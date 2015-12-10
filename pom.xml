@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>eu.clarin.cmdi</groupId>
+  <artifactId>cmdi-curation-module</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  <properties>
+  		<humanize.version>1.2.2</humanize.version>
+  		<junit.version>4.12</junit.version>
+  		<slf4j.version>1.7.12</slf4j.version> 
+  		<vtd-xml.version>2.11</vtd-xml.version>  
+  </properties>
+  
+  <dependencies>
+  
+	<dependency>
+	  <groupId>com.ximpleware</groupId>
+	  <artifactId>vtd-xml</artifactId>
+	  <version>${vtd-xml.version}</version>
+	</dependency>
+  	<dependency>
+  	  <groupId>junit</groupId>
+  	  <artifactId>junit</artifactId>
+  	  <version>${junit.version}</version>
+  	</dependency>
+	<dependency>
+	  <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-api</artifactId>
+	  <version>${slf4j.version}</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-log4j12</artifactId>
+	  <version>${slf4j.version}</version>
+	</dependency>
+  	<dependency>
+	  <groupId>com.github.mfornos</groupId>
+	  <artifactId>humanize-slim</artifactId>
+	  <version>${humanize.version}</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.apache.commons</groupId>
+	  <artifactId>commons-jcs-core</artifactId>
+	  <version>2.0-beta-1</version>
+	</dependency>
+  </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.3</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
