@@ -14,6 +14,7 @@ public class CMDIRecord extends CurationEntity{
 	public final static Collection<String> duplicateMDSelfLinks = Collections.synchronizedCollection(new LinkedList<>());
 		
 	private int numOfElements = 0;
+	private int numOfSimpleElements = 0;
 	private int numOfEmptyElements = 0;	
 	private int numOfResourceProxies = 0;
 	
@@ -21,7 +22,9 @@ public class CMDIRecord extends CurationEntity{
 	private String selfLink = null;
 	private String collectionDisplayName = null;
 	
+	private boolean isValid = true;
 	
+	Collection<String> values;
 	
 	public CMDIRecord(Path path) {
 		super(path);
@@ -106,6 +109,30 @@ public class CMDIRecord extends CurationEntity{
 
 	public void setCollectionDisplayName(String collectionDisplayName) {
 		this.collectionDisplayName = collectionDisplayName;
+	}
+
+	public int getNumOfSimpleElements() {
+		return numOfSimpleElements;
+	}
+
+	public void setNumOfSimpleElements(int numOfSimpleElements) {
+		this.numOfSimpleElements = numOfSimpleElements;
+	}
+
+	public Collection<String> getValues() {
+		return values;
+	}
+
+	public void setValues(Collection<String> values) {
+		this.values = values;
+	}
+
+	public boolean isValid() {
+		return isValid;
+	}
+
+	public void setValid(boolean isValid) {
+		this.isValid = isValid;
 	}
 	
 

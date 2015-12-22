@@ -32,37 +32,9 @@ public class XSDCache {
 	public static XSDCache getInstance(){
 		return instance;
 	}
-	
-	public synchronized Validator getSchemaValidator(String profile) throws Exception{		
-		Validator validator = getSchema(profile).newValidator();
-		//setValidationFeatures(validator);		
-		return 	validator;
-	}
-	
-	public synchronized ValidatorHandler getSchemaValidatorHandler(String profile) throws Exception{		
-		 ValidatorHandler schemaValidator = getSchema(profile).newValidatorHandler();
-         //schemaValidator.setResourceResolver(resolver);
-         //schemaValidator.setErrorHandler(errorHandler);
-		 //schemaValidator.setContentHandler(new CMDIContentHandler(schemaValidator.getTypeInfoProvider());
-         schemaValidator.setContentHandler(new CMDIContentHandler());
 		
-		return 	schemaValidator;
-	}
 	
-	private void setValidationFeatures(Validator validator){
-		try {
-			validator.setFeature("http://apache.org/xml/features/warn-on-duplicate-entitydef", true);
-			validator.setFeature("http://apache.org/xml/features/continue-after-fatal-error", true);
-			validator.setFeature("http://xml.org/sax/features/validation", true);
-			validator.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
-			
-			
-		} catch (Exception e) {
-			_logger.warn("feature is not supported", e);
-		}
-	}
-	
-	private Schema getSchema(String profile) throws Exception{
+	public Schema getSchema(String profile) throws Exception{
 		if(!cache.containsKey(profile)){
 			//fall-back: xsd dir, download
 			_logger.trace("Schema for {} is not in the cache, searching in the local FS", profile);

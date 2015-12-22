@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.report;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -16,7 +17,17 @@ import javax.annotation.Nonnull;
  */
  public class CMDIReport {	
 	
-	private Collection<Message> messages;	
+	private Collection<Message> messages;
+	
+	int numOfElements = 0;
+	int numOfSimpleElements = 0;
+	int numOfEmptyElements = 0;	
+	
+	int numOfResourceProxies = 0;
+	String selfLink = null;
+	String collectionDisplayName = null;
+	
+	Collection<String> values = new LinkedList<String>();
 	
 	public void addMessage(@Nonnull Message m){
 		//init collection in a lazy way
@@ -36,6 +47,8 @@ import javax.annotation.Nonnull;
 	public Message getFirst(){
 		return messages == null || messages.isEmpty() ? null : messages.iterator().next();
 	}
+	
+	
 	
 	
 }

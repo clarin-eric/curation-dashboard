@@ -7,6 +7,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import eu.clarin.cmdi.curation.entities.CMDIRecord;
+
 /**
  * @author dostojic
  * 
@@ -15,6 +17,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 
 public class CMDIContentHandler extends DefaultHandler{        
+		
+	CMDIRecord instance;
+	
 	int numOfElements = 0;
 	int numOfSimpleElements = 0;
 	int numOfEmptyElements = 0;
@@ -24,11 +29,18 @@ public class CMDIContentHandler extends DefaultHandler{
     
     Collection<String> values = new LinkedList<String>();
     
+    
+    
     //for handling attributes
 //	private TypeInfoProvider provider;
 //  public CMDIContentHandler(TypeInfoProvider provider) {
 //      this.provider = provider;
 //  }
+    
+    public CMDIContentHandler(CMDIRecord instance){
+    	this.instance = instance;
+    }
+    
 
     /**
      * Receive notification of the start of an element.
@@ -71,6 +83,19 @@ public class CMDIContentHandler extends DefaultHandler{
     public void characters(char[] ch, int start, int length) throws SAXException {
     	elemWithValue = true;
     	values.add(new String(ch, start, length));
+    }
+    
+    /* (non-Javadoc)
+     * @see org.xml.sax.helpers.DefaultHandler#endDocument()
+     */
+    @Override
+    public void endDocument() throws SAXException {
+    	instance.setNumOfElements(numOfElements);
+    	instance.setNumOfSimpleElements(numOfSimpleElements);
+    	instance.setNumOfEmptyElements(numOfEmptyElements);
+    	
+    	instance.setValues(values);
+    	
     }
 
 }

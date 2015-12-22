@@ -7,6 +7,7 @@ import eu.clarin.cmdi.curation.subprocessor.CMDIHeaderValidator;
 import eu.clarin.cmdi.curation.subprocessor.CMDIValidator;
 import eu.clarin.cmdi.curation.subprocessor.CurationStep;
 import eu.clarin.cmdi.curation.subprocessor.FileSizeValidator;
+import eu.clarin.cmdi.curation.subprocessor.HttpURLValidator;
 
 public class CMDIProcessor extends AbstractProcessor{
 
@@ -16,7 +17,8 @@ public class CMDIProcessor extends AbstractProcessor{
 		return Arrays.asList(
 				new FileSizeValidator(),
 				new CMDIHeaderValidator(),
-				new CMDIValidator()
+				new CMDIValidator(),
+				new HttpURLValidator()
 				);
 	}
 }
