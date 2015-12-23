@@ -65,7 +65,7 @@ public class Directory extends CurationEntity{
 	public String getStat() {
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("Colection: " + path.getFileName() + "\n");
+		sb.append("Collection: " + path.getFileName() + "\n");
 		sb.append("Total number of records: " + numOfFiles + "\n");
 		sb.append("Total number of valid records: " + numOfValidFiles + "\n");
 		sb.append("Average number of valid records: " + new DecimalFormat("0%").format(div(numOfValidFiles,numOfFiles)) + "\n");
@@ -77,6 +77,24 @@ public class Directory extends CurationEntity{
 		//children.forEach(child -> sb.append(child.getStat()));		
 		
 		return sb.toString();		
+	}
+	
+	
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer("\n");
+		
+		sb.append("Collection: " + path.getFileName() + "\n");
+		sb.append("Total number of records: " + numOfFiles + "\n");
+		sb.append("Total number of valid records: " + numOfValidFiles + "\n");
+		sb.append("Average number of valid records: " + new DecimalFormat("0%").format(div(numOfValidFiles,numOfFiles)) + "\n");
+		sb.append("Total file size: " + size + " bytes" + "\n");
+		sb.append("Average file size: " + new DecimalFormat("0.00").format(div(size, numOfFiles)) + " bytes" + "\n");
+		sb.append("max/min file size: " + maxFileSize + "/" + minFileSize  + " bytes" + "\n");
+		
+		children.forEach(child -> sb.append(child.toString()).append("\n------------------------------------------------\n"));
+		
+		return sb.toString();
 	}
 	
 	private double div(double a, double b){

@@ -87,4 +87,15 @@ public abstract class CurationEntity {
 		reports.add(report);
 	}
 	
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("Report for " + path).append("\n");
+		sb.append("VALID: " + isValid()).append("\n");
+		
+		reports.forEach(report -> sb.append(report).append("\n"));
+		
+		return sb.toString();
+	}
+	
 }

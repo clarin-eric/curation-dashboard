@@ -8,7 +8,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.clarin.cmdi.curation.entities.CMDIRecord;
+import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Report;
+import eu.clarin.cmdi.curation.report.Severity;
 
 /**
  * @author dostojic
@@ -75,8 +77,10 @@ public class CMDIContentHandler extends DefaultHandler{
     	
     	if(curElem.equals(qName)){//is a simple elem
     		numOfSimpleElements++;
-    		if(!elemWithValue)//does it have value
+    		if(!elemWithValue){//does it have value
     			numOfEmptyElements++;
+    			report.addMessage(new Message(Severity.WARNING, "Simple element " + qName + " doesn't contain any value"));
+    		}
     	}
     			
     	elemWithValue = false;

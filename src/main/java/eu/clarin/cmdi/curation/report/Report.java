@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.report;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import javax.annotation.Nonnull;
  public class Report {
 	
 	private List<Message> messages;
-	private boolean verbose = false;
+	private boolean verbose;
 	private String name;
 	
 	public Report(String name, boolean verbose){
@@ -26,7 +25,7 @@ import javax.annotation.Nonnull;
 	}
 	
 	public Report(String name){
-		this(name, false);
+		this(name, true);
 	}
 	
 	public void addMessage(@Nonnull Message m){
@@ -65,7 +64,7 @@ import javax.annotation.Nonnull;
 	public String toString(){
 		//Collections.sort(messages);
 		StringBuilder sb = new StringBuilder(1000);
-		sb.append(name + ":").append(isPassed()? "OK" : "FAILED");
+		sb.append(name).append("\n").append("STATUS: ").append(isPassed()? "OK" : "FAILED").append("\n");
 		messages
 			.stream()
 			.filter(Message::isInfo)

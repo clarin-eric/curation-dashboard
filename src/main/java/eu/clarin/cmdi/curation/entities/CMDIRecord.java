@@ -33,24 +33,6 @@ public class CMDIRecord extends CurationEntity{
 		return new CMDIProcessor();
 	}
 
-	public String getStat() {
-		StringBuilder sb = new StringBuilder("");
-		switch(RECORD_STAT_PRINT_LVL){		
-			case ALL:
-			case HEADER_ONLY:
-				sb.append("CMDI Record: " + path.getFileName() + "\n");
-				sb.append("size: " + size + " bytes" + "\n");
-				sb.append("valid: " + valid + "\n");
-				if(RECORD_STAT_PRINT_LVL == RecordStatPrintLvl.HEADER_ONLY)
-					break;				
-				//sb.append(report);
-			case NONE:			
-		}	
-		
-		return sb.toString();
-				
-	}
-
 	public String getProfile() {
 		return profile;
 	}

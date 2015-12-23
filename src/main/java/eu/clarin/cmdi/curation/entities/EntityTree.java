@@ -52,8 +52,8 @@ public class EntityTree implements FileVisitor<Path>{
 			curDir
 			.getChildren()
 			.parallelStream()
-			.map(CurationEntity::genReport)
-			.count()
+			.mapToLong(CurationEntity::genReport)
+			.sum()
 		);		
 				
 		if(stack.isEmpty()){

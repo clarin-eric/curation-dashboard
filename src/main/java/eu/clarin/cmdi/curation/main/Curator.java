@@ -41,8 +41,8 @@ public class Curator {
 				else
 					throw new IllegalArgumentException("Curation module can process only xml and xsd files!\nPS\nAt least for now");			
 			
-			
-			_logger.info(entity.toStat());
+			entity.genReport();
+			_logger.info(entity.toString());
 		} catch (Exception e) {
 			_logger.error("Curation failed for " + path, e);
 		}
