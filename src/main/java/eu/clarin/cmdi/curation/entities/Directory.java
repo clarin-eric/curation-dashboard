@@ -15,15 +15,23 @@ public class Directory extends CurationEntity{
 	private long size = 0;
 	private long numOfValidFiles = 0;
 	private long maxFileSize = 0;
-	private long minFileSize = Long.MAX_VALUE;
-	
-	
-	
+	private long minFileSize = Long.MAX_VALUE;	
 	
 	public Directory(Path path) {
 		super(path);
 		children = new LinkedList<CurationEntity>();
 	}
+	
+	@Override
+	public long genReport(){
+		return numOfValidFiles;
+	}
+	
+	@Override
+	protected AbstractProcessor getProcessor() {
+		return null;
+	}
+
 
 	public CurationEntity addChild(CurationEntity child){
 		children.add(child);
@@ -54,7 +62,6 @@ public class Directory extends CurationEntity{
 		return child;
 	}
 		
-	@Override
 	public String getStat() {
 		
 		StringBuilder sb = new StringBuilder();
@@ -67,7 +74,7 @@ public class Directory extends CurationEntity{
 		sb.append("max/min file size: " + maxFileSize + "/" + minFileSize  + " bytes" + "\n");
 		sb.append("\n");		
 		
-		children.forEach(child -> sb.append(child.getStat()));		
+		//children.forEach(child -> sb.append(child.getStat()));		
 		
 		return sb.toString();		
 	}
@@ -75,12 +82,7 @@ public class Directory extends CurationEntity{
 	private double div(double a, double b){
 		return a/b;
 	}
-	
-	@Override
-	protected AbstractProcessor getProcessor() {
-		return new DirectoryProcessor();
-	}
-	
+		
 
 	public Collection<CurationEntity> getChildren() {
 		return children;

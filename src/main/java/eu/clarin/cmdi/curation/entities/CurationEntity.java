@@ -4,10 +4,8 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import javax.annotation.Nonnull;
-
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
-import eu.clarin.cmdi.curation.report.Message;
+import eu.clarin.cmdi.curation.report.Report;
 
 public abstract class CurationEntity {
 	
@@ -23,15 +21,8 @@ public abstract class CurationEntity {
 	
 	protected boolean valid = false;
 	
-	Collection<Message> report = new LinkedList<Message>(){
-		@Override
-		public String toString() {
-			if(isEmpty()) return "";
-			StringBuilder sb = new StringBuilder("Report[\n" );
-			this.forEach(m -> sb.append("\t" + m.toString() + "\n"));
-			return sb.append("]\n").toString();
-		}
-	};
+	protected Collection<Report> reports = new LinkedList<Report>();
+	
 		
 	public CurationEntity(Path path){
 		this.path = path;
@@ -41,6 +32,13 @@ public abstract class CurationEntity {
 		this.path = path;
 		this.size = size;
 	}
+	
+	public long genReport(){
+		getProcessor().process(this);
+		return isValid()? 1l : 0l;
+	}
+	
+	protected abstract AbstractProcessor getProcessor();
 			
 
 	public Path getPath() {
@@ -51,23 +49,6 @@ public abstract class CurationEntity {
 		this.path = path;
 	}
 	
-	public void addMessage(@Nonnull Message... message){
-		for(Message m: message)
-			report.add(m);
-	}	
-	
-	public String toStat(){
-		genStat();
-		return getStat();
-	}
-	
-	abstract protected String getStat();
-	
-	abstract protected AbstractProcessor getProcessor();
-	
-	public void genStat(){
-		getProcessor().process(this);
-	}
 
 	public long getNumOfFiles() {
 		return numOfFiles;
@@ -93,4 +74,17 @@ public abstract class CurationEntity {
 	public void setSize(long size) {
 		this.size = size;
 	}
+
+	public Collection<Report> getReports() {
+		return reports;
+	}
+
+	public void setReports(Collection<Report> reports) {
+		this.reports = reports;
+	}
+	
+	public void addReport(Report report){
+		reports.add(report);
+	}
+	
 }

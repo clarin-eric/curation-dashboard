@@ -3,11 +3,6 @@ package eu.clarin.cmdi.curation.subprocessor;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,31 +16,35 @@ import com.ximpleware.VTDNav;
 
 import eu.clarin.cmdi.curation.entities.CMDIRecord;
 import eu.clarin.cmdi.curation.report.Message;
+import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.report.Severity;
 
-public class CMDIHeaderValidator implements CurationStep<CMDIRecord>{
+public class CMDIHeaderValidator extends CurationStep<CMDIRecord>{
+	
 	private static final Logger _logger = LoggerFactory.getLogger(CMDIHeaderValidator.class);
 	
 	private static final Pattern PROFILE_ID_PATTERN = Pattern.compile(".*(clarin.eu:cr1:p_[0-9]+).*");
 	 
-	private final static Set<String> uniqueMDSelfLinks = Collections.synchronizedSet(new HashSet<>());
-	 
 	private VTDNav navigator;
 	
+	Report report = new Report("CMDIHeaderReport");
+	
+	
 	@Override
-	public boolean apply(CMDIRecord entity) {
-		try{
-			parse(entity.getPath());			
-			handleMdProfile(entity);
-			handleMdSelfLink(entity);
-			handleMdCollectionDisplyName(entity);
+	public Report process(CMDIRecord entity){
+		try{			
+			parse(entity.getPath());		
+			String profile = handleMdProfile();
+			handleMdSelfLink();
+			handleMdCollectionDisplyName();
+			entity.setProfile(profile);
 			navigator = null;
-			return true;
-		}catch(Exception e){// we are throwing it only if file can not be üarsed or profileId is missing
-			entity.addMessage(new Message(Severity.FATAL, e.getMessage()));
-			return false;
+		}catch(Exception e){// we are throwing it only if file can not be parsed or profileId is missing
+			report.addMessage(new Message(Severity.FATAL, e.getMessage()));
 		}
+		return report;
 	}
+	
 	 
 	 private void parse(Path cmdiRecord) throws Exception{
 		 VTDGen parser = new VTDGen();
@@ -60,16 +59,16 @@ public class CMDIHeaderValidator implements CurationStep<CMDIRecord>{
 		
 	 }
 	 
-	 private void handleMdProfile(CMDIRecord entity) throws Exception{
+	 private String handleMdProfile() throws Exception{
 		 //search in header first
 		 String profile = xpath("/CMD/Header/MdProfile/text()");
 		 if(profile == null){//not in header
-			 entity.addMessage(new Message(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with proile ID!"));
+			 report.addMessage(new Message(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with proile ID!"));
 			 profile = extractProfileFromNameSpace();
 			 if(profile != null)
 				 throw new Exception("Profile can not be extracted from namespace!");
 		 }		 
-		 entity.setProfile(profile);
+		 return profile;
 	 }
 	 
 	 //try with schemaLocation/noNamespaceSchemaLocation attributes
@@ -94,22 +93,19 @@ public class CMDIHeaderValidator implements CurationStep<CMDIRecord>{
 	 }
 	 
 	 
-	 private void handleMdCollectionDisplyName(CMDIRecord entity){
+	 private void handleMdCollectionDisplyName(){
 		 String mdCollectionDisplayName = xpath("/CMD/Header/MdCollectionDisplayName/text()");
 		 if(mdCollectionDisplayName == null || mdCollectionDisplayName.isEmpty())
-			 entity.addMessage(new Message(Severity.ERROR, "Value for MdCollectionDisplayName is missing"));
-		 else
-			 entity.setCollectionDisplayName(mdCollectionDisplayName);		 
+			 report.addMessage(new Message(Severity.ERROR, "Value for MdCollectionDisplayName is missing"));	 
 	 }
 	 
-	 private void handleMdSelfLink(CMDIRecord entity){
+	 private void handleMdSelfLink(){
 		 String mdSelfLink = xpath("/CMD/Header/MdSelfLink/text()");
 		 if(mdSelfLink == null || mdSelfLink.isEmpty())
-			 entity.addMessage(new Message(Severity.ERROR, "Value for MdCollectionDisplayName is missing"));
+			 report.addMessage(new Message(Severity.ERROR, "Value for MdCollectionDisplayName is missing"));
 		 else{
-			 entity.setSelfLink(mdSelfLink);
-			 if(!uniqueMDSelfLinks.add(mdSelfLink)){
-				 entity.addMessage(new Message(Severity.WARNING, "SelfLink: " + mdSelfLink + " is not unique"));
+			 if(!CMDIRecord.uniqueMDSelfLinks.add(mdSelfLink)){
+				 report.addMessage(new Message(Severity.WARNING, "SelfLink: " + mdSelfLink + " is not unique"));
 				 CMDIRecord.duplicateMDSelfLinks.add(mdSelfLink);
 			 } 
 		 } 

@@ -13,7 +13,7 @@ public class CMDIProcessor extends AbstractProcessor{
 
 	
 	@Override
-	protected Collection<CurationStep> initPipeline() {
+	protected Collection<CurationStep> createPipeline() {
 		return Arrays.asList(
 				new FileSizeValidator(),
 				new CMDIHeaderValidator(),

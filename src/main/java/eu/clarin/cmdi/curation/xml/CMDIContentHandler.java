@@ -8,6 +8,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.clarin.cmdi.curation.entities.CMDIRecord;
+import eu.clarin.cmdi.curation.report.Report;
 
 /**
  * @author dostojic
@@ -18,6 +19,7 @@ import eu.clarin.cmdi.curation.entities.CMDIRecord;
 
 public class CMDIContentHandler extends DefaultHandler{        
 		
+	Report report;
 	CMDIRecord instance;
 	
 	int numOfElements = 0;
@@ -32,13 +34,14 @@ public class CMDIContentHandler extends DefaultHandler{
     
     
     //for handling attributes
-//	private TypeInfoProvider provider;
+//	private TypeInfoProvider provider;s
 //  public CMDIContentHandler(TypeInfoProvider provider) {
 //      this.provider = provider;
 //  }
     
-    public CMDIContentHandler(CMDIRecord instance){
+    public CMDIContentHandler(CMDIRecord instance, Report report){
     	this.instance = instance;
+    	this.report = report;
     }
     
 
@@ -90,9 +93,9 @@ public class CMDIContentHandler extends DefaultHandler{
      */
     @Override
     public void endDocument() throws SAXException {
-    	instance.setNumOfElements(numOfElements);
-    	instance.setNumOfSimpleElements(numOfSimpleElements);
-    	instance.setNumOfEmptyElements(numOfEmptyElements);
+    	report.addMessage("Total number of elements:" + numOfElements);
+    	report.addMessage("Total number of simple elements:" + numOfSimpleElements);
+    	report.addMessage("Total number of empty elements:" + numOfEmptyElements);    	
     	
     	instance.setValues(values);
     	

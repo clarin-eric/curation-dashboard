@@ -47,21 +47,14 @@ public class EntityTree implements FileVisitor<Path>{
 	public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 		_logger.trace("finished visiting {}, number of files: {}", dir, curDir.getSize());
 		
-		
-		//fire processors
-		curDir
-		.getChildren()
-		.parallelStream()
-		.forEach(CurationEntity::genStat);
-		
-		//count valid files
+		// fire processors and count valid files
 		curDir.setNumOfValidFiles(
-				curDir.getChildren()
-				.stream()
-				.filter(CurationEntity::isValid)
-				.count()
-		);
-		
+			curDir
+			.getChildren()
+			.parallelStream()
+			.map(CurationEntity::genReport)
+			.count()
+		);		
 				
 		if(stack.isEmpty()){
 			root = curDir;

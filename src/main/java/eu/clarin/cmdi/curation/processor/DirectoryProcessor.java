@@ -13,7 +13,7 @@ import eu.clarin.cmdi.curation.subprocessor.Dummy;
 public class DirectoryProcessor extends AbstractProcessor {
 
 	@Override
-	protected Collection<CurationStep> initPipeline() {
+	protected Collection<CurationStep> createPipeline() {
 		return Arrays.asList(
 				new Dummy()
 				);

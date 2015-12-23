@@ -6,6 +6,7 @@ import org.xml.sax.SAXParseException;
 
 import eu.clarin.cmdi.curation.entities.CMDIRecord;
 import eu.clarin.cmdi.curation.report.Message;
+import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.report.Severity;
 
 /**
@@ -16,25 +17,26 @@ import eu.clarin.cmdi.curation.report.Severity;
 
 public class CMDIErrorHandler implements ErrorHandler{
 	
-	CMDIRecord instance;
+	Report report;
 	
-	public CMDIErrorHandler(CMDIRecord instance){
-		this.instance = instance;
+	public CMDIErrorHandler(Report report){
+		this.report = report;
 	}
 
 	@Override
 	public void fatalError(SAXParseException exception) throws SAXException {
-		instance.addMessage(new Message(Severity.FATAL, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), exception));
+		report.addMessage(new Message(Severity.FATAL, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), exception));
+		throw exception;
 	}
 	
 	@Override
 	public void error(SAXParseException exception) throws SAXException {
-		instance.addMessage(new Message(Severity.ERROR, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), exception));			
+		report.addMessage(new Message(Severity.ERROR, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), exception));			
 	}
 
 	@Override
 	public void warning(SAXParseException exception) throws SAXException {
-		instance.addMessage(new Message(Severity.WARNING, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), exception));
+		report.addMessage(new Message(Severity.WARNING, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), exception));
 		
 	}
 }

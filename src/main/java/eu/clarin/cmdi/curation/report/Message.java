@@ -1,5 +1,9 @@
 package eu.clarin.cmdi.curation.report;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 public class Message implements Comparable<Message>{
 	
 	private final Severity severity;
@@ -55,15 +59,20 @@ public class Message implements Comparable<Message>{
 		return severity == Severity.FATAL;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	public boolean isInfo(){
+		return severity == Severity.INFO;
+	}
+	
+	public boolean isNonInfo(){
+		return severity != Severity.INFO;
+	}
+	
 	@Override
 	public String toString() {
 		return new StringBuilder()
 				.append(severity.label + " -")
-				.append(line != 0 ? "line:" + line + " " : " ")
-				.append(col != 0 ?  "column:" + col + " " : " ")
+				.append(line != 0 ? ("line:" + line + " ") : " ")
+				.append(col != 0 ?  ("column:" + col + " ") : " ")
 				.append(message + " ")
 				.append(cause != null ? cause.getMessage() : "")
 				.toString();			   
@@ -73,15 +82,9 @@ public class Message implements Comparable<Message>{
 	@Override
 	public int compareTo(Message msg) {		
 		//compare by severity then line and finally by column
-		
-		return sign(severity.priority, msg.severity.priority) == 0 ? 0 : 
-			   sign(line, msg.line) 						  == 0 ? 0 :
-			   sign(col, msg.col);
-
-	}
-	
-	private int sign(int a, int b){
-		return a > b ? +1 : a < b ? -1 : 0;
+		return Integer.compare(severity.priority, msg.severity.priority) != 0? Integer.compare(severity.priority, msg.severity.priority) :
+			   Integer.compare(line, msg.line) != 0? Integer.compare(line, msg.line) :
+			   Integer.compare(col, msg.col);
 	}
 
 }
