@@ -4,62 +4,96 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-import javax.xml.validation.ValidatorHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.clarin.cmdi.curation.io.Downloader;
-import eu.clarin.cmdi.curation.xml.CMDIContentHandler;
 
 public class XSDCache {
 	
 	private static final Logger _logger = LoggerFactory.getLogger(XSDCache.class);
 	
 	//Singleton
-	private static volatile  XSDCache instance = new XSDCache();
+	private static XSDCache instance = new XSDCache();
 	
 	private Map<String, Schema> cache = new HashMap<>();
+		
+	private List<String> beingLoadedSchemas = new LinkedList<String>();
+	
+	private Map<String, Exception> exceptions = new HashMap<>();
 	
 	private XSDCache(){}
 	
 	public static XSDCache getInstance(){
 		return instance;
 	}
-		
 	
-	public Schema getSchema(String profile) throws Exception{
-		if(!cache.containsKey(profile)){
-			//fall-back: xsd dir, download
-			_logger.trace("Schema for {} is not in the cache, searching in the local FS", profile);
-			Schema schema = loadSchemaFromFile(profile);
-			cache.put(profile, schema);
-		}		
-		
-		return cache.get(profile);
-	}
 	
-	private Schema loadSchemaFromFile(String profile) throws Exception{		
-		Path schema = Paths.get(ComponentRegistryService.SCHEMA_FOLDER, profile + ".xsd");
-		_logger.trace("Loading {} schema from {}", profile, schema);
-		if(Files.notExists(schema)){
-			_logger.trace("Schema for {} is not in the local FS, downloading it", profile);
-			Downloader downloader = new Downloader(getProfileURL(profile), ComponentRegistryService.SCHEMA_FOLDER + "/" + profile + ".xsd");
-			downloader.download();
-		}
+	public Schema getSchema(final String profile)throws Exception{		
+		synchronized (cache) {
+			//if not in the cache and not being currently loaded start new Thread
+			if(!cache.containsKey(profile) && !beingLoadedSchemas.contains(profile)){
+				beingLoadedSchemas.add(profile);
+				new Thread(){
+					public void run() {
+						try{
+							Path pathToSchema = Paths.get(ComponentRegistryService.SCHEMA_FOLDER, profile + ".xsd");
+							_logger.trace("Loading {} schema from {}", profile, pathToSchema);
+							
+							if(Files.notExists(pathToSchema)){
+								_logger.trace("Schema for {} is not in the local FS, downloading it", profile);
+								String profileURL = ComponentRegistryService.CLARIN_COMPONENT_REGISTRY_REST_URL + ComponentRegistryService.PROFILE_PREFIX + profile + "/xsd";
+								Downloader downloader = new Downloader(profileURL, ComponentRegistryService.SCHEMA_FOLDER + "/" + profile + ".xsd");
+								downloader.download();
+							}
+									
+							SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);		
+							Schema schema = schemaFactory.newSchema(pathToSchema.toFile());
+							
+							synchronized (cache) {
+								cache.put(profile, schema);
+								cache.notifyAll();
+								beingLoadedSchemas.remove(profile);
+							}
+						
+						}
+						catch(Exception e){
+							synchronized (cache) {
+								cache.put(profile, null);
+								cache.notifyAll();
+								exceptions.put(profile, e);//save the exception because it goes into report
+							}
+						}
+							
+					}
+				}.start();
+			}
 				
-		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);		
-		return schemaFactory.newSchema(schema.toFile());
+			
+			while(!cache.containsKey(profile)){
+				_logger.trace("{} waiting on {}", Thread.currentThread().getId(), profile);
+				cache.wait();
+			}
+				
+		}
+		
+		_logger.trace("{} got profile {}", Thread.currentThread().getId(), profile);
+		Schema schema = cache.get(profile);
+		if(schema == null)
+			throw exceptions.get(profile);
+		
+		return schema;
+		
+		
 	}
+		
 	
-	
-	public synchronized String getProfileURL(String profileId) {
-		return ComponentRegistryService.CLARIN_COMPONENT_REGISTRY_REST_URL + ComponentRegistryService.PROFILE_PREFIX + profileId + "/xsd";
-	}
 }
