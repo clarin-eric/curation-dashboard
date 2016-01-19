@@ -7,10 +7,10 @@ import eu.clarin.cmdi.curation.report.Report;
  * @author dostojic
  *
  */
-public class Dummy extends CurationStep {
+public class Dummy extends CurationTask {
 
 	@Override
-	public Report process(CurationEntity entity) {
+	public Report generateReport(CurationEntity entity) {
 		return new Report("");
 	}
 

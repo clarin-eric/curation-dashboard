@@ -4,7 +4,6 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import eu.clarin.cmdi.curation.entities.CMDIRecord;
 import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.report.Severity;
@@ -25,18 +24,18 @@ public class CMDIErrorHandler implements ErrorHandler{
 
 	@Override
 	public void fatalError(SAXParseException exception) throws SAXException {
-		report.addMessage(new Message(Severity.FATAL, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), exception));
+		report.addMessage(new Message(Severity.FATAL, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), null)); //, exception
 		throw exception;
 	}
 	
 	@Override
 	public void error(SAXParseException exception) throws SAXException {
-		report.addMessage(new Message(Severity.ERROR, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), exception));			
+		report.addMessage(new Message(Severity.ERROR, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), null)); //, exception
 	}
 
 	@Override
 	public void warning(SAXParseException exception) throws SAXException {
-		report.addMessage(new Message(Severity.WARNING, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), exception));
+		report.addMessage(new Message(Severity.WARNING, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), null)); //, exception
 		
 	}
 }

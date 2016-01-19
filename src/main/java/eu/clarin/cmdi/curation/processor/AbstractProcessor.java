@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import eu.clarin.cmdi.curation.entities.CurationEntity;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.curation.subprocessor.CurationStep;
+import eu.clarin.cmdi.curation.subprocessor.CurationTask;
 
 	public abstract class AbstractProcessor{
 		
@@ -12,14 +12,14 @@ import eu.clarin.cmdi.curation.subprocessor.CurationStep;
 	}
 
 	public void process(CurationEntity entity) {
-		for(CurationStep step: createPipeline())		
-			if(step.apply(entity) == Severity.FATAL)//stop applying further processors in case of fatal curation error
+		for(CurationTask task: createPipeline())		
+			if(task.process(entity) == Severity.FATAL)//stop applying further processors in case of fatal curation error
 				return;	
 		entity.setValid(true);
 		
 	}
 	
-	protected abstract Collection<CurationStep> createPipeline();
+	protected abstract Collection<CurationTask> createPipeline();
 	
 	
 

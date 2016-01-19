@@ -3,14 +3,14 @@
  */
 package eu.clarin.cmdi.curation.subprocessor;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import eu.clarin.cmdi.curation.entities.CMDIRecord;
+import eu.clarin.cmdi.curation.entities.CMDIRecordValue;
+import eu.clarin.cmdi.curation.io.HTTPLinkChecker;
 import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.report.Severity;
@@ -19,54 +19,48 @@ import eu.clarin.cmdi.curation.report.Severity;
  * @author dostojic
  *
  */
-public class HttpURLValidator extends CurationStep<CMDIRecord>{
+public class HttpURLValidator extends CurationTask<CMDIRecord>{
 	
-	int timeout;
-	
-	public HttpURLValidator(){
-		this(2000);//1 sec by default
-	}
-	
-	public HttpURLValidator(int timeout){
-		this.timeout = timeout;
-	}
 
 	@Override
-	public Report process(CMDIRecord entity) {
+	public Report generateReport(CMDIRecord entity) {
 		Report report = new Report("HttpLinks Report");
 		int totalNumberOfLinks;
 		AtomicInteger numOfBrokenLinks = new AtomicInteger(0);		
 		
 		//filter urls
-		Collection<String> urls = entity
+		Collection<CMDIRecordValue> urls = entity
 				.getValues()
 				.stream()
-				.filter(value -> value.startsWith("http://") || value.startsWith("https://"))
+				.filter(value -> value.getValue().startsWith("http://") || value.getValue().startsWith("https://"))
 				.collect(Collectors.toList());
 		
 		totalNumberOfLinks = urls.size();
 		
 		//filter unique urls
-		urls = urls.stream().distinct().collect(Collectors.toList());
+		urls = urls.stream().distinct().collect(Collectors.toList());		
 		
-		
-		urls.parallelStream()
-		.forEach(value -> {
+		urls.parallelStream().forEach(value -> {
+			String link = value.getValue();
+			String tag = value.getTag() != null? value.getTag() + ": " : "";
+			
 			try{//check if URL is broken
-				String url = value.replaceFirst("^https", "http"); //we don't care about errors because of invalid certificates
-				HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-				connection.setConnectTimeout(timeout);
-				connection.setReadTimeout(timeout);
-				connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0");
-				connection.setRequestMethod("HEAD");
-				int responseCode = connection.getResponseCode();
-				if (responseCode != 200) {
+				String url = value.getValue().replaceFirst("^https", "http"); //we don't care about errors because of invalid certificates
+				
+				int responseCode = new HTTPLinkChecker().checkLink(url);
+				
+				if(responseCode == 200 || responseCode == 302){
+					report.addDebugMessage(tag + "URL: " + link + "\t STATUS:" + responseCode);
+				} //OK
+				else if(responseCode < 400)//2XX and 3XX, redirections, empty content ...
+					report.addMessage(new Message(Severity.WARNING, tag + "URL: " + link + "\t STATUS:" + responseCode));
+				else{//4XX and 5XX, client/server errors
 					numOfBrokenLinks.incrementAndGet();
-					report.addMessage(new Message(Severity.ERROR, "URL: " + value + "\t STATUS:" + responseCode));
+					report.addMessage(new Message(Severity.ERROR, tag + "URL: " + link + "\t STATUS:" + responseCode));
 				}
 			}catch(Exception e){
 				numOfBrokenLinks.incrementAndGet();
-				report.addMessage(new Message(Severity.ERROR, "URL: " + value + "\t STATUS:" + e.getMessage()));
+				report.addMessage(new Message(Severity.ERROR, tag + "URL: " + link + "\t STATUS:" + e.getMessage()));
 			}
 		});
 		

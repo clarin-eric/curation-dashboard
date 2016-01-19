@@ -63,8 +63,12 @@ public class Message implements Comparable<Message>{
 		return severity == Severity.INFO;
 	}
 	
+	public boolean isDebug(){
+		return severity == Severity.DEBUG;
+	}
+	
 	public boolean isNonInfo(){
-		return severity != Severity.INFO;
+		return severity != Severity.INFO && severity != Severity.DEBUG;
 	}
 	
 	@Override

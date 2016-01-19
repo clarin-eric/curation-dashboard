@@ -8,9 +8,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.clarin.cmdi.curation.entities.CMDIRecord;
+import eu.clarin.cmdi.curation.entities.CMDIRecordValue;
 import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.report.Severity;
+import eu.clarin.cmdi.curation.subprocessor.CMDIValidator;
 
 /**
  * @author dostojic
@@ -31,7 +33,7 @@ public class CMDIContentHandler extends DefaultHandler{
     String curElem;
     boolean elemWithValue;
     
-    Collection<String> values = new LinkedList<String>();
+    Collection<CMDIRecordValue> values = new LinkedList<CMDIRecordValue>();
     
     
     
@@ -77,9 +79,9 @@ public class CMDIContentHandler extends DefaultHandler{
     	
     	if(curElem.equals(qName)){//is a simple elem
     		numOfSimpleElements++;
-    		if(!elemWithValue){//does it have value
+    		if(!elemWithValue){//does it have a value
     			numOfEmptyElements++;
-    			report.addMessage(new Message(Severity.WARNING, "Simple element " + qName + " doesn't contain any value"));
+    			report.addMessage(new Message(Severity.WARNING, "Simple element \"" + qName + "\" doesn't contain any value"));
     		}
     	}
     			
@@ -89,7 +91,10 @@ public class CMDIContentHandler extends DefaultHandler{
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
     	elemWithValue = true;
-    	values.add(new String(ch, start, length));
+    	//mark MDSelflinks and ResourceProxy Links
+    	values.add(new CMDIRecordValue(new String(ch, start, length), (curElem.equals("MdSelfLink") || curElem.equals("ResourceRef"))? curElem : null));
+    	
+    	
     }
     
     /* (non-Javadoc)

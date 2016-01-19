@@ -18,12 +18,12 @@ import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.xml.CMDIContentHandler;
 import eu.clarin.cmdi.curation.xml.CMDIErrorHandler;
 
-public class CMDIValidator extends CurationStep<CMDIRecord>{
+public class CMDIValidator extends CurationTask<CMDIRecord>{
 	
 	static final Logger _logger = LoggerFactory.getLogger(CMDIValidator.class);
 	
 	@Override
-	public Report process(CMDIRecord entity) {
+	public Report generateReport(CMDIRecord entity) {
 		Report report = new Report("XSD Validation Report");
 		try {
 			ValidatorHandler schemaValidator = XSDCache.getInstance().getSchema(entity.getProfile()).newValidatorHandler();

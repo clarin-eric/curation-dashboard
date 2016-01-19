@@ -9,14 +9,14 @@ import eu.clarin.cmdi.curation.report.Severity;
  *  
  */
 
-public abstract class CurationStep<T extends CurationEntity>{
+public abstract class CurationTask<T extends CurationEntity>{
 	
-	public Severity apply(T entity){
-		Report report = process(entity);
+	public Severity process(T entity){
+		Report report = generateReport(entity);
 		entity.addReport(report);
 		return report.getHighestSeverity();
 	};
 	
-	protected abstract Report process(T entity);
+	protected abstract Report generateReport(T entity);
 
 }

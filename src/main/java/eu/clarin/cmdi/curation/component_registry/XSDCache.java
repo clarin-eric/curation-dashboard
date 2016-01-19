@@ -38,60 +38,57 @@ public class XSDCache {
 	
 	
 	public Schema getSchema(final String profile)throws Exception{		
-		synchronized (cache) {
-			//if not in the cache and not being currently loaded start new Thread
-			if(!cache.containsKey(profile) && !beingLoadedSchemas.contains(profile)){
-				beingLoadedSchemas.add(profile);
-				new Thread(){
-					public void run() {
-						try{
-							Path pathToSchema = Paths.get(ComponentRegistryService.SCHEMA_FOLDER, profile + ".xsd");
-							_logger.trace("Loading {} schema from {}", profile, pathToSchema);
+		synchronized (cache) {			
+			if(!cache.containsKey(profile)){
+				if(!beingLoadedSchemas.contains(profile)){
+					beingLoadedSchemas.add(profile);
+					new Thread(){//if not in the cache and not being currently loaded start new Thread
+						public void run() {
+							try{
+								Path pathToSchema = Paths.get(ComponentRegistryService.SCHEMA_FOLDER, profile + ".xsd");
+								_logger.trace("Loading {} schema from {}", profile, pathToSchema);
+								
+								if(Files.notExists(pathToSchema)){
+									_logger.trace("Schema for {} is not in the local FS, downloading it", profile);
+									String profileURL = ComponentRegistryService.CLARIN_COMPONENT_REGISTRY_REST_URL + ComponentRegistryService.PROFILE_PREFIX + profile + "/xsd";
+									Downloader downloader = new Downloader(profileURL, ComponentRegistryService.SCHEMA_FOLDER + "/" + profile + ".xsd");
+									downloader.download();
+								}
+										
+								SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);		
+								Schema schema = schemaFactory.newSchema(pathToSchema.toFile());
+								
+								synchronized (cache) {
+									cache.put(profile, schema);
+									cache.notifyAll();
+									beingLoadedSchemas.remove(profile);
+								}
 							
-							if(Files.notExists(pathToSchema)){
-								_logger.trace("Schema for {} is not in the local FS, downloading it", profile);
-								String profileURL = ComponentRegistryService.CLARIN_COMPONENT_REGISTRY_REST_URL + ComponentRegistryService.PROFILE_PREFIX + profile + "/xsd";
-								Downloader downloader = new Downloader(profileURL, ComponentRegistryService.SCHEMA_FOLDER + "/" + profile + ".xsd");
-								downloader.download();
 							}
-									
-							SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);		
-							Schema schema = schemaFactory.newSchema(pathToSchema.toFile());
-							
-							synchronized (cache) {
-								cache.put(profile, schema);
-								cache.notifyAll();
-								beingLoadedSchemas.remove(profile);
+							catch(Exception e){
+								synchronized (cache) {
+									cache.put(profile, null);
+									cache.notifyAll();
+									exceptions.put(profile, e);//save the exception because it goes into report
+								}
 							}
-						
+								
 						}
-						catch(Exception e){
-							synchronized (cache) {
-								cache.put(profile, null);
-								cache.notifyAll();
-								exceptions.put(profile, e);//save the exception because it goes into report
-							}
-						}
-							
-					}
-				}.start();
+					}.start();
+				}
 			}
 				
 			
-			while(!cache.containsKey(profile)){
-				_logger.trace("{} waiting on {}", Thread.currentThread().getId(), profile);
+			while(!cache.containsKey(profile))
 				cache.wait();
-			}
 				
 		}
 		
-		_logger.trace("{} got profile {}", Thread.currentThread().getId(), profile);
 		Schema schema = cache.get(profile);
 		if(schema == null)
 			throw exceptions.get(profile);
 		
-		return schema;
-		
+		return schema;		
 		
 	}
 		

@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.report;
 
 public enum Severity {
     
+	DEBUG(0, "DEBUG"),
 	INFO(1, "INFO"), 
 	WARNING(2, "WARNING"),
 	ERROR(3, "ERROR"),

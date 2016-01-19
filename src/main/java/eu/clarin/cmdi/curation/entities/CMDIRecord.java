@@ -18,7 +18,7 @@ public class CMDIRecord extends CurationEntity{
 	
 	private String profile = null; //is stored in digits, url, and profile format are converted in setProfile	
 	
-	Collection<String> values;
+	Collection<CMDIRecordValue> values;
 	
 	public CMDIRecord(Path path) {
 		super(path);
@@ -46,13 +46,12 @@ public class CMDIRecord extends CurationEntity{
 			this.profile = profile;
 	}
 
-	public Collection<String> getValues() {
+	public Collection<CMDIRecordValue> getValues() {
 		return values;
 	}
 
-	public void setValues(Collection<String> values) {
+	public void setValues(Collection<CMDIRecordValue> values) {
 		this.values = values;
 	}
 	
-
 }

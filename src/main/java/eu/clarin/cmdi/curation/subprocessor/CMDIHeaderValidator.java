@@ -19,7 +19,7 @@ import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.report.Severity;
 
-public class CMDIHeaderValidator extends CurationStep<CMDIRecord>{
+public class CMDIHeaderValidator extends CurationTask<CMDIRecord>{
 	
 	private static final Logger _logger = LoggerFactory.getLogger(CMDIHeaderValidator.class);
 	
@@ -31,9 +31,9 @@ public class CMDIHeaderValidator extends CurationStep<CMDIRecord>{
 	
 	
 	@Override
-	public Report process(CMDIRecord entity){
+	public Report generateReport(CMDIRecord entity){
 		try{			
-			parse(entity.getPath());		
+			parse(entity.getPath());
 			String profile = handleMdProfile();
 			handleMdSelfLink();
 			handleMdCollectionDisplyName();
@@ -65,7 +65,7 @@ public class CMDIHeaderValidator extends CurationStep<CMDIRecord>{
 		 if(profile == null){//not in header
 			 report.addMessage(new Message(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with proile ID!"));
 			 profile = extractProfileFromNameSpace();
-			 if(profile != null)
+			 if(profile == null)
 				 throw new Exception("Profile can not be extracted from namespace!");
 		 }		 
 		 return profile;

@@ -6,10 +6,10 @@ import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.report.Severity;
 
-public class FileSizeValidator extends CurationStep{
+public class FileSizeValidator extends CurationTask{
 
 	@Override
-	public Report process(CurationEntity entity) {
+	public Report generateReport(CurationEntity entity) {
 		Report report = new Report("FileSizeReport");
 		report.addMessage(new Message("Size: " + entity.getSize()));
 		if(entity.getSize() > Config.MAX_SIZE_OF_FILE)

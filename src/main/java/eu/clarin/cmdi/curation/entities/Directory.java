@@ -61,25 +61,7 @@ public class Directory extends CurationEntity{
 		
 		return child;
 	}
-		
-	public String getStat() {
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append("Collection: " + path.getFileName() + "\n");
-		sb.append("Total number of records: " + numOfFiles + "\n");
-		sb.append("Total number of valid records: " + numOfValidFiles + "\n");
-		sb.append("Average number of valid records: " + new DecimalFormat("0%").format(div(numOfValidFiles,numOfFiles)) + "\n");
-		sb.append("Total file size: " + size + " bytes" + "\n");
-		sb.append("Average file size: " + new DecimalFormat("0.00").format(div(size, numOfFiles)) + " bytes" + "\n");
-		sb.append("max/min file size: " + maxFileSize + "/" + minFileSize  + " bytes" + "\n");
-		sb.append("\n");		
-		
-		//children.forEach(child -> sb.append(child.getStat()));		
-		
-		return sb.toString();		
-	}
-	
-	
+			
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer("\n");
@@ -87,18 +69,20 @@ public class Directory extends CurationEntity{
 		sb.append("Collection: " + path.getFileName() + "\n");
 		sb.append("Total number of records: " + numOfFiles + "\n");
 		sb.append("Total number of valid records: " + numOfValidFiles + "\n");
-		sb.append("Average number of valid records: " + new DecimalFormat("0%").format(div(numOfValidFiles,numOfFiles)) + "\n");
+		sb.append("Average number of valid records: " + divAndFormat(numOfValidFiles, numOfFiles, "0%") + "\n");
 		sb.append("Total file size: " + size + " bytes" + "\n");
-		sb.append("Average file size: " + new DecimalFormat("0.00").format(div(size, numOfFiles)) + " bytes" + "\n");
+		sb.append("Average file size: " + divAndFormat(size, numOfFiles, "0.00") + " bytes" + "\n");
 		sb.append("max/min file size: " + maxFileSize + "/" + minFileSize  + " bytes" + "\n");
+		
+		sb.append("\nDetailed report for each child:\n\n");
 		
 		children.forEach(child -> sb.append(child.toString()).append("\n------------------------------------------------\n"));
 		
 		return sb.toString();
 	}
 	
-	private double div(double a, double b){
-		return a/b;
+	private String divAndFormat(double a, double b, String format){
+		return new DecimalFormat(format).format(a/b);
 	}
 		
 

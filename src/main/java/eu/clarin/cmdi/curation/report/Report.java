@@ -16,16 +16,23 @@ import javax.annotation.Nonnull;
 	
 	private List<Message> messages;
 	private boolean verbose;
+	private boolean debug;
 	private String name;
 	
-	public Report(String name, boolean verbose){
+	public Report(String name, boolean verbose, boolean debug){
 		this.name = name;
 		this.verbose = verbose;
+		//this.debug = debug;
+		this.debug = true;
 		messages = new LinkedList<>();
 	}
 	
+	public Report(String name, boolean verbose){
+		this(name, verbose, false);
+	}
+	
 	public Report(String name){
-		this(name, true);
+		this(name, true, false);
 	}
 	
 	public void addMessage(@Nonnull Message m){
@@ -34,6 +41,11 @@ import javax.annotation.Nonnull;
 	
 	public void addMessage(@Nonnull String m){
 		messages.add(new Message(m));
+	}
+	
+	public void addDebugMessage(@Nonnull String m){
+		if(debug)
+			messages.add(new Message(Severity.DEBUG, m));
 	}
 	
 	
@@ -63,7 +75,7 @@ import javax.annotation.Nonnull;
 	
 	public String toString(){
 		//Collections.sort(messages);
-		StringBuilder sb = new StringBuilder(1000);
+		StringBuilder sb = new StringBuilder(2000);
 		sb.append(name).append("\n").append("STATUS: ").append(isPassed()? "OK" : "FAILED").append("\n");
 		messages
 			.stream()
@@ -73,10 +85,18 @@ import javax.annotation.Nonnull;
 			messages
 			.stream()
 			.filter(Message::isNonInfo)
-			.forEach(msg -> sb.append("\t").append(msg).append("\n"));		
+			.forEach(msg -> sb.append("\t").append(msg).append("\n"));	
+		if(debug){
+			messages
+			.stream()
+			.filter(Message::isDebug)
+			.forEach(msg -> sb.append("\t").append(msg).append("\n"));
+		}
 		return sb.toString();
 	}
 	
 	
-
+	public void setDebug(boolean debug){
+		this.debug = debug;
+	}
 }

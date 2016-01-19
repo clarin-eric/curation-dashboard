@@ -58,10 +58,11 @@ public class Curator {
 	public static void main(String[] args){
 		Path path1 = FileSystems.getDefault().getPath("D:/data/cmdi/The_Tibetan_and_Himalayan_Library/oai_corpus_11022000000007F6E8.xml");
 		Path path2 = FileSystems.getDefault().getPath("D:/data/cmdi/The_Tibetan_and_Himalayan_Library/oai_THDL_virginia_edu_All.xml");
+		Path path3 = FileSystems.getDefault().getPath("D:/data/cmdi/Deutsches_Textarchiv/dta_386.xml");
 		Path dir = 	 FileSystems.getDefault().getPath("D:/data/cmdi/__TEST");
 		Curator curator = new Curator();
 		//curator.curate(path1); curator.curate(path2);
-		curator.curate(dir);
+		curator.curate(path3);
 	}
 
 }
