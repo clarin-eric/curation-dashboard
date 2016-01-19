@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -12,7 +13,6 @@ import eu.clarin.cmdi.curation.entities.CMDIRecordValue;
 import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.curation.subprocessor.CMDIValidator;
 
 /**
  * @author dostojic
@@ -33,12 +33,14 @@ public class CMDIContentHandler extends DefaultHandler{
     String curElem;
     boolean elemWithValue;
     
+    Locator locator;
+    
     Collection<CMDIRecordValue> values = new LinkedList<CMDIRecordValue>();
     
     
     
     //for handling attributes
-//	private TypeInfoProvider provider;s
+//	private TypeInfoProvider provider;
 //  public CMDIContentHandler(TypeInfoProvider provider) {
 //      this.provider = provider;
 //  }
@@ -46,6 +48,11 @@ public class CMDIContentHandler extends DefaultHandler{
     public CMDIContentHandler(CMDIRecord instance, Report report){
     	this.instance = instance;
     	this.report = report;
+    }
+    
+    @Override
+    public void setDocumentLocator(Locator locator) {
+    	this.locator = locator;
     }
     
 
@@ -80,8 +87,8 @@ public class CMDIContentHandler extends DefaultHandler{
     	if(curElem.equals(qName)){//is a simple elem
     		numOfSimpleElements++;
     		if(!elemWithValue){//does it have a value
-    			numOfEmptyElements++;
-    			report.addMessage(new Message(Severity.WARNING, "Simple element \"" + qName + "\" doesn't contain any value"));
+    			numOfEmptyElements++; 
+    			report.addMessage(new Message(Severity.WARNING, locator.getLineNumber(), locator.getColumnNumber(), "Simple element \"" + qName + "\" doesn't contain any value"));
     		}
     	}
     			
@@ -104,10 +111,11 @@ public class CMDIContentHandler extends DefaultHandler{
     public void endDocument() throws SAXException {
     	report.addMessage("Total number of elements:" + numOfElements);
     	report.addMessage("Total number of simple elements:" + numOfSimpleElements);
-    	report.addMessage("Total number of empty elements:" + numOfEmptyElements);    	
-    	
+    	report.addMessage("Total number of empty elements:" + numOfEmptyElements); 
+    	report.addMessage("Filled in ratio: " + (numOfSimpleElements - numOfEmptyElements)*1.0/numOfSimpleElements*100 + "%"); 
     	instance.setValues(values);
     	
     }
+    
 
 }

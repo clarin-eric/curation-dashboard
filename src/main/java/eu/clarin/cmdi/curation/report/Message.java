@@ -22,6 +22,10 @@ public class Message implements Comparable<Message>{
 		this.cause = cause;
 	}
     
+    public Message(Severity severity, int line, int col, String message) {
+		this(severity, line, col, message, null);
+	}
+    
     public Message(Severity severity, String message){
     	this(severity, 0, 0, message, null);
     }

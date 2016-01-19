@@ -24,18 +24,18 @@ public class CMDIErrorHandler implements ErrorHandler{
 
 	@Override
 	public void fatalError(SAXParseException exception) throws SAXException {
-		report.addMessage(new Message(Severity.FATAL, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), null)); //, exception
+		report.addMessage(new Message(Severity.FATAL, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage())); //, exception
 		throw exception;
 	}
 	
 	@Override
 	public void error(SAXParseException exception) throws SAXException {
-		report.addMessage(new Message(Severity.ERROR, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), null)); //, exception
+		report.addMessage(new Message(Severity.ERROR, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage())); //, exception
 	}
 
 	@Override
 	public void warning(SAXParseException exception) throws SAXException {
-		report.addMessage(new Message(Severity.WARNING, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage(), null)); //, exception
+		report.addMessage(new Message(Severity.WARNING, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage())); //, exception
 		
 	}
 }
