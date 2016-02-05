@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import eu.clarin.cmdi.curation.subprocessor.CurationTask;
-import eu.clarin.cmdi.curation.subprocessor.Dummy;
+import eu.clarin.cmdi.curation.subprocessor.DirectoryAggregator;
 
 /**
  * @author dostojic
@@ -15,7 +15,7 @@ public class DirectoryProcessor extends AbstractProcessor {
 	@Override
 	protected Collection<CurationTask> createPipeline() {
 		return Arrays.asList(
-				new Dummy()
+				new DirectoryAggregator()
 				);
 	}
 

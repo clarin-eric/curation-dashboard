@@ -10,7 +10,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import eu.clarin.cmdi.curation.component_registry.XSDCache;
+import eu.clarin.cmdi.curation.component_registry.ComponentRegistryService;
 import eu.clarin.cmdi.curation.entities.CMDIRecord;
 import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Report;
@@ -18,15 +18,15 @@ import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.xml.CMDIContentHandler;
 import eu.clarin.cmdi.curation.xml.CMDIErrorHandler;
 
-public class CMDIValidator extends CurationTask<CMDIRecord>{
+public class CMDIXMLValidator extends CurationTask<CMDIRecord>{
 	
-	static final Logger _logger = LoggerFactory.getLogger(CMDIValidator.class);
+	static final Logger _logger = LoggerFactory.getLogger(CMDIXMLValidator.class);
 	
 	@Override
 	public Report generateReport(CMDIRecord entity) {
 		Report report = new Report("XSD Validation Report");
 		try {
-			ValidatorHandler schemaValidator = XSDCache.getInstance().getSchema(entity.getProfile()).newValidatorHandler();
+			ValidatorHandler schemaValidator = ComponentRegistryService.getInstance().getSchema(entity.getProfile()).newValidatorHandler();
 			schemaValidator.setErrorHandler(new CMDIErrorHandler(report));
 	        schemaValidator.setContentHandler(new CMDIContentHandler(entity, report));
 	        //setValidationFeatures(schemaValidator);

@@ -7,51 +7,58 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import eu.clarin.cmdi.curation.component_registry.ComponentRegistryService;
+import eu.clarin.cmdi.curation.main.Config;
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CMDIProcessor;
+import eu.clarin.cmdi.curation.report.Report;
 
-public class CMDIRecord extends CurationEntity{	
+public class CMDIRecord extends CurationEntity {
 
-	public final static Set<String> uniqueMDSelfLinks = Collections.synchronizedSet(new HashSet<>());
-	public final static Collection<String> duplicateMDSelfLinks = Collections.synchronizedCollection(new LinkedList<>());
-	
-	private String profile = null; //is stored in digits, url, and profile format are converted in setProfile	
-	
-	Collection<CMDIRecordValue> values;
-	
-	public CMDIRecord(Path path) {
-		super(path);
-	}
-	
-	public CMDIRecord(Path path, long size){
-		super(path, size);
-	}
-	
-	@Override
-	protected AbstractProcessor getProcessor() {
-		return new CMDIProcessor();
-	}
+    public final static Set<String> uniqueMDSelfLinks = Collections.synchronizedSet(new HashSet<>());
+    public final static Collection<String> duplicateMDSelfLinks = Collections
+	    .synchronizedCollection(new LinkedList<>());
 
-	public String getProfile() {
-		return profile;
-	}
+    
+    private String profile = null;
 
-	public void setProfile(String profile) {
-		if(profile.startsWith(ComponentRegistryService.CLARIN_COMPONENT_REGISTRY_REST_URL))//url
-			this.profile = profile.substring((ComponentRegistryService.CLARIN_COMPONENT_REGISTRY_REST_URL + ComponentRegistryService.PROFILE_PREFIX).length(), profile.indexOf("/xsd"));
-		else if (profile.startsWith(ComponentRegistryService.PROFILE_PREFIX))//profile format: clarin.eu:cr1:p_xxx
-			this.profile = profile.substring(ComponentRegistryService.PROFILE_PREFIX.length());
-		else//just digits
-			this.profile = profile;
-	}
+    Collection<CMDIUrlNode> values;
 
-	public Collection<CMDIRecordValue> getValues() {
-		return values;
-	}
+    public CMDIRecord(Path path) {
+	super(path);
+    }
 
-	public void setValues(Collection<CMDIRecordValue> values) {
-		this.values = values;
-	}
-	
+    public CMDIRecord(Path path, long size) {
+	super(path, size);
+    }
+
+    @Override
+    protected AbstractProcessor getProcessor() {
+	return new CMDIProcessor();
+    }
+
+    public String getProfile() {
+	return profile;
+    }
+
+    public void setProfile(String profile) {
+	this.profile = profile;
+    }
+
+    public Collection<CMDIUrlNode> getValues() {
+	return values;
+    }
+
+    public void setValues(Collection<CMDIUrlNode> values) {
+	this.values = values;
+    }
+    
+    /* (non-Javadoc)
+     * @see eu.clarin.cmdi.curation.entities.CurationEntity#addReport(eu.clarin.cmdi.curation.report.Report)
+     */
+    @Override
+    public void addReport(Report report) {
+        if(Config.PRINT_COLLECTION_DETAILS)
+            reports.add(report);
+    }
+
 }

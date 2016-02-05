@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.xml;
 
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -9,7 +10,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.clarin.cmdi.curation.entities.CMDIRecord;
-import eu.clarin.cmdi.curation.entities.CMDIRecordValue;
+import eu.clarin.cmdi.curation.entities.CMDIUrlNode;
 import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.report.Severity;
@@ -35,7 +36,7 @@ public class CMDIContentHandler extends DefaultHandler{
     
     Locator locator;
     
-    Collection<CMDIRecordValue> values = new LinkedList<CMDIRecordValue>();
+    Collection<CMDIUrlNode> values = new LinkedList<CMDIUrlNode>();
     
     
     
@@ -98,8 +99,12 @@ public class CMDIContentHandler extends DefaultHandler{
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
     	elemWithValue = true;
+    	//keeping all values consumes a lot of mem
+    	//keep only links for URL validation
     	//mark MDSelflinks and ResourceProxy Links
-    	values.add(new CMDIRecordValue(new String(ch, start, length), (curElem.equals("MdSelfLink") || curElem.equals("ResourceRef"))? curElem : null));
+    	String val = new String(ch, start, length);
+    	if(val.startsWith("http://") || val.startsWith("https://"))
+    	    values.add(new CMDIUrlNode(val, (curElem.equals("MdSelfLink") || curElem.equals("ResourceRef"))? curElem : null));
     	
     	
     }
@@ -112,9 +117,14 @@ public class CMDIContentHandler extends DefaultHandler{
     	report.addMessage("Total number of elements:" + numOfElements);
     	report.addMessage("Total number of simple elements:" + numOfSimpleElements);
     	report.addMessage("Total number of empty elements:" + numOfEmptyElements); 
-    	report.addMessage("Filled in ratio: " + (numOfSimpleElements - numOfEmptyElements)*1.0/numOfSimpleElements*100 + "%"); 
+    	report.addMessage("Filled in ratio: " + divAndFormat(numOfSimpleElements - numOfEmptyElements, numOfSimpleElements, "0.00") + "%");
+    	
     	instance.setValues(values);
     	
+    }
+    
+    private String divAndFormat(double a, double b, String format) {
+	return new DecimalFormat(format).format(a / b);
     }
     
 

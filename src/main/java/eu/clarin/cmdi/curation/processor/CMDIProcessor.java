@@ -3,8 +3,9 @@ package eu.clarin.cmdi.curation.processor;
 import java.util.Arrays;
 import java.util.Collection;
 
+import eu.clarin.cmdi.curation.subprocessor.CMDIFaceting;
 import eu.clarin.cmdi.curation.subprocessor.CMDIHeaderValidator;
-import eu.clarin.cmdi.curation.subprocessor.CMDIValidator;
+import eu.clarin.cmdi.curation.subprocessor.CMDIXMLValidator;
 import eu.clarin.cmdi.curation.subprocessor.CurationTask;
 import eu.clarin.cmdi.curation.subprocessor.FileSizeValidator;
 import eu.clarin.cmdi.curation.subprocessor.HttpURLValidator;
@@ -19,8 +20,9 @@ public class CMDIProcessor extends AbstractProcessor{
 				new FileSizeValidator(),
 				new CMDIHeaderValidator(),
 				new ResourceProxyValidator(),
-				new CMDIValidator(),
-				new HttpURLValidator()
+				new CMDIXMLValidator(),
+				//new HttpURLValidator(),
+				new CMDIFaceting()
 			);
 	}
 }

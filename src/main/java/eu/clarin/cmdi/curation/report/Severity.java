@@ -1,12 +1,12 @@
 package eu.clarin.cmdi.curation.report;
 
 public enum Severity {
-    
 	DEBUG(0, "DEBUG"),
 	INFO(1, "INFO"), 
 	WARNING(2, "WARNING"),
 	ERROR(3, "ERROR"),
-	FATAL(4, "FATAL");
+	FATAL(4, "FATAL"),
+	NONE(5, "NONE");
 	
     
     final int priority;

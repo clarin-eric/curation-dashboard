@@ -7,17 +7,17 @@ package eu.clarin.cmdi.curation.entities;
  * @author dostojic
  *
  */
-public class CMDIRecordValue {
+public class CMDIUrlNode {
 	
 	String value;
 	String tag;
 	
-	public CMDIRecordValue(String value) {
+	public CMDIUrlNode(String value) {
 		this(value, null);
 	}
 	
 	
-	public CMDIRecordValue(String value, String tag) {
+	public CMDIUrlNode(String value, String tag) {
 		this.value = value;
 		this.tag = tag;
 	}
