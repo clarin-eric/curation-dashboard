@@ -61,10 +61,11 @@ public class Main {
 	Path mee_240K = FileSystems.getDefault().getPath("D:/data/cmdi/Meertens_Institute_Metadata_Repository");
 	Path bas_23K = FileSystems.getDefault().getPath("D:/data/cmdi/BAS_Repository");
 	Path ehu_18 = FileSystems.getDefault().getPath("D:/data/cmdi/Euskal_Herriko_Unibertsitatea");
+	Path unname_65K = FileSystems.getDefault().getPath("D:/data/cmdi/Unnamed_provider_at_dspace_library_uu_nl");
 
 	Main curator = new Main();
 	// curator.curate(path1); curator.curate(path2);
-	curator.curate(mee_240K);
+	curator.curate(ehu_18);
     }
 
 }

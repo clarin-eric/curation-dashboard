@@ -4,7 +4,7 @@
 //import java.util.LinkedList;
 //
 //import eu.clarin.cmdi.curation.subprocessor.CMDIXMLValidator;
-//import eu.clarin.cmdi.curation.subprocessor.CurationTask;
+//import eu.clarin.cmdi.curation.subprocessor.ProcessingActivity;
 //import eu.clarin.cmdi.curation.subprocessor.FileSizeValidator;
 //
 //
@@ -21,7 +21,7 @@
 //
 //	@Override
 //	public synchronized CMDIProcessor createCMDIProcessor() {
-//		Collection<CurationTask> pipeline = new LinkedList<CurationTask>();
+//		Collection<ProcessingActivity> pipeline = new LinkedList<ProcessingActivity>();
 //
 //		//add your validators/normalisators/enrichers/etc here 
 //		pipeline.add(new FileSizeValidator());

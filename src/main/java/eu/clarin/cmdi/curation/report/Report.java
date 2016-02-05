@@ -15,7 +15,7 @@ import eu.clarin.cmdi.curation.main.Config;
  *         https://trac.clarin.eu/wiki/Cmdi/QualityCriteria
  *
  */
-public class Report {
+class Report {
 
     private List<Message> messages;
     private Severity verbose;

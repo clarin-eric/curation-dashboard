@@ -15,19 +15,22 @@ import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
 import eu.clarin.cmdi.curation.entities.CMDIRecord;
-import eu.clarin.cmdi.curation.report.Message;
-import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.report.Severity;
 
 /**
  * @author dostojic
  *
  */
-public class ResourceProxyValidator extends CurationTask<CMDIRecord> {
+public class ResourceProxyValidator implements ProcessingActivity<CMDIRecord> {
 
     @Override
-    protected Report generateReport(CMDIRecord entity) {
-	Report report = new Report("ResourceProxyReport");
+    public Severity process(CMDIRecord entity) {
+	int numOfResWithMime = 0;
+	int numOfTypeLandingPage = 0;
+	int numOfTypeLandingPageWithoutLink = 0;
+	int numOfTypeRes = 0;
+	int numOfTypeMD = 0;
+	
 	try {
 	    Collection<ResourceProxy> resources = new LinkedList<>();
 	    VTDNav navigator = parse(entity.getPath());
@@ -35,6 +38,7 @@ public class ResourceProxyValidator extends CurationTask<CMDIRecord> {
 	    ap.selectXPath("//ResourceProxy");
 	    int index;
 	    while ((index = ap.evalXPath()) != -1) {// for each ResourceProxy
+		
 		ResourceProxy resource = new ResourceProxy();
 		int ind;
 		if ((ind = navigator.getAttrVal("id")) != -1)
@@ -53,15 +57,7 @@ public class ResourceProxyValidator extends CurationTask<CMDIRecord> {
 		navigator.toElement(VTDNav.PARENT);
 
 		resources.add(resource);
-	    }
-	    ;
-
-	    report.addMessage("Number of ResourcesProxies: " + resources.size());
-	    int numOfResWithMime = 0;
-	    int numOfTypeLandingPage = 0;
-	    int numOfTypeLandingPageWithoutLink = 0;
-	    int numOfTypeRes = 0;
-	    int numOfTypeMD = 0;
+	    } // end while
 
 	    for (ResourceProxy res : resources) {
 		if (!res.mimeType.isEmpty())
@@ -78,21 +74,21 @@ public class ResourceProxyValidator extends CurationTask<CMDIRecord> {
 			numOfTypeLandingPageWithoutLink++;
 
 		}
-
-		report.addMessage(new Message(Severity.DEBUG, res.toString()));
 	    }
 
-	    report.addMessage("Number of elements with specified MIME type: " + numOfResWithMime);
-	    report.addMessage("Number of elements of ResourceType: LandingPage: " + numOfTypeLandingPage
-		    + ", without link: " + numOfTypeLandingPageWithoutLink);
-	    report.addMessage("Number of elements of ResourceType: Resource: " + numOfTypeRes);
-	    report.addMessage("Number of elements of ResourceType: Metadata: " + numOfTypeMD);
+	    entity.setNumOfResources(resources.size());
+	    entity.setNumOfResWithMime(numOfResWithMime);
+	    entity.setNumOfLandingPages(numOfTypeLandingPage);
+	    entity.setNumOfLandingPagesWithoutLink(numOfTypeLandingPageWithoutLink);
+	    entity.setNumOfResources(numOfTypeRes);
+	    entity.setNumOfMetadata(numOfTypeMD);
+
+	    return Severity.NONE;
 
 	} catch (Exception e) {
-	    report.addMessage(new Message(Severity.FATAL, e.getMessage()));
+	    entity.addDetail(Severity.FATAL, e.getMessage());
+	    return Severity.FATAL;
 	}
-
-	return report;
     }
 
     private VTDNav parse(Path cmdiRecord) throws Exception {

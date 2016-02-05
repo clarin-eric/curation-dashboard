@@ -41,5 +41,13 @@ public class CMDIUrlNode {
 	public void setTag(String tag) {
 		this.tag = tag;
 	}
+	
+	// since we care only about uniqueness of links
+	//it is enough to compare link
+	@Override
+	public boolean equals(Object obj) {
+	    if ( !(obj instanceof CMDIUrlNode) ) return false;
+	    return this.value.equals(((CMDIUrlNode)obj).value);
+	}
 
 }

@@ -2,13 +2,13 @@ package eu.clarin.cmdi.curation.entities;
 
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
-import eu.clarin.cmdi.curation.report.Report;
+import eu.clarin.cmdi.curation.report.Detail;
+import eu.clarin.cmdi.curation.report.Severity;
 
 public abstract class CurationEntity {
 
@@ -21,9 +21,9 @@ public abstract class CurationEntity {
     protected long numOfFiles = 0;
 
     // numOfValidFiles tells if file is valid (1) or how many valid files folder has
-    protected long numOfValidFiles = 1;
+    protected long numOfValidFiles = -1;
 
-    protected Collection<Report> reports = null;
+    protected Collection<Detail> details = null;
 
     public CurationEntity(Path path) {
 	this.path = path;
@@ -35,8 +35,7 @@ public abstract class CurationEntity {
     }
 
     public long genReport() {
-	if (reports == null) {
-	    reports = new LinkedList<>();
+	if (numOfValidFiles < 0) {
 	    getProcessor().process(this);
 	}
 	
@@ -81,17 +80,14 @@ public abstract class CurationEntity {
 	this.size = size;
     }
 
-    public Collection<Report> getReports() {
-	return reports;
+    public Collection<Detail> getDetails(){
+	return details;
     }
-
-    public void setReports(Collection<Report> reports) {
-	this.reports = reports;
+    
+    public void addDetail(Severity lvl, String message){
+	details.add(new Detail(lvl, message));
     }
-
-    public void addReport(Report report) {
-	reports.add(report);
-    }
+    
 
     @Override
     public String toString() {
@@ -99,7 +95,7 @@ public abstract class CurationEntity {
 	sb.append("Report for " + path).append("\n");
 	sb.append("VALID: " + isValid()).append("\n");
 
-	reports.forEach(report -> sb.append(report).append("\n"));
+	details.forEach(detail -> sb.append(detail).append("\n"));
 
 	return sb.toString();
     }

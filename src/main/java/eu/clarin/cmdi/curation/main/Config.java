@@ -11,8 +11,10 @@ public class Config {
 	
 	public static String schematronFile = "default.sch";
 	
+	public static boolean INCLUDE_DETAILS = false;
+	
 	public static Severity REPORT_VERBOSITY = Severity.INFO;
 	
-	public static boolean PRINT_COLLECTION_DETAILS = false;
+	public static boolean PRINT_COLLECTION_DETAILS = true;
 	
 }

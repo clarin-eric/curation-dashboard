@@ -16,35 +16,35 @@ import com.ximpleware.VTDNav;
 
 import eu.clarin.cmdi.curation.component_registry.ComponentRegistryService;
 import eu.clarin.cmdi.curation.entities.CMDIRecord;
-import eu.clarin.cmdi.curation.report.Message;
-import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.report.Severity;
 
-public class CMDIHeaderValidator extends CurationTask<CMDIRecord> {
+public class CMDIHeaderValidator implements ProcessingActivity<CMDIRecord> {
 
     private static final Logger _logger = LoggerFactory.getLogger(CMDIHeaderValidator.class);
 
     private static final Pattern PROFILE_ID_PATTERN = Pattern.compile(".*(clarin.eu:cr1:p_[0-9]+).*");
 
     private VTDNav navigator;
-
-    Report report = new Report("CMDIHeaderReport");
+    
+    Severity highest = Severity.NONE;
 
     @Override
-    public Report generateReport(CMDIRecord entity) {
+    public Severity process(CMDIRecord entity) {
 	try {
-	    parse(entity.getPath());
-	    // keep profile without prefix "clarin.eu:cr1"
-	    String profile = handleMdProfile().substring(ComponentRegistryService.PROFILE_PREFIX.length());
-	    handleMdSelfLink();
-	    handleMdCollectionDisplyName();
-	    entity.setProfile(profile);
+	    parse(entity.getPath());	    
+	    handleMdProfile(entity);
+	    handleMdSelfLink(entity);
+	    handleMdCollectionDisplyName(entity);
 	    navigator = null;
-	} catch (Exception e) {// we are throwing it only if file can not be
-			       // parsed or profileId is missing
-	    report.addMessage(new Message(Severity.FATAL, e.getMessage()));
+	    
+	    return highest;
+
+	    // we are throwing it only if file can not be parsed or profileId is
+	    // missing
+	} catch (Exception e) {
+	    entity.addDetail(Severity.FATAL, e.getMessage());
+	    return Severity.FATAL;
 	}
-	return report;
     }
 
     private void parse(Path cmdiRecord) throws Exception {
@@ -60,17 +60,17 @@ public class CMDIHeaderValidator extends CurationTask<CMDIRecord> {
 
     }
 
-    private String handleMdProfile() throws Exception {
+    private void handleMdProfile(CMDIRecord entity) throws Exception {
 	// search in header first
 	String profile = xpath("/CMD/Header/MdProfile/text()");
 	if (profile == null) {// not in header
-	    report.addMessage(
-		    new Message(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with proile ID!"));
+	    addMessage(entity, Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with proile ID!");
 	    profile = extractProfileFromNameSpace();
 	    if (profile == null)
 		throw new Exception("Profile can not be extracted from namespace!");
 	}
-	return profile;
+	// keep profile without prefix "clarin.eu:cr1"
+	entity.setProfile(profile.substring(ComponentRegistryService.PROFILE_PREFIX.length()));
     }
 
     // try with schemaLocation/noNamespaceSchemaLocation attributes
@@ -94,19 +94,19 @@ public class CMDIHeaderValidator extends CurationTask<CMDIRecord> {
 	return schema;
     }
 
-    private void handleMdCollectionDisplyName() {
+    private void handleMdCollectionDisplyName(CMDIRecord entity) {
 	String mdCollectionDisplayName = xpath("/CMD/Header/MdCollectionDisplayName/text()");
 	if (mdCollectionDisplayName == null || mdCollectionDisplayName.isEmpty())
-	    report.addMessage(new Message(Severity.ERROR, "Value for MdCollectionDisplayName is missing"));
+	    addMessage(entity, Severity.ERROR, "Value for MdCollectionDisplayName is missing");
     }
 
-    private void handleMdSelfLink() {
+    private void handleMdSelfLink(CMDIRecord entity) {
 	String mdSelfLink = xpath("/CMD/Header/MdSelfLink/text()");
 	if (mdSelfLink == null || mdSelfLink.isEmpty())
-	    report.addMessage(new Message(Severity.ERROR, "Value for MdCollectionDisplayName is missing"));
+	    addMessage(entity, Severity.ERROR, "Value for MdCollectionDisplayName is missing");
 	else {
 	    if (!CMDIRecord.uniqueMDSelfLinks.add(mdSelfLink)) {
-		report.addMessage(new Message(Severity.WARNING, "SelfLink: " + mdSelfLink + " is not unique"));
+		addMessage(entity, Severity.WARNING, "SelfLink: " + mdSelfLink + " is not unique");
 		CMDIRecord.duplicateMDSelfLinks.add(mdSelfLink);
 	    }
 	}
@@ -126,6 +126,12 @@ public class CMDIHeaderValidator extends CurationTask<CMDIRecord> {
 	    _logger.trace("Errors while performing xpath operation: {}", xpath, e);
 	}
 	return result;
+    }
+    
+    private void addMessage(CMDIRecord entity, Severity lvl, String msg){
+	entity.addDetail(lvl, msg);
+	if(lvl.compareTo(highest) > 0)
+	    highest = lvl;	
     }
 
 }
