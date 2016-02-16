@@ -14,31 +14,27 @@ import com.ximpleware.ParseException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
-import eu.clarin.cmdi.curation.entities.CMDIRecord;
+import eu.clarin.cmdi.curation.entities.CMDIInstance;
+import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
 
 /**
  * @author dostojic
  *
  */
-public class ResourceProxyValidator implements ProcessingActivity<CMDIRecord> {
+public class ResourceProxyValidator extends CMDISubprocessor {
 
     @Override
-    public Severity process(CMDIRecord entity) {
-	int numOfResWithMime = 0;
-	int numOfTypeLandingPage = 0;
-	int numOfTypeLandingPageWithoutLink = 0;
-	int numOfTypeRes = 0;
-	int numOfTypeMD = 0;
-	
+    public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
 	try {
 	    Collection<ResourceProxy> resources = new LinkedList<>();
+	    report.numOfResProxies = resources.size();
 	    VTDNav navigator = parse(entity.getPath());
 	    AutoPilot ap = new AutoPilot(navigator);
 	    ap.selectXPath("//ResourceProxy");
 	    int index;
 	    while ((index = ap.evalXPath()) != -1) {// for each ResourceProxy
-		
+
 		ResourceProxy resource = new ResourceProxy();
 		int ind;
 		if ((ind = navigator.getAttrVal("id")) != -1)
@@ -61,33 +57,26 @@ public class ResourceProxyValidator implements ProcessingActivity<CMDIRecord> {
 
 	    for (ResourceProxy res : resources) {
 		if (!res.mimeType.isEmpty())
-		    numOfResWithMime++;
+		    report.numOfResWithMime++;
 		if (res.resourceType.equals("Resource"))
-		    numOfTypeRes++;
+		    report.numOfResources++;
 		else if (res.resourceType.equals("Metadata"))
-		    numOfTypeMD++;
+		    report.numOfMetadata++;
 
 		// handle LandingPage
 		if (res.resourceType.equals("LandingPage")) {
-		    numOfTypeLandingPage++;
+		    report.numOfLandingPages++;
 		    if (res.resourceRef.isEmpty())
-			numOfTypeLandingPageWithoutLink++;
+			report.numOfLandingPagesWithoutLink++;
 
 		}
 	    }
 
-	    entity.setNumOfResources(resources.size());
-	    entity.setNumOfResWithMime(numOfResWithMime);
-	    entity.setNumOfLandingPages(numOfTypeLandingPage);
-	    entity.setNumOfLandingPagesWithoutLink(numOfTypeLandingPageWithoutLink);
-	    entity.setNumOfResources(numOfTypeRes);
-	    entity.setNumOfMetadata(numOfTypeMD);
-
-	    return Severity.NONE;
+	    return true;
 
 	} catch (Exception e) {
-	    entity.addDetail(Severity.FATAL, e.getMessage());
-	    return Severity.FATAL;
+	    report.addDetail(Severity.FATAL, e.getMessage());
+	    return false;
 	}
     }
 
