@@ -1,17 +1,10 @@
-/**
- * 
- */
 package eu.clarin.cmdi.curation.subprocessor;
 
-import java.text.DecimalFormat;
-import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
-import eu.clarin.cmdi.curation.entities.CMDIRecord;
-import eu.clarin.cmdi.curation.entities.CMDIUrlNode;
+import eu.clarin.cmdi.curation.entities.CMDIInstance;
 import eu.clarin.cmdi.curation.io.HTTPLinkChecker;
-import eu.clarin.cmdi.curation.report.Message;
+import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
 
 /**
@@ -19,13 +12,10 @@ import eu.clarin.cmdi.curation.report.Severity;
  *
  */
 
-public class HttpURLValidator implements ProcessingActivity<CMDIRecord> {
-
-    Severity highest = Severity.NONE;
+public class HttpURLValidator extends CMDISubprocessor {
 
     @Override
-    public Severity process(CMDIRecord entity) {
-	int totalNumberOfLinks;
+    public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
 	AtomicInteger numOfBrokenLinks = new AtomicInteger(0);
 
 	//links are unique
@@ -46,27 +36,22 @@ public class HttpURLValidator implements ProcessingActivity<CMDIRecord> {
 		} // OK
 		else if (responseCode < 400)// 2XX and 3XX, redirections, empty
 					    // content ...
-		    addMessage(entity, Severity.WARNING, tag + "URL: " + link + "\t STATUS:" + responseCode);
+		    report.addDetail(Severity.WARNING, tag + "URL: " + link + "\t STATUS:" + responseCode);
 
 		else {// 4XX and 5XX, client/server errors
 		    numOfBrokenLinks.incrementAndGet();
-		    addMessage(entity, Severity.ERROR, tag + "URL: " + link + "\t STATUS:" + responseCode);
+		    report.addDetail(Severity.ERROR, tag + "URL: " + link + "\t STATUS:" + responseCode);
 		}
 	    } catch (Exception e) {
 		numOfBrokenLinks.incrementAndGet();
-		addMessage(entity, Severity.ERROR, tag + "URL: " + link + "\t STATUS:" + e.getMessage());
+		report.addDetail(Severity.ERROR, tag + "URL: " + link + "\t STATUS:" + e.getMessage());
 	    }
 	});
-	entity.setNumOfBrokenLinks(numOfBrokenLinks.get());
 	
-	return highest;
+	report.numOfBrokenLinks = numOfBrokenLinks.get();	
+	return true;
 
     }
 
-    private void addMessage(CMDIRecord entity, Severity lvl, String msg) {
-	entity.addDetail(lvl, msg);
-	if (lvl.compareTo(highest) > 0)
-	    highest = lvl;
-    }
 
 }

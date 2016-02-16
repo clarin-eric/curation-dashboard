@@ -18,6 +18,8 @@ public class Profile2FacetMap {
 
     private Collection<Facet> mappings = new LinkedList<>();
 
+    private List<String> notCovered = new ArrayList<String>();
+
     public void addMapping(Facet facet) {
 	mappings.add(facet);
     }
@@ -25,21 +27,25 @@ public class Profile2FacetMap {
     public Collection<Facet> getMappings() {
 	return mappings;
     }
-    
-    public Collection<String> getFacetNames(){
+
+    public Collection<String> getFacetNames() {
 	return mappings.stream().map(Facet::getName).collect(Collectors.toList());
     }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
+    public List<String> getNotCovered() {
+	return notCovered;
+    }
+
+    public void addNotCovered(String facet) {
+	this.notCovered.add(facet);
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        mappings.stream().map(f -> sb.append(f.toString()).append("\n"));
-        return sb.toString();
+	StringBuilder sb = new StringBuilder();
+	mappings.stream().map(f -> sb.append(f.toString()).append("\n"));
+	return sb.toString();
     }
-    
 
     public static class Facet {
 	private String name;
@@ -79,7 +85,6 @@ public class Profile2FacetMap {
 	public List<String> getPatterns() {
 	    return patterns;
 	}
-	
 
 	public List<String> getFallbackPatterns() {
 	    return fallbackPatterns;

@@ -15,10 +15,11 @@ import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
 import eu.clarin.cmdi.curation.component_registry.ComponentRegistryService;
-import eu.clarin.cmdi.curation.entities.CMDIRecord;
+import eu.clarin.cmdi.curation.entities.CMDIInstance;
+import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
 
-public class CMDIHeaderValidator implements ProcessingActivity<CMDIRecord> {
+public class CMDIHeaderValidator extends CMDISubprocessor {
 
     private static final Logger _logger = LoggerFactory.getLogger(CMDIHeaderValidator.class);
 
@@ -26,24 +27,22 @@ public class CMDIHeaderValidator implements ProcessingActivity<CMDIRecord> {
 
     private VTDNav navigator;
     
-    Severity highest = Severity.NONE;
-
     @Override
-    public Severity process(CMDIRecord entity) {
+    public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
 	try {
 	    parse(entity.getPath());	    
-	    handleMdProfile(entity);
-	    handleMdSelfLink(entity);
-	    handleMdCollectionDisplyName(entity);
+	    handleMdProfile(report);
+	    handleMdSelfLink(report);
+	    handleMdCollectionDisplyName(report);
 	    navigator = null;
 	    
-	    return highest;
+	    return true;
 
 	    // we are throwing it only if file can not be parsed or profileId is
 	    // missing
 	} catch (Exception e) {
-	    entity.addDetail(Severity.FATAL, e.getMessage());
-	    return Severity.FATAL;
+	    report.addDetail(Severity.FATAL, e.getMessage());
+	    return false;
 	}
     }
 
@@ -60,17 +59,17 @@ public class CMDIHeaderValidator implements ProcessingActivity<CMDIRecord> {
 
     }
 
-    private void handleMdProfile(CMDIRecord entity) throws Exception {
+    private void handleMdProfile(CMDIInstanceReport report) throws Exception {
 	// search in header first
 	String profile = xpath("/CMD/Header/MdProfile/text()");
 	if (profile == null) {// not in header
-	    addMessage(entity, Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with proile ID!");
+	    report.addDetail(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with proile ID!");
 	    profile = extractProfileFromNameSpace();
 	    if (profile == null)
 		throw new Exception("Profile can not be extracted from namespace!");
 	}
 	// keep profile without prefix "clarin.eu:cr1"
-	entity.setProfile(profile.substring(ComponentRegistryService.PROFILE_PREFIX.length()));
+	report.profile = profile.substring(ComponentRegistryService.PROFILE_PREFIX.length());
     }
 
     // try with schemaLocation/noNamespaceSchemaLocation attributes
@@ -94,20 +93,19 @@ public class CMDIHeaderValidator implements ProcessingActivity<CMDIRecord> {
 	return schema;
     }
 
-    private void handleMdCollectionDisplyName(CMDIRecord entity) {
+    private void handleMdCollectionDisplyName(CMDIInstanceReport report) {
 	String mdCollectionDisplayName = xpath("/CMD/Header/MdCollectionDisplayName/text()");
 	if (mdCollectionDisplayName == null || mdCollectionDisplayName.isEmpty())
-	    addMessage(entity, Severity.ERROR, "Value for MdCollectionDisplayName is missing");
+	    report.addDetail(Severity.ERROR, "Value for MdCollectionDisplayName is missing");
     }
 
-    private void handleMdSelfLink(CMDIRecord entity) {
+    private void handleMdSelfLink(CMDIInstanceReport report) {
 	String mdSelfLink = xpath("/CMD/Header/MdSelfLink/text()");
 	if (mdSelfLink == null || mdSelfLink.isEmpty())
-	    addMessage(entity, Severity.ERROR, "Value for MdCollectionDisplayName is missing");
+	    report.addDetail(Severity.ERROR, "Value for MdCollectionDisplayName is missing");
 	else {
-	    if (!CMDIRecord.uniqueMDSelfLinks.add(mdSelfLink)) {
-		addMessage(entity, Severity.WARNING, "SelfLink: " + mdSelfLink + " is not unique");
-		CMDIRecord.duplicateMDSelfLinks.add(mdSelfLink);
+	    if (!CMDIInstance.uniqueMDSelfLinks.add(mdSelfLink)) {		
+		CMDIInstance.duplicateMDSelfLinks.add(mdSelfLink);
 	    }
 	}
     }
@@ -127,11 +125,6 @@ public class CMDIHeaderValidator implements ProcessingActivity<CMDIRecord> {
 	}
 	return result;
     }
-    
-    private void addMessage(CMDIRecord entity, Severity lvl, String msg){
-	entity.addDetail(lvl, msg);
-	if(lvl.compareTo(highest) > 0)
-	    highest = lvl;	
-    }
+
 
 }

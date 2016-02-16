@@ -1,29 +1,32 @@
 package eu.clarin.cmdi.curation.entities;
 
 import java.nio.file.Path;
-import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
-import eu.clarin.cmdi.curation.report.Detail;
-import eu.clarin.cmdi.curation.report.Severity;
+import eu.clarin.cmdi.curation.report.Message;
+import eu.clarin.cmdi.curation.report.Report;
 
 public abstract class CurationEntity {
 
     static final Logger _logger = LoggerFactory.getLogger(CurationEntity.class);
     
+    
     protected Path path = null;
+    
+    protected Report report = null;
 
     protected long size = 0;
 
-    protected long numOfFiles = 0;
+    // validity -> negative - not set; 0 - not valid; positive - number of valid file in case of directory
+    protected long validity = -1;
 
-    // numOfValidFiles tells if file is valid (1) or how many valid files folder has
-    protected long numOfValidFiles = -1;
-
-    protected Collection<Detail> details = null;
+    protected List<Message> messages = new LinkedList<>();
+    
 
     public CurationEntity(Path path) {
 	this.path = path;
@@ -33,13 +36,11 @@ public abstract class CurationEntity {
 	this.path = path;
 	this.size = size;
     }
-
-    public long genReport() {
-	if (numOfValidFiles < 0) {
-	    getProcessor().process(this);
-	}
-	
-	return numOfValidFiles;
+    
+    public Report generateReport(){
+	if(report == null)
+	    report = getProcessor().process(this);
+	return report;
     }
 
     protected abstract AbstractProcessor getProcessor();
@@ -52,24 +53,16 @@ public abstract class CurationEntity {
 	this.path = path;
     }
 
-    public long getNumOfFiles() {
-	return numOfFiles;
+    public long getValidity() {
+	return validity;
     }
 
-    public void setNumOfFiles(long numOfFiles) {
-	this.numOfFiles = numOfFiles;
-    }
-
-    public long getNumOfValidFiles() {
-	return numOfValidFiles;
-    }
-
-    public void setNumOfValidFiles(long numOfValidFiles) {
-	this.numOfValidFiles = numOfValidFiles;
+    public void setValidity(long validity) {
+	this.validity = validity;
     }
 
     public boolean isValid() {
-	return genReport() > 0;
+	return validity > 0;
     }
 
     public long getSize() {
@@ -80,13 +73,17 @@ public abstract class CurationEntity {
 	this.size = size;
     }
 
-    public Collection<Detail> getDetails(){
-	return details;
+    public List<Message> getMessages(){
+	return messages;
     }
     
-    public void addDetail(Severity lvl, String message){
-	details.add(new Detail(lvl, message));
+    public Report getReport(){
+	return report;
     }
+    
+//    public void addDetail(Severity lvl, String message){
+//	messages.add(new Message(lvl, message));
+//    }
     
 
     @Override
@@ -95,7 +92,7 @@ public abstract class CurationEntity {
 	sb.append("Report for " + path).append("\n");
 	sb.append("VALID: " + isValid()).append("\n");
 
-	details.forEach(detail -> sb.append(detail).append("\n"));
+	messages.forEach(detail -> sb.append(detail).append("\n"));
 
 	return sb.toString();
     }

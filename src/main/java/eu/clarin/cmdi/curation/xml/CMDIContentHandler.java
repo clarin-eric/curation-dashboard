@@ -8,8 +8,9 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import eu.clarin.cmdi.curation.entities.CMDIRecord;
+import eu.clarin.cmdi.curation.entities.CMDIInstance;
 import eu.clarin.cmdi.curation.entities.CMDIUrlNode;
+import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
 
 /**
@@ -21,14 +22,8 @@ import eu.clarin.cmdi.curation.report.Severity;
 
 public class CMDIContentHandler extends DefaultHandler {
 
-    CMDIRecord instance;
-
-    int numOfElements = 0;
-    int numOfSimpleElements = 0;
-    int numOfEmptyElements = 0;
-    
-    int numOfLinks = 0;
-    int numOfResProxyLinks = 0;
+    CMDIInstance instance;
+    CMDIInstanceReport report;
 
     String curElem;
     boolean elemWithValue;
@@ -43,8 +38,9 @@ public class CMDIContentHandler extends DefaultHandler {
     // this.provider = provider;
     // }
 
-    public CMDIContentHandler(CMDIRecord instance) {
+    public CMDIContentHandler(CMDIInstance instance, CMDIInstanceReport report) {
 	this.instance = instance;
+	this.report = report;
     }
 
     @Override
@@ -57,7 +53,7 @@ public class CMDIContentHandler extends DefaultHandler {
      */
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-	numOfElements++;
+	report.numOfXMLElements++;
 	curElem = qName;
 
 	// handle attributes
@@ -84,11 +80,11 @@ public class CMDIContentHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
 
 	if (curElem.equals(qName)) {// is a simple elem
-	    numOfSimpleElements++;
+	    report.numOfXMLSimpleElements++;
 	    if (!elemWithValue) {// does it have a value
-		numOfEmptyElements++;
+		report.numOfXMLEmptyElement++;
 		String msg = "Empty element <" + qName + "> was found on line " + locator.getLineNumber();
-		instance.addDetail(Severity.WARNING, msg);
+		report.addDetail(Severity.WARNING, msg);
 	    }
 	}
 
@@ -103,13 +99,13 @@ public class CMDIContentHandler extends DefaultHandler {
 	// mark MDSelflinks and ResourceProxy Links
 	String val = new String(ch, start, length);
 	if (val.startsWith("http://") || val.startsWith("https://")){
-	    numOfLinks++;
+	    report.numOfLinks++;
 	    CMDIUrlNode node = new CMDIUrlNode(val, (curElem.equals("MdSelfLink") || curElem.equals("ResourceRef")) ? curElem : null);
 	    if(!values.contains(node))
 		values.add(node);
 	    
 	    if(curElem.equals("MdSelfLink"))
-		numOfResProxyLinks++;
+		report.numOfResProxiesLinks++;
 	}
     }
 
@@ -120,12 +116,7 @@ public class CMDIContentHandler extends DefaultHandler {
      */
     @Override
     public void endDocument() throws SAXException {
-	instance.setNumOfXMLElements(numOfElements);
-	instance.setNumOfXMLSimpleElements(numOfSimpleElements);
-	instance.setNumOfXMLEmptyElement(numOfEmptyElements);
-	instance.setNumOfLinks(numOfLinks);
-	instance.setNumOfResProxiesLinks(numOfResProxyLinks);
-	instance.setNumOfUniqueLinks(values.size());
+	report.numOfUniqueLinks = values.size();
 	instance.setLinks(values);
 
     }

@@ -49,7 +49,7 @@ public class CMDIProfile extends CurationEntity {
 
     @Override
     public String toString() {
-	return new StringBuffer(1000).append("Id: ").append(id).append("\t").append("Name: ").append(name).append("\t")
+	return new StringBuffer(250).append("Id: ").append(id).append("\t").append("Name: ").append(name).append("\t")
 		.append("URL: ").append(url).toString();
     }
 

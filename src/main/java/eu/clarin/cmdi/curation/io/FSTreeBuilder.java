@@ -10,7 +10,7 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.clarin.cmdi.curation.entities.CMDIRecord;
+import eu.clarin.cmdi.curation.entities.CMDIInstance;
 import eu.clarin.cmdi.curation.entities.Directory;
 
 
@@ -37,7 +37,7 @@ public class FSTreeBuilder implements FileVisitor<Path>{
 	
 	@Override
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-		curDir.addChild(new CMDIRecord(file, attrs.size()));
+		curDir.addChild(new CMDIInstance(file, attrs.size()));
 		return FileVisitResult.CONTINUE;
 	}
 	

@@ -1,19 +1,21 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
-import eu.clarin.cmdi.curation.entities.CurationEntity;
+import eu.clarin.cmdi.curation.entities.CMDIInstance;
 import eu.clarin.cmdi.curation.main.Config;
+import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
 
-public class FileSizeValidator implements ProcessingActivity {
+public class FileSizeValidator extends CMDISubprocessor {
 
     @Override
-    public Severity process(CurationEntity entity) {
-	if (entity.getSize() > Config.MAX_SIZE_OF_FILE){
-	    entity.addDetail(Severity.FATAL, "The file size exceeds the limit allowed (" + Config.MAX_SIZE_OF_FILE + "B)");
-	    return Severity.FATAL;
+    public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
+	report.size = entity.getSize();
+	report.path = entity.getPath().toString();
+	if (report.size > Config.MAX_SIZE_OF_FILE){
+	    report.addDetail(Severity.FATAL, "The file size exceeds the limit allowed (" + Config.MAX_SIZE_OF_FILE + "B)");
+	    return false;
 	}
 
-	return Severity.NONE;
+	return true;
     }
-
 }

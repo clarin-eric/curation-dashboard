@@ -4,8 +4,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import eu.clarin.cmdi.curation.entities.CMDIRecord;
-import eu.clarin.cmdi.curation.report.Detail;
+import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
 
 /**
@@ -15,11 +14,11 @@ import eu.clarin.cmdi.curation.report.Severity;
  */
 
 public class CMDIErrorHandler implements ErrorHandler {
+    
+    CMDIInstanceReport report;
 
-    CMDIRecord instance;
-
-    public CMDIErrorHandler(CMDIRecord instance) {
-	this.instance = instance;
+    public CMDIErrorHandler(CMDIInstanceReport report) {
+	this.report = report;
     }
 
     @Override
@@ -40,7 +39,7 @@ public class CMDIErrorHandler implements ErrorHandler {
     }
 
     private void addMessage(Severity lvl, int line, int col, String msg) {
-	instance.addDetail(lvl, 	"line: " + line + ", col: " + col + " - " + msg);
+	report.addDetail(lvl, "line: " + line + ", col: " + col + " - " + msg);
 
     }
 }

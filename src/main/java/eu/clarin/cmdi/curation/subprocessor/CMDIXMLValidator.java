@@ -10,24 +10,23 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import eu.clarin.cmdi.curation.component_registry.ComponentRegistryService;
-import eu.clarin.cmdi.curation.entities.CMDIRecord;
-import eu.clarin.cmdi.curation.main.Config;
+import eu.clarin.cmdi.curation.entities.CMDIInstance;
+import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.xml.CMDIContentHandler;
 import eu.clarin.cmdi.curation.xml.CMDIErrorHandler;
 
-public class CMDIXMLValidator implements ProcessingActivity<CMDIRecord> {
+public class CMDIXMLValidator extends CMDISubprocessor {
 
     static final Logger _logger = LoggerFactory.getLogger(CMDIXMLValidator.class);
 
     @Override
-    public Severity process(CMDIRecord entity) {
+    public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
 	try {
-	    ValidatorHandler schemaValidator = ComponentRegistryService.getInstance().getSchema(entity.getProfile())
+	    ValidatorHandler schemaValidator = ComponentRegistryService.getInstance().getSchema(report.profile)
 		    .newValidatorHandler();
-	    if (Config.INCLUDE_DETAILS)
-		schemaValidator.setErrorHandler(new CMDIErrorHandler(entity));
-	    schemaValidator.setContentHandler(new CMDIContentHandler(entity));
+	    schemaValidator.setErrorHandler(new CMDIErrorHandler(report));
+	    schemaValidator.setContentHandler(new CMDIContentHandler(entity, report));
 	    // setValidationFeatures(schemaValidator);
 	    SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 	    parserFactory.setNamespaceAware(true);
@@ -35,13 +34,13 @@ public class CMDIXMLValidator implements ProcessingActivity<CMDIRecord> {
 	    XMLReader reader = parser.getXMLReader();
 	    reader.setContentHandler(schemaValidator);
 	    reader.parse(new InputSource(entity.getPath().toUri().toString()));
+	    return true;
 	} catch (Exception e) {
-	    _logger.error("Error processing XSD schema with ID:  " + entity.getProfile(), e);
-	    entity.addDetail(Severity.FATAL,
-		    "Error processing XSD schema with ID:  " + entity.getProfile() + ", " + e.getMessage());
+	    _logger.error("Error processing XSD schema with ID:  " + report.profile, e);
+	    report.addDetail(Severity.FATAL,
+		    "Error processing XSD schema with ID:  " + report.profile + ", " + e.getMessage());
+	    return false;
 	}
-
-	return Severity.NONE;
     }
 
     /*

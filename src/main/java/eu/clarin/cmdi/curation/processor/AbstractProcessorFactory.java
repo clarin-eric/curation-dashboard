@@ -8,8 +8,11 @@
 // */
 //
 //@FunctionalInterface
-//public interface AbstractProcessorFactory {
+//public class AbstractProcessorFactory {
 //	
-//	public AbstractProcessor<? extends CurationEntity> createCMDIProcessor();
+//	public AbstractProcessor createCMDIProcessor(){
+//	    
+//	    
+//	}
 //
 //}

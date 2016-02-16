@@ -4,19 +4,25 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import eu.clarin.cmdi.curation.subprocessor.ProcessingActivity;
-import eu.clarin.cmdi.curation.subprocessor.DirectoryAggregator;
+import eu.clarin.cmdi.curation.report.CollectionReport;
+import eu.clarin.cmdi.curation.subprocessor.CollectionAggregator;
 
 /**
  * @author dostojic
  *
  */
-public class DirectoryProcessor extends AbstractProcessor {
+public class DirectoryProcessor extends AbstractProcessor<CollectionReport> {
 
 	@Override
 	protected Collection<ProcessingActivity> createPipeline() {
 		return Arrays.asList(
-				new DirectoryAggregator()
+				new CollectionAggregator()
 				);
+	}
+
+	@Override
+	protected CollectionReport createReport() {
+	   return new CollectionReport();
 	}
 
 

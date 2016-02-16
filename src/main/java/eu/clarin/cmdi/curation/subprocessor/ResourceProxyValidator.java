@@ -9,6 +9,9 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ximpleware.AutoPilot;
 import com.ximpleware.ParseException;
 import com.ximpleware.VTDGen;
@@ -24,53 +27,51 @@ import eu.clarin.cmdi.curation.report.Severity;
  */
 public class ResourceProxyValidator extends CMDISubprocessor {
 
+    static final Logger _logger = LoggerFactory.getLogger(ResourceProxyValidator.class);
+
     @Override
     public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
 	try {
-	    Collection<ResourceProxy> resources = new LinkedList<>();
-	    report.numOfResProxies = resources.size();
 	    VTDNav navigator = parse(entity.getPath());
 	    AutoPilot ap = new AutoPilot(navigator);
 	    ap.selectXPath("//ResourceProxy");
 	    int index;
 	    while ((index = ap.evalXPath()) != -1) {// for each ResourceProxy
 
-		ResourceProxy resource = new ResourceProxy();
+		report.numOfResProxies++;
 		int ind;
-		if ((ind = navigator.getAttrVal("id")) != -1)
-		    resource.id = navigator.toNormalizedString(ind);
 
 		if (navigator.toElement(VTDNav.FIRST_CHILD, "ResourceType")) {
-		    resource.resourceType = navigator.toNormalizedString(navigator.getText());
 
-		    if ((ind = navigator.getAttrVal("mimetype")) != -1)
-			resource.mimeType = navigator.toNormalizedString(ind);
+		    // handle ResourceType
+		    String resourceType = navigator.toNormalizedString(navigator.getText());
+		    switch (resourceType) {
+		    case "Resource":
+			report.numOfResources++;
+			break;
+		    case "Metadata":
+			report.numOfMetadata++;
+			break;
+		    case "LandingPage":
+			report.numOfLandingPages++;
+			if (navigator.toElement(VTDNav.NEXT_SIBLING, "ResourceRef")
+				&& !navigator.toNormalizedString(navigator.getText()).isEmpty()) {
+			    report.numOfLandingPagesWithoutLink++;
+			}
+			break;
+		    default:
+			_logger.debug("Unhandeled value for ResourceType: {}", resourceType);
+
+		    }
+
+		    // handle mimeType
+		    if ((ind = navigator.getAttrVal("mimetype")) != -1 && !navigator.toNormalizedString(ind).isEmpty())
+			report.numOfResWithMime++;
 		}
-
-		if (navigator.toElement(VTDNav.NEXT_SIBLING, "ResourceRef"))
-		    resource.resourceRef = navigator.toNormalizedString(navigator.getText());
 
 		navigator.toElement(VTDNav.PARENT);
 
-		resources.add(resource);
 	    } // end while
-
-	    for (ResourceProxy res : resources) {
-		if (!res.mimeType.isEmpty())
-		    report.numOfResWithMime++;
-		if (res.resourceType.equals("Resource"))
-		    report.numOfResources++;
-		else if (res.resourceType.equals("Metadata"))
-		    report.numOfMetadata++;
-
-		// handle LandingPage
-		if (res.resourceType.equals("LandingPage")) {
-		    report.numOfLandingPages++;
-		    if (res.resourceRef.isEmpty())
-			report.numOfLandingPagesWithoutLink++;
-
-		}
-	    }
 
 	    return true;
 
@@ -94,21 +95,21 @@ public class ResourceProxyValidator extends CMDISubprocessor {
 
     }
 
-    private class ResourceProxy {
-
-	String id = "";
-	String mimeType = "";
-	String resourceType = "";
-	String resourceRef = "";
-
-	@Override
-	public String toString() {
-	    return (id.isEmpty() ? "" : "Id: " + id + "\t")
-		    + (mimeType.isEmpty() ? "" : "MIME type: " + mimeType + "\t")
-		    + (resourceType.isEmpty() ? "" : "ResourceType:" + resourceType + "\t")
-		    + (resourceType.isEmpty() ? "" : "ResourceRef:" + resourceRef + "\t");
-	}
-
-    }
+    // private class ResourceProxy {
+    //
+    // String id = "";
+    // String mimeType = "";
+    // String resourceType = "";
+    // String resourceRef = "";
+    //
+    // @Override
+    // public String toString() {
+    // return (id.isEmpty() ? "" : "Id: " + id + "\t")
+    // + (mimeType.isEmpty() ? "" : "MIME type: " + mimeType + "\t")
+    // + (resourceType.isEmpty() ? "" : "ResourceType:" + resourceType + "\t")
+    // + (resourceType.isEmpty() ? "" : "ResourceRef:" + resourceRef + "\t");
+    // }
+    //
+    // }
 
 }

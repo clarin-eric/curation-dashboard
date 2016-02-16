@@ -10,6 +10,8 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.clarin.cmdi.curation.utils.TimeUtils;
+
 public class EntityTree implements FileVisitor<Path> {
 
     private static final Logger _logger = LoggerFactory.getLogger(EntityTree.class);
@@ -36,8 +38,8 @@ public class EntityTree implements FileVisitor<Path> {
 	CurationEntity entity;
 	if (file.endsWith(".xsd"))
 	    entity = new CMDIProfile(file, attrs.size());
-	else // restricted only to CMDI files
-	    entity = new CMDIRecord(file, attrs.size());
+	else
+	    entity = new CMDIInstance(file, attrs.size());
 
 	curDir.addChild(entity);
 	return FileVisitResult.CONTINUE;
@@ -55,9 +57,9 @@ public class EntityTree implements FileVisitor<Path> {
 
 	long startTime = System.currentTimeMillis();
 	// fire processors for children
-	curDir.genReport();
+	curDir.generateReport();
 	long end = System.currentTimeMillis();
-	_logger.info("validation for {} lasted {} ms", dir, end - startTime);
+	_logger.info("validation for {} lasted {}", dir, TimeUtils.humanizeTime(end - startTime));
 	
 	
 	if(!stack.empty()){

@@ -53,6 +53,7 @@ public class FacetConceptMappingService implements XMLMarshaller<FacetConceptMap
     private Collection<FacetConcept> facetConcepts;
 
     private final Collection<String> facetConceptsNames;
+    private final int totalNumOfFacets;
 
     private final Map<String, Pair<Profile2FacetMap, Exception>> facetMappingCache = new ConcurrentHashMap<>();
     private final Map<String, Object> beingProcessed = new ConcurrentHashMap<>();
@@ -67,10 +68,15 @@ public class FacetConceptMappingService implements XMLMarshaller<FacetConceptMap
     private FacetConceptMappingService() throws Exception {
 	facetConcepts = createFacetConcept();
 	facetConceptsNames = facetConcepts.stream().map(FacetConcept::getName).collect(Collectors.toList());
+	totalNumOfFacets = facetConceptsNames.size();
     }
 
     public Collection<String> getFacetConceptsNames() {
 	return facetConceptsNames;
+    }
+    
+    public int getTotalNumOfFacets(){
+	return totalNumOfFacets;
     }
 
     public Profile2FacetMap getMapping(String profile) throws Exception {
@@ -109,7 +115,7 @@ public class FacetConceptMappingService implements XMLMarshaller<FacetConceptMap
 
     @Override
     public void marshal(FacetConceptMapping object, OutputStream os) throws Exception {
-	// never used
+	throw new UnsupportedOperationException();
     }
 
     private class MappingCreatorThread extends Thread {
@@ -235,7 +241,8 @@ public class FacetConceptMappingService implements XMLMarshaller<FacetConceptMap
 
 		    if (!config.getPatterns().isEmpty() || !config.getFallbackPatterns().isEmpty()) {
 			mapping.addMapping(config);
-		    }
+		    }else
+			mapping.addNotCovered(config.getName());
 		}
 		pair.setX(mapping);
 	    } catch (Exception e) {

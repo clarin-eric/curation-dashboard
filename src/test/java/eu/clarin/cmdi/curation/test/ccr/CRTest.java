@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.component_registry;
+package eu.clarin.cmdi.curation.test.ccr;
 
 import org.junit.Rule;
 import org.junit.Test;

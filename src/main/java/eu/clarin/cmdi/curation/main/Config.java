@@ -7,11 +7,12 @@ public class Config {
 	
 	public static final String SCORE_NUMERIC_DISPLAY_FORMAT = "#0.000";
 	
+	//VLO restriction
 	public static final long MAX_SIZE_OF_FILE = 30 * 1024; //30 KB
 	
 	public static String schematronFile = "default.sch";
 	
-	public static boolean INCLUDE_DETAILS = false;
+	public static boolean INCLUDE_DETAILS = true;
 	
 	public static Severity REPORT_VERBOSITY = Severity.INFO;
 	

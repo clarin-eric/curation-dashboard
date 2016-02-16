@@ -9,16 +9,16 @@ import eu.clarin.cmdi.curation.processor.DirectoryProcessor;
 
 public class Directory extends CurationEntity {
 
-    private Collection<CurationEntity> children;
+    Collection<CurationEntity> children;
 
-    private long maxFileSize = 0;
-    private long minFileSize = Long.MAX_VALUE;
-
-
+    long numOfFiles;
+    long maxFileSize = 0;
+    long minFileSize = Long.MAX_VALUE;
+    
     public Directory(Path path) {
 	super(path);
 	children = new LinkedList<CurationEntity>();
-	numOfValidFiles = 0;
+	validity = 0;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class Directory extends CurationEntity {
     public CurationEntity addChild(CurationEntity child) {
 	children.add(child);
 
-	if (child instanceof CMDIRecord || child instanceof CMDIProfile) {
+	if (child instanceof CMDIInstance || child instanceof CMDIProfile) {
 
 	    numOfFiles++;
 	    size += child.getSize();
@@ -49,7 +49,7 @@ public class Directory extends CurationEntity {
     
     private void aggregateWithDir(Directory child) {
 	numOfFiles += child.numOfFiles;
-	numOfValidFiles += child.numOfValidFiles;
+	validity += child.validity;
 	size += child.size;
 	if (child.maxFileSize > maxFileSize)
 	    maxFileSize = child.maxFileSize;
@@ -61,6 +61,14 @@ public class Directory extends CurationEntity {
 	return children;
     }
     
+
+    public long getNumOfFiles() {
+        return numOfFiles;
+    }
+
+    public void setNumOfFiles(long numOfFiles) {
+        this.numOfFiles = numOfFiles;
+    }
 
     public long getMaxFileSize() {
 	return maxFileSize;
@@ -77,5 +85,4 @@ public class Directory extends CurationEntity {
     public void setMinFileSize(long minFileSize) {
 	this.minFileSize = minFileSize;
     }
-
 }
