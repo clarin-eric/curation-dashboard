@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import eu.clarin.cmdi.curation.report.Report;
-import eu.clarin.cmdi.curation.subprocessor.ProcessingActivity;
+import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 
 /**
  * @author dostojic
@@ -16,7 +16,7 @@ import eu.clarin.cmdi.curation.subprocessor.ProcessingActivity;
 public class CMDIProfileProcessor extends AbstractProcessor {
 
     @Override
-    protected Collection<ProcessingActivity> createPipeline() {
+    protected Collection<ProcessingStep> createPipeline() {
 	return Arrays.asList(
 		//new ProfileFacetCoverage()
 		);

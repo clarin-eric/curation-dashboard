@@ -16,10 +16,10 @@ public class EntityTree implements FileVisitor<Path> {
 
     private static final Logger _logger = LoggerFactory.getLogger(EntityTree.class);
 
-    private Directory curDir = null;
-    private Directory root = null;
+    private Collection curDir = null;
+    private Collection root = null;
 
-    private Stack<Directory> stack = new Stack<Directory>();
+    private Stack<Collection> stack = new Stack<Collection>();
     
 
     @Override
@@ -28,7 +28,7 @@ public class EntityTree implements FileVisitor<Path> {
 	if (curDir != null)
 	    stack.push(curDir);
 
-	curDir = new Directory(dir);
+	curDir = new Collection(dir);
 
 	return FileVisitResult.CONTINUE;
     }
@@ -75,11 +75,11 @@ public class EntityTree implements FileVisitor<Path> {
 	return FileVisitResult.CONTINUE;
     }
 
-    public Directory getRoot() {
+    public Collection getRoot() {
 	return root;
     }
 
-    public void setRoot(Directory root) {
+    public void setRoot(Collection root) {
 	this.root = root;
     }
 

@@ -1,7 +1,5 @@
 package eu.clarin.cmdi.curation.main;
 
-import eu.clarin.cmdi.curation.report.Severity;
-
 public class Config {
 	
 	
@@ -10,12 +8,10 @@ public class Config {
 	//VLO restriction
 	public static final long MAX_SIZE_OF_FILE = 30 * 1024; //30 KB
 	
-	public static String schematronFile = "default.sch";
+	//huge performance impact, use it only for smaller collections <100
+	public static final boolean HTTP_VALIDATION = false;
 	
-	public static boolean INCLUDE_DETAILS = true;
-	
-	public static Severity REPORT_VERBOSITY = Severity.INFO;
-	
-	public static boolean PRINT_COLLECTION_DETAILS = true;
-	
+	public static final boolean GENERATE_CHILDREN_REPORTS = false;
+
+	public static final String OUTPUT_DIRECTORY = "";
 }

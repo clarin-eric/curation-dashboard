@@ -38,9 +38,8 @@ public class ComponentRegistryService implements IComponentRegistryService { // 
     public static final String PROFILE_PREFIX = "clarin.eu:cr1:";
     public static final String SCHEMA_FOLDER = "D:/xsd/";
 
-    private Collection<CMDIProfile> profiles = new LinkedList<>();
 
-    private final Map<String, Triplet<File, Schema, Exception>> schemaCache = new ConcurrentHashMap<>();// XSDCache.getInstance();
+    private final Map<String, Triplet<File, Schema, Exception>> schemaCache = new ConcurrentHashMap<>();
     private final Map<String, Object> beingProcessed = new ConcurrentHashMap<>();
 
     final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -167,44 +166,41 @@ public class ComponentRegistryService implements IComponentRegistryService { // 
 	    return cmdi;
 	}
     }
+//
+//    public static void test2(String[] args) {
+//
+//	ComponentRegistryService crs = ComponentRegistryService.getInstance();
+//	try {
+//	    crs.getPublicProfiles().forEach(System.out::println);
+//	} catch (Exception e) {
+//	    System.out.println("unable to download xsd schemas");
+//	    e.printStackTrace();
+//	}
+//    }
+//
+//    // test concurency
+//    public static void test1() {
+//	ComponentRegistryService crs = ComponentRegistryService.getInstance();
+//
+//	Collection<String> profiles = new LinkedList();
+//	profiles.add("p_1357720977520");
+//	profiles.add("p_1297242111880");
+//	profiles.add("p_1361876010587");
+//	profiles.add("p_1361876010587");
+//	profiles.add("p_1357720977520");
+//	profiles.add("p_1297242111880");
+//	profiles.add("p_1357720977520");
+//	profiles.add("p_1361876010587");
+//	profiles.add("p_1297242111880");
+//
+//	profiles.parallelStream().forEach(profile -> {
+//	    try {
+//		crs.getSchema(profile);
+//	    } catch (Exception e) {
+//		_logger.error("", e);
+//	    }
+//	});
+//    }
 
-    public static void test2(String[] args) {
-
-	ComponentRegistryService crs = ComponentRegistryService.getInstance();
-	try {
-	    crs.getPublicProfiles().forEach(System.out::println);
-	} catch (Exception e) {
-	    System.out.println("unable to download xsd schemas");
-	    e.printStackTrace();
-	}
-    }
-
-    // test concurency
-    public static void test1() {
-	ComponentRegistryService crs = ComponentRegistryService.getInstance();
-
-	Collection<String> profiles = new LinkedList();
-	profiles.add("p_1357720977520");
-	profiles.add("p_1297242111880");
-	profiles.add("p_1361876010587");
-	profiles.add("p_1361876010587");
-	profiles.add("p_1357720977520");
-	profiles.add("p_1297242111880");
-	profiles.add("p_1357720977520");
-	profiles.add("p_1361876010587");
-	profiles.add("p_1297242111880");
-
-	profiles.parallelStream().forEach(profile -> {
-	    try {
-		crs.getSchema(profile);
-	    } catch (Exception e) {
-		_logger.error("", e);
-	    }
-	});
-    }
-
-    public static void main(String[] args) {
-	test1();
-    }
 
 }

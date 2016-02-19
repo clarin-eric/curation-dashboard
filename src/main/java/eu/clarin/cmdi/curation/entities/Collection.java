@@ -1,21 +1,21 @@
 package eu.clarin.cmdi.curation.entities;
 
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
-import eu.clarin.cmdi.curation.processor.DirectoryProcessor;
+import eu.clarin.cmdi.curation.processor.CollectionProcessor;
 
-public class Directory extends CurationEntity {
+public class Collection extends CurationEntity {
 
-    Collection<CurationEntity> children;
+    List<CurationEntity> children;
 
     long numOfFiles;
     long maxFileSize = 0;
     long minFileSize = Long.MAX_VALUE;
     
-    public Directory(Path path) {
+    public Collection(Path path) {
 	super(path);
 	children = new LinkedList<CurationEntity>();
 	validity = 0;
@@ -23,7 +23,7 @@ public class Directory extends CurationEntity {
 
     @Override
     protected AbstractProcessor getProcessor() {
-	return new DirectoryProcessor();
+	return new CollectionProcessor();
     }
 
     public CurationEntity addChild(CurationEntity child) {
@@ -38,16 +38,15 @@ public class Directory extends CurationEntity {
 	    if (child.getSize() < minFileSize)
 		minFileSize = child.getSize();
 
-	} else if (child instanceof Directory) {
-	    aggregateWithDir((Directory) child);
-	} else {
-	    // implementation for different kinds of entities if necessary
-	}
+	} else if (child instanceof Collection) {
+	    aggregateWithDir((Collection) child);
+	} //else implementation for different kinds of entities if necessary
+	
 
 	return child;
     }
     
-    private void aggregateWithDir(Directory child) {
+    private void aggregateWithDir(Collection child) {
 	numOfFiles += child.numOfFiles;
 	validity += child.validity;
 	size += child.size;
@@ -57,7 +56,7 @@ public class Directory extends CurationEntity {
 	    minFileSize = child.minFileSize;
     }
 
-    public Collection<CurationEntity> getChildren() {
+    public List<CurationEntity> getChildren() {
 	return children;
     }
     

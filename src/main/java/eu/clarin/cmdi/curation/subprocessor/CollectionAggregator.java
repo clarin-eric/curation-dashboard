@@ -1,15 +1,15 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.clarin.cmdi.curation.entities.CMDIInstance;
+import eu.clarin.cmdi.curation.entities.Collection;
 import eu.clarin.cmdi.curation.entities.CurationEntity;
-import eu.clarin.cmdi.curation.entities.Directory;
 import eu.clarin.cmdi.curation.report.CollectionReport;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 
@@ -17,14 +17,14 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
  * @author dostojic
  *
  */
-public class CollectionAggregator implements ProcessingActivity<Directory, CollectionReport> {
+public class CollectionAggregator implements ProcessingStep<Collection, CollectionReport> {
 
     private static final Logger _logger = LoggerFactory.getLogger(CollectionAggregator.class);
 
     private final int CHUNK_SIZE = 10000;
 
     @Override
-    public boolean process(Directory dir, final CollectionReport report) {
+    public boolean process(Collection dir, final CollectionReport report) {
 
 	report.provider = dir.getPath().getFileName().toString();
 
@@ -38,7 +38,7 @@ public class CollectionAggregator implements ProcessingActivity<Directory, Colle
 	Iterator<CurationEntity> it = dir.getChildren().iterator();
 	int processed = 0;
 	while (it.hasNext()) {
-	    final Collection<CurationEntity> chunk = new ArrayList<>(CHUNK_SIZE);
+	    final List<CurationEntity> chunk = new ArrayList<>(CHUNK_SIZE);
 	    for (int i = 0; i < CHUNK_SIZE && it.hasNext(); i++) {
 		chunk.add(it.next());
 		it.remove();

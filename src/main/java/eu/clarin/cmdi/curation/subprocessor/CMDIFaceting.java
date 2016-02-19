@@ -8,7 +8,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,59 +44,58 @@ public class CMDIFaceting extends CMDISubprocessor {
     private Map<String, List<String>> facetValues = new LinkedHashMap<>();
 
     private VTDNav navigator;
+
     @Override
     public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
 	try {
 	    parse(entity.getPath());
 
-	    // coverage of profile
-	    FacetConceptMappingService facetService = FacetConceptMappingService.getInstance();
+	    // coverage of profile	    
 
-	    Profile2FacetMap map = facetService.getMapping(report.profile);
-	    extractFacetValues(map);
 	    
-	    int totalNumOfFacets = facetService.getTotalNumOfFacets();
 	    FacetConceptMappingService service;
-		Profile2FacetMap profileMap;
-		try {
-		    service = FacetConceptMappingService.getInstance();
-		    profileMap = service.getMapping(report.profile); 
-		} catch (Exception e) {
-		    _logger.error("Unable to obtain mapping for profile {}", report.profile, e);
-		    return false;
-		}
-		
-		Profile profileReport = new Profile();
-		profileReport.numOfCoveredFacets = map.getMappings().size();
-		profileReport.notCovered = profileMap.getNotCovered();
-		profileReport.coverage = 1.0 * profileReport.numOfCoveredFacets / totalNumOfFacets;
-		
-		Instance instance = new Instance();	
-		
-		instance.numOfCoveredFacets = facetValues.size();	
-		instance.coverage = 1.0 * facetValues.size() / totalNumOfFacets;	
-		
-		List<FacetValues> vals = new LinkedList<>();
-		List<FacetValues> missingVals = new LinkedList<>();
-		
-		for(String facet: profileMap.getFacetNames())
-		    if(facetValues.containsKey(facet))
-			vals.add(new FacetValues(facet, facetValues.get(facet)));
-		    else
-			missingVals.add(new FacetValues(facet, null));
-		   
-		instance.facetValues = vals;	
-		instance.missingValues = missingVals;	
-		
-		
-		Facets facets = new Facets();
-		facets.numOfFacets = totalNumOfFacets;
-		
-		facets.profile = profileReport;
-		
-		facets.instance = instance;
-		
-		report.facets = facets;
+	    Profile2FacetMap profileMap;
+	    try {
+		service = FacetConceptMappingService.getInstance();
+		profileMap = service.getMapping(report.profile);
+	    } catch (Exception e) {
+		_logger.error("Unable to obtain mapping for profile {}", report.profile, e);
+		return false;
+	    }
+
+	    extractFacetValues(profileMap);
+	    int totalNumOfFacets = service.getTotalNumOfFacets();
+	    
+	    Profile profileReport = new Profile();
+	    profileReport.numOfCoveredFacets = profileMap.getMappings().size();
+	    profileReport.notCovered = profileMap.getNotCovered();
+	    profileReport.coverage = 1.0 * profileReport.numOfCoveredFacets / totalNumOfFacets;
+
+	    Instance instance = new Instance();
+
+	    instance.numOfCoveredFacets = facetValues.size();
+	    instance.coverage = 1.0 * facetValues.size() / totalNumOfFacets;
+
+	    List<FacetValues> vals = new LinkedList<>();
+	    List<FacetValues> missingVals = new LinkedList<>();
+
+	    for (String facet : profileMap.getFacetNames())
+		if (facetValues.containsKey(facet))
+		    vals.add(new FacetValues(facet, facetValues.get(facet)));
+		else
+		    missingVals.add(new FacetValues(facet, null));
+
+	    instance.facetValues = vals;
+	    instance.missingValues = missingVals;
+
+	    Facets facets = new Facets();
+	    facets.numOfFacets = totalNumOfFacets;
+
+	    facets.profile = profileReport;
+
+	    facets.instance = instance;
+
+	    report.facets = facets;
 
 	    return true;
 
@@ -188,7 +186,7 @@ public class CMDIFaceting extends CMDISubprocessor {
 		continue;
 	    }
 
-	    if(value != null && !value.isEmpty() && !values.contains(value))
+	    if (value != null && !value.isEmpty() && !values.contains(value))
 		values.add(value);
 
 	    if (!allowMultipleValues)
@@ -196,7 +194,7 @@ public class CMDIFaceting extends CMDISubprocessor {
 	    index = ap.evalXPath();
 	}
 
-	if(!values.isEmpty())
+	if (!values.isEmpty())
 	    facetValues.put(facet.getName(), values);
 	return matchedPattern;
     }

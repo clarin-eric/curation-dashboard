@@ -17,7 +17,7 @@
 // * @author dostojic
 // *
 // */
-//public class ProfileFacetCoverage implements ProcessingActivity<CMDIProfile, ?> {
+//public class ProfileFacetCoverage implements ProcessingStep<CMDIProfile, ?> {
 //
 //    @Override
 //    public Severity process(CMDIProfile profile) {

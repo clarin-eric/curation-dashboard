@@ -4,20 +4,20 @@ import java.util.Collection;
 
 import eu.clarin.cmdi.curation.entities.CurationEntity;
 import eu.clarin.cmdi.curation.report.Report;
-import eu.clarin.cmdi.curation.subprocessor.ProcessingActivity;
+import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 
 public abstract class AbstractProcessor<R extends Report>{
 
     public R process(CurationEntity entity) {
 	R report = createReport();
-	for (ProcessingActivity activity : createPipeline())
+	for (ProcessingStep step : createPipeline())
 	    // stop applying further processors in case of fatal error
-	    if (!activity.process(entity, report))
+	    if (!step.process(entity, report))
 		break;
 	return report;
     }
 
-    protected abstract Collection<ProcessingActivity> createPipeline();
+    protected abstract Collection<ProcessingStep> createPipeline();
     
     protected abstract R createReport();
 

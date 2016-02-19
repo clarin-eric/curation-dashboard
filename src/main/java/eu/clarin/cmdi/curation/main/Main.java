@@ -5,6 +5,12 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,13 +61,47 @@ public class Main {
 	}
 
     }
+    
+    private static Options createOptions(){
+	Options options = new Options();
+	Option config = new Option("c", "config", true, "path to configuration file");
+	
+	Option printOnScreen = new Option("ps", "print-on-screen", false, "print the report on the screen instead of saving it in the file");
+	printOnScreen.setRequired(false);
+	
+	Option input = new Option("i", "input", true, "input file or folder");
+	input.setRequired(true);
+	
+	options.addOption(config);
+	options.addOption(printOnScreen);
+	options.addOption(input);
+	
+	return options;
+    }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
 	
+	//CommandLineParser parser = new PosixParser();
+	//CommandLine cmd = parser.parse(createOptions(), args);
+	
+	
+		
+	Path path1 = FileSystems.getDefault().getPath(
+		"D:/data/cmdi/META_SHARE_3_0/08ae069e770a11e5a6e4005056b4002410c2850320274e04b9a6c6692883a054.xml");
+	Path path2 = FileSystems.getDefault().getPath("D:/data/cmdi/Deutsches_Textarchiv/dta_386.xml");
+	Path cmdi = FileSystems.getDefault().getPath("D:/data/cmdi");
+	Path test = FileSystems.getDefault().getPath("D:/data/test");
+
+	Path ehu_18 = FileSystems.getDefault().getPath("D:/data/cmdi/Euskal_Herriko_Unibertsitatea");
+	Path lbof_295 = FileSystems.getDefault().getPath("D:/data/cmdi/Language_Bank_of_Finland");
+	Path eloftw_7K = FileSystems.getDefault().getPath("D:/data/cmdi/Ethnologue_Languages_of_the_World");
+	Path bas_23K = FileSystems.getDefault().getPath("D:/data/cmdi/BAS_Repository/oai_BAS_repo_Corpora_aGender_101104.xml");
+	Path unname_65K = FileSystems.getDefault().getPath("D:/data/cmdi/Unnamed_provider_at_dspace_library_uu_nl");
+	Path mee_240K = FileSystems.getDefault().getPath("D:/data/cmdi/Meertens_Institute_Metadata_Repository");
+
 	Main curator = new Main();
-	
-	for(String entity: args)
-	    curator.curate(FileSystems.getDefault().getPath(entity));
+	// curator.curate(path1); curator.curate(path2);
+	curator.curate(eloftw_7K);
     }
 
 }

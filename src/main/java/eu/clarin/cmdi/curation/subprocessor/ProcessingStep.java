@@ -9,7 +9,7 @@ import eu.clarin.cmdi.curation.report.Report;
  */
 
 
-public interface ProcessingActivity<T extends CurationEntity, R extends Report> {
+public interface ProcessingStep<T extends CurationEntity, R extends Report> {
 
 
     /**

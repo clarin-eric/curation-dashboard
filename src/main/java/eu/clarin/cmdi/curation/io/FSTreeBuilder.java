@@ -11,15 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.clarin.cmdi.curation.entities.CMDIInstance;
-import eu.clarin.cmdi.curation.entities.Directory;
+import eu.clarin.cmdi.curation.entities.Collection;
 
 
 public class FSTreeBuilder implements FileVisitor<Path>{
 	
-	private Directory curDir = null;
-	private Directory root = null;
+	private Collection curDir = null;
+	private Collection root = null;
 	
-	private Stack<Directory> stack = new Stack<Directory>();
+	private Stack<Collection> stack = new Stack<Collection>();
 	
 	private static Logger _logger = LoggerFactory.getLogger(FSTreeBuilder.class);
 				 
@@ -28,9 +28,9 @@ public class FSTreeBuilder implements FileVisitor<Path>{
 	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 		if(curDir != null){
 			stack.push(curDir);
-			curDir = (Directory) curDir.addChild(new Directory(dir));
+			curDir = (Collection) curDir.addChild(new Collection(dir));
 		}else
-			curDir = new Directory(dir);
+			curDir = new Collection(dir);
 				
 		return FileVisitResult.CONTINUE;
 	}
@@ -61,11 +61,11 @@ public class FSTreeBuilder implements FileVisitor<Path>{
 		return FileVisitResult.CONTINUE;
 	}
 
-	public Directory getRoot() {
+	public Collection getRoot() {
 		return root;
 	}
 
-	public void setRoot(Directory root) {
+	public void setRoot(Collection root) {
 		this.root = root;
 	}	
 	
