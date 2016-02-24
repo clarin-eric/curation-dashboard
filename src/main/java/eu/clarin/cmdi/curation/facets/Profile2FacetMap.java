@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
  *
  */
 public class Profile2FacetMap {
+    
 
     private Collection<Facet> mappings = new LinkedList<>();
 

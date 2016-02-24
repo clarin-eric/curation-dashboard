@@ -5,33 +5,33 @@ import java.util.Collection;
 
 import eu.clarin.cmdi.curation.main.Config;
 import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
-import eu.clarin.cmdi.curation.subprocessor.CMDIFaceting;
-import eu.clarin.cmdi.curation.subprocessor.CMDIHeaderValidator;
-import eu.clarin.cmdi.curation.subprocessor.CMDIXMLValidator;
+import eu.clarin.cmdi.curation.subprocessor.CMDIInstanceFacets;
+import eu.clarin.cmdi.curation.subprocessor.CMDIInstanceHeaderValidator;
+import eu.clarin.cmdi.curation.subprocessor.InstanceXMLValidator;
 import eu.clarin.cmdi.curation.subprocessor.FileSizeValidator;
-import eu.clarin.cmdi.curation.subprocessor.HttpURLValidator;
+import eu.clarin.cmdi.curation.subprocessor.URLValidator;
 import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 import eu.clarin.cmdi.curation.subprocessor.ResourceProxyValidator;
 
-public class CMDIProcessor extends AbstractProcessor<CMDIInstanceReport> {
+public class CMDIInstanceProcessor extends AbstractProcessor<CMDIInstanceReport> {
 
     @Override
     protected Collection<ProcessingStep> createPipeline() {
-	return Config.HTTP_VALIDATION ?
+	return Config.HTTP_VALIDATION() ?
 		Arrays.asList(
 			new FileSizeValidator(),
-			new CMDIHeaderValidator(),
+			new CMDIInstanceHeaderValidator(),
 			new ResourceProxyValidator(),
-			new CMDIXMLValidator(),
-			new HttpURLValidator(),
-			new CMDIFaceting()) 
+			new InstanceXMLValidator(),
+			new URLValidator(),
+			new CMDIInstanceFacets()) 
 		: 
 		Arrays.asList(
 			new FileSizeValidator(),
-			new CMDIHeaderValidator(),
+			new CMDIInstanceHeaderValidator(),
 			new ResourceProxyValidator(),
-			new CMDIXMLValidator(),
-			new CMDIFaceting());
+			new InstanceXMLValidator(),
+			new CMDIInstanceFacets());
     }
 
     @Override

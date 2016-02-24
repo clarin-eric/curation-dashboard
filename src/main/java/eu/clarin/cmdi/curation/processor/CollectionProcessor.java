@@ -13,17 +13,14 @@ import eu.clarin.cmdi.curation.subprocessor.CollectionAggregator;
  */
 public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
 
-	@Override
-	protected Collection<ProcessingStep> createPipeline() {
-		return Arrays.asList(
-				new CollectionAggregator()
-				);
-	}
+    @Override
+    protected Collection<ProcessingStep> createPipeline() {
+	return Arrays.asList(new CollectionAggregator());
+    }
 
-	@Override
-	protected CollectionReport createReport() {
-	   return new CollectionReport();
-	}
-
+    @Override
+    protected CollectionReport createReport() {
+	return new CollectionReport();
+    }
 
 }

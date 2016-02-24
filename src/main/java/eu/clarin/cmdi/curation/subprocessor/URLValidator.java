@@ -12,7 +12,7 @@ import eu.clarin.cmdi.curation.report.Severity;
  *
  */
 
-public class HttpURLValidator extends CMDISubprocessor {
+public class URLValidator extends CMDISubprocessor {
 
     @Override
     public boolean process(CMDIInstance entity, CMDIInstanceReport report) {

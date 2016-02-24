@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
-import eu.clarin.cmdi.curation.processor.CMDIProcessor;
+import eu.clarin.cmdi.curation.processor.CMDIInstanceProcessor;
 
 public class CMDIInstance extends CurationEntity {
 
@@ -28,7 +28,7 @@ public class CMDIInstance extends CurationEntity {
 
     @Override
     protected AbstractProcessor getProcessor() {
-	return new CMDIProcessor();
+	return new CMDIInstanceProcessor();
     }
 
     public Collection<CMDIUrlNode> getLinks() {

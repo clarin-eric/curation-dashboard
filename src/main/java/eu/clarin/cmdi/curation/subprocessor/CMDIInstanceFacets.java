@@ -24,19 +24,19 @@ import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.facets.Profile2FacetMap;
 import eu.clarin.cmdi.curation.facets.Profile2FacetMap.Facet;
 import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
-import eu.clarin.cmdi.curation.report.CMDIInstanceReport.FacetValues;
-import eu.clarin.cmdi.curation.report.CMDIInstanceReport.Facets;
-import eu.clarin.cmdi.curation.report.CMDIInstanceReport.Instance;
-import eu.clarin.cmdi.curation.report.CMDIInstanceReport.Profile;
+import eu.clarin.cmdi.curation.report.FacetReport;
+import eu.clarin.cmdi.curation.report.FacetReport.FacetValues;
+import eu.clarin.cmdi.curation.report.FacetReport.Instance;
+import eu.clarin.cmdi.curation.report.FacetReport.Profile;
 import eu.clarin.cmdi.curation.report.Severity;
 
 /**
  * @author dostojic
  *
  */
-public class CMDIFaceting extends CMDISubprocessor {
+public class CMDIInstanceFacets extends CMDISubprocessor {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CMDIFaceting.class);
+    private static final Logger _logger = LoggerFactory.getLogger(CMDIInstanceFacets.class);
 
     private static final String DEFAULT_LANGUAGE = "code:und";
     private static final String FACET_LANGUAGECODE = "languageCode";
@@ -88,7 +88,7 @@ public class CMDIFaceting extends CMDISubprocessor {
 	    instance.facetValues = vals;
 	    instance.missingValues = missingVals;
 
-	    Facets facets = new Facets();
+	    FacetReport facets = new FacetReport();
 	    facets.numOfFacets = totalNumOfFacets;
 
 	    facets.profile = profileReport;

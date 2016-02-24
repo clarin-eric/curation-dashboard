@@ -7,7 +7,7 @@ import eu.clarin.cmdi.curation.main.Config;
 
 public class Score {
 	
-	private static final NumberFormat formatter = new DecimalFormat(Config.SCORE_NUMERIC_DISPLAY_FORMAT);
+	private static final NumberFormat formatter = new DecimalFormat(Config.SCORE_NUMERIC_DISPLAY_FORMAT());
 
 	private double score = 0;
 	//private String score

@@ -7,17 +7,9 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.text.DecimalFormat;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import eu.clarin.cmdi.curation.component_registry.ComponentRegistryService;
 
 public class DownloaderService {
 
@@ -75,16 +67,16 @@ public class DownloaderService {
 
     
     //test concurency
-    public static void main(String[] args) throws Exception {
-	String[] profiles = { "clarin.eu:cr1:p_1357720977520", "clarin.eu:cr1:p_1361876010587",
-		"clarin.eu:cr1:p_1297242111880" };
-
-	for (String p : profiles) {
-	    String url = ComponentRegistryService.CCR_REST + p + "/xsd";
-	    String dest = ComponentRegistryService.SCHEMA_FOLDER + p.substring("clarin.eu:cr1:".length()) + ".xsd";
-	    instance.download(url, new File(dest));
-	}
-
-    }
+//    public static void main(String[] args) throws Exception {
+//	String[] profiles = { "clarin.eu:cr1:p_1357720977520", "clarin.eu:cr1:p_1361876010587",
+//		"clarin.eu:cr1:p_1297242111880" };
+//
+//	for (String p : profiles) {
+//	    String url = CCR_Constants.REST_API + p + "/xsd";
+//	    String dest = CCR_Constants.SCHEMA_FOLDER + p.substring("clarin.eu:cr1:".length()) + ".xsd";
+//	    instance.download(url, new File(dest));
+//	}
+//
+//    }
 
 }

@@ -1,25 +1,16 @@
-/**
- * 
- */
-package eu.clarin.cmdi.curation.subprocessor;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.LinkedList;
+package eu.clarin.cmdi.curation.subprocessor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ximpleware.AutoPilot;
-import com.ximpleware.ParseException;
-import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
 import eu.clarin.cmdi.curation.entities.CMDIInstance;
 import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
+import eu.clarin.cmdi.curation.xml.CMDIXPathService;
 
 /**
  * @author dostojic
@@ -32,19 +23,18 @@ public class ResourceProxyValidator extends CMDISubprocessor {
     @Override
     public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
 	try {
-	    VTDNav navigator = parse(entity.getPath());
-	    AutoPilot ap = new AutoPilot(navigator);
-	    ap.selectXPath("//ResourceProxy");
-	    int index;
-	    while ((index = ap.evalXPath()) != -1) {// for each ResourceProxy
 
+	    CMDIXPathService xmlService = new CMDIXPathService(entity.getPath());
+	    AutoPilot ap = new AutoPilot(xmlService.getNavigator());
+	    ap.selectElement("ResourceProxy");
+	    while (ap.iterate()) {// for each ResourceProxy
 		report.numOfResProxies++;
-		int ind;
 
-		if (navigator.toElement(VTDNav.FIRST_CHILD, "ResourceType")) {
+		if (xmlService.getNavigator().toElement(VTDNav.FIRST_CHILD, "ResourceType")) {
 
 		    // handle ResourceType
-		    String resourceType = navigator.toNormalizedString(navigator.getText());
+		    String resourceType = xmlService.getNavigator()
+			    .toNormalizedString(xmlService.getNavigator().getText());
 		    switch (resourceType) {
 		    case "Resource":
 			report.numOfResources++;
@@ -54,8 +44,8 @@ public class ResourceProxyValidator extends CMDISubprocessor {
 			break;
 		    case "LandingPage":
 			report.numOfLandingPages++;
-			if (navigator.toElement(VTDNav.NEXT_SIBLING, "ResourceRef")
-				&& !navigator.toNormalizedString(navigator.getText()).isEmpty()) {
+			if (xmlService.getNavigator().toElement(VTDNav.NEXT_SIBLING, "ResourceRef") && !xmlService
+				.getNavigator().toNormalizedString(xmlService.getNavigator().getText()).isEmpty()) {
 			    report.numOfLandingPagesWithoutLink++;
 			}
 			break;
@@ -64,12 +54,14 @@ public class ResourceProxyValidator extends CMDISubprocessor {
 
 		    }
 
+		    int ind;
 		    // handle mimeType
-		    if ((ind = navigator.getAttrVal("mimetype")) != -1 && !navigator.toNormalizedString(ind).isEmpty())
+		    if ((ind = xmlService.getNavigator().getAttrVal("mimetype")) != -1
+			    && !xmlService.getNavigator().toNormalizedString(ind).isEmpty())
 			report.numOfResWithMime++;
 		}
 
-		navigator.toElement(VTDNav.PARENT);
+		xmlService.getNavigator().toElement(VTDNav.PARENT);
 
 	    } // end while
 
@@ -80,36 +72,4 @@ public class ResourceProxyValidator extends CMDISubprocessor {
 	    return false;
 	}
     }
-
-    private VTDNav parse(Path cmdiRecord) throws Exception {
-	VTDGen parser = new VTDGen();
-	try {
-	    parser.setDoc(Files.readAllBytes(cmdiRecord));
-	    parser.parse(true);
-	    VTDNav navigator = parser.getNav();
-	    parser = null;
-	    return navigator;
-	} catch (IOException | ParseException e) {
-	    throw new Exception("Errors while parsing " + cmdiRecord, e);
-	}
-
-    }
-
-    // private class ResourceProxy {
-    //
-    // String id = "";
-    // String mimeType = "";
-    // String resourceType = "";
-    // String resourceRef = "";
-    //
-    // @Override
-    // public String toString() {
-    // return (id.isEmpty() ? "" : "Id: " + id + "\t")
-    // + (mimeType.isEmpty() ? "" : "MIME type: " + mimeType + "\t")
-    // + (resourceType.isEmpty() ? "" : "ResourceType:" + resourceType + "\t")
-    // + (resourceType.isEmpty() ? "" : "ResourceRef:" + resourceRef + "\t");
-    // }
-    //
-    // }
-
 }
