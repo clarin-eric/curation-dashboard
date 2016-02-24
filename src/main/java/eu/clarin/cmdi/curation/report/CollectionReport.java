@@ -1,6 +1,8 @@
 package eu.clarin.cmdi.curation.report;
 
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "collection-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionReport implements Report<CollectionReport> {
+    
+    public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
 
     public String provider;
 

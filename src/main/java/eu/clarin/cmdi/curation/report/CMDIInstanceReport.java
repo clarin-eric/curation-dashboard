@@ -1,6 +1,8 @@
 package eu.clarin.cmdi.curation.report;
 
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,6 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "instance-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDIInstanceReport implements Report<CollectionReport> {
+
+    public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
 
     // file
     public String path;
@@ -69,11 +73,10 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 
     @Override
     public void mergeWithParent(CollectionReport parentReport) {
-	if (!isValid){
+	if (!isValid) {
 	    parentReport.addNewInvalid(path);
 	    return;
 	}
-	    
 
 	parentReport.numOfValidFiles++;
 
