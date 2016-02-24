@@ -27,7 +27,7 @@ import eu.clarin.cmdi.curation.xml.CMDIXPathService;
  * @author dostojic
  *
  */
-public class CMDIProfileValidator implements ProcessingStep<CMDIProfile, CMDIProfileReport> {
+public class CMDIProfileValidator extends ProcessingStep<CMDIProfile, CMDIProfileReport> {
 
     private static final Logger _logger = LoggerFactory.getLogger(CMDIProfileValidator.class);
 

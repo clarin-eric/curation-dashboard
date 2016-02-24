@@ -22,36 +22,48 @@ public class CMDIInstanceHeaderValidator extends CMDISubprocessor {
 
     private CMDIXPathService xmlService;
     
+    
     @Override
     public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
+	boolean status = true;
+	String profile = null;
 	try {
 	    xmlService = new CMDIXPathService(entity.getPath());	    
-	    handleMdProfile(report);
+	    profile = handleMdProfile(report);
 	    handleMdSelfLink(report);
 	    handleMdCollectionDisplyName(report);
 	    xmlService = null;
-	    
-	    return true;
 
 	    // we are throwing it only if file can not be parsed or profileId is
 	    // missing
-	} catch (Exception e) {
-	    report.addDetail(Severity.FATAL, e.getMessage());
-	    return false;
+	} catch (Exception e) {	    
+	    addMessage(Severity.FATAL, e.getMessage());
+	    status =  false;
+	}finally{
+	    report.addHeaderReport(profile, msgs);
 	}
+	
+	
+	return status;
     }
 
-    private void handleMdProfile(CMDIInstanceReport report) throws Exception {
+    private String handleMdProfile(CMDIInstanceReport report) throws Exception {
 	// search in header first
 	String profile = xmlService.xpath("/CMD/Header/MdProfile/text()");
 	if (profile == null) {// not in header
-	    report.addDetail(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with proile ID!");
+	    report.mdProfileExists = false;
+	    addMessage(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with proile ID!");
 	    profile = extractProfileFromNameSpace();
 	    if (profile == null)
 		throw new Exception("Profile can not be extracted from namespace!");
 	}
 	// keep profile without prefix "clarin.eu:cr1"
-	report.profile = profile.substring(CCR_Constants.PROFILE_PREFIX.length());
+	report.schemaAvailable = true;
+	if(profile.startsWith(CCR_Constants.PROFILE_PREFIX)){
+	    report.schemaInCCR = true;
+	    profile = profile.substring(CCR_Constants.PROFILE_PREFIX.length());
+	}
+	return profile;
     }
 
     // try with schemaLocation/noNamespaceSchemaLocation attributes
@@ -78,14 +90,18 @@ public class CMDIInstanceHeaderValidator extends CMDISubprocessor {
 
     private void handleMdCollectionDisplyName(CMDIInstanceReport report) throws Exception {
 	String mdCollectionDisplayName = xmlService.xpath("/CMD/Header/MdCollectionDisplayName/text()");
-	if (mdCollectionDisplayName == null || mdCollectionDisplayName.isEmpty())
-	    report.addDetail(Severity.ERROR, "Value for MdCollectionDisplayName is missing");
+	if (mdCollectionDisplayName == null || mdCollectionDisplayName.isEmpty()){
+	    report.mdCollectionDispExists = false;
+	    addMessage(Severity.ERROR, "Value for MdCollectionDisplayName is missing");
+	}
     }
 
     private void handleMdSelfLink(CMDIInstanceReport report) throws Exception {
 	String mdSelfLink = xmlService.xpath("/CMD/Header/MdSelfLink/text()");
-	if (mdSelfLink == null || mdSelfLink.isEmpty())
-	    report.addDetail(Severity.ERROR, "Value for MdCollectionDisplayName is missing");
+	if (mdSelfLink == null || mdSelfLink.isEmpty()){
+	    addMessage(Severity.ERROR, "Value for MdCollctionDisplayName is missing");
+	    report.mdSelfLinkExists = false;
+	}
 	else {
 	    if (!CMDIInstance.uniqueMDSelfLinks.add(mdSelfLink)) {		
 		CMDIInstance.duplicateMDSelfLinks.add(mdSelfLink);

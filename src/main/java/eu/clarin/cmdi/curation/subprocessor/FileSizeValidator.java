@@ -8,14 +8,14 @@ import eu.clarin.cmdi.curation.report.Severity;
 public class FileSizeValidator extends CMDISubprocessor {
 
     @Override
-    public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
-	report.size = entity.getSize();
-	report.path = entity.getPath().toString();
-	if (report.size > Config.MAX_SIZE_OF_FILE()){
-	    report.addDetail(Severity.FATAL, "The file size exceeds the limit allowed (" + Config.MAX_SIZE_OF_FILE() + "B)");
-	    return false;
+    public boolean process(CMDIInstance entity, CMDIInstanceReport report) {	
+	if (entity.getSize() > Config.MAX_SIZE_OF_FILE()){
+	    report.sizeExceeded = true;
+	    addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + Config.MAX_SIZE_OF_FILE() + "B)");
 	}
-
-	return true;
+	
+	report.addFileReport(entity.getPath().toString(), entity.getSize(), msgs);
+	
+	return !report.sizeExceeded;
     }
 }

@@ -26,13 +26,19 @@ import eu.clarin.cmdi.curation.xml.CMDIErrorHandler;
 public class InstanceXMLValidator extends CMDISubprocessor {
 
     static final Logger _logger = LoggerFactory.getLogger(InstanceXMLValidator.class);
+    
+    int numOfXMLElements = 0;
+    int numOfXMLSimpleElements = 0;
+    int numOfXMLEmptyElement = 0;
+    
 
     @Override
     public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
+	boolean status = true;
 	try {
-	    ValidatorHandler schemaValidator = ComponentRegistryService.getInstance().getSchema(report.profile)
+	    ValidatorHandler schemaValidator = ComponentRegistryService.getInstance().getSchema(report.getProfile())
 		    .newValidatorHandler();
-	    schemaValidator.setErrorHandler(new CMDIErrorHandler(report));
+	    schemaValidator.setErrorHandler(new CMDIErrorHandler(report, msgs));
 	    schemaValidator.setContentHandler(new CMDIInstanceContentHandler(entity, report));
 	    // setValidationFeatures(schemaValidator);
 	    SAXParserFactory parserFactory = SAXParserFactory.newInstance();
@@ -41,13 +47,17 @@ public class InstanceXMLValidator extends CMDISubprocessor {
 	    XMLReader reader = parser.getXMLReader();
 	    reader.setContentHandler(schemaValidator);
 	    reader.parse(new InputSource(entity.getPath().toUri().toString()));
-	    return true;
 	} catch (Exception e) {
-	    _logger.error("Error processing XSD schema with ID:  " + report.profile, e);
-	    report.addDetail(Severity.FATAL,
-		    "Error processing XSD schema with ID:  " + report.profile + ", " + e.getMessage());
-	    return false;
+	    _logger.error("Error processing XSD schema with ID:  " + report.getProfile(), e);
+	    addMessage(Severity.FATAL,
+		    "Error processing XSD schema with ID:  " + report.getProfile() + ", " + e.getMessage());
+	    
+	    status = false;
+	}finally{
+	    report.addXmlReport(numOfXMLElements, numOfXMLSimpleElements, numOfXMLEmptyElement, msgs);	    
 	}
+	return status;
+	
     }
 
     /*
@@ -100,7 +110,7 @@ public class InstanceXMLValidator extends CMDISubprocessor {
 	     */
 	    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-		report.numOfXMLElements++;
+		numOfXMLElements++;
 		curElem = qName;
 
 		// handle attributes
@@ -127,11 +137,11 @@ public class InstanceXMLValidator extends CMDISubprocessor {
 	    public void endElement(String uri, String localName, String qName) throws SAXException {
 
 		if (curElem.equals(qName)) {// is a simple elem
-		    report.numOfXMLSimpleElements++;
+		    numOfXMLSimpleElements++;
 		    if (!elemWithValue) {// does it have a value
-			report.numOfXMLEmptyElement++;
+			numOfXMLEmptyElement++;
 			String msg = "Empty element <" + qName + "> was found on line " + locator.getLineNumber();
-			report.addDetail(Severity.WARNING, msg);
+			addMessage(Severity.WARNING, msg);
 		    }
 		}
 
@@ -156,16 +166,10 @@ public class InstanceXMLValidator extends CMDISubprocessor {
 		}
 	    }
 
-	    /*
-	     * (non-Javadoc)
-	     * 
-	     * @see org.xml.sax.helpers.DefaultHandler#endDocument()
-	     */
 	    @Override
 	    public void endDocument() throws SAXException {
-		report.numOfUniqueLinks = values.size();
+		report.numOfUniqueLinks = values.size();		
 		instance.setLinks(values);
-
 	    }
     }
 

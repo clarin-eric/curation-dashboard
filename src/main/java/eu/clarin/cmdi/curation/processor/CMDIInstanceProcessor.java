@@ -17,21 +17,13 @@ public class CMDIInstanceProcessor extends AbstractProcessor<CMDIInstanceReport>
 
     @Override
     protected Collection<ProcessingStep> createPipeline() {
-	return Config.HTTP_VALIDATION() ?
-		Arrays.asList(
-			new FileSizeValidator(),
-			new CMDIInstanceHeaderValidator(),
-			new ResourceProxyValidator(),
-			new InstanceXMLValidator(),
-			new URLValidator(),
-			new CMDIInstanceFacets()) 
-		: 
-		Arrays.asList(
-			new FileSizeValidator(),
-			new CMDIInstanceHeaderValidator(),
-			new ResourceProxyValidator(),
-			new InstanceXMLValidator(),
-			new CMDIInstanceFacets());
+	return Arrays.asList(
+		new FileSizeValidator(),
+		new CMDIInstanceHeaderValidator(),
+		new ResourceProxyValidator(),
+		new InstanceXMLValidator(),
+		new URLValidator(),
+		new CMDIInstanceFacets());
     }
 
     @Override

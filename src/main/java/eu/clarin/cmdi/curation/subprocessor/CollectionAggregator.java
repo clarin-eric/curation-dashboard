@@ -17,7 +17,7 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
  * @author dostojic
  *
  */
-public class CollectionAggregator implements ProcessingStep<Collection, CollectionReport> {
+public class CollectionAggregator extends ProcessingStep<Collection, CollectionReport> {
 
     private static final Logger _logger = LoggerFactory.getLogger(CollectionAggregator.class);
 

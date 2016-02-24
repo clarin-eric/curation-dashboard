@@ -10,7 +10,7 @@ import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
  * @author dostojic
  *
  */
-public abstract class CMDISubprocessor implements ProcessingStep<CMDIInstance, CMDIInstanceReport> {
+public abstract class CMDISubprocessor extends ProcessingStep<CMDIInstance, CMDIInstanceReport> {
 
     @Override
     public abstract boolean process(CMDIInstance entity, CMDIInstanceReport report);

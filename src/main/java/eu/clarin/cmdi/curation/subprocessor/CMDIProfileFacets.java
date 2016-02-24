@@ -17,7 +17,7 @@ import eu.clarin.cmdi.curation.report.FacetReport.Profile;
  * @author dostojic
  *
  */
-public class CMDIProfileFacets implements ProcessingStep<CMDIProfile, CMDIProfileReport> {
+public class CMDIProfileFacets extends ProcessingStep<CMDIProfile, CMDIProfileReport> {
 
     private static final Logger _logger = LoggerFactory.getLogger(CMDIProfileFacets.class);
 
@@ -44,6 +44,7 @@ public class CMDIProfileFacets implements ProcessingStep<CMDIProfile, CMDIProfil
 	report.facet = new FacetReport();
 	report.facet.numOfFacets = totalNumOfFacets;
 	report.facet.profile = profileReport;
+	report.facet.messages = msgs;
 
 	return true;
     }

@@ -25,6 +25,9 @@ public class FacetReport {
     public Profile profile;
 
     public Instance instance;
+    
+    @XmlElementWrapper(name = "details")
+    public List<Message> messages = null;
 
     @XmlRootElement(name = "profile")
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -44,7 +47,7 @@ public class FacetReport {
 	public Double coverage;
 
 	@XmlElementWrapper(name = "values")
-	public List<FacetValues> facetValues;
+	public List<FacetValues> facet;
 
 	@XmlElementWrapper(name = "missingValues")
 	public List<FacetValues> missingValues;
@@ -60,13 +63,14 @@ public class FacetReport {
 
 	public FacetValues(String name, List<String> values) {
 	    this.name = name;
-	    this.values = values;
+	    this.value = values;
 	}
 
 	@XmlAttribute
 	public String name;
 
-	public List<String> values;
+	@XmlElementWrapper(name = "values")
+	public List<String> value;
     }
 
 }

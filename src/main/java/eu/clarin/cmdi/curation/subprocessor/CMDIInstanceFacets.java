@@ -47,6 +47,7 @@ public class CMDIInstanceFacets extends CMDISubprocessor {
 
     @Override
     public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
+	boolean status = true;
 	try {
 	    parse(entity.getPath());
 
@@ -57,9 +58,9 @@ public class CMDIInstanceFacets extends CMDISubprocessor {
 	    Profile2FacetMap profileMap;
 	    try {
 		service = FacetConceptMappingService.getInstance();
-		profileMap = service.getMapping(report.profile);
+		profileMap = service.getMapping(report.getProfile());
 	    } catch (Exception e) {
-		_logger.error("Unable to obtain mapping for profile {}", report.profile, e);
+		_logger.error("Unable to obtain mapping for profile {}", report.getProfile(), e);
 		return false;
 	    }
 
@@ -85,7 +86,7 @@ public class CMDIInstanceFacets extends CMDISubprocessor {
 		else
 		    missingVals.add(new FacetValues(facet, null));
 
-	    instance.facetValues = vals;
+	    instance.facet = vals;
 	    instance.missingValues = missingVals;
 
 	    FacetReport facets = new FacetReport();
@@ -97,12 +98,14 @@ public class CMDIInstanceFacets extends CMDISubprocessor {
 
 	    report.facets = facets;
 
-	    return true;
-
 	} catch (Exception e) {
-	    report.addDetail(Severity.FATAL, e.getMessage());
-	    return false;
+	    addMessage(Severity.FATAL, e.getMessage());
+	    status = false;
+	}finally{
+	    report.facets.messages = msgs;
 	}
+	
+	return status;
     }
 
     private void parse(Path cmdiRecord) throws Exception {

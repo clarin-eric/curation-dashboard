@@ -1,7 +1,12 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import eu.clarin.cmdi.curation.entities.CurationEntity;
+import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Report;
+import eu.clarin.cmdi.curation.report.Severity;
 
 /**
  * @author dostojic
@@ -9,13 +14,22 @@ import eu.clarin.cmdi.curation.report.Report;
  */
 
 
-public interface ProcessingStep<T extends CurationEntity, R extends Report> {
+public abstract class ProcessingStep<T extends CurationEntity, R extends Report> {
 
+    protected List<Message> msgs = null;
 
     /**
      * @param entity 
      * @param report
      * @return true if processing finished without fatal errors
      */
-    public boolean process(T entity, R report);
+    public abstract boolean process(T entity, R report);
+    
+    
+    protected void addMessage(Severity lvl, String message){
+	if(msgs == null){
+	    msgs = new LinkedList<>();
+	}
+	msgs.add(new Message(lvl, message));
+    }
 }

@@ -24,7 +24,7 @@ public class CurationTest {
 		"D:/data/cmdi/META_SHARE_3_0/08ae069e770a11e5a6e4005056b4002410c2850320274e04b9a6c6692883a054.xml");
 	Path path2 = FileSystems.getDefault().getPath("D:/data/cmdi/Deutsches_Textarchiv/dta_386.xml");
 	Path cmdi = FileSystems.getDefault().getPath("D:/data/cmdi");
-	Path test = FileSystems.getDefault().getPath("D:/data/test");
+	Path test = FileSystems.getDefault().getPath("D:/data/test/test1");
 
 	Path ehu_18 = FileSystems.getDefault().getPath("D:/data/cmdi/Euskal_Herriko_Unibertsitatea");
 	Path lbof_295 = FileSystems.getDefault().getPath("D:/data/cmdi/Language_Bank_of_Finland");
@@ -38,7 +38,7 @@ public class CurationTest {
 	Path profile1 =  FileSystems.getDefault().getPath("D:/xsd/p_1361876010587.xsd");
 
 	// curator.curate(path1); curator.curate(path2);
-	new Curator().curate(profile1);
+	new Curator().curate(path1);
 
     }
 

@@ -22,13 +22,21 @@ public class ResourceProxyValidator extends CMDISubprocessor {
 
     @Override
     public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
+	boolean status = true;
+	int numOfResProxies = 0;
+	int numOfResources = 0;
+	int numOfMetadata = 0;
+	int numOfLandingPages = 0;
+	int numOfLandingPagesWithoutLink = 0;
+	int numOfResWithMime = 0;
+	
 	try {
 
 	    CMDIXPathService xmlService = new CMDIXPathService(entity.getPath());
 	    AutoPilot ap = new AutoPilot(xmlService.getNavigator());
 	    ap.selectElement("ResourceProxy");
 	    while (ap.iterate()) {// for each ResourceProxy
-		report.numOfResProxies++;
+		numOfResProxies++;
 
 		if (xmlService.getNavigator().toElement(VTDNav.FIRST_CHILD, "ResourceType")) {
 
@@ -37,39 +45,40 @@ public class ResourceProxyValidator extends CMDISubprocessor {
 			    .toNormalizedString(xmlService.getNavigator().getText());
 		    switch (resourceType) {
 		    case "Resource":
-			report.numOfResources++;
+			numOfResources++;
 			break;
 		    case "Metadata":
-			report.numOfMetadata++;
+			numOfMetadata++;
 			break;
 		    case "LandingPage":
-			report.numOfLandingPages++;
+			numOfLandingPages++;
 			if (xmlService.getNavigator().toElement(VTDNav.NEXT_SIBLING, "ResourceRef") && !xmlService
 				.getNavigator().toNormalizedString(xmlService.getNavigator().getText()).isEmpty()) {
-			    report.numOfLandingPagesWithoutLink++;
+			    numOfLandingPagesWithoutLink++;
 			}
 			break;
 		    default:
 			_logger.debug("Unhandeled value for ResourceType: {}", resourceType);
 
 		    }
-
+		    
 		    int ind;
 		    // handle mimeType
 		    if ((ind = xmlService.getNavigator().getAttrVal("mimetype")) != -1
 			    && !xmlService.getNavigator().toNormalizedString(ind).isEmpty())
-			report.numOfResWithMime++;
+			numOfResWithMime++;
 		}
 
 		xmlService.getNavigator().toElement(VTDNav.PARENT);
 
 	    } // end while
-
-	    return true;
-
 	} catch (Exception e) {
-	    report.addDetail(Severity.FATAL, e.getMessage());
-	    return false;
-	}
+	    addMessage(Severity.FATAL, e.getMessage());
+	    status = false;
+	}finally{
+	    report.addResProxyReport(numOfResProxies, numOfResWithMime, numOfLandingPages, numOfLandingPagesWithoutLink, numOfResources, numOfMetadata, msgs);    
+	}	
+	
+	return status;
     }
 }
