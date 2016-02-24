@@ -16,8 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Message {
     
     @XmlAttribute
-    Severity lvl;
-    
+    Severity lvl;    
+    @XmlAttribute
     String message; 
     
     public Message(){}

@@ -12,6 +12,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -23,81 +24,241 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "collection-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionReport implements Report<CollectionReport> {
-    
+
+    transient public Double avgFacetCoverageByInstanceSum = 0d;
+
     public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
 
-    public String provider;
+    public double score;
 
-    public long numOfFiles = 0;
-    public long size;
+    public double avgScore;
 
-    public long maxFileSize;
-    public long minFileSize;
+    @XmlElement(name = "file-section")
+    FileReport fileReport = new FileReport();
 
-    public long numOfValidFiles;
-    public Double percOfValidFiles;
-
-    @XmlElementWrapper(name = "duplicatedMDSelfLinks")
-    public List<String> duplicatedMDSelfLink = null;
+    @XmlElement(name = "header-section")
+    HeaderReport headerReport = new HeaderReport();
 
     // ResProxies
-    public int totNumOfResProxies;
-    public Double avgNumOfResProxies;
-    public int totNumOfResWithMime;
-    public Double avgNumOfResWithMime;
-    public int totNumOfLandingPages;
-    public Double avgNumOfLandingPages;
-    public int totNumOfLandingPagesWithoutLink;
-    public Double avgNumOfLandingPagesWithoutLink;
-    public int totNumOfResources;
-    public Double avgNumOfResources;
-    public int totNumOfMetadata;
-    public Double avgNumOfMetadata;
+    @XmlElement(name = "resProxy-section")
+    ResProxyReport resProxyReport = new ResProxyReport();
 
     // XMLValidator
-    public int totNumOfXMLElements;
-    public Double avgNumOfXMLElements;
-    public int totNumOfXMLSimpleElements;
-    public Double avgNumOfXMLSimpleElements;
-    public int totNumOfXMLEmptyElement;
-    public Double avgXMLEmptyElement;
-    public Double avgRateOfPopulatedElements;
+    @XmlElement(name = "xml-validation-section")
+    XMLValidationReport xmlReport = new XMLValidationReport();
 
     // URL
-    public int totNumOfLinks;
-    public Double avgNumOfLinks;
-    public int totNumOfUniqueLinks;
-    public Double avgNumOfUniqueLinks;
-    public int totNumOfResProxiesLinks;
-    public Double avgNumOfResProxiesLinks;
-    public int totNumOfBrokenLinks;
-    public Double avgNumOfBrokenLinks;
-    public Double avgPercOfValidLinks;
+    @XmlElement(name = "url-validation-section")
+    URLValidationReport urlReport = new URLValidationReport();
 
     // Facets
-    transient public Double avgFacetCoverageByInstanceSum = 0d;
-    public Double avgFacetCoverageByInstance;
 
-    // Profiles
-    public Profiles profiles = null;
+    @XmlElement(name = "facet-section")
+    FacetReport facetReport = new FacetReport();
 
     @XmlElementWrapper(name = "invalidFilesList")
     public List<String> invalidFile = null;
 
-    @XmlElementWrapper(name = "details")
-    public List<Message> messages = null;
 
     public void addNewInvalid(String file) {
 	if (invalidFile == null)
 	    invalidFile = new LinkedList<>();
-	
+
 	invalidFile.add(file);
 
     }
 
+    public void handleProfile(String profile) {
+	if(headerReport == null)
+	    headerReport = new HeaderReport();
+	if (headerReport.profiles == null)
+	    headerReport.profiles = new Profiles();
+	headerReport.profiles.handleProfile(profile);
+    }
+
+    public void handleProfile(Profile profile) {
+	if (headerReport.profiles == null)
+	    headerReport.profiles = new Profiles();
+	headerReport.profiles.handleProfile(profile);
+    }
+
+    
+
+    @Override
+    public void mergeWithParent(CollectionReport parentReport) {
+
+	parentReport.score += score;
+
+	// ResProxies
+	
+	parentReport.resProxyReport.totNumOfResProxies += resProxyReport.totNumOfResProxies;
+	parentReport.resProxyReport.totNumOfResWithMime += resProxyReport.totNumOfResWithMime;
+	parentReport.resProxyReport.totNumOfLandingPages += resProxyReport.totNumOfLandingPages;
+	parentReport.resProxyReport.totNumOfLandingPagesWithoutLink += resProxyReport.totNumOfLandingPagesWithoutLink;
+	parentReport.resProxyReport.totNumOfResources += resProxyReport.totNumOfResources;
+	parentReport.resProxyReport.totNumOfMetadata += resProxyReport.totNumOfMetadata;
+
+	// XMLValidator
+	parentReport.xmlReport.totNumOfXMLElements += xmlReport.totNumOfXMLElements;
+	parentReport.xmlReport.totNumOfXMLSimpleElements += xmlReport.totNumOfXMLSimpleElements;
+	parentReport.xmlReport.totNumOfXMLEmptyElement += xmlReport.totNumOfXMLEmptyElement;
+
+	// URL
+	parentReport.urlReport.totNumOfLinks += urlReport.totNumOfLinks;
+	parentReport.urlReport.totNumOfUniqueLinks += urlReport.totNumOfUniqueLinks;
+	parentReport.urlReport.totNumOfResProxiesLinks += urlReport.totNumOfResProxiesLinks;
+	parentReport.urlReport.totNumOfBrokenLinks += urlReport.totNumOfBrokenLinks;
+
+	// Facet
+	parentReport.avgFacetCoverageByInstanceSum += avgFacetCoverageByInstanceSum;
+
+	// Profiles
+	for (Profile p : headerReport.profiles.profiles)
+	    parentReport.handleProfile(p);
+
+	// MDSelfLinks
+	if (headerReport.duplicatedMDSelfLink != null && !headerReport.duplicatedMDSelfLink.isEmpty()) {
+
+	    if (parentReport.headerReport.duplicatedMDSelfLink == null) {
+		parentReport.headerReport.duplicatedMDSelfLink = new LinkedList();
+	    }
+
+	    for (String mdSelfLink : headerReport.duplicatedMDSelfLink)
+		if (!parentReport.headerReport.duplicatedMDSelfLink.contains(mdSelfLink))
+		    parentReport.headerReport.duplicatedMDSelfLink.add(mdSelfLink);
+	}
+
+	// invalid files
+	if (invalidFile != null) {
+	    for (String invalid : invalidFile)
+		parentReport.addNewInvalid(invalid);
+	}
+
+    }
+
+    public void calculateAverageValues() {
+	// score
+	avgScore = score / fileReport.numOfFiles;
+
+	// ResProxies
+	resProxyReport.avgNumOfResProxies = (double)resProxyReport.totNumOfResProxies / fileReport.numOfFiles;
+	resProxyReport.avgNumOfResWithMime = (double) resProxyReport.totNumOfResWithMime / fileReport.numOfFiles;
+	resProxyReport.avgNumOfLandingPages = (double) resProxyReport.totNumOfLandingPages / fileReport.numOfFiles;
+	resProxyReport.avgNumOfLandingPagesWithoutLink = (double)resProxyReport.totNumOfLandingPagesWithoutLink / fileReport.numOfFiles;
+	resProxyReport.avgNumOfResources = (double)resProxyReport.totNumOfResources / fileReport.numOfFiles;
+	resProxyReport.avgNumOfMetadata =(double)resProxyReport.totNumOfMetadata / fileReport.numOfFiles;
+
+	// XMLValidator
+	xmlReport.avgNumOfXMLElements =(double)xmlReport.totNumOfXMLElements / fileReport.numOfFiles;
+	xmlReport.avgNumOfXMLSimpleElements = (double) xmlReport.totNumOfXMLSimpleElements / fileReport.numOfFiles;
+	xmlReport.avgXMLEmptyElement = (double) xmlReport.totNumOfXMLEmptyElement / fileReport.numOfFiles;
+
+	xmlReport.avgRateOfPopulatedElements = (double) (xmlReport.totNumOfXMLSimpleElements - xmlReport.totNumOfXMLEmptyElement) / fileReport.numOfFiles;
+
+	// URL
+	urlReport.avgNumOfLinks = (double)urlReport.totNumOfLinks / fileReport.numOfFiles;
+	urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
+	urlReport.avgNumOfResProxiesLinks = (double)urlReport.totNumOfResProxiesLinks / fileReport.numOfFiles;
+	urlReport.avgNumOfBrokenLinks = 1.0 * (double)urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
+
+	urlReport.avgNumOfValidLinks = (double) (urlReport.totNumOfUniqueLinks - urlReport.totNumOfBrokenLinks) / fileReport.numOfFiles;
+
+	// Facets
+	if(facetReport == null)
+	    facetReport = new FacetReport();
+	facetReport.avgFacetCoverageByInstance = (double) avgFacetCoverageByInstanceSum / fileReport.numOfFiles;
+
+    }
+
+    @Override
+    public void marshal(OutputStream os) throws Exception {
+	try {
+
+	    JAXBContext jaxbContext = JAXBContext.newInstance(CollectionReport.class);
+	    Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+	    // output pretty printed
+	    jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+	    jaxbMarshaller.marshal(this, os);
+
+	} catch (JAXBException e) {
+	    e.printStackTrace();
+	}
+
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class FileReport {
+	String provider;
+	long numOfFiles = 0;
+	long size;
+	long minFileSize;
+	long maxFileSize;
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class HeaderReport {
+	@XmlElementWrapper(name = "duplicatedMDSelfLinks")
+	public List<String> duplicatedMDSelfLink = null;
+	public Profiles profiles = null;
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class ResProxyReport {
+	int totNumOfResProxies;
+	double avgNumOfResProxies;
+	int totNumOfResWithMime;
+	double avgNumOfResWithMime;
+	int totNumOfLandingPages;
+	double avgNumOfLandingPages;
+	int totNumOfLandingPagesWithoutLink;
+	double avgNumOfLandingPagesWithoutLink;
+	int totNumOfResources;
+	double avgNumOfResources;
+	int totNumOfMetadata;
+	double avgNumOfMetadata;
+
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class XMLValidationReport {
+	int totNumOfXMLElements;
+	double avgNumOfXMLElements;
+	int totNumOfXMLSimpleElements;
+	double avgNumOfXMLSimpleElements;
+	int totNumOfXMLEmptyElement;
+	double avgXMLEmptyElement;
+	double avgRateOfPopulatedElements;
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class URLValidationReport {
+	int totNumOfLinks;
+	double avgNumOfLinks;
+	int totNumOfUniqueLinks;
+	double avgNumOfUniqueLinks;
+	int totNumOfResProxiesLinks;
+	double avgNumOfResProxiesLinks;
+	int totNumOfBrokenLinks;
+	double avgNumOfBrokenLinks;
+	double avgNumOfValidLinks;
+    }
+    
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class FacetReport{
+	double avgFacetCoverageByInstance;
+    }
+    
     @XmlRootElement(name = "profiles")
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Profiles {
+    static class Profiles {
 
 	@XmlAttribute(name = "count")
 	public int totNumOfProfiles = 0;
@@ -139,7 +300,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
     @XmlRootElement(name = "profile")
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Profile {
+    static class Profile {
 
 	@XmlAttribute
 	public String name;
@@ -148,85 +309,21 @@ public class CollectionReport implements Report<CollectionReport> {
 	public int count;
     }
 
-    public void handleProfile(String profile) {
-	if (profiles == null)
-	    profiles = new Profiles();
-	profiles.handleProfile(profile);
+    public void addFileReport(String provider, long numOfFiles, long size, long minSize, long maxSize) {
+	fileReport.provider = provider;
+	fileReport.numOfFiles = numOfFiles;
+	fileReport.size = size;
+	fileReport.minFileSize = minSize;
+	fileReport.maxFileSize = maxSize;
+
     }
-
-    public void handleProfile(Profile profile) {
-	if (profiles == null)
-	    profiles = new Profiles();
-	profiles.handleProfile(profile);
-    }
-
-    @Override
-    public void mergeWithParent(CollectionReport parentReport) {
-
-	parentReport.numOfValidFiles += numOfValidFiles;
-
-	// ResProxies
-	parentReport.totNumOfResProxies += totNumOfResProxies;
-	parentReport.totNumOfResWithMime += totNumOfResWithMime;
-	parentReport.totNumOfLandingPages += totNumOfLandingPages;
-	parentReport.totNumOfLandingPagesWithoutLink += totNumOfLandingPagesWithoutLink;
-	parentReport.totNumOfResources += totNumOfResources;
-	parentReport.totNumOfMetadata += totNumOfMetadata;
-
-	// XMLValidator
-	parentReport.totNumOfXMLElements += totNumOfXMLElements;
-	parentReport.totNumOfXMLSimpleElements += totNumOfXMLSimpleElements;
-	parentReport.totNumOfXMLEmptyElement += totNumOfXMLEmptyElement;
-
-	// URL
-	parentReport.totNumOfLinks += totNumOfLinks;
-	parentReport.totNumOfUniqueLinks += totNumOfUniqueLinks;
-	parentReport.totNumOfResProxiesLinks += totNumOfResProxiesLinks;
-	parentReport.totNumOfBrokenLinks += totNumOfBrokenLinks;
-
-	// Facet
-	parentReport.avgFacetCoverageByInstanceSum += avgFacetCoverageByInstanceSum;
-
-	// Profiles
-	for (Profile p : profiles.profiles)
-	    parentReport.handleProfile(p);
-
-	// MDSelfLinks
-	if (duplicatedMDSelfLink != null && !duplicatedMDSelfLink.isEmpty()) {
-
-	    if (parentReport.duplicatedMDSelfLink == null) {
-		parentReport.duplicatedMDSelfLink = new LinkedList();
-	    }
-
-	    for (String mdSelfLink : duplicatedMDSelfLink)
-		if (!parentReport.duplicatedMDSelfLink.contains(mdSelfLink))
-		    parentReport.duplicatedMDSelfLink.add(mdSelfLink);
+    
+    public void addSelfLinks(List<String> duplicatedMDSelfLink){
+	if(headerReport == null){
+	    headerReport = new HeaderReport();
+	    headerReport.duplicatedMDSelfLink = duplicatedMDSelfLink;
 	}
 	
-	//invalid files
-	if(invalidFile != null){
-	    for(String invalid: invalidFile)
-		parentReport.addNewInvalid(invalid);
-	}
-
-    }
-
-    @Override
-    public void marshal(OutputStream os) throws Exception {
-	try {
-
-	    JAXBContext jaxbContext = JAXBContext.newInstance(CollectionReport.class);
-	    Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-	    // output pretty printed
-	    jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-	    jaxbMarshaller.marshal(this, os);
-
-	} catch (JAXBException e) {
-	    e.printStackTrace();
-	}
-
     }
 
 }

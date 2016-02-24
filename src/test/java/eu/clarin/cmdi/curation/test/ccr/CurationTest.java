@@ -21,7 +21,7 @@ public class CurationTest {
 	Config.setOUTPUT_DIRECTORY(null);
 
 	Path path1 = FileSystems.getDefault().getPath(
-		"D:/data/cmdi/META_SHARE_3_0/08ae069e770a11e5a6e4005056b4002410c2850320274e04b9a6c6692883a054.xml");
+		"D:/data/test/test1/eeba6672493adaa6f24b3bf1c13c385b.xml");
 	Path path2 = FileSystems.getDefault().getPath("D:/data/cmdi/Deutsches_Textarchiv/dta_386.xml");
 	Path cmdi = FileSystems.getDefault().getPath("D:/data/cmdi");
 	Path test = FileSystems.getDefault().getPath("D:/data/test/test1");
@@ -38,7 +38,7 @@ public class CurationTest {
 	Path profile1 =  FileSystems.getDefault().getPath("D:/xsd/p_1361876010587.xsd");
 
 	// curator.curate(path1); curator.curate(path2);
-	new Curator().curate(path1);
+	new Curator().curate(test);
 
     }
 

@@ -29,8 +29,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 
     public double score;
 
-    // status
-    public transient boolean isValid = true;
+    public boolean isValid = true;
 
     // for score calculation
 
@@ -44,8 +43,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
     public transient boolean mdProfileExists = true;
     public transient boolean mdCollectionDispExists = true;
     public transient boolean mdSelfLinkExists = true;
-    
-    
+
     // for passing values
     public transient int numOfLinks = 0;
     public transient int numOfResProxiesLinks = 0;
@@ -53,15 +51,15 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
     public transient int numOfWarnnings;
     public transient int numOfErrors;
     public transient int numOfFatals;
-    
+
     public transient List<Message> xmlErrors;
 
     // sub reports **************************************
 
-    //Header
+    // Header
     @XmlElement(name = "header-section")
     HeaderReport headerReport;
-    
+
     // file
     @XmlElement(name = "file-section")
     FileReport fileReport;
@@ -75,7 +73,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
     XMLReport xmlReport;
 
     // URL
-    @XmlElement(name = "url-section")
+    @XmlElement(name = "url-validation-section")
     URLReport urlReport;
 
     // facets
@@ -110,8 +108,9 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	if (resProxyReport.numOfResProxies > 0) {// if there are resproxies
 	    sectionScore += 1;
 	    // perc of landPages having references with link
-	    sectionScore += resProxyReport.numOfLandingPages
-		    - resProxyReport.numOfLandingPagesWithoutLink / (double) resProxyReport.numOfLandingPages;
+	    if (resProxyReport.numOfLandingPages > 0)
+		sectionScore += (resProxyReport.numOfLandingPages - resProxyReport.numOfLandingPagesWithoutLink)
+			/ (double) resProxyReport.numOfLandingPages;
 
 	}
 	score += sectionScore; // * resProxy factor
@@ -119,44 +118,47 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	score += xmlReport.percOfPopulatedElements; // * xmlValidation factor
 
 	sectionScore = 0;
-	//it can influence the score, if one collection was done with enabled and the other without
-	if(!Double.isNaN(urlReport.percOfValidLinks)){
+	// it can influence the score, if one collection was done with enabled
+	// and the other without
+	if (!Double.isNaN(urlReport.percOfValidLinks)) {
 	    sectionScore += urlReport.percOfValidLinks;
-	}//else
-	
+	} // else
+
 	score += sectionScore; // * urlValidation factor
-	
+
 	score += facets.instance.coverage;// *facetCoverage factor
 
     }
 
     @Override
     public void mergeWithParent(CollectionReport parentReport) {
+
+	calculateScore();
+
 	if (!isValid) {
 	    parentReport.addNewInvalid(fileReport.path);
-	    return;
 	}
 
-	parentReport.numOfValidFiles++;
+	parentReport.score += score;
 
 	// ResProxies
-	parentReport.totNumOfResProxies += resProxyReport.numOfResProxies;
-	parentReport.totNumOfResWithMime += resProxyReport.numOfResWithMime;
-	parentReport.totNumOfLandingPages += resProxyReport.numOfLandingPages;
-	parentReport.totNumOfLandingPagesWithoutLink += resProxyReport.numOfLandingPagesWithoutLink;
-	parentReport.totNumOfResources += resProxyReport.numOfResources;
-	parentReport.totNumOfMetadata += resProxyReport.numOfMetadata;
+	parentReport.resProxyReport.totNumOfResProxies += resProxyReport.numOfResProxies;
+	parentReport.resProxyReport.totNumOfResWithMime += resProxyReport.numOfResWithMime;
+	parentReport.resProxyReport.totNumOfLandingPages += resProxyReport.numOfLandingPages;
+	parentReport.resProxyReport.totNumOfLandingPagesWithoutLink += resProxyReport.numOfLandingPagesWithoutLink;
+	parentReport.resProxyReport.totNumOfResources += resProxyReport.numOfResources;
+	parentReport.resProxyReport.totNumOfMetadata += resProxyReport.numOfMetadata;
 
 	// XMLValidator
-	parentReport.totNumOfXMLElements += xmlReport.numOfXMLElements;
-	parentReport.totNumOfXMLSimpleElements += xmlReport.numOfXMLSimpleElements;
-	parentReport.totNumOfXMLEmptyElement += xmlReport.numOfXMLEmptyElement;
+	parentReport.xmlReport.totNumOfXMLElements += xmlReport.numOfXMLElements;
+	parentReport.xmlReport.totNumOfXMLSimpleElements += xmlReport.numOfXMLSimpleElements;
+	parentReport.xmlReport.totNumOfXMLEmptyElement += xmlReport.numOfXMLEmptyElement;
 
 	// URL
-	parentReport.totNumOfLinks += urlReport.numOfLinks;
-	parentReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
-	parentReport.totNumOfResProxiesLinks += urlReport.numOfResProxiesLinks;
-	parentReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
+	parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;
+	parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
+	parentReport.urlReport.totNumOfResProxiesLinks += urlReport.numOfResProxiesLinks;
+	parentReport.urlReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
 
 	// Facet
 	if (facets != null && facets.instance != null)
@@ -183,8 +185,8 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	    e.printStackTrace();
 	}
     }
-    
-    public String getProfile(){
+
+    public String getProfile() {
 	return headerReport.profile;
     }
 
@@ -206,7 +208,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	public FileReport() {
 	};
     }
-    
+
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
     static class HeaderReport {
@@ -233,7 +235,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	int numOfLandingPagesWithoutLink;
 	int numOfResources;
 	int numOfMetadata;
-	
+
 	@XmlElementWrapper(name = "details")
 	List<Message> messages = null;
 
@@ -263,12 +265,13 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	int numOfWarnnings;
 	int numOfErrors;
 	int numOfFatals;
-	
+
 	@XmlElementWrapper(name = "details")
 	List<Message> messages = null;
 
 	public XMLReport(int numOfXMLElements, int numOfXMLSimpleElements, int numOfXMLEmptyElement,
-		double percOfPopulatedElements, int numOfWarnnings, int numOfErrors, int numOfFatals, List<Message> messages) {
+		double percOfPopulatedElements, int numOfWarnnings, int numOfErrors, int numOfFatals,
+		List<Message> messages) {
 	    this.numOfXMLElements = numOfXMLElements;
 	    this.numOfXMLSimpleElements = numOfXMLSimpleElements;
 	    this.numOfXMLEmptyElement = numOfXMLEmptyElement;
@@ -291,7 +294,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	int numOfResProxiesLinks;
 	int numOfBrokenLinks;
 	double percOfValidLinks;
-	
+
 	@XmlElementWrapper(name = "details")
 	List<Message> messages = null;
 
@@ -313,10 +316,10 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
     public void addFileReport(String path, long size, List<Message> messages) {
 	fileReport = new FileReport(path, size, messages);
     }
-    
+
     public void addHeaderReport(String profile, List<Message> messages) {
-   	headerReport = new HeaderReport(profile, messages);
-       }
+	headerReport = new HeaderReport(profile, messages);
+    }
 
     public void addResProxyReport(int numOfResProxies, int numOfResWithMime, int numOfLandingPages,
 	    int numOfLandingPagesWithoutLink, int numOfResources, int numOfMetadata, List<Message> messages) {
@@ -324,9 +327,11 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 		numOfLandingPagesWithoutLink, numOfResources, numOfMetadata, messages);
     }
 
-    public void addXmlReport(int numOfXMLElements, int numOfXMLSimpleElements, int numOfXMLEmptyElement, List<Message> messages) {
+    public void addXmlReport(int numOfXMLElements, int numOfXMLSimpleElements, int numOfXMLEmptyElement,
+	    List<Message> messages) {
 
-	double percOfPopulatedElements = (numOfXMLSimpleElements - numOfXMLEmptyElement) / (double)numOfXMLSimpleElements;
+	double percOfPopulatedElements = (numOfXMLSimpleElements - numOfXMLEmptyElement)
+		/ (double) numOfXMLSimpleElements;
 	xmlReport = new XMLReport(numOfXMLElements, numOfXMLSimpleElements, numOfXMLEmptyElement,
 		percOfPopulatedElements, numOfWarnnings, numOfErrors, numOfFatals, messages);
     }
@@ -334,7 +339,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
     public void addURLReport(int numOfBrokenLinks, List<Message> messages) {
 
 	double percOfValidLinks = Double.NaN;
-	if(Config.HTTP_VALIDATION())	
+	if (Config.HTTP_VALIDATION())
 	    percOfValidLinks = (numOfLinks - numOfBrokenLinks) / (double) numOfLinks;
 	urlReport = new URLReport(numOfLinks, numOfUniqueLinks, numOfResProxiesLinks, numOfBrokenLinks,
 		percOfValidLinks, messages);

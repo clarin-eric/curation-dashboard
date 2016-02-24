@@ -26,13 +26,7 @@ public class CollectionAggregator extends ProcessingStep<Collection, CollectionR
     @Override
     public boolean process(Collection dir, final CollectionReport report) {
 
-	report.provider = dir.getPath().getFileName().toString();
-
-	report.size = dir.getSize();
-	report.maxFileSize = dir.getMaxFileSize();
-	report.minFileSize = dir.getMinFileSize();
-
-	report.numOfFiles = dir.getNumOfFiles();
+	report.addFileReport(dir.getPath().getFileName().toString(), dir.getNumOfFiles(), dir.getSize(), dir.getMinFileSize(), dir.getMaxFileSize());
 	
 	// process in portions to avoid memory thresholds
 	Iterator<CurationEntity> it = dir.getChildren().iterator();
@@ -54,37 +48,11 @@ public class CollectionAggregator extends ProcessingStep<Collection, CollectionR
 	    _logger.debug("{} records are processed so far, rest {}", processed, dir.getChildren().size());
 
 	}
-
-	// ResProxies
-	report.percOfValidFiles = 1.0 * report.numOfValidFiles / report.numOfFiles;
-	report.avgNumOfResProxies = 1.0 * report.totNumOfResProxies / report.numOfFiles;
-	report.avgNumOfResWithMime = 1.0 * report.totNumOfResWithMime / report.numOfFiles;
-	report.avgNumOfLandingPages = 1.0 * report.totNumOfLandingPages / report.numOfFiles;
-	report.avgNumOfLandingPagesWithoutLink = 1.0 * report.totNumOfLandingPagesWithoutLink / report.numOfFiles;
-	report.avgNumOfResources = 1.0 * report.totNumOfResources / report.numOfFiles;
-	report.avgNumOfMetadata = 1.0 * report.totNumOfMetadata / report.numOfFiles;
-
-	// XMLValidator
-	report.avgNumOfXMLElements = 1.0 * report.totNumOfXMLElements / report.numOfFiles;
-	report.avgNumOfXMLSimpleElements = 1.0 * report.totNumOfXMLSimpleElements / report.numOfFiles;
-	report.avgXMLEmptyElement = 1.0 * report.totNumOfXMLEmptyElement / report.numOfFiles;
-
-	report.avgRateOfPopulatedElements = 1.0 * (report.totNumOfXMLSimpleElements - report.totNumOfXMLEmptyElement)
-		/ report.numOfFiles;
-
-	// URL
-	report.avgNumOfLinks = 1.0 * report.totNumOfLinks / report.numOfFiles;
-	report.avgNumOfUniqueLinks = 1.0 * report.totNumOfUniqueLinks / report.numOfFiles;
-	report.avgNumOfResProxiesLinks = 1.0 * report.totNumOfResProxiesLinks / report.numOfFiles;
-	report.avgNumOfBrokenLinks = 1.0 * report.totNumOfBrokenLinks / report.numOfFiles;
-
-	report.avgPercOfValidLinks = 1.0 * (report.totNumOfLinks - report.totNumOfBrokenLinks) / report.numOfFiles;
-
-	// Facets
-	report.avgFacetCoverageByInstance = 1.0 * report.avgFacetCoverageByInstanceSum / report.numOfFiles;
+	
+	report.calculateAverageValues();
 	
 	if(!CMDIInstance.duplicateMDSelfLinks.isEmpty())
-	    report.duplicatedMDSelfLink = new ArrayList(CMDIInstance.duplicateMDSelfLinks);
+	    report.addSelfLinks(new ArrayList(CMDIInstance.duplicateMDSelfLinks));
 	CMDIInstance.duplicateMDSelfLinks.clear();
 	CMDIInstance.uniqueMDSelfLinks.clear();
 

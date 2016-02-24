@@ -11,11 +11,12 @@ public class FileSizeValidator extends CMDISubprocessor {
     public boolean process(CMDIInstance entity, CMDIInstanceReport report) {	
 	if (entity.getSize() > Config.MAX_SIZE_OF_FILE()){
 	    report.sizeExceeded = true;
-	    addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + Config.MAX_SIZE_OF_FILE() + "B)");
+	    report.isValid = false;
+	    addMessage(Severity.ERROR, "The file size exceeds the limit allowed (" + Config.MAX_SIZE_OF_FILE() + "B)");
 	}
 	
 	report.addFileReport(entity.getPath().toString(), entity.getSize(), msgs);
 	
-	return !report.sizeExceeded;
+	return true;
     }
 }
