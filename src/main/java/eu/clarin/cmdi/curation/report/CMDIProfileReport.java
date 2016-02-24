@@ -14,6 +14,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -43,11 +44,13 @@ public class CMDIProfileReport implements Report<Report>{
     public int numOfElements;
     //public int numOfUniqueElements;
     public int numOfElementsWithDatcat;
-    public double ratioOfElemenetsWithDatcat;    
-    public int numOfRequiredDatCat;
+    public double ratioOfElemenetsWithDatcat; 
+    
+    public int numOfRequiredDatcat;
+    public int numOfUniqueDatcat;
     
     @XmlElementWrapper(name = "datcats")
-    public List<String> datcat = null;
+    public List<Datcat> datcat = null;
     
     @XmlElement(name = "facets-report")
     public FacetReport facet;
@@ -61,12 +64,6 @@ public class CMDIProfileReport implements Report<Report>{
 	messages.add(new Message(lvl, message));
     }
     
-    public void addDatcat(String val){
-	if (datcat == null)
-	    datcat = new LinkedList<>();
-	datcat.add(val);
-    }
-
 
     @Override
     public void mergeWithParent(Report parentReport) {
@@ -92,6 +89,24 @@ public class CMDIProfileReport implements Report<Report>{
 	    e.printStackTrace();
 	}
 	
+    }
+    
+    @XmlRootElement(name = "datcat")
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Datcat{
+	@XmlAttribute
+	String value;
+	
+	@XmlAttribute
+	int count;
+	
+	public Datcat(){}
+	
+	public Datcat(String value, int count){
+	    this.value = value;
+	    this.count = count;
+	    
+	}
     }
 
 }

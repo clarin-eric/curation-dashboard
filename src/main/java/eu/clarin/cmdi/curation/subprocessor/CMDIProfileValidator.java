@@ -3,6 +3,8 @@
  */
 package eu.clarin.cmdi.curation.subprocessor;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -17,6 +19,7 @@ import eu.clarin.cmdi.curation.component_registry.ComponentRegistryService;
 import eu.clarin.cmdi.curation.component_registry.ProfileSpec;
 import eu.clarin.cmdi.curation.entities.CMDIProfile;
 import eu.clarin.cmdi.curation.report.CMDIProfileReport;
+import eu.clarin.cmdi.curation.report.CMDIProfileReport.Datcat;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.xml.CMDIXPathService;
 
@@ -52,6 +55,8 @@ public class CMDIProfileValidator implements ProcessingStep<CMDIProfile, CMDIPro
 	    int numOfElements = 0;
 	    int numOfElementsWithDatcat = 0;
 	    int numOfRequiredDatCat = 0;
+	    
+	    Map<String, Integer> datcatMap = new HashMap<>();
 
 	    xmlService.getNavigator().toElement(VTDNav.ROOT);
 	    ap.selectElement("xs:element");
@@ -61,8 +66,8 @@ public class CMDIProfileValidator implements ProcessingStep<CMDIProfile, CMDIPro
 		if (datcatIndex != -1) {
 		    numOfElementsWithDatcat++;
 		    // get the string
-		    report.addDatcat(xmlService.getNavigator().toNormalizedString(datcatIndex));
-
+		    String datacat = xmlService.getNavigator().toNormalizedString(datcatIndex);
+		    datcatMap.put(datacat, !datcatMap.containsKey(datacat)? new Integer(1) : new Integer(datcatMap.get(datacat) + 1));
 		    int minOccInd = xmlService.getNavigator().getAttrVal("minOccurs");
 		    if (minOccInd != -1) {
 			if (!xmlService.getNavigator().toNormalizedString(minOccInd).isEmpty()
@@ -71,16 +76,19 @@ public class CMDIProfileValidator implements ProcessingStep<CMDIProfile, CMDIPro
 		    }
 		}
 	    }
+	    report.datcat = datcatMap.entrySet().stream().map(entry -> new Datcat(entry.getKey(), entry.getValue())).collect(Collectors.toList());
 	    report.numOfElements = numOfElements;
 	    report.numOfElementsWithDatcat = numOfElementsWithDatcat;
-	    report.numOfRequiredDatCat = numOfRequiredDatCat;
-	    report.ratioOfElemenetsWithDatcat = (double) numOfElementsWithDatcat / numOfElements;
+	    report.numOfRequiredDatcat = numOfRequiredDatCat;
+	    report.numOfUniqueDatcat = (int) report.datcat.size();
+	    report.ratioOfElemenetsWithDatcat = (double) numOfElementsWithDatcat / numOfElements;	    
+	    
 
 	    return true;
 
 	} catch (Exception e) {
 	    _logger.error("Error processing profile {}", entity.getPath(), e);
-	    report.addDetail(Severity.FATAL, e.getMessage());
+	    report.addDetail(Severity.FATAL, e.toString());
 	    return false;
 	}
 
