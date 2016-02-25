@@ -17,9 +17,9 @@ import eu.clarin.cmdi.curation.report.FacetReport.Profile;
  * @author dostojic
  *
  */
-public class CMDIProfileFacets extends ProcessingStep<CMDIProfile, CMDIProfileReport> {
+public class ProfileFacetHanlder extends ProcessingStep<CMDIProfile, CMDIProfileReport> {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CMDIProfileFacets.class);
+    private static final Logger _logger = LoggerFactory.getLogger(ProfileFacetHanlder.class);
 
     @Override
     public boolean process(CMDIProfile entity, CMDIProfileReport report) {

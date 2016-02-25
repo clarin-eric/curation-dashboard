@@ -29,20 +29,17 @@ public class CMDIErrorHandler implements ErrorHandler {
 
     @Override
     public void fatalError(SAXParseException exception) throws SAXException {
-	report.numOfFatals++;
 	addMessage(Severity.FATAL, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage());
 	throw exception;
     }
 
     @Override
     public void error(SAXParseException exception) throws SAXException {
-	report.numOfErrors++;
 	addMessage(Severity.ERROR, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage());
     }
 
     @Override
     public void warning(SAXParseException exception) throws SAXException {
-	report.numOfWarnnings++;
 	addMessage(Severity.WARNING, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage());
 
     }

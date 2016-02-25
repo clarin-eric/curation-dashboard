@@ -8,12 +8,13 @@ import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 
 public abstract class AbstractProcessor<R extends Report>{
 
-    public R process(CurationEntity entity) {
-	R report = createReport();
+    public Report process(CurationEntity entity) {
+	Report report = createReport();
 	for (ProcessingStep step : createPipeline())
 	    // stop applying further processors in case of fatal error
 	    if (!step.process(entity, report))
 		break;
+	report.calculateScore();
 	return report;
     }
 

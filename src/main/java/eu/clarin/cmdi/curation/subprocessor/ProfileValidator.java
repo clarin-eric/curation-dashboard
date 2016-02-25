@@ -3,10 +3,6 @@
  */
 package eu.clarin.cmdi.curation.subprocessor;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +13,9 @@ import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.component_registry.CCR_Constants;
 import eu.clarin.cmdi.curation.component_registry.ComponentRegistryService;
 import eu.clarin.cmdi.curation.component_registry.ProfileSpec;
+import eu.clarin.cmdi.curation.component_registry.ProfileSpec.CMD_Component;
 import eu.clarin.cmdi.curation.entities.CMDIProfile;
 import eu.clarin.cmdi.curation.report.CMDIProfileReport;
-import eu.clarin.cmdi.curation.report.CMDIProfileReport.Datcat;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.xml.CMDIXPathService;
 
@@ -27,9 +23,9 @@ import eu.clarin.cmdi.curation.xml.CMDIXPathService;
  * @author dostojic
  *
  */
-public class CMDIProfileValidator extends ProcessingStep<CMDIProfile, CMDIProfileReport> {
+public class ProfileValidator extends ProcessingStep<CMDIProfile, CMDIProfileReport> {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CMDIProfileValidator.class);
+    private static final Logger _logger = LoggerFactory.getLogger(ProfileValidator.class);
 
     @Override
     public boolean process(CMDIProfile entity, CMDIProfileReport report) {
@@ -40,7 +36,7 @@ public class CMDIProfileValidator extends ProcessingStep<CMDIProfile, CMDIProfil
 	    AutoPilot ap = new AutoPilot(xmlService.getNavigator());
 
 	    // extract profileID:
-	    ap.selectElement("ann:ID");
+	    ap.selectElement("ID");
 	    while (ap.iterate()) {
 		int t = xmlService.getNavigator().getText();
 		if (t != -1) {
@@ -54,35 +50,32 @@ public class CMDIProfileValidator extends ProcessingStep<CMDIProfile, CMDIProfil
 
 	    int numOfElements = 0;
 	    int numOfElementsWithDatcat = 0;
-	    int numOfRequiredDatCat = 0;
-	    
-	    Map<String, Integer> datcatMap = new HashMap<>();
 
 	    xmlService.getNavigator().toElement(VTDNav.ROOT);
-	    ap.selectElement("xs:element");
+	    ap.selectElement("element");
 	    while (ap.iterate()) {
+		boolean required = false;
+		String datacat = null;
 		numOfElements++;
 		int datcatIndex = getDatcatIndex(xmlService.getNavigator());
 		if (datcatIndex != -1) {
 		    numOfElementsWithDatcat++;
 		    // get the string
-		    String datacat = xmlService.getNavigator().toNormalizedString(datcatIndex);
-		    datcatMap.put(datacat, !datcatMap.containsKey(datacat)? new Integer(1) : new Integer(datcatMap.get(datacat) + 1));
+		    datacat = xmlService.getNavigator().toNormalizedString(datcatIndex);
 		    int minOccInd = xmlService.getNavigator().getAttrVal("minOccurs");
 		    if (minOccInd != -1) {
 			if (!xmlService.getNavigator().toNormalizedString(minOccInd).isEmpty()
 				&& !xmlService.getNavigator().toNormalizedString(minOccInd).equals("0"))
-			    numOfRequiredDatCat++;
+			    required = true;
 		    }
 		}
+		
+		if(datacat != null)
+		    report.addDataCategory(datacat, required);
 	    }
-	    report.datcat = datcatMap.entrySet().stream().map(entry -> new Datcat(entry.getKey(), entry.getValue())).collect(Collectors.toList());
-	    report.numOfElements = numOfElements;
-	    report.numOfElementsWithDatcat = numOfElementsWithDatcat;
-	    report.numOfRequiredDatcat = numOfRequiredDatCat;
-	    report.numOfUniqueDatcat = (int) report.datcat.size();
-	    report.ratioOfElemenetsWithDatcat = (double) numOfElementsWithDatcat / numOfElements;	    
 	    
+	    report.numOfElements = numOfElements;
+	    report.ratioOfElemenetsWithDatcat = (double) numOfElementsWithDatcat / numOfElements;
 
 	    return true;
 
@@ -113,18 +106,10 @@ public class CMDIProfileValidator extends ProcessingStep<CMDIProfile, CMDIProfil
 
 	report.isPublic = ComponentRegistryService.getInstance().isPublic(report.ID);
 
-	report.numOfComponents = spec.getComponent().getComponents().size();
-	report.numOfRequiredComponents = spec.getComponent().getComponents().stream()
-		.mapToInt(c -> c.getCardinalityMin().equals("0") ? 0 : 1).filter(cardinlaityMin -> cardinlaityMin > 0)
-		.sum();
-	report.component = spec.getComponent().getComponents().stream().map(c -> {
-	    if (c.getName() == null || c.getName().isEmpty())
-		return c.getComponetId();
-	    else if (c.getComponetId() == null || c.getComponetId().isEmpty())
-		return c.getName();
-	    else
-		return c.getName() + "/" + c.getComponetId();
-	}).collect(Collectors.toList());
+	for (CMD_Component c : spec.getComponent().getComponents()) {
+	    report.addComponent(c.getName(), c.getComponetId(), !c.getCardinalityMin().equals("0"));
+	}
+
     }
 
 }

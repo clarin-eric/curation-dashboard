@@ -24,14 +24,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "collection-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionReport implements Report<CollectionReport> {
+    
+    transient public double avgFacetCoverageByInstanceSum;
+    
+    transient public double score;
+    
 
-    transient public Double avgFacetCoverageByInstanceSum = 0d;
-
+    //report fields
     public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+    
+    @XmlElement(name = "score")
+    public String totalScore;
 
-    public double score;
-
-    public double avgScore;
+    public String avgScore;
 
     @XmlElement(name = "file-section")
     FileReport fileReport = new FileReport();
@@ -52,12 +57,13 @@ public class CollectionReport implements Report<CollectionReport> {
     URLValidationReport urlReport = new URLValidationReport();
 
     // Facets
-
     @XmlElement(name = "facet-section")
     FacetReport facetReport = new FacetReport();
 
     @XmlElementWrapper(name = "invalidFilesList")
     public List<String> invalidFile = null;
+    
+    
 
 
     public void addNewInvalid(String file) {
@@ -135,10 +141,20 @@ public class CollectionReport implements Report<CollectionReport> {
 	}
 
     }
+    
+    @Override
+    public double getMaxScore() {
+	return fileReport.numOfFiles * CMDIInstanceReport.MAX_SCORE;
+    };
+    
+    @Override
+    public void calculateScore() {
+	totalScore = formatScore(score, getMaxScore());	
+	avgScore = formatScore(score / fileReport.numOfFiles, CMDIInstanceReport.MAX_SCORE);	
+	
+    }
 
-    public void calculateAverageValues() {
-	// score
-	avgScore = score / fileReport.numOfFiles;
+    public void calculateAverageValues() {	
 
 	// ResProxies
 	resProxyReport.avgNumOfResProxies = (double)resProxyReport.totNumOfResProxies / fileReport.numOfFiles;

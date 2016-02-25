@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -24,10 +25,14 @@ import eu.clarin.cmdi.curation.main.Config;
 @XmlRootElement(name = "instance-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDIInstanceReport implements Report<CollectionReport> {
-
+    
+    static final double MAX_SCORE = 11;
+    
     public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-
-    public double score;
+    transient double score; 
+    
+    @XmlElement(name = "score")
+    public String overallScore;
 
     public boolean isValid = true;
 
@@ -48,9 +53,6 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
     public transient int numOfLinks = 0;
     public transient int numOfResProxiesLinks = 0;
     public transient int numOfUniqueLinks = 0;
-    public transient int numOfWarnnings;
-    public transient int numOfErrors;
-    public transient int numOfFatals;
 
     public transient List<Message> xmlErrors;
 
@@ -78,7 +80,13 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 
     // facets
     public FacetReport facets;
+    
+    @Override
+    public double getMaxScore() {
+	return MAX_SCORE;
+    };
 
+    @Override
     public void calculateScore() {
 	score = 0;
 
@@ -127,13 +135,13 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	score += sectionScore; // * urlValidation factor
 
 	score += facets.instance.coverage;// *facetCoverage factor
+	
+	overallScore = formatScore(score, getMaxScore());
 
     }
 
     @Override
     public void mergeWithParent(CollectionReport parentReport) {
-
-	calculateScore();
 
 	if (!isValid) {
 	    parentReport.addNewInvalid(fileReport.path);
@@ -170,7 +178,6 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 
     @Override
     public void marshal(OutputStream os) throws Exception {
-	calculateScore();
 	try {
 
 	    JAXBContext jaxbContext = JAXBContext.newInstance(CMDIInstanceReport.class);
@@ -262,23 +269,16 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	int numOfXMLSimpleElements;
 	int numOfXMLEmptyElement;
 	double percOfPopulatedElements;
-	int numOfWarnnings;
-	int numOfErrors;
-	int numOfFatals;
 
 	@XmlElementWrapper(name = "details")
 	List<Message> messages = null;
 
 	public XMLReport(int numOfXMLElements, int numOfXMLSimpleElements, int numOfXMLEmptyElement,
-		double percOfPopulatedElements, int numOfWarnnings, int numOfErrors, int numOfFatals,
-		List<Message> messages) {
+		double percOfPopulatedElements, List<Message> messages) {
 	    this.numOfXMLElements = numOfXMLElements;
 	    this.numOfXMLSimpleElements = numOfXMLSimpleElements;
 	    this.numOfXMLEmptyElement = numOfXMLEmptyElement;
 	    this.percOfPopulatedElements = percOfPopulatedElements;
-	    this.numOfWarnnings = numOfWarnnings;
-	    this.numOfErrors = numOfErrors;
-	    this.numOfFatals = numOfFatals;
 	    this.messages = messages;
 	}
 
@@ -333,7 +333,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	double percOfPopulatedElements = (numOfXMLSimpleElements - numOfXMLEmptyElement)
 		/ (double) numOfXMLSimpleElements;
 	xmlReport = new XMLReport(numOfXMLElements, numOfXMLSimpleElements, numOfXMLEmptyElement,
-		percOfPopulatedElements, numOfWarnnings, numOfErrors, numOfFatals, messages);
+		percOfPopulatedElements, messages);
     }
 
     public void addURLReport(int numOfBrokenLinks, List<Message> messages) {

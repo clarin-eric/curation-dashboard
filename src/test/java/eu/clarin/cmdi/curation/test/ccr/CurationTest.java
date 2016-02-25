@@ -38,7 +38,7 @@ public class CurationTest {
 	Path profile1 =  FileSystems.getDefault().getPath("D:/xsd/p_1361876010587.xsd");
 
 	// curator.curate(path1); curator.curate(path2);
-	new Curator().curate(test);
+	new Curator().curate(path1);
 
     }
 

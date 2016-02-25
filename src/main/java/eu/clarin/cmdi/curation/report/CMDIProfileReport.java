@@ -25,36 +25,32 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "profile-report")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CMDIProfileReport implements Report<Report>{
+public class CMDIProfileReport implements Report<Report> {
+
+    static final double MAX_SCORE = 3;
     
-    public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+    public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());    
     
+    @XmlElement(name = "score")
+    public String overallScore;
+
     public String ID;
     public String name;
     public String url;
     public String description;
     public boolean isPublic;
-    
-    public int numOfComponents;
-    public int numOfRequiredComponents; //cardinality > 0
-    
-    @XmlElementWrapper(name = "components")
-    public List<String> component;
+
+    Components components;
     
     public int numOfElements;
-    //public int numOfUniqueElements;
-    public int numOfElementsWithDatcat;
-    public double ratioOfElemenetsWithDatcat; 
+    public double ratioOfElemenetsWithDatcat;
     
-    public int numOfRequiredDatcat;
-    public int numOfUniqueDatcat;
+    Datacategories datacategories;
     
-    @XmlElementWrapper(name = "datcats")
-    public List<Datcat> datcat = null;
-    
+
     @XmlElement(name = "facets-report")
     public FacetReport facet;
-    
+
     @XmlElementWrapper(name = "details")
     public List<Message> messages = null;
 
@@ -63,15 +59,13 @@ public class CMDIProfileReport implements Report<Report>{
 	    messages = new LinkedList<>();
 	messages.add(new Message(lvl, message));
     }
-    
 
     @Override
     public void mergeWithParent(Report parentReport) {
-	//profile should not have a parent
+	// profile should not have a parent
 	throw new UnsupportedOperationException();
-	
-    }
 
+    }
 
     @Override
     public void marshal(OutputStream os) throws Exception {
@@ -88,25 +82,135 @@ public class CMDIProfileReport implements Report<Report>{
 	} catch (JAXBException e) {
 	    e.printStackTrace();
 	}
+
+    }
+    
+    @Override
+    public double getMaxScore() {
+	return MAX_SCORE;
+    };
+    
+    public void calculateScore(){
+	double score = 0;
+	
+	if(isPublic)
+	    score++;
+	
+	score += ratioOfElemenetsWithDatcat; //* factor for datcats
+	
+	score += facet.profile.coverage; // * factor for facet coverage
+	
+	overallScore = formatScore(score, MAX_SCORE);
+    }
+    
+    public void addComponent(String componentName, String componentId, boolean required){
+	if(components == null){
+	    components = new Components();
+	    components.component = new LinkedList<>();
+	}
+	
+	components.total++;
+	
+	if(required)
+	    components.required++;
+	
+	Component c = new Component();
+	c.name = componentName;
+	c.id = componentId;
+	c.required = required;
+	
+	components.component.add(c);
 	
     }
     
-    @XmlRootElement(name = "datcat")
-    @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Datcat{
-	@XmlAttribute
-	String value;
+    public void addDataCategory(String name, boolean required){
+	if(datacategories == null){
+	    datacategories = new Datacategories();
+	    datacategories.datcat = new LinkedList<>();
+	}
 	
+	datacategories.total++;	
+	if(required)
+	    datacategories.required++;
+	
+	for(Datcat d: datacategories.datcat)
+	    if(d.name.equals(name)){
+		d.count++;
+		if(required)
+		    d.required = true;
+		return;
+	    }
+	//not in the list
+	
+	datacategories.unique++;
+	
+	Datcat d = new Datcat();
+	d.name = name;
+	d.count = 1;
+	if(required)
+	    d.required = true;
+	datacategories.datcat.add(d);
+    }
+    
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Datacategories {
+	
+	@XmlAttribute
+	int total;
+	
+	@XmlAttribute
+	int unique;
+	
+	@XmlAttribute
+	int required;
+	
+	public List<Datcat> datcat;	
+	
+    }
+    
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Datcat {
+	@XmlAttribute
+	String name;
+
 	@XmlAttribute
 	int count;
 	
-	public Datcat(){}
+	@XmlAttribute
+	boolean required;
+
+    }
+
+    @XmlRootElement()
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class Components {
+	@XmlAttribute
+	int total;
 	
-	public Datcat(String value, int count){
-	    this.value = value;
-	    this.count = count;
-	    
-	}
+	@XmlAttribute
+	int required; // cardinality > 0
+	
+	List<Component> component;
+
+    }
+    
+    @XmlRootElement()
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class Component{
+	
+	@XmlAttribute
+	String name;
+	
+	@XmlAttribute
+	String id;
+	
+	@XmlAttribute
+	boolean required;
+	
+	
     }
 
 }

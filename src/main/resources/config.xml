@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config>
+    <MAX_SIZE_OF_FILE>30720</MAX_SIZE_OF_FILE>
+    <HTTP_VALIDATION>false</HTTP_VALIDATION>
+    <GENERATE_CHILDREN_REPORTS>false</GENERATE_CHILDREN_REPORTS>
+    <OUTPUT_DIRECTORY>./reports</OUTPUT_DIRECTORY>
+</config>

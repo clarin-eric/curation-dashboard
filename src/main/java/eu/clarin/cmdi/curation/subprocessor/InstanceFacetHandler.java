@@ -34,9 +34,9 @@ import eu.clarin.cmdi.curation.report.Severity;
  * @author dostojic
  *
  */
-public class CMDIInstanceFacets extends CMDISubprocessor {
+public class InstanceFacetHandler extends CMDISubprocessor {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CMDIInstanceFacets.class);
+    private static final Logger _logger = LoggerFactory.getLogger(InstanceFacetHandler.class);
 
     private static final String DEFAULT_LANGUAGE = "code:und";
     private static final String FACET_LANGUAGECODE = "languageCode";
