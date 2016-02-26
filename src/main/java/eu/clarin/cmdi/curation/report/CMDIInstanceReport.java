@@ -340,7 +340,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 
 	double percOfValidLinks = Double.NaN;
 	if (Config.HTTP_VALIDATION())
-	    percOfValidLinks = (numOfLinks - numOfBrokenLinks) / (double) numOfLinks;
+	    percOfValidLinks = (numOfUniqueLinks - numOfBrokenLinks) / (double) numOfUniqueLinks;
 	urlReport = new URLReport(numOfLinks, numOfUniqueLinks, numOfResProxiesLinks, numOfBrokenLinks,
 		percOfValidLinks, messages);
     }

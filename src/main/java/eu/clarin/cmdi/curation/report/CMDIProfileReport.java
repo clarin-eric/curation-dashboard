@@ -43,6 +43,7 @@ public class CMDIProfileReport implements Report<Report> {
     Components components;
     
     public int numOfElements;
+    public int numOfRequiredElements;
     public double ratioOfElemenetsWithDatcat;
     
     Datacategories datacategories;
@@ -129,15 +130,14 @@ public class CMDIProfileReport implements Report<Report> {
 	    datacategories.datcat = new LinkedList<>();
 	}
 	
-	datacategories.total++;	
+	datacategories.total++;
+	
 	if(required)
-	    datacategories.required++;
+	    numOfRequiredElements++;
 	
 	for(Datcat d: datacategories.datcat)
 	    if(d.name.equals(name)){
 		d.count++;
-		if(required)
-		    d.required = true;
 		return;
 	    }
 	//not in the list
@@ -147,8 +147,6 @@ public class CMDIProfileReport implements Report<Report> {
 	Datcat d = new Datcat();
 	d.name = name;
 	d.count = 1;
-	if(required)
-	    d.required = true;
 	datacategories.datcat.add(d);
     }
     
@@ -161,9 +159,6 @@ public class CMDIProfileReport implements Report<Report> {
 	
 	@XmlAttribute
 	int unique;
-	
-	@XmlAttribute
-	int required;
 	
 	public List<Datcat> datcat;	
 	
@@ -178,10 +173,6 @@ public class CMDIProfileReport implements Report<Report> {
 
 	@XmlAttribute
 	int count;
-	
-	@XmlAttribute
-	boolean required;
-
     }
 
     @XmlRootElement()

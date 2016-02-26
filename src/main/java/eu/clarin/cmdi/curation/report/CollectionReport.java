@@ -154,7 +154,10 @@ public class CollectionReport implements Report<CollectionReport> {
 	
     }
 
-    public void calculateAverageValues() {	
+    public void calculateAverageValues() {
+	
+	//file
+	fileReport.avgSize = fileReport.size / fileReport.numOfFiles;
 
 	// ResProxies
 	resProxyReport.avgNumOfResProxies = (double)resProxyReport.totNumOfResProxies / fileReport.numOfFiles;
@@ -210,6 +213,7 @@ public class CollectionReport implements Report<CollectionReport> {
 	String provider;
 	long numOfFiles = 0;
 	long size;
+	long avgSize;
 	long minFileSize;
 	long maxFileSize;
     }
