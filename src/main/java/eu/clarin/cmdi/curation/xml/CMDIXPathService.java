@@ -33,10 +33,19 @@ public class CMDIXPathService {
 	}
     }
 
+    public CMDIXPathService(String url) throws Exception {
+	VTDGen parser = new VTDGen();
+	
+	if (!parser.parseHttpUrl(url, true))
+	    throw new Exception("Errors while parsing " + url);
+	
+	navigator = parser.getNav();
+	parser = null;
+    }
+
     public VTDNav getNavigator() {
 	return navigator;
     }
-    
 
     public String xpath(String xpath) throws Exception {
 	String result = null;

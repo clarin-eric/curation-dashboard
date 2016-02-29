@@ -7,9 +7,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import eu.clarin.cmdi.curation.report.CMDIProfileReport;
-import eu.clarin.cmdi.curation.subprocessor.ProfileFacetHanlder;
-import eu.clarin.cmdi.curation.subprocessor.ProfileValidator;
 import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
+import eu.clarin.cmdi.curation.subprocessor.ProfileComponentsHandler;
+import eu.clarin.cmdi.curation.subprocessor.ProfileElementsHandler;
+import eu.clarin.cmdi.curation.subprocessor.ProfileFacetHanlder;
 
 /**
  * @author dostojic
@@ -23,7 +24,8 @@ public class CMDIProfileProcessor extends AbstractProcessor<CMDIProfileReport> {
     @Override
     protected Collection<ProcessingStep> createPipeline() {
 	return Arrays.asList(
-		new ProfileValidator(),
+		new ProfileComponentsHandler(),
+		new ProfileElementsHandler(),
 		new ProfileFacetHanlder()
 		);
     }

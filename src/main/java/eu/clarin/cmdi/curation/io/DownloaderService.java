@@ -72,8 +72,8 @@ public class DownloaderService {
 //		"clarin.eu:cr1:p_1297242111880" };
 //
 //	for (String p : profiles) {
-//	    String url = CCR_Constants.REST_API + p + "/xsd";
-//	    String dest = CCR_Constants.SCHEMA_FOLDER + p.substring("clarin.eu:cr1:".length()) + ".xsd";
+//	    String url = CRConstants.REST_API + p + "/xsd";
+//	    String dest = CRConstants.SCHEMA_FOLDER + p.substring("clarin.eu:cr1:".length()) + ".xsd";
 //	    instance.download(url, new File(dest));
 //	}
 //

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.clarin.cmdi.curation.component_registry;
+package eu.clarin.cmdi.curation.cr;
 
 import java.io.File;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.clarin.cmdi.curation.component_registry;
+package eu.clarin.cmdi.curation.cr;
 
 import java.util.Collection;
 
@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "profileDescriptions")
-public class CCRProfiles {
+public class CRProfiles {
     @XmlElement
     Collection<ProfileDescription> profileDescription;
     

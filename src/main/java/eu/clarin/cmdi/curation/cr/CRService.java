@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.component_registry;
+package eu.clarin.cmdi.curation.cr;
 
 import java.io.File;
 import java.net.URL;
@@ -20,12 +20,12 @@ import org.xml.sax.SAXException;
 import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.utils.Triplet;
 
-public class ComponentRegistryService implements IComponentRegistryService { // ,XMLMarshaller<CCRProfiles>
+public class CRService implements IComponentRegistryService { // ,XMLMarshaller<CRProfiles>
 
-    static final Logger _logger = LoggerFactory.getLogger(ComponentRegistryService.class);
+    static final Logger _logger = LoggerFactory.getLogger(CRService.class);
     
     //singleton
-    private static ComponentRegistryService instance = new ComponentRegistryService();
+    private static CRService instance = new CRService();
 
 
     private final Map<String, Triplet<File, Schema, Exception>> schemaCache = new ConcurrentHashMap<>();
@@ -35,13 +35,13 @@ public class ComponentRegistryService implements IComponentRegistryService { // 
 
     final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);    
 
-    private ComponentRegistryService() {
+    private CRService() {
 	// create xsd dir if it doesnt exist
-	File xsdDir = new File(CCR_Constants.SCHEMA_FOLDER);
+	File xsdDir = new File(CRConstants.SCHEMA_FOLDER);
 	xsdDir.mkdirs();
     }
 
-    public static ComponentRegistryService getInstance() {
+    public static CRService getInstance() {
 	return instance;
     }
     
@@ -50,7 +50,7 @@ public class ComponentRegistryService implements IComponentRegistryService { // 
     public ProfileSpec getProfile(final String profile) throws Exception{
 	JAXBContext jc = JAXBContext.newInstance(ProfileSpec.class);
 	Unmarshaller unmarshaller = jc.createUnmarshaller();
-	ProfileSpec profileSpec = (ProfileSpec) unmarshaller.unmarshal(new URL(CCR_Constants.REST_API + CCR_Constants.PROFILE_PREFIX  + profile).openStream());
+	ProfileSpec profileSpec = (ProfileSpec) unmarshaller.unmarshal(new URL(CRConstants.REST_API + CRConstants.PROFILE_PREFIX  + profile).openStream());
 	return profileSpec;
     }
     
@@ -84,11 +84,11 @@ public class ComponentRegistryService implements IComponentRegistryService { // 
     
     //returns ids without prefix clarin.eu:cr1:
     private Collection<String> getPublicProfiles() throws Exception {
-	JAXBContext jc = JAXBContext.newInstance(CCRProfiles.class);
+	JAXBContext jc = JAXBContext.newInstance(CRProfiles.class);
 	Unmarshaller unmarshaller = jc.createUnmarshaller();
-	CCRProfiles ccrProfiles = (CCRProfiles) unmarshaller.unmarshal(new URL(CCR_Constants.REST_API).openStream());
-	return ccrProfiles.profileDescription.stream()
-		.map(desc -> desc.id.substring(CCR_Constants.PROFILE_PREFIX.length()))
+	CRProfiles crProfiles = (CRProfiles) unmarshaller.unmarshal(new URL(CRConstants.REST_API).openStream());
+	return crProfiles.profileDescription.stream()
+		.map(desc -> desc.id.substring(CRConstants.PROFILE_PREFIX.length()))
 		.collect(Collectors.toList());
     }
 
@@ -103,12 +103,12 @@ public class ComponentRegistryService implements IComponentRegistryService { // 
 			Triplet<File, Schema, Exception> triplet = new Triplet<>();
 			try {
 			    // check if file is on disk
-			    File schemaFile = new File(CCR_Constants.SCHEMA_FOLDER + profile + ".xsd");
+			    File schemaFile = new File(CRConstants.SCHEMA_FOLDER + profile + ".xsd");
 			    _logger.trace("Loading {} schema from {}", profile, schemaFile.getName());
 			    if (!schemaFile.exists()) {
 				// if not download it
 				_logger.trace("Schema for {} is not in the local FS, downloading it", profile);
-				new Downloader().download(CCR_Constants.REST_API + CCR_Constants.PROFILE_PREFIX + profile + "/xsd", schemaFile);
+				new Downloader().download(CRConstants.REST_API + CRConstants.PROFILE_PREFIX + profile + "/xsd", schemaFile);
 			    }
 
 			    triplet.setX(schemaFile);
@@ -146,7 +146,7 @@ public class ComponentRegistryService implements IComponentRegistryService { // 
 
 //    // test concurency
     public static void main(String[] args) throws Exception {
-//	ComponentRegistryService crs = ComponentRegistryService.getInstance();
+//	CRService crs = CRService.getInstance();
 
 //	Collection<String> profiles = new LinkedList();
 //	profiles.add("p_1357720977520");

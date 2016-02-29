@@ -11,7 +11,7 @@ public class CRTest {
 
 	@Test
 	public void test() throws Exception {
-//		ComponentRegistryService crService = ComponentRegistryService.getInstance();
+//		CRService crService = CRService.getInstance();
 //		CMDIProfiles profiles = crService.getProfilesFromComponentRegistry();
 		
 //		Assert.assertNotEquals("number of returned profiles must be around 200", 0, profiles.count());

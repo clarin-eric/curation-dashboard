@@ -16,7 +16,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import eu.clarin.cmdi.curation.component_registry.ComponentRegistryService;
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDIInstance;
 import eu.clarin.cmdi.curation.entities.CMDIUrlNode;
 import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
@@ -36,7 +36,7 @@ public class InstanceXMLValidator extends CMDISubprocessor {
     public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
 	boolean status = true;
 	try {
-	    ValidatorHandler schemaValidator = ComponentRegistryService.getInstance().getSchema(report.getProfile())
+	    ValidatorHandler schemaValidator = CRService.getInstance().getSchema(report.getProfile())
 		    .newValidatorHandler();
 	    schemaValidator.setErrorHandler(new CMDIErrorHandler(report, msgs));
 	    schemaValidator.setContentHandler(new CMDIInstanceContentHandler(entity, report));

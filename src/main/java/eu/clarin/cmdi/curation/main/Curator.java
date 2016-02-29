@@ -22,8 +22,29 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
  *
  */
 public class Curator {
-    
+
     private static final Logger _logger = LoggerFactory.getLogger(Curator.class);
+
+    public void curate(String profileId) {
+	long start = System.currentTimeMillis();
+
+	CMDIProfile profile = new CMDIProfile(profileId);
+	Report report = profile.generateReport();
+
+	long end = System.currentTimeMillis();
+	_logger.info("Curation lasted {}", TimeUtils.humanizeTime(end - start));
+	
+	try {
+	    saveReport(report, profileId + ".xml");
+	}  catch (Exception e) {	   
+	    _logger.error("Curation failed for " + profileId, e);
+	   
+	}finally {
+	    end = System.currentTimeMillis();
+	    _logger.info("Curation lasted {}", TimeUtils.humanizeTime(end - start));
+	}
+
+    }
 
     public void curate(Path path) {
 
@@ -51,23 +72,30 @@ public class Curator {
 	    long end = System.currentTimeMillis();
 	    _logger.info("Curation lasted {}", TimeUtils.humanizeTime(end - start));
 	    
-	    if(Config.OUTPUT_DIRECTORY() == null){
-		report.marshal(System.out);
-	    }
-	    else{
-		String output = Config.OUTPUT_DIRECTORY() + "/" + path.getFileName();
-		if(Files.isDirectory(path))
+	    String output = Config.OUTPUT_DIRECTORY() + "/" + path.getFileName();
+	    if (Files.isDirectory(path))
 		    output += ".xml";
-		report.marshal(new FileOutputStream(output));
-	    }
-	    	    
+	   
+	    saveReport(report, output); 
+	   
 
-	} catch (Exception e) {
-	    long end = System.currentTimeMillis();
+	} catch (Exception e) {	   
 	    _logger.error("Curation failed for " + path, e);
+	   
+	}finally {
+	    long end = System.currentTimeMillis();
 	    _logger.info("Curation lasted {}", TimeUtils.humanizeTime(end - start));
 	}
 
+    }
+
+    private void saveReport(Report report, String path) throws Exception {
+	if (Config.OUTPUT_DIRECTORY() == null) {
+	    report.marshal(System.out);
+	} else {
+	    String output = Config.OUTPUT_DIRECTORY() + "/" + path;
+	    report.marshal(new FileOutputStream(output));
+	}
     }
 
 }

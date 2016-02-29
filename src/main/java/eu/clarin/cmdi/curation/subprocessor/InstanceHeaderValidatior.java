@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.ximpleware.AutoPilot;
 import com.ximpleware.VTDNav;
 
-import eu.clarin.cmdi.curation.component_registry.CCR_Constants;
+import eu.clarin.cmdi.curation.cr.CRConstants;
 import eu.clarin.cmdi.curation.entities.CMDIInstance;
 import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
@@ -60,9 +60,9 @@ public class InstanceHeaderValidatior extends CMDISubprocessor {
 	}
 	// keep profile without prefix "clarin.eu:cr1"
 	report.schemaAvailable = true;
-	if (profile.startsWith(CCR_Constants.PROFILE_PREFIX)) {
+	if (profile.startsWith(CRConstants.PROFILE_PREFIX)) {
 	    report.schemaInCCR = true;
-	    profile = profile.substring(CCR_Constants.PROFILE_PREFIX.length());
+	    profile = profile.substring(CRConstants.PROFILE_PREFIX.length());
 	}
 	return profile;
     }

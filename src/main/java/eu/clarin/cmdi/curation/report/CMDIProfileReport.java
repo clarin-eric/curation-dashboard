@@ -1,6 +1,3 @@
-/**
- * 
- */
 package eu.clarin.cmdi.curation.report;
 
 import java.io.OutputStream;
@@ -8,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -40,14 +39,11 @@ public class CMDIProfileReport implements Report<Report> {
     public String description;
     public boolean isPublic;
 
+    @XmlElement(name = "CMDI-Components")
     Components components;
     
-    public int numOfElements;
-    public int numOfRequiredElements;
-    public double ratioOfElemenetsWithDatcat;
-    
-    Datacategories datacategories;
-    
+    @XmlElement(name = "CMDI-Elements")
+    Elements elements;    
 
     @XmlElement(name = "facets-report")
     public FacetReport facet;
@@ -97,94 +93,51 @@ public class CMDIProfileReport implements Report<Report> {
 	if(isPublic)
 	    score++;
 	
-	score += ratioOfElemenetsWithDatcat; //* factor for datcats
+	score += elements.percWithDatacategory; //* factor for datcats
 	
 	score += facet.profile.coverage; // * factor for facet coverage
 	
 	overallScore = formatScore(score, MAX_SCORE);
     }
     
-    public void addComponent(String componentName, String componentId, boolean required){
-	if(components == null){
-	    components = new Components();
-	    components.component = new LinkedList<>();
-	}
-	
-	components.total++;
-	
-	if(required)
-	    components.required++;
-	
-	Component c = new Component();
-	c.name = componentName;
-	c.id = componentId;
-	c.required = required;
-	
-	components.component.add(c);
+    public void createComponentsReport(int total, int required, int unique ){
+	components = new Components();
+	components.total = total;
+	components.required = required;
+	components.unique = unique;	
 	
     }
     
-    public void addDataCategory(String name, boolean required){
-	if(datacategories == null){
-	    datacategories = new Datacategories();
-	    datacategories.datcat = new LinkedList<>();
-	}
+    public void createElementsReport(int total, int unique, int required, int withDatacategory, Map<String, Integer> datcats, int requiredDatcats){
+	elements = new Elements();
+	elements.total = total;
+	elements.unique = unique;
+	elements.required = required;
+	elements.withDatacategory = withDatacategory;
 	
-	datacategories.total++;
+	elements.percWithDatacategory = (double)withDatacategory / total;
 	
-	if(required)
-	    numOfRequiredElements++;
+	elements.datacategories = new Datacategories();
 	
-	for(Datcat d: datacategories.datcat)
-	    if(d.name.equals(name)){
-		d.count++;
-		return;
-	    }
-	//not in the list
+	elements.datacategories.total = elements.withDatacategory;
+	elements.datacategories.unique = datcats.size();
+	elements.datacategories.required = requiredDatcats;
 	
-	datacategories.unique++;
-	
-	Datcat d = new Datcat();
-	d.name = name;
-	d.count = 1;
-	datacategories.datcat.add(d);
-    }
-    
-    @XmlRootElement
-    @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Datacategories {
-	
-	@XmlAttribute
-	int total;
-	
-	@XmlAttribute
-	int unique;
-	
-	public List<Datcat> datcat;	
-	
-    }
-    
-
-    @XmlRootElement
-    @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Datcat {
-	@XmlAttribute
-	String name;
-
-	@XmlAttribute
-	int count;
+	for(Entry<String, Integer> datcat: datcats.entrySet())
+	    elements.datacategories.addDatcat(datcat.getKey(), datcat.getValue());
     }
 
     @XmlRootElement()
     @XmlAccessorType(XmlAccessType.FIELD)
     static class Components {
-	@XmlAttribute
+	
 	int total;
 	
-	@XmlAttribute
+	int unique;
+	
 	int required; // cardinality > 0
 	
-	List<Component> component;
+	//List<Component> component;
 
     }
     
@@ -196,12 +149,65 @@ public class CMDIProfileReport implements Report<Report> {
 	String name;
 	
 	@XmlAttribute
-	String id;
+	String id;	
+    }
+    
+    @XmlRootElement()
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class Elements {
+	
+	int total;
+	
+	int unique;
+	
+	int required; // cardinality > 0
+	
+	int withDatacategory;
+	
+	double percWithDatacategory;
+	
+	public Datacategories datacategories;
+
+    }
+    
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class Datacategories {
 	
 	@XmlAttribute
-	boolean required;
+	int total;
 	
+	@XmlAttribute
+	int unique;
 	
+	@XmlAttribute
+	int required;
+	
+	public List<Datcat> datcat;
+	
+	public void addDatcat(String url, int count){
+	    
+	    Datcat d = new Datcat();
+	    d.url = url;
+	    d.count = count;
+	    
+	    if(datcat == null)
+		datcat = new LinkedList<>();
+	    
+	    datcat.add(d);
+	    
+	}
+	
+    }
+    
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class Datcat {
+	@XmlAttribute
+	String url;
+
+	@XmlAttribute
+	int count;
     }
 
 }

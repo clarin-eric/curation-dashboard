@@ -28,7 +28,7 @@ import com.ximpleware.NavException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
-import eu.clarin.cmdi.curation.component_registry.ComponentRegistryService;
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.facets.FacetConceptMapping.AcceptableContext;
 import eu.clarin.cmdi.curation.facets.FacetConceptMapping.FacetConcept;
 import eu.clarin.cmdi.curation.facets.FacetConceptMapping.RejectableContext;
@@ -301,7 +301,7 @@ public class FacetConceptMappingService implements XMLMarshaller<FacetConceptMap
 	    Map<String, List<String>> result = new HashMap<String, List<String>>();
 	    VTDGen vg = new VTDGen();
 	    boolean parseSuccess;
-	    parseSuccess = vg.parseFile(ComponentRegistryService.getInstance().getLocalFile(profile).getAbsolutePath(),
+	    parseSuccess = vg.parseFile(CRService.getInstance().getLocalFile(profile).getAbsolutePath(),
 		    true);
 
 	    if (!parseSuccess) {

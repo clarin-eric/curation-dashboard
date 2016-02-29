@@ -1,13 +1,13 @@
 /**
  * 
  */
-package eu.clarin.cmdi.curation.component_registry;
+package eu.clarin.cmdi.curation.cr;
 
 /**
  * @author dostojic
  *
  */
-public final class CCR_Constants {
+public final class CRConstants {
     
     
     //move this to config
@@ -17,6 +17,10 @@ public final class CCR_Constants {
     
     
     
-    private CCR_Constants(){}
+    private CRConstants(){}
+    
+    public static String getProfilesURL(String profile){
+	return REST_API + PROFILE_PREFIX + profile + "/";
+    }
 
 }
