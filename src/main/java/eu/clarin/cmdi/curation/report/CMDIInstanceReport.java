@@ -3,7 +3,11 @@ package eu.clarin.cmdi.curation.report;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -25,12 +29,12 @@ import eu.clarin.cmdi.curation.main.Config;
 @XmlRootElement(name = "instance-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDIInstanceReport implements Report<CollectionReport> {
-    
+
     static final double MAX_SCORE = 11;
-    
+
     public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-    transient double score; 
-    
+    transient double score;
+
     @XmlElement(name = "score")
     public String overallScore;
 
@@ -80,7 +84,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 
     // facets
     public FacetReport facets;
-    
+
     @Override
     public double getMaxScore() {
 	return MAX_SCORE;
@@ -113,14 +117,9 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	score += sectionScore; // * header factor
 
 	sectionScore = 0;
-	if (resProxyReport.numOfResProxies > 0) {// if there are resproxies
-	    sectionScore += 1;
-	    // perc of landPages having references with link
-	    if (resProxyReport.numOfLandingPages > 0)
-		sectionScore += (resProxyReport.numOfLandingPages - resProxyReport.numOfLandingPagesWithoutLink)
-			/ (double) resProxyReport.numOfLandingPages;
 
-	}
+	sectionScore += resProxyReport.percOfResProxiesWithMime + resProxyReport.percOfResProxiesWithReferences;
+
 	score += sectionScore; // * resProxy factor
 
 	score += xmlReport.percOfPopulatedElements; // * xmlValidation factor
@@ -135,7 +134,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	score += sectionScore; // * urlValidation factor
 
 	score += facets.instance.coverage;// *facetCoverage factor
-	
+
 	overallScore = formatScore(score, getMaxScore());
 
     }
@@ -151,11 +150,8 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 
 	// ResProxies
 	parentReport.resProxyReport.totNumOfResProxies += resProxyReport.numOfResProxies;
-	parentReport.resProxyReport.totNumOfResWithMime += resProxyReport.numOfResWithMime;
-	parentReport.resProxyReport.totNumOfLandingPages += resProxyReport.numOfLandingPages;
-	parentReport.resProxyReport.totNumOfLandingPagesWithoutLink += resProxyReport.numOfLandingPagesWithoutLink;
-	parentReport.resProxyReport.totNumOfResources += resProxyReport.numOfResources;
-	parentReport.resProxyReport.totNumOfMetadata += resProxyReport.numOfMetadata;
+	parentReport.resProxyReport.totNumOfResProxiesWithMime += resProxyReport.numOfResProxiesWithMime;
+	parentReport.resProxyReport.totNumOfResProxiesWithReferences += resProxyReport.numOfResProxiesWithReferences;
 
 	// XMLValidator
 	parentReport.xmlReport.totNumOfXMLElements += xmlReport.numOfXMLElements;
@@ -237,28 +233,40 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
     @XmlAccessorType(XmlAccessType.FIELD)
     static class ResProxyReport {
 	int numOfResProxies;
-	int numOfResWithMime;
-	int numOfLandingPages;
-	int numOfLandingPagesWithoutLink;
-	int numOfResources;
-	int numOfMetadata;
+	int numOfResProxiesWithMime;
+	double percOfResProxiesWithMime;
+	int numOfResProxiesWithReferences;
+	double percOfResProxiesWithReferences;
 
-	@XmlElementWrapper(name = "details")
-	List<Message> messages = null;
+	@XmlElementWrapper(name = "resourceTypes")
+	List<ResourceType> resourceType;
 
-	public ResProxyReport(int numOfResProxies, int numOfResWithMime, int numOfLandingPages,
-		int numOfLandingPagesWithoutLink, int numOfResources, int numOfMetadata, List<Message> messages) {
+	// @XmlElementWrapper(name = "details") List<Message> messages = null;
+
+	public ResProxyReport(int numOfResProxies, int numOfResProxiesWithMime, double percOfResProxiesWithMime,
+		int numOfResProxiesWithReferences, double percOfResProxiesWithReferences,
+		List<ResourceType> resourceTypes) {
 	    this.numOfResProxies = numOfResProxies;
-	    this.numOfResWithMime = numOfResWithMime;
-	    this.numOfLandingPages = numOfLandingPages;
-	    this.numOfLandingPagesWithoutLink = numOfLandingPagesWithoutLink;
-	    this.numOfResources = numOfResources;
-	    this.numOfMetadata = numOfMetadata;
-	    this.messages = messages;
+	    this.numOfResProxiesWithMime = numOfResProxiesWithMime;
+	    this.percOfResProxiesWithMime = percOfResProxiesWithMime;
+	    this.numOfResProxiesWithReferences = numOfResProxiesWithReferences;
+	    this.percOfResProxiesWithReferences = percOfResProxiesWithReferences;
+	    this.resourceType = resourceTypes;
 	}
 
 	public ResProxyReport() {
 	}
+
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    static class ResourceType {
+	@XmlAttribute
+	String type;
+
+	@XmlAttribute
+	int count;
 
     }
 
@@ -321,10 +329,31 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	headerReport = new HeaderReport(profile, messages);
     }
 
-    public void addResProxyReport(int numOfResProxies, int numOfResWithMime, int numOfLandingPages,
-	    int numOfLandingPagesWithoutLink, int numOfResources, int numOfMetadata, List<Message> messages) {
-	resProxyReport = new ResProxyReport(numOfResProxies, numOfResWithMime, numOfLandingPages,
-		numOfLandingPagesWithoutLink, numOfResources, numOfMetadata, messages);
+    public void addResProxyReport(int numOfResProxies, int numOfResProxiesWithMime, int numOfResProxiesWithReferences,
+	    Map<String, Integer> resourceTypeMap) {
+
+	double percOfResProxiesWithMime = 0;
+	double percOfResProxiesWithReferences = 0;
+
+	if (numOfResProxies > 0) {
+	    percOfResProxiesWithMime = (double) numOfResProxiesWithMime / numOfResProxies;
+	    percOfResProxiesWithReferences = (double) numOfResProxiesWithReferences / numOfResProxies;
+	}
+
+	// prepare resTypes
+	List<ResourceType> resourceTypes = null;
+	if (!resourceTypeMap.isEmpty()) {
+	    resourceTypes = new LinkedList<>();
+	    for (Entry<String, Integer> resType : resourceTypeMap.entrySet()) {
+		ResourceType res = new ResourceType();
+		res.type = resType.getKey();
+		res.count = resType.getValue();
+		resourceTypes.add(res);
+	    }
+	}
+
+	resProxyReport = new ResProxyReport(numOfResProxies, numOfResProxiesWithMime, percOfResProxiesWithMime,
+		numOfResProxiesWithReferences, percOfResProxiesWithReferences, resourceTypes);
     }
 
     public void addXmlReport(int numOfXMLElements, int numOfXMLSimpleElements, int numOfXMLEmptyElement,

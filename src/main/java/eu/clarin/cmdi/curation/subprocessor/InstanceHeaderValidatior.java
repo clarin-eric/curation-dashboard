@@ -1,5 +1,8 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,6 +15,7 @@ import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.cr.CRConstants;
 import eu.clarin.cmdi.curation.entities.CMDIInstance;
 import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
+import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.xml.CMDIXPathService;
 
@@ -53,7 +57,7 @@ public class InstanceHeaderValidatior extends CMDISubprocessor {
 	String profile = xmlService.xpath("/CMD/Header/MdProfile/text()");
 	if (profile == null) {// not in header
 	    report.mdProfileExists = false;
-	    addMessage(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with proile ID!");
+	    addMessage(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with profile ID!");
 	    profile = extractProfileFromNameSpace();
 	    if (profile == null)
 		throw new Exception("Profile can not be extracted from namespace!");
@@ -111,11 +115,10 @@ public class InstanceHeaderValidatior extends CMDISubprocessor {
 
     private void handleResourceProxies(CMDIInstanceReport report) {
 	int numOfResProxies = 0;
-	int numOfResources = 0;
-	int numOfMetadata = 0;
-	int numOfLandingPages = 0;
-	int numOfLandingPagesWithoutLink = 0;
-	int numOfResWithMime = 0;
+	int numOfResProxiesWithMime = 0;
+	int numOfResProxiesWithReferences = 0;
+
+	Map<String, Integer> resources = new HashMap<>();
 
 	try {
 	    xmlService.getNavigator().toElement(VTDNav.ROOT);
@@ -124,35 +127,28 @@ public class InstanceHeaderValidatior extends CMDISubprocessor {
 	    while (ap.iterate()) {// for each ResourceProxy
 		numOfResProxies++;
 
+		// handle ResourceType
 		if (xmlService.getNavigator().toElement(VTDNav.FIRST_CHILD, "ResourceType")) {
 
-		    // handle ResourceType
-		    String resourceType = xmlService.getNavigator()
-			    .toNormalizedString(xmlService.getNavigator().getText());
-		    switch (resourceType) {
-		    case "Resource":
-			numOfResources++;
-			break;
-		    case "Metadata":
-			numOfMetadata++;
-			break;
-		    case "LandingPage":
-			numOfLandingPages++;
-			if (xmlService.getNavigator().toElement(VTDNav.NEXT_SIBLING, "ResourceRef") && !xmlService
-				.getNavigator().toNormalizedString(xmlService.getNavigator().getText()).isEmpty()) {
-			    numOfLandingPagesWithoutLink++;
-			}
-			break;
-		    default:
-			_logger.debug("Unhandeled value for ResourceType: {}", resourceType);
+		    String type = xmlService.getNavigator().toNormalizedString(xmlService.getNavigator().getText());
+		    if (!type.isEmpty())
+			resources.put(type, resources.containsKey(type) ? resources.get(type) + 1 : 1);
 
-		    }
+		    // handle mimeType
 
 		    int ind;
-		    // handle mimeType
 		    if ((ind = xmlService.getNavigator().getAttrVal("mimetype")) != -1
 			    && !xmlService.getNavigator().toNormalizedString(ind).isEmpty())
-			numOfResWithMime++;
+			numOfResProxiesWithMime++;
+
+		}
+
+		// handle ResourceRef
+		if (xmlService.getNavigator().toElement(VTDNav.NEXT_SIBLING, "ResourceRef")) {
+		    String reference = xmlService.getNavigator()
+			    .toNormalizedString(xmlService.getNavigator().getText());
+		    if (!reference.isEmpty())
+			numOfResProxiesWithReferences++;
 		}
 
 		xmlService.getNavigator().toElement(VTDNav.PARENT);
@@ -162,8 +158,8 @@ public class InstanceHeaderValidatior extends CMDISubprocessor {
 	    addMessage(Severity.FATAL, e.getMessage());
 	    report.isValid = false;
 	} finally {
-	    report.addResProxyReport(numOfResProxies, numOfResWithMime, numOfLandingPages, numOfLandingPagesWithoutLink,
-		    numOfResources, numOfMetadata, null);
+	    report.addResProxyReport(numOfResProxies, numOfResProxiesWithMime, 
+		    numOfResProxiesWithReferences, resources);
 	}
     }
 

@@ -98,11 +98,8 @@ public class CollectionReport implements Report<CollectionReport> {
 	// ResProxies
 	
 	parentReport.resProxyReport.totNumOfResProxies += resProxyReport.totNumOfResProxies;
-	parentReport.resProxyReport.totNumOfResWithMime += resProxyReport.totNumOfResWithMime;
-	parentReport.resProxyReport.totNumOfLandingPages += resProxyReport.totNumOfLandingPages;
-	parentReport.resProxyReport.totNumOfLandingPagesWithoutLink += resProxyReport.totNumOfLandingPagesWithoutLink;
-	parentReport.resProxyReport.totNumOfResources += resProxyReport.totNumOfResources;
-	parentReport.resProxyReport.totNumOfMetadata += resProxyReport.totNumOfMetadata;
+	parentReport.resProxyReport.totNumOfResProxiesWithMime += resProxyReport.totNumOfResProxiesWithMime;
+	parentReport.resProxyReport.totNumOfResProxiesWithReferences += resProxyReport.totNumOfResProxiesWithReferences;
 
 	// XMLValidator
 	parentReport.xmlReport.totNumOfXMLElements += xmlReport.totNumOfXMLElements;
@@ -161,11 +158,8 @@ public class CollectionReport implements Report<CollectionReport> {
 
 	// ResProxies
 	resProxyReport.avgNumOfResProxies = (double)resProxyReport.totNumOfResProxies / fileReport.numOfFiles;
-	resProxyReport.avgNumOfResWithMime = (double) resProxyReport.totNumOfResWithMime / fileReport.numOfFiles;
-	resProxyReport.avgNumOfLandingPages = (double) resProxyReport.totNumOfLandingPages / fileReport.numOfFiles;
-	resProxyReport.avgNumOfLandingPagesWithoutLink = (double)resProxyReport.totNumOfLandingPagesWithoutLink / fileReport.numOfFiles;
-	resProxyReport.avgNumOfResources = (double)resProxyReport.totNumOfResources / fileReport.numOfFiles;
-	resProxyReport.avgNumOfMetadata =(double)resProxyReport.totNumOfMetadata / fileReport.numOfFiles;
+	resProxyReport.avgNumOfResProxiesWithMime = (double) resProxyReport.totNumOfResProxiesWithMime / fileReport.numOfFiles;
+	resProxyReport.avgNumOfResProxiesWithReferences = (double) resProxyReport.totNumOfResProxiesWithReferences / fileReport.numOfFiles;
 
 	// XMLValidator
 	xmlReport.avgNumOfXMLElements =(double)xmlReport.totNumOfXMLElements / fileReport.numOfFiles;
@@ -231,16 +225,10 @@ public class CollectionReport implements Report<CollectionReport> {
     static class ResProxyReport {
 	int totNumOfResProxies;
 	double avgNumOfResProxies;
-	int totNumOfResWithMime;
-	double avgNumOfResWithMime;
-	int totNumOfLandingPages;
-	double avgNumOfLandingPages;
-	int totNumOfLandingPagesWithoutLink;
-	double avgNumOfLandingPagesWithoutLink;
-	int totNumOfResources;
-	double avgNumOfResources;
-	int totNumOfMetadata;
-	double avgNumOfMetadata;
+	int totNumOfResProxiesWithMime;
+	double avgNumOfResProxiesWithMime;
+	int totNumOfResProxiesWithReferences;
+	double avgNumOfResProxiesWithReferences;
 
     }
 
