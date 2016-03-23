@@ -19,12 +19,8 @@ public interface Report<R extends Report> {
     
     public void marshal(OutputStream os) throws Exception;
     
-    public void calculateScore();
-    public double getMaxScore();
+    public double calculateScore();
     
-    public default String formatScore(double score, double maxScore){
-	NumberFormat formatter = new DecimalFormat(Config.SCORE_NUMERIC_DISPLAY_FORMAT());
-	return formatter.format(score) + "/" + formatter.format(maxScore);
-    }
+    public double getMaxScore();
 
 }

@@ -21,7 +21,7 @@ public class CurationTest {
 	Config.setOUTPUT_DIRECTORY(null);
 
 	Path path1 = FileSystems.getDefault().getPath(
-		"D:/data/test/test1/eeba6672493adaa6f24b3bf1c13c385b.xml");
+		"Q:/data/vlo/results/cmdi/BAS_Repository/oai_BAS_repo_Corpora_aGender_101106.xml");
 	Path path2 = FileSystems.getDefault().getPath("D:/data/cmdi/Deutsches_Textarchiv/dta_386.xml");
 	Path cmdi = FileSystems.getDefault().getPath("D:/data/cmdi");
 	Path test = FileSystems.getDefault().getPath("D:/data/test/test1");
@@ -38,7 +38,7 @@ public class CurationTest {
 	Path profile1 =  FileSystems.getDefault().getPath("D:/xsd/p_1361876010587.xsd");
 
 	
-	new Curator().curate(test);
+	new Curator().curate(path1);
 	
 
     }
