@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import eu.clarin.cmdi.curation.main.Config;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.xml.ScoreAdapter;
 
 /**
@@ -371,7 +371,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	public void addURLReport(int numOfBrokenLinks, List<Message> messages) {
 
 		double percOfValidLinks = Double.NaN;
-		if (Config.HTTP_VALIDATION())
+		if (Configuration.HTTP_VALIDATION)
 			percOfValidLinks = (numOfUniqueLinks - numOfBrokenLinks) / (double) numOfUniqueLinks;
 		urlReport = new URLReport(numOfLinks, numOfUniqueLinks, numOfResProxiesLinks, numOfBrokenLinks,
 				percOfValidLinks, messages);

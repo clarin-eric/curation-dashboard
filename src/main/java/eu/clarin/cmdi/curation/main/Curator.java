@@ -72,7 +72,7 @@ public class Curator {
 	    long end = System.currentTimeMillis();
 	    _logger.info("Curation lasted {}", TimeUtils.humanizeTime(end - start));
 	    
-	    String output = Config.OUTPUT_DIRECTORY() + "/" + path.getFileName();
+	    String output = Configuration.OUTPUT_DIRECTORY + "/" + path.getFileName();
 	    if (Files.isDirectory(path))
 		    output += ".xml";
 	   
@@ -90,10 +90,10 @@ public class Curator {
     }
 
     private void saveReport(Report report, String path) throws Exception {
-	if (Config.OUTPUT_DIRECTORY() == null) {
+	if (Configuration.OUTPUT_DIRECTORY == null) {
 	    report.marshal(System.out);
 	} else {
-	    String output = Config.OUTPUT_DIRECTORY() + "/" + path;
+	    String output = Configuration.OUTPUT_DIRECTORY + "/" + path;
 	    report.marshal(new FileOutputStream(output));
 	}
     }

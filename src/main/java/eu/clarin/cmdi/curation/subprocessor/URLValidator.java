@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import eu.clarin.cmdi.curation.entities.CMDIInstance;
 import eu.clarin.cmdi.curation.io.HTTPLinkChecker;
-import eu.clarin.cmdi.curation.main.Config;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
 
@@ -18,7 +18,7 @@ public class URLValidator extends CMDISubprocessor {
     @Override
     public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
 	// links are unique
-	if (Config.HTTP_VALIDATION()) {
+	if (Configuration.HTTP_VALIDATION) {
 	    AtomicInteger numOfBrokenLinks = new AtomicInteger(0);
 	    entity.getLinks().parallelStream().forEach(value -> {
 		String link = value.getValue();

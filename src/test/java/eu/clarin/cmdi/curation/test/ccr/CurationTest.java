@@ -3,10 +3,13 @@
  */
 package eu.clarin.cmdi.curation.test.ccr;
 
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
-import eu.clarin.cmdi.curation.main.Config;
+import org.apache.commons.configuration.ConfigurationException;
+
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.Curator;
 
 /**
@@ -15,10 +18,10 @@ import eu.clarin.cmdi.curation.main.Curator;
  */
 public class CurationTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ConfigurationException, IOException {
 	
-	Config.initDefault();
-	Config.setOUTPUT_DIRECTORY(null);
+    Configuration.initDefault();
+    Configuration.OUTPUT_DIRECTORY = null;
 
 	Path path1 = FileSystems.getDefault().getPath(
 		"Q:/data/vlo/results/cmdi/BAS_Repository/oai_BAS_repo_Corpora_aGender_101106.xml");

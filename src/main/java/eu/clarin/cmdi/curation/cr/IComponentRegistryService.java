@@ -18,6 +18,8 @@ public interface IComponentRegistryService {
     public boolean isPublic(final String profile) throws Exception;
     
     public Schema getSchema(final String profile) throws Exception;
+    
+    public double getProfileScore(final String profile) throws Exception;
 
     public File getLocalFile(String profile) throws Exception;
 }

@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.main;
 
+import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
@@ -12,19 +13,19 @@ import org.apache.commons.cli.PosixParser;
 
 public class Main {
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws Exception {
 
 	CommandLineParser parser = new PosixParser();
 	CommandLine cmd = parser.parse(createOptions(), args);
 
 	// init configuration file
 	if(cmd.hasOption('c'))
-	    Config.init(cmd.getOptionValue('c'));
+		Configuration.init(new File(cmd.getOptionValue('c')));
 	else
-	    Config.initDefault();
+		Configuration.initDefault();
 
 	if (cmd.hasOption('p')) {
-	    Config.setOUTPUT_DIRECTORY(null);
+		Configuration.OUTPUT_DIRECTORY = null;
 	}
 
 	for (String input : cmd.getOptionValues('i')) {
