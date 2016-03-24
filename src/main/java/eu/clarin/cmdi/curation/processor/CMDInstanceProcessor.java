@@ -3,15 +3,15 @@ package eu.clarin.cmdi.curation.processor;
 import java.util.Arrays;
 import java.util.Collection;
 
-import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
-import eu.clarin.cmdi.curation.subprocessor.InstanceFacetHandler;
+import eu.clarin.cmdi.curation.report.CMDInstanceReport;
+import eu.clarin.cmdi.curation.subprocessor.InstanceFacetProcessor;
 import eu.clarin.cmdi.curation.subprocessor.FileSizeValidator;
 import eu.clarin.cmdi.curation.subprocessor.InstanceHeaderValidatior;
 import eu.clarin.cmdi.curation.subprocessor.InstanceXMLValidator;
 import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 import eu.clarin.cmdi.curation.subprocessor.URLValidator;
 
-public class CMDIInstanceProcessor extends AbstractProcessor<CMDIInstanceReport> {
+public class CMDInstanceProcessor extends AbstractProcessor<CMDInstanceReport> {
 
     @Override
     protected Collection<ProcessingStep> createPipeline() {
@@ -21,12 +21,12 @@ public class CMDIInstanceProcessor extends AbstractProcessor<CMDIInstanceReport>
 		//new ResourceProxyValidator(),
 		new InstanceXMLValidator(),
 		new URLValidator(),
-		new InstanceFacetHandler());
+		new InstanceFacetProcessor());
     }
 
     @Override
-    protected CMDIInstanceReport createReport() {
-	return new CMDIInstanceReport();
+    protected CMDInstanceReport createReport() {
+	return new CMDInstanceReport();
     }
 
 }

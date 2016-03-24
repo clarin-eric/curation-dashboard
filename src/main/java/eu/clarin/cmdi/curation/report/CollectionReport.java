@@ -34,7 +34,7 @@ public class CollectionReport implements Report<CollectionReport> {
 	public double maxScore;
 	
 	@XmlAttribute(name = "max-score-instance")
-	public final double maxScoreInstance = CMDIInstanceReport.MAX_SCORE;
+	public final double maxScoreInstance = CMDInstanceReport.MAX_SCORE;
 
 	// report fields
 	public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
@@ -143,7 +143,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
 	@Override
 	public double getMaxScore() {
-		return fileReport.numOfFiles * CMDIInstanceReport.MAX_SCORE;
+		return fileReport.numOfFiles * CMDInstanceReport.MAX_SCORE;
 	};
 
 	@Override

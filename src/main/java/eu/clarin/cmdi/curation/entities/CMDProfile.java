@@ -3,28 +3,28 @@ package eu.clarin.cmdi.curation.entities;
 import java.nio.file.Path;
 
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
-import eu.clarin.cmdi.curation.processor.CMDIProfileProcessor;
+import eu.clarin.cmdi.curation.processor.CMDProfileProcessor;
 
 /**
  * @author dostojic
  *
  */
 
-public class CMDIProfile extends CurationEntity {
+public class CMDProfile extends CurationEntity {
 
     private String profile;
     
 
-    public CMDIProfile(String profile){
+    public CMDProfile(String profile){
 	super(null);
 	this.profile = profile;
     }
 
-    public CMDIProfile(Path path) {
+    public CMDProfile(Path path) {
 	super(path);
     }
 
-    public CMDIProfile(Path path, long size) {
+    public CMDProfile(Path path, long size) {
 	super(path, size);
     }    
 
@@ -38,7 +38,7 @@ public class CMDIProfile extends CurationEntity {
 
     @Override
     protected AbstractProcessor getProcessor() {
-	return new CMDIProfileProcessor();
+	return new CMDProfileProcessor();
     }
 
 }

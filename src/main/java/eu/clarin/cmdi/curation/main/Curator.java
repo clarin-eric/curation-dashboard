@@ -10,8 +10,8 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.clarin.cmdi.curation.entities.CMDIInstance;
-import eu.clarin.cmdi.curation.entities.CMDIProfile;
+import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.entities.CurationEntity;
 import eu.clarin.cmdi.curation.entities.EntityTree;
 import eu.clarin.cmdi.curation.report.Report;
@@ -28,7 +28,7 @@ public class Curator {
     public void curate(String profileId) {
 	long start = System.currentTimeMillis();
 
-	CMDIProfile profile = new CMDIProfile(profileId);
+	CMDProfile profile = new CMDProfile(profileId);
 	Report report = profile.generateReport();
 
 	long end = System.currentTimeMillis();
@@ -61,9 +61,9 @@ public class Curator {
 		Files.walkFileTree(path, entityTree);
 		entity = entityTree.getRoot();
 	    } else if (path.toString().endsWith(".xml"))
-		entity = new CMDIInstance(path, Files.size(path));
+		entity = new CMDInstance(path, Files.size(path));
 	    else if (path.toString().endsWith(".xsd"))
-		entity = new CMDIProfile(path, Files.size(path));
+		entity = new CMDProfile(path, Files.size(path));
 	    else
 		throw new IllegalArgumentException(
 			"Curation module can process only xml and xsd files!\nPS\nAt least for now");

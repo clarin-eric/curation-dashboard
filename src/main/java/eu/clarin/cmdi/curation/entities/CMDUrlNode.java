@@ -7,17 +7,17 @@ package eu.clarin.cmdi.curation.entities;
  * @author dostojic
  *
  */
-public class CMDIUrlNode {
+public class CMDUrlNode {
 	
 	String value;
 	String tag;
 	
-	public CMDIUrlNode(String value) {
+	public CMDUrlNode(String value) {
 		this(value, null);
 	}
 	
 	
-	public CMDIUrlNode(String value, String tag) {
+	public CMDUrlNode(String value, String tag) {
 		this.value = value;
 		this.tag = tag;
 	}
@@ -46,8 +46,8 @@ public class CMDIUrlNode {
 	//it is enough to compare link
 	@Override
 	public boolean equals(Object obj) {
-	    if ( !(obj instanceof CMDIUrlNode) ) return false;
-	    return this.value.equals(((CMDIUrlNode)obj).value);
+	    if ( !(obj instanceof CMDUrlNode) ) return false;
+	    return this.value.equals(((CMDUrlNode)obj).value);
 	}
 
 }

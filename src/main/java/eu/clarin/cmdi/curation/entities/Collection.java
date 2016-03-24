@@ -29,7 +29,7 @@ public class Collection extends CurationEntity {
     public CurationEntity addChild(CurationEntity child) {
 	children.add(child);
 
-	if (child instanceof CMDIInstance || child instanceof CMDIProfile) {
+	if (child instanceof CMDInstance || child instanceof CMDProfile) {
 
 	    numOfFiles++;
 	    size += child.getSize();

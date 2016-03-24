@@ -17,13 +17,13 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.entities.CMDIInstance;
-import eu.clarin.cmdi.curation.entities.CMDIUrlNode;
-import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
+import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.entities.CMDUrlNode;
+import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.curation.xml.CMDIErrorHandler;
+import eu.clarin.cmdi.curation.xml.CMDErrorHandler;
 
-public class InstanceXMLValidator extends CMDISubprocessor {
+public class InstanceXMLValidator extends CMDSubprocessor {
 
     static final Logger _logger = LoggerFactory.getLogger(InstanceXMLValidator.class);
     
@@ -33,12 +33,12 @@ public class InstanceXMLValidator extends CMDISubprocessor {
     
 
     @Override
-    public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
+    public boolean process(CMDInstance entity, CMDInstanceReport report) {
 	boolean status = true;
 	try {
 	    ValidatorHandler schemaValidator = CRService.getInstance().getSchema(report.getProfile())
 		    .newValidatorHandler();
-	    schemaValidator.setErrorHandler(new CMDIErrorHandler(report, msgs));
+	    schemaValidator.setErrorHandler(new CMDErrorHandler(report, msgs));
 	    schemaValidator.setContentHandler(new CMDIInstanceContentHandler(entity, report));
 	    // setValidationFeatures(schemaValidator);
 	    SAXParserFactory parserFactory = SAXParserFactory.newInstance();
@@ -79,15 +79,15 @@ public class InstanceXMLValidator extends CMDISubprocessor {
     
     class CMDIInstanceContentHandler extends DefaultHandler {
 
-	    CMDIInstance instance;
-	    CMDIInstanceReport report;
+	    CMDInstance instance;
+	    CMDInstanceReport report;
 
 	    String curElem;
 	    boolean elemWithValue;
 
 	    Locator locator;
 
-	    Collection<CMDIUrlNode> values = new LinkedList<CMDIUrlNode>();
+	    Collection<CMDUrlNode> values = new LinkedList<CMDUrlNode>();
 
 	    // for handling attributes
 	    // private TypeInfoProvider provider;
@@ -95,7 +95,7 @@ public class InstanceXMLValidator extends CMDISubprocessor {
 	    // this.provider = provider;
 	    // }
 
-	    public CMDIInstanceContentHandler(CMDIInstance instance, CMDIInstanceReport report) {
+	    public CMDIInstanceContentHandler(CMDInstance instance, CMDInstanceReport report) {
 		this.instance = instance;
 		this.report = report;
 	    }
@@ -157,7 +157,7 @@ public class InstanceXMLValidator extends CMDISubprocessor {
 		String val = new String(ch, start, length);
 		if (val.startsWith("http://") || val.startsWith("https://")){
 		    report.numOfLinks++;
-		    CMDIUrlNode node = new CMDIUrlNode(val, (curElem.equals("MdSelfLink") || curElem.equals("ResourceRef")) ? curElem : null);
+		    CMDUrlNode node = new CMDUrlNode(val, (curElem.equals("MdSelfLink") || curElem.equals("ResourceRef")) ? curElem : null);
 		    if(!values.contains(node))
 			values.add(node);
 		    

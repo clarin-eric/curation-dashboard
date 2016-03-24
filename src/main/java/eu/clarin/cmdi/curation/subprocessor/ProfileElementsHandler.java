@@ -18,21 +18,21 @@ import eu.clarin.cmdi.curation.cr.CRConstants;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileSpec;
 import eu.clarin.cmdi.curation.cr.ProfileSpec.CMD_Component;
-import eu.clarin.cmdi.curation.entities.CMDIProfile;
-import eu.clarin.cmdi.curation.report.CMDIProfileReport;
+import eu.clarin.cmdi.curation.entities.CMDProfile;
+import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.curation.xml.CMDIXPathService;
+import eu.clarin.cmdi.curation.xml.CMDXPathService;
 
 /**
  * @author dostojic
  *
  */
-public class ProfileElementsHandler extends ProcessingStep<CMDIProfile, CMDIProfileReport> {
+public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfileReport> {
 
     private static final Logger _logger = LoggerFactory.getLogger(ProfileElementsHandler.class);
 
     @Override
-    public boolean process(CMDIProfile entity, CMDIProfileReport report) {
+    public boolean process(CMDProfile entity, CMDProfileReport report) {
 	try {
 	    
 	    //createElementsReport(int total, int unique, int required, int withDatacategory, Map<String, Integer> datcats);
@@ -43,7 +43,7 @@ public class ProfileElementsHandler extends ProcessingStep<CMDIProfile, CMDIProf
 	    Map<String, Integer> elements = new HashMap<>();
 	    Map<String, Integer> datcats = new HashMap();
 
-	    CMDIXPathService xmlService = new CMDIXPathService(CRConstants.getProfilesURL(entity.getProfile()) + "xsd");
+	    CMDXPathService xmlService = new CMDXPathService(CRConstants.getProfilesURL(entity.getProfile()) + "xsd");
 	    VTDNav navigator = xmlService.getNavigator();
 	    AutoPilot ap = new AutoPilot(xmlService.getNavigator());
 

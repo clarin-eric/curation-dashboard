@@ -16,24 +16,24 @@ import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.cr.CRConstants;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.IComponentRegistryService;
-import eu.clarin.cmdi.curation.entities.CMDIProfile;
-import eu.clarin.cmdi.curation.report.CMDIProfileReport;
+import eu.clarin.cmdi.curation.entities.CMDProfile;
+import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.curation.xml.CMDIXPathService;
+import eu.clarin.cmdi.curation.xml.CMDXPathService;
 
 /**
  * @author dostojic
  *
  */
-public class ProfileComponentsHandler extends ProcessingStep<CMDIProfile, CMDIProfileReport> {
+public class ProfileComponentsHandler extends ProcessingStep<CMDProfile, CMDProfileReport> {
 
     private static final Logger _logger = LoggerFactory.getLogger(ProfileComponentsHandler.class);
 
     @Override
-    public boolean process(CMDIProfile entity, CMDIProfileReport report) {
+    public boolean process(CMDProfile entity, CMDProfileReport report) {
 	try {
 
-	    CMDIXPathService xmlService = new CMDIXPathService(CRConstants.getProfilesURL(entity.getProfile()) + "xml");
+	    CMDXPathService xmlService = new CMDXPathService(CRConstants.getProfilesURL(entity.getProfile()) + "xml");
 	    VTDNav navigator = xmlService.getNavigator();
 
 	    // header

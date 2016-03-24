@@ -7,7 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.clarin.cmdi.curation.entities.CMDIInstance;
+import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.Collection;
 import eu.clarin.cmdi.curation.entities.CurationEntity;
 import eu.clarin.cmdi.curation.report.CollectionReport;
@@ -51,10 +51,10 @@ public class CollectionAggregator extends ProcessingStep<Collection, CollectionR
 	
 	report.calculateAverageValues();
 	
-	if(!CMDIInstance.duplicateMDSelfLinks.isEmpty())
-	    report.addSelfLinks(new ArrayList(CMDIInstance.duplicateMDSelfLinks));
-	CMDIInstance.duplicateMDSelfLinks.clear();
-	CMDIInstance.uniqueMDSelfLinks.clear();
+	if(!CMDInstance.duplicateMDSelfLinks.isEmpty())
+	    report.addSelfLinks(new ArrayList(CMDInstance.duplicateMDSelfLinks));
+	CMDInstance.duplicateMDSelfLinks.clear();
+	CMDInstance.uniqueMDSelfLinks.clear();
 
 	return true;
 

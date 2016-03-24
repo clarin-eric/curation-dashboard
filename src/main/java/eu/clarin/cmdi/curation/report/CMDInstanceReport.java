@@ -29,7 +29,7 @@ import eu.clarin.cmdi.curation.xml.ScoreAdapter;
 
 @XmlRootElement(name = "instance-report")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CMDIInstanceReport implements Report<CollectionReport> {
+public class CMDInstanceReport implements Report<CollectionReport> {
 	
 	public static final double MAX_SCORE = 11;
 
@@ -179,7 +179,7 @@ public class CMDIInstanceReport implements Report<CollectionReport> {
 	public void marshal(OutputStream os) throws Exception {
 		try {
 
-			JAXBContext jaxbContext = JAXBContext.newInstance(CMDIInstanceReport.class);
+			JAXBContext jaxbContext = JAXBContext.newInstance(CMDInstanceReport.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
 			// output pretty printed

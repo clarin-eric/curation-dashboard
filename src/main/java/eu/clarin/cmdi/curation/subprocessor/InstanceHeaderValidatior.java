@@ -13,26 +13,26 @@ import com.ximpleware.AutoPilot;
 import com.ximpleware.VTDNav;
 
 import eu.clarin.cmdi.curation.cr.CRConstants;
-import eu.clarin.cmdi.curation.entities.CMDIInstance;
-import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
+import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.curation.xml.CMDIXPathService;
+import eu.clarin.cmdi.curation.xml.CMDXPathService;
 
-public class InstanceHeaderValidatior extends CMDISubprocessor {
+public class InstanceHeaderValidatior extends CMDSubprocessor {
 
     private static final Logger _logger = LoggerFactory.getLogger(InstanceHeaderValidatior.class);
 
     private static final Pattern PROFILE_ID_PATTERN = Pattern.compile(".*(clarin.eu:cr1:p_[0-9]+).*");
 
-    private CMDIXPathService xmlService;
+    private CMDXPathService xmlService;
 
     @Override
-    public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
+    public boolean process(CMDInstance entity, CMDInstanceReport report) {
 	boolean status = true;
 	String profile = null;
 	try {
-	    xmlService = new CMDIXPathService(entity.getPath());
+	    xmlService = new CMDXPathService(entity.getPath());
 	    profile = handleMdProfile(report);
 	    handleMdSelfLink(report);
 	    handleMdCollectionDisplyName(report);
@@ -52,7 +52,7 @@ public class InstanceHeaderValidatior extends CMDISubprocessor {
 	return status;
     }
 
-    private String handleMdProfile(CMDIInstanceReport report) throws Exception {
+    private String handleMdProfile(CMDInstanceReport report) throws Exception {
 	// search in header first
 	String profile = xmlService.xpath("/CMD/Header/MdProfile/text()");
 	if (profile == null) {// not in header
@@ -93,7 +93,7 @@ public class InstanceHeaderValidatior extends CMDISubprocessor {
 	return schema;
     }
 
-    private void handleMdCollectionDisplyName(CMDIInstanceReport report) throws Exception {
+    private void handleMdCollectionDisplyName(CMDInstanceReport report) throws Exception {
 	String mdCollectionDisplayName = xmlService.xpath("/CMD/Header/MdCollectionDisplayName/text()");
 	if (mdCollectionDisplayName == null || mdCollectionDisplayName.isEmpty()) {
 	    report.mdCollectionDispExists = false;
@@ -101,19 +101,19 @@ public class InstanceHeaderValidatior extends CMDISubprocessor {
 	}
     }
 
-    private void handleMdSelfLink(CMDIInstanceReport report) throws Exception {
+    private void handleMdSelfLink(CMDInstanceReport report) throws Exception {
 	String mdSelfLink = xmlService.xpath("/CMD/Header/MdSelfLink/text()");
 	if (mdSelfLink == null || mdSelfLink.isEmpty()) {
 	    addMessage(Severity.ERROR, "Value for MdCollctionDisplayName is missing");
 	    report.mdSelfLinkExists = false;
 	} else {
-	    if (!CMDIInstance.uniqueMDSelfLinks.add(mdSelfLink)) {
-		CMDIInstance.duplicateMDSelfLinks.add(mdSelfLink);
+	    if (!CMDInstance.uniqueMDSelfLinks.add(mdSelfLink)) {
+		CMDInstance.duplicateMDSelfLinks.add(mdSelfLink);
 	    }
 	}
     }
 
-    private void handleResourceProxies(CMDIInstanceReport report) {
+    private void handleResourceProxies(CMDInstanceReport report) {
 	int numOfResProxies = 0;
 	int numOfResProxiesWithMime = 0;
 	int numOfResProxiesWithReferences = 0;

@@ -37,9 +37,9 @@ public class EntityTree implements FileVisitor<Path> {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 	CurationEntity entity;
 	if (file.endsWith(".xsd"))
-	    entity = new CMDIProfile(file, attrs.size());
+	    entity = new CMDProfile(file, attrs.size());
 	else
-	    entity = new CMDIInstance(file, attrs.size());
+	    entity = new CMDInstance(file, attrs.size());
 
 	curDir.addChild(entity);
 	return FileVisitResult.CONTINUE;

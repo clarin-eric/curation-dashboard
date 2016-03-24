@@ -8,34 +8,34 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
-import eu.clarin.cmdi.curation.processor.CMDIInstanceProcessor;
+import eu.clarin.cmdi.curation.processor.CMDInstanceProcessor;
 
-public class CMDIInstance extends CurationEntity {
+public class CMDInstance extends CurationEntity {
 
     public static Set<String> uniqueMDSelfLinks = Collections.synchronizedSet(new HashSet<>());
     public static Collection<String> duplicateMDSelfLinks = Collections
 	    .synchronizedCollection(new LinkedList<>());
 
-    Collection<CMDIUrlNode> links = new LinkedList<>();
+    Collection<CMDUrlNode> links = new LinkedList<>();
 
-    public CMDIInstance(Path path) {
+    public CMDInstance(Path path) {
 	super(path);
     }
 
-    public CMDIInstance(Path path, long size) {
+    public CMDInstance(Path path, long size) {
 	super(path, size);
     }
 
     @Override
     protected AbstractProcessor getProcessor() {
-	return new CMDIInstanceProcessor();
+	return new CMDInstanceProcessor();
     }
 
-    public Collection<CMDIUrlNode> getLinks() {
+    public Collection<CMDUrlNode> getLinks() {
 	return links;
     }
 
-    public void setLinks(Collection<CMDIUrlNode> links) {
+    public void setLinks(Collection<CMDUrlNode> links) {
 	this.links = links;
     }
 

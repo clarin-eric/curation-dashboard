@@ -19,11 +19,11 @@ import com.ximpleware.VTDException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
-import eu.clarin.cmdi.curation.entities.CMDIInstance;
+import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.facets.Profile2FacetMap;
 import eu.clarin.cmdi.curation.facets.Profile2FacetMap.Facet;
-import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
+import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.FacetReport;
 import eu.clarin.cmdi.curation.report.FacetReport.FacetValues;
 import eu.clarin.cmdi.curation.report.FacetReport.Instance;
@@ -34,9 +34,9 @@ import eu.clarin.cmdi.curation.report.Severity;
  * @author dostojic
  *
  */
-public class InstanceFacetHandler extends CMDISubprocessor {
+public class InstanceFacetProcessor extends CMDSubprocessor {
 
-    private static final Logger _logger = LoggerFactory.getLogger(InstanceFacetHandler.class);
+    private static final Logger _logger = LoggerFactory.getLogger(InstanceFacetProcessor.class);
 
     private static final String DEFAULT_LANGUAGE = "code:und";
     private static final String FACET_LANGUAGECODE = "languageCode";
@@ -46,7 +46,7 @@ public class InstanceFacetHandler extends CMDISubprocessor {
     private VTDNav navigator;
 
     @Override
-    public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
+    public boolean process(CMDInstance entity, CMDInstanceReport report) {
 	boolean status = true;
 	try {
 	    parse(entity.getPath());

@@ -6,10 +6,10 @@ package eu.clarin.cmdi.curation.subprocessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.clarin.cmdi.curation.entities.CMDIProfile;
+import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.facets.Profile2FacetMap;
-import eu.clarin.cmdi.curation.report.CMDIProfileReport;
+import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.FacetReport;
 import eu.clarin.cmdi.curation.report.FacetReport.Profile;
 
@@ -17,12 +17,12 @@ import eu.clarin.cmdi.curation.report.FacetReport.Profile;
  * @author dostojic
  *
  */
-public class ProfileFacetHanlder extends ProcessingStep<CMDIProfile, CMDIProfileReport> {
+public class ProfileFacetHanlder extends ProcessingStep<CMDProfile, CMDProfileReport> {
 
     private static final Logger _logger = LoggerFactory.getLogger(ProfileFacetHanlder.class);
 
     @Override
-    public boolean process(CMDIProfile entity, CMDIProfileReport report) {
+    public boolean process(CMDProfile entity, CMDProfileReport report) {
 
 	FacetConceptMappingService service;
 	Profile2FacetMap profileMap;

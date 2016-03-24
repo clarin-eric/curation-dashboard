@@ -27,7 +27,7 @@ import eu.clarin.cmdi.curation.xml.ScoreAdapter;
  */
 @XmlRootElement(name = "profile-report")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CMDIProfileReport implements Report<Report> {
+public class CMDProfileReport implements Report<Report> {
 	
 	public static final double MAX_SCORE = 3;
 
@@ -74,7 +74,7 @@ public class CMDIProfileReport implements Report<Report> {
 	public void marshal(OutputStream os) throws Exception {
 		try {
 
-			JAXBContext jaxbContext = JAXBContext.newInstance(CMDIProfileReport.class);
+			JAXBContext jaxbContext = JAXBContext.newInstance(CMDProfileReport.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
 			// output pretty printed

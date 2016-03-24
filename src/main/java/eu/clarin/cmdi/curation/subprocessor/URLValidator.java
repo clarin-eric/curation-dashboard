@@ -2,10 +2,10 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import eu.clarin.cmdi.curation.entities.CMDIInstance;
+import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.io.HTTPLinkChecker;
 import eu.clarin.cmdi.curation.main.Configuration;
-import eu.clarin.cmdi.curation.report.CMDIInstanceReport;
+import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
 
 /**
@@ -13,10 +13,10 @@ import eu.clarin.cmdi.curation.report.Severity;
  *
  */
 
-public class URLValidator extends CMDISubprocessor {
+public class URLValidator extends CMDSubprocessor {
 
     @Override
-    public boolean process(CMDIInstance entity, CMDIInstanceReport report) {
+    public boolean process(CMDInstance entity, CMDInstanceReport report) {
 	// links are unique
 	if (Configuration.HTTP_VALIDATION) {
 	    AtomicInteger numOfBrokenLinks = new AtomicInteger(0);

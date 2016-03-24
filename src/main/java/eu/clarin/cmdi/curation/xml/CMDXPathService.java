@@ -15,13 +15,13 @@ import com.ximpleware.ParseException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
-public class CMDIXPathService {
+public class CMDXPathService {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CMDIXPathService.class);
+    private static final Logger _logger = LoggerFactory.getLogger(CMDXPathService.class);
 
     private VTDNav navigator = null;
 
-    public CMDIXPathService(Path path) throws Exception {
+    public CMDXPathService(Path path) throws Exception {
 	VTDGen parser = new VTDGen();
 	try {
 	    parser.setDoc(Files.readAllBytes(path));
@@ -33,7 +33,7 @@ public class CMDIXPathService {
 	}
     }
 
-    public CMDIXPathService(String url) throws Exception {
+    public CMDXPathService(String url) throws Exception {
 	VTDGen parser = new VTDGen();
 	
 	if (!parser.parseHttpUrl(url, true))
