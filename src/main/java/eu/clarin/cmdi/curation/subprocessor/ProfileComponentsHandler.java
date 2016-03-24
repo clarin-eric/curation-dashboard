@@ -27,67 +27,66 @@ import eu.clarin.cmdi.curation.xml.CMDXPathService;
  */
 public class ProfileComponentsHandler extends ProcessingStep<CMDProfile, CMDProfileReport> {
 
-    private static final Logger _logger = LoggerFactory.getLogger(ProfileComponentsHandler.class);
+	private static final Logger _logger = LoggerFactory.getLogger(ProfileComponentsHandler.class);
 
-    @Override
-    public boolean process(CMDProfile entity, CMDProfileReport report) {
-	try {
+	@Override
+	public boolean process(CMDProfile entity, CMDProfileReport report) {
+		try {
 
-	    CMDXPathService xmlService = new CMDXPathService(CRConstants.getProfilesURL(entity.getProfile()) + "xml");
-	    VTDNav navigator = xmlService.getNavigator();
+			CMDXPathService xmlService = new CMDXPathService(CRConstants.getProfilesURL(entity.getProfile()) + "xml");
+			VTDNav navigator = xmlService.getNavigator();
 
-	    // header
-	    //report.ID = xmlService.xpath("/CMD_ComponentSpec/Header/ID/text()");
-	    report.ID = entity.getProfile();
-	    report.name = xmlService.xpath("/CMD_ComponentSpec/Header/Name/text()");
-	    report.description = xmlService.xpath("/CMD_ComponentSpec/Header/Description/text()");
-	    
-	    IComponentRegistryService crService = CRService.getInstance();
-	    report.isPublic = crService.isPublic(report.ID);
+			// header
+			// report.ID =
+			// xmlService.xpath("/CMD_ComponentSpec/Header/ID/text()");
+			report.ID = entity.getProfile();
+			report.name = xmlService.getXPathValue("/CMD_ComponentSpec/Header/Name/text()");
+			report.description = xmlService.getXPathValue("/CMD_ComponentSpec/Header/Description/text()");
 
-	    int numOfComponents = 0;
-	    int numOfRequiredComponents = 0;
-	    int numOfUniqueComponents = 0;
-	    
-	    Map<String, Integer> components = new HashMap<>();
+			IComponentRegistryService crService = CRService.getInstance();
+			report.isPublic = crService.isPublic(report.ID);
 
-	    AutoPilot ap = new AutoPilot(navigator);
+			int numOfComponents = 0;
+			int numOfRequiredComponents = 0;
+			int numOfUniqueComponents = 0;
 
-	    // components
-	    navigator.toElement(VTDNav.ROOT);
-	    ap.selectElement("CMD_Component");
-	    while (ap.iterate()) {
-		numOfComponents++;
-		int ind;
-		ind = navigator.getAttrVal("CardinalityMin");
+			Map<String, Integer> components = new HashMap<>();
 
-		// if attr CardinalityMin > 0
-		if (ind != -1 && navigator.toNormalizedString(ind).compareTo("0") > 0)
-		    numOfRequiredComponents++;
+			AutoPilot ap = new AutoPilot(navigator);
 
-		ind = navigator.getAttrVal("name");
+			// components
+			navigator.toElement(VTDNav.ROOT);
+			ap.selectElement("CMD_Component");
+			while (ap.iterate()) {
+				numOfComponents++;
+				int ind;
+				ind = navigator.getAttrVal("CardinalityMin");
 
-		if (ind != -1) {
-		    String name = navigator.toNormalizedString(ind);
-		    components.put(name, components.containsKey(name) ? components.get(name) + 1 : 1);
-		} else
-		    _logger.error("missing name");
-	    }
+				// if attr CardinalityMin > 0
+				if (ind != -1 && navigator.toNormalizedString(ind).compareTo("0") > 0)
+					numOfRequiredComponents++;
 
-	    
-	    numOfUniqueComponents = components.keySet().size();
-	    components = null;
-	    
-	    report.createComponentsReport(numOfComponents, numOfRequiredComponents, numOfUniqueComponents);
+				ind = navigator.getAttrVal("name");
 
-	    return true;
+				if (ind != -1) {
+					String name = navigator.toNormalizedString(ind);
+					components.put(name, components.containsKey(name) ? components.get(name) + 1 : 1);
+				} else
+					_logger.error("missing name");
+			}
 
-	} catch (Exception e) {
-	    _logger.error("Error processing profile {}", entity.getPath(), e);
-	    report.addDetail(Severity.FATAL, e.toString());
-	    return false;
+			numOfUniqueComponents = components.keySet().size();
+			components = null;
+
+			report.createComponentsReport(numOfComponents, numOfRequiredComponents, numOfUniqueComponents);
+
+			return true;
+
+		} catch (Exception e) {
+			_logger.error("Error processing profile {}", entity.getPath(), e);
+			report.addDetail(Severity.FATAL, e.toString());
+			return false;
+		}
 	}
-    }
-
 
 }

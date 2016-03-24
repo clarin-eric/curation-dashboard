@@ -54,7 +54,7 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
 
     private String handleMdProfile(CMDInstanceReport report) throws Exception {
 	// search in header first
-	String profile = xmlService.xpath("/CMD/Header/MdProfile/text()");
+	String profile = xmlService.getXPathValue("/CMD/Header/MdProfile/text()");
 	if (profile == null) {// not in header
 	    report.mdProfileExists = false;
 	    addMessage(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with profile ID!");
@@ -94,7 +94,7 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
     }
 
     private void handleMdCollectionDisplyName(CMDInstanceReport report) throws Exception {
-	String mdCollectionDisplayName = xmlService.xpath("/CMD/Header/MdCollectionDisplayName/text()");
+	String mdCollectionDisplayName = xmlService.getXPathValue("/CMD/Header/MdCollectionDisplayName/text()");
 	if (mdCollectionDisplayName == null || mdCollectionDisplayName.isEmpty()) {
 	    report.mdCollectionDispExists = false;
 	    addMessage(Severity.ERROR, "Value for MdCollectionDisplayName is missing");
@@ -102,7 +102,7 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
     }
 
     private void handleMdSelfLink(CMDInstanceReport report) throws Exception {
-	String mdSelfLink = xmlService.xpath("/CMD/Header/MdSelfLink/text()");
+	String mdSelfLink = xmlService.getXPathValue("/CMD/Header/MdSelfLink/text()");
 	if (mdSelfLink == null || mdSelfLink.isEmpty()) {
 	    addMessage(Severity.ERROR, "Value for MdCollctionDisplayName is missing");
 	    report.mdSelfLinkExists = false;
