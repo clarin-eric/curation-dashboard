@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.configuration.SystemConfiguration;
+
 import eu.clarin.cmdi.curation.main.Configuration;
 
 /**
@@ -34,15 +36,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	public transient boolean isValid = true;
 
 	@XmlAttribute(name = "max-score")
-	public final double maxScore = MAX_SCORE;
-	
-	public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-	
-	public Double score;
+	public final double maxScore = MAX_SCORE + CMDProfileReport.MAX_SCORE;
 
-	
-
-	// for score calculation
+	// transient variables used in score calculation
 
 	// file
 	public transient boolean sizeExceeded = false;
@@ -61,6 +57,15 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	public transient int numOfUniqueLinks = 0;
 
 	public transient List<Message> xmlErrors;
+	
+	public Long timeStamp = System.currentTimeMillis();
+	
+	@XmlElement(name = "score-profile")
+	public Double profileScore;
+	@XmlElement(name = "score-instance")
+	public Double instanceScore;
+	@XmlElement(name = "score-total")
+	public Double totalScore;
 
 	// sub reports **************************************
 
@@ -70,7 +75,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
 	// file
 	@XmlElement(name = "file-section")
-	FileReport fileReport;
+	public FileReport fileReport;
 
 	// ResProxy
 	@XmlElement(name = "resProxy-section")
@@ -94,11 +99,15 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
 	@Override
 	public double calculateScore() {
-		score = 0.0;
+		instanceScore = 0.0;
+		
+		if(!isValid){
+			return instanceScore;
+		}
 
 		// fileSize
 		if (!sizeExceeded)
-			score += 1; // * weight
+			instanceScore += 1; // * weight
 
 		// schema
 		double sectionScore = 0;
@@ -107,7 +116,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 		if (schemaInCCR)
 			sectionScore += 1; // * weight
 
-		score += sectionScore; // * schema factor
+		instanceScore += sectionScore; // * schema factor
 
 		sectionScore = 0;
 		if (mdProfileExists)
@@ -116,16 +125,17 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 			sectionScore += 1;
 		if (mdSelfLinkExists)
 			sectionScore += 1;
-		score += sectionScore; // * header factor
+		instanceScore += sectionScore; // * header factor
 
 		sectionScore = 0;
 
 		sectionScore += resProxyReport.percOfResProxiesWithMime + resProxyReport.percOfResProxiesWithReferences;
 
-		score += sectionScore; // * resProxy factor
+		instanceScore += sectionScore; // * resProxy factor
 
-		score += xmlReport.percOfPopulatedElements; // * xmlValidation factor
-
+		instanceScore += xmlReport.percOfPopulatedElements; // * xmlValidation factor
+		//we don't take into account errors and warnings from xml parser
+		
 		sectionScore = 0;
 		// it can influence the score, if one collection was done with enabled
 		// and the other without
@@ -133,11 +143,12 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 			sectionScore += urlReport.percOfValidLinks;
 		} // else
 
-		score += sectionScore; // * urlValidation factor
+		instanceScore += sectionScore; // * urlValidation factor
 
-		score += facets.instance.coverage;// *facetCoverage factor
+		instanceScore += facets.instance.coverage;// *facetCoverage factor
 
-		return score;
+		totalScore = instanceScore + profileScore; 
+		return totalScore;
 
 	}
 
@@ -145,10 +156,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	public void mergeWithParent(CollectionReport parentReport) {
 
 		if (!isValid) {
-			parentReport.addNewInvalid(fileReport.path);
+			parentReport.addNewInvalid(fileReport.location);
 		}
 
-		parentReport.score += score;
+		parentReport.score += totalScore;
 
 		// ResProxies
 		parentReport.resProxyReport.totNumOfResProxies += resProxyReport.numOfResProxies;
@@ -202,15 +213,15 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class FileReport {
-		String path;
-		long size;
+	public static class FileReport {
+		public String location;
+		public long size;
 
 		@XmlElementWrapper(name = "details")
 		List<Message> messages = null;
 
-		public FileReport(String path, long size, List<Message> messages) {
-			this.path = path;
+		public FileReport(String location, long size, List<Message> messages) {
+			this.location = location;
 			this.size = size;
 			this.messages = messages;
 		}

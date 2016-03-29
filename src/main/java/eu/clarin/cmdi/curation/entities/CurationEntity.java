@@ -18,10 +18,6 @@ public abstract class CurationEntity {
 
 	protected long size = 0;
 
-	// validity -> negative - not set; 0 - not valid; positive - number of valid
-	// file in case of directory
-	protected long validity = -1;
-
 	public CurationEntity(Path path) {
 		this.path = path;
 	}
@@ -47,37 +43,12 @@ public abstract class CurationEntity {
 		this.path = path;
 	}
 
-	public long getValidity() {
-		return validity;
-	}
-
-	public void setValidity(long validity) {
-		this.validity = validity;
-	}
-
-	public boolean isValid() {
-		return validity > 0;
-	}
-
 	public long getSize() {
 		return size;
 	}
 
 	public void setSize(long size) {
 		this.size = size;
-	}
-
-	public Report getReport() {
-		return report;
-	}
-
-	@Override
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("Report for " + path).append("\n");
-		sb.append("VALID: " + isValid()).append("\n");
-
-		return sb.toString();
 	}
 
 }

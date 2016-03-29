@@ -24,6 +24,11 @@ public class Downloader {
 
 	public void download(String url, File destination) throws IOException {
 		try {
+			int responseCode = new HTTPLinkChecker().checkLink(url);
+			
+			if(responseCode != 200)
+				throw new Exception("HTTP status code was " + responseCode + ". Check if " + url + " is a valid URL");
+			
 			_logger.trace("Downloading file from {} into {}", url, destination.getName());
 			ReadableByteChannel channel = Channels.newChannel(new URL(url).openStream());
 			FileOutputStream fos = new FileOutputStream(destination);
@@ -31,7 +36,7 @@ public class Downloader {
 			_logger.trace("File successefully downloaded with size {} KB",
 					new DecimalFormat("#,##0.#").format(size / 1024));
 			fos.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new IOException("Error while downloading file " + url, e);
 		}
 	}

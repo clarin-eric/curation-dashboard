@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.main;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -13,9 +14,12 @@ public interface CurationModuleInterface {
 	
 	public Report processCMDProfile(URL url);
 	
-	public Report processCMDInstance(Path file);
+	/*
+	 * throws Exception if file doesn't exist or is invalid
+	 */
+	public Report processCMDInstance(Path file) throws IOException;
 	
-	public Report processCMDInstance(URL url);
+	public Report processCMDInstance(URL url) throws IOException;
 	
 	public Report processCollection(Path path);
 	

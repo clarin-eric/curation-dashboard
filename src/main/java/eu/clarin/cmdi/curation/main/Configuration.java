@@ -15,7 +15,8 @@ public class Configuration {
 
 	private static Logger _logger = LoggerFactory.getLogger(Configuration.class);
 
-	public static final String SCORE_NUMERIC_DISPLAY_FORMAT = "#0.00";
+	public static final String SCORE_NUMERIC_DISPLAY_FORMAT = "#0.0000";
+	public static final String TIMESTAMP_DISPLAY_FORMAT = "dd-MM-yyyy HH.mm.ss";
 
 	public static long MAX_FILE_SIZE;
 	public static boolean HTTP_VALIDATION;

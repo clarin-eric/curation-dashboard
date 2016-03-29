@@ -12,39 +12,38 @@ import eu.clarin.cmdi.curation.processor.CMDInstanceProcessor;
 
 public class CMDInstance extends CurationEntity {
 
-    public static Set<String> uniqueMDSelfLinks = Collections.synchronizedSet(new HashSet<>());
-    public static Collection<String> duplicateMDSelfLinks = Collections
-	    .synchronizedCollection(new LinkedList<>());
+	public static Set<String> uniqueMDSelfLinks = Collections.synchronizedSet(new HashSet<>());
+	public static Collection<String> duplicateMDSelfLinks = Collections.synchronizedCollection(new LinkedList<>());
 
-    Collection<CMDUrlNode> links = new LinkedList<>();
+	Collection<CMDUrlNode> links = new LinkedList<>();
 
-    public CMDInstance(Path path) {
-	super(path);
-    }
+	public CMDInstance(Path path) {
+		super(path);
+	}
 
-    public CMDInstance(Path path, long size) {
-	super(path, size);
-    }
+	public CMDInstance(Path path, long size) {
+		super(path, size);
+	}
 
-    @Override
-    protected AbstractProcessor getProcessor() {
-	return new CMDInstanceProcessor();
-    }
+	@Override
+	protected AbstractProcessor getProcessor() {
+		return new CMDInstanceProcessor();
+	}
 
-    public Collection<CMDUrlNode> getLinks() {
-	return links;
-    }
+	public Collection<CMDUrlNode> getLinks() {
+		return links;
+	}
 
-    public void setLinks(Collection<CMDUrlNode> links) {
-	this.links = links;
-    }
+	public void setLinks(Collection<CMDUrlNode> links) {
+		this.links = links;
+	}
 
-    public static Set<String> getUniquemdselflinks() {
-	return uniqueMDSelfLinks;
-    }
+	public static Set<String> getUniquemdselflinks() {
+		return uniqueMDSelfLinks;
+	}
 
-    public static Collection<String> getDuplicatemdselflinks() {
-	return duplicateMDSelfLinks;
-    }
+	public static Collection<String> getDuplicatemdselflinks() {
+		return duplicateMDSelfLinks;
+	}
 
 }

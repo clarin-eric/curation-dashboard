@@ -9,7 +9,7 @@ import java.util.Collection;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 import eu.clarin.cmdi.curation.subprocessor.ProfileComponentsHandler;
-import eu.clarin.cmdi.curation.subprocessor.ProfileElementsHandler;
+import eu.clarin.cmdi.curation.subprocessor.ProfileConceptsHandler;
 import eu.clarin.cmdi.curation.subprocessor.ProfileFacetHanlder;
 
 /**
@@ -25,7 +25,7 @@ public class CMDProfileProcessor extends AbstractProcessor<CMDProfileReport> {
     protected Collection<ProcessingStep> createPipeline() {
 	return Arrays.asList(
 		new ProfileComponentsHandler(),
-		new ProfileElementsHandler(),
+		new ProfileConceptsHandler(),
 		new ProfileFacetHanlder()
 		);
     }

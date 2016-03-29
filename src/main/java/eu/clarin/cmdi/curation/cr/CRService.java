@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.cr;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,8 +61,8 @@ public class CRService implements ICRService {
 	}
 
 	@Override
-	public boolean isSchemaCRResident(final URL schemaUrl) {
-		return schemaUrl.toString().startsWith(REST_API);
+	public boolean isSchemaCRResident(final String schemaUrl) {
+		return schemaUrl.startsWith(REST_API);
 	}
 
 	@Override
@@ -94,7 +95,7 @@ public class CRService implements ICRService {
 			if (scoreBeingProcessed.putIfAbsent(profileId, new Object()) == null) {
 				new Runnable() {
 					public void run() {
-						CMDProfileReport report = (CMDProfileReport) new CMDProfile(profileId).getReport();
+						CMDProfileReport report = (CMDProfileReport) new CMDProfile(profileId).generateReport();
 						if (!report.isValid)
 							scoreCache.put(profileId, new ScoreStruct(new Exception("Unable to process profile"
 									+ profileId + ". Run curation for this profile to see details!")));
@@ -140,49 +141,41 @@ public class CRService implements ICRService {
 						Path xsd = null;
 						Path xml = null;
 						try {
-
-							if (isPublic(profileId)) {
-								// resolve xsd
-								String fileName = profileId.substring(PROFILE_PREFIX.length());
-								xsd = Configuration.CACHE_DIRECTORY.resolve(fileName + ".xsd");
-								_logger.trace("Loading {} schema from {}", profileId, xsd);
-								if (!Files.exists(xsd)) {
-									// if not download it
-									Files.createFile(xsd);
-									_logger.info("{}/xsd is not in the local cache, it will be downloaded", profileId);
-									new Downloader().download(REST_API + profileId + "/xsd", xsd.toFile());
-								}
-
-								// resolve xml
-								xml = Configuration.CACHE_DIRECTORY.resolve(fileName + ".xml");
-								_logger.trace("Loading {} xml from {}", profileId, xml);
-								if (!Files.exists(xml)) {
-									// if not download it
-									Files.createFile(xml);
-									_logger.info("{}/xml is not in the local cache, it will be downloaded", profileId);
-									new Downloader().download(REST_API + profileId + "/xml", xml.toFile());
-								}
-
-								VTDGen parser = new VTDGen();
-								parser.setDoc(Files.readAllBytes(xsd));
-								parser.parse(true);
-								VTDNav parsedXSD = parser.getNav();
-
-								parser.setDoc(Files.readAllBytes(xml));
-								parser.parse(true);
-								VTDNav parsedXML = parser.getNav();
-
-								Schema schema = createSchema(xsd.toFile());
-
-								if (!isPublic(profileId)) {
-									_logger.warn("Profile {} is not public. XSD and XML files wont be cached");
-									// dont keep files if profile is not public
-									Files.delete(xsd);
-									Files.delete(xml);
-								}
-
-								elem = new ProfileStruct(isPublic(profileId), parsedXSD, parsedXML, schema);
+							// resolve xsd
+							String fileName = profileId.substring(PROFILE_PREFIX.length());
+							xsd = Configuration.CACHE_DIRECTORY.resolve(fileName + ".xsd");
+							_logger.trace("Loading {} schema from {}", profileId, xsd);
+							if (!Files.exists(xsd)) {
+								// if not download it
+								Files.createFile(xsd);
+								_logger.info("{}/xsd is not in the local cache, it will be downloaded", profileId);
+								new Downloader().download(REST_API + profileId + "/xsd", xsd.toFile());
 							}
+
+							// resolve xml
+							xml = Configuration.CACHE_DIRECTORY.resolve(fileName + ".xml");
+							_logger.trace("Loading {} xml from {}", profileId, xml);
+							if (!Files.exists(xml)) {
+								// if not download it
+								Files.createFile(xml);
+								_logger.info("{}/xml is not in the local cache, it will be downloaded", profileId);
+								new Downloader().download(REST_API + profileId + "/xml", xml.toFile());
+							} else {// not public, dont cache it
+
+							}
+
+							VTDGen parser = new VTDGen();
+							parser.setDoc(Files.readAllBytes(xsd));
+							parser.parse(true);
+							VTDNav parsedXSD = parser.getNav();
+
+							parser.setDoc(Files.readAllBytes(xml));
+							parser.parse(true);
+							VTDNav parsedXML = parser.getNav();
+
+							Schema schema = createSchema(xsd.toFile());
+
+							elem = new ProfileStruct(isPublic(profileId), parsedXSD, parsedXML, schema);
 
 						} catch (Exception e) {
 							_logger.error("Error while caching schema for {}. XSD and XML files will be removed!",
@@ -200,6 +193,17 @@ public class CRService implements ICRService {
 							Object lock = schemaBeingProcessed.get(profileId);
 							synchronized (lock) {
 								lock.notifyAll();
+							}
+
+							// dont keep files if profile is not public
+							try {
+								if (!isPublic(profileId)) {
+									_logger.warn("Profile {} is not public. XSD and XML files wont be cached", profileId);									
+									Files.delete(xsd);
+									Files.delete(xml);
+								}
+							} catch (Exception e) {
+								// do nothing
 							}
 
 						}
@@ -222,6 +226,10 @@ public class CRService implements ICRService {
 
 	synchronized private Schema createSchema(File schemaFile) throws SAXException {
 		return schemaFactory.newSchema(schemaFile);
+	}
+
+	synchronized private Schema createSchema(URL schemaURL) throws SAXException {
+		return schemaFactory.newSchema(schemaURL);
 	}
 
 	class ProfileStruct {

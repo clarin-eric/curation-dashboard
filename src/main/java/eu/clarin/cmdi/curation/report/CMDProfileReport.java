@@ -33,10 +33,9 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 	@XmlAttribute(name = "max-score")
 	public final double maxScore = MAX_SCORE;
 
-	public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+	public Long timeStamp = System.currentTimeMillis();
 
-	public Double score;
-	
+	public Double score;	
 
 	public String ID;
 	public String name;
@@ -94,6 +93,9 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
 	public double calculateScore() {
 		score = 0.0;
+		
+		if(!isValid)
+			return score;
 
 		if (isPublic)
 			score++;

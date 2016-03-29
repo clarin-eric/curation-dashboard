@@ -37,7 +37,7 @@ public class CollectionReport implements Report<CollectionReport> {
 	public final double maxScoreInstance = CMDInstanceReport.MAX_SCORE;
 
 	// report fields
-	public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+	public Long timeStamp = System.currentTimeMillis();
 
 	@XmlJavaTypeAdapter(ScoreAdapter.class)
 	public Double score;

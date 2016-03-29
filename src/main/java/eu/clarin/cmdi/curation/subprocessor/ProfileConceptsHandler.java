@@ -27,9 +27,9 @@ import eu.clarin.cmdi.curation.xml.CMDXPathService;
  * @author dostojic
  *
  */
-public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfileReport> {
+public class ProfileConceptsHandler extends ProcessingStep<CMDProfile, CMDProfileReport> {
 
-    private static final Logger _logger = LoggerFactory.getLogger(ProfileElementsHandler.class);
+    private static final Logger _logger = LoggerFactory.getLogger(ProfileConceptsHandler.class);
 
     @Override
     public boolean process(CMDProfile entity, CMDProfileReport report) {

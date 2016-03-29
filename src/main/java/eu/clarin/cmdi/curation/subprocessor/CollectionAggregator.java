@@ -42,7 +42,7 @@ public class CollectionAggregator extends ProcessingStep<Collection, CollectionR
 	    chunk.parallelStream().forEach(CurationEntity::generateReport);
 	    long end = System.currentTimeMillis();
 	    _logger.info("validation for {} files lasted {}", chunk.size(), TimeUtils.humanizeTime(end - startTime));	    	    
-	    chunk.stream().forEach(child -> child.getReport().mergeWithParent(report));
+	    chunk.stream().forEach(child -> child.generateReport().mergeWithParent(report));
 
 	    processed += chunk.size();
 	    _logger.debug("{} records are processed so far, rest {}", processed, dir.getChildren().size());

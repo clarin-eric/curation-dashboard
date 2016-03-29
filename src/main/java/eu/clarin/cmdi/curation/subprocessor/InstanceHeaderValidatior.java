@@ -1,21 +1,21 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ximpleware.AutoPilot;
 import com.ximpleware.VTDNav;
 
-import eu.clarin.cmdi.curation.cr.CRConstants;
+import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.ICRService;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
-import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.xml.CMDXPathService;
 
@@ -26,14 +26,20 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
 	private static final Pattern PROFILE_ID_PATTERN = Pattern.compile(".*(clarin.eu:cr1:p_[0-9]+).*");
 
 	private CMDXPathService xmlService;
+	
+	private ICRService crService = CRService.getInstance();
+	
+	private String profile;
 
 	@Override
 	public boolean process(CMDInstance entity, CMDInstanceReport report) {
 		boolean status = true;
-		String profile = null;
 		try {
 			xmlService = new CMDXPathService(entity.getPath());
 			profile = handleMdProfile(report);
+			
+			report.profileScore = crService.getScore(profile);
+			
 			handleMdSelfLink(report);
 			handleMdCollectionDisplyName(report);
 			handleResourceProxies(report);
@@ -43,7 +49,8 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
 			// missing
 		} catch (Exception e) {
 			report.isValid = false;
-			addMessage(Severity.FATAL, e.getMessage());
+			_logger.error("Unable to process {}", entity.getPath(), e);
+			addMessage(Severity.FATAL, "Unable to process header");
 			status = false;
 		} finally {
 			report.addHeaderReport(profile, msgs);
@@ -52,24 +59,39 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
 		return status;
 	}
 
-
 	private String handleMdProfile(CMDInstanceReport report) throws Exception {
-		// search in header first
+		// extract profile from header MDProfile
 		String profile = xmlService.getXPathValue("/CMD/Header/MdProfile/text()");
+		String schema = getSchema();
+
 		if (profile == null) {// not in header
 			report.mdProfileExists = false;
 			addMessage(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with profile ID!");
-			profile = extractProfileFromNameSpace();
+
+			if (!schema.startsWith(CRService.getInstance().REST_API))
+
+				// extract profile ID
+				if (schema != null) {
+					Matcher m = PROFILE_ID_PATTERN.matcher(schema);
+					if (m.find())
+						profile = m.group(1);
+				}
+
 			if (profile == null)
 				throw new Exception("Profile can not be extracted from namespace!");
 		}
-		report.schemaAvailable = true;
+
+		if (schema != null) {
+			report.schemaAvailable = true;
+			report.schemaInCCR = CRService.getInstance().isSchemaCRResident(schema);
+		}
+
 		return profile;
 
 	}
 
 	// try with schemaLocation/noNamespaceSchemaLocation attributes
-	private String extractProfileFromNameSpace() throws Exception {
+	private String getSchema() throws Exception {
 		String schema = null;
 		VTDNav navigator = xmlService.getNavigator();
 		navigator.toElement(VTDNav.ROOT);
@@ -81,14 +103,9 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
 			if (index != -1)
 				schema = navigator.toNormalizedString(index);
 		}
-		// extract profile ID
-		if (schema != null) {
-			Matcher m = PROFILE_ID_PATTERN.matcher(schema);
-			if (m.find())
-				schema = m.group(1);
-		}
 		return schema;
 	}
+
 
 	private void handleMdCollectionDisplyName(CMDInstanceReport report) throws Exception {
 		String mdCollectionDisplayName = xmlService.getXPathValue("/CMD/Header/MdCollectionDisplayName/text()");
@@ -118,8 +135,9 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
 		Map<String, Integer> resources = new HashMap<>();
 
 		try {
-			xmlService.getNavigator().toElement(VTDNav.ROOT);
-			AutoPilot ap = new AutoPilot(xmlService.getNavigator());
+			VTDNav nav = xmlService.getNavigator();
+			nav.toElement(VTDNav.ROOT);			
+			AutoPilot ap = new AutoPilot(nav);
 			ap.selectElement("ResourceProxy");
 			while (ap.iterate()) {// for each ResourceProxy
 				numOfResProxies++;

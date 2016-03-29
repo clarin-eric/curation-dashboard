@@ -18,7 +18,6 @@ public class Collection extends CurationEntity {
     public Collection(Path path) {
 	super(path);
 	children = new LinkedList<CurationEntity>();
-	validity = 0;
     }
 
     @Override
@@ -48,7 +47,6 @@ public class Collection extends CurationEntity {
     
     private void aggregateWithDir(Collection child) {
 	numOfFiles += child.numOfFiles;
-	validity += child.validity;
 	size += child.size;
 	if (child.maxFileSize > maxFileSize)
 	    maxFileSize = child.maxFileSize;

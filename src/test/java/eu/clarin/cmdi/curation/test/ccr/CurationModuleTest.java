@@ -19,7 +19,7 @@ public static void main(String[] args) throws Exception{
 	Path instancePath2 = FileSystems.getDefault().getPath(
 			"D:/data/cmdi/BAS_Repository/oai_BAS_repo_Corpora_aGender_101106.xml");
 	
-	URL instanceURL = new URL("http://vlo.clarin.eu/data/clarin/results/cmdi/CLARIN_DK_UCPH_Repository/oai_clarin_dk_dkclarin_1257002.xml");
+	URL instanceURL = new URL("https://vlo.clarin.eu/data/clarin/results/cmdi/CLARIN_DK_UCPH_Repository/oai_clarin_dk_dkclarin_1257002.xml");
 	
 	
 	Path cmdi = FileSystems.getDefault().getPath("D:/data/cmdi");
@@ -36,7 +36,6 @@ public static void main(String[] args) throws Exception{
 	
 	URL profileURL1 = new URL("http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1324638957718");
 	URL profileURL2 = new URL("http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1280305685223/");
-	
 
 	
 	Path config = Paths.get("D:/git/clarin-curation-module/src/main/resources/config.properties");
@@ -47,15 +46,20 @@ public static void main(String[] args) throws Exception{
 	
 	Report r = null;
 
-	module.processCMDProfile("clarin.eu:cr1:p_1423750293168");
+	//r = module.processCMDProfile("clarin.eu:cr1:p_1423750293168");	
 	
-	module.processCMDProfile(profileURL2);
+	//profile is not public
+	//r = module.processCMDProfile("clarin.eu:cr1:p_1381926654438");
 	
-	module.processCMDInstance(instancePath1);
 	
-	module.processCMDInstance(instanceURL);
+	//r = module.processCMDProfile(profileURL2);
 	
-	module.processCollection(ehu_18);	
+	//profile is not public
+	//r = module.processCMDInstance(instancePath1);
+	
+	r = module.processCMDInstance(instanceURL);
+	
+	//r = module.processCollection(ehu_18);	
 	
 	r.marshal(System.out);
 }
