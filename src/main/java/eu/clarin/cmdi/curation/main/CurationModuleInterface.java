@@ -21,7 +21,7 @@ public interface CurationModuleInterface {
 	
 	public Report processCMDInstance(URL url) throws IOException;
 	
-	public Report processCollection(Path path);
+	public Report processCollection(Path path) throws IOException;
 	
 	public Report aggregateReports(Collection<Report> reports);
 }

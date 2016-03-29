@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import com.ximpleware.AutoPilot;
 import com.ximpleware.VTDNav;
 
-import eu.clarin.cmdi.curation.cr.CRConstants;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ICRService;
 import eu.clarin.cmdi.curation.entities.CMDProfile;

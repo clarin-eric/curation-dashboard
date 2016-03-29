@@ -5,7 +5,6 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,14 +13,10 @@ import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
 import com.ximpleware.VTDNav;
 
-import eu.clarin.cmdi.curation.cr.CRConstants;
 import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.cr.ProfileSpec;
-import eu.clarin.cmdi.curation.cr.ProfileSpec.CMD_Component;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.curation.xml.CMDXPathService;
 
 /**
  * @author dostojic

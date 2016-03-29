@@ -1,8 +1,6 @@
 package eu.clarin.cmdi.curation.report;
 
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,23 +25,25 @@ import eu.clarin.cmdi.curation.xml.ScoreAdapter;
 @XmlRootElement(name = "collection-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionReport implements Report<CollectionReport> {
-	
+
 	transient public double avgFacetCoverageByInstanceSum;
 
+	public transient boolean isValid = true;
+
 	@XmlAttribute(name = "max-score-collection")
-	public double maxScore;
-	
+	public Double maxScore = 0.0;
+
 	@XmlAttribute(name = "max-score-instance")
-	public final double maxScoreInstance = CMDInstanceReport.MAX_SCORE;
+	public final Double maxScoreInstance = CMDInstanceReport.MAX_SCORE + CMDProfileReport.MAX_SCORE;
 
 	// report fields
 	public Long timeStamp = System.currentTimeMillis();
 
 	@XmlJavaTypeAdapter(ScoreAdapter.class)
-	public Double score;
+	public Double score = 0.0;
 
 	@XmlJavaTypeAdapter(ScoreAdapter.class)
-	public Double avgScore;
+	public Double avgScore = 0.0;
 
 	@XmlElement(name = "file-section")
 	FileReport fileReport = new FileReport();
@@ -143,18 +143,23 @@ public class CollectionReport implements Report<CollectionReport> {
 
 	@Override
 	public double getMaxScore() {
-		return fileReport.numOfFiles * CMDInstanceReport.MAX_SCORE;
+		return fileReport.numOfFiles * maxScoreInstance;
 	};
 
 	@Override
 	public double calculateScore() {
-		avgScore = score / fileReport.numOfFiles;		
+
+		if (!isValid)
+			return score;
+
+		avgScore = score / fileReport.numOfFiles;
+		maxScore = getMaxScore();
 		return score;
 	}
-	
+
 	@Override
 	public boolean isValid() {
-		return true;
+		return isValid;
 	}
 
 	public void calculateAverageValues() {
@@ -234,11 +239,11 @@ public class CollectionReport implements Report<CollectionReport> {
 	@XmlAccessorType(XmlAccessType.FIELD)
 	static class ResProxyReport {
 		int totNumOfResProxies;
-		double avgNumOfResProxies;
+		Double avgNumOfResProxies = 0.0;
 		int totNumOfResProxiesWithMime;
-		double avgNumOfResProxiesWithMime;
+		Double avgNumOfResProxiesWithMime = 0.0;
 		int totNumOfResProxiesWithReferences;
-		double avgNumOfResProxiesWithReferences;
+		Double avgNumOfResProxiesWithReferences = 0.0;
 
 	}
 
@@ -246,32 +251,32 @@ public class CollectionReport implements Report<CollectionReport> {
 	@XmlAccessorType(XmlAccessType.FIELD)
 	static class XMLValidationReport {
 		int totNumOfXMLElements;
-		double avgNumOfXMLElements;
+		Double avgNumOfXMLElements = 0.0;
 		int totNumOfXMLSimpleElements;
-		double avgNumOfXMLSimpleElements;
+		Double avgNumOfXMLSimpleElements = 0.0;
 		int totNumOfXMLEmptyElement;
-		double avgXMLEmptyElement;
-		double avgRateOfPopulatedElements;
+		Double avgXMLEmptyElement = 0.0;
+		Double avgRateOfPopulatedElements = 0.0;
 	}
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
 	static class URLValidationReport {
 		int totNumOfLinks;
-		double avgNumOfLinks;
+		Double avgNumOfLinks = 0.0;
 		int totNumOfUniqueLinks;
-		double avgNumOfUniqueLinks;
+		Double avgNumOfUniqueLinks = 0.0;
 		int totNumOfResProxiesLinks;
-		double avgNumOfResProxiesLinks;
+		Double avgNumOfResProxiesLinks = 0.0;
 		int totNumOfBrokenLinks;
-		double avgNumOfBrokenLinks;
-		double avgNumOfValidLinks;
+		Double avgNumOfBrokenLinks = 0.0;
+		Double avgNumOfValidLinks = 0.0;
 	}
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
 	static class FacetReport {
-		double avgFacetCoverageByInstance;
+		Double avgFacetCoverageByInstance = 0.0;
 	}
 
 	@XmlRootElement(name = "profiles")

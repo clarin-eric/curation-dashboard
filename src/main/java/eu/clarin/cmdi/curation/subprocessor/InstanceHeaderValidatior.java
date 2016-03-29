@@ -26,9 +26,9 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
 	private static final Pattern PROFILE_ID_PATTERN = Pattern.compile(".*(clarin.eu:cr1:p_[0-9]+).*");
 
 	private CMDXPathService xmlService;
-	
+
 	private ICRService crService = CRService.getInstance();
-	
+
 	private String profile;
 
 	@Override
@@ -37,9 +37,9 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
 		try {
 			xmlService = new CMDXPathService(entity.getPath());
 			profile = handleMdProfile(report);
-			
+
 			report.profileScore = crService.getScore(profile);
-			
+
 			handleMdSelfLink(report);
 			handleMdCollectionDisplyName(report);
 			handleResourceProxies(report);
@@ -68,14 +68,12 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
 			report.mdProfileExists = false;
 			addMessage(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with profile ID!");
 
-			if (!schema.startsWith(CRService.getInstance().REST_API))
-
-				// extract profile ID
-				if (schema != null) {
-					Matcher m = PROFILE_ID_PATTERN.matcher(schema);
-					if (m.find())
-						profile = m.group(1);
-				}
+			// extract profile ID
+			if (schema != null) {
+				Matcher m = PROFILE_ID_PATTERN.matcher(schema);
+				if (m.find())
+					profile = m.group(1);
+			}
 
 			if (profile == null)
 				throw new Exception("Profile can not be extracted from namespace!");
@@ -106,7 +104,6 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
 		return schema;
 	}
 
-
 	private void handleMdCollectionDisplyName(CMDInstanceReport report) throws Exception {
 		String mdCollectionDisplayName = xmlService.getXPathValue("/CMD/Header/MdCollectionDisplayName/text()");
 		if (mdCollectionDisplayName == null || mdCollectionDisplayName.isEmpty()) {
@@ -136,7 +133,7 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
 
 		try {
 			VTDNav nav = xmlService.getNavigator();
-			nav.toElement(VTDNav.ROOT);			
+			nav.toElement(VTDNav.ROOT);
 			AutoPilot ap = new AutoPilot(nav);
 			ap.selectElement("ResourceProxy");
 			while (ap.iterate()) {// for each ResourceProxy

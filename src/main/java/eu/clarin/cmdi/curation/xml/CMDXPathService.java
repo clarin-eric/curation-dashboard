@@ -14,8 +14,6 @@ import com.ximpleware.ParseException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
-import eu.clarin.cmdi.curation.cr.CRConstants;
-
 public class CMDXPathService {
 
 	private static final Logger _logger = LoggerFactory.getLogger(CMDXPathService.class);

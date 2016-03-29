@@ -209,14 +209,14 @@ public class CRService implements ICRService {
 						}
 					}
 				}.run();
-
-				while (!schemaCache.containsKey(profileId)) {
-					Object lock = schemaBeingProcessed.get(profileId);
-					synchronized (lock) {
-						lock.wait();
-					}
-				}
 			} // end if is currently processed
+			
+			while (!schemaCache.containsKey(profileId)) {
+				Object lock = schemaBeingProcessed.get(profileId);
+				synchronized (lock) {
+					lock.wait();
+				}
+			}
 
 		} // end if not in cache
 

@@ -1,8 +1,6 @@
 package eu.clarin.cmdi.curation.report;
 
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +15,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.commons.configuration.SystemConfiguration;
 
 import eu.clarin.cmdi.curation.main.Configuration;
 
@@ -61,11 +57,11 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	public Long timeStamp = System.currentTimeMillis();
 	
 	@XmlElement(name = "score-profile")
-	public Double profileScore;
+	public Double profileScore = 0.0;
 	@XmlElement(name = "score-instance")
-	public Double instanceScore;
+	public Double instanceScore = 0.0;
 	@XmlElement(name = "score-total")
-	public Double totalScore;
+	public Double totalScore = 0.0;
 
 	// sub reports **************************************
 
@@ -98,11 +94,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	};
 
 	@Override
-	public double calculateScore() {
-		instanceScore = 0.0;
-		
+	public double calculateScore() {		
 		if(!isValid){
-			return instanceScore;
+			return totalScore;
 		}
 
 		// fileSize
@@ -157,6 +151,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
 		if (!isValid) {
 			parentReport.addNewInvalid(fileReport.location);
+			return;
 		}
 
 		parentReport.score += totalScore;

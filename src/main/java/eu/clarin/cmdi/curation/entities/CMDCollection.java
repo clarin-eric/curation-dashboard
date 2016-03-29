@@ -7,7 +7,7 @@ import java.util.List;
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CollectionProcessor;
 
-public class Collection extends CurationEntity {
+public class CMDCollection extends CurationEntity {
 
     List<CurationEntity> children;
 
@@ -15,7 +15,7 @@ public class Collection extends CurationEntity {
     long maxFileSize = 0;
     long minFileSize = Long.MAX_VALUE;
     
-    public Collection(Path path) {
+    public CMDCollection(Path path) {
 	super(path);
 	children = new LinkedList<CurationEntity>();
     }
@@ -37,15 +37,15 @@ public class Collection extends CurationEntity {
 	    if (child.getSize() < minFileSize)
 		minFileSize = child.getSize();
 
-	} else if (child instanceof Collection) {
-	    aggregateWithDir((Collection) child);
+	} else if (child instanceof CMDCollection) {
+	    aggregateWithDir((CMDCollection) child);
 	} //else implementation for different kinds of entities if necessary
 	
 
 	return child;
     }
     
-    private void aggregateWithDir(Collection child) {
+    private void aggregateWithDir(CMDCollection child) {
 	numOfFiles += child.numOfFiles;
 	size += child.size;
 	if (child.maxFileSize > maxFileSize)

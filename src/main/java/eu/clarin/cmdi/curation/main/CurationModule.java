@@ -9,8 +9,10 @@ import java.util.Collection;
 import org.apache.commons.configuration.ConfigurationException;
 
 import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
+import eu.clarin.cmdi.curation.entities.EntityTree;
 import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
@@ -60,9 +62,12 @@ public class CurationModule implements CurationModuleInterface {
 	}
 
 	@Override
-	public Report processCollection(Path path) {
-		// TODO Auto-generated method stub
-		return null;
+	public Report processCollection(Path path) throws IOException {
+		EntityTree entityTree = new EntityTree();
+		Files.walkFileTree(path, entityTree);
+		CMDCollection collection = entityTree.getRoot();
+		
+		return collection.generateReport();
 	}
 
 	@Override

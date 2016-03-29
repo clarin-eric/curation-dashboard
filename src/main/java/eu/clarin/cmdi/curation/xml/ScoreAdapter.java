@@ -6,8 +6,8 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import eu.clarin.cmdi.curation.main.Configuration;
 
-public class ScoreAdapter extends XmlAdapter<String, Double>{
-	
+public class ScoreAdapter extends XmlAdapter<String, Double> {
+
 	private static DecimalFormat formatter = new DecimalFormat(Configuration.SCORE_NUMERIC_DISPLAY_FORMAT);
 
 	@Override
@@ -17,6 +17,7 @@ public class ScoreAdapter extends XmlAdapter<String, Double>{
 
 	@Override
 	public String marshal(Double v) throws Exception {
+
 		return formatter.format(v);
 	}
 

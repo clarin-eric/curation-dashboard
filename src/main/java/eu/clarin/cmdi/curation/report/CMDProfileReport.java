@@ -35,7 +35,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
 	public Long timeStamp = System.currentTimeMillis();
 
-	public Double score;	
+	public Double score = 0.0;	
 
 	public String ID;
 	public String name;
@@ -92,7 +92,6 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 	};
 
 	public double calculateScore() {
-		score = 0.0;
 		
 		if(!isValid)
 			return score;
