@@ -7,6 +7,9 @@ import java.util.Collection;
 
 import org.apache.commons.configuration.ConfigurationException;
 
+import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.report.Report;
 
 public class CurationModule implements CurationModuleInterface{
@@ -19,23 +22,25 @@ public class CurationModule implements CurationModuleInterface{
 			throw new RuntimeException("Unable to initialize configuration", e);
 		}
 	}
+	
 
 	@Override
 	public Report processCMDProfile(String profileId) {
-		// TODO Auto-generated method stub
-		return null;
+		return new CMDProfile(profileId).generateReport();
 	}
 
 	@Override
 	public Report processCMDProfile(URL url) {
-		// TODO Auto-generated method stub
-		return null;
+		String profileId = url.toString().substring(CRService.REST_API.length());
+		if(profileId.endsWith("/"))
+			profileId = profileId.substring(0, profileId.length()-1);
+		
+		return new CMDProfile(profileId).generateReport();
 	}
 
 	@Override
 	public Report processCMDInstance(Path file) {
-		// TODO Auto-generated method stub
-		return null;
+		return new CMDInstance(file).generateReport();
 	}
 
 	@Override

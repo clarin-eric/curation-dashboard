@@ -299,21 +299,25 @@ public class FacetConceptMappingService implements XMLMarshaller<FacetConceptMap
 	 */
 	private Map<String, List<String>> createConceptLinkPathMapping() throws Exception {
 	    Map<String, List<String>> result = new HashMap<String, List<String>>();
-	    VTDGen vg = new VTDGen();
-	    boolean parseSuccess;
-	    parseSuccess = vg.parseFile(CRService.getInstance().getLocalFile(profile).getAbsolutePath(),
-		    true);
 
-	    if (!parseSuccess) {
-		_logger.error("Cannot create ConceptLink Map from xsd (xsd is probably not reachable): " + profile
-			+ ". All metadata instances that use this xsd will not be imported correctly.");
-		return result; // return empty map, so the incorrect xsd is not
-			       // tried for all metadata instances that specify
-			       // it.
-	    }
-	    VTDNav vn = vg.getNav();
+//	    VTDGen vg = new VTDGen();
+//	    boolean parseSuccess;
+//	    parseSuccess = vg.parseFile(CRService.getInstance().getLocalFile(profile).getAbsolutePath(),
+//		    true);
+//
+//	    if (!parseSuccess) {
+//		_logger.error("Cannot create ConceptLink Map from xsd (xsd is probably not reachable): " + profile
+//			+ ". All metadata instances that use this xsd will not be imported correctly.");
+//		return result; // return empty map, so the incorrect xsd is not
+//			       // tried for all metadata instances that specify
+//			       // it.
+//	    }
+	    
+	    VTDNav vn = CRService.getInstance().getParsedXSD(profile);
+	    
+	    //VTDNav vn = vg.getNav();
 	    AutoPilot ap = new AutoPilot(vn);
-	    ap.selectElement("xs:element");
+	    ap.selectElement("element");
 	    Deque<Token> elementPath = new LinkedList<Token>();
 	    while (ap.iterate()) {
 		int i = vn.getAttrVal("name");

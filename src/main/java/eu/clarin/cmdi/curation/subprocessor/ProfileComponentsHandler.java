@@ -10,12 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ximpleware.AutoPilot;
-import com.ximpleware.NavException;
 import com.ximpleware.VTDNav;
 
 import eu.clarin.cmdi.curation.cr.CRConstants;
 import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.cr.IComponentRegistryService;
+import eu.clarin.cmdi.curation.cr.ICRService;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Severity;
@@ -32,18 +31,16 @@ public class ProfileComponentsHandler extends ProcessingStep<CMDProfile, CMDProf
 	@Override
 	public boolean process(CMDProfile entity, CMDProfileReport report) {
 		try {
-
-			CMDXPathService xmlService = new CMDXPathService(CRConstants.getProfilesURL(entity.getProfile()) + "xml");
-			VTDNav navigator = xmlService.getNavigator();
+			ICRService crService = CRService.getInstance();
+			VTDNav navigator = crService.getParseXML(entity.getProfile());
+			CMDXPathService xmlService = new CMDXPathService(navigator);			
 
 			// header
-			// report.ID =
-			// xmlService.xpath("/CMD_ComponentSpec/Header/ID/text()");
 			report.ID = entity.getProfile();
 			report.name = xmlService.getXPathValue("/CMD_ComponentSpec/Header/Name/text()");
 			report.description = xmlService.getXPathValue("/CMD_ComponentSpec/Header/Description/text()");
 
-			IComponentRegistryService crService = CRService.getInstance();
+			
 			report.isPublic = crService.isPublic(report.ID);
 
 			int numOfComponents = 0;

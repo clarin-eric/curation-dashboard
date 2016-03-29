@@ -21,6 +21,10 @@ public class CMDXPathService {
 	private static final Logger _logger = LoggerFactory.getLogger(CMDXPathService.class);
 
 	private VTDNav navigator = null;
+	
+	public CMDXPathService(VTDNav navigator){
+		this.navigator = navigator;
+	}
 
 	public CMDXPathService(Path path) throws Exception {
 		VTDGen parser = new VTDGen();

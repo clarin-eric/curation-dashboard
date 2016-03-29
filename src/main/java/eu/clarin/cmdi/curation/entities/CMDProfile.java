@@ -12,33 +12,32 @@ import eu.clarin.cmdi.curation.processor.CMDProfileProcessor;
 
 public class CMDProfile extends CurationEntity {
 
-    private String profile;
-    
+	private String profile;
 
-    public CMDProfile(String profile){
-	super(null);
-	this.profile = profile;
-    }
+	public CMDProfile(String profile) {
+		super(null);
+		this.profile = profile;
+	}
 
-    public CMDProfile(Path path) {
-	super(path);
-    }
+	public CMDProfile(Path path) {
+		super(path);
+	}
 
-    public CMDProfile(Path path, long size) {
-	super(path, size);
-    }    
+	public CMDProfile(Path path, long size) {
+		super(path, size);
+	}
 
-    public String getProfile() {
-	return profile;
-    }
+	public String getProfile() {
+		return profile;
+	}
 
-    public void setProfile(String profile) {
-	this.profile = profile;
-    }
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
 
-    @Override
-    protected AbstractProcessor getProcessor() {
-	return new CMDProfileProcessor();
-    }
+	@Override
+	protected AbstractProcessor getProcessor() {
+		return new CMDProfileProcessor();
+	}
 
 }

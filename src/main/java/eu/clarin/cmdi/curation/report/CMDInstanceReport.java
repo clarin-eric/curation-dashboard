@@ -17,10 +17,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import eu.clarin.cmdi.curation.main.Configuration;
-import eu.clarin.cmdi.curation.xml.ScoreAdapter;
 
 /**
  * @author dostojic
@@ -32,16 +30,17 @@ import eu.clarin.cmdi.curation.xml.ScoreAdapter;
 public class CMDInstanceReport implements Report<CollectionReport> {
 	
 	public static final double MAX_SCORE = 11;
+	
+	public transient boolean isValid = true;
 
 	@XmlAttribute(name = "max-score")
 	public final double maxScore = MAX_SCORE;
 	
 	public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
 	
-	@XmlJavaTypeAdapter(ScoreAdapter.class)
 	public Double score;
 
-	public boolean isValid = true;
+	
 
 	// for score calculation
 
@@ -191,6 +190,11 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public boolean isValid() {
+		return isValid;
+	}
 
 	public String getProfile() {
 		return headerReport.profile;
@@ -237,9 +241,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	static class ResProxyReport {
 		int numOfResProxies;
 		int numOfResProxiesWithMime;
-		double percOfResProxiesWithMime;
+		Double percOfResProxiesWithMime;
 		int numOfResProxiesWithReferences;
-		double percOfResProxiesWithReferences;
+		Double percOfResProxiesWithReferences;
 
 		@XmlElementWrapper(name = "resourceTypes")
 		List<ResourceType> resourceType;
@@ -279,7 +283,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 		int numOfXMLElements;
 		int numOfXMLSimpleElements;
 		int numOfXMLEmptyElement;
-		double percOfPopulatedElements;
+		Double percOfPopulatedElements;
 
 		@XmlElementWrapper(name = "details")
 		List<Message> messages = null;
@@ -304,7 +308,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 		int numOfUniqueLinks;
 		int numOfResProxiesLinks;
 		int numOfBrokenLinks;
-		double percOfValidLinks;
+		Double percOfValidLinks;
 
 		@XmlElementWrapper(name = "details")
 		List<Message> messages = null;

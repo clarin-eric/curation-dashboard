@@ -151,6 +151,11 @@ public class CollectionReport implements Report<CollectionReport> {
 		avgScore = score / fileReport.numOfFiles;		
 		return score;
 	}
+	
+	@Override
+	public boolean isValid() {
+		return true;
+	}
 
 	public void calculateAverageValues() {
 

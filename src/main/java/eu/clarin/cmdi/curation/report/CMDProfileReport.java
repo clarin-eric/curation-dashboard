@@ -17,9 +17,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import eu.clarin.cmdi.curation.xml.ScoreAdapter;
 
 /**
  * @author dostojic
@@ -27,17 +24,19 @@ import eu.clarin.cmdi.curation.xml.ScoreAdapter;
  */
 @XmlRootElement(name = "profile-report")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CMDProfileReport implements Report<Report> {
+public class CMDProfileReport implements Report<CMDProfileReport> {
 	
 	public static final double MAX_SCORE = 3;
+	
+	public transient boolean isValid = true;
 
 	@XmlAttribute(name = "max-score")
 	public final double maxScore = MAX_SCORE;
 
 	public String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
 
-	@XmlJavaTypeAdapter(ScoreAdapter.class)
 	public Double score;
+	
 
 	public String ID;
 	public String name;
@@ -45,13 +44,13 @@ public class CMDProfileReport implements Report<Report> {
 	public String description;
 	public boolean isPublic;
 
-	@XmlElement(name = "CMDI-Components")
+	@XmlElement(name = "cmd-components-section")
 	Components components;
 
-	@XmlElement(name = "CMDI-Elements")
+	@XmlElement(name = "cmd-concepts-section")
 	Elements elements;
 
-	@XmlElement(name = "facets-report")
+	@XmlElement(name = "facets-section")
 	public FacetReport facet;
 
 	@XmlElementWrapper(name = "details")
@@ -64,7 +63,7 @@ public class CMDProfileReport implements Report<Report> {
 	}
 
 	@Override
-	public void mergeWithParent(Report parentReport) {
+	public void mergeWithParent(CMDProfileReport parentReport) {
 		// profile should not have a parent
 		throw new UnsupportedOperationException();
 
@@ -99,11 +98,16 @@ public class CMDProfileReport implements Report<Report> {
 		if (isPublic)
 			score++;
 
-		score += elements.percWithDatacategory; // * factor for datcats
+		score += elements.percWithConcept; // * factor for concepts
 
 		score += facet.profile.coverage; // * factor for facet coverage
 		
 		return score;
+	}
+	
+	@Override
+	public boolean isValid() {
+		return isValid;
 	}
 
 	public void createComponentsReport(int total, int required, int unique) {
@@ -114,24 +118,24 @@ public class CMDProfileReport implements Report<Report> {
 
 	}
 
-	public void createElementsReport(int total, int unique, int required, int withDatacategory,
+	public void createElementsReport(int total, int unique, int required, int withConcept,
 			Map<String, Integer> datcats, int requiredDatcats) {
 		elements = new Elements();
 		elements.total = total;
 		elements.unique = unique;
 		elements.required = required;
-		elements.withDatacategory = withDatacategory;
+		elements.withConcept = withConcept;
 
-		elements.percWithDatacategory = (double) withDatacategory / total;
+		elements.percWithConcept = (double) withConcept / total;
 
-		elements.datacategories = new Datacategories();
+		elements.concepts = new Concepts();
 
-		elements.datacategories.total = elements.withDatacategory;
-		elements.datacategories.unique = datcats.size();
-		elements.datacategories.required = requiredDatcats;
+		elements.concepts.total = elements.withConcept;
+		elements.concepts.unique = datcats.size();
+		elements.concepts.required = requiredDatcats;
 
 		for (Entry<String, Integer> datcat : datcats.entrySet())
-			elements.datacategories.addDatcat(datcat.getKey(), datcat.getValue());
+			elements.concepts.addConcept(datcat.getKey(), datcat.getValue());
 	}
 
 	@XmlRootElement()
@@ -169,17 +173,17 @@ public class CMDProfileReport implements Report<Report> {
 
 		int required; // cardinality > 0
 
-		int withDatacategory;
+		int withConcept;
 
-		double percWithDatacategory;
+		Double percWithConcept;
 
-		public Datacategories datacategories;
+		public Concepts concepts;
 
 	}
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class Datacategories {
+	static class Concepts {
 
 		@XmlAttribute
 		int total;
@@ -190,18 +194,18 @@ public class CMDProfileReport implements Report<Report> {
 		@XmlAttribute
 		int required;
 
-		public List<Datcat> datcat;
+		public List<Datcat> concept;
 
-		public void addDatcat(String url, int count) {
+		public void addConcept(String url, int count) {
 
 			Datcat d = new Datcat();
 			d.url = url;
 			d.count = count;
 
-			if (datcat == null)
-				datcat = new LinkedList<>();
+			if (concept == null)
+				concept = new LinkedList<>();
 
-			datcat.add(d);
+			concept.add(d);
 
 		}
 

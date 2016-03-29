@@ -16,7 +16,9 @@ public interface Report<R extends Report> {
 	public void marshal(OutputStream os) throws Exception;
 
 	public double calculateScore();
-
+	
 	public double getMaxScore();
+	
+	public boolean isValid();
 
 }

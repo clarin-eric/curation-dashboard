@@ -42,43 +42,39 @@ public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfil
 	    int numOfReqDatcats = 0;
 	    Map<String, Integer> elements = new HashMap<>();
 	    Map<String, Integer> datcats = new HashMap();
-
-	    CMDXPathService xmlService = new CMDXPathService(CRConstants.getProfilesURL(entity.getProfile()) + "xsd");
-	    VTDNav navigator = xmlService.getNavigator();
-	    AutoPilot ap = new AutoPilot(xmlService.getNavigator());
-
-	   
-	    xmlService.getNavigator().toElement(VTDNav.ROOT);
+	    
+	    VTDNav xsdNavigator = CRService.getInstance().getParsedXSD(entity.getProfile());
+	    AutoPilot ap = new AutoPilot(xsdNavigator);
 	    ap.selectElement("element");
 	    while (ap.iterate()) {		
-		int ind = navigator.getAttrVal("name");
+		int ind = xsdNavigator.getAttrVal("name");
 
 		if (ind != -1) {
 		    numOfElements++;
-		    String name = navigator.toNormalizedString(ind);
+		    String name = xsdNavigator.toNormalizedString(ind);
 		    elements.put(name, elements.containsKey(name) ? elements.get(name) + 1 : 1);
 		    
 		} else
 		    _logger.error("missing name");
 		
 		
-		ind = navigator.getAttrVal("minOccurs");
+		ind = xsdNavigator.getAttrVal("minOccurs");
 		
 		// if attr CardinalityMin > 0
 		boolean required = false;
-		if (ind != -1 && navigator.toNormalizedString(ind).compareTo("0") > 0){
+		if (ind != -1 && xsdNavigator.toNormalizedString(ind).compareTo("0") > 0){
 		    numOfReqElements++;
 		    required = true;
 		}
 
 		
 		
-		ind = getDatcatIndex(navigator);
+		ind = getDatcatIndex(xsdNavigator);
 		if (ind != -1) {
 		    numOfElemsWithDatcat++;
 		    if(required)
 			numOfReqDatcats++;
-		    String datcatUrl = navigator.toNormalizedString(ind);
+		    String datcatUrl = xsdNavigator.toNormalizedString(ind);
 		    datcats.put(datcatUrl, datcats.containsKey(datcatUrl) ? datcats.get(datcatUrl) + 1 : 1);
 		}
 	    }

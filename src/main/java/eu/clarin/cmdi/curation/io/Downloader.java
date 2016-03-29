@@ -20,20 +20,20 @@ import org.slf4j.LoggerFactory;
  */
 public class Downloader {
 
-    static final Logger _logger = LoggerFactory.getLogger(Downloader.class);
+	static final Logger _logger = LoggerFactory.getLogger(Downloader.class);
 
-    public void download(String url, File destination) throws IOException {
-	try {
-	    _logger.trace("Downloading file from {} into {}", url, destination.getName());
-	    ReadableByteChannel channel = Channels.newChannel(new URL(url).openStream());
-	    FileOutputStream fos = new FileOutputStream(destination);
-	    long size = fos.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
-	    _logger.trace("File successefully downloaded with size {} KB",
-		    new DecimalFormat("#,##0.#").format(size / 1024));
-	    fos.close();
-	} catch (IOException e) {
-	    throw new IOException("Error while downloading file " + url, e);
+	public void download(String url, File destination) throws IOException {
+		try {
+			_logger.trace("Downloading file from {} into {}", url, destination.getName());
+			ReadableByteChannel channel = Channels.newChannel(new URL(url).openStream());
+			FileOutputStream fos = new FileOutputStream(destination);
+			long size = fos.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
+			_logger.trace("File successefully downloaded with size {} KB",
+					new DecimalFormat("#,##0.#").format(size / 1024));
+			fos.close();
+		} catch (IOException e) {
+			throw new IOException("Error while downloading file " + url, e);
+		}
 	}
-    }
 
 }
