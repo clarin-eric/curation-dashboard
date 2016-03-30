@@ -1,21 +1,17 @@
-    <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" 
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
 	<id>dist</id>
 	<formats>
 		<format>tar.gz</format>
 	</formats>
 	<fileSets>
-		<!-- include readme
-		<fileSet>
-			<directory>${project.basedir}</directory>
-			<outputDirectory>/</outputDirectory>
-			<includes>
-				<include>README*</include>
-			</includes>
-		</fileSet>
-		-->
-		<!-- include jar-->
+		<!-- include readme <fileSet> <directory>${project.basedir}</directory> 
+			<outputDirectory>/</outputDirectory> <includes> <include>README*</include> 
+			</includes> </fileSet> -->
+		<!-- include jar -->
 		<fileSet>
 			<directory>${project.build.directory}</directory>
 			<outputDirectory>/</outputDirectory>
@@ -23,22 +19,16 @@
 				<include>*.jar</include>
 			</includes>
 		</fileSet>
-		<!-- include config-->
+		<!-- include config -->
 		<fileSet>
 			<directory>${project.basedir}/src/main/resources</directory>
 			<outputDirectory>/</outputDirectory>
 			<includes>
-				<include>config.xml</include>
+				<include>config.properties</include>
 			</includes>
 		</fileSet>
-		<!-- include start script
-		<fileSet>
-			<directory>${project.basedir}/src/bin</directory>
-			<outputDirectory>/</outputDirectory>
-			<includes>
-				<include>start.sh</include>
-			</includes>
-		</fileSet>
-		-->
+		<!-- include start script <fileSet> <directory>${project.basedir}/src/bin</directory> 
+			<outputDirectory>/</outputDirectory> <includes> <include>start.sh</include> 
+			</includes> </fileSet> -->
 	</fileSets>
 </assembly>

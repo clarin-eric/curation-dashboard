@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.OptionGroup;
@@ -19,9 +20,23 @@ import eu.clarin.cmdi.curation.report.Report;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-
+		
 		CommandLineParser parser = new PosixParser();
-		CommandLine cmd = parser.parse(createOptions(), args);
+		
+		Options helpOptions = createHelpOption();
+		
+		Options options = createOptions();
+		
+		CommandLine cmd = parser.parse(helpOptions, args);
+		
+				
+		if(cmd.hasOption("help")){
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("curation module", options);
+			return;
+		}
+			
+		cmd = parser.parse(options, args);
 		
 		List<Report> reports = new LinkedList<>();
 
@@ -74,10 +89,17 @@ public class Main {
 		}
 		
 	}
+	
+	private static Options createHelpOption(){
+		Option help = new Option( "help", "print this message" );
+		Options options = new Options();
+		options.addOption(help);
+		return options;
+	}
 
 
-	private static Options createOptions() {
-
+	private static Options createOptions() {		
+		
 		Option configurationFile = OptionBuilder
 				.withArgName("file")
 				.hasArg()
@@ -121,8 +143,8 @@ public class Main {
 
 		OptionGroup curationInputParams = new OptionGroup();
 		curationInputParams.addOption(paramId).addOption(paramPath).addOption(paramUrl);
-		curationInputParams.setRequired(true);
-
+		curationInputParams.setRequired(true);		
+		
 		Options options = new Options();
 		options.addOption(configurationFile);
 		options.addOptionGroup(curationGroup);
@@ -130,5 +152,5 @@ public class Main {
 
 		return options;
 	}
-
+	
 }
