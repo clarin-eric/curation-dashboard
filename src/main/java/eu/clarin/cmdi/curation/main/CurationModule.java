@@ -12,20 +12,12 @@ import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
-import eu.clarin.cmdi.curation.entities.EntityTree;
+import eu.clarin.cmdi.curation.io.CMDFileVisitor;
 import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
 
 public class CurationModule implements CurationModuleInterface {
-
-	public CurationModule(Path configuration) {
-		try {
-			Configuration.init(configuration.toFile());
-		} catch (ConfigurationException | IOException e) {
-			throw new RuntimeException("Unable to initialize configuration", e);
-		}
-	}
 
 	@Override
 	public Report processCMDProfile(String profileId) {
@@ -63,7 +55,7 @@ public class CurationModule implements CurationModuleInterface {
 
 	@Override
 	public Report processCollection(Path path) throws IOException {
-		EntityTree entityTree = new EntityTree();
+		CMDFileVisitor entityTree = new CMDFileVisitor();
 		Files.walkFileTree(path, entityTree);
 		CMDCollection collection = entityTree.getRoot();
 		

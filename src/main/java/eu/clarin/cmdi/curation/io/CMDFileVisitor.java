@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.entities;
+package eu.clarin.cmdi.curation.io;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -10,11 +10,15 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.clarin.cmdi.curation.entities.CMDCollection;
+import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.entities.CMDProfile;
+import eu.clarin.cmdi.curation.entities.CurationEntity;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 
-public class EntityTree implements FileVisitor<Path> {
+public class CMDFileVisitor implements FileVisitor<Path> {
 
-    private static final Logger _logger = LoggerFactory.getLogger(EntityTree.class);
+    private static final Logger _logger = LoggerFactory.getLogger(CMDFileVisitor.class);
 
     private CMDCollection curDir = null;
     private CMDCollection root = null;

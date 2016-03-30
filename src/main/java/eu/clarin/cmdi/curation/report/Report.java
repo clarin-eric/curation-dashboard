@@ -13,7 +13,7 @@ public interface Report<R extends Report> {
 
 	public void mergeWithParent(R parentReport);
 
-	public void marshal(OutputStream os) throws Exception;
+	public void toXML(OutputStream os) throws Exception;
 
 	public double calculateScore();
 	

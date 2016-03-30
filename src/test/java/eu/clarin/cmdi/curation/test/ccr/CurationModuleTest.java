@@ -37,12 +37,9 @@ public static void main(String[] args) throws Exception{
 	URL profileURL1 = new URL("http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1324638957718");
 	URL profileURL2 = new URL("http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1280305685223/");
 
-	
-	Path config = Paths.get("D:/git/clarin-curation-module/src/main/resources/config.properties");
-	
-	CurationModuleInterface module = new CurationModule(config);
+	Configuration.initDefault();
 	Configuration.OUTPUT_DIRECTORY = null;
-	
+	CurationModuleInterface module = new CurationModule();
 	
 	Report r = null;
 
@@ -59,9 +56,9 @@ public static void main(String[] args) throws Exception{
 	
 	//r = module.processCMDInstance(instanceURL);
 	
-	r = module.processCollection(test);	
+	r = module.processCollection(ehu_18);	
 	
-	r.marshal(System.out);
+	r.toXML(System.out);
 }
 	
 	

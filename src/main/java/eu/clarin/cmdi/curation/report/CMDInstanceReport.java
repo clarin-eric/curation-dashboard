@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.main.Configuration;
+import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
  * @author dostojic
@@ -26,9 +27,9 @@ import eu.clarin.cmdi.curation.main.Configuration;
 @XmlRootElement(name = "instance-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDInstanceReport implements Report<CollectionReport> {
-	
+
 	public static final double MAX_SCORE = 11;
-	
+
 	public transient boolean isValid = true;
 
 	@XmlAttribute(name = "max-score")
@@ -53,9 +54,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	public transient int numOfUniqueLinks = 0;
 
 	public transient List<Message> xmlErrors;
-	
+
 	public Long timeStamp = System.currentTimeMillis();
-	
+
 	@XmlElement(name = "score-profile")
 	public Double profileScore = 0.0;
 	@XmlElement(name = "score-instance")
@@ -94,8 +95,8 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	};
 
 	@Override
-	public double calculateScore() {		
-		if(!isValid){
+	public double calculateScore() {
+		if (!isValid) {
 			return totalScore;
 		}
 
@@ -127,9 +128,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
 		instanceScore += sectionScore; // * resProxy factor
 
-		instanceScore += xmlReport.percOfPopulatedElements; // * xmlValidation factor
-		//we don't take into account errors and warnings from xml parser
-		
+		instanceScore += xmlReport.percOfPopulatedElements; // * xmlValidation
+															// factor
+		// we don't take into account errors and warnings from xml parser
+
 		sectionScore = 0;
 		// it can influence the score, if one collection was done with enabled
 		// and the other without
@@ -141,7 +143,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
 		instanceScore += facets.instance.coverage;// *facetCoverage factor
 
-		totalScore = instanceScore + profileScore; 
+		totalScore = instanceScore + profileScore;
 		return totalScore;
 
 	}
@@ -181,22 +183,11 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	}
 
 	@Override
-	public void marshal(OutputStream os) throws Exception {
-		try {
-
-			JAXBContext jaxbContext = JAXBContext.newInstance(CMDInstanceReport.class);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-			// output pretty printed
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-			jaxbMarshaller.marshal(this, os);
-
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
+	public void toXML(OutputStream os) throws Exception {
+		XMLMarshaller<CMDInstanceReport> instanceMarshaller = new XMLMarshaller<>(CMDInstanceReport.class);
+		instanceMarshaller.marshal(this, os);
 	}
-	
+
 	@Override
 	public boolean isValid() {
 		return isValid;

@@ -198,7 +198,7 @@ public class CRService implements ICRService {
 							// dont keep files if profile is not public
 							try {
 								if (!isPublic(profileId)) {
-									_logger.warn("Profile {} is not public. XSD and XML files wont be cached", profileId);									
+									_logger.warn("Profile {} is not public. XSD and XML files won't be kept on disk", profileId);									
 									Files.delete(xsd);
 									Files.delete(xml);
 								}

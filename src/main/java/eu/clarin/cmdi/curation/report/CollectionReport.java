@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import eu.clarin.cmdi.curation.xml.ScoreAdapter;
+import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
  * @author dostojic
@@ -199,21 +200,9 @@ public class CollectionReport implements Report<CollectionReport> {
 	}
 
 	@Override
-	public void marshal(OutputStream os) throws Exception {
-		try {
-
-			JAXBContext jaxbContext = JAXBContext.newInstance(CollectionReport.class);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-			// output pretty printed
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-			jaxbMarshaller.marshal(this, os);
-
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-
+	public void toXML(OutputStream os) throws Exception {
+		XMLMarshaller<CollectionReport> instanceMarshaller = new XMLMarshaller<>(CollectionReport.class);
+		instanceMarshaller.marshal(this, os);
 	}
 
 	@XmlRootElement

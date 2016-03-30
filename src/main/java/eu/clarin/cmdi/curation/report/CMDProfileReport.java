@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+
 /**
  * @author dostojic
  *
@@ -69,21 +71,9 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 	}
 
 	@Override
-	public void marshal(OutputStream os) throws Exception {
-		try {
-
-			JAXBContext jaxbContext = JAXBContext.newInstance(CMDProfileReport.class);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-			// output pretty printed
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-			jaxbMarshaller.marshal(this, os);
-
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-
+	public void toXML(OutputStream os) throws Exception {
+		XMLMarshaller<CMDProfileReport> instanceMarshaller = new XMLMarshaller<>(CMDProfileReport.class);
+		instanceMarshaller.marshal(this, os);
 	}
 
 	@Override

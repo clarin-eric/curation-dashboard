@@ -19,9 +19,9 @@ import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.xml.CMDXPathService;
 
-public class InstanceHeaderValidatior extends CMDSubprocessor {
+public class InstanceHeaderValidator extends CMDSubprocessor {
 
-	private static final Logger _logger = LoggerFactory.getLogger(InstanceHeaderValidatior.class);
+	private static final Logger _logger = LoggerFactory.getLogger(InstanceHeaderValidator.class);
 
 	private static final Pattern PROFILE_ID_PATTERN = Pattern.compile(".*(clarin.eu:cr1:p_[0-9]+).*");
 
@@ -38,6 +38,7 @@ public class InstanceHeaderValidatior extends CMDSubprocessor {
 			xmlService = new CMDXPathService(entity.getPath());
 			profile = handleMdProfile(report);
 
+			//at this point profile will be processed and cached
 			report.profileScore = crService.getScore(profile);
 
 			handleMdSelfLink(report);
