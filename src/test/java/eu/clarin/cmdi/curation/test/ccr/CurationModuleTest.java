@@ -54,9 +54,9 @@ public static void main(String[] args) throws Exception{
 	//profile is not public
 	//r = module.processCMDInstance(instancePath1);
 	
-	//r = module.processCMDInstance(instanceURL);
+	r = module.processCMDInstance(instanceURL);
 	
-	r = module.processCollection(ehu_18);	
+	//r = module.processCollection(ehu_18);	
 	
 	r.toXML(System.out);
 }

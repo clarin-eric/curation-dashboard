@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,8 +35,8 @@ public class CRService implements ICRService {
 	private static final String PROFILE_PREFIX = "clarin.eu:cr1:";
 
 	private final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-	private Collection<String> publicProfiles = null;
+	
+	private Map<String, String> publicProfiles = null;
 
 	private final Map<String, ProfileStruct> schemaCache = new ConcurrentHashMap<>();
 	private final Map<String, Object> schemaBeingProcessed = new ConcurrentHashMap<>();
@@ -57,7 +59,7 @@ public class CRService implements ICRService {
 		if (publicProfiles == null) {
 			publicProfiles = getPublicProfiles();
 		}
-		return publicProfiles.contains(profileId);
+		return publicProfiles.containsKey(profileId);
 	}
 
 	@Override
@@ -124,9 +126,21 @@ public class CRService implements ICRService {
 		return entry.score;
 	}
 
-	private Collection<String> getPublicProfiles() throws Exception {
+	@Override
+	public Map<String, String> getPublicProfiles() throws Exception {
 		CMDXPathService xmlService = new CMDXPathService(REST_API);
-		return xmlService.getXPathValues("/profileDescriptions/profileDescription/id/text()");
+		Collection<String> idsList = xmlService.getXPathValues("/profileDescriptions/profileDescription/id/text()");
+		Collection<String> namesList = xmlService.getXPathValues("/profileDescriptions/profileDescription/name/text()");
+		
+		String[] ids = idsList.toArray(new String[idsList.size()]);
+		String[] names = namesList.toArray(new String[namesList.size()]);
+		
+		Map<String, String> profiles = new HashMap<>();
+		for(int i = 0; i < ids.length; i++){
+			profiles.put(ids[i], names[i]);
+		}
+		
+		return profiles;		
 	}
 
 	private ProfileStruct schemaLookup(final String profileId) throws InterruptedException {
