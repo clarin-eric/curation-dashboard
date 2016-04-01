@@ -46,11 +46,11 @@ public class FacetReport {
 	public int numOfCoveredFacets;
 	public Double coverage;
 
-	@XmlElementWrapper(name = "values")
 	public List<FacetValues> facet;
 
 	@XmlElementWrapper(name = "missingValues")
-	public List<FacetValues> missingValues;
+	@XmlElement(name = "facet")
+	public List<String> missingValue;
 
     }
 
@@ -69,7 +69,6 @@ public class FacetReport {
 	@XmlAttribute
 	public String name;
 
-	@XmlElementWrapper(name = "values")
 	public List<String> value;
     }
 

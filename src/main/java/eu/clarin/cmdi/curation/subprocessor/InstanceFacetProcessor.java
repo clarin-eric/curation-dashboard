@@ -78,16 +78,16 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	    instance.coverage = 1.0 * facetValues.size() / totalNumOfFacets;
 
 	    List<FacetValues> vals = new LinkedList<>();
-	    List<FacetValues> missingVals = new LinkedList<>();
+	    List<String> missingVals = new LinkedList<>();
 
 	    for (String facet : profileMap.getFacetNames())
 		if (facetValues.containsKey(facet))
 		    vals.add(new FacetValues(facet, facetValues.get(facet)));
 		else
-		    missingVals.add(new FacetValues(facet, null));
+		    missingVals.add(facet);
 
 	    instance.facet = vals;
-	    instance.missingValues = missingVals;
+	    instance.missingValue = missingVals;
 
 	    FacetReport facets = new FacetReport();
 	    facets.numOfFacets = totalNumOfFacets;
