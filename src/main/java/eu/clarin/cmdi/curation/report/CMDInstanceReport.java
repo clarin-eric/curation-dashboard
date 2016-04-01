@@ -87,6 +87,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	URLReport urlReport;
 
 	// facets
+	@XmlElement (name = "facets-section")
 	public FacetReport facets;
 
 	@Override
