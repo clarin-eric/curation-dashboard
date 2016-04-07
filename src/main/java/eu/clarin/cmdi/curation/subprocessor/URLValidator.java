@@ -7,6 +7,7 @@ import eu.clarin.cmdi.curation.io.HTTPLinkChecker;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Severity;
+import eu.clarin.cmdi.curation.utils.ExStacktraceAsString;
 
 /**
  * @author dostojic
@@ -40,15 +41,15 @@ public class URLValidator extends CMDSubprocessor {
 		    else if (responseCode < 400)// 2XX and 3XX, redirections,
 						// empty
 						// content ...
-			addMessage(Severity.WARNING, tag + "URL: " + link + "\t STATUS:" + responseCode);
+			addMessage(Severity.WARNING, tag + "URL: " + link + "     STATUS:" + responseCode);
 
 		    else {// 4XX and 5XX, client/server errors
 			numOfBrokenLinks.incrementAndGet();
-			addMessage(Severity.ERROR, tag + "URL: " + link + "\t STATUS:" + responseCode);
+			addMessage(Severity.ERROR, tag + "URL: " + link + "    STATUS:" + responseCode);
 		    }
 		} catch (Exception e) {
 		    numOfBrokenLinks.incrementAndGet();
-		    addMessage(Severity.ERROR, tag + "URL: " + link + "\t STATUS:" + e.getMessage());
+		    addMessage(Severity.ERROR, tag + "URL: " + link + "    STATUS:" + e.toString());
 		}
 	    });
 	    

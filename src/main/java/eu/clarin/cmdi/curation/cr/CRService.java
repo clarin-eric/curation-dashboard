@@ -1,15 +1,14 @@
 package eu.clarin.cmdi.curation.cr;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
@@ -22,11 +21,13 @@ import org.xml.sax.SAXException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
+import eu.clarin.cmdi.curation.cr.ProfileDescriptions.ProfileHeader;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.xml.CMDXPathService;
+import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 public class CRService implements ICRService {
 	static final Logger _logger = LoggerFactory.getLogger(CRService.class);
@@ -35,8 +36,8 @@ public class CRService implements ICRService {
 	private static final String PROFILE_PREFIX = "clarin.eu:cr1:";
 
 	private final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-	
-	private Map<String, String> publicProfiles = null;
+
+	private List<ProfileHeader> profileHeaders = null;
 
 	private final Map<String, ProfileStruct> schemaCache = new ConcurrentHashMap<>();
 	private final Map<String, Object> schemaBeingProcessed = new ConcurrentHashMap<>();
@@ -48,6 +49,12 @@ public class CRService implements ICRService {
 	private static CRService instance = new CRService();
 
 	private CRService() {
+		try{
+			//cache all public profiles
+			getPublicProfiles();
+		}catch (Exception e) {
+			throw new RuntimeException("CLARIN Component Registry REST service doesn't work as expected. Unable to continue", e);
+		}
 	}
 
 	public static CRService getInstance() {
@@ -55,11 +62,41 @@ public class CRService implements ICRService {
 	}
 
 	@Override
+	public ProfileHeader getProfileHeader(final String profileId) throws Exception{
+		ProfileHeader profile = profileHeaders.stream().filter(p -> p.id.equals(profileId)).findFirst().orElse(null);
+		if(profile != null)
+			return profile;
+		
+		//not public
+		CMDXPathService xpathService = new CMDXPathService(REST_API + profileId);
+		profile = new ProfileHeader();
+		profile.id = profileId;
+		profile.name = xpathService.getXPathValue("/CMD_ComponentSpec/Header/Name");
+		profile.description = xpathService.getXPathValue("/CMD_ComponentSpec/Header/Description");
+		profile.isPublic = false;
+		
+		profileHeaders.add(profile);
+		
+		return profile;
+		
+		
+	}
+	
+	
+	@Override
 	public boolean isPublic(final String profileId) throws Exception {
-		if (publicProfiles == null) {
-			publicProfiles = getPublicProfiles();
-		}
-		return publicProfiles.containsKey(profileId);
+		ProfileHeader profile = getProfileHeader(profileId);
+		return profile.isPublic;			
+	}
+	
+	@Override
+	public boolean isNameUnique(String name) throws Exception {		
+		return profileHeaders.stream().filter(profile -> profile.name.equals(name)).count() <= 1;
+	}
+
+	@Override
+	public boolean isDescriptionUnique(String description) throws Exception {	
+		return profileHeaders.stream().filter(profile -> profile.description.equals(description)).count() <= 1;
 	}
 
 	@Override
@@ -127,20 +164,17 @@ public class CRService implements ICRService {
 	}
 
 	@Override
-	public Map<String, String> getPublicProfiles() throws Exception {
-		CMDXPathService xmlService = new CMDXPathService(REST_API);
-		Collection<String> idsList = xmlService.getXPathValues("/profileDescriptions/profileDescription/id/text()");
-		Collection<String> namesList = xmlService.getXPathValues("/profileDescriptions/profileDescription/name/text()");
-		
-		String[] ids = idsList.toArray(new String[idsList.size()]);
-		String[] names = namesList.toArray(new String[namesList.size()]);
-		
-		Map<String, String> profiles = new HashMap<>();
-		for(int i = 0; i < ids.length; i++){
-			profiles.put(ids[i], names[i]);
+	public List<ProfileHeader> getPublicProfiles() throws Exception {		
+		if(profileHeaders == null){		
+			XMLMarshaller<ProfileDescriptions> marshaller = new XMLMarshaller<>(ProfileDescriptions.class);
+			
+			List<ProfileHeader> publicProfiles = marshaller.unmarshal(new URL(REST_API).openStream()).profileDescription;
+			publicProfiles.forEach(p -> p.isPublic = true);
+			profileHeaders = publicProfiles;
+			return profileHeaders;
+		}else{
+			return profileHeaders.stream().filter(profile -> profile.isPublic).collect(Collectors.toList());			
 		}
-		
-		return profiles;		
 	}
 
 	private ProfileStruct schemaLookup(final String profileId) throws InterruptedException {
@@ -212,7 +246,8 @@ public class CRService implements ICRService {
 							// dont keep files if profile is not public
 							try {
 								if (!isPublic(profileId)) {
-									_logger.warn("Profile {} is not public. XSD and XML files won't be kept on disk", profileId);									
+									_logger.warn("Profile {} is not public. XSD and XML files won't be kept on disk",
+											profileId);
 									Files.delete(xsd);
 									Files.delete(xml);
 								}
@@ -224,7 +259,7 @@ public class CRService implements ICRService {
 					}
 				}.run();
 			} // end if is currently processed
-			
+
 			while (!schemaCache.containsKey(profileId)) {
 				Object lock = schemaBeingProcessed.get(profileId);
 				synchronized (lock) {
@@ -283,4 +318,5 @@ public class CRService implements ICRService {
 			this.ex = exception;
 		}
 	}
+
 }

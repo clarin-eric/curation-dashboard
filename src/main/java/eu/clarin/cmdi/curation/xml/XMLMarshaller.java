@@ -36,6 +36,7 @@ public class XMLMarshaller<T> {
 
 			// output pretty printed
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			jaxbMarshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
 
 			jaxbMarshaller.marshal(object, os);
 

@@ -25,7 +25,7 @@ public class Configuration {
 
 	public static void init(File file) throws ConfigurationException, IOException {
 		_logger.info("Initializing configuration from {}", file);
-		readProperties(new PropertiesConfiguration(file));		
+		readProperties(new PropertiesConfiguration(file));
 	}
 	
 	public static void initDefault() throws ConfigurationException, IOException {

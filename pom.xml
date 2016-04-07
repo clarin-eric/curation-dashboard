@@ -1,11 +1,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>eu.clarin.cmdi</groupId>
-	<artifactId>cmdi-curation-module</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 
+	<groupId>eu.clarin.cmdi</groupId>
+	<artifactId>curation-module-core</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<!-- vtd-xml 2.12 is not in the maven central repository yet. To use it you mast take the code from sourceforge, build it manually 
+	    in install it in your local  repository using following command: 
+		mvn install:install-file -Dfile=<path-to-file> \
+                         -DgroupId=<myGroup> \
+                         -DartifactId=<myArtifactId> \
+                         -Dversion=<myVersion> \
+                         -Dpackaging=<myPackaging> \
+                         -DlocalRepositoryPath=<path-to-my-repo>
+                         
+       see http://stackoverflow.com/questions/2065928/maven-2-assembly-with-dependencies-jar-under-scope-system-not-included
+	-->
+	
 	<properties>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+
 		<humanize.version>1.2.2</humanize.version>
 		<junit.version>4.12</junit.version>
 		<slf4j.version>1.7.12</slf4j.version>
@@ -13,13 +31,10 @@
 	</properties>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>com.ximpleware</groupId>
 			<artifactId>vtd-xml</artifactId>
-			<version>2.11</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/vtd-xml-2.11.jar</systemPath>
+			<version>${vtd-xml.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -60,16 +75,15 @@
 		</dependency>
 	</dependencies>
 
+
+
+
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
 			</plugin>
 			<!-- don't create jar, leave this to maven-assembly -->
 			<plugin>
@@ -112,7 +126,7 @@
 							<descriptors>
 								<descriptor>src/assembly/dist.xml</descriptor>
 							</descriptors>
-							<finalName>sitemap-dist</finalName>
+							<finalName>curation-module-${project.version}</finalName>
 						</configuration>
 						<phase>package</phase>
 						<goals>

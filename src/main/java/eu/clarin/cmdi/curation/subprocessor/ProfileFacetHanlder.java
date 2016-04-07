@@ -28,9 +28,9 @@ public class ProfileFacetHanlder extends ProcessingStep<CMDProfile, CMDProfileRe
 	Profile2FacetMap profileMap;
 	try {
 	    service = FacetConceptMappingService.getInstance();
-	    profileMap = service.getMapping(report.ID);
+	    profileMap = service.getMapping(report.header.ID);
 	} catch (Exception e) {
-	    _logger.error("Unable to create facet mapping for profile {}", report.ID, e);
+	    _logger.error("Unable to create facet mapping for profile {}", report.header.ID, e);
 	    return false;
 	}
 

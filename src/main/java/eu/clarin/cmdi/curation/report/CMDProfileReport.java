@@ -31,6 +31,9 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 	public static final double MAX_SCORE = 3;
 	
 	public transient boolean isValid = true;
+	
+	public transient boolean duplicatedName = false;
+	public transient boolean duplicatedDescription = false;
 
 	@XmlAttribute(name = "max-score")
 	public final double maxScore = MAX_SCORE;
@@ -39,17 +42,14 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
 	public Double score = 0.0;	
 
-	public String ID;
-	public String name;
-	public String url;
-	public String description;
-	public boolean isPublic;
+	@XmlElement(name = "header-section")
+	public Header header;
 
 	@XmlElement(name = "cmd-components-section")
-	Components components;
+	public Components components;
 
 	@XmlElement(name = "cmd-concepts-section")
-	Elements elements;
+	public Elements elements;
 
 	@XmlElement(name = "facets-section")
 	public FacetReport facet;
@@ -86,7 +86,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 		if(!isValid)
 			return score;
 
-		if (isPublic)
+		if (header.isPublic)
 			score++;
 
 		score += elements.percWithConcept; // * factor for concepts
@@ -99,6 +99,15 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 	@Override
 	public boolean isValid() {
 		return isValid;
+	}
+	
+	public void createHeaderReport(String id, String url, String name, String description, boolean isPublic){
+		header = new Header();
+		header.ID = id;
+		header.url = url;
+		header.name = name;
+		header.description = description;
+		header.isPublic = isPublic;		
 	}
 
 	public void createComponentsReport(int total, int required, int unique) {
@@ -128,10 +137,21 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 		for (Entry<String, Integer> datcat : datcats.entrySet())
 			elements.concepts.addConcept(datcat.getKey(), datcat.getValue());
 	}
+	
+	@XmlRootElement()
+	@XmlAccessorType(XmlAccessType.FIELD)
+	public static class Header {
+
+		public String ID;
+		public String name;		
+		public String description;
+		public String url;
+		public boolean isPublic;
+	}	
 
 	@XmlRootElement()
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class Components {
+	public static class Components {
 
 		int total;
 
@@ -174,7 +194,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class Concepts {
+	public static class Concepts {
 
 		@XmlAttribute
 		int total;
@@ -204,7 +224,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class Datcat {
+	public static class Datcat {
 		@XmlAttribute
 		String url;
 

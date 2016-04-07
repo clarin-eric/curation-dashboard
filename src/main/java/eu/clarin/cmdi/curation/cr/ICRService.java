@@ -1,17 +1,24 @@
 package eu.clarin.cmdi.curation.cr;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 
 import javax.xml.validation.Schema;
 
 import com.ximpleware.VTDNav;
 
+import eu.clarin.cmdi.curation.cr.ProfileDescriptions.ProfileHeader;
+
 public interface ICRService {
 	
 	public boolean isPublic(final String profileId) throws Exception;
 	
-	public Map<String, String> getPublicProfiles() throws Exception;
+	public List<ProfileHeader> getPublicProfiles() throws Exception;
+	
+	public ProfileHeader getProfileHeader(final String profileId) throws Exception;
+	
+	public boolean isNameUnique(String name) throws Exception;
+	
+	public boolean isDescriptionUnique(String description) throws Exception;
 	
 	public boolean isSchemaCRResident(String schemaUrl);	
 	
@@ -22,7 +29,4 @@ public interface ICRService {
 	public VTDNav getParseXML(final String profileId) throws Exception;
 	
 	public double getScore(final String profileId) throws Exception;
-
-
-
 }

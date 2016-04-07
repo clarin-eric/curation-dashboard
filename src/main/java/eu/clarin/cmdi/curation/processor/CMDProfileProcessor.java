@@ -11,6 +11,7 @@ import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 import eu.clarin.cmdi.curation.subprocessor.ProfileComponentsHandler;
 import eu.clarin.cmdi.curation.subprocessor.ProfileConceptsHandler;
 import eu.clarin.cmdi.curation.subprocessor.ProfileFacetHanlder;
+import eu.clarin.cmdi.curation.subprocessor.ProfileHeaderHandler;
 
 /**
  * @author dostojic
@@ -24,6 +25,7 @@ public class CMDProfileProcessor extends AbstractProcessor<CMDProfileReport> {
     @Override
     protected Collection<ProcessingStep> createPipeline() {
 	return Arrays.asList(
+		new ProfileHeaderHandler(),
 		new ProfileComponentsHandler(),
 		new ProfileConceptsHandler(),
 		new ProfileFacetHanlder()

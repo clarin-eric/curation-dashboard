@@ -314,7 +314,7 @@ public class FacetConceptMappingService {
 
 			// VTDNav vn = vg.getNav();
 			AutoPilot ap = new AutoPilot(vn);
-			ap.selectElement("element");
+			ap.selectElement("xs:element");
 			Deque<Token> elementPath = new LinkedList<Token>();
 			while (ap.iterate()) {
 				int i = vn.getAttrVal("name");

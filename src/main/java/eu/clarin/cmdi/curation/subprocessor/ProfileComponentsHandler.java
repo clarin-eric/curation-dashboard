@@ -34,13 +34,11 @@ public class ProfileComponentsHandler extends ProcessingStep<CMDProfile, CMDProf
 			VTDNav navigator = crService.getParseXML(entity.getProfile());
 			CMDXPathService xmlService = new CMDXPathService(navigator);			
 
-			// header
-			report.ID = entity.getProfile();
-			report.name = xmlService.getXPathValue("/CMD_ComponentSpec/Header/Name/text()");
-			report.description = xmlService.getXPathValue("/CMD_ComponentSpec/Header/Description/text()");
-
-			
-			report.isPublic = crService.isPublic(report.ID);
+			// header - moved to profileHeaderHandler
+//			report.ID = entity.getProfile();
+//			report.name = xmlService.getXPathValue("/CMD_ComponentSpec/Header/Name/text()");
+//			report.description = xmlService.getXPathValue("/CMD_ComponentSpec/Header/Description/text()");			
+//			report.isPublic = crService.isPublic(report.ID);			
 
 			int numOfComponents = 0;
 			int numOfRequiredComponents = 0;

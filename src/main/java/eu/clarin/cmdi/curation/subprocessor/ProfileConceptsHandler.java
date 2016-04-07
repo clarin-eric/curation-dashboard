@@ -24,80 +24,79 @@ import eu.clarin.cmdi.curation.report.Severity;
  */
 public class ProfileConceptsHandler extends ProcessingStep<CMDProfile, CMDProfileReport> {
 
-    private static final Logger _logger = LoggerFactory.getLogger(ProfileConceptsHandler.class);
+	private static final Logger _logger = LoggerFactory.getLogger(ProfileConceptsHandler.class);
 
-    @Override
-    public boolean process(CMDProfile entity, CMDProfileReport report) {
-	try {
-	    
-	    //createElementsReport(int total, int unique, int required, int withDatacategory, Map<String, Integer> datcats);
-	    int numOfElements = 0;
-	    int numOfReqElements = 0;
-	    int numOfElemsWithDatcat = 0;
-	    int numOfReqDatcats = 0;
-	    Map<String, Integer> elements = new HashMap<>();
-	    Map<String, Integer> datcats = new HashMap();
-	    
-	    VTDNav xsdNavigator = CRService.getInstance().getParsedXSD(entity.getProfile());
-	    AutoPilot ap = new AutoPilot(xsdNavigator);
-	    ap.selectElement("element");
-	    while (ap.iterate()) {		
-		int ind = xsdNavigator.getAttrVal("name");
+	@Override
+	public boolean process(CMDProfile entity, CMDProfileReport report) {
+		try {
 
-		if (ind != -1) {
-		    numOfElements++;
-		    String name = xsdNavigator.toNormalizedString(ind);
-		    elements.put(name, elements.containsKey(name) ? elements.get(name) + 1 : 1);
-		    
-		} else
-		    _logger.error("missing name");
-		
-		
-		ind = xsdNavigator.getAttrVal("minOccurs");
-		
-		// if attr CardinalityMin > 0
-		boolean required = false;
-		if (ind != -1 && xsdNavigator.toNormalizedString(ind).compareTo("0") > 0){
-		    numOfReqElements++;
-		    required = true;
+			// createElementsReport(int total, int unique, int required, int
+			// withDatacategory, Map<String, Integer> datcats);
+			int numOfElements = 0;
+			int numOfReqElements = 0;
+			int numOfElemsWithDatcat = 0;
+			int numOfReqDatcats = 0;
+			Map<String, Integer> elements = new HashMap<>();
+			Map<String, Integer> datcats = new HashMap();
+
+			VTDNav xsdNavigator = CRService.getInstance().getParsedXSD(entity.getProfile());
+			AutoPilot ap = new AutoPilot(xsdNavigator);
+			ap.selectElement("xs:element");
+			while (ap.iterate()) {
+				int ind = xsdNavigator.getAttrVal("name");
+
+				if (ind != -1) {
+					numOfElements++;
+					String name = xsdNavigator.toNormalizedString(ind);
+					elements.put(name, elements.containsKey(name) ? elements.get(name) + 1 : 1);
+
+				} else
+					_logger.error("missing name");
+
+				ind = xsdNavigator.getAttrVal("minOccurs");
+
+				// if attr CardinalityMin > 0
+				boolean required = false;
+				if (ind != -1 && xsdNavigator.toNormalizedString(ind).compareTo("0") > 0) {
+					numOfReqElements++;
+					required = true;
+				}
+
+				ind = getDatcatIndex(xsdNavigator);
+				if (ind != -1) {
+					numOfElemsWithDatcat++;
+					if (required)
+						numOfReqDatcats++;
+					String datcatUrl = xsdNavigator.toNormalizedString(ind);
+					datcats.put(datcatUrl, datcats.containsKey(datcatUrl) ? datcats.get(datcatUrl) + 1 : 1);
+				}
+			}
+
+			report.createElementsReport(numOfElements, elements.size(), numOfReqElements, numOfElemsWithDatcat, datcats,
+					numOfReqDatcats);
+
+			elements = null;
+			datcats = null;
+
+			return true;
+
+		} catch (Exception e) {
+			_logger.error("Error processing profile {}", entity.getPath(), e);
+			report.addDetail(Severity.FATAL, e.toString());
+			return false;
 		}
 
-		
-		
-		ind = getDatcatIndex(xsdNavigator);
-		if (ind != -1) {
-		    numOfElemsWithDatcat++;
-		    if(required)
-			numOfReqDatcats++;
-		    String datcatUrl = xsdNavigator.toNormalizedString(ind);
-		    datcats.put(datcatUrl, datcats.containsKey(datcatUrl) ? datcats.get(datcatUrl) + 1 : 1);
+	}
+
+	private int getDatcatIndex(VTDNav vn) throws NavException {
+		int result = -1;
+		result = vn.getAttrValNS("http://www.isocat.org/ns/dcr", "datcat");
+		if (result == -1) {
+			result = vn.getAttrValNS("http://www.isocat.org", "datcat");
 		}
-	    }
-	    
-	    report.createElementsReport(numOfElements, elements.size(), numOfReqElements, numOfElemsWithDatcat, datcats, numOfReqDatcats);
-	    
-	    elements = null;
-	    datcats = null;
-
-	    return true;
-
-	} catch (Exception e) {
-	    _logger.error("Error processing profile {}", entity.getPath(), e);
-	    report.addDetail(Severity.FATAL, e.toString());
-	    return false;
+		if (result == -1) {
+			result = vn.getAttrVal("dcr:datcat");
+		}
+		return result;
 	}
-
-    }
-
-    private int getDatcatIndex(VTDNav vn) throws NavException {
-	int result = -1;
-	result = vn.getAttrValNS("http://www.isocat.org/ns/dcr", "datcat");
-	if (result == -1) {
-	    result = vn.getAttrValNS("http://www.isocat.org", "datcat");
-	}
-	if (result == -1) {
-	    result = vn.getAttrVal("dcr:datcat");
-	}
-	return result;
-    }
 }
