@@ -19,25 +19,31 @@ import eu.clarin.cmdi.curation.report.Report;
 
 public class Main {
 
-	public static void main(String[] args) throws Exception {
-		
+	public static void main(String[] args) throws Exception{
+
 		CommandLineParser parser = new PosixParser();
-		
+
 		Options helpOptions = createHelpOption();
-		
+
 		Options options = createOptions();
-		
-		CommandLine cmd = parser.parse(helpOptions, args);
-		
-				
-		if(cmd.hasOption("help")){
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("curation module", options);
-			return;
+
+		CommandLine cmd = null;
+
+		try {
+			cmd = parser.parse(helpOptions, args);
+			if (cmd.hasOption("help")) {
+				HelpFormatter formatter = new HelpFormatter();
+				formatter.printHelp("curation module", options);
+				return;
+			}
+		} catch (org.apache.commons.cli.ParseException e) {
+			// do nothing
 		}
-			
-		cmd = parser.parse(options, args);
+
 		
+
+		cmd = parser.parse(options, args);
+
 		List<Report> reports = new LinkedList<>();
 
 		// init configuration file
@@ -49,102 +55,81 @@ public class Main {
 		if (cmd.hasOption('p')) {
 			Configuration.OUTPUT_DIRECTORY = null;
 		}
-		
+
 		CurationModule curator = new CurationModule();
-		
-		if (cmd.hasOption("p")){//profile
-			if (cmd.hasOption("id")){
-				for(String id: cmd.getOptionValues("id"))
+
+		if (cmd.hasOption("p")) {// profile
+			if (cmd.hasOption("id")) {
+				for (String id : cmd.getOptionValues("id"))
 					reports.add(curator.processCMDProfile(id));
-			}else if(cmd.hasOption("url")){
-				for(String url: cmd.getOptionValues("url"))
+			} else if (cmd.hasOption("url")) {
+				for (String url : cmd.getOptionValues("url"))
 					reports.add(curator.processCMDProfile(new URL(url)));
-			}else
+			} else
 				throw new Exception("Only id and url options are allowed for profiles curation");
-		}else if (cmd.hasOption("i")){//instance
-			if(cmd.hasOption("url")){
-				for(String url: cmd.getOptionValues("url"))
+		} else if (cmd.hasOption("i")) {// instance
+			if (cmd.hasOption("url")) {
+				for (String url : cmd.getOptionValues("url"))
 					reports.add(curator.processCMDInstance(new URL(url)));
-			}else if(cmd.hasOption("path")){
-				for(String path: cmd.getOptionValues("path"))
+			} else if (cmd.hasOption("path")) {
+				for (String path : cmd.getOptionValues("path"))
 					reports.add(curator.processCMDInstance(Paths.get(path)));
-			}else
+			} else
 				throw new Exception("Only path and url options are allowed for instances curation");
-			
-		}else if (cmd.hasOption("c")){//collection
-			if(cmd.hasOption("path")){
-				for(String path: cmd.getOptionValues("path"))
+
+		} else if (cmd.hasOption("c")) {// collection
+			if (cmd.hasOption("path")) {
+				for (String path : cmd.getOptionValues("path"))
 					reports.add(curator.processCollection(Paths.get(path)));
-			}else
+			} else
 				throw new Exception("Only path is allowed for collection curation");
-		}else
+		} else
 			throw new Exception("Curation module can curate profiles (-p), instances (-i) and collections (-c)");
-		
-		
-		for(Report r: reports){
+
+		for (Report r : reports) {
 			r.toXML(System.out);
 			System.out.println("-----------------------------------------------------------------");
 			System.out.println();
 			System.out.println();
 		}
-		
+
 	}
-	
-	private static Options createHelpOption(){
-		Option help = new Option( "help", "print this message" );
+
+	private static Options createHelpOption() {
+		Option help = new Option("help", "print this message");
 		Options options = new Options();
 		options.addOption(help);
 		return options;
 	}
 
+	private static Options createOptions() {
 
-	private static Options createOptions() {		
-		
-		Option configurationFile = OptionBuilder
-				.withArgName("file")
-				.hasArg()
-				.isRequired(false)
-				.withDescription("a path to the configuration file")
-				.create("config");
+		Option configurationFile = OptionBuilder.withArgName("file").hasArg().isRequired(false)
+				.withDescription("a path to the configuration file").create("config");
 
-		Option profileCuration = OptionBuilder
-				.withDescription("curate a profile")
-				.create("p");
+		Option profileCuration = OptionBuilder.withDescription("curate a profile").create("p");
 
-		Option instanceCuration = OptionBuilder
-				.withDescription("curate an instance")
-				.create("i");
+		Option instanceCuration = OptionBuilder.withDescription("curate an instance").create("i");
 
-		Option collectionCuration = OptionBuilder
-				.withDescription("curate a collection")
-				.create("c");
+		Option collectionCuration = OptionBuilder.withDescription("curate a collection").create("c");
 
 		OptionGroup curationGroup = new OptionGroup();
 		curationGroup.addOption(profileCuration).addOption(instanceCuration).addOption(collectionCuration);
 		curationGroup.setRequired(true);
 
-		Option paramId = OptionBuilder
-				.withArgName("profilesId")
-				.hasArgs(Option.UNLIMITED_VALUES)
-				.withDescription("Space separated CLARIN profile IDs in format: clarin.eu:cr1:p_xxx")
-				.create("id");
+		Option paramId = OptionBuilder.withArgName("profilesId").hasArgs(Option.UNLIMITED_VALUES)
+				.withDescription("Space separated CLARIN profile IDs in format: clarin.eu:cr1:p_xxx").create("id");
 
-		Option paramPath = OptionBuilder
-				.withArgName("path")
-				.hasArgs(Option.UNLIMITED_VALUES)
-				.withDescription("Space separated paths to file or folder to be curated")
-				.create("path");
+		Option paramPath = OptionBuilder.withArgName("path").hasArgs(Option.UNLIMITED_VALUES)
+				.withDescription("Space separated paths to file or folder to be curated").create("path");
 
-		Option paramUrl = OptionBuilder
-				.withArgName("url")
-				.hasArgs(Option.UNLIMITED_VALUES)
-				.withDescription("Space separated urls to profile or instane to be curated")
-				.create("url");
+		Option paramUrl = OptionBuilder.withArgName("url").hasArgs(Option.UNLIMITED_VALUES)
+				.withDescription("Space separated urls to profile or instane to be curated").create("url");
 
 		OptionGroup curationInputParams = new OptionGroup();
 		curationInputParams.addOption(paramId).addOption(paramPath).addOption(paramUrl);
-		curationInputParams.setRequired(true);		
-		
+		curationInputParams.setRequired(true);
+
 		Options options = new Options();
 		options.addOption(configurationFile);
 		options.addOptionGroup(curationGroup);
@@ -152,5 +137,5 @@ public class Main {
 
 		return options;
 	}
-	
+
 }
