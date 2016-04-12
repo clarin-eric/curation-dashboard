@@ -31,7 +31,7 @@ public class ProfileComponentsHandler extends ProcessingStep<CMDProfile, CMDProf
 	public boolean process(CMDProfile entity, CMDProfileReport report) {
 		try {
 			ICRService crService = CRService.getInstance();
-			VTDNav navigator = crService.getParseXML(entity.getProfile());
+			VTDNav navigator = crService.getParsedXML(entity.getProfile());
 			CMDXPathService xmlService = new CMDXPathService(navigator);			
 
 			// header - moved to profileHeaderHandler

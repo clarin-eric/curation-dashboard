@@ -26,7 +26,7 @@ public interface ICRService {
 		
 	public VTDNav getParsedXSD(final String profileId) throws Exception;
 	
-	public VTDNav getParseXML(final String profileId) throws Exception;
+	public VTDNav getParsedXML(final String profileId) throws Exception;
 	
 	public double getScore(final String profileId) throws Exception;
 }

@@ -1,12 +1,9 @@
 package eu.clarin.cmdi.curation.report;
 
 import java.io.OutputStream;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -73,7 +70,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
 	public void addNewInvalid(String file) {
 		if (invalidFile == null)
-			invalidFile = new LinkedList<>();
+			invalidFile = new ArrayList<>();
 
 		invalidFile.add(file);
 
@@ -126,7 +123,7 @@ public class CollectionReport implements Report<CollectionReport> {
 		if (headerReport.duplicatedMDSelfLink != null && !headerReport.duplicatedMDSelfLink.isEmpty()) {
 
 			if (parentReport.headerReport.duplicatedMDSelfLink == null) {
-				parentReport.headerReport.duplicatedMDSelfLink = new LinkedList();
+				parentReport.headerReport.duplicatedMDSelfLink = new ArrayList();
 			}
 
 			for (String mdSelfLink : headerReport.duplicatedMDSelfLink)
@@ -279,7 +276,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
 		public void handleProfile(String profile) {
 			if (profiles == null)
-				profiles = new LinkedList<>();
+				profiles = new ArrayList<>();
 
 			for (Profile p : profiles)
 				if (p.name.equals(profile)) {
@@ -296,7 +293,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
 		public void handleProfile(Profile profile) {
 			if (profiles == null)
-				profiles = new LinkedList<>();
+				profiles = new ArrayList<>();
 
 			for (Profile p : profiles)
 				if (p.name.equals(profile.name)) {

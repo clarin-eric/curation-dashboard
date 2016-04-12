@@ -3,8 +3,8 @@ package eu.clarin.cmdi.curation.xml;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class CMDXPathService {
 	
 	public Collection<String> getXPathValues(String xpath) throws Exception {
 		
-		Collection<String> result = new LinkedList<>();
+		Collection<String> result = new ArrayList<>();
 		try {
 			navigator.toElement(VTDNav.ROOT);
 			AutoPilot ap = new AutoPilot(navigator);

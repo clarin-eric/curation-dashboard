@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.entities;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -15,7 +16,7 @@ public class CMDInstance extends CurationEntity {
 	public static Set<String> uniqueMDSelfLinks = Collections.synchronizedSet(new HashSet<>());
 	public static Collection<String> duplicateMDSelfLinks = Collections.synchronizedCollection(new LinkedList<>());
 
-	Collection<CMDUrlNode> links = new LinkedList<>();
+	Collection<CMDUrlNode> links = new ArrayList<>();
 
 	public CMDInstance(Path path) {
 		super(path);

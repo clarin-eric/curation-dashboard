@@ -1,6 +1,6 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import eu.clarin.cmdi.curation.entities.CurationEntity;
@@ -28,7 +28,7 @@ public abstract class ProcessingStep<T extends CurationEntity, R extends Report>
     
     protected void addMessage(Severity lvl, String message){
 	if(msgs == null){
-	    msgs = new LinkedList<>();
+	    msgs = new ArrayList<>();
 	}
 	msgs.add(new Message(lvl, message));
     }

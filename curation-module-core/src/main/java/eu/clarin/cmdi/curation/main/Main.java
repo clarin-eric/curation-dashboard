@@ -3,7 +3,7 @@ package eu.clarin.cmdi.curation.main;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -44,7 +44,7 @@ public class Main {
 
 		cmd = parser.parse(options, args);
 
-		List<Report> reports = new LinkedList<>();
+		List<Report> reports = new ArrayList<>();
 
 		// init configuration file
 		if (cmd.hasOption("conf"))

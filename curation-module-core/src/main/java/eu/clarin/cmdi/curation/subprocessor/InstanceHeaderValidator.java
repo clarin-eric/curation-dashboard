@@ -96,7 +96,8 @@ public class InstanceHeaderValidator extends CMDSubprocessor {
 		navigator.toElement(VTDNav.ROOT);
 		int index = navigator.getAttrValNS("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation");
 		if (index != -1) {
-			schema = navigator.toNormalizedString(index).split(" ")[1];
+			String[] schemaLocation = navigator.toNormalizedString(index).split(" ");
+			schema = schemaLocation.length == 2? schemaLocation[1] : schemaLocation[0];
 		} else {
 			index = navigator.getAttrValNS("http://www.w3.org/2001/XMLSchema-instance", "noNamespaceSchemaLocation");
 			if (index != -1)

@@ -1,8 +1,11 @@
 package eu.clarin.cmdi.curation.test.ccr;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +61,7 @@ public class CurationModuleTest {
 
 		Report r = null;
 
-		r = module.processCMDProfile("clarin.eu:cr1:p_1407745711934");
+		r = module.processCMDProfile("clarin.eu:cr1:p_1393514855466");
 
 		// profile is not public
 		// r = module.processCMDProfile("clarin.eu:cr1:p_1369140737154");
@@ -67,6 +70,9 @@ public class CurationModuleTest {
 
 		// profile is not public
 		// r = module.processCMDInstance(instancePath1);
+		
+		
+		//r = module.processCMDInstance(Paths.get("D:/data/harvester/results/cmdi/BAS_Repository/oai_BAS_repo_Corpora_aGender_000000.xml"));
 
 		// r = module.processCMDInstance(instanceURL1);
 
@@ -114,5 +120,7 @@ Map<String, Integer> profileMap = new HashMap<>();
 			System.out.println(entry.getKey() + ", " + entry.getValue());
 		}
 	}
+	
+	
 
 }

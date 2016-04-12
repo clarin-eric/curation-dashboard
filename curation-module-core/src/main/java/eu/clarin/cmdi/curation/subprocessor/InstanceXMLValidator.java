@@ -1,7 +1,7 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -87,7 +87,7 @@ public class InstanceXMLValidator extends CMDSubprocessor {
 
 	    Locator locator;
 
-	    Collection<CMDUrlNode> values = new LinkedList<CMDUrlNode>();
+	    Collection<CMDUrlNode> values = new ArrayList<CMDUrlNode>();
 
 	    // for handling attributes
 	    // private TypeInfoProvider provider;

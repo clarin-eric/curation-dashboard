@@ -1,16 +1,11 @@
 package eu.clarin.cmdi.curation.report;
 
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -59,7 +54,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
 	public void addDetail(Severity lvl, String message) {
 		if (messages == null)
-			messages = new LinkedList<>();
+			messages = new ArrayList<>();
 		messages.add(new Message(lvl, message));
 	}
 
@@ -214,7 +209,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 			d.count = count;
 
 			if (concept == null)
-				concept = new LinkedList<>();
+				concept = new ArrayList<>(total);
 
 			concept.add(d);
 

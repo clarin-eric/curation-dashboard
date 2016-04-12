@@ -1,7 +1,7 @@
 package eu.clarin.cmdi.curation.entities;
 
 import java.nio.file.Path;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
@@ -17,7 +17,7 @@ public class CMDCollection extends CurationEntity {
     
     public CMDCollection(Path path) {
 	super(path);
-	children = new LinkedList<CurationEntity>();
+	children = new ArrayList<CurationEntity>();
     }
 
     @Override

@@ -68,9 +68,13 @@ public class CRService implements ICRService {
 			return profile;
 		
 		//not public
-		CMDXPathService xpathService = new CMDXPathService(REST_API + profileId);
+		
+		//CMDXPathService xpathService = new CMDXPathService(REST_API + profileId); // => HTTP Status 401 - Unauthorized
+		//use profile_id/xml
+		
+		CMDXPathService xpathService = new CMDXPathService(getParsedXML(profileId));		
 		profile = new ProfileHeader();
-		profile.id = profileId;
+		profile.id = profileId;	
 		profile.name = xpathService.getXPathValue("/CMD_ComponentSpec/Header/Name");
 		profile.description = xpathService.getXPathValue("/CMD_ComponentSpec/Header/Description");
 		profile.isPublic = false;
@@ -121,7 +125,7 @@ public class CRService implements ICRService {
 	}
 
 	@Override
-	public VTDNav getParseXML(final String profileId) throws Exception {
+	public VTDNav getParsedXML(final String profileId) throws Exception {
 		ProfileStruct elem = schemaLookup(profileId);
 		if (elem.ex != null)
 			throw elem.ex;
@@ -223,12 +227,12 @@ public class CRService implements ICRService {
 
 							Schema schema = createSchema(xsd.toFile());
 
-							elem = new ProfileStruct(isPublic(profileId), parsedXSD, parsedXML, schema);
+							elem = new ProfileStruct(parsedXSD, parsedXML, schema);
 
 						} catch (Exception e) {
 							_logger.error("Error while caching schema for {}. XSD and XML files will be removed!",
 									profileId, e);
-							elem = new ProfileStruct(false, e);
+							elem = new ProfileStruct(e);
 							try {
 								Files.delete(xsd);
 								Files.delete(xml);
@@ -290,17 +294,13 @@ public class CRService implements ICRService {
 
 		Exception ex = null;
 
-		boolean isPublic = false;
-
-		ProfileStruct(boolean isPublic, VTDNav xsd, VTDNav xml, Schema schema) {
-			this.isPublic = isPublic;
+		ProfileStruct(VTDNav xsd, VTDNav xml, Schema schema) {
 			this.xsd = xsd;
 			this.xml = xml;
 			this.schema = schema;
 		}
 
-		ProfileStruct(boolean isPublic, Exception ex) {
-			this.isPublic = isPublic;
+		ProfileStruct(Exception ex) {
 			this.ex = ex;
 		}
 	}

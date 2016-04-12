@@ -1,14 +1,11 @@
 package eu.clarin.cmdi.curation.report;
 
 import java.io.OutputStream;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -348,7 +345,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 		// prepare resTypes
 		List<ResourceType> resourceTypes = null;
 		if (!resourceTypeMap.isEmpty()) {
-			resourceTypes = new LinkedList<>();
+			resourceTypes = new ArrayList<>();
 			for (Entry<String, Integer> resType : resourceTypeMap.entrySet()) {
 				ResourceType res = new ResourceType();
 				res.type = resType.getKey();
