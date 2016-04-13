@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,13 +22,15 @@ public class InstanceHeaderValidator extends CMDSubprocessor {
 
 	private static final Logger _logger = LoggerFactory.getLogger(InstanceHeaderValidator.class);
 
-	private static final Pattern PROFILE_ID_PATTERN = Pattern.compile(".*(clarin.eu:cr1:p_[0-9]+).*");
+	private static final String PROFILE_ID_FORMAT = "clarin\\.eu:cr1:p_[0-9]+";
+	private static final Pattern PROFILE_ID_PATTERN = Pattern.compile(PROFILE_ID_FORMAT);
 
 	private CMDXPathService xmlService;
 
 	private ICRService crService = CRService.getInstance();
 
 	private String profile;
+	
 
 	@Override
 	public boolean process(CMDInstance entity, CMDInstanceReport report) {
@@ -65,15 +66,24 @@ public class InstanceHeaderValidator extends CMDSubprocessor {
 		String profile = xmlService.getXPathValue("/CMD/Header/MdProfile/text()");
 		String schema = getSchema();
 
-		if (profile == null) {// not in header
+		if(profile != null && !profile.matches(PROFILE_ID_FORMAT)){//try to normalize profileId
+			addMessage(Severity.ERROR, "Format of the profile's ID in the element CMD/Header/MdProfile should should be: clarin.eu:cr1:p_xxxxxxxxxxxxx!");
+			Matcher m = PROFILE_ID_PATTERN.matcher(profile);
+			if(m.find())
+				profile = m.group();
+			else
+				profile = null; //completly invalid value, set it to null and try to resolve profileId from schemaLocation
+		}else if (profile == null)//if tag is missing add error msg, in the next if block we can't resolve if tag is missing or value was invalid
+			addMessage(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile element with the profile's ID in the format clarin.eu:cr1:p_xxxxxxxxxxxxx!");
+		
+		if (profile == null) {// element /CMD/Header/MdProfile/ is missing 
 			report.mdProfileExists = false;
-			addMessage(Severity.ERROR, "CMDI Record must contain CMD/Header/MdProfile tag with profile ID!");
 
-			// extract profile ID
+			// extract profile ID from schemaLocation attribute
 			if (schema != null) {
 				Matcher m = PROFILE_ID_PATTERN.matcher(schema);
 				if (m.find())
-					profile = m.group(1);
+					profile = m.group();
 			}
 
 			if (profile == null)
@@ -117,7 +127,7 @@ public class InstanceHeaderValidator extends CMDSubprocessor {
 	private void handleMdSelfLink(CMDInstanceReport report) throws Exception {
 		String mdSelfLink = xmlService.getXPathValue("/CMD/Header/MdSelfLink/text()");
 		if (mdSelfLink == null || mdSelfLink.isEmpty()) {
-			addMessage(Severity.ERROR, "Value for MdCollctionDisplayName is missing");
+			addMessage(Severity.ERROR, "Value for MdSelfLink is missing");
 			report.mdSelfLinkExists = false;
 		} else {
 			if (!CMDInstance.uniqueMDSelfLinks.add(mdSelfLink)) {

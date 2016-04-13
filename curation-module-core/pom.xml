@@ -6,20 +6,16 @@
 	<artifactId>curation-module-core</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
-	<!-- vtd-xml 2.12 is not in the maven central repository yet. To use it you mast take the code from sourceforge, build it manually 
-	    in install it in your local  repository using following command: 
-		mvn install:install-file -Dfile=<path-to-file> \
-                         -DgroupId=<myGroup> \
-                         -DartifactId=<myArtifactId> \
-                         -Dversion=<myVersion> \
-                         -Dpackaging=<myPackaging> \
-                         -DlocalRepositoryPath=<path-to-my-repo>
-                         
-       see http://stackoverflow.com/questions/2065928/maven-2-assembly-with-dependencies-jar-under-scope-system-not-included
+	<!-- 
+	vtd-xml 2.12 is not in the maven central repository yet but this project is using this version. Here are instrructions on how to use vtd-xml 2.12
+		1. download zip from: https://sourceforge.net/projects/vtd-xml/files/vtd-xml/ximpleware_2.12/ximpleware-2.12-java.zip/
+		2. unpack and rebuild the library (make sure that jar contains VtdGen.class, sometimes it doesnt)
+		3. install it in the local maven repository with the command:
+			mvn install:install-file -Dfile=vtd-xml.jar -DgroupId=com.ximpleware -DartifactId=vtd-xml -Dversion=2.12 -Dpackaging=jar
+		4. now you can build curation module project
 	-->
 	
 	<properties>
-
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -27,7 +23,7 @@
 		<humanize.version>1.2.2</humanize.version>
 		<junit.version>4.12</junit.version>
 		<slf4j.version>1.7.12</slf4j.version>
-		<vtd-xml.version>2.11</vtd-xml.version>
+		<vtd-xml.version>2.12</vtd-xml.version>
 	</properties>
 
 	<dependencies>

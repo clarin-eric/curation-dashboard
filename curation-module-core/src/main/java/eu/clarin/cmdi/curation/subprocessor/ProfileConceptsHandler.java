@@ -41,7 +41,7 @@ public class ProfileConceptsHandler extends ProcessingStep<CMDProfile, CMDProfil
 
 			VTDNav xsdNavigator = CRService.getInstance().getParsedXSD(entity.getProfile());
 			AutoPilot ap = new AutoPilot(xsdNavigator);
-			ap.selectElement("xs:element");
+			ap.selectElement("element");
 			while (ap.iterate()) {
 				int ind = xsdNavigator.getAttrVal("name");
 
@@ -95,7 +95,7 @@ public class ProfileConceptsHandler extends ProcessingStep<CMDProfile, CMDProfil
 			result = vn.getAttrValNS("http://www.isocat.org", "datcat");
 		}
 		if (result == -1) {
-			result = vn.getAttrVal("dcr:datcat");
+			result = vn.getAttrVal("datcat");
 		}
 		return result;
 	}

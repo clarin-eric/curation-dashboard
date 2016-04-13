@@ -2,7 +2,6 @@ package eu.clarin.cmdi.curation.facets;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,15 +16,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
-import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
 import eu.clarin.cmdi.curation.cr.CRService;
@@ -314,7 +309,7 @@ public class FacetConceptMappingService {
 
 			// VTDNav vn = vg.getNav();
 			AutoPilot ap = new AutoPilot(vn);
-			ap.selectElement("xs:element");
+			ap.selectElement("element");
 			Deque<Token> elementPath = new LinkedList<Token>();
 			while (ap.iterate()) {
 				int i = vn.getAttrVal("name");
@@ -350,7 +345,7 @@ public class FacetConceptMappingService {
 				result = vn.getAttrValNS("http://www.isocat.org", "datcat");
 			}
 			if (result == -1) {
-				result = vn.getAttrVal("dcr:datcat");
+				result = vn.getAttrVal("datcat");
 			}
 			return result;
 		}

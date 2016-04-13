@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +32,7 @@ public class CRService implements ICRService {
 	static final Logger _logger = LoggerFactory.getLogger(CRService.class);
 
 	public static final String REST_API = "http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/";
-	private static final String PROFILE_PREFIX = "clarin.eu:cr1:";
+	public static final String PROFILE_PREFIX = "clarin.eu:cr1:";
 
 	private final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
