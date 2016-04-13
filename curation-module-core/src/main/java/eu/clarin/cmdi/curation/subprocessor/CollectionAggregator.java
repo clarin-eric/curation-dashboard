@@ -36,7 +36,6 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
 			final List<CurationEntity> chunk = new ArrayList<>(CHUNK_SIZE);
 			for (int i = 0; i < CHUNK_SIZE && it.hasNext(); i++) {
 				chunk.add(it.next());
-				it.remove();
 			}
 
 			long startTime = System.currentTimeMillis();
@@ -46,7 +45,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
 			chunk.stream().forEach(child -> child.generateReport().mergeWithParent(report));
 
 			processed += chunk.size();
-			_logger.debug("{} records are processed so far, rest {}", processed, dir.getChildren().size());
+			_logger.debug("{} records are processed so far, rest {}", processed, dir.getChildren().size() - processed);
 
 		}
 

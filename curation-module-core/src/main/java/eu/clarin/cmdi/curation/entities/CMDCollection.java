@@ -9,77 +9,75 @@ import eu.clarin.cmdi.curation.processor.CollectionProcessor;
 
 public class CMDCollection extends CurationEntity {
 
-    List<CurationEntity> children;
+	List<CurationEntity> children;
 
-    long numOfFiles;
-    long maxFileSize = 0;
-    long minFileSize = Long.MAX_VALUE;
-    
-    public CMDCollection(Path path) {
-	super(path);
-	children = new ArrayList<CurationEntity>();
-    }
+	long numOfFiles;
+	long maxFileSize = 0;
+	long minFileSize = Long.MAX_VALUE;
 
-    @Override
-    protected AbstractProcessor getProcessor() {
-	return new CollectionProcessor();
-    }
+	public CMDCollection(Path path) {
+		super(path);
+		children = new ArrayList<CurationEntity>();
+	}
 
-    public CurationEntity addChild(CurationEntity child) {
-	children.add(child);
+	@Override
+	protected AbstractProcessor getProcessor() {
+		return new CollectionProcessor();
+	}
 
-	if (child instanceof CMDInstance || child instanceof CMDProfile) {
+	public CurationEntity addChild(CurationEntity child) {
+		children.add(child);
 
-	    numOfFiles++;
-	    size += child.getSize();
-	    if (child.getSize() > maxFileSize)
-		maxFileSize = child.getSize();
-	    if (child.getSize() < minFileSize)
-		minFileSize = child.getSize();
+		if (child instanceof CMDInstance || child instanceof CMDProfile) {
 
-	} else if (child instanceof CMDCollection) {
-	    aggregateWithDir((CMDCollection) child);
-	} //else implementation for different kinds of entities if necessary
-	
+			numOfFiles++;
+			size += child.getSize();
+			if (child.getSize() > maxFileSize)
+				maxFileSize = child.getSize();
+			if (child.getSize() < minFileSize)
+				minFileSize = child.getSize();
 
-	return child;
-    }
-    
-    private void aggregateWithDir(CMDCollection child) {
-	numOfFiles += child.numOfFiles;
-	size += child.size;
-	if (child.maxFileSize > maxFileSize)
-	    maxFileSize = child.maxFileSize;
-	if (child.minFileSize < minFileSize)
-	    minFileSize = child.minFileSize;
-    }
+		} else if (child instanceof CMDCollection) {
+			aggregateWithDir((CMDCollection) child);
+		} // else implementation for different kinds of entities if necessary
 
-    public List<CurationEntity> getChildren() {
-	return children;
-    }
-    
+		return child;
+	}
 
-    public long getNumOfFiles() {
-        return numOfFiles;
-    }
+	private void aggregateWithDir(CMDCollection child) {
+		numOfFiles += child.numOfFiles;
+		size += child.size;
+		if (child.maxFileSize > maxFileSize)
+			maxFileSize = child.maxFileSize;
+		if (child.minFileSize < minFileSize)
+			minFileSize = child.minFileSize;
+	}
 
-    public void setNumOfFiles(long numOfFiles) {
-        this.numOfFiles = numOfFiles;
-    }
+	public List<CurationEntity> getChildren() {
+		return children;
+	}
 
-    public long getMaxFileSize() {
-	return maxFileSize;
-    }
+	public long getNumOfFiles() {
+		return numOfFiles;
+	}
 
-    public void setMaxFileSize(long maxFileSize) {
-	this.maxFileSize = maxFileSize;
-    }
+	public void setNumOfFiles(long numOfFiles) {
+		this.numOfFiles = numOfFiles;
+	}
 
-    public long getMinFileSize() {
-	return minFileSize;
-    }
+	public long getMaxFileSize() {
+		return maxFileSize;
+	}
 
-    public void setMinFileSize(long minFileSize) {
-	this.minFileSize = minFileSize;
-    }
+	public void setMaxFileSize(long maxFileSize) {
+		this.maxFileSize = maxFileSize;
+	}
+
+	public long getMinFileSize() {
+		return minFileSize;
+	}
+
+	public void setMinFileSize(long minFileSize) {
+		this.minFileSize = minFileSize;
+	}
 }

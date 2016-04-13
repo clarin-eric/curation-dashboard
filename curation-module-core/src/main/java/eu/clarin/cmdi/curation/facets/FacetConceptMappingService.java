@@ -150,14 +150,12 @@ public class FacetConceptMappingService {
 										AcceptableContext acceptableContext = facetConcept.getAcceptableContext();
 										if (context == null && acceptableContext.includeEmpty()) {
 											// no context is accepted
-											_logger.debug("facet[{}] path[{}] context[{}](empty) is accepted",
-													facetConcept.getName(), path, context);
+											//_logger.debug("facet[{}] path[{}] context[{}](empty) is accepted", facetConcept.getName(), path, context);
 											xpaths.add(path);
 											handled = true;
 										} else if (acceptableContext.getConcepts().contains(context)) {
 											// a specific context is accepted
-											_logger.debug("facet[{}] path[{}] context[{}] is accepted",
-													facetConcept.getName(), path, context);
+											//_logger.debug("facet[{}] path[{}] context[{}] is accepted", facetConcept.getName(), path, context);
 											xpaths.add(path);
 											handled = true;
 										}
@@ -167,18 +165,15 @@ public class FacetConceptMappingService {
 										RejectableContext rejectableContext = facetConcept.getRejectableContext();
 										if (context == null && rejectableContext.includeEmpty()) {
 											// no context is rejected
-											_logger.debug("facet[{}] path[{}] context[{}](empty) is rejected",
-													facetConcept.getName(), path, context);
+											//_logger.debug("facet[{}] path[{}] context[{}](empty) is rejected", facetConcept.getName(), path, context);
 											handled = true;
 										} else if (rejectableContext.getConcepts().contains(context)) {
 											// a specific context is rejected
-											_logger.debug("facet[{}] path[{}] context[{}] is rejected",
-													facetConcept.getName(), path, context);
+											//_logger.debug("facet[{}] path[{}] context[{}] is rejected", facetConcept.getName(), path, context);
 											handled = true;
 										} else if (rejectableContext.includeAny()) {
 											// any context is rejected
-											_logger.debug("facet[{}] path[{}] context[{}](any) is rejected",
-													facetConcept.getName(), path, context);
+											//_logger.debug("facet[{}] path[{}] context[{}](any) is rejected", facetConcept.getName(), path, context);
 											handled = true;
 										}
 									}
@@ -186,8 +181,7 @@ public class FacetConceptMappingService {
 											&& facetConcept.getAcceptableContext().includeAny()) {
 										// any, not rejected context, is
 										// accepted
-										_logger.debug("facet[{}] path[{}] context[{}](any) is accepted",
-												facetConcept.getName(), path, context);
+										//_logger.debug("facet[{}] path[{}] context[{}](any) is accepted", facetConcept.getName(), path, context);
 										xpaths.add(path);
 									}
 								}
@@ -209,8 +203,7 @@ public class FacetConceptMappingService {
 						while (xpathIterator.hasNext()) {
 							String xpath = xpathIterator.next();
 							if (xpath.contains(blacklistPattern)) {
-								_logger.debug("Rejecting {} because of blacklisted substring {}", xpath,
-										blacklistPattern);
+								//_logger.debug("Rejecting {} because of blacklisted substring {}", xpath, blacklistPattern);
 								xpathIterator.remove();
 							}
 						}
