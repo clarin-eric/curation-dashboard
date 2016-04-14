@@ -3,6 +3,7 @@
  */
 package eu.clarin.web;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletContextEvent;
@@ -20,9 +21,10 @@ public class ApplicationInit implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
-
 		try {
-			Configuration.initDefault();
+			File configDir = new File(System.getProperty("catalina.base"), "conf");
+			File configFile = new File(configDir, "curate.properties");
+			Configuration.init(configFile);
 			Configuration.HTTP_VALIDATION = true;
 		} catch (ConfigurationException | IOException e) {
 			throw new RuntimeException("Unable to initialize configuration with default properties file", e);

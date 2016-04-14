@@ -6,15 +6,15 @@
 	<artifactId>curation-module-core</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
-	<!-- 
-	vtd-xml 2.12 is not in the maven central repository yet but this project is using this version. Here are instrructions on how to use vtd-xml 2.12
-		1. download zip from: https://sourceforge.net/projects/vtd-xml/files/vtd-xml/ximpleware_2.12/ximpleware-2.12-java.zip/
-		2. unpack and rebuild the library (make sure that jar contains VtdGen.class, sometimes it doesnt)
-		3. install it in the local maven repository with the command:
-			mvn install:install-file -Dfile=vtd-xml.jar -DgroupId=com.ximpleware -DartifactId=vtd-xml -Dversion=2.12 -Dpackaging=jar
-		4. now you can build curation module project
-	-->
-	
+	<!-- vtd-xml 2.12 is not in the maven central repository yet but this project 
+		is using this version. Here are instrructions on how to use vtd-xml 2.12 
+		1. download zip from: https://sourceforge.net/projects/vtd-xml/files/vtd-xml/ximpleware_2.12/ximpleware-2.12-java.zip/ 
+		2. unpack and rebuild the library (make sure that jar contains VtdGen.class, 
+		sometimes it doesnt) 3. install it in the local maven repository with the 
+		command: mvn install:install-file -Dfile=vtd-xml.jar -DgroupId=com.ximpleware 
+		-DartifactId=vtd-xml -Dversion=2.12 -Dpackaging=jar 4. now you can build 
+		curation module project -->
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -85,52 +85,16 @@
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.3.1</version>
-				<executions>
-					<execution>
-						<id>default-jar</id>
-						<phase>none</phase>
-					</execution>
-				</executions>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>eu.clarin.cmdi.curation.main.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.5</version>
-				<executions>
-					<execution>
-						<id>build-jar-with-dependencies</id>
-						<configuration>
-							<appendAssemblyId>false</appendAssemblyId>
-							<archive>
-								<manifest>
-									<mainClass>eu.clarin.cmdi.curation.main.Main</mainClass>
-								</manifest>
-							</archive>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<finalName>${project.artifactId}-${project.version}</finalName>
-						</configuration>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-distribution</id>
-						<configuration>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>src/assembly/dist.xml</descriptor>
-							</descriptors>
-							<finalName>curation-module-${project.version}</finalName>
-						</configuration>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+
 		</plugins>
 	</build>
 </project>

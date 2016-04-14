@@ -1,6 +1,8 @@
 package eu.clarin.web.components;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 
 import com.vaadin.data.util.ObjectProperty;
@@ -51,8 +53,12 @@ public class InputForm extends HorizontalLayout {
 
 			} catch (Exception e) {
 				e.printStackTrace();
+				
+				StringWriter errors = new StringWriter();
+				e.printStackTrace(new PrintWriter(errors));
+				
 				reportOutput.setValue("Error while curating " + (type == TYPE.INSTANCE ? "instance" : "profile")
-						+ " from " + input.getValue() + "!\n" + e.toString());
+						+ " from " + input.getValue() + "!\n" + errors.toString());
 			}
 		});
 
