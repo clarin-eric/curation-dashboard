@@ -361,6 +361,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	public void addXmlReport(int numOfXMLElements, int numOfXMLSimpleElements, int numOfXMLEmptyElement,
 			List<Message> messages) {
 
+		messages.sort((m1, m2) -> m2.lvl.priority - m1.lvl.priority);
 		double percOfPopulatedElements = (numOfXMLSimpleElements - numOfXMLEmptyElement)
 				/ (double) numOfXMLSimpleElements;
 		xmlReport = new XMLReport(numOfXMLElements, numOfXMLSimpleElements, numOfXMLEmptyElement,

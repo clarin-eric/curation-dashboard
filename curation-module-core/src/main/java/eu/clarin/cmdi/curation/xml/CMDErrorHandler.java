@@ -45,9 +45,6 @@ public class CMDErrorHandler implements ErrorHandler {
 	}
 
 	private void addMessage(Severity lvl, int line, int col, String msg) {
-		if (msgs == null) {
-			msgs = new ArrayList<>();
-		}
 		msgs.add(new Message(lvl, "line: " + line + ", col: " + col + " - " + msg));
 
 	}

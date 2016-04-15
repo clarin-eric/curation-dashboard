@@ -38,6 +38,7 @@ public class InstanceXMLValidator extends CMDSubprocessor {
 	try {
 	    ValidatorHandler schemaValidator = CRService.getInstance().getSchema(report.getProfile())
 		    .newValidatorHandler();
+	    msgs = new ArrayList<>();
 	    schemaValidator.setErrorHandler(new CMDErrorHandler(report, msgs));
 	    schemaValidator.setContentHandler(new CMDIInstanceContentHandler(entity, report));
 	    // setValidationFeatures(schemaValidator);
