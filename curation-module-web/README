@@ -1,0 +1,9 @@
+curate.properties has to be in the classpath of the application or of the webserver
+
+Application
+put it in the WEB-INF
+
+webserver:
+
+e.g. Tomcat 8
+add path to the shared.loader property in the {$catalina.base}/conf/catalina.properties file

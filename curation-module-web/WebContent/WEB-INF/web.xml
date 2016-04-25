@@ -14,7 +14,7 @@
         <init-param>
             <description>Vaadin UI</description>
             <param-name>UI</param-name>
-            <param-value>eu.clarin.web.CurationUI</param-value>
+            <param-value>eu.clarin.web.MainUI</param-value>
         </init-param>
     </servlet>
     
