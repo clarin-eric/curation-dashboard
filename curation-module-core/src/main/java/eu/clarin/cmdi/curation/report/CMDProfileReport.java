@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
@@ -69,6 +70,11 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 	public void toXML(OutputStream os) throws Exception {
 		XMLMarshaller<CMDProfileReport> instanceMarshaller = new XMLMarshaller<>(CMDProfileReport.class);
 		instanceMarshaller.marshal(this, os);
+	}
+	
+	@Override
+	public String getName() {
+		return header.ID.substring(CRService.PROFILE_PREFIX.length());
 	}
 
 	@Override
@@ -171,7 +177,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
 	@XmlRootElement()
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class Elements {
+	public static class Elements {
 
 		int total;
 
@@ -181,7 +187,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
 		int withConcept;
 
-		Double percWithConcept;
+		public Double percWithConcept;
 
 		public Concepts concepts;
 

@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.xml.ScoreAdapter;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
@@ -44,26 +45,26 @@ public class CollectionReport implements Report<CollectionReport> {
 	public Double avgScore = 0.0;
 
 	@XmlElement(name = "file-section")
-	FileReport fileReport = new FileReport();
+	public FileReport fileReport = new FileReport();
 
 	@XmlElement(name = "header-section")
-	HeaderReport headerReport = new HeaderReport();
+	public HeaderReport headerReport = new HeaderReport();
 
 	// ResProxies
 	@XmlElement(name = "resProxy-section")
-	ResProxyReport resProxyReport = new ResProxyReport();
+	public ResProxyReport resProxyReport = new ResProxyReport();
 
 	// XMLValidator
 	@XmlElement(name = "xml-validation-section")
-	XMLValidationReport xmlReport = new XMLValidationReport();
+	public XMLValidationReport xmlReport = new XMLValidationReport();
 
 	// URL
 	@XmlElement(name = "url-validation-section")
-	URLValidationReport urlReport = new URLValidationReport();
+	public URLValidationReport urlReport = new URLValidationReport();
 
 	// Facets
 	@XmlElement(name = "facet-section")
-	FacetReport facetReport = new FacetReport();
+	public FacetReport facetReport = new FacetReport();
 
 	@XmlElementWrapper(name = "invalidFilesList")
 	public List<String> invalidFile = null;
@@ -89,6 +90,12 @@ public class CollectionReport implements Report<CollectionReport> {
 			headerReport.profiles = new Profiles();
 		headerReport.profiles.handleProfile(profile);
 	}
+	
+	@Override
+	public String getName() {
+		return fileReport.provider;
+	}
+
 
 	@Override
 	public void mergeWithParent(CollectionReport parentReport) {
@@ -177,8 +184,7 @@ public class CollectionReport implements Report<CollectionReport> {
 		xmlReport.avgNumOfXMLSimpleElements = (double) xmlReport.totNumOfXMLSimpleElements / fileReport.numOfFiles;
 		xmlReport.avgXMLEmptyElement = (double) xmlReport.totNumOfXMLEmptyElement / fileReport.numOfFiles;
 
-		xmlReport.avgRateOfPopulatedElements = (double) (xmlReport.totNumOfXMLSimpleElements
-				- xmlReport.totNumOfXMLEmptyElement) / fileReport.numOfFiles;
+		xmlReport.avgRateOfPopulatedElements = (xmlReport.avgNumOfXMLSimpleElements - xmlReport.avgXMLEmptyElement) / xmlReport.avgNumOfXMLSimpleElements;
 
 		// URL
 		urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
@@ -204,18 +210,18 @@ public class CollectionReport implements Report<CollectionReport> {
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class FileReport {
-		String provider;
-		long numOfFiles = 0;
-		long size;
-		long avgSize;
-		long minFileSize;
-		long maxFileSize;
+	public static class FileReport {
+		public String provider;
+		public long numOfFiles = 0;
+		public long size;
+		public long avgSize;
+		public long minFileSize;
+		public long maxFileSize;
 	}
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class HeaderReport {
+	public static class HeaderReport {
 		@XmlElementWrapper(name = "duplicatedMDSelfLinks")
 		public List<String> duplicatedMDSelfLink = null;
 		public Profiles profiles = null;
@@ -223,51 +229,51 @@ public class CollectionReport implements Report<CollectionReport> {
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class ResProxyReport {
-		int totNumOfResProxies;
-		Double avgNumOfResProxies = 0.0;
-		int totNumOfResProxiesWithMime;
-		Double avgNumOfResProxiesWithMime = 0.0;
-		int totNumOfResProxiesWithReferences;
-		Double avgNumOfResProxiesWithReferences = 0.0;
+	public static class ResProxyReport {
+		public int totNumOfResProxies;
+		public Double avgNumOfResProxies = 0.0;
+		public int totNumOfResProxiesWithMime;
+		public Double avgNumOfResProxiesWithMime = 0.0;
+		public int totNumOfResProxiesWithReferences;
+		public Double avgNumOfResProxiesWithReferences = 0.0;
 
 	}
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class XMLValidationReport {
-		int totNumOfXMLElements;
-		Double avgNumOfXMLElements = 0.0;
-		int totNumOfXMLSimpleElements;
-		Double avgNumOfXMLSimpleElements = 0.0;
-		int totNumOfXMLEmptyElement;
-		Double avgXMLEmptyElement = 0.0;
-		Double avgRateOfPopulatedElements = 0.0;
+	public static class XMLValidationReport {
+		public int totNumOfXMLElements;
+		public Double avgNumOfXMLElements = 0.0;
+		public int totNumOfXMLSimpleElements;
+		public Double avgNumOfXMLSimpleElements = 0.0;
+		public int totNumOfXMLEmptyElement;
+		public Double avgXMLEmptyElement = 0.0;
+		public Double avgRateOfPopulatedElements = 0.0;
 	}
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class URLValidationReport {
-		int totNumOfLinks;
-		Double avgNumOfLinks = 0.0;
-		int totNumOfUniqueLinks;
-		Double avgNumOfUniqueLinks = 0.0;
-		int totNumOfResProxiesLinks;
-		Double avgNumOfResProxiesLinks = 0.0;
-		int totNumOfBrokenLinks;
-		Double avgNumOfBrokenLinks = 0.0;
-		Double avgNumOfValidLinks = 0.0;
+	public static class URLValidationReport {
+		public int totNumOfLinks;
+		public Double avgNumOfLinks = 0.0;
+		public int totNumOfUniqueLinks;
+		public Double avgNumOfUniqueLinks = 0.0;
+		public int totNumOfResProxiesLinks;
+		public Double avgNumOfResProxiesLinks = 0.0;
+		public int totNumOfBrokenLinks;
+		public Double avgNumOfBrokenLinks = 0.0;
+		public Double avgNumOfValidLinks = 0.0;
 	}
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class FacetReport {
-		Double avgFacetCoverageByInstance = 0.0;
+	public static class FacetReport {
+		public Double avgFacetCoverageByInstance = 0.0;
 	}
 
 	@XmlRootElement(name = "profiles")
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class Profiles {
+	public static class Profiles {
 
 		@XmlAttribute(name = "count")
 		public int totNumOfProfiles = 0;
@@ -309,7 +315,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
 	@XmlRootElement(name = "profile")
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class Profile {
+	public static class Profile {
 
 		@XmlAttribute
 		public String name;

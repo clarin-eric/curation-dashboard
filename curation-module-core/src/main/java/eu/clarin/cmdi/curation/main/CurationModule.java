@@ -6,8 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 
-import org.apache.commons.configuration.ConfigurationException;
-
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
@@ -67,5 +65,4 @@ public class CurationModule implements CurationModuleInterface {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

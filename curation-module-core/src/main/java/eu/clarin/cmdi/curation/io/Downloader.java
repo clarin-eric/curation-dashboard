@@ -24,12 +24,15 @@ public class Downloader {
 
 	public void download(String url, File destination) throws IOException {
 		try {
-//			int responseCode = new HTTPLinkChecker().checkLink(url);
-//			
-//			if(responseCode != 200)
-//				throw new Exception("HTTP status code was " + responseCode + ". Check if " + url + " is a valid URL");
+			HTTPLinkChecker lc = new HTTPLinkChecker();
+			if(lc.checkLink(url) != 200)//redirection is already handled, 30x status will not be thrown
+				throw new Exception(url + " is not valid! Response from server:\n" + lc.getResponse());	
 			
 			_logger.trace("Downloading file from {} into {}", url, destination.getName());
+			
+			if(lc.getRedirectLink() != null)//if redirection issed use new link
+				url = lc.getRedirectLink();
+			
 			ReadableByteChannel channel = Channels.newChannel(new URL(url).openStream());
 			FileOutputStream fos = new FileOutputStream(destination);
 			long size = fos.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);

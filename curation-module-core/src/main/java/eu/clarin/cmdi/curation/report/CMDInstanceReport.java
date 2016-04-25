@@ -86,6 +86,12 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	// facets
 	@XmlElement (name = "facets-section")
 	public FacetReport facets;
+	
+	@Override
+	public String getName() {
+		String name = fileReport.location;
+		return name.substring(name.lastIndexOf('/') + 1, name.lastIndexOf('.'));
+	}
 
 	@Override
 	public double getMaxScore() {
@@ -376,4 +382,5 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 		urlReport = new URLReport(numOfLinks, numOfUniqueLinks, numOfResProxiesLinks, numOfBrokenLinks,
 				percOfValidLinks, messages);
 	}
+
 }

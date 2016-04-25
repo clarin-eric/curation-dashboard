@@ -1,7 +1,11 @@
 package eu.clarin.cmdi.curation.main;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +19,7 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 
+import eu.clarin.cmdi.curation.entities.CurationEntityType;
 import eu.clarin.cmdi.curation.report.Report;
 
 public class Main {
@@ -57,8 +62,10 @@ public class Main {
 		}
 
 		CurationModule curator = new CurationModule();
+		CurationEntityType type = null;
 
 		if (cmd.hasOption("p")) {// profile
+			type = CurationEntityType.PROFILE;
 			if (cmd.hasOption("id")) {
 				for (String id : cmd.getOptionValues("id"))
 					reports.add(curator.processCMDProfile(id));
@@ -68,6 +75,7 @@ public class Main {
 			} else
 				throw new Exception("Only id and url options are allowed for profiles curation");
 		} else if (cmd.hasOption("i")) {// instance
+			type = CurationEntityType.INSTANCE;
 			if (cmd.hasOption("url")) {
 				for (String url : cmd.getOptionValues("url"))
 					reports.add(curator.processCMDInstance(new URL(url)));
@@ -78,6 +86,7 @@ public class Main {
 				throw new Exception("Only path and url options are allowed for instances curation");
 
 		} else if (cmd.hasOption("c")) {// collection
+			type = CurationEntityType.COLLECTION;
 			if (cmd.hasOption("path")) {
 				for (String path : cmd.getOptionValues("path"))
 					reports.add(curator.processCollection(Paths.get(path)));
@@ -87,7 +96,7 @@ public class Main {
 			throw new Exception("Curation module can curate profiles (-p), instances (-i) and collections (-c)");
 
 		for (Report r : reports) {
-			r.toXML(System.out);
+			r.toXML(getOutputStream(r, type));
 			System.out.println("-----------------------------------------------------------------");
 			System.out.println();
 			System.out.println();
@@ -137,5 +146,26 @@ public class Main {
 
 		return options;
 	}
-
+	
+	private static OutputStream getOutputStream(Report report, CurationEntityType type) throws IOException{
+		if(Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null && !Configuration.OUTPUT_DIRECTORY.isAbsolute()){
+			Path path = null;
+			switch (type) {
+			case PROFILE:
+				path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
+				break;
+			case INSTANCE:
+				path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
+				break;
+			case COLLECTION:
+				path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
+				break;
+			}
+			path = path.resolve(report.getName() + ".xml");
+			return Files.newOutputStream(path);
+		}
+		
+		return System.out;
+		
+	}
 }

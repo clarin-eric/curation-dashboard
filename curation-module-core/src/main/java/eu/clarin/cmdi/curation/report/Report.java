@@ -10,6 +10,8 @@ import java.io.OutputStream;
  *
  */
 public interface Report<R extends Report> {
+	
+	public String getName();
 
 	public void mergeWithParent(R parentReport);
 

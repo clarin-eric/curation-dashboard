@@ -15,6 +15,8 @@ import javax.xml.validation.SchemaFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
 
 import com.ximpleware.VTDGen;
@@ -26,6 +28,7 @@ import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.xml.CMDXPathService;
+import eu.clarin.cmdi.curation.xml.SchemaResourceResolver;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 public class CRService implements ICRService {
@@ -48,11 +51,13 @@ public class CRService implements ICRService {
 	private static CRService instance = new CRService();
 
 	private CRService() {
-		try{
-			//cache all public profiles
+		try {
+			// cache all public profiles
 			getPublicProfiles();
-		}catch (Exception e) {
-			throw new RuntimeException("CLARIN Component Registry REST service doesn't work as expected. Unable to continue", e);
+			schemaFactory.setResourceResolver(new SchemaResourceResolver());
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"CLARIN Component Registry REST service doesn't work as expected. Unable to continue", e);
 		}
 	}
 
@@ -61,44 +66,43 @@ public class CRService implements ICRService {
 	}
 
 	@Override
-	public ProfileHeader getProfileHeader(final String profileId) throws Exception{
+	public ProfileHeader getProfileHeader(final String profileId) throws Exception {
 		ProfileHeader profile = profileHeaders.stream().filter(p -> p.id.equals(profileId)).findFirst().orElse(null);
-		if(profile != null)
+		if (profile != null)
 			return profile;
-		
-		//not public
-		
-		//CMDXPathService xpathService = new CMDXPathService(REST_API + profileId); // => HTTP Status 401 - Unauthorized
-		//use profile_id/xml
-		
-		CMDXPathService xpathService = new CMDXPathService(getParsedXML(profileId));		
+
+		// not public
+
+		// CMDXPathService xpathService = new CMDXPathService(REST_API +
+		// profileId); // => HTTP Status 401 - Unauthorized
+		// use profile_id/xml
+
+		CMDXPathService xpathService = new CMDXPathService(getParsedXML(profileId));
 		profile = new ProfileHeader();
-		profile.id = profileId;	
+		profile.id = profileId;
 		profile.name = xpathService.getXPathValue("/CMD_ComponentSpec/Header/Name");
 		profile.description = xpathService.getXPathValue("/CMD_ComponentSpec/Header/Description");
 		profile.isPublic = false;
-		
+
 		profileHeaders.add(profile);
-		
+
 		return profile;
-		
-		
+
 	}
-	
-	
+
 	@Override
 	public boolean isPublic(final String profileId) throws Exception {
 		ProfileHeader profile = getProfileHeader(profileId);
-		return profile.isPublic;			
+		return profile.isPublic;
 	}
-	
+
 	@Override
-	public boolean isNameUnique(String name) throws Exception {		
+	public boolean isNameUnique(String name) throws Exception {
 		return profileHeaders.stream().filter(profile -> profile.name.equals(name)).count() <= 1;
 	}
 
 	@Override
-	public boolean isDescriptionUnique(String description) throws Exception {	
+	public boolean isDescriptionUnique(String description) throws Exception {
 		return profileHeaders.stream().filter(profile -> profile.description.equals(description)).count() <= 1;
 	}
 
@@ -167,16 +171,17 @@ public class CRService implements ICRService {
 	}
 
 	@Override
-	public List<ProfileHeader> getPublicProfiles() throws Exception {		
-		if(profileHeaders == null){		
+	public List<ProfileHeader> getPublicProfiles() throws Exception {
+		if (profileHeaders == null) {
 			XMLMarshaller<ProfileDescriptions> marshaller = new XMLMarshaller<>(ProfileDescriptions.class);
-			
-			List<ProfileHeader> publicProfiles = marshaller.unmarshal(new URL(REST_API).openStream()).profileDescription;
+
+			List<ProfileHeader> publicProfiles = marshaller
+					.unmarshal(new URL(REST_API).openStream()).profileDescription;
 			publicProfiles.forEach(p -> p.isPublic = true);
 			profileHeaders = publicProfiles;
 			return profileHeaders;
-		}else{
-			return profileHeaders.stream().filter(profile -> profile.isPublic).collect(Collectors.toList());			
+		} else {
+			return profileHeaders.stream().filter(profile -> profile.isPublic).collect(Collectors.toList());
 		}
 	}
 
