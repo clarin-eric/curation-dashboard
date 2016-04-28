@@ -15,6 +15,19 @@
 	<p>number of unique components: <xsl:value-of select="./cmd-components-section/unique"/></p>
 	<p>number of required components: <xsl:value-of select="./cmd-components-section/required"/></p>
 	
+	<h2>facets-section</h2>
+	<!--
+	<p>total number of facets (from facetConcept.xml): <xsl:value-of select="facets-section/numOfFacets"/></p>
+	-->
+	<p>number of covered facets: <xsl:value-of select="./facets-section/profile/numOfCoveredFacets"/>/<xsl:value-of select="./facets-section/numOfFacets"/></p>
+	<p>coverage: <xsl:value-of select="./facets-section/profile/coverage"/>%</p>
+	<p>facets not being covered: 
+	<xsl:for-each select="./facets-section/profile/not-covered/facet">
+	  <xsl:value-of select="."/>
+	  <xsl:if test="position() &lt; last()">, </xsl:if>
+	</xsl:for-each>
+	</p>
+	
 	<h2>cmd-concepts-section</h2>
 	<p>total number of elements: <xsl:value-of select="./cmd-concepts-section/total"/></p>
 	<p>number of unique elements: <xsl:value-of select="./cmd-concepts-section/unique"/></p>
@@ -47,20 +60,8 @@
 		</tbody>
 	</table>
 	
-	<h2>facets-section</h2>
-	<!--
-	<p>total number of facets (from facetConcept.xml): <xsl:value-of select="facets-section/numOfFacets"/></p>
-	-->
-	<p>number of covered facets: <xsl:value-of select="./facets-section/profile/numOfCoveredFacets"/>/<xsl:value-of select="./facets-section/numOfFacets"/></p>
-	<p>coverage: <xsl:value-of select="./facets-section/profile/coverage"/>%</p>
-	<p>facets not being covered: 
-	<xsl:for-each select="./facets-section/profile/not-covered/facet">
-	  <xsl:value-of select="."/>
-	  <xsl:if test="position() &lt; last()">, </xsl:if>
-	</xsl:for-each>
-	</p>
 	
-	<h2>Issues occured during the assesment</h2>
+	<h2>Issues occured during the assessment</h2>
 	<table border="1" cellpadding="1" cellspacing="1">
 		<thead>
 			<tr>

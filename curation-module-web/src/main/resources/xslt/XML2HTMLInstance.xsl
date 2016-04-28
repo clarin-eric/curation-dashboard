@@ -68,7 +68,7 @@
 		</xsl:for-each>
 	</ul>
 	
-	<h2>Issues occured during the assesment</h2>
+	<h2>Issues occured during the assessment</h2>
 	<table border="1" cellpadding="1" cellspacing="1">
 		<thead>
 			<tr>
