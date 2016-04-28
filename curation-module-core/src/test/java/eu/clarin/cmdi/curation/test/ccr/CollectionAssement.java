@@ -19,27 +19,27 @@ public class CollectionAssement {
 	public static void main(String[] args) throws Exception {
 
 		Configuration.initDefault();
-		Configuration.OUTPUT_DIRECTORY = Paths.get("D:/data/reports");
+		Configuration.OUTPUT_DIRECTORY = Paths.get("D:/reports");
 		Configuration.HTTP_VALIDATION = false;
 		
-		String collection = "CHILDES";
 		CurationModule module = new CurationModule();
-		Report r = module.processCollection(Paths.get("D:/data/harvester/results/cmdi/" + collection));
-		r.toXML(new FileOutputStream(new File("D:/data/reports/" + collection + ".xml")));		
 		
-		//fileList("D:/data/cmdi/").forEach(System.out::println);
-//		
-//		for(Path collection: fileList("D:/data/harvester/others/results/cmdi")){
-//			Report r = module.processCollection(collection);
-//			r.toXML(new FileOutputStream(new File("D:/data/reports/" + collection.getFileName() + ".xml")));
-//		}
+		//r.toXML(new FileOutputStream(new File("D:/data/reports/" + collection + ".xml")));		
+		
+		//fileList("C:/harvester/cmdi/").forEach(System.out::println);
+		
+		for(Path collection: fileList("C:/harvester/cmdi/")){
+			Report r = module.processCollection(collection);
+			r.toXML(new FileOutputStream(new File("D:/reports/collections1/" + collection.getFileName() + ".xml")));
+		}
 	}
 	
 	public static List<Path> fileList(String directory) {
         List<Path> fileNames = new ArrayList<>();
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(directory))) {
             for (Path path : directoryStream) {
-                fileNames.add(path);
+            	if(!path.getFileName().toString().equals("CLARIN_OAIProvider_Institute_of_Computer_Science_NLP_Group_University_of_Leipzig"))
+            		fileNames.add(path);
             }
         } catch (IOException ex) {}
         return fileNames;

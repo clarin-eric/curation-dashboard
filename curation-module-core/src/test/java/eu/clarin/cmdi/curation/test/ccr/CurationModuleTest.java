@@ -1,7 +1,5 @@
 package eu.clarin.cmdi.curation.test.ccr;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -33,12 +31,13 @@ public class CurationModuleTest {
 	}
 
 	public static void test() throws Exception {
-		Path instancePath1 = FileSystems.getDefault().getPath("D:/data/cmdi/Deutsches_Textarchiv/dta_386.xml");
+
+		Path instancePath1 = FileSystems.getDefault().getPath("D:/data/test/test2/oai_www_mpi_nl_MPI1485767.xml");
 		Path instancePath2 = FileSystems.getDefault()
 				.getPath("D:/data/cmdi/BAS_Repository/oai_BAS_repo_Corpora_aGender_101106.xml");
 
 		URL instanceURL = new URL(
-				"https://vlo.clarin.eu/data/clarin/results/cmdi/CLARIN_DK_UCPH_Repository/oai_clarin_dk_dkclarin_1257002.xml");
+				"http://vlo.clarin.eu/data/clarin/results/cmdi/CLARIN_DK_UCPH_Repository/oai_clarin_dk_dkclarin_1254001.xml");
 
 		Path cmdi = FileSystems.getDefault().getPath("D:/data/cmdi");
 		Path test = FileSystems.getDefault().getPath("D:/data/test/test1");
@@ -59,9 +58,15 @@ public class CurationModuleTest {
 		URL profileURL2 = new URL(
 				"http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1407745711934");
 
+		Path barsa = Paths.get("C:/harvester/cmdi/Universitat_de_Barcelona");
+		Path barsa1 = Paths.get("C:/harvester/cmdi/Universitat_de_Barcelona/oai_grial_159.xml");
+		Path barsa2 = Paths.get("C:/harvester/cmdi/Universitat_de_Barcelona/oai_grial_166.xml");
+		Path barsa3 = Paths.get("C:/harvester/cmdi/Universitat_de_Barcelona/oai_grial_159.xml");
+
+		long start = System.currentTimeMillis();
 		Report r = null;
 
-		r = module.processCMDProfile("clarin.eu:cr1:p_1393514855466");
+		//r = module.processCMDProfile("clarin.eu:cr1:p_1288172614026");
 
 		// profile is not public
 		// r = module.processCMDProfile("clarin.eu:cr1:p_1369140737154");
@@ -70,30 +75,32 @@ public class CurationModuleTest {
 
 		// profile is not public
 		// r = module.processCMDInstance(instancePath1);
-		
-		
-		//r = module.processCMDInstance(Paths.get("D:/data/harvester/results/cmdi/BAS_Repository/oai_BAS_repo_Corpora_aGender_000000.xml"));
 
-		// r = module.processCMDInstance(instanceURL1);
+		// r =
+		// module.processCMDInstance(Paths.get("D:/data/harvester/results/cmdi/BAS_Repository/oai_BAS_repo_Corpora_aGender_000000.xml"));
 
-		// r = module.processCollection(ehu_18);
+		// Configuration.HTTP_VALIDATION = true;
+		// r = module.processCMDInstance(new URL(
+		// "https://vlo.clarin.eu/data/clarin/results/cmdi/HZSK_Repository/oai_corpora_uni_hamburg_de_spoken_corpus_hamatac.xml"));
 
+		//r = module.processCollection(barsa);
+		r = module.processCMDInstance(barsa1);
+
+		System.out.println("Curation lasted: " + (System.currentTimeMillis() - start) + " ms");
 		r.toXML(System.out);
-
+		System.out.println("Program finished in: " + (System.currentTimeMillis() - start) + " ms");
 
 	}
 
 	static public void nonCoverageForPublicProfiles() throws Exception {
 
-		List<CMDProfileReport> profiles = CRService.getInstance()
-				.getPublicProfiles()
-				.parallelStream()
+		List<CMDProfileReport> profiles = CRService.getInstance().getPublicProfiles().parallelStream()
 				.map(profile -> (CMDProfileReport) module.processCMDProfile(profile.getId()))
 				.collect(Collectors.toList());
 
 		for (CMDProfileReport report : profiles) {
-			System.out.println("ID: " + report.header.ID + ", non-coverage: " + report.facet.profile.notCovered.size() + "/"
-					+ report.facet.numOfFacets);
+			System.out.println("ID: " + report.header.ID + ", non-coverage: " + report.facet.profile.notCovered.size()
+					+ "/" + report.facet.numOfFacets);
 
 			for (String facet : report.facet.profile.notCovered)
 				System.out.println(facet);
@@ -101,10 +108,10 @@ public class CurationModuleTest {
 
 		}
 	}
-	
-	public static void profilesWithDuplicatedName() throws Exception{
-Map<String, Integer> profileMap = new HashMap<>();
-		
+
+	public static void profilesWithDuplicatedName() throws Exception {
+		Map<String, Integer> profileMap = new HashMap<>();
+
 		List<ProfileHeader> profiles = CRService.getInstance().getPublicProfiles();
 
 		for (ProfileHeader p : profiles) {
@@ -116,11 +123,9 @@ Map<String, Integer> profileMap = new HashMap<>();
 		}
 
 		for (Map.Entry entry : profileMap.entrySet()) {
-			if((int)entry.getValue() > 1)
-			System.out.println(entry.getKey() + ", " + entry.getValue());
+			if ((int) entry.getValue() > 1)
+				System.out.println(entry.getKey() + ", " + entry.getValue());
 		}
 	}
-	
-	
 
 }
