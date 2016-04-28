@@ -394,47 +394,4 @@ public class FacetConceptMappingService {
 			}
 		}
 	}
-
-	// public static void test1() {
-	// FacetConceptMappingService fcmSrv;
-	// try {
-	// fcmSrv = FacetConceptMappingService.getInstance();
-	// } catch (Exception e) {
-	// throw new RuntimeException("Unable to create FacetConceptMapping", e);
-	// }
-	//
-	// Collection<String> profiles = new LinkedList();
-	// profiles.add("p_1357720977520");
-	// profiles.add("p_1297242111880");
-	// profiles.add("p_1361876010587");
-	// profiles.add("p_1361876010587");
-	// profiles.add("p_1357720977520");
-	// profiles.add("p_1297242111880");
-	// profiles.add("p_1357720977520");
-	// profiles.add("p_1361876010587");
-	// profiles.add("p_1297242111880");
-	//
-	// profiles.parallelStream().forEach(profile -> {
-	// try {
-	// Profile2FacetMap map = fcmSrv.getMapping(profile);
-	//
-	// List<String> uncoveredFacets = new LinkedList<>();
-	// for (String facet : fcmSrv.getFacetConceptsNames())
-	// if (!map.getFacetNames().contains(facet))
-	// uncoveredFacets.add(facet);
-	//
-	// _logger.debug("Mapping successfully generated for {}, uncovered facets:
-	// {}", profile,
-	// String.join(", ", uncoveredFacets));
-	//
-	// } catch (Exception e) {
-	// _logger.error("", e);
-	// }
-	// });
-	// }
-	//
-	// public static void main(String[] args) {
-	// test1();
-	// }
-
 }
