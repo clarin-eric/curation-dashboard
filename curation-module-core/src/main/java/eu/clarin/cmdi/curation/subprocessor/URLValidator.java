@@ -21,16 +21,13 @@ public class URLValidator extends CMDSubprocessor {
 	// links are unique
 	if (Configuration.HTTP_VALIDATION) {
 	    AtomicInteger numOfBrokenLinks = new AtomicInteger(0);
-	    entity.getLinks().parallelStream().forEach(value -> {
+	    entity.getLinks().stream().forEach(value -> {
 		String link = value.getValue();
 		String tag = value.getTag() != null ? value.getTag() + ": " : "";
 
 		try {// check if URL is broken
-		     // we don't care about errors because of invalid
-		     // certificatesF
-		    String url = value.getValue().replaceFirst("^https", "http");
-
-		    int responseCode = new HTTPLinkChecker().checkLink(url);
+			
+		    int responseCode = new HTTPLinkChecker().checkLink(value.getValue());
 
 		    if (responseCode == 200 || responseCode == 302) {
 			// debug info
