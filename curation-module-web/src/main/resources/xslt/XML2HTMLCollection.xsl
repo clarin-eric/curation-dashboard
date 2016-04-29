@@ -87,8 +87,6 @@
 		</xsl:for-each>
 		</tbody>
 	</table>
-
-<h3><a href="#!ResultView/xml/">See XML</a></h3>
 </body>
 </html>
 </xsl:template>
