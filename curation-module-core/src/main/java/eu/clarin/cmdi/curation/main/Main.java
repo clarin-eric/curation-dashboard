@@ -133,7 +133,7 @@ public class Main {
 				.withDescription("Space separated paths to file or folder to be curated").create("path");
 
 		Option paramUrl = OptionBuilder.withArgName("url").hasArgs(Option.UNLIMITED_VALUES)
-				.withDescription("Space separated urls to profile or instane to be curated").create("url");
+				.withDescription("Space separated urls to profile or instance to be curated").create("url");
 
 		OptionGroup curationInputParams = new OptionGroup();
 		curationInputParams.addOption(paramId).addOption(paramPath).addOption(paramUrl);
