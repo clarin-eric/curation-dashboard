@@ -1,6 +1,3 @@
-/**
- * 
- */
 package eu.clarin.cmdi.curation.facets;
 
 import java.util.ArrayList;

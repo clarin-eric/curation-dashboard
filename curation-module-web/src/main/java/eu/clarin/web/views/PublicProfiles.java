@@ -27,20 +27,20 @@ public class PublicProfiles extends VerticalLayout implements View {
 		grid.addColumn("Score", Double.class);
 		grid.addColumn("FacetCoverage", Double.class);
 		grid.addColumn("Perc of Elements with Concepts", Double.class);
-		grid.addColumn("Details", String.class);
 		grid.addColumn("SMC", String.class);
 		
 		Column c = grid.getColumn("");
 
 		Shared.publicProfiles.forEach(
-				p -> grid.addRow(p.getId(), p.getName(), p.getScore(), p.getFacetCoverage(), p.getElementsWithConcepts(),
-				"<a href='#!ResultView/profile/" + p.getId() + "' target='_top'>see details</a>",
+				p -> grid.addRow(
+				"<a href='#!ResultView/profile/" + p.getId() + "' target='_top'>" + p.getId() + "</a>",
+				p.getName(), p.getScore(), p.getFacetCoverage(), p.getElementsWithConcepts(),
 				"<a href='#!SMC Browser/" + p.getId() + "' target='_top'>explore</a>")
 		);
-		grid.setColumnOrder("Id", "Name", "Score", "FacetCoverage", "Perc of Elements with Concepts", "Details", "SMC");
+		grid.setColumnOrder("Id", "Name", "Score", "FacetCoverage", "Perc of Elements with Concepts", "SMC");
 		grid.sort("Score", SortDirection.DESCENDING);
-
-		Grid.Column link = grid.getColumn("Details");
+		
+		Grid.Column link = grid.getColumn("Id");
 		link.setRenderer(new HtmlRenderer());
 		
 		Grid.Column smc = grid.getColumn("SMC");

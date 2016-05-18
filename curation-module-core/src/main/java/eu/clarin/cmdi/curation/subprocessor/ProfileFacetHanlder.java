@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
+import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.facets.Profile2FacetMap;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.FacetReport;
