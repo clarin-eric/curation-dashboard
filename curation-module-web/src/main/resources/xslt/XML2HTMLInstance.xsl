@@ -3,7 +3,7 @@
 <xsl:template match="/instance-report">
 <html>
 <body style="font-family: ‘Lucida Sans Unicode’, ‘Lucida Grande’, sans-serif;">
-	<h1>Report for the Instance: <xsl:value-of select="file-section/location"/></h1>
+	<h1>Instance's report for: <xsl:value-of select="file-section/location"/></h1>
 	
 	<p>profile's score: <xsl:value-of select="./score-profile"/></p>
 	<p>instance's score: <xsl:value-of select="./score-instance"/></p>

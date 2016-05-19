@@ -3,7 +3,7 @@
 <xsl:template match="/collection-report">
 <html>
 <body style="font-family: ‘Lucida Sans Unicode’, ‘Lucida Grande’, sans-serif;">
-	<h1>Report for the collection: <xsl:value-of select="./file-section/provider"/></h1>
+	<h1>Collection's report for: <xsl:value-of select="./file-section/provider"/></h1>
 	
 	
 	<p>Total Score: <xsl:value-of select="./score"/> from <xsl:value-of select="./@max-score-collection"/></p>

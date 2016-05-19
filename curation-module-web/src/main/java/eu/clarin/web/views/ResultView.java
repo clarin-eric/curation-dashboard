@@ -42,7 +42,7 @@ public class ResultView extends Panel implements View{
 		
 		xmlReport = new StreamResource(null, "");
 		xmlReport.setMIMEType("application/xml");
-		xmlReport.setCacheTime(0);		
+		xmlReport.setCacheTime(0);
 		
 		BrowserWindowOpener popup = new BrowserWindowOpener(xmlReport);
 		popup.setFeatures("");
