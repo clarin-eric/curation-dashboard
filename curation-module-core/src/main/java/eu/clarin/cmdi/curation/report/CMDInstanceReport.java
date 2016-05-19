@@ -89,8 +89,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	
 	@Override
 	public String getName() {
-		String name = fileReport.location;
-		return name.substring(name.lastIndexOf('/') + 1, name.lastIndexOf('.'));
+		if(fileReport.location.contains(".xml"))
+			return fileReport.location.substring(fileReport.location.lastIndexOf('/') + 1, fileReport.location.lastIndexOf('.'));
+		else
+			return fileReport.location;
 	}
 
 	@Override
