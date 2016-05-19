@@ -27,7 +27,7 @@ public class CurationForm extends VerticalLayout implements View{
 		tfProfile.addValidator(new InputValidator(false));
 				
 		bInstance.addClickListener(event -> curate(tfInstance, true));
-		bProfile.addClickListener(event -> curate(tfProfile, false));		
+		bProfile.addClickListener(event -> curate(tfProfile, false));
 	}
 
 	@Override

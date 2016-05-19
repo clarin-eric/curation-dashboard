@@ -44,7 +44,7 @@ public class MainUI extends UI {
 		main.addComponents(header, middle, footer);
 		main.setExpandRatio(header, 2);
 		main.setExpandRatio(middle, 17);
-		main.setExpandRatio(footer, 1);
+		main.setExpandRatio(footer, 1.5f);
 
 		setNavigator(new Navigator(this, viewArea));
 		addView("Form", new CurationForm());
@@ -70,10 +70,8 @@ public class MainUI extends UI {
 			public void buttonClick(ClickEvent event) {
 				UI.getCurrent().getNavigator().navigateTo(viewName);
 			}
-		});
-		
+		});		
 		button.setWidth("100%");
-
 		menu.addComponent(button);
 	}
 	
@@ -82,15 +80,14 @@ public class MainUI extends UI {
 		middle.setSizeFull();
 
 		menu = new VerticalLayout();
-		//menu.setSizeFull();
 		menu.setMargin(true);
 
 		viewArea = new CssLayout();
 		viewArea.setSizeFull();
 
 		middle.addComponents(menu, viewArea);
-		middle.setExpandRatio(menu, 2);
-		middle.setExpandRatio(viewArea, 8);
+		middle.setExpandRatio(menu, 15);
+		middle.setExpandRatio(viewArea, 85);
 
 		return middle;
 
