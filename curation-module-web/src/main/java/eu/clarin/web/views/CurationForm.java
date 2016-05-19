@@ -2,6 +2,7 @@ package eu.clarin.web.views;
 
 import com.vaadin.annotations.DesignRoot;
 import com.vaadin.annotations.Title;
+import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
@@ -31,6 +32,7 @@ public class CurationForm extends VerticalLayout implements View{
 
 	@Override
 	public void enter(ViewChangeEvent event) {
+		clearError();
 		tfInstance.setValidationVisible(false);
 		tfProfile.setValidationVisible(false);
 	}
@@ -38,13 +40,23 @@ public class CurationForm extends VerticalLayout implements View{
 	
 	private void curate(TextField input, boolean isInstance){
 		//validate input
+		clearError();
 		input.setValidationVisible(true);
-		input.addValidator(new InputValidator(isInstance));
-		input.validate();
+		try{
+			input.validate();
+		}catch(InvalidValueException ex){
+			//do nothing
+		}
+		
 		if(!input.isValid())
 			return;
 		
 		// all processing is done in the ResultView class
 		getUI().getNavigator().navigateTo("ResultView/" + (isInstance? "instance" : "profile") + "/" + input.getValue());
+	}
+	
+	private void clearError(){
+		tfInstance.setComponentError(null);
+		tfProfile.setComponentError(null);
 	}
 }
