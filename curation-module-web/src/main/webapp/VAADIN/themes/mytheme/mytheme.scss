@@ -54,11 +54,17 @@
   	 target-name:new;
 	 target-new:tab;
   }
-  
-  
-  
+    
   .content{
   	color:#a7ffeb;
   }
+  
+  
+  .v-button-link:focus:after{
+   outline: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  }
+  
   
 }
