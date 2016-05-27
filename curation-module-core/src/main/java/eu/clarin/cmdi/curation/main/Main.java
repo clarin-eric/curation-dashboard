@@ -52,8 +52,8 @@ public class Main {
 		List<Report> reports = new ArrayList<>();
 
 		// init configuration file
-		if (cmd.hasOption("conf"))
-			Configuration.init(new File(cmd.getOptionValue("conf")));
+		if (cmd.hasOption("config"))
+			Configuration.init(new File(cmd.getOptionValue("config")));
 		else
 			Configuration.initDefault();
 
@@ -148,19 +148,21 @@ public class Main {
 	}
 	
 	private static OutputStream getOutputStream(Report report, CurationEntityType type) throws IOException{
-		if(Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null && !Configuration.OUTPUT_DIRECTORY.isAbsolute()){
+		if(Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null){
 			Path path = null;
 			switch (type) {
 			case PROFILE:
 				path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
 				break;
 			case INSTANCE:
-				path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
+				path = Configuration.OUTPUT_DIRECTORY.resolve("instances");
 				break;
 			case COLLECTION:
-				path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
+				path = Configuration.OUTPUT_DIRECTORY.resolve("collections");
 				break;
 			}
+			
+			Files.createDirectories(path);			
 			path = path.resolve(report.getName() + ".xml");
 			return Files.newOutputStream(path);
 		}

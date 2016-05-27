@@ -51,12 +51,9 @@ public class Configuration {
 		String outDir = config.getString("OUTPUT_DIRECTORY");
 		String cacheDir = config.getString("CACHE_DIRECTORY");
 		
-		if(outDir != null){
+		
+		if(outDir != null)
 			OUTPUT_DIRECTORY = Files.createDirectories(Paths.get(outDir));
-			Files.createDirectories(OUTPUT_DIRECTORY.resolve("profiles"));
-			Files.createDirectories(OUTPUT_DIRECTORY.resolve("instances"));
-			Files.createDirectories(OUTPUT_DIRECTORY.resolve("collections"));
-		}
 		if(cacheDir != null)
 			CACHE_DIRECTORY = Files.createDirectories(Paths.get(cacheDir));
 		
