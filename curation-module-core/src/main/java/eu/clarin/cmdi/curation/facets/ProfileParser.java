@@ -87,26 +87,52 @@ public class ProfileParser {
 		List<Pair<String, Integer>> elems = new ArrayList<>();
 		ap.selectElement("element");
 		while(ap.iterate()){
-			int ind = vn.getAttrVal("name");
-			String name = "";
-			if(ind != -1)
-				name = vn.toNormalizedString(ind);
-			int lvl = vn.getCurrentDepth();
-			
-			//System.out.println(name + ", " + lvl);
+			CMDElement elem = processNode(vn, false);
 			if(curr == null)
-				root = curr = new CMDElement(name, lvl);
+				root = curr = elem;
 			else{
-				curr = curr.addChild(new CMDElement(name, lvl));
-				curr.concept = getDatcat(vn);
-				vn.push();
-				curr.attributes = getAttributes(vn);
+				curr = curr.addChild(elem);
+				vn.push();//add attributes to the current node
+				getAttributes(vn).forEach(curr::addChild); 
 				vn.pop();
 			}
 			
 		}
 		
 		return root;		
+	}
+	
+	private List<CMDElement> getAttributes(VTDNav vn) throws Exception {
+		List<CMDElement> attributes = new ArrayList<>();
+		
+		vn.push();
+		AutoPilot ap = new AutoPilot(vn);
+		ap.selectXPath("./complexType/simpleContent/extension/attribute");
+		while(ap.evalXPath() != -1){
+			CMDElement elem = processNode(vn, true);
+			if(elem.concept != null)//consider attrs with concept only
+				attributes.add(elem);
+		}
+		
+		//teiHeader.xsd has such a case
+		vn.pop();
+		ap.bind(vn);
+		ap.selectXPath("./complexType/attribute");
+		while(ap.evalXPath() != -1){
+			CMDElement elem = processNode(vn, true);
+			if(elem.concept != null)//consider attrs with concept only
+				attributes.add(elem);
+		}		
+		
+		return attributes;		
+	}
+	
+	private CMDElement processNode(VTDNav vn, boolean isAttribute) throws NavException{
+		int ind = vn.getAttrVal("name");
+		String name = "";
+		if(ind != -1)
+			name = vn.toNormalizedString(ind);
+		return new CMDElement((ind != -1)? vn.toNormalizedString(ind) : "", vn.getCurrentDepth(), getDatcat(vn), isAttribute);
 	}
 	
 	
@@ -124,34 +150,25 @@ public class ProfileParser {
 	}
 	
 	
-	private List<String> getAttributes(VTDNav vn) throws Exception {
-		List<String> attributes = new ArrayList<>();		
-		AutoPilot ap = new AutoPilot(vn);
-		ap.selectXPath("./complexType/simpleContent/extension/attribute");
-		while(ap.evalXPath() != -1){
-			int ind = vn.getAttrVal("name");
-			if(ind != -1)
-				attributes.add(vn.toNormalizedString(ind));
-		}
-		
-		return attributes;		
-	}
-	
-	
 	public static class CMDElement{
 		CMDElement parent;
 		String name;
 		int lvl;
 		String concept;
-		List<String> attributes;
+		boolean isAttribute;
 		
 		List<CMDElement> children = null;
 		
-		public CMDElement(String name, int lvl){
+		public CMDElement(String name, int lvl, String concept){
+			this(name, lvl, concept, false);
+		}
+		
+		public CMDElement(String name, int lvl, String concept, boolean isAttribute){
 			this.name = name;
 			this.lvl = lvl;
 			parent = null;
-			attributes = null;
+			this.concept = concept; 
+			this.isAttribute = isAttribute;
 			children = new ArrayList<>();
 		}
 		
@@ -172,22 +189,14 @@ public class ProfileParser {
 			return child;
 		}
 		
-		public List<String> toXPaths(){
-			List<String> xpaths = new ArrayList<>();
-			String xpath = getFullNodeName();
+		public String toXPath(){			
+			String xpath = "";
 			while(parent != null){
 				xpath = parent.getFullNodeName() + "/" + xpath;
 				parent = parent.parent;
-			}		
-			final String basePath = "/" + xpath;
+			}
 			
-			xpaths.add(basePath + "/text()");
-			
-			//add attributes
-			if(attributes != null)
-				attributes.forEach(attr -> xpaths.add(basePath + "/@" + attr));
-			
-			return xpaths;
+			return "/" + xpath + (isAttribute? "@" + name : getFullNodeName() + "/text()");
 			 
 		}
 		
@@ -200,8 +209,13 @@ public class ProfileParser {
 			Map<String, String> map = new HashMap<>();
 			if(!children.isEmpty())
 				children.forEach(child -> map.putAll(child.toMap()));
-			toXPaths().forEach(xpath -> map.put(xpath, concept));
+			map.put(toXPath(), concept);
 			return map;			
+		}
+		
+		@Override
+		public String toString() {
+			return name;
 		}
 	}
 	

@@ -89,8 +89,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	
 	@Override
 	public String getName() {
-		if(fileReport.location.contains(".xml"))
-			return fileReport.location.substring(fileReport.location.lastIndexOf('/') + 1, fileReport.location.lastIndexOf('.'));
+		if(fileReport.location.contains(".xml")){
+			String normalisedPath = fileReport.location.replace('\\', '/');
+			return normalisedPath.substring(normalisedPath.lastIndexOf('/') + 1, normalisedPath.lastIndexOf('.'));
+		}
 		else
 			return fileReport.location;
 	}
@@ -158,7 +160,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	public void mergeWithParent(CollectionReport parentReport) {
 
 		if (!isValid) {
-			parentReport.addNewInvalid(fileReport.location);
+			parentReport.addNewInvalid(getName());
 			return;
 		}
 
@@ -184,7 +186,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 		if (facets != null && facets.instance != null)
 			parentReport.avgFacetCoverageByInstanceSum += facets.instance.coverage;
 
-		parentReport.handleProfile(headerReport.profile);
+		parentReport.handleProfile(headerReport.profile, profileScore);
 
 	}
 

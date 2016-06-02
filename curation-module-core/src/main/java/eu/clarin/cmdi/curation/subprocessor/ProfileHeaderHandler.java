@@ -31,6 +31,7 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 			return true;
 
 		} catch (Exception e) {
+			report.isValid = false;
 			_logger.error("Error processing profile {}", entity.getPath(), e);
 			report.addDetail(Severity.FATAL, e.toString());
 			return false;

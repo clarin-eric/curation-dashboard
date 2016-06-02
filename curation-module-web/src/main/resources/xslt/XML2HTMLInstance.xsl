@@ -8,10 +8,12 @@
 	<p>profile's score: <xsl:value-of select="./score-profile"/></p>
 	<p>instance's score: <xsl:value-of select="./score-instance"/></p>
 	<p>total score: <xsl:value-of select="./score-total"/> from <xsl:value-of select="./@max-score"/></p>
-	<p>profile: <xsl:value-of select="./header-section/profile"/></p>
+	<xsl:variable name="profileID" select="./header-section/profile" />
+	<p>profile: <a href="#!ResultView/profile/{$profileID}"><xsl:copy-of select="$profileID"/></a></p>
 	
 	<h2>file-section</h2>
-	<p>location: <xsl:value-of select="./file-section/location"/></p>
+	<xsl:variable name="loc" select="./file-section/location" />
+	<p>location: <a href="{$loc}"><xsl:copy-of select="$loc"/></a></p>
 	<p>file size: <xsl:value-of select="./file-section/size"/> B</p> 
 	
 	<h2>resProxy-section</h2>
@@ -37,7 +39,7 @@
 	<p>number of links: <xsl:value-of select="url-validation-section/numOfLinks"/></p>
 	<p>number of unique links: <xsl:value-of select="url-validation-section/numOfUniqueLinks"/></p>
 	<p>number of links in resourceProxy reference <xsl:value-of select="url-validation-section/numOfResProxiesLinks"/></p>
-	<p>number of broken inks <xsl:value-of select="url-validation-section/numOfBrokenLinks"/></p>
+	<p>number of broken links <xsl:value-of select="url-validation-section/numOfBrokenLinks"/></p>
 	<p>percentage of valid links XML elements: <xsl:value-of select="url-validation-section/percOfValidLinks"/>%</p>
 	
 	<h2>facets-section</h2>
@@ -56,17 +58,32 @@
 		</xsl:for-each>
 	</p>
 	
-	<p>Facet values</p>
-	<ul>
+	<h3>Facet values</h3>	
+	
+	<table style="width:100%" border="1" cellpadding="1" cellspacing="1">
+		<thead>
+			<tr>
+				<th scope="col">Facet</th>
+				<th scope="col">Value</th>
+				<th scope="col">Concept</th>
+				<th scope="col">XPath</th>
+			</tr>
+		</thead>
+		<tbody>
 		<xsl:for-each select="facets-section/instance/facet">
-		<li><xsl:value-of select="./@name"/></li>
-		<ul>
-			<xsl:for-each select="./value">
-			<li><xsl:value-of select="."/></li>
+			<xsl:for-each select="./entry">
+				<tr>								
+					<xsl:if test="position() = 1">
+						<th rowspan="{last()}"><xsl:value-of select="../@name"/></th>
+					</xsl:if>				
+					<th><xsl:value-of select="@value"/></th>
+					<td><a href="{@concept}"><xsl:value-of select="@concept"/></a></td>
+					<td><xsl:value-of select="@xpath"/></td>
+				</tr>
 			</xsl:for-each>
-		</ul>
 		</xsl:for-each>
-	</ul>
+	  	</tbody>
+	</table>
 	
 	<h2>Issues occured during the assessment</h2>
 	<table border="1" cellpadding="1" cellspacing="1">

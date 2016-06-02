@@ -1,11 +1,16 @@
 package eu.clarin.web;
 
+import java.io.IOException;
+
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinResponse;
+import com.vaadin.server.VaadinSession;
+import com.vaadin.server.communication.ServletBootstrapHandler;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
@@ -29,11 +34,11 @@ import eu.clarin.web.views.SMC;
 public class MainUI extends UI {
 
 	VerticalLayout menu;
-	CssLayout viewArea;
+	CssLayout viewArea;		
 
 	@Override
 	protected void init(VaadinRequest request) {
-
+					
 		VerticalLayout main = new VerticalLayout();
 		main.setSizeFull();
 
@@ -53,12 +58,13 @@ public class MainUI extends UI {
 		addView("SMC Browser", new SMC());
 		addView("Help", new Help());
 		
-		//addView();
 		getNavigator().addView("ResultView", new ResultView());
 		
-
 		setContent(main);
-		getNavigator().navigateTo("Form");
+		
+		//if no params in url goto start page (CurationForm) else to params
+		String view = request.getParameter("v-loc");
+		getNavigator().navigateTo(view.contains("#!")? view.substring(view.indexOf("#!") + 2) : "Form");
 
 	}
 
@@ -90,7 +96,6 @@ public class MainUI extends UI {
 		middle.setExpandRatio(viewArea, 85);
 
 		return middle;
-
 	}
 
 }

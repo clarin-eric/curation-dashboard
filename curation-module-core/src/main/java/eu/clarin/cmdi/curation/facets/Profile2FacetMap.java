@@ -3,7 +3,9 @@ package eu.clarin.cmdi.curation.facets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -39,14 +41,14 @@ public class Profile2FacetMap {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		mappings.stream().map(f -> sb.append(f.toString()).append("\n"));
+		mappings.forEach(f -> sb.append(f).append("\n"));
 		return sb.toString();
 	}
 
 	public static class Facet {
 		private String name;
 		private boolean caseInsensitive = false;
-		private List<String> patterns = new ArrayList<String>();
+		private Map<String, String> patterns = new HashMap<>(); //extended to keep concepts
 		private List<String> fallbackPatterns = new ArrayList<String>();
 		private List<String> derivedFacets = new ArrayList<String>();
 		private boolean allowMultipleValues = true;
@@ -59,16 +61,12 @@ public class Profile2FacetMap {
 			return caseInsensitive;
 		}
 
-		public void setPatterns(List<String> patterns) {
+		public void setPatterns(Map<String, String> patterns) {
 			this.patterns = patterns;
 		}
 
 		public void setFallbackPatterns(List<String> fallbackPatterns) {
 			this.fallbackPatterns = fallbackPatterns;
-		}
-
-		public void setPattern(String pattern) {
-			this.patterns = Collections.singletonList(pattern);
 		}
 
 		public void setFallbackPattern(String fallbackPattern) {
@@ -78,7 +76,7 @@ public class Profile2FacetMap {
 		/**
 		 * @return List of Strings which are xpaths expressions.
 		 */
-		public List<String> getPatterns() {
+		public Map<String, String> getPatterns() {
 			return patterns;
 		}
 
@@ -96,7 +94,12 @@ public class Profile2FacetMap {
 
 		@Override
 		public String toString() {
-			return "name=" + name + ", pattern=" + patterns + ", fallbackpattern=" + fallbackPatterns;
+			StringBuilder sb = new StringBuilder("name:").append(name).append("\n").append("patterns:").append("\n");
+			patterns.forEach((k, v) -> sb.append("\t" + k + "\t" + v).append("\n"));
+			sb.append("fallback patterns:").append("\n");
+			fallbackPatterns.forEach(p -> sb.append("\t" + p).append("\n"));
+			
+			return sb.toString();
 		}
 
 		public boolean getAllowMultipleValues() {

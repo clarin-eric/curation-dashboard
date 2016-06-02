@@ -75,12 +75,13 @@ public class ResultView extends Panel implements View{
 		try {
 			switch (type) {
 				case INSTANCE:
+					r = new CurationModule().processCMDInstance(new URL(input));
+					break;
 				case PROFILE:
-					CurationModule curator = new CurationModule();
-					// if profileId append CLARIN REST prefix
-					URL url = new URL((!input.startsWith("http") ? CRService.REST_API : "") + input);
-					r = type.compareTo(CurationEntityType.INSTANCE) == 0 ? curator.processCMDInstance(url)
-							: curator.processCMDProfile(url);
+					if(input.startsWith("http"))//URL
+						r = new CurationModule().processCMDProfile(new URL(input));
+					else //ID
+						r = new CurationModule().processCMDProfile(input);
 					break;
 				case COLLECTION:
 					r = Shared.getCollectionReport(input);
@@ -107,7 +108,7 @@ public class ResultView extends Panel implements View{
 			e.printStackTrace(new PrintWriter(errors));
 			String msg = "Error while curating " + type.toString().toLowerCase() + " from " + input + "!\n"
 					+ errors.toString();
-			label.setValue(msg);
+			label.setValue("<pre>" + msg + "</pre>");
 		}
 	}
 

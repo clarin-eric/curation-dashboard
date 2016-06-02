@@ -12962,3 +12962,11 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .center-txt-align {
 	text-align: center;
 }
+
+.mytheme .form-top-margin-25 {
+	margin-top: 25px;
+}
+
+.mytheme .form-top-margin-50 {
+	margin-top: 50px;
+}

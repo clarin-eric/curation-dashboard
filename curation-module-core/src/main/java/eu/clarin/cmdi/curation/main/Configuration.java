@@ -23,6 +23,8 @@ public class Configuration {
 	public static boolean SAVE_REPORT;
 	public static Path OUTPUT_DIRECTORY = null;
 	public static Path CACHE_DIRECTORY = null;
+
+	public static boolean COLLECTION_MODE = false; //when true values wont be extracted for facet "text", saves a lot of time in collection assesment
 	
 	public static void init(InputStream is) throws ConfigurationException, IOException {
 		PropertiesConfiguration prop = new PropertiesConfiguration();

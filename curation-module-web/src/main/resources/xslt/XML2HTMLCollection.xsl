@@ -23,20 +23,25 @@
 		<thead>
 			<tr>
 				<th>ID</th>
+				<th>Score</th>
 				<th>Count</th>
 			</tr>
 		</thead>
 		<tfoot>
 			<tr>
-				<td>Total number of profiles: <xsl:value-of select="./header-section/profiles/@count"/></td>
+				<td colspan="3">Total number of profiles: <xsl:value-of select="./header-section/profiles/@count"/></td>
 			</tr>
 		</tfoot>
 		<tbody>
 		<xsl:for-each select="./header-section/profiles/profiles">
-		<tr>
-			<td><xsl:value-of select="./@name"/></td>
-			<td><xsl:value-of select="./@count"/></td>
-	    </tr>
+			<xsl:sort select="./@score" data-type="number" order="descending"/>
+			<xsl:sort select="./@count" data-type="number" order="descending"/>
+			<xsl:variable name="profileID"><xsl:value-of select="./@name"/></xsl:variable>
+			<tr>
+				<td><a href="#!ResultView/profile/{$profileID}"><xsl:copy-of select="$profileID"/></a></td>
+				<td><xsl:value-of select="./@score"/></td>
+				<td><xsl:value-of select="./@count"/></td>
+		    </tr>
 		</xsl:for-each>
 		</tbody>
 	</table>
