@@ -73,11 +73,4 @@ public class HTTPLinkChecker{
 		return builder.toString();
 	}
 	
-//	public static void main(String[] args) throws Exception{
-//		System.setProperty("jsse.enableSNIExtension", "false");		
-//		HTTPLinkChecker l = new HTTPLinkChecker();
-//		l.checkLink("http://hdl.handle.net/11022/0000-0000-63C6-1@PDF");
-//		System.out.println(l.getResponse());
-//	}
-	
 }

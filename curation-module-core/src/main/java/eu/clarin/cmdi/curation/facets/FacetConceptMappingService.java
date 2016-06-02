@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -113,20 +114,19 @@ public class FacetConceptMappingService {
 				ProfileParser parser = new ProfileParser(profile);
 				for(FacetConcept facetConcept: facetConcepts){
 					Facet facet = new Facet();
-					List<String> xpaths = new ArrayList<>();
+					Map<String, String> xpaths = new HashMap<>();
 					handleId(xpaths, facetConcept);
 					//handle concepts
 					for(String concept: facetConcept.getConcepts()){
 						if(!facetConcept.hasContext())
-							xpaths.addAll(parser.getXPathsForConcept(concept));
+							parser.getXPathsForConcept(concept).forEach(xpath -> xpaths.put(xpath, concept));
 						else//context exists
-							xpaths.addAll(
-								parser.getXPathsForConcept(concept)
-								.stream()
-								.filter(path -> acceptPath(path, getContext(path, parser), facetConcept.getAcceptableContext(),
-										facetConcept.getRejectableContext(), facetConcept.getName()))
-								.collect(Collectors.toList())
-							);
+							parser.getXPathsForConcept(concept)
+							.stream()
+							.filter(path -> acceptPath(path, getContext(path, parser), facetConcept.getAcceptableContext(),
+									facetConcept.getRejectableContext(), facetConcept.getName()))
+							.forEach(xpath -> xpaths.put(xpath, concept));
+							
 					}
 					
 					// pattern-based blacklisting: remove all XPath expressions
@@ -135,12 +135,16 @@ public class FacetConceptMappingService {
 					// visualised information in the VLO;
 					// should be replaced by a more intelligent approach in the future
 					for (String blacklistPattern : facetConcept.getBlacklistPatterns()) {
-						Iterator<String> xpathIterator = xpaths.iterator();
+						//Iterator<String> xpathIterator = xpaths.iterator();
+						Iterator<String> xpathIterator = xpaths.keySet().iterator();
 						while (xpathIterator.hasNext()) {
 							String xpath = xpathIterator.next();
 							if (xpath.contains(blacklistPattern)) {
 								//_logger.debug("Rejecting {} because of blacklisted substring {}", xpath, blacklistPattern);
 								xpathIterator.remove();
+								
+								//remove it from map as well
+								xpaths.remove(xpath);
 							}
 						}
 					}
@@ -148,9 +152,6 @@ public class FacetConceptMappingService {
 					facet.setCaseInsensitive(facetConcept.isCaseInsensitive());
 					facet.setAllowMultipleValues(facetConcept.isAllowMultipleValues());
 					facet.setName(facetConcept.getName());
-
-					//remove duplicates
-					xpaths = xpaths.stream().distinct().collect(Collectors.toList());
 					
 					facet.setPatterns(xpaths);
 					//add patterns if they really exists (if schema supports them)
@@ -163,6 +164,7 @@ public class FacetConceptMappingService {
 					} else
 						mapping.addNotCovered(facet.getName());
 				}
+				
 				pair.setX(mapping);			
 			} catch (Exception e) {
 				pair.setY(new Exception("Error creating facetMapping for profile " + profile, e));
@@ -175,9 +177,9 @@ public class FacetConceptMappingService {
 			}
 		}
 		
-		private void handleId(List<String> xpaths, FacetConcept facetConcept) {
+		private void handleId(Map<String, String> xpaths, FacetConcept facetConcept) {
 			if ("id".equals(facetConcept.getName())) {
-				xpaths.addAll(facetConcept.getPatterns());
+				facetConcept.getPatterns().forEach(pattern -> xpaths.put(pattern, null));
 			}
 		}		
 		
@@ -186,11 +188,9 @@ public class FacetConceptMappingService {
 			if (acceptableContext != null) {
 				if (context == null && acceptableContext.includeEmpty()) {
 					// no context is accepted
-					_logger.debug("facet[{}] path[{}] context[{}](empty) is accepted", facetName, path, context);
 					return true;
 				} else if (acceptableContext.getConcepts().contains(context)) {
 					// a specific context is accepted
-					_logger.debug("facet[{}] path[{}] context[{}] is accepted", facetName, path, context);
 					return true;
 				}
 			}
@@ -198,21 +198,17 @@ public class FacetConceptMappingService {
 			if (rejectableContext != null) {
 				if (context == null && rejectableContext.includeEmpty()) {
 					// no context is rejected
-					_logger.debug("facet[{}] path[{}] context[{}](empty) is rejected", facetName, path, context);
 					return false;
 				} else if (rejectableContext.getConcepts().contains(context)) {
 					// a specific context is rejected
-					_logger.debug("facet[{}] path[{}] context[{}] is rejected", facetName, path, context);
 					return false;
 				} else if (rejectableContext.includeAny()) {
 					// any context is rejected
-					_logger.debug("facet[{}] path[{}] context[{}](any) is rejected", facetName, path, context);
 					return false;
 				}
 			}
 			if (context != null && acceptableContext != null && acceptableContext.includeAny()) {
 				// any, not rejected context, is accepted
-				_logger.debug("facet[{}] path[{}] context[{}](any) is accepted", facetName, path, context);
 				return true;
 			}
 			

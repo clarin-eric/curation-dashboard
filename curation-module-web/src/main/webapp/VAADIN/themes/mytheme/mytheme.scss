@@ -54,11 +54,28 @@
   	 target-name:new;
 	 target-new:tab;
   }
-  
-  
-  
+    
   .content{
   	color:#a7ffeb;
+  }
+  
+  
+  .v-button-link:focus:after{
+   outline: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  }
+  
+  .center-txt-align {
+  	text-align: center;
+  }
+  
+  .form-top-margin-25 {
+  	margin-top:25px;
+  }
+  
+    .form-top-margin-50 {
+  	margin-top:50px;
   }
   
 }

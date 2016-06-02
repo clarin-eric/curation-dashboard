@@ -5,6 +5,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.regex.Matcher;
 
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDCollection;
@@ -15,7 +16,7 @@ import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
 
-public class CurationModule implements CurationModuleInterface {
+public class CurationModule implements CurationModuleInterface {		
 
 	@Override
 	public Report processCMDProfile(String profileId) {
@@ -24,11 +25,11 @@ public class CurationModule implements CurationModuleInterface {
 
 	@Override
 	public Report processCMDProfile(URL url) {
-		String profileId = url.toString().substring(CRService.REST_API.length());
-		if (profileId.endsWith("/"))
-			profileId = profileId.substring(0, profileId.length() - 1);
-
-		return new CMDProfile(profileId).generateReport();
+		Matcher m = CRService.PROFILE_ID_PATTERN.matcher(url.toString());
+		if(m.find()){
+			return new CMDProfile(m.group()).generateReport();
+		}
+		throw new IllegalArgumentException(url + " must contain profileID");
 	}
 
 	@Override
@@ -37,17 +38,17 @@ public class CurationModule implements CurationModuleInterface {
 			throw new IOException(file.toString() + " doesn't exist!");
 		return new CMDInstance(file, Files.size(file)).generateReport();
 	}
+	
 
 	@Override
-	public Report processCMDInstance(URL url) throws IOException {		
-		Path path = Files.createTempFile(null, null);
+	public Report processCMDInstance(URL url) throws IOException{		
+		Path path = Files.createTempFile(null, null);		
 		new Downloader().download(url.toString(), path.toFile());
 		long size = Files.size(path);
-		Report r = new CMDInstance(path, size).generateReport();		
+		Report r = new CMDInstance(path, size).generateReport();
 		Files.delete(path);
 		
 		((CMDInstanceReport)r).fileReport.location = url.toString();
-		
 		return r;
 	}
 

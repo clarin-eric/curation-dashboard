@@ -6,6 +6,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.HeaderCell;
 import com.vaadin.ui.Grid.HeaderRow;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.declarative.Design;
@@ -14,7 +15,7 @@ import com.vaadin.ui.renderers.HtmlRenderer;
 import eu.clarin.web.Shared;
 
 @DesignRoot
-public class Collections extends VerticalLayout implements View {
+public class Collections extends Panel implements View {
 
 	Grid grid;
 

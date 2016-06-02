@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.xml.XMLConstants;
@@ -36,6 +37,9 @@ public class CRService implements ICRService {
 
 	public static final String REST_API = "http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/";
 	public static final String PROFILE_PREFIX = "clarin.eu:cr1:";
+	public static final String PROFILE_ID_REGEX = Pattern.quote(PROFILE_PREFIX) + "p_\\d{13,}";
+	
+	public static final Pattern PROFILE_ID_PATTERN = Pattern.compile(PROFILE_ID_REGEX);
 
 	private final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
@@ -142,11 +146,11 @@ public class CRService implements ICRService {
 				new Runnable() {
 					public void run() {
 						CMDProfileReport report = (CMDProfileReport) new CMDProfile(profileId).generateReport();
-						if (!report.isValid)
-							scoreCache.put(profileId, new ScoreStruct(new Exception("Unable to process profile"
-									+ profileId + ". Run curation for this profile to see details!")));
-						else
+						if (report.isValid)
 							scoreCache.put(profileId, new ScoreStruct(report.score));
+						else
+							scoreCache.put(profileId,
+									new ScoreStruct(new Exception("Unable to process profile " + profileId)));
 						Object lock = scoreBeingProcessed.get(profileId);
 						synchronized (lock) {
 							lock.notifyAll();

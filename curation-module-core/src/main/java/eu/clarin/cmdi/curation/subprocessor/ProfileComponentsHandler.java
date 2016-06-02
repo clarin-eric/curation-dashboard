@@ -77,7 +77,7 @@ public class ProfileComponentsHandler extends ProcessingStep<CMDProfile, CMDProf
 			return true;
 
 		} catch (Exception e) {
-			_logger.error("Error processing profile {}", entity.getPath(), e);
+			_logger.error("Error processing profile {}", entity.getProfile(), e);
 			report.addDetail(Severity.FATAL, e.toString());
 			return false;
 		}

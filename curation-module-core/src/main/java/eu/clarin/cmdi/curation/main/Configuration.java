@@ -23,6 +23,8 @@ public class Configuration {
 	public static boolean SAVE_REPORT;
 	public static Path OUTPUT_DIRECTORY = null;
 	public static Path CACHE_DIRECTORY = null;
+
+	public static boolean COLLECTION_MODE = false; //when true values wont be extracted for facet "text", saves a lot of time in collection assesment
 	
 	public static void init(InputStream is) throws ConfigurationException, IOException {
 		PropertiesConfiguration prop = new PropertiesConfiguration();
@@ -51,12 +53,9 @@ public class Configuration {
 		String outDir = config.getString("OUTPUT_DIRECTORY");
 		String cacheDir = config.getString("CACHE_DIRECTORY");
 		
-		if(outDir != null){
+		
+		if(outDir != null)
 			OUTPUT_DIRECTORY = Files.createDirectories(Paths.get(outDir));
-			Files.createDirectories(OUTPUT_DIRECTORY.resolve("profiles"));
-			Files.createDirectories(OUTPUT_DIRECTORY.resolve("instances"));
-			Files.createDirectories(OUTPUT_DIRECTORY.resolve("collections"));
-		}
 		if(cacheDir != null)
 			CACHE_DIRECTORY = Files.createDirectories(Paths.get(cacheDir));
 		

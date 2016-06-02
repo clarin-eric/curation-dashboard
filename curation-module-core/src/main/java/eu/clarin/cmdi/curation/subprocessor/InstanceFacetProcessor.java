@@ -24,8 +24,10 @@ import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.facets.Profile2FacetMap;
 import eu.clarin.cmdi.curation.facets.Profile2FacetMap.Facet;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.FacetReport;
+import eu.clarin.cmdi.curation.report.FacetReport.FacetValue;
 import eu.clarin.cmdi.curation.report.FacetReport.FacetValues;
 import eu.clarin.cmdi.curation.report.FacetReport.Instance;
 import eu.clarin.cmdi.curation.report.FacetReport.Profile;
@@ -42,7 +44,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	private static final String DEFAULT_LANGUAGE = "code:und";
 	private static final String FACET_LANGUAGECODE = "languageCode";
 
-	private Map<String, List<String>> facetValues = new LinkedHashMap<>();
+	private Map<String, List<FacetValue>> facetValues = new LinkedHashMap<>();
 
 	private VTDNav navigator;
 
@@ -59,11 +61,12 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 			try {
 				service = FacetConceptMappingService.getInstance();
 				profileMap = service.getMapping(report.getProfile());
+				
 			} catch (Exception e) {
 				_logger.error("Unable to obtain mapping for profile {}", report.getProfile(), e);
 				return false;
 			}
-
+			
 			extractFacetValues(profileMap);
 			int totalNumOfFacets = service.getTotalNumOfFacets();
 
@@ -78,6 +81,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 			instance.coverage = 1.0 * facetValues.size() / totalNumOfFacets;
 
 			List<FacetValues> vals = new ArrayList<>();
+			List<FacetValue> singleFacetValues = new ArrayList<>();
 			List<String> missingVals = new ArrayList<>();
 
 			for (String facet : profileMap.getFacetNames())
@@ -122,12 +126,16 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	}
 
 	private void extractFacetValues(Profile2FacetMap map) throws VTDException {
-		Collection<Facet> facetList = map.getMappings();
-		for (Facet facet : facetList) {
+		for (Facet facet : map.getMappings()) {
+			if(facet.getName().equals("text") && Configuration.COLLECTION_MODE){
+				facetValues.put("text", null);
+				continue;
+			}
+			
 			boolean matchedPattern = false;
-			List<String> patterns = facet.getPatterns();
-			for (String pattern : patterns) {
-				matchedPattern = matchPattern(facet, pattern, facet.getAllowMultipleValues());
+			Map<String, String> patterns = facet.getPatterns();
+			for (String pattern : patterns.keySet()) {
+				matchedPattern = matchPattern(facet.getName(), pattern, patterns.get(pattern), facet.getAllowMultipleValues());
 				if (matchedPattern && !facet.getAllowMultipleValues()) {
 					break;
 				}
@@ -136,7 +144,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 			// using fallback patterns if extraction failed
 			if (matchedPattern == false) {
 				for (String pattern : facet.getFallbackPatterns()) {
-					matchedPattern = matchPattern(facet, pattern, facet.getAllowMultipleValues());
+					matchedPattern = matchPattern(facet.getName(), pattern, null, facet.getAllowMultipleValues());
 					if (matchedPattern && !facet.getAllowMultipleValues()) {
 						break;
 					}
@@ -162,7 +170,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	 * @return pattern matched a node in the CMDI file?
 	 * @throws VTDException
 	 */
-	private boolean matchPattern(Facet facet, String pattern, Boolean allowMultipleValues) throws VTDException {
+	private boolean matchPattern(String facet, String pattern, String concept, Boolean allowMultipleValues) throws VTDException {
 		final AutoPilot ap = new AutoPilot(navigator);
 		ap.declareXPathNameSpace("c", "http://www.clarin.eu/cmd/");
 		ap.selectXPath(pattern);
@@ -170,7 +178,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 		boolean matchedPattern = false;
 		int index = ap.evalXPath();
 
-		ArrayList<String> values = new ArrayList<>();
+		ArrayList<FacetValue> values = new ArrayList<>();
 
 		while (index != -1) {
 			matchedPattern = true;
@@ -183,14 +191,17 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 			final String languageCode = extractLanguageCode(navigator);
 
 			// ignore non-English language names for facet LANGUAGE_CODE
-			if (facet.getName().equals(FACET_LANGUAGECODE) && !languageCode.equals("code:eng")
+			if (facet.equals(FACET_LANGUAGECODE) && !languageCode.equals("code:eng")
 					&& !languageCode.equals("code:und")) {
 				index = ap.evalXPath();
 				continue;
 			}
 
-			if (value != null && !value.isEmpty() && !values.contains(value))
-				values.add(value);
+			if (value != null && !value.isEmpty()){
+				FacetValue newValue = new FacetValue(concept, pattern, value);
+				if(!values.contains(newValue))
+					values.add(newValue);
+			}
 
 			if (!allowMultipleValues)
 				break;
@@ -198,7 +209,9 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 		}
 
 		if (!values.isEmpty())
-			facetValues.put(facet.getName(), values);
+			facetValues.put(facet, values);
+		
+		
 		return matchedPattern;
 	}
 

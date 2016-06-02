@@ -11,6 +11,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlValue;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
  * @author dostojic
@@ -54,22 +57,69 @@ public class FacetReport {
 
     }
 
-    @XmlRootElement(name = "facet")
+    @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class FacetValues {
 
 	public FacetValues() {
 	}
 
-	public FacetValues(String name, List<String> values) {
+	public FacetValues(String name, List<FacetValue> values) {
 	    this.name = name;
 	    this.value = values;
 	}
 
 	@XmlAttribute
 	public String name;
+	
+	@XmlElement(name = "entry")
+	public List<FacetValue> value;
+    
+    
+    }
+    
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class FacetValue{
+    	
+    	@XmlAttribute
+    	public String value;    	
+    	
+    	@XmlAttribute
+    	public String concept;
+    	
+    	@XmlAttribute
+    	public String xpath;
+    	
+    	
+    	public FacetValue() {
+		}
 
-	public List<String> value;
+		public FacetValue(String concept, String xpath, String value) {
+			this.concept = concept;
+			this.xpath = xpath;
+			this.value = value;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof FacetValue))
+	            return false;
+	        if (obj == this)
+	            return true;
+	        FacetValue rhs = (FacetValue) obj;
+	        return new EqualsBuilder()
+	        		.append(value, rhs.value)
+	        		.append(xpath, rhs.xpath)
+	        		.isEquals();
+		}
+		
+		@Override
+		public String toString() {
+			return value + "\t" + xpath + "\t" + concept;
+		}
+    	
+    	
     }
 
 }

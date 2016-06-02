@@ -49,11 +49,9 @@ public class Main {
 
 		cmd = parser.parse(options, args);
 
-		List<Report> reports = new ArrayList<>();
-
 		// init configuration file
-		if (cmd.hasOption("conf"))
-			Configuration.init(new File(cmd.getOptionValue("conf")));
+		if (cmd.hasOption("config"))
+			Configuration.init(new File(cmd.getOptionValue("config")));
 		else
 			Configuration.initDefault();
 
@@ -68,40 +66,59 @@ public class Main {
 			type = CurationEntityType.PROFILE;
 			if (cmd.hasOption("id")) {
 				for (String id : cmd.getOptionValues("id"))
-					reports.add(curator.processCMDProfile(id));
+					dump(curator.processCMDProfile(id), type);
 			} else if (cmd.hasOption("url")) {
 				for (String url : cmd.getOptionValues("url"))
-					reports.add(curator.processCMDProfile(new URL(url)));
+					dump(curator.processCMDProfile(new URL(url)), type);
 			} else
 				throw new Exception("Only id and url options are allowed for profiles curation");
 		} else if (cmd.hasOption("i")) {// instance
 			type = CurationEntityType.INSTANCE;
 			if (cmd.hasOption("url")) {
 				for (String url : cmd.getOptionValues("url"))
-					reports.add(curator.processCMDInstance(new URL(url)));
+					dump(curator.processCMDInstance(new URL(url)), type);
 			} else if (cmd.hasOption("path")) {
 				for (String path : cmd.getOptionValues("path"))
-					reports.add(curator.processCMDInstance(Paths.get(path)));
+					dump(curator.processCMDInstance(Paths.get(path)), type);
 			} else
 				throw new Exception("Only path and url options are allowed for instances curation");
 
 		} else if (cmd.hasOption("c")) {// collection
 			type = CurationEntityType.COLLECTION;
+			Configuration.COLLECTION_MODE = true;
 			if (cmd.hasOption("path")) {
 				for (String path : cmd.getOptionValues("path"))
-					reports.add(curator.processCollection(Paths.get(path)));
+					dump(curator.processCollection(Paths.get(path)), type);
 			} else
 				throw new Exception("Only path is allowed for collection curation");
 		} else
 			throw new Exception("Curation module can curate profiles (-p), instances (-i) and collections (-c)");
-
-		for (Report r : reports) {
-			r.toXML(getOutputStream(r, type));
+	}
+	
+	private static void dump(Report report, CurationEntityType type) throws Exception{
+		if(Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null){
+			Path path = null;
+			switch (type) {
+				case PROFILE:
+					path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
+					break;
+				case INSTANCE:
+					path = Configuration.OUTPUT_DIRECTORY.resolve("instances");
+					break;
+				case COLLECTION:
+					path = Configuration.OUTPUT_DIRECTORY.resolve("collections");
+					break;
+			}
+			
+			Files.createDirectories(path);			
+			path = path.resolve(report.getName() + ".xml");
+			report.toXML(Files.newOutputStream(path));
+		}else{//print to console
+			report.toXML(System.out);
 			System.out.println("-----------------------------------------------------------------");
 			System.out.println();
-			System.out.println();
+			
 		}
-
 	}
 
 	private static Options createHelpOption() {
@@ -148,19 +165,21 @@ public class Main {
 	}
 	
 	private static OutputStream getOutputStream(Report report, CurationEntityType type) throws IOException{
-		if(Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null && !Configuration.OUTPUT_DIRECTORY.isAbsolute()){
+		if(Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null){
 			Path path = null;
 			switch (type) {
-			case PROFILE:
-				path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
-				break;
-			case INSTANCE:
-				path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
-				break;
-			case COLLECTION:
-				path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
-				break;
+				case PROFILE:
+					path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
+					break;
+				case INSTANCE:
+					path = Configuration.OUTPUT_DIRECTORY.resolve("instances");
+					break;
+				case COLLECTION:
+					path = Configuration.OUTPUT_DIRECTORY.resolve("collections");
+					break;
 			}
+			
+			Files.createDirectories(path);			
 			path = path.resolve(report.getName() + ".xml");
 			return Files.newOutputStream(path);
 		}

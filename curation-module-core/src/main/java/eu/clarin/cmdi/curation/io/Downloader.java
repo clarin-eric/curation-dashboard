@@ -22,7 +22,7 @@ public class Downloader {
 
 	static final Logger _logger = LoggerFactory.getLogger(Downloader.class);
 
-	public void download(String url, File destination) throws IOException {
+	public void download(String url, File destination) throws IOException {		
 		try {
 			HTTPLinkChecker lc = new HTTPLinkChecker();
 			if(lc.checkLink(url) != 200)//redirection is already handled, 30x status will not be thrown
@@ -30,7 +30,7 @@ public class Downloader {
 			
 			_logger.trace("Downloading file from {} into {}", url, destination.getName());
 			
-			if(lc.getRedirectLink() != null)//if redirection issed use new link
+			if(lc.getRedirectLink() != null)//if redirection issued use new link
 				url = lc.getRedirectLink();
 			
 			ReadableByteChannel channel = Channels.newChannel(new URL(url).openStream());

@@ -3,7 +3,7 @@
 <xsl:template match="/profile-report">
 <html>
 <body style="font-family: ‘Lucida Sans Unicode’, ‘Lucida Grande’, sans-serif;">
-	<h1>Report for the profile: <xsl:value-of select="./header-section/name"/></h1>
+	<h1>Profile's report for: <xsl:value-of select="./header-section/name"/></h1>
 	
 	<p>Id: <xsl:value-of select="./header-section/ID"/></p>
 	<p>Description: <xsl:value-of select="./header-section/description"/></p>
@@ -61,7 +61,7 @@
 	</table>
 	
 	
-	<h2>Issues occured during the assessment</h2>
+	<h2>Issues occurred during the assessment</h2>
 	<table border="1" cellpadding="1" cellspacing="1">
 		<thead>
 			<tr>

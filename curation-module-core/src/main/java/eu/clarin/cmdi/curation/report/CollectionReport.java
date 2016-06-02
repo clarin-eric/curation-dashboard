@@ -77,12 +77,12 @@ public class CollectionReport implements Report<CollectionReport> {
 
 	}
 
-	public void handleProfile(String profile) {
+	public void handleProfile(String profile, double score) {
 		if (headerReport == null)
 			headerReport = new HeaderReport();
 		if (headerReport.profiles == null)
 			headerReport.profiles = new Profiles();
-		headerReport.profiles.handleProfile(profile);
+		headerReport.profiles.handleProfile(profile, score);
 	}
 
 	public void handleProfile(Profile profile) {
@@ -280,7 +280,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
 		public List<Profile> profiles;
 
-		public void handleProfile(String profile) {
+		public void handleProfile(String profile, double score) {
 			if (profiles == null)
 				profiles = new ArrayList<>();
 
@@ -289,9 +289,11 @@ public class CollectionReport implements Report<CollectionReport> {
 					p.count++;
 					return;
 				}
+			
 			Profile p = new Profile();
 			p.count = 1;
 			p.name = profile;
+			p.score = score;
 
 			profiles.add(p);
 			totNumOfProfiles++;
@@ -322,6 +324,9 @@ public class CollectionReport implements Report<CollectionReport> {
 
 		@XmlAttribute
 		public int count;
+		
+		@XmlAttribute
+		public Double score;
 	}
 
 	public void addFileReport(String provider, long numOfFiles, long size, long minSize, long maxSize) {

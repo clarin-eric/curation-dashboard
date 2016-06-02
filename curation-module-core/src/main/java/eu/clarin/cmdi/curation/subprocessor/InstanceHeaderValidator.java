@@ -169,8 +169,11 @@ public class InstanceHeaderValidator extends CMDSubprocessor {
 
 				// handle ResourceRef
 				if (xmlService.getNavigator().toElement(VTDNav.NEXT_SIBLING, "ResourceRef")) {
-					String reference = xmlService.getNavigator()
-							.toNormalizedString(xmlService.getNavigator().getText());
+					int ind = xmlService.getNavigator().getText();
+					String reference = "";
+					if(ind != -1){
+						reference = xmlService.getNavigator().toNormalizedString(ind);						
+					}
 					if (!reference.isEmpty())
 						numOfResProxiesWithReferences++;
 				}
@@ -179,6 +182,7 @@ public class InstanceHeaderValidator extends CMDSubprocessor {
 
 			} // end while
 		} catch (Exception e) {
+			_logger.error("Error while processing resource proxies in {}", report.fileReport.location, e);
 			addMessage(Severity.FATAL, e.getMessage());
 			report.isValid = false;
 		} finally {
