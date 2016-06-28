@@ -64,6 +64,7 @@ public class MainUI extends UI {
 		
 		//if no params in url goto start page (CurationForm) else to params
 		String view = request.getParameter("v-loc");
+		view = view.replaceAll("%20", " ");
 		getNavigator().navigateTo(view.contains("#!")? view.substring(view.indexOf("#!") + 2) : "Form");
 
 	}
