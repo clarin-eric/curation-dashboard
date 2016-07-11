@@ -51,6 +51,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	@Override
 	public boolean process(CMDInstance entity, CMDInstanceReport report) {
 		boolean status = true;
+		report.facets = new FacetReport();
 		try {
 			parse(entity.getPath());
 
@@ -93,17 +94,16 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 			instance.facet = vals;
 			instance.missingValue = missingVals;
 
-			FacetReport facets = new FacetReport();
-			facets.numOfFacets = totalNumOfFacets;
+			report.facets.numOfFacets = totalNumOfFacets;
 
-			facets.profile = profileReport;
+			report.facets.profile = profileReport;
 
-			facets.instance = instance;
+			report.facets.instance = instance;
 
-			report.facets = facets;
 
 		} catch (Exception e) {
 			addMessage(Severity.FATAL, e.getMessage());
+			report.isValid = false;
 			status = false;
 		} finally {
 			report.facets.messages = msgs;
