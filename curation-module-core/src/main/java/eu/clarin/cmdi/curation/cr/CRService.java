@@ -84,8 +84,8 @@ public class CRService implements ICRService {
 		CMDXPathService xpathService = new CMDXPathService(getParsedXML(profileId));
 		profile = new ProfileHeader();
 		profile.id = profileId;
-		profile.name = xpathService.getXPathValue("/CMD_ComponentSpec/Header/Name");
-		profile.description = xpathService.getXPathValue("/CMD_ComponentSpec/Header/Description");
+		profile.name = xpathService.getXPathValue("/CMD_ComponentSpec/Header/Name/text()");
+		profile.description = xpathService.getXPathValue("/CMD_ComponentSpec/Header/Description/text()");
 		profile.isPublic = false;
 
 		profileHeaders.add(profile);
