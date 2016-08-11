@@ -12,7 +12,7 @@ public interface CurationModuleInterface {
 	
 	public Report processCMDProfile(String profileId);
 	
-	public Report processCMDProfile(URL url);
+	public Report processCMDProfile(URL schemaLocation);
 	
 	/*
 	 * throws Exception if file doesn't exist or is invalid

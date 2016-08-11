@@ -2,9 +2,7 @@ package eu.clarin.cmdi.curation.report;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,7 +11,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import eu.clarin.cmdi.curation.main.Configuration;
+import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.report.CollectionReport.Facet;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
@@ -24,48 +23,33 @@ import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 @XmlRootElement(name = "instance-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDInstanceReport implements Report<CollectionReport> {
-
-	public static final double MAX_SCORE = 11;
-
-	public transient boolean isValid = true;
-
+		
+	@XmlAttribute
+	public Double score = 0.0;	
+	
+	@XmlAttribute(name = "ins-score")
+	public Double instanceScore = 0.0;
+	
+	@XmlAttribute(name = "pfl-score")
+	public Double profileScore = 0.0;
+	
 	@XmlAttribute(name = "max-score")
-	public final double maxScore = MAX_SCORE + CMDProfileReport.MAX_SCORE;
+	public double maxScore;
 
-	// transient variables used in score calculation
+	@XmlAttribute
+	public Long timeStamp = System.currentTimeMillis();
 
-	// file
-	public transient boolean sizeExceeded = false;
-	// schema
-	public transient boolean schemaAvailable = false;
-	public transient boolean schemaInCCR = false;
-
-	// profile
-	public transient boolean mdProfileExists = true;
-	public transient boolean mdCollectionDispExists = true;
-	public transient boolean mdSelfLinkExists = true;
 
 	// for passing values
 	public transient int numOfLinks = 0;
 	public transient int numOfResProxiesLinks = 0;
 	public transient int numOfUniqueLinks = 0;
 
-	public transient List<Message> xmlErrors;
-
-	public Long timeStamp = System.currentTimeMillis();
-
-	@XmlElement(name = "score-profile")
-	public Double profileScore = 0.0;
-	@XmlElement(name = "score-instance")
-	public Double instanceScore = 0.0;
-	@XmlElement(name = "score-total")
-	public Double totalScore = 0.0;
-
 	// sub reports **************************************
 
 	// Header
-	@XmlElement(name = "header-section")
-	HeaderReport headerReport;
+	@XmlElement(name = "profile-section")
+	public ProfileHeader header;
 
 	// file
 	@XmlElement(name = "file-section")
@@ -73,19 +57,24 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
 	// ResProxy
 	@XmlElement(name = "resProxy-section")
-	ResProxyReport resProxyReport;
+	public ResProxyReport resProxyReport;
 
 	// XMLValidator
 	@XmlElement(name = "xml-validation-section")
-	XMLReport xmlReport;
+	public XMLReport xmlReport;
 
 	// URL
 	@XmlElement(name = "url-validation-section")
-	URLReport urlReport;
+	public URLReport urlReport;
 
 	// facets
 	@XmlElement (name = "facets-section")
 	public FacetReport facets;
+	
+	//scores
+	@XmlElementWrapper(name="score-section")
+	@XmlElement(name="score")
+	public Collection<Score> segmentScores;
 	
 	@Override
 	public String getName() {
@@ -98,77 +87,21 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	}
 
 	@Override
-	public double getMaxScore() {
-		return MAX_SCORE;
-	};
-
-	@Override
-	public double calculateScore() {
-		if (!isValid) {
-			return totalScore;
-		}
-
-		// fileSize
-		if (!sizeExceeded)
-			instanceScore += 1; // * weight
-
-		// schema
-		double sectionScore = 0;
-		if (schemaAvailable)
-			sectionScore += 1; // * weight
-		if (schemaInCCR)
-			sectionScore += 1; // * weight
-
-		instanceScore += sectionScore; // * schema factor
-
-		sectionScore = 0;
-		if (mdProfileExists)
-			sectionScore += 1;
-		if (mdCollectionDispExists)
-			sectionScore += 1;
-		if (mdSelfLinkExists)
-			sectionScore += 1;
-		instanceScore += sectionScore; // * header factor
-
-		sectionScore = 0;
-
-		sectionScore += resProxyReport.percOfResProxiesWithMime + resProxyReport.percOfResProxiesWithReferences;
-
-		instanceScore += sectionScore; // * resProxy factor
-
-		instanceScore += xmlReport.percOfPopulatedElements; // * xmlValidation
-															// factor
-		// we don't take into account errors and warnings from xml parser
-
-		sectionScore = 0;
-		// it can influence the score, if one collection was done with enabled
-		// and the other without
-		if (!Double.isNaN(urlReport.percOfValidLinks)) {
-			sectionScore += urlReport.percOfValidLinks;
-		} // else
-
-		instanceScore += sectionScore; // * urlValidation factor
-
-		instanceScore += facets.instance.coverage;// *facetCoverage factor
-
-		totalScore = instanceScore + profileScore;
-		return totalScore;
-
-	}
-
-	@Override
 	public void mergeWithParent(CollectionReport parentReport) {
 
-		if (!isValid) {
-			parentReport.addNewInvalid(getName());
-			return;
-		}
-
-		parentReport.score += totalScore;
+		parentReport.score += score;
+		if(score > parentReport.insMaxScore)
+			parentReport.insMaxScore = score;
+		
+		if(score < parentReport.insMinScore)
+			parentReport.insMinScore = score;
+		
+		parentReport.maxScoreInstance = maxScore;
 
 		// ResProxies
 		parentReport.resProxyReport.totNumOfResProxies += resProxyReport.numOfResProxies;
-		parentReport.resProxyReport.totNumOfResProxiesWithMime += resProxyReport.numOfResProxiesWithMime;
+			 
+		parentReport.resProxyReport.totNumOfResourcesWithMime += resProxyReport.numOfResourcesWithMime;
 		parentReport.resProxyReport.totNumOfResProxiesWithReferences += resProxyReport.numOfResProxiesWithReferences;
 
 		// XMLValidator
@@ -182,11 +115,15 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 		parentReport.urlReport.totNumOfResProxiesLinks += urlReport.numOfResProxiesLinks;
 		parentReport.urlReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
 
-		// Facet
-		if (facets != null && facets.instance != null)
-			parentReport.avgFacetCoverageByInstanceSum += facets.instance.coverage;
+		// Facet		
+		facets.facets.forEach(facet -> {
+			Facet parFacet = parentReport.facetReport.facet.stream().filter(f -> f.name.equals(facet.name)).findFirst().orElse(null);
+			//text is always covered
+			if(parFacet.name.equals("text") || facet.values != null)
+				parFacet.cnt++;			
+		});
 
-		parentReport.handleProfile(headerReport.profile, profileScore);
+		parentReport.handleProfile(header.id, profileScore);
 
 	}
 
@@ -198,12 +135,22 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
 	@Override
 	public boolean isValid() {
-		return isValid;
+		return segmentScores.stream().filter(Score::hasFatalMsg).findFirst().orElse(null) == null;
+	}
+	
+	@Override
+	public void addSegmentScore(Score segmentScore) {
+		if(segmentScores == null)
+			segmentScores = new ArrayList<>();
+		
+		segmentScores.add(segmentScore);
+		maxScore += segmentScore.maxScore;
+		score += segmentScore.score;
+		if(!segmentScore.segment.equals("profiles-score"))
+			instanceScore += segmentScore.score;
+		
 	}
 
-	public String getProfile() {
-		return headerReport.profile;
-	}
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
@@ -211,180 +158,59 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 		public String location;
 		public long size;
 
-		@XmlElementWrapper(name = "details")
-		List<Message> messages = null;
-
-		public FileReport(String location, long size, List<Message> messages) {
-			this.location = location;
-			this.size = size;
-			this.messages = messages;
-		}
-
-		public FileReport() {
-		};
+		public FileReport() {};
 	}
+
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class HeaderReport {
-		String profile;
-
-		@XmlElementWrapper(name = "details")
-		List<Message> messages = null;
-
-		public HeaderReport(String profile, List<Message> messages) {
-			this.profile = profile;
-			this.messages = messages;
-		}
-
-		public HeaderReport() {
-		};
-	}
-
-	@XmlRootElement
-	@XmlAccessorType(XmlAccessType.FIELD)
-	static class ResProxyReport {
-		int numOfResProxies;
-		int numOfResProxiesWithMime;
-		Double percOfResProxiesWithMime;
-		int numOfResProxiesWithReferences;
-		Double percOfResProxiesWithReferences;
+	public static class ResProxyReport {
+		public int numOfResProxies;
+		public int numOfResourcesWithMime;
+		public Double percOfResourcesWithMime;
+		public int numOfResProxiesWithReferences;
+		public Double percOfResProxiesWithReferences;
 
 		@XmlElementWrapper(name = "resourceTypes")
-		List<ResourceType> resourceType;
+		public Collection<ResourceType> resourceType;
 
-		// @XmlElementWrapper(name = "details") List<Message> messages = null;
-
-		public ResProxyReport(int numOfResProxies, int numOfResProxiesWithMime, double percOfResProxiesWithMime,
-				int numOfResProxiesWithReferences, double percOfResProxiesWithReferences,
-				List<ResourceType> resourceTypes) {
-			this.numOfResProxies = numOfResProxies;
-			this.numOfResProxiesWithMime = numOfResProxiesWithMime;
-			this.percOfResProxiesWithMime = percOfResProxiesWithMime;
-			this.numOfResProxiesWithReferences = numOfResProxiesWithReferences;
-			this.percOfResProxiesWithReferences = percOfResProxiesWithReferences;
-			this.resourceType = resourceTypes;
-		}
-
-		public ResProxyReport() {
-		}
+		public ResProxyReport() {}
 
 	}
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class ResourceType {
+	public static class ResourceType {
 		@XmlAttribute
-		String type;
+		public String type;
 
 		@XmlAttribute
-		int count;
+		public int count;
 
 	}
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class XMLReport {
-		int numOfXMLElements;
-		int numOfXMLSimpleElements;
-		int numOfXMLEmptyElement;
-		Double percOfPopulatedElements;
-
-		@XmlElementWrapper(name = "details")
-		List<Message> messages = null;
-
-		public XMLReport(int numOfXMLElements, int numOfXMLSimpleElements, int numOfXMLEmptyElement,
-				double percOfPopulatedElements, List<Message> messages) {
-			this.numOfXMLElements = numOfXMLElements;
-			this.numOfXMLSimpleElements = numOfXMLSimpleElements;
-			this.numOfXMLEmptyElement = numOfXMLEmptyElement;
-			this.percOfPopulatedElements = percOfPopulatedElements;
-			this.messages = messages;
-		}
-
-		public XMLReport() {
-		}
+	public static class XMLReport {
+		public int numOfXMLElements;
+		public int numOfXMLSimpleElements;
+		public int numOfXMLEmptyElement;
+		public Double percOfPopulatedElements;
+		
+		public XMLReport() {}
 	}
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class URLReport {
-		int numOfLinks;
-		int numOfUniqueLinks;
-		int numOfResProxiesLinks;
-		int numOfBrokenLinks;
-		Double percOfValidLinks;
+	public static class URLReport {
+		public int numOfLinks;
+		public int numOfUniqueLinks;
+		public int numOfResProxiesLinks;
+		public int numOfBrokenLinks;
+		public Double percOfValidLinks;
 
-		@XmlElementWrapper(name = "details")
-		List<Message> messages = null;
+		public URLReport() {}
 
-		public URLReport(int numOfLinks, int numOfUniqueLinks, int numOfResProxiesLinks, int numOfBrokenLinks,
-				double percOfValidLinks, List<Message> messages) {
-			this.numOfLinks = numOfLinks;
-			this.numOfUniqueLinks = numOfUniqueLinks;
-			this.numOfResProxiesLinks = numOfResProxiesLinks;
-			this.numOfBrokenLinks = numOfBrokenLinks;
-			this.percOfValidLinks = percOfValidLinks;
-			this.messages = messages;
-		}
-
-		public URLReport() {
-		}
-
-	}
-
-	public void addFileReport(String path, long size, List<Message> messages) {
-		fileReport = new FileReport(path, size, messages);
-	}
-
-	public void addHeaderReport(String profile, List<Message> messages) {
-		headerReport = new HeaderReport(profile, messages);
-	}
-
-	public void addResProxyReport(int numOfResProxies, int numOfResProxiesWithMime, int numOfResProxiesWithReferences,
-			Map<String, Integer> resourceTypeMap) {
-
-		double percOfResProxiesWithMime = 0;
-		double percOfResProxiesWithReferences = 0;
-
-		if (numOfResProxies > 0) {
-			percOfResProxiesWithMime = (double) numOfResProxiesWithMime / numOfResProxies;
-			percOfResProxiesWithReferences = (double) numOfResProxiesWithReferences / numOfResProxies;
-		}
-
-		// prepare resTypes
-		List<ResourceType> resourceTypes = null;
-		if (!resourceTypeMap.isEmpty()) {
-			resourceTypes = new ArrayList<>();
-			for (Entry<String, Integer> resType : resourceTypeMap.entrySet()) {
-				ResourceType res = new ResourceType();
-				res.type = resType.getKey();
-				res.count = resType.getValue();
-				resourceTypes.add(res);
-			}
-		}
-
-		resProxyReport = new ResProxyReport(numOfResProxies, numOfResProxiesWithMime, percOfResProxiesWithMime,
-				numOfResProxiesWithReferences, percOfResProxiesWithReferences, resourceTypes);
-	}
-
-	public void addXmlReport(int numOfXMLElements, int numOfXMLSimpleElements, int numOfXMLEmptyElement,
-			List<Message> messages) {
-
-		messages.sort((m1, m2) -> m2.lvl.priority - m1.lvl.priority);
-		double percOfPopulatedElements = (numOfXMLSimpleElements - numOfXMLEmptyElement)
-				/ (double) numOfXMLSimpleElements;
-		xmlReport = new XMLReport(numOfXMLElements, numOfXMLSimpleElements, numOfXMLEmptyElement,
-				percOfPopulatedElements, messages);
-	}
-
-	public void addURLReport(int numOfBrokenLinks, List<Message> messages) {
-
-		double percOfValidLinks = Double.NaN;
-		if (Configuration.HTTP_VALIDATION)
-			percOfValidLinks = (numOfUniqueLinks - numOfBrokenLinks) / (double) numOfUniqueLinks;
-		urlReport = new URLReport(numOfLinks, numOfUniqueLinks, numOfResProxiesLinks, numOfBrokenLinks,
-				percOfValidLinks, messages);
 	}
 
 }

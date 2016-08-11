@@ -80,4 +80,9 @@ public class CMDCollection extends CurationEntity {
 	public void setMinFileSize(long minFileSize) {
 		this.minFileSize = minFileSize;
 	}
+	
+	@Override
+	public String toString() {
+		return "Collection: " + path.toString();
+	}
 }

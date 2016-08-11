@@ -1,37 +1,24 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
-import com.ximpleware.ParseException;
 import com.ximpleware.VTDException;
-import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.facets.Profile2FacetMap;
 import eu.clarin.cmdi.curation.facets.Profile2FacetMap.Facet;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
-import eu.clarin.cmdi.curation.report.FacetReport;
+import eu.clarin.cmdi.curation.report.FacetReport.FacetStruct;
 import eu.clarin.cmdi.curation.report.FacetReport.FacetValue;
-import eu.clarin.cmdi.curation.report.FacetReport.FacetValues;
-import eu.clarin.cmdi.curation.report.FacetReport.Instance;
-import eu.clarin.cmdi.curation.report.FacetReport.Profile;
-import eu.clarin.cmdi.curation.report.Severity;
+import eu.clarin.cmdi.curation.report.Score;
+import eu.clarin.cmdi.curation.xml.CMDXPathService;
 
 /**
  * @author dostojic
@@ -39,103 +26,59 @@ import eu.clarin.cmdi.curation.report.Severity;
  */
 public class InstanceFacetProcessor extends CMDSubprocessor {
 
-	private static final Logger _logger = LoggerFactory.getLogger(InstanceFacetProcessor.class);
-
 	private static final String DEFAULT_LANGUAGE = "code:und";
 	private static final String FACET_LANGUAGECODE = "languageCode";
 
-	private Map<String, List<FacetValue>> facetValues = new LinkedHashMap<>();
-
+	int numOfFacetsCoveredByIns = 0;
+	
 	private VTDNav navigator;
 
 	@Override
-	public boolean process(CMDInstance entity, CMDInstanceReport report) {
-		boolean status = true;
-		report.facets = new FacetReport();
-		try {
-			parse(entity.getPath());
-
-			// coverage of profile
-
-			FacetConceptMappingService service;
-			Profile2FacetMap profileMap;
-			try {
-				service = FacetConceptMappingService.getInstance();
-				profileMap = service.getMapping(report.getProfile());
+	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
 				
-			} catch (Exception e) {
-				_logger.error("Unable to obtain mapping for profile {}", report.getProfile(), e);
-				return false;
-			}
+		FacetConceptMappingService facetMappingService = new FacetConceptMappingService();		
+		Profile2FacetMap facetMappings;
+		try{
+			facetMappings = facetMappingService.getFacetMapping(report.header);
+		
+		
+			report.facets = new FacetReportCreator().createFacetReport(facetMappings.getMappings());		
 			
-			extractFacetValues(profileMap);
-			int totalNumOfFacets = service.getTotalNumOfFacets();
-
-			Profile profileReport = new Profile();
-			profileReport.numOfCoveredFacets = profileMap.getMappings().size();
-			profileReport.notCovered = profileMap.getNotCovered();
-			profileReport.coverage = 1.0 * profileReport.numOfCoveredFacets / totalNumOfFacets;
-
-			Instance instance = new Instance();
-
-			instance.numOfCoveredFacets = facetValues.size();
-			instance.coverage = 1.0 * facetValues.size() / totalNumOfFacets;
-
-			List<FacetValues> vals = new ArrayList<>();
-			List<FacetValue> singleFacetValues = new ArrayList<>();
-			List<String> missingVals = new ArrayList<>();
-
-			for (String facet : profileMap.getFacetNames())
-				if (facetValues.containsKey(facet))
-					vals.add(new FacetValues(facet, facetValues.get(facet)));
-				else
-					missingVals.add(facet);
-
-			instance.facet = vals;
-			instance.missingValue = missingVals;
-
-			report.facets.numOfFacets = totalNumOfFacets;
-
-			report.facets.profile = profileReport;
-
-			report.facets.instance = instance;
-
-
-		} catch (Exception e) {
-			addMessage(Severity.FATAL, e.getMessage());
-			report.isValid = false;
-			status = false;
-		} finally {
-			report.facets.messages = msgs;
-		}
-
-		return status;
-	}
-
-	private void parse(Path cmdiRecord) throws Exception {
-		VTDGen parser = new VTDGen();
-		try {
-			parser.setDoc(Files.readAllBytes(cmdiRecord));
-			parser.parse(true);
-			navigator = parser.getNav();
-			parser = null;
-		} catch (IOException | ParseException e) {
-			throw new Exception("Errors while parsing " + cmdiRecord, e);
-		}
+			//parse instance
+			CMDXPathService xmlService = new CMDXPathService(entity.getPath());
+			navigator = xmlService.getNavigator();
+			extractFacetValues(facetMappings.getMappings(), report.facets.facets);
+			
+			report.facets.coveredByInstance = numOfFacetsCoveredByIns;
+			report.facets.instanceCoverage = (double) numOfFacetsCoveredByIns / report.facets.numOfFacets;
+		
+		}catch (Exception e) {
+			throw new Exception("Unable to obtain mapping for " + entity, e);
+		};
 
 	}
+	
+	@Override
+	public Score calculateScore(CMDInstanceReport report) {
+		return new Score(report.facets.instanceCoverage, 1.0, "facet-mapping", msgs);
+	}
 
-	private void extractFacetValues(Profile2FacetMap map) throws VTDException {
-		for (Facet facet : map.getMappings()) {
-			if(facet.getName().equals("text") && Configuration.COLLECTION_MODE){
-				facetValues.put("text", null);
+
+	private void extractFacetValues(Map<String, Facet> map, Collection<FacetStruct> facets) throws VTDException {
+		for(FacetStruct facetStruct: facets){
+			if(!facetStruct.covered)
+				continue;
+			//dont extract all values for collection mode
+			if(facetStruct.name.equals("text") && Configuration.COLLECTION_MODE){
 				continue;
 			}
+			
+			Facet facet = map.get(facetStruct.name);
 			
 			boolean matchedPattern = false;
 			Map<String, String> patterns = facet.getPatterns();
 			for (String pattern : patterns.keySet()) {
-				matchedPattern = matchPattern(facet.getName(), pattern, patterns.get(pattern), facet.getAllowMultipleValues());
+				matchedPattern = matchPattern(facetStruct.name, pattern, patterns.get(pattern), facet.getAllowMultipleValues(), facetStruct);
 				if (matchedPattern && !facet.getAllowMultipleValues()) {
 					break;
 				}
@@ -144,12 +87,14 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 			// using fallback patterns if extraction failed
 			if (matchedPattern == false) {
 				for (String pattern : facet.getFallbackPatterns()) {
-					matchedPattern = matchPattern(facet.getName(), pattern, null, facet.getAllowMultipleValues());
+					matchedPattern = matchPattern(facetStruct.name, pattern, null, facet.getAllowMultipleValues(), facetStruct);
 					if (matchedPattern && !facet.getAllowMultipleValues()) {
 						break;
 					}
 				}
 			}
+			
+			
 		}
 	}
 
@@ -170,7 +115,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	 * @return pattern matched a node in the CMDI file?
 	 * @throws VTDException
 	 */
-	private boolean matchPattern(String facet, String pattern, String concept, Boolean allowMultipleValues) throws VTDException {
+	private boolean matchPattern(String facet, String pattern, String concept, Boolean allowMultipleValues, FacetStruct facetStruct) throws VTDException {
 		final AutoPilot ap = new AutoPilot(navigator);
 		ap.declareXPathNameSpace("c", "http://www.clarin.eu/cmd/");
 		ap.selectXPath(pattern);
@@ -208,8 +153,14 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 			index = ap.evalXPath();
 		}
 
-		if (!values.isEmpty())
-			facetValues.put(facet, values);
+		if (!values.isEmpty()){
+			if(facetStruct.values == null){
+				facetStruct.values = values;
+				numOfFacetsCoveredByIns++;
+			}else
+				facetStruct.values.addAll(values);
+			
+		}
 		
 		
 		return matchedPattern;

@@ -1,11 +1,12 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import eu.clarin.cmdi.curation.entities.CurationEntity;
 import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Report;
+import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
 
 /**
@@ -16,20 +17,23 @@ import eu.clarin.cmdi.curation.report.Severity;
 
 public abstract class ProcessingStep<T extends CurationEntity, R extends Report> {
 
-    protected List<Message> msgs = null;
+    protected Collection<Message> msgs = null;
 
     /**
      * @param entity 
      * @param report
      * @return true if processing finished without fatal errors
+     * @throws CMDFatalErrorException 
+     * @throws Exception 
      */
-    public abstract boolean process(T entity, R report);
+    public abstract void process(T entity, R report) throws Exception;
     
+    public abstract Score calculateScore(R report);
     
     protected void addMessage(Severity lvl, String message){
-	if(msgs == null){
-	    msgs = new ArrayList<>();
-	}
-	msgs.add(new Message(lvl, message));
+		if(msgs == null){
+		    msgs = new ArrayList<>();
+		}
+		msgs.add(new Message(lvl, message));
     }
 }

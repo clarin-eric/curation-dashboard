@@ -28,63 +28,57 @@ public class CMDFileVisitor implements FileVisitor<Path> {
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-	_logger.trace("visiting {}", dir);
-	if (curDir != null)
-	    stack.push(curDir);
-
-	curDir = new CMDCollection(dir);
-
-	return FileVisitResult.CONTINUE;
+		_logger.trace("visiting {}", dir);
+		if (curDir != null)
+		    stack.push(curDir);
+	
+		curDir = new CMDCollection(dir);
+	
+		return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-	CurationEntity entity;
-	if (file.endsWith(".xsd"))
-	    entity = new CMDProfile(file, attrs.size());
-	else
-	    entity = new CMDInstance(file, attrs.size());
-
-	curDir.addChild(entity);
-	return FileVisitResult.CONTINUE;
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {	
+		curDir.addChild(new CMDInstance(file, attrs.size()));
+		return FileVisitResult.CONTINUE;
     }
 
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-	throw new IOException("Failed to process " + file, exc);
+		throw new IOException("Failed to process " + file, exc);
     }
 
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 
-	_logger.trace("finished visiting {}, number of files: {}", dir, curDir.getNumOfFiles());
-
-	long startTime = System.currentTimeMillis();
-	// fire processors for children
-	curDir.generateReport();
-	long end = System.currentTimeMillis();
-	_logger.info("validation for {} lasted {}", dir, TimeUtils.humanizeTime(end - startTime));
+		_logger.trace("finished visiting {}, number of files: {}", dir, curDir.getNumOfFiles());
 	
-	
-	if(!stack.empty()){
-	    root = stack.pop();
-	    root.addChild(curDir);
-	    curDir = root;
-	}else{
-	    root = curDir;
-	}
-	
-	//else: last elem
-	
-	return FileVisitResult.CONTINUE;
+		long startTime = System.currentTimeMillis();
+		// fire processors for children
+		curDir.generateReport();
+		long end = System.currentTimeMillis();
+		_logger.info("validation for {} lasted {}", dir, TimeUtils.humanizeTime(end - startTime));
+		
+		
+		if(!stack.empty()){
+		    root = stack.pop();
+		    root.addChild(curDir);
+		    curDir = root;
+		}else{
+		    root = curDir;
+		}
+		
+		//else: last elem
+		
+		return FileVisitResult.CONTINUE;
     }
 
     public CMDCollection getRoot() {
-	return root;
+		return root;
     }
 
     public void setRoot(CMDCollection root) {
-	this.root = root;
+		this.root = root;
     }
 
 }

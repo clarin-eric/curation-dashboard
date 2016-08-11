@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ximpleware.AutoPilot;
+import com.ximpleware.NavException;
 import com.ximpleware.ParseException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
@@ -19,16 +20,12 @@ public class CMDXPathService {
 	private static final Logger _logger = LoggerFactory.getLogger(CMDXPathService.class);
 
 	private VTDNav navigator = null;
-	
-	public CMDXPathService(VTDNav navigator){
-		this.navigator = navigator;
-	}
 
 	public CMDXPathService(Path path) throws Exception {
 		VTDGen parser = new VTDGen();
 		try {
 			parser.setDoc(Files.readAllBytes(path));
-			parser.parse(true);
+			parser.parse(false);
 			navigator = parser.getNav();
 			parser = null;
 		} catch (IOException | ParseException e) {
@@ -53,8 +50,7 @@ public class CMDXPathService {
 	public String getXPathValue(String xpath) throws Exception {
 		String result = null;
 		try {
-			navigator.toElement(VTDNav.ROOT);
-			AutoPilot ap = new AutoPilot(navigator);
+			AutoPilot ap = new AutoPilot(reset());
 			ap.selectXPath(xpath);
 			int index = ap.evalXPath();
 			if (index != -1)
@@ -65,12 +61,25 @@ public class CMDXPathService {
 		return result;
 	}
 	
+	public String getXPathAttrValue(String xpath, String attributeName) throws Exception {
+		String result = null;
+		try {
+			AutoPilot ap = new AutoPilot(reset());
+			ap.selectXPath(xpath);
+			int index = ap.evalXPath();
+			if (index != -1)
+				result = navigator.toString(navigator.getAttrVal(attributeName)).trim();
+		} catch (Exception e) {
+			throw new Exception("Errors while performing xpath operation:" + xpath, e);
+		}
+		return result;
+	}
+	
 	public Collection<String> getXPathValues(String xpath) throws Exception {
 		
 		Collection<String> result = new ArrayList<>();
 		try {
-			navigator.toElement(VTDNav.ROOT);
-			AutoPilot ap = new AutoPilot(navigator);
+			AutoPilot ap = new AutoPilot(reset());
 			ap.selectXPath(xpath);
 			while(true){
 				int index = ap.evalXPath();
@@ -84,5 +93,10 @@ public class CMDXPathService {
 		}
 		
 		return result;
+	}
+	
+	public VTDNav reset() throws NavException{
+		navigator.toElement(VTDNav.ROOT);
+		return navigator;
 	}
 }

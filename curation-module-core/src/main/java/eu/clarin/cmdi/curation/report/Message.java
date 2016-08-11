@@ -23,9 +23,9 @@ public class Message {
     public Message(){}
 
     public Message(Severity lvl, String message) {
-	super();
-	this.lvl = lvl;
-	this.message = message;
+		super();
+		this.lvl = lvl;
+		this.message = message;
     }
 
     public Severity getLvl() {

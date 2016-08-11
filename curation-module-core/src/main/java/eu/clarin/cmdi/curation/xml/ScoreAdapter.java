@@ -17,7 +17,6 @@ public class ScoreAdapter extends XmlAdapter<String, Double> {
 		formatter.applyPattern(Configuration.SCORE_NUMERIC_DISPLAY_FORMAT);
 	}
 	
-	
 
 	@Override
 	public Double unmarshal(String v) throws Exception {
@@ -26,6 +25,8 @@ public class ScoreAdapter extends XmlAdapter<String, Double> {
 
 	@Override
 	public String marshal(Double v) throws Exception {
+		if(v == null)
+			return null;
 		return v.isNaN()? "NaN" : formatter.format(v);
 	}
 

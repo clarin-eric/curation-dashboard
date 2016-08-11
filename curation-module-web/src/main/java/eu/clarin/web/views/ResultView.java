@@ -11,8 +11,6 @@ import com.vaadin.annotations.DesignRoot;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.BrowserWindowOpener;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.ui.Button;
@@ -20,8 +18,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.declarative.Design;
 
-import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.entities.CurationEntityType;
+import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.web.Shared;

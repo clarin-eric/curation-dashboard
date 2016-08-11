@@ -12,15 +12,12 @@ import java.io.OutputStream;
 public interface Report<R extends Report> {
 	
 	public String getName();
-
-	public void mergeWithParent(R parentReport);
-
-	public void toXML(OutputStream os) throws Exception;
-
-	public double calculateScore();
-	
-	public double getMaxScore();
 	
 	public boolean isValid();
-
+	
+	public void addSegmentScore(Score segmentScore);
+	
+	public void toXML(OutputStream os) throws Exception;
+	
+	public void mergeWithParent(R parentReport);
 }

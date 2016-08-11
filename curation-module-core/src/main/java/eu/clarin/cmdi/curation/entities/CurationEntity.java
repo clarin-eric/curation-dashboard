@@ -9,7 +9,9 @@ import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.report.Report;
 
 public abstract class CurationEntity {
-
+	
+	public enum CurationEntityType {PROFILE, INSTANCE, COLLECTION}
+	
 	static final Logger _logger = LoggerFactory.getLogger(CurationEntity.class);
 
 	protected Path path = null;
@@ -50,5 +52,8 @@ public abstract class CurationEntity {
 	public void setSize(long size) {
 		this.size = size;
 	}
+	
+	@Override
+	public abstract String toString();
 
 }

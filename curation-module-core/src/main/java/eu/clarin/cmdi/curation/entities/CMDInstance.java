@@ -5,16 +5,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
 
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CMDInstanceProcessor;
 
 public class CMDInstance extends CurationEntity {
 
-	public static Set<String> uniqueMDSelfLinks = Collections.synchronizedSet(new HashSet<>());
-	public static Collection<String> duplicateMDSelfLinks = Collections.synchronizedCollection(new LinkedList<>());
+	public static Collection<String> mdSelfLinks = Collections.synchronizedCollection(new HashSet<>());
+	public static Collection<String> duplicateMDSelfLink = Collections.synchronizedCollection(new HashSet<>());
+	
 
 	Collection<CMDUrlNode> links = new ArrayList<>();
 
@@ -38,13 +37,13 @@ public class CMDInstance extends CurationEntity {
 	public void setLinks(Collection<CMDUrlNode> links) {
 		this.links = links;
 	}
-
-	public static Set<String> getUniquemdselflinks() {
-		return uniqueMDSelfLinks;
+	
+	@Override
+	public String toString() {
+		int cnt = path.getNameCount();
+		String name = path.getName(cnt - 1).toString();
+		if(cnt > 1)
+			name = path.getName(cnt - 2) + "/" + name;
+		return "CMD Instance: " + name;
 	}
-
-	public static Collection<String> getDuplicatemdselflinks() {
-		return duplicateMDSelfLinks;
-	}
-
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -14,43 +13,41 @@ import java.util.stream.Collectors;
  */
 public class Profile2FacetMap {
 
-	private Collection<Facet> mappings = new ArrayList<>();
-
-	private List<String> notCovered = new ArrayList<String>();
-
-	public void addMapping(Facet facet) {
-		mappings.add(facet);
+	private Map<String, Facet> mappings = new HashMap<>();
+	
+	void addMapping(String name, Facet facet) {
+		mappings.put(name, facet);
 	}
 
-	public Collection<Facet> getMappings() {
+	public Map<String, Facet> getMappings() {
 		return mappings;
 	}
 
 	public Collection<String> getFacetNames() {
-		return mappings.stream().map(Facet::getName).collect(Collectors.toList());
+		return mappings.keySet();
 	}
 
-	public List<String> getNotCovered() {
-		return notCovered;
+	public Collection<String> getCovered() {
+		return mappings.keySet().stream().filter(name -> mappings.get(name) != null).collect(Collectors.toList());
+	}
+	
+	public Collection<String> getNotCovered() {
+		return mappings.keySet().stream().filter(name -> mappings.get(name) == null).collect(Collectors.toList());
 	}
 
-	public void addNotCovered(String facet) {
-		this.notCovered.add(facet);
-	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		mappings.forEach(f -> sb.append(f).append("\n"));
+		mappings.keySet().forEach(name -> sb.append(name + ":\n" + mappings.get(name)).append("\n"));
 		return sb.toString();
 	}
 
 	public static class Facet {
-		private String name;
 		private boolean caseInsensitive = false;
 		private Map<String, String> patterns = new HashMap<>(); //extended to keep concepts
-		private List<String> fallbackPatterns = new ArrayList<String>();
-		private List<String> derivedFacets = new ArrayList<String>();
+		private Collection<String> fallbackPatterns = new ArrayList<String>();
+		private Collection<String> derivedFacets = new ArrayList<String>();
 		private boolean allowMultipleValues = true;
 
 		public void setCaseInsensitive(boolean caseValue) {
@@ -65,7 +62,7 @@ public class Profile2FacetMap {
 			this.patterns = patterns;
 		}
 
-		public void setFallbackPatterns(List<String> fallbackPatterns) {
+		public void setFallbackPatterns(Collection<String> fallbackPatterns) {
 			this.fallbackPatterns = fallbackPatterns;
 		}
 
@@ -80,21 +77,14 @@ public class Profile2FacetMap {
 			return patterns;
 		}
 
-		public List<String> getFallbackPatterns() {
+		public Collection<String> getFallbackPatterns() {
 			return fallbackPatterns;
 		}
 
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public String getName() {
-			return name;
-		}
 
 		@Override
 		public String toString() {
-			StringBuilder sb = new StringBuilder("name:").append(name).append("\n").append("patterns:").append("\n");
+			StringBuilder sb = new StringBuilder("name:").append("\n").append("patterns:").append("\n");
 			patterns.forEach((k, v) -> sb.append("\t" + k + "\t" + v).append("\n"));
 			sb.append("fallback patterns:").append("\n");
 			fallbackPatterns.forEach(p -> sb.append("\t" + p).append("\n"));
@@ -110,12 +100,12 @@ public class Profile2FacetMap {
 			this.allowMultipleValues = allowMultipleValues;
 		}
 
-		public List<String> getDerivedFacets() {
+		public Collection<String> getDerivedFacets() {
 			return derivedFacets;
 		}
 
-		public void setDerivedFacets(List<String> derivedFacets) {
-			this.derivedFacets = derivedFacets;
+		public void setDerivedFacets(Collection<String> collection) {
+			this.derivedFacets = collection;
 		}
 
 	}

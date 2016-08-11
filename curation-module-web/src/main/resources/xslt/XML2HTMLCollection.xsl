@@ -6,8 +6,12 @@
 	<h1>Collection's report for: <xsl:value-of select="./file-section/provider"/></h1>
 	
 	
-	<p>Total Score: <xsl:value-of select="./score"/> from <xsl:value-of select="./@max-score-collection"/></p>
-	<p>Average Score: <xsl:value-of select="./avgScore"/> from <xsl:value-of select="./@max-score-instance"/></p>
+	<p>Total Score: <xsl:value-of select="./@score"/> out of <xsl:value-of select="./@col-max-score"/></p>
+	<p>Average Score: <xsl:value-of select="./@avg-score"/> out of <xsl:value-of select="./@ins-max-score"/></p>
+	<p>Maximal score in collection: <xsl:value-of select="./@max-score"/></p>
+	<p>Minimal score in collection: <xsl:value-of select="./@min-score"/></p>
+	
+	<hr/>
 	
 	<h2>File Section</h2>
 	<p>Provider: <xsl:value-of select="./file-section/provider"/></p>
@@ -16,6 +20,8 @@
 	<p>Average size: <xsl:value-of select="./file-section/avgSize"/> B</p>
 	<p>Minimal file size: <xsl:value-of select="./file-section/minFileSize"/> B</p>
 	<p>Maximal file size: <xsl:value-of select="./file-section/maxFileSize"/> B</p>
+	
+	<hr/>
 	
 	<h2>Header Section</h2>
 	<table border="1" cellpadding="1" cellspacing="1">
@@ -46,14 +52,40 @@
 		</tbody>
 	</table>
 	
+	<h2>Facet Section</h2>	
+	<table border="1" cellpadding="1" cellspacing="1">
+		<thead>
+			<tr>
+				<th scope="col">name</th>
+				<th scope="col">coverage</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr><td colspan="2"><b>
+				facet-coverage: <xsl:value-of select="./facet-section/coverage"/>
+			</b></td></tr>
+		</tfoot>
+		<tbody>
+		<xsl:for-each select="./facet-section/facets/facet">
+		<tr>
+			<td><xsl:value-of select="./@name"/></td>
+			<td><xsl:value-of select="./@coverage"/></td>
+	    </tr>
+		</xsl:for-each>
+		</tbody>
+	</table>
+	
+	<hr/>
+	
 	<h2>ResourceProxy Section</h2>
 	<p>Total number of resource proxies: <xsl:value-of select="./resProxy-section/totNumOfResProxies"/></p>
 	<p>Average number of resource proxies: <xsl:value-of select="./resProxy-section/avgNumOfResProxies"/></p>
-	<p>Total number of resource proxies with MIME: <xsl:value-of select="./resProxy-section/totNumOfResProxiesWithMime"/></p>
-	<p>Average number of resource proxies with MIME: <xsl:value-of select="./resProxy-section/avgNumOfResProxiesWithMime"/></p>
+	<p>Total number of resource proxies with MIME: <xsl:value-of select="./resProxy-section/totNumOfResourcesWithMime"/></p>
+	<p>Average number of resource proxies with MIME: <xsl:value-of select="./resProxy-section/avgNumOfResourcesWithMime"/></p>
 	<p>Total number of resource proxies with reference: <xsl:value-of select="./resProxy-section/totNumOfResProxiesWithReferences"/></p>
 	<p>Average number of resource proxies with references: <xsl:value-of select="./resProxy-section/avgNumOfResProxiesWithReferences"/></p>
 	
+	<hr/>
 	
 	<h2>XML Validation Section</h2>
 	<p>Total number of XML elements: <xsl:value-of select="./xml-validation-section/totNumOfXMLElements"/></p>
@@ -63,6 +95,8 @@
 	<p>Total number of empty XML elements: <xsl:value-of select="./xml-validation-section/totNumOfXMLEmptyElement"/></p>
 	<p>Average number of empty XML elements: <xsl:value-of select="./xml-validation-section/avgXMLEmptyElement"/></p>
 	<p>Average rate of populated elements: <xsl:value-of select="./xml-validation-section/avgRateOfPopulatedElements"/>%</p>
+	
+	<hr/>
 	
 	<h2>URL Validation Section</h2>
 	<p>Total number of links: <xsl:value-of select="./url-validation-section/totNumOfLinks"/></p>
@@ -74,24 +108,17 @@
 	<p>Total number of broken links: <xsl:value-of select="./url-validation-section/totNumOfBrokenLinks"/></p>
 	<p>Average number of broken links: <xsl:value-of select="./url-validation-section/avgNumOfBrokenLinks"/></p>
 	<p>Average number of valid links: <xsl:value-of select="./url-validation-section/avgNumOfValidLinks"/></p>
+		
+	<xsl:if test="./invalid-records/record">
 	
-	<h2>Facet Section</h2>
-	<p>Average facet coverage: <xsl:value-of select="./facet-section/avgFacetCoverageByInstance"/>%</p>
-	
-	<h2>Invalid files in collection</h2>
-	<table border="1" cellpadding="1" cellspacing="1">
-		<thead>
-			<tr><th>File</th></tr>
-		</thead>
-		<tfoot>
-			<tr><td>Total: <xsl:value-of select="count(./invalidFilesList/invalidFile)"/></td></tr>
-		</tfoot>
-		<tbody>
-		<xsl:for-each select="./invalidFilesList">
-			<tr><td><xsl:value-of select="./invalidFile"/></td></tr>
-		</xsl:for-each>
-		</tbody>
-	</table>
+		<hr/>	
+		<h2>Invalid files in collection</h2>
+		 <ol>
+		  <xsl:for-each select="./invalid-records/record">
+		  <li><xsl:copy-of select="." /></li>
+		  </xsl:for-each>
+		</ol>
+	</xsl:if>
 </body>
 </html>
 </xsl:template>

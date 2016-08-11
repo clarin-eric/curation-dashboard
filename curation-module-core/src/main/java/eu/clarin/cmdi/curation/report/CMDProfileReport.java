@@ -2,9 +2,7 @@ package eu.clarin.cmdi.curation.report;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
@@ -23,23 +21,18 @@ import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 @XmlRootElement(name = "profile-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDProfileReport implements Report<CMDProfileReport> {
-	
-	public static final double MAX_SCORE = 3;
-	
-	public transient boolean isValid = true;
-	
-	public transient boolean duplicatedName = false;
-	public transient boolean duplicatedDescription = false;
 
+	@XmlAttribute(name = "score")
+	public Double score = 0.0;
+	
 	@XmlAttribute(name = "max-score")
-	public final double maxScore = MAX_SCORE;
+	public double maxScore;
 
+	@XmlAttribute
 	public Long timeStamp = System.currentTimeMillis();
-
-	public Double score = 0.0;	
-
+	
 	@XmlElement(name = "header-section")
-	public Header header;
+	public ProfileHeader header;
 
 	@XmlElement(name = "cmd-components-section")
 	public Components components;
@@ -49,21 +42,15 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
 	@XmlElement(name = "facets-section")
 	public FacetReport facet;
-
-	@XmlElementWrapper(name = "details")
-	public List<Message> messages = null;
-
-	public void addDetail(Severity lvl, String message) {
-		if (messages == null)
-			messages = new ArrayList<>();
-		messages.add(new Message(lvl, message));
-	}
+	
+	@XmlElementWrapper(name="score-section")
+	@XmlElement(name="score")
+	public Collection<Score> segmentScores;
 
 	@Override
 	public void mergeWithParent(CMDProfileReport parentReport) {
 		// profile should not have a parent
 		throw new UnsupportedOperationException();
-
 	}
 
 	@Override
@@ -72,121 +59,59 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 		instanceMarshaller.marshal(this, os);
 	}
 	
+	
 	@Override
 	public String getName() {
-		return header.ID.substring(CRService.PROFILE_PREFIX.length());
-	}
-
-	@Override
-	public double getMaxScore() {
-		return MAX_SCORE;
-	};
-
-	public double calculateScore() {
-		
-		if(!isValid)
-			return score;
-
-		if (header.isPublic)
-			score++;
-
-		score += elements.percWithConcept; // * factor for concepts
-
-		score += facet.profile.coverage; // * factor for facet coverage
-		
-		return score;
+		return header.id + ": " + header.name;
 	}
 	
-	@Override
-	public boolean isValid() {
-		return isValid;
-	}
-	
-	public void createHeaderReport(String id, String url, String name, String description, boolean isPublic){
-		header = new Header();
-		header.ID = id;
-		header.url = url;
-		header.name = name;
-		header.description = description;
-		header.isPublic = isPublic;		
-	}
-
-	public void createComponentsReport(int total, int required, int unique) {
-		components = new Components();
-		components.total = total;
-		components.required = required;
-		components.unique = unique;
-
-	}
-
-	public void createElementsReport(int total, int unique, int required, int withConcept,
-			Map<String, Integer> datcats, int requiredDatcats) {
-		elements = new Elements();
-		elements.total = total;
-		elements.unique = unique;
-		elements.required = required;
-		elements.withConcept = withConcept;
-
-		elements.percWithConcept = (double) withConcept / total;
-
-		elements.concepts = new Concepts();
-
-		elements.concepts.total = elements.withConcept;
-		elements.concepts.unique = datcats.size();
-		elements.concepts.required = requiredDatcats;
-
-		for (Entry<String, Integer> datcat : datcats.entrySet())
-			elements.concepts.addConcept(datcat.getKey(), datcat.getValue());
-	}
-	
-	@XmlRootElement()
-	@XmlAccessorType(XmlAccessType.FIELD)
-	public static class Header {
-
-		public String ID;
-		public String name;		
-		public String description;
-		public String url;
-		public boolean isPublic;
-	}	
 
 	@XmlRootElement()
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class Components {
 
-		int total;
+		@XmlAttribute
+		public int total;
+		
+		@XmlAttribute
+		public int unique;
 
-		int unique;
+		@XmlAttribute
+		public int required; // cardinality > 0
 
-		int required; // cardinality > 0
-
-		// List<Component> component;
+		@XmlElement(name="component")
+		public Collection<Component> components;
 
 	}
 
 	@XmlRootElement()
 	@XmlAccessorType(XmlAccessType.FIELD)
-	static class Component {
+	public static class Component {
 
 		@XmlAttribute
-		String name;
-
+		public String id;
+		
 		@XmlAttribute
-		String id;
+		public String name;
+		
+		@XmlAttribute
+		public int count;
 	}
 
 	@XmlRootElement()
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class Elements {
 
-		int total;
+		@XmlAttribute
+		public int total;
 
-		int unique;
+		@XmlAttribute
+		public int required; // cardinality > 0
 
-		int required; // cardinality > 0
+		@XmlAttribute
+		public int withConcept;
 
-		int withConcept;
-
+		@XmlAttribute
 		public Double percWithConcept;
 
 		public Concepts concepts;
@@ -198,39 +123,43 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 	public static class Concepts {
 
 		@XmlAttribute
-		int total;
+		public int total;
 
 		@XmlAttribute
-		int unique;
+		public int unique;
 
 		@XmlAttribute
-		int required;
+		public int required;
 
-		public List<Datcat> concept;
-
-		public void addConcept(String url, int count) {
-
-			Datcat d = new Datcat();
-			d.url = url;
-			d.count = count;
-
-			if (concept == null)
-				concept = new ArrayList<>(total);
-
-			concept.add(d);
-
-		}
+		@XmlElement(name="concept")
+		public Collection<Datcat> concepts;
 
 	}
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class Datcat {
+		
 		@XmlAttribute
-		String url;
+		public String ccr;
 
 		@XmlAttribute
-		int count;
+		public int count;
+	}
+
+	@Override
+	public void addSegmentScore(Score segmentScore) {
+		if(segmentScores == null)
+			segmentScores = new ArrayList<>();
+		
+		segmentScores.add(segmentScore);
+		maxScore += segmentScore.maxScore;
+		score += segmentScore.score;
+	}
+
+	@Override
+	public boolean isValid() {
+		return segmentScores.stream().filter(Score::hasFatalMsg).findFirst().orElse(null) == null;
 	}
 
 }

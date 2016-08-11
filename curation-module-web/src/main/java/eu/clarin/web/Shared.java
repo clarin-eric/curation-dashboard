@@ -34,12 +34,12 @@ public class Shared {
 	
 	private static void initPublicProfiles(){
 		try {// .subList(0, 20)
-			publicProfiles = CRService.getInstance().getPublicProfiles().parallelStream().map(p -> {
+			publicProfiles = new CRService().getPublicProfiles().parallelStream().map(p -> {
 				try {
-					CMDProfileReport report = (CMDProfileReport) new CurationModule().processCMDProfile(p.getId());
-					return new PublicProfile(p.getId(), p.getName(), report.score, report.facet.profile.coverage, report.elements.percWithConcept);
+					CMDProfileReport report = (CMDProfileReport) new CurationModule().processCMDProfile(p.id);
+					return new PublicProfile(p.id, p.name, report.score, report.facet.profileCoverage, report.elements.percWithConcept);
 				} catch (Exception e) {
-					return new PublicProfile(p.getId(), p.getName(), -1, -1, -1);
+					return new PublicProfile(p.id, p.name, -1, -1, -1);
 				}
 			}).collect(Collectors.toList());
 

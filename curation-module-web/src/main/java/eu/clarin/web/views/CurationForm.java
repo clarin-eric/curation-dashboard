@@ -39,6 +39,7 @@ public class CurationForm extends VerticalLayout implements View{
 	
 	
 	private void curate(TextField input, boolean isInstance){
+		input.setValue(input.getValue().trim());
 		//validate input
 		clearError();
 		input.setValidationVisible(true);

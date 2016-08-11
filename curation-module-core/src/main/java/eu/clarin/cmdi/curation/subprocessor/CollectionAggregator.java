@@ -7,10 +7,20 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CMDCollection;
+import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CurationEntity;
+import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.report.CollectionReport;
+import eu.clarin.cmdi.curation.report.CollectionReport.Facet;
+import eu.clarin.cmdi.curation.report.CollectionReport.FacetReport;
+import eu.clarin.cmdi.curation.report.CollectionReport.FileReport;
+import eu.clarin.cmdi.curation.report.CollectionReport.HeaderReport;
+import eu.clarin.cmdi.curation.report.CollectionReport.ResProxyReport;
+import eu.clarin.cmdi.curation.report.CollectionReport.URLValidationReport;
+import eu.clarin.cmdi.curation.report.CollectionReport.XMLValidationReport;
+import eu.clarin.cmdi.curation.report.Score;
+import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 
 /**
@@ -24,10 +34,31 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
 	private final int CHUNK_SIZE = 10000;
 
 	@Override
-	public boolean process(CMDCollection dir, final CollectionReport report) {
-
-		report.addFileReport(dir.getPath().getFileName().toString(), dir.getNumOfFiles(), dir.getSize(),
-				dir.getMinFileSize(), dir.getMaxFileSize());
+	public void process(CMDCollection dir, final CollectionReport report) {
+		
+		report.fileReport = new FileReport();
+		report.headerReport = new HeaderReport();
+		report.resProxyReport = new ResProxyReport();
+		report.xmlReport = new XMLValidationReport();
+		report.urlReport = new URLValidationReport();
+		report.facetReport = new FacetReport();
+		
+		report.facetReport.facet = new ArrayList<>();
+		new FacetConceptMappingService().getFacetNames().forEach(f -> {
+			Facet facet = new Facet();
+			facet.name = f;
+			facet.cnt = 0;
+			report.facetReport.facet.add(facet);
+		});
+		
+		
+		//add info regarding file statistics
+		report.fileReport.provider = dir.getPath().getFileName().toString();
+		report.fileReport.numOfFiles = dir.getNumOfFiles();
+		report.fileReport.size = dir.getSize();
+		report.fileReport.minFileSize = dir.getMinFileSize();
+		report.fileReport.maxFileSize = dir.getMaxFileSize();
+		
 
 		// process in portions to avoid memory thresholds
 		Iterator<CurationEntity> it = dir.getChildren().iterator();
@@ -51,12 +82,23 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
 
 		report.calculateAverageValues();
 
-		if (!CMDInstance.duplicateMDSelfLinks.isEmpty())
-			report.addSelfLinks(new ArrayList(CMDInstance.duplicateMDSelfLinks));
-		CMDInstance.duplicateMDSelfLinks.clear();
-		CMDInstance.uniqueMDSelfLinks.clear();
-
-		return true;
+		if (!CMDInstance.duplicateMDSelfLink.isEmpty()){
+			report.headerReport.duplicatedMDSelfLink = CMDInstance.duplicateMDSelfLink;
+		}
+		CMDInstance.duplicateMDSelfLink.clear();
+		CMDInstance.mdSelfLinks.clear();
 
 	}
+
+	@Override
+	public Score calculateScore(CollectionReport report) {
+		double score = report.fileReport.numOfFiles;
+		if(report.invalidFiles != null){
+			report.invalidFiles.forEach(ir -> addMessage(Severity.ERROR, ir));
+			score = (score - report.invalidFiles.size()) / score;
+		}
+		
+		return new Score(score, (double) report.fileReport.numOfFiles, "invalid-files", msgs);
+	}
+	
 }

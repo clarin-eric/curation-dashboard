@@ -2,6 +2,8 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -20,6 +22,9 @@ import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CMDUrlNode;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
+import eu.clarin.cmdi.curation.report.CMDInstanceReport.XMLReport;
+import eu.clarin.cmdi.curation.report.Message;
+import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.xml.CMDErrorHandler;
 
@@ -33,48 +38,52 @@ public class InstanceXMLValidator extends CMDSubprocessor {
     
 
     @Override
-    public boolean process(CMDInstance entity, CMDInstanceReport report) {
-	boolean status = true;
-	try {
-	    ValidatorHandler schemaValidator = CRService.getInstance().getSchema(report.getProfile())
-		    .newValidatorHandler();
-	    msgs = new ArrayList<>();
-	    schemaValidator.setErrorHandler(new CMDErrorHandler(report, msgs));
-	    schemaValidator.setContentHandler(new CMDIInstanceContentHandler(entity, report));
-	    // setValidationFeatures(schemaValidator);
-	    SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-	    parserFactory.setNamespaceAware(true);
-	    SAXParser parser = parserFactory.newSAXParser();
-	    XMLReader reader = parser.getXMLReader();
-	    reader.setContentHandler(schemaValidator);
-	    reader.parse(new InputSource(entity.getPath().toUri().toString()));
-	} catch (Exception e) {
-	    _logger.error("Error processing XSD schema with ID:  " + report.getProfile(), e);
-	    addMessage(Severity.FATAL,
-		    "Error processing XSD schema with ID:  " + report.getProfile() + ", " + e.getMessage());
-	    
-	    status = false;
-	}finally{
-	    report.addXmlReport(numOfXMLElements, numOfXMLSimpleElements, numOfXMLEmptyElement, msgs);	    
-	}
-	return status;
+    public void process(CMDInstance entity, CMDInstanceReport report) throws Exception{
+		try {
+		    ValidatorHandler schemaValidator = new CRService().getSchema(report.header).newValidatorHandler();
+		    msgs = new ArrayList<>();
+		    schemaValidator.setErrorHandler(new CMDErrorHandler(report, msgs));
+		    schemaValidator.setContentHandler(new CMDIInstanceContentHandler(entity, report));
+		    // setValidationFeatures(schemaValidator);
+		    SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+		    parserFactory.setNamespaceAware(true);
+		    SAXParser parser = parserFactory.newSAXParser();
+		    XMLReader reader = parser.getXMLReader();
+		    reader.setContentHandler(schemaValidator);
+		    reader.parse(new InputSource(entity.getPath().toUri().toString()));
+	
+		    report.xmlReport = new XMLReport();
+		    report.xmlReport.numOfXMLElements = numOfXMLElements;
+		    report.xmlReport.numOfXMLSimpleElements = numOfXMLSimpleElements;
+		    report.xmlReport.numOfXMLEmptyElement = numOfXMLEmptyElement;
+		    report.xmlReport.percOfPopulatedElements = (numOfXMLSimpleElements - numOfXMLEmptyElement) / (double) numOfXMLSimpleElements;
+			
+			
+		} catch (Exception e) {
+		    throw new Exception("Unable to do xml validation for " + entity.toString(), e);
+		}
 	
     }
-
-    /*
-     * set custom xerces features here, if u really need them
-     * 
-     */
-
-    private void setValidationFeatures(ValidatorHandler validator) {
-	try {
-	    validator.setFeature("http://apache.org/xml/features/warn-on-duplicate-entitydef", true);
-	    validator.setFeature("http://apache.org/xml/features/continue-after-fatal-error", true);
-	    validator.setFeature("http://xml.org/sax/features/validation", true);
-	    validator.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
-	} catch (Exception e) {
-	    _logger.warn("feature is not supported", e);
+    
+	@Override
+	public Score calculateScore(CMDInstanceReport report) {
+		List<Message> list = new ArrayList<>(msgs);
+		//sort messages, errors first
+		Collections.sort(list, (m1, m2) -> m2.getLvl().getPriority() - m1.getLvl().getPriority());
+		// we don't take into account errors and warnings from xml parser
+		return new Score(report.xmlReport.percOfPopulatedElements, 1.0, "xml-validation", list);
 	}
+
+    //set custom xerces features here, if u really need them
+    private void setValidationFeatures(ValidatorHandler validator) {
+		try {
+		    validator.setFeature("http://apache.org/xml/features/warn-on-duplicate-entitydef", true);
+		    validator.setFeature("http://apache.org/xml/features/continue-after-fatal-error", true);
+		    validator.setFeature("http://xml.org/sax/features/validation", true);
+		    validator.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
+		} catch (Exception e) {
+		    _logger.warn("feature is not supported", e);
+		}
     }
     
     
@@ -136,35 +145,34 @@ public class InstanceXMLValidator extends CMDSubprocessor {
 	     * Receive notification of the end of an element.
 	     */
 	    public void endElement(String uri, String localName, String qName) throws SAXException {
-
-		if (curElem.equals(qName)) {// is a simple elem
-		    numOfXMLSimpleElements++;
-		    if (!elemWithValue) {// does it have a value
-			numOfXMLEmptyElement++;
-			String msg = "Empty element <" + qName + "> was found on line " + locator.getLineNumber();
-			addMessage(Severity.WARNING, msg);
-		    }
-		}
-
-		elemWithValue = false;
+			if (curElem.equals(qName)) {// is a simple elem
+			    numOfXMLSimpleElements++;
+			    if (!elemWithValue) {// does it have a value
+				numOfXMLEmptyElement++;
+				String msg = "Empty element <" + qName + "> was found on line " + locator.getLineNumber();
+				addMessage(Severity.WARNING, msg);
+			    }
+			}
+	
+			elemWithValue = false;
 	    }
 
 	    @Override
 	    public void characters(char[] ch, int start, int length) throws SAXException {
-		elemWithValue = true;
-		// keeping all values consumes a lot of mem
-		// keep only links for URL validation
-		// mark MDSelflinks and ResourceProxy Links
-		String val = new String(ch, start, length);
-		if (val.startsWith("http://") || val.startsWith("https://")){
-		    report.numOfLinks++;
-		    CMDUrlNode node = new CMDUrlNode(val, (curElem.equals("MdSelfLink") || curElem.equals("ResourceRef")) ? curElem : null);
-		    if(!values.contains(node))
-			values.add(node);
-		    
-		    if(curElem.equals("MdSelfLink"))
-			report.numOfResProxiesLinks++;
-		}
+			elemWithValue = true;
+			// keeping all values consumes a lot of mem
+			// keep only links for URL validation
+			// mark MDSelflinks and ResourceProxy Links
+			String val = new String(ch, start, length);
+			if (val.startsWith("http://") || val.startsWith("https://")){
+			    report.numOfLinks++;
+			    CMDUrlNode node = new CMDUrlNode(val, (curElem.equals("MdSelfLink") || curElem.equals("ResourceRef")) ? curElem : null);
+			    if(!values.contains(node))
+			    	values.add(node);
+			    
+			    if(curElem.equals("MdSelfLink"))
+			    	report.numOfResProxiesLinks++;
+			}
 	    }
 
 	    @Override

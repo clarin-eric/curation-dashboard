@@ -1,7 +1,6 @@
 package eu.clarin.cmdi.curation.xml;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -20,9 +19,9 @@ import eu.clarin.cmdi.curation.report.Severity;
 public class CMDErrorHandler implements ErrorHandler {
 
 	CMDInstanceReport report;
-	List<Message> msgs;
+	Collection<Message> msgs;
 
-	public CMDErrorHandler(CMDInstanceReport report, List<Message> msgs) {
+	public CMDErrorHandler(CMDInstanceReport report, Collection<Message> msgs) {
 		this.report = report;
 		this.msgs = msgs;
 	}

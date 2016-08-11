@@ -5,7 +5,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.regex.Matcher;
 
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDCollection;
@@ -20,16 +19,18 @@ public class CurationModule implements CurationModuleInterface {
 
 	@Override
 	public Report processCMDProfile(String profileId) {
-		return new CMDProfile(profileId).generateReport();
+		return new CMDProfile(CRService.CR_REST_1_2_PROFILES + profileId + "/xsd", "1.2").generateReport();
 	}
 
 	@Override
-	public Report processCMDProfile(URL url) {
-		Matcher m = CRService.PROFILE_ID_PATTERN.matcher(url.toString());
-		if(m.find()){
-			return new CMDProfile(m.group()).generateReport();
+	public Report processCMDProfile(URL schemaLocation) {
+		String cmdiVersion = "1.1";
+		if(schemaLocation.toString().startsWith(CRService.CR_REST)){
+			String version = schemaLocation.toString().substring(CRService.CR_REST.length(), CRService.CR_REST.length() + 3);
+			if(version.startsWith("1."))
+				cmdiVersion = version;
 		}
-		throw new IllegalArgumentException(url + " must contain profileID");
+		return new CMDProfile(schemaLocation.toString(), cmdiVersion).generateReport();
 	}
 
 	@Override

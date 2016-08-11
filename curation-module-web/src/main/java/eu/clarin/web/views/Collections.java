@@ -39,7 +39,7 @@ public class Collections extends Panel implements View {
 			c.avgScore, c.fileReport.numOfFiles,
 			c.fileReport.size, c.fileReport.avgSize, c.headerReport.profiles.totNumOfProfiles,
 			c.resProxyReport.avgNumOfResProxies, c.xmlReport.avgNumOfXMLElements, c.xmlReport.avgXMLEmptyElement,
-			c.xmlReport.avgRateOfPopulatedElements, c.facetReport.avgFacetCoverageByInstance)
+			c.xmlReport.avgRateOfPopulatedElements, c.facetReport.coverage)
 		);
 		
 		Grid.Column collection = grid.getColumn("Name");

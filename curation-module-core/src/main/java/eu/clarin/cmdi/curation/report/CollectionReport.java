@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.report;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -10,10 +11,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.xml.ScoreAdapter;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
@@ -24,58 +22,53 @@ import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 @XmlRootElement(name = "collection-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionReport implements Report<CollectionReport> {
-
-	transient public double avgFacetCoverageByInstanceSum;
-
-	public transient boolean isValid = true;
-
-	@XmlAttribute(name = "max-score-collection")
+	
+	@XmlAttribute(name = "score")
+	public Double score = 0.0;
+	
+	@XmlAttribute(name = "avg-score")
+	public Double avgScore = 0.0;
+	
+	@XmlAttribute(name = "min-score")
+	public Double insMinScore = Double.MAX_VALUE;
+	
+	@XmlAttribute(name = "max-score")
+	public Double insMaxScore = 0.0;
+	
+	@XmlAttribute(name = "col-max-score")
 	public Double maxScore = 0.0;
+	
+	@XmlAttribute(name = "ins-max-score")
+	public Double maxScoreInstance = 0.0;
 
-	@XmlAttribute(name = "max-score-instance")
-	public final Double maxScoreInstance = CMDInstanceReport.MAX_SCORE + CMDProfileReport.MAX_SCORE;
-
-	// report fields
+	@XmlAttribute
 	public Long timeStamp = System.currentTimeMillis();
 
-	@XmlJavaTypeAdapter(ScoreAdapter.class)
-	public Double score = 0.0;
-
-	@XmlJavaTypeAdapter(ScoreAdapter.class)
-	public Double avgScore = 0.0;
-
 	@XmlElement(name = "file-section")
-	public FileReport fileReport = new FileReport();
+	public FileReport fileReport;
 
 	@XmlElement(name = "header-section")
-	public HeaderReport headerReport = new HeaderReport();
+	public HeaderReport headerReport;
 
 	// ResProxies
 	@XmlElement(name = "resProxy-section")
-	public ResProxyReport resProxyReport = new ResProxyReport();
+	public ResProxyReport resProxyReport;
 
 	// XMLValidator
 	@XmlElement(name = "xml-validation-section")
-	public XMLValidationReport xmlReport = new XMLValidationReport();
+	public XMLValidationReport xmlReport;
 
 	// URL
 	@XmlElement(name = "url-validation-section")
-	public URLValidationReport urlReport = new URLValidationReport();
+	public URLValidationReport urlReport;
 
 	// Facets
 	@XmlElement(name = "facet-section")
-	public FacetReport facetReport = new FacetReport();
-
-	@XmlElementWrapper(name = "invalidFilesList")
-	public List<String> invalidFile = null;
-
-	public void addNewInvalid(String file) {
-		if (invalidFile == null)
-			invalidFile = new ArrayList<>();
-
-		invalidFile.add(file);
-
-	}
+	public FacetReport facetReport;
+			
+	@XmlElementWrapper(name="invalid-records")
+	@XmlElement(name="record")
+	public List<String> invalidFiles;
 
 	public void handleProfile(String profile, double score) {
 		if (headerReport == null)
@@ -105,7 +98,7 @@ public class CollectionReport implements Report<CollectionReport> {
 		// ResProxies
 
 		parentReport.resProxyReport.totNumOfResProxies += resProxyReport.totNumOfResProxies;
-		parentReport.resProxyReport.totNumOfResProxiesWithMime += resProxyReport.totNumOfResProxiesWithMime;
+		parentReport.resProxyReport.totNumOfResourcesWithMime += resProxyReport.totNumOfResourcesWithMime;
 		parentReport.resProxyReport.totNumOfResProxiesWithReferences += resProxyReport.totNumOfResProxiesWithReferences;
 
 		// XMLValidator
@@ -119,8 +112,11 @@ public class CollectionReport implements Report<CollectionReport> {
 		parentReport.urlReport.totNumOfResProxiesLinks += urlReport.totNumOfResProxiesLinks;
 		parentReport.urlReport.totNumOfBrokenLinks += urlReport.totNumOfBrokenLinks;
 
-		// Facet
-		parentReport.avgFacetCoverageByInstanceSum += avgFacetCoverageByInstanceSum;
+		// Facet		
+		facetReport.facet.forEach(facet -> {
+			Facet parFacet = parentReport.facetReport.facet.stream().filter(f -> f.name.equals(facet.name)).findFirst().orElse(null);
+			parFacet.cnt += facet.cnt;	
+		});
 
 		// Profiles
 		for (Profile p : headerReport.profiles.profiles)
@@ -130,7 +126,7 @@ public class CollectionReport implements Report<CollectionReport> {
 		if (headerReport.duplicatedMDSelfLink != null && !headerReport.duplicatedMDSelfLink.isEmpty()) {
 
 			if (parentReport.headerReport.duplicatedMDSelfLink == null) {
-				parentReport.headerReport.duplicatedMDSelfLink = new ArrayList();
+				parentReport.headerReport.duplicatedMDSelfLink = new ArrayList<>();
 			}
 
 			for (String mdSelfLink : headerReport.duplicatedMDSelfLink)
@@ -139,32 +135,23 @@ public class CollectionReport implements Report<CollectionReport> {
 		}
 
 		// invalid files
-		if (invalidFile != null) {
-			for (String invalid : invalidFile)
-				parentReport.addNewInvalid(invalid);
+		if (invalidFiles != null) {
+			if(parentReport.invalidFiles == null)
+				parentReport.invalidFiles = new ArrayList<>();
+			parentReport.invalidFiles.addAll(invalidFiles);
 		}
 
 	}
-
+	
 	@Override
-	public double getMaxScore() {
-		return fileReport.numOfFiles * maxScoreInstance;
-	};
-
-	@Override
-	public double calculateScore() {
-
-		if (!isValid)
-			return score;
-
-		avgScore = score / fileReport.numOfFiles;
-		maxScore = getMaxScore();
-		return score;
+	public void addSegmentScore(Score segmentScore) {
+		//not used
 	}
+
 
 	@Override
 	public boolean isValid() {
-		return isValid;
+		return true;
 	}
 
 	public void calculateAverageValues() {
@@ -174,7 +161,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
 		// ResProxies
 		resProxyReport.avgNumOfResProxies = (double) resProxyReport.totNumOfResProxies / fileReport.numOfFiles;
-		resProxyReport.avgNumOfResProxiesWithMime = (double) resProxyReport.totNumOfResProxiesWithMime
+		resProxyReport.avgNumOfResourcesWithMime = (double) resProxyReport.totNumOfResourcesWithMime
 				/ fileReport.numOfFiles;
 		resProxyReport.avgNumOfResProxiesWithReferences = (double) resProxyReport.totNumOfResProxiesWithReferences
 				/ fileReport.numOfFiles;
@@ -196,9 +183,11 @@ public class CollectionReport implements Report<CollectionReport> {
 				/ fileReport.numOfFiles;
 
 		// Facets
-		if (facetReport == null)
-			facetReport = new FacetReport();
-		facetReport.avgFacetCoverageByInstance = (double) avgFacetCoverageByInstanceSum / fileReport.numOfFiles;
+		facetReport.facet.forEach(facet -> facet.coverage = (double) facet.cnt / fileReport.numOfFiles);
+		facetReport.coverage = facetReport.facet.stream().mapToDouble(f -> f.cnt != 0? 1.0 : 0).sum() / facetReport.facet.size();
+		
+		avgScore = score / fileReport.numOfFiles;
+		maxScore = fileReport.numOfFiles * maxScoreInstance;
 
 	}
 
@@ -223,7 +212,7 @@ public class CollectionReport implements Report<CollectionReport> {
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class HeaderReport {
 		@XmlElementWrapper(name = "duplicatedMDSelfLinks")
-		public List<String> duplicatedMDSelfLink = null;
+		public Collection<String> duplicatedMDSelfLink = null;
 		public Profiles profiles = null;
 	}
 
@@ -232,8 +221,8 @@ public class CollectionReport implements Report<CollectionReport> {
 	public static class ResProxyReport {
 		public int totNumOfResProxies;
 		public Double avgNumOfResProxies = 0.0;
-		public int totNumOfResProxiesWithMime;
-		public Double avgNumOfResProxiesWithMime = 0.0;
+		public int totNumOfResourcesWithMime;
+		public Double avgNumOfResourcesWithMime = 0.0;
 		public int totNumOfResProxiesWithReferences;
 		public Double avgNumOfResProxiesWithReferences = 0.0;
 
@@ -252,7 +241,6 @@ public class CollectionReport implements Report<CollectionReport> {
 	}
 
 	@XmlRootElement
-	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class URLValidationReport {
 		public int totNumOfLinks;
 		public Double avgNumOfLinks = 0.0;
@@ -268,7 +256,23 @@ public class CollectionReport implements Report<CollectionReport> {
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class FacetReport {
-		public Double avgFacetCoverageByInstance = 0.0;
+		public Double coverage = 0.0;
+		
+		@XmlElementWrapper(name="facets")
+		public Collection<Facet> facet;
+	}
+	
+	@XmlRootElement
+	public static class Facet{
+		@XmlAttribute 
+		public String name;
+		
+		@XmlAttribute 
+		public int cnt; //num of records covering it
+		
+		@XmlAttribute 
+		public Double coverage;
+		
 	}
 
 	@XmlRootElement(name = "profiles")
@@ -327,23 +331,6 @@ public class CollectionReport implements Report<CollectionReport> {
 		
 		@XmlAttribute
 		public Double score;
-	}
-
-	public void addFileReport(String provider, long numOfFiles, long size, long minSize, long maxSize) {
-		fileReport.provider = provider;
-		fileReport.numOfFiles = numOfFiles;
-		fileReport.size = size;
-		fileReport.minFileSize = minSize;
-		fileReport.maxFileSize = maxSize;
-
-	}
-
-	public void addSelfLinks(List<String> duplicatedMDSelfLink) {
-		if (headerReport == null) {
-			headerReport = new HeaderReport();
-			headerReport.duplicatedMDSelfLink = duplicatedMDSelfLink;
-		}
-
 	}
 
 }

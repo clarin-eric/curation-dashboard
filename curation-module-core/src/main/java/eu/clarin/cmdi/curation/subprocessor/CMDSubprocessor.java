@@ -13,6 +13,6 @@ import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 public abstract class CMDSubprocessor extends ProcessingStep<CMDInstance, CMDInstanceReport> {
 
     @Override
-    public abstract boolean process(CMDInstance entity, CMDInstanceReport report);
+    public abstract void process(CMDInstance entity, CMDInstanceReport report) throws Exception;
 
 }

@@ -14,8 +14,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.clarin.cmdi.curation.entities.CurationEntityType;
-
 public class XSLTTransformer {
 	
 	static final Logger _logger = LoggerFactory.getLogger(XSLTTransformer.class);
@@ -45,7 +43,7 @@ public class XSLTTransformer {
 		}
 	}
 	
-	public String transform(CurationEntityType type, String content){
+	public String transform(eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType type, String content){
 		Source source = new StreamSource(new StringReader(content));
 		StreamResult result = new StreamResult(new StringWriter());
 		try{
