@@ -61,10 +61,7 @@ class ProfileCacheFactory{
 	
 	
 	
-	private static class ProfileCacheLoader extends CacheLoader<ProfileHeader, ProfileCacheEntry>{	
-		
-		static final String PROFILE_ID_FORMAT = "clarin\\.eu:cr1:p_[0-9]+";
-		static final Pattern PROFILE_ID_PATTERN = Pattern.compile(PROFILE_ID_FORMAT);
+	private static class ProfileCacheLoader extends CacheLoader<ProfileHeader, ProfileCacheEntry>{
 
 		final boolean isPublicProfilesCache;
 		
@@ -80,7 +77,7 @@ class ProfileCacheFactory{
 			Path xsd;			
 			
 			if(isPublicProfilesCache){
-				Matcher matcher = PROFILE_ID_PATTERN.matcher(header.schemaLocation);
+				Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(header.schemaLocation);
 				matcher.find();
 				String id = matcher.group(0);					
 				

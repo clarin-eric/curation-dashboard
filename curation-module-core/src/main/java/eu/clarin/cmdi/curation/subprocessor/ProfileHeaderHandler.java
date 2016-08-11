@@ -1,5 +1,7 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
+import java.util.regex.Matcher;
+
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
@@ -34,7 +36,14 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 			report.header = new ProfileHeader();
 			report.header.schemaLocation = schemaLocation;
 			report.header.cmdiVersion = entity.getCmdiVersion();
-			report.header.isPublic = service.isSchemaCRResident(schemaLocation);			
+			
+			Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(report.header.schemaLocation);
+			matcher.find();
+			String id = matcher.group(0);
+			
+			report.header.isPublic = id == null? false : 
+				service.getPublicProfiles().stream().filter(p -> p.id.equals(id)).findFirst().orElse(null) == null?
+						false : true;		
 		}
 		
 		report.header.isLocalFile = isLocalFile;
