@@ -58,7 +58,7 @@ class FacetMappingCacheFactory{
 				Facet facet = new Facet();
 				Map<String, String> xpaths = new HashMap<>(); //<xpath, concept>
 				//take all patterns for "id" facet				
-				if ("id".equals(facetConcept.getName())) {
+				if (FacetConstants.FIELD_ID.equals(facetConcept.getName())) {
 					facetConcept.getPatterns().forEach(pattern -> xpaths.put(pattern, null));
 				}
 				

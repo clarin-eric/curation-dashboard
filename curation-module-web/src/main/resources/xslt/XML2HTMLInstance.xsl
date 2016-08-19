@@ -42,18 +42,22 @@
 	
 		<hr/>
 	
-	<h2>facets-section</h2>	
+	<h2>facets-section</h2>
+	
+	<font color="blue" size="2">* - facet is derived</font>
+	 
 	<table style="width:100%" border="1" cellpadding="1" cellspacing="1">
 		<thead>
 			<tr>
 				<th scope="col">Facet</th>
 				<th scope="col">Value</th>
+				<th scope="col">Normalised Value</th>
 				<th scope="col">Concept</th>
 				<th scope="col">XPath</th>
 			</tr>
 		</thead>
 		<tfoot>
-			<tr><td colspan="4"><b>
+			<tr><td colspan="5"><b>
 				total: <xsl:value-of select="./facets-section/@numOfFacets"/> 				
 				coveredByInstance: <xsl:value-of select="./facets-section/@coveredByInstance"/> 
 				instanceCoverage: <xsl:value-of select="./facets-section/@instanceCoverage"/> 
@@ -69,18 +73,31 @@
 				<xsl:for-each select="./entry">
 					<tr>								
 						<xsl:if test="position() = 1">
-							<th rowspan="{last()}"><xsl:value-of select="../@name"/></th>
-						</xsl:if>				
+							<th rowspan="{last()}">
+								<xsl:value-of select="../@name"/>
+								<xsl:if test="../@derived">*</xsl:if>
+							</th>
+						</xsl:if>
 						<th><xsl:value-of select="@value"/></th>
-						<td><a href="{@concept}" target="_blank"><xsl:value-of select="@concept"/></a></td>
-						<td><xsl:value-of select="@xpath"/></td>
+						<td><xsl:value-of select="./@normalisedValue"/></td>											
+						<td><a href="{@concept}" target="_blank"><xsl:value-of select="./@concept"/></a></td>
+						<td><xsl:value-of select="./@xpath"/></td>
 					</tr>
 				</xsl:for-each>
 			  </xsl:when>
 			  <xsl:otherwise>
 				<tr>
 					<th><xsl:value-of select="./@name"/></th>
-					<th colspan="3">missing value</th>
+					<th colspan="4"><font color="red">
+						<xsl:choose>
+			  				<xsl:when test="./@covered = 'true'">
+								missing value
+							</xsl:when>
+			  				<xsl:otherwise>
+			  					not covered by profile
+			  				</xsl:otherwise>
+			  			</xsl:choose>
+					</font></th>
 				</tr>
 			  </xsl:otherwise>
 			</xsl:choose>			

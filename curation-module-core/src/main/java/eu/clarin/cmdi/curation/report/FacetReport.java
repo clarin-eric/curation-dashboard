@@ -48,10 +48,14 @@ public class FacetReport {
     	public String name;
     	
     	@XmlAttribute
-    	public boolean covered;    	
+    	public boolean covered;
+    	
+    	@XmlAttribute
+    	public Boolean derived = null;
     	
     	@XmlElement(name = "entry")
 		public Collection<FacetValue> values;
+    	
     }
 
     
@@ -60,7 +64,10 @@ public class FacetReport {
     public static class FacetValue{
     	
     	@XmlAttribute
-    	public String value;    	
+    	public String value;
+    	
+    	@XmlAttribute
+    	public String normalisedValue;
     	
     	@XmlAttribute
     	public String concept;
