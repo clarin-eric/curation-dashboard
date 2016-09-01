@@ -22,7 +22,7 @@ public class FacetConceptMappingService implements IFacetConceptMappingService{
 	// move this to config
 	public static final String FACET_CONCEPTS_URL = "https://raw.githubusercontent.com/clarin-eric/VLO/master/vlo-commons/src/main/resources/facetConcepts.xml";
 
-	static Collection<FacetConcept> facetConcepts = FacetConcepts.createFacetConcept();
+	public static final Collection<FacetConcept> facetConcepts = FacetConcepts.createFacetConcept();
 
 	private static final LoadingCache<ProfileHeader, Profile2FacetMap> facetMappingPublicCache = FacetMappingCacheFactory.createFacetMappingCache(true);
 	private static final LoadingCache<ProfileHeader, Profile2FacetMap> facetMappingNonpublicCache = FacetMappingCacheFactory.createFacetMappingCache(false);
