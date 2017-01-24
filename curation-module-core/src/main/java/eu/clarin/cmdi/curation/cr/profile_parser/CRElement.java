@@ -7,6 +7,7 @@ public class CRElement {
 	String name = null;
 	String ref = null; //datcat or id in case of component
 	
+	boolean isLeaf;
 	boolean isRequired;	
 	NodeType type;
 	int lvl;
@@ -34,7 +35,7 @@ public class CRElement {
 	
 	@Override
 	public String toString() {
-		return type.name() + "\t" + name + "\t" + ref;
+		return type.name() + "\t" + name + "\t" + "leaf:" + isLeaf + "\t" + ref;
 	}
 	
 

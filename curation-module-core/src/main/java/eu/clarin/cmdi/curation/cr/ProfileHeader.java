@@ -1,11 +1,12 @@
 package eu.clarin.cmdi.curation.cr;
 
+import java.util.Objects;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -42,9 +43,7 @@ public class ProfileHeader {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(15, 45)
-				.append(schemaLocation)
-				.hashCode();
+		return Objects.hash(this.schemaLocation);
 	}
 	
 	@Override

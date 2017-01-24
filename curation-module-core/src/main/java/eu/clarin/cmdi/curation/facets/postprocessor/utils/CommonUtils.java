@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -13,16 +15,27 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.ximpleware.AutoPilot;
+import com.ximpleware.VTDGen;
+import com.ximpleware.VTDNav;
+
 import eu.clarin.cmdi.curation.facets.FacetConstants;
 
 public final class CommonUtils {
+	
+	private final static Logger LOG = LoggerFactory.getLogger(CommonUtils.class);
 
-    private final static Set<String> ANNOTATION_MIMETYPES = new HashSet<String>();
+    private final static Set<String> ANNOTATION_MIMETYPES = new HashSet<>();
+    
+    static final Map<String, Map<String, String>> cmdiComponentItemMapCache = new HashMap<>();
 
     static {
         ANNOTATION_MIMETYPES.add("text/x-eaf+xml");
@@ -102,23 +115,38 @@ public final class CommonUtils {
      * @throws SAXException
      * @throws ParserConfigurationException
      */
-    public static Map<String, String> createCMDIComponentItemMap(String urlToComponent) throws XPathExpressionException, SAXException,
-            IOException, ParserConfigurationException {
-        Map<String, String> result = new HashMap<String, String>();
-        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-        domFactory.setNamespaceAware(true);
-        URL url = new URL(urlToComponent);
-        //TODO: Process XML as stream for much better performance (no need to build entire DOM)
-        DocumentBuilder builder = domFactory.newDocumentBuilder();
-        Document doc = builder.parse(url.openStream());
-        XPath xpath = XPathFactory.newInstance().newXPath();
-        NodeList nodeList = (NodeList) xpath.evaluate("//item", doc, XPathConstants.NODESET);
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node node = nodeList.item(i);
-            String shortName = node.getTextContent();
-            String longName = node.getAttributes().getNamedItem("AppInfo").getNodeValue().replaceAll(" \\([a-zA-Z]+\\)$", "");
-            result.put(shortName.toUpperCase(), longName);
-        }
+    public synchronized static Map<String, String> createCMDIComponentItemMap(String urlToComponent) throws Exception {
+    	
+    	//check in cache
+    	Map<String, String> result;
+    	result = cmdiComponentItemMapCache.get(urlToComponent);
+    	if(result != null)
+    		return result;
+    	
+    	LOG.info("Creating code map from {}", urlToComponent);
+    	//not in cache
+        result = new ConcurrentHashMap<String, String>();
+        
+        
+        VTDGen parser = new VTDGen();
+		if (!parser.parseHttpUrl(urlToComponent, true))
+			throw new Exception("Errors while parsing " + urlToComponent);
+		VTDNav navigator = parser.getNav();
+		AutoPilot ap = new AutoPilot(navigator);
+		ap.selectXPath("//item");
+		while(true){
+            int index = ap.evalXPath();
+			if (index != -1){
+				String shortName = navigator.getXPathStringVal();
+				String longName = navigator.toString(navigator.getAttrVal("AppInfo")).replaceAll(" \\([a-zA-Z]+\\)$", "");								
+				result.put(shortName.toUpperCase(), longName);
+			}
+			else
+				break;
+		}
+        
+        //add to cache
+        cmdiComponentItemMapCache.put(urlToComponent, result);
         return result;
     }
 

@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
+import eu.clarin.cmdi.curation.instance_parser.ParsedInstance.InstanceNode;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Score;
@@ -24,14 +26,16 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 	boolean missingMdSelfLink = false;
 
 	@Override
-	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
-		CMDXPathService xmlService = new CMDXPathService(entity.getPath());
+	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {		
 		CRService crService = new CRService();
+		ParsedInstance parsedInstance = entity.getParsedInstance();
 
-		String schemaLocation = xmlService.getXPathAttrValue("/CMD/@schemaLocation", "schemaLocation");
+		InstanceNode instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/CMD/@xsi:schemaLocation")).findFirst().orElse(null); 
+		String schemaLocation = instanceNode != null? instanceNode.getValue() : null;
 		String profileIdFromSchema = null;
 		if (schemaLocation == null || schemaLocation.isEmpty()){
-			schemaLocation = xmlService.getXPathAttrValue("/CMD/@noNamespaceSchemaLocation", "noNamespaceSchemaLocation");
+			instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/CMD/@xsi:noNamespaceSchemaLocation")).findFirst().orElse(null);
+			schemaLocation = instanceNode != null? instanceNode.getValue() : null;
 		}else{
 			String[] locations = schemaLocation.split(" ");
 			schemaLocation = locations[locations.length - 1];
@@ -39,13 +43,17 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 			profileIdFromSchema = extractProfile(schemaLocation);
 		} 
 
-		String cmdVersion = xmlService.getXPathAttrValue("/CMD/@CMDVersion", "CMDVersion");
+		
+		instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/CMD/@CMDVersion")).findFirst().orElse(null);
+		String cmdVersion = instanceNode != null? instanceNode.getValue() : null;
 
-		String mdprofile = xmlService.getXPathValue("/CMD/Header/MdProfile/text()");
-		String mdCollectionDisplayName = xmlService.getXPathValue("/CMD/Header/MdCollectionDisplayName/text()");
-		String mdSelfLink = xmlService.getXPathValue("/CMD/Header/MdSelfLink/text()");
+		instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/CMD/Header/MdProfile/text()")).findFirst().orElse(null);
+		String mdprofile = instanceNode != null? instanceNode.getValue() : null;
+		instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/CMD/Header/MdCollectionDisplayName/text()")).findFirst().orElse(null);
+		String mdCollectionDisplayName = instanceNode != null? instanceNode.getValue() : null;
+		instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/CMD/Header/MdSelfLink/text()")).findFirst().orElse(null);
+		String mdSelfLink = instanceNode != null? instanceNode.getValue() : null;
 
-		xmlService = null;
 		
 		missingSchema = schemaLocation == null || schemaLocation.isEmpty();
 		missingMdprofile = mdprofile == null || mdprofile.isEmpty();
@@ -98,6 +106,8 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 		report.header = crService.createProfileHeader(schemaLocation, cmdVersion, false);
 		report.header.id = mdprofile;
 		report.header.cmdiVersion = cmdVersion;
+		report.fileReport.collection = mdCollectionDisplayName;
+		
 		report.profileScore = crService.getScore(report.header);
 		
 		report.addSegmentScore(new Score(report.profileScore, CRService.PROFILE_MAX_SCORE, "profiles-score", null));

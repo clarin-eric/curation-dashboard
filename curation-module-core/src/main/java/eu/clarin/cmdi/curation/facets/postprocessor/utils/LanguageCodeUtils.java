@@ -150,11 +150,9 @@ public class LanguageCodeUtils {
         return iso639_2TToISO639_3Map;
     }
 
-    private Map<String, String> createCodeMap(String url) {
-        LOG.info("Creating language code map from {}", url);
+    private Map<String, String> createCodeMap(String url) {       
         try {
-            Map<String, String> result = new ConcurrentHashMap<String, String>(CommonUtils.createCMDIComponentItemMap(url));
-            return result;
+        	return CommonUtils.createCMDIComponentItemMap(url);
         } catch (Exception e) {
             if (CommonUtils.shouldSwallowLookupErrors()) {
                 LOG.warn("Ignoring exception", e);

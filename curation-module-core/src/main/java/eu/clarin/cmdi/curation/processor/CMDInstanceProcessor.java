@@ -3,7 +3,11 @@ package eu.clarin.cmdi.curation.processor;
 import java.util.Arrays;
 import java.util.Collection;
 
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
+import eu.clarin.cmdi.curation.subprocessor.CollectionInstanceFacetProcessor;
+import eu.clarin.cmdi.curation.subprocessor.CollectionInstanceHeaderProcessor;
+import eu.clarin.cmdi.curation.subprocessor.CollectionInstanceResourceProxyProcessor;
 import eu.clarin.cmdi.curation.subprocessor.FileSizeValidator;
 import eu.clarin.cmdi.curation.subprocessor.InstanceFacetProcessor;
 import eu.clarin.cmdi.curation.subprocessor.InstanceHeaderProcessor;
@@ -16,14 +20,25 @@ public class CMDInstanceProcessor extends AbstractProcessor<CMDInstanceReport> {
 
     @Override	
     protected Collection<ProcessingStep> createPipeline() {
-		return Arrays.asList(
-			new FileSizeValidator(),
-			new InstanceHeaderProcessor(),
-			new InstanceResourceProxyProcessor(),
-			new InstanceXMLValidator(),
-			new URLValidator(),
-			new InstanceFacetProcessor()
-		);
+		return (Configuration.COLLECTION_MODE)?
+				Arrays.asList(
+					new FileSizeValidator(),
+					new CollectionInstanceHeaderProcessor(),
+					new CollectionInstanceResourceProxyProcessor(),
+					//new URLValidator(),
+					new InstanceXMLValidator(),
+					new CollectionInstanceFacetProcessor())
+				:
+				Arrays.asList(
+					new FileSizeValidator(),
+					new InstanceHeaderProcessor(),
+					new InstanceResourceProxyProcessor(),
+					new URLValidator(),
+					new InstanceXMLValidator(),
+					new InstanceFacetProcessor()
+				);
+				
+			
     }
 
     @Override
