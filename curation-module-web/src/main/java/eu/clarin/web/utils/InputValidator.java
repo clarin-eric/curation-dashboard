@@ -19,12 +19,14 @@ public class InputValidator implements Validator{
 		
 		if(val == null || val.length() == 0) throw new InvalidValueException("Value is missing!");
 				
-		if(isInstance)
+		if(isInstance){
 			if(!val.matches(URL_FORMAT))
 				throw new InvalidValueException("Invalid value, URL expected!");
-		else//profile: URL or profileID
+		}
+		else{//profile: URL or profileID
 			if(!val.matches(URL_FORMAT) && !val.matches(PROFILE_ID_FORMAT))
-				throw new InvalidValueException("Invalid value, URL expected!");
+				throw new InvalidValueException("Invalid value, URL or Profile ID expected!");
+		}
 	}	
 
 }

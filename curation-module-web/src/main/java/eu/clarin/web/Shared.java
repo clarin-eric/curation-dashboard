@@ -4,10 +4,15 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
@@ -21,11 +26,17 @@ public class Shared {
 	
 	public static List<CollectionReport> collections;	
 	public static List<PublicProfile> publicProfiles;
+	public static Collection<String> facetNames;
+	
 	
 	public static void init(){
 		REPORTS_FOLDER = Configuration.OUTPUT_DIRECTORY.resolve("collections");
+		//init facetNames
+		facetNames = new FacetConceptMappingService().getFacetNames();		
 		initPublicProfiles();
 		initCollections();
+		
+		
 	}
 	
 	public static CollectionReport getCollectionReport(final String name){
@@ -33,13 +44,17 @@ public class Shared {
 	}
 	
 	private static void initPublicProfiles(){
-		try {// .subList(0, 20)
-			publicProfiles = new CRService().getPublicProfiles().parallelStream().map(p -> {
-				try {
+		try {
+			List<ProfileHeader> profiles = (List<ProfileHeader>) new CRService().getPublicProfiles();
+			publicProfiles = profiles.parallelStream().map(p -> {//.subList(0, 10) 
+				Map<String, Boolean> facetMap = new LinkedHashMap<>();
+				facetNames.forEach(name -> facetMap.put(name, false));				
+				try {					
 					CMDProfileReport report = (CMDProfileReport) new CurationModule().processCMDProfile(p.id);
-					return new PublicProfile(p.id, p.name, report.score, report.facet.profileCoverage, report.elements.percWithConcept);
+					report.facet.coverage.stream().filter(f -> f.coveredByProfile).map(f -> f.name).forEach(f -> facetMap.put(f, true));					
+					return new PublicProfile(p.id, p.name, report.score, report.facet.profileCoverage, report.elements.percWithConcept, facetMap);
 				} catch (Exception e) {
-					return new PublicProfile(p.id, p.name, -1, -1, -1);
+					return new PublicProfile(p.id, p.name, -1, -1, -1, facetMap);
 				}
 			}).collect(Collectors.toList());
 
@@ -60,5 +75,4 @@ public class Shared {
 			e.printStackTrace();
 		}
 	}
-
 }

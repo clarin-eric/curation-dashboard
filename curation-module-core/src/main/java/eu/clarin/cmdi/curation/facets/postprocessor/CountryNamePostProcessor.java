@@ -49,7 +49,7 @@ public class CountryNamePostProcessor implements PostProcessor {
     private Map<String, String> createCountryCodeMap() {
     	
         final String countryComponentUrl = VLOConfigFactory.getVloConfig().getCountryComponentUrl();
-        LOG.info("Creating country code map from {}", countryComponentUrl);
+        //LOG.info("Creating country code map from {}", countryComponentUrl);
         try {
             Map<String, String> result = CommonUtils.createCMDIComponentItemMap(countryComponentUrl);
             return result;

@@ -2,10 +2,10 @@ package eu.clarin.web;
 
 import java.io.IOException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +21,19 @@ public class ApplicationInit implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
-		try {
-			Configuration.init(Thread.currentThread().getContextClassLoader().getResourceAsStream("curate.properties"));
+		try {			
+			ServletContext sc = sce.getServletContext();
+			String configLocation = sc.getInitParameter("config.location");
+			if(configLocation != null){
+				Configuration.init(configLocation);
+			}else
+				Configuration.initDefault();
 			Configuration.HTTP_VALIDATION = true;
 			
 			// init shared
 			Shared.init();
 			
-		} catch (ConfigurationException | IOException e) {
+		} catch (IOException e) {
 			_logger.error("", e);
 			throw new RuntimeException("Unable to initialize configuration with default properties file", e);
 		}

@@ -12,7 +12,7 @@ import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CurationEntity;
 import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.report.CollectionReport;
-import eu.clarin.cmdi.curation.report.CollectionReport.Facet;
+import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.report.CollectionReport.FacetReport;
 import eu.clarin.cmdi.curation.report.CollectionReport.FileReport;
 import eu.clarin.cmdi.curation.report.CollectionReport.HeaderReport;
@@ -45,7 +45,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
 		
 		report.facetReport.facet = new ArrayList<>();
 		new FacetConceptMappingService().getFacetNames().forEach(f -> {
-			Facet facet = new Facet();
+			FacetCollectionStruct facet = new FacetCollectionStruct();
 			facet.name = f;
 			facet.cnt = 0;
 			report.facetReport.facet.add(facet);

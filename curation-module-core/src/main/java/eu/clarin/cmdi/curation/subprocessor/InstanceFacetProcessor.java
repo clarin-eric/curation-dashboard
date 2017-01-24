@@ -2,17 +2,10 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import com.google.common.collect.ComparisonChain;
-import com.ximpleware.AutoPilot;
-import com.ximpleware.NavException;
-import com.ximpleware.VTDException;
-import com.ximpleware.VTDNav;
-
+import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.facets.FacetConstants;
@@ -29,13 +22,14 @@ import eu.clarin.cmdi.curation.facets.postprocessor.OrganisationPostProcessor;
 import eu.clarin.cmdi.curation.facets.postprocessor.PostProcessor;
 import eu.clarin.cmdi.curation.facets.postprocessor.ResourceClassPostProcessor;
 import eu.clarin.cmdi.curation.facets.postprocessor.TemporalCoveragePostProcessor;
-import eu.clarin.cmdi.curation.main.Configuration;
+import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
-import eu.clarin.cmdi.curation.report.FacetReport.FacetStruct;
-import eu.clarin.cmdi.curation.report.FacetReport.FacetValue;
+import eu.clarin.cmdi.curation.report.Concept;
+import eu.clarin.cmdi.curation.report.FacetReport;
+import eu.clarin.cmdi.curation.report.FacetReport.FacetValueStruct;
+import eu.clarin.cmdi.curation.report.FacetReport.ValueNode;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.curation.xml.CMDXPathService;
 
 /**
  * @author dostojic
@@ -44,35 +38,25 @@ import eu.clarin.cmdi.curation.xml.CMDXPathService;
 public class InstanceFacetProcessor extends CMDSubprocessor {
 
 	int numOfFacetsCoveredByIns = 0;
-	
-	private VTDNav navigator;
 
 	@Override
 	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
 				
-		FacetConceptMappingService facetMappingService = new FacetConceptMappingService();		
+		FacetConceptMappingService facetMappingService = new FacetConceptMappingService();
+		Map<String, CMDINode> elements = new CRService().getParsedProfile(report.header).getElements();
+		ParsedInstance parsedInstance = entity.getParsedInstance();
 		Profile2FacetMap facetMappings;
+		
 		try{
 			facetMappings = facetMappingService.getFacetMapping(report.header);
-		
-		
-			report.facets = new FacetReportCreator().createFacetReport(facetMappings.getMappings());	
+						
+			report.facets = new FacetReportCreator().createFacetReport(facetMappings.getMappings());			
+						
+			createValueNodes(parsedInstance, elements, report.facets);			
+			joinFacetsToValues(facetMappings.getMappings(), report.facets);
 			
-			//parse instance
-			CMDXPathService xmlService = new CMDXPathService(entity.getPath());
-			navigator = xmlService.getNavigator();
-			extractFacetValues(facetMappings.getMappings(), report.facets.facets);			
-			
-			
-			Collections.sort((List<FacetStruct>)report.facets.facets, (a, b) -> 
-				 ComparisonChain.start()
-				 	.compareTrueFirst(a.values != null, b.values != null)
-					.compareTrueFirst(a.covered, b.covered)
-					.result()
-			);
-			
-			report.facets.coveredByInstance = numOfFacetsCoveredByIns;
-			report.facets.instanceCoverage = (double) numOfFacetsCoveredByIns / report.facets.numOfFacets;
+			double numOfCoveredByIns = report.facets.coverage.stream().filter(facet -> facet.coveredByInstance).count();
+			report.facets.instanceCoverage = numOfCoveredByIns / report.facets.numOfFacets;
 		
 		}catch (Exception e) {
 			throw new Exception("Unable to obtain mapping for " + entity, e);
@@ -84,24 +68,38 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	public Score calculateScore(CMDInstanceReport report) {
 		return new Score(report.facets.instanceCoverage, 1.0, "facet-mapping", msgs);
 	}
-
-
-	private void extractFacetValues(Map<String, Facet> map, Collection<FacetStruct> facets) throws VTDException {
-		Collection<FacetStruct> derivedFacets= new ArrayList<>();
-		for(FacetStruct facetStruct: facets){
-			if(!facetStruct.covered)
-				continue;
-			//dont extract all values for collection mode
-			if(facetStruct.name.equals(FacetConstants.FIELD_TEXT) && Configuration.COLLECTION_MODE){
-				continue;
-			}
+	
+	private void createValueNodes(ParsedInstance parsedInstance, Map<String, CMDINode> parsedProfile, FacetReport facetReport){
+		
+		if(facetReport.values == null){
+			facetReport.values = new ArrayList<>();
+		}
+		
+		parsedInstance.getNodes().stream()
+		.filter(node -> !node.getValue().trim().isEmpty())
+		.forEach(instanceNode -> {
+			ValueNode val = new ValueNode();
+			val.xpath = instanceNode.getXpath();
+			val.value = instanceNode.getValue();
 			
-			Facet facet = map.get(facetStruct.name);
+			CMDINode node = parsedProfile.get(instanceNode.getXpath());
+			if(node != null && node.concept != null)
+				val.concept = new Concept(node.concept.uri, node.concept.prefLabel, node.concept.status);
+			
+			facetReport.values.add(val);
+			
+		});
+		
+	}
+
+	private void joinFacetsToValues(Map<String, Facet> facetMappings, FacetReport facetReport){
+		facetReport.coverage.stream().filter(f -> f.coveredByProfile).map(f -> f.name).forEach(facetName -> {
+			Facet facet = facetMappings.get(facetName);
 			
 			boolean matchedPattern = false;
-			Map<String, String> patterns = facet.getPatterns();
-			for (String pattern : patterns.keySet()) {
-				matchedPattern = matchPattern(facetStruct.name, pattern, patterns.get(pattern), facet.getAllowMultipleValues(), facetStruct);
+			Collection<String> patterns = facet.getPatterns();
+			for (String pattern : patterns) {
+				matchedPattern = matchPattern(facetName, pattern, facet, facetReport);
 				if (matchedPattern && !facet.getAllowMultipleValues()) {
 					break;
 				}
@@ -110,152 +108,116 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 			// using fallback patterns if extraction failed
 			if (matchedPattern == false) {
 				for (String pattern : facet.getFallbackPatterns()) {
-					matchedPattern = matchPattern(facetStruct.name, pattern, null, facet.getAllowMultipleValues(), facetStruct);
+					matchedPattern = matchPattern(facetName, pattern, facet, facetReport);
 					if (matchedPattern && !facet.getAllowMultipleValues()) {
 						break;
 					}
 				}
 			}
-			
-			//normalize facet values
-			normalise(facetStruct);
-			
-			
-			//create derived facets and assigned values
-			facet.getDerivedFacets().forEach(df -> {
-				FacetStruct derivedFacet = new FacetStruct();
-				derivedFacet.name = df;
-				derivedFacet.derived = true;
-				derivedFacet.covered = facetStruct.covered;
-				derivedFacet.values = facetStruct.values
-						.stream()
-						//facetvalue is set to normalised facet value
-						.map(facVal -> new FacetValue(null, null, facVal.normalisedValue))
-						.collect(Collectors.toList());
-				//normalize values for derived facet
-				normalise(derivedFacet);
-				
-				derivedFacets.add(derivedFacet);
-			});
-		}
-		
-		//add derived facets to the report
-		facets.addAll(derivedFacets);
+		});
 	}
 	
-
-	/**
-	 * Extracts content from CMDI file for a specific facet based on a single
-	 * XPath expression
-	 *
-	 * @param cmdiData
-	 *            representation of the CMDI document
-	 * @param nav
-	 *            VTD Navigator
-	 * @param config
-	 *            facet configuration
-	 * @param pattern
-	 *            XPath expression
-	 * @param allowMultipleValues
-	 *            information if multiple values are allowed in this facet
-	 * @return pattern matched a node in the CMDI file?
-	 * @throws VTDException
-	 */
-	private boolean matchPattern(String facet, String pattern, String concept, Boolean allowMultipleValues, FacetStruct facetStruct) throws VTDException {
-		final AutoPilot ap = new AutoPilot(navigator);
-		ap.declareXPathNameSpace("c", "http://www.clarin.eu/cmd/");
-		ap.selectXPath(pattern);
-
+	private boolean matchPattern(String facetName, String pattern, Facet facet, FacetReport facetReport){
+		
 		boolean matchedPattern = false;
-		int index = ap.evalXPath();
-
-		ArrayList<FacetValue> values = new ArrayList<>();
-
-		while (index != -1) {
-			matchedPattern = true;
-			if (navigator.getTokenType(index) == VTDNav.TOKEN_ATTR_NAME) {
-				// if it is an attribute you need to add 1 to the index to get
-				// the right value
-				index++;
+		
+		for(ValueNode valueNode: facetReport.values){
+			//remove array indexes, i.e. [1]
+			String xpath = valueNode.xpath.replaceAll("\\[[0-9]+\\]", "");
+			if(pattern.contains("//")){//generic xpath: compare only the last part
+				String[] tokens = pattern.split("//");
+				if(!xpath.endsWith(tokens[tokens.length - 1]))
+					continue;
+			}else if(pattern.matches(".*\\[@.*=\\\".*\\\"\\].*")){
+				/* pattern has condition
+				 * check first the condition
+				 */
+				String[] tokens = pattern.split("=");
+				String attrXpath = tokens[0].replace('[', '/');
+				String attrVal = tokens[1].substring(1, tokens[1].indexOf('"', 1));
+				ValueNode conditional = facetReport.values
+						.stream()
+						.filter(iNode -> iNode.xpath.equals(attrXpath))
+						.findFirst()
+						.orElse(null);
+				
+				//attribute doens't exist or its value doesn't match the one from condition
+				if(conditional == null || !conditional.value.equals(attrVal))
+					continue;
+			}else{
+				if(!xpath.equals(pattern))
+					continue;
 			}
-			final String value = navigator.toString(index);
-			final String languageCode = extractLanguageCode(navigator);
-
-			// ignore non-English language names for facet LANGUAGE_CODE
-			if (facet.equals(FacetConstants.FIELD_LANGUAGE_CODE) 
-					&& !languageCode.equals(FacetConstants.ENG_LANGUAGE)
-					&& !languageCode.equals(FacetConstants.DEFAULT_LANGUAGE)
-				) {
-				index = ap.evalXPath();
-				continue;
+			
+			//should obtain val from the pattern/@xml:lang but here we dont check it
+			//final String languageCode = extractLanguageCode(navigator);
+			
+			//normalisation is done in this method
+			FacetValueStruct facetNode = createFacetValueStruct(facetName, valueNode.value, false);
+			
+			if(facetNode != null){
+				facetReport.coverage.stream().filter(f -> f.name.equals(facetName)).findFirst().ifPresent(f -> f.coveredByInstance = true);
+				matchedPattern = true;			
+				
+				if(valueNode.facet == null){
+					valueNode.facet = new ArrayList<>();
+				}
+				
+				valueNode.facet.add(facetNode);				
+				
+				//create derived facets and assigned values
+				facet.getDerivedFacets().forEach(df -> {
+					FacetValueStruct derivedFacetNode = createFacetValueStruct(df, facetNode.normalisedValue, true);				
+					
+					if(derivedFacetNode != null){
+						valueNode.facet.add(derivedFacetNode);
+						//don't count derived facets 
+						//facetReport.coveredByInstance.add(df);
+					}
+				});				
 			}
-
-			if (value != null && !value.isEmpty()){				
-				FacetValue newValue = new FacetValue(concept, pattern, value);
-				if(!values.contains(newValue))
-					values.add(newValue);
-			}
-
-			if (!allowMultipleValues)
+			
+			if (!facet.getAllowMultipleValues())
 				break;
-			index = ap.evalXPath();
-		}
-
-		if (!values.isEmpty()){
-			if(facetStruct.values == null){
-				facetStruct.values = values;
-				numOfFacetsCoveredByIns++;
-			}else
-				facetStruct.values.addAll(values);
+			
 			
 		}
-		
 		
 		return matchedPattern;
-	}
+	}	
 
-	private String extractLanguageCode(VTDNav nav) throws NavException {
-		// extract language code in xml:lang if available
-		Integer langAttrIndex = nav.getAttrVal("xml:lang");
-		String languageCode;
-		if (langAttrIndex != -1) {
-			languageCode = nav.toString(langAttrIndex).trim();
-		} else {
-			return FacetConstants.DEFAULT_LANGUAGE;
-		}
-
-		return languageCode;
-	}
+	/*
+	 * facet value normalisation is done here
+	 */
 	
-	private void normalise(FacetStruct facet){
-		//don't normalise when assessing collection
-		if(Configuration.COLLECTION_MODE || facet.values == null)
-			return;
-		PostProcessor postProcessor = getPostProcessor(facet.name);
+	private FacetValueStruct createFacetValueStruct(String facetName, String value, boolean isDerived){
+		
+		FacetValueStruct facetNode = new FacetValueStruct();
+		facetNode.name = facetName;
+		facetNode.isDerived = isDerived? true : null;
+		facetNode.normalisedValue = null;
+		
+		if(value == null || value.isEmpty())
+			return facetNode;
+		
+		PostProcessor postProcessor = getPostProcessor(facetName);
 		if(postProcessor == null)
-			return;
+			return facetNode;
 		
-		facet.values.forEach(item ->{
-			String normalisedValue = String.join("; ", postProcessor.process(item.value));
-			if(!item.value.equals(normalisedValue)){
-				item.normalisedValue = normalisedValue;
-				if(!normalisedValue.equals("--"))
-					addMessage(Severity.INFO, "Normalised value for facet "+ facet.name + ": '" + item.value + "' into '" + normalisedValue + "'");
-			}
-		});
+		String normalisedValue = String.join("; ", postProcessor.process(value));
+		if(normalisedValue != null && !normalisedValue.trim().isEmpty() && !normalisedValue.equals("--") && !value.equals(normalisedValue)){
+			addMessage(Severity.INFO, "Normalised value for facet " + facetName + ": '" + value + "' into '" + normalisedValue + "'");
+			facetNode.normalisedValue = normalisedValue;
+		}else if(facetName.equals(FacetConstants.FIELD_LICENSE) && normalisedValue.equals("--")){
+			//ignore values normalized to '--' for license facet
+			facetNode = null;
+			addMessage(Severity.INFO, "Ignored value for facet "+ facetName + ": '" + value + "'. This value will be removed from mapping");
+		}
+			
+		return facetNode;	
 		
-		//ignore values normalized to '--' for license facet
-		if(facet.name.equals(FacetConstants.FIELD_LICENSE))
-			facet.values.removeIf(item -> {
-				if(item.normalisedValue != null && item.normalisedValue.equals("--")){
-					addMessage(Severity.INFO, "Ignored value for facet "+ facet.name + ": '" + item.value + "'. This value will be removed from mapping");
-					return true;
-				}else
-					return false;
-				
-			});		
+		
 	}
-	
 	
 	private PostProcessor getPostProcessor(String facetName){
 		switch (facetName) {
@@ -285,5 +247,4 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 				return null;
 		}
 	}
-
 }

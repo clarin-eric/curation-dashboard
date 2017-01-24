@@ -4,17 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -31,6 +27,7 @@ import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParser;
 import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParserFactory;
 import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.main.Configuration;
+import eu.clarin.cmdi.curation.xml.SchemaResourceResolver;
 
 class ProfileCacheFactory{
 	
@@ -38,7 +35,12 @@ class ProfileCacheFactory{
 	
 	private static final Logger _logger = LoggerFactory.getLogger(ProfileCacheFactory.class);
 	
-	private static final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);	
+	private static final SchemaFactory schemaFactory;
+	
+	static{
+		schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		schemaFactory.setResourceResolver(new SchemaResourceResolver());
+	}
 	
 	public static LoadingCache<ProfileHeader, ProfileCacheEntry> createProfileCache(boolean isPublicProfilesCache){
 		return isPublicProfilesCache?
@@ -93,12 +95,25 @@ class ProfileCacheFactory{
 				}
 			}else{//non-public profiles are not cached on disk
 				_logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.schemaLocation);
-				if(header.isLocalFile){
-					xsd = Paths.get(header.schemaLocation);
-				}else{
-					xsd = Files.createTempFile("CLARIN_Profile_" + System.nanoTime(), ".xsd");
+				
+				//keep private schemas on disk
+				
+				Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(header.schemaLocation);
+				matcher.find();
+				String id = matcher.group(0);					
+				
+				String fileName = id.substring(CRService.PROFILE_PREFIX.length());
+				xsd = Configuration.CACHE_DIRECTORY.resolve("private_profiles");
+				xsd = xsd.resolve(fileName + ".xsd");
+				//try to load it from the disk
+				_logger.debug("Loading schema for non public profile {} from {}", id, xsd);
+				if (!Files.exists(xsd)) {
+					// if not download it
+					Files.createFile(xsd);
+					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", id);
 					new Downloader().download(header.schemaLocation, xsd.toFile());
-					}
+					
+				}
 			}
 			
 			VTDGen vg = new VTDGen();
@@ -108,11 +123,12 @@ class ProfileCacheFactory{
 			ParsedProfile parsedProfile = parser.parse(vg.getNav(), header);
 			Schema schema = createSchema(xsd.toFile());
 			
+			//facetMapping
+			
 			return new ProfileCacheEntry(parsedProfile, schema);
 		}
 		
 	}
-	
 	
 	static class ProfileCacheEntry{
 		ParsedProfile parsedProfile;

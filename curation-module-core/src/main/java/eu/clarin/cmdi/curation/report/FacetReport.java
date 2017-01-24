@@ -1,6 +1,3 @@
-/**
- * 
- */
 package eu.clarin.cmdi.curation.report;
 
 import java.util.Collection;
@@ -9,9 +6,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
  * @author dostojic
@@ -24,83 +20,60 @@ public class FacetReport {
 	@XmlAttribute
     public int numOfFacets;
 	
-	@XmlAttribute
-	public Integer coveredByProfile;
-	
-	@XmlAttribute
-	public Integer coveredByInstance;
+	@XmlElementWrapper
+	@XmlElement(name="facet")
+	public Collection<Coverage> coverage;
 	
 	@XmlAttribute
 	public Double profileCoverage;
 	
-	//keep it as Object to remove from profile report
 	@XmlAttribute
-	public Double instanceCoverage;
+	public Double instanceCoverage;	
 	
-	
-	@XmlElement(name = "facet")
-	public Collection<FacetStruct> facets;
-	
-	@XmlRootElement
-    @XmlAccessorType(XmlAccessType.FIELD)
-    public static class FacetStruct{
-    	@XmlAttribute
-    	public String name;
-    	
-    	@XmlAttribute
-    	public boolean covered;
-    	
-    	@XmlAttribute
-    	public Boolean derived = null;
-    	
-    	@XmlElement(name = "entry")
-		public Collection<FacetValue> values;
-    	
-    }
+	@XmlElementWrapper
+	@XmlElement(name="valueNode")
+	public Collection<ValueNode> values;
 
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class ValueNode{
+    	
+    	@XmlElement public String value;
+    	
+    	@XmlElement public String xpath;
+    	
+    	@XmlElement	public Concept concept;
+    	
+    	@XmlElement public Collection<FacetValueStruct> facet;
+    		
+    }    
     
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class FacetValue{
+    public static class FacetValueStruct{
     	
-    	@XmlAttribute
-    	public String value;
-    	
-    	@XmlAttribute
-    	public String normalisedValue;
-    	
-    	@XmlAttribute
-    	public String concept;
-    	
-    	@XmlAttribute
-    	public String xpath;
-    	
-    	
-    	public FacetValue() {
-		}
-
-		public FacetValue(String concept, String xpath, String value) {
-			this.concept = concept;
-			this.xpath = xpath;
-			this.value = value;
-		}
+    	@XmlAttribute public String name;
 		
-		@Override
-		public boolean equals(Object obj) {
-			if (!(obj instanceof FacetValue))
-	            return false;
-	        if (obj == this)
-	            return true;
-	        FacetValue rhs = (FacetValue) obj;
-	        return new EqualsBuilder()
-	        		.append(value, rhs.value)
-	        		.append(xpath, rhs.xpath)
-	        		.isEquals();
-		}
+    	@XmlAttribute public Boolean isDerived;
+    	
+    	@XmlAttribute public String normalisedValue;    
 		
-		@Override
-		public String toString() {
-			return value + "\t" + xpath + "\t" + concept;
-		}    	
     }
+    
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Coverage{
+    	
+    	@XmlAttribute public String name;
+		
+    	@XmlAttribute public Boolean coveredByProfile = false;
+    	
+    	@XmlAttribute public Boolean coveredByInstance = false;
+    	
+    	@Override
+    	public String toString() {
+    		return name + "\tprofile: " + coveredByProfile + "\tinstance: " + coveredByInstance;
+    	}
+		
+    }
+    
 }

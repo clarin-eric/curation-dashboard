@@ -49,7 +49,8 @@ public class CurationModule implements CurationModuleInterface {
 		Report r = new CMDInstance(path, size).generateReport();
 		Files.delete(path);
 		
-		((CMDInstanceReport)r).fileReport.location = url.toString();
+		if(r instanceof CMDInstanceReport)
+			((CMDInstanceReport)r).fileReport.location = url.toString();
 		return r;
 	}
 

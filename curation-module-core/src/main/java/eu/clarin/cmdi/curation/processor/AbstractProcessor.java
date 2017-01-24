@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.clarin.cmdi.curation.entities.CurationEntity;
+import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.report.ErrorReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
@@ -25,10 +26,13 @@ public abstract class AbstractProcessor<R extends Report<?>> {
 			}
 				
 			return report;
+		}catch (FileSizeException e) {
+			_logger.error(e.getMessage());
+			return new ErrorReport(entity.toString(), e.getMessage());
 		}catch(Exception e){
 			_logger.error("Error while processing {}", entity, e);
 			return new ErrorReport(entity.toString(), getStackTrace(e));
-		}	
+		}
 		
 	}
 

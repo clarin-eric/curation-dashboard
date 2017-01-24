@@ -5,17 +5,19 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.cr.profile_parser.CRElement;
+import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Component;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Components;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Concepts;
-import eu.clarin.cmdi.curation.report.CMDProfileReport.Datcat;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Elements;
+import eu.clarin.cmdi.curation.report.Concept;
 import eu.clarin.cmdi.curation.report.Score;
 
 /**
@@ -44,7 +46,7 @@ public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfil
 	}
 	
 	private Components createComponentSegment(ParsedProfile parsedProfile){
-		Collection<CRElement> crComponents = parsedProfile.getComponents();		
+		Collection<CMDINode> crComponents = parsedProfile.getComponents();
 		Components comp = new Components();
 		comp.total = crComponents.size();
 		comp.required = 0;
@@ -53,16 +55,16 @@ public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfil
 		
 		crComponents.forEach(crc -> {
 			
-			if(crc.isRequired())
+			if(crc.isRequired)
 				comp.required++;
 			
-			Component component = comp.components.stream().filter(c -> c.id.equals(crc.getComponentId())).findFirst().orElse(null);
+			Component component = comp.components.stream().filter(c -> c.id.equals(crc.component.id)).findFirst().orElse(null);
 			if(component != null){
 				component.count++;
 			}else{
 				component = new Component();
-				component.id = crc.getComponentId();
-				component.name = crc.getName();
+				component.id = crc.component.id;
+				component.name = crc.component.name;
 				component.count = 1;				
 				comp.components.add(component);
 			}
@@ -74,10 +76,13 @@ public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfil
 	}
 	
 	private Elements createElementSegment(ParsedProfile parsedProfile){
-		Collection<CRElement> crElements = parsedProfile.getElements();
-		
+		Collection<CMDINode> elemNodes = parsedProfile.getElements().entrySet()
+				.stream() //dont consider elements from header and resources, they dont have concept
+				.filter(e -> e.getKey().startsWith("/CMD/Components/"))
+				.map(Entry::getValue)
+				.collect(Collectors.toList());
 		Elements elems = new Elements();		
-		elems.total = crElements.size();
+		elems.total = elemNodes.size();
 		elems.required = 0;
 		elems.withConcept = 0;
 		elems.concepts = new Concepts();		
@@ -86,29 +91,26 @@ public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfil
 		elems.concepts.required = 0;
 		elems.concepts.concepts = new ArrayList<>();
 		
-		crElements.forEach(e -> {
-			if(e.isRequired())
+		elemNodes.forEach(n -> {
+			if(n.isRequired)
 				elems.required++;
 			
-			if(e.getConcept() != null){				
+			if(n.concept != null){			
 				elems.withConcept++;
 				
-				if(e.isRequired())
-					elems.concepts.required++;				
+				if(n.isRequired)
+					elems.concepts.required++;
 				
-				Datcat datcat = elems.concepts.concepts.stream().filter(d -> d.ccr.equals(e.getConcept())).findFirst().orElse(null);
-				if(datcat != null){
-					datcat.count++;
+				Concept concept = elems.concepts.concepts.stream().filter(c -> c.uri.equals(n.concept.uri)).findFirst().orElse(null);
+				
+				if(concept != null){
+					concept.count++;
 				}else{
-					datcat = new Datcat();
-					datcat.ccr = e.getConcept();
-					datcat.count = 1;
-					elems.concepts.concepts.add(datcat);
+					elems.concepts.concepts.add(new Concept(n.concept.uri, n.concept.prefLabel, n.concept.status));
 				}				
 			}
 			
-		});
-				
+		});				
 		
 		elems.concepts.total = elems.withConcept;
 		elems.concepts.unique = elems.concepts.concepts.size();

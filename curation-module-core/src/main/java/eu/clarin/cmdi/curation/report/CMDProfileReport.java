@@ -132,19 +132,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 		public int required;
 
 		@XmlElement(name="concept")
-		public Collection<Datcat> concepts;
-
-	}
-
-	@XmlRootElement
-	@XmlAccessorType(XmlAccessType.FIELD)
-	public static class Datcat {
-		
-		@XmlAttribute
-		public String ccr;
-
-		@XmlAttribute
-		public int count;
+		public Collection<Concept> concepts;		
 	}
 
 	@Override

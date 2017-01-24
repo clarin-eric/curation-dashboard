@@ -1,11 +1,11 @@
 package eu.clarin.cmdi.curation.entities;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
+import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CMDInstanceProcessor;
 
@@ -14,8 +14,7 @@ public class CMDInstance extends CurationEntity {
 	public static Collection<String> mdSelfLinks = Collections.synchronizedCollection(new HashSet<>());
 	public static Collection<String> duplicateMDSelfLink = Collections.synchronizedCollection(new HashSet<>());
 	
-
-	Collection<CMDUrlNode> links = new ArrayList<>();
+	private ParsedInstance parsedInstance = null;
 
 	public CMDInstance(Path path) {
 		super(path);
@@ -28,16 +27,16 @@ public class CMDInstance extends CurationEntity {
 	@Override
 	protected AbstractProcessor getProcessor() {
 		return new CMDInstanceProcessor();
-	}
-
-	public Collection<CMDUrlNode> getLinks() {
-		return links;
-	}
-
-	public void setLinks(Collection<CMDUrlNode> links) {
-		this.links = links;
-	}
+	}	
 	
+	public ParsedInstance getParsedInstance() {
+		return parsedInstance;
+	}
+
+	public void setParsedInstance(ParsedInstance parsedInstance) {
+		this.parsedInstance = parsedInstance;
+	}
+
 	@Override
 	public String toString() {
 		int cnt = path.getNameCount();

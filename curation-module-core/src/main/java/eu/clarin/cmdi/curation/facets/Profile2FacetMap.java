@@ -45,7 +45,7 @@ public class Profile2FacetMap {
 
 	public static class Facet {
 		private boolean caseInsensitive = false;
-		private Map<String, String> patterns = new HashMap<>(); //extended to keep concepts
+		private Collection<String> patterns = new ArrayList<>(); //extended to keep concepts
 		private Collection<String> fallbackPatterns = new ArrayList<String>();
 		private Collection<String> derivedFacets = new ArrayList<String>();
 		private boolean allowMultipleValues = true;
@@ -58,7 +58,7 @@ public class Profile2FacetMap {
 			return caseInsensitive;
 		}
 
-		public void setPatterns(Map<String, String> patterns) {
+		public void setPatterns(Collection<String> patterns) {
 			this.patterns = patterns;
 		}
 
@@ -73,7 +73,7 @@ public class Profile2FacetMap {
 		/**
 		 * @return List of Strings which are xpaths expressions.
 		 */
-		public Map<String, String> getPatterns() {
+		public Collection<String> getPatterns() {
 			return patterns;
 		}
 
@@ -84,8 +84,8 @@ public class Profile2FacetMap {
 
 		@Override
 		public String toString() {
-			StringBuilder sb = new StringBuilder("name:").append("\n").append("patterns:").append("\n");
-			patterns.forEach((k, v) -> sb.append("\t" + k + "\t" + v).append("\n"));
+			StringBuilder sb = new StringBuilder("patterns:").append("\n");
+			patterns.forEach(p -> sb.append("\t" + p).append("\n"));
 			sb.append("fallback patterns:").append("\n");
 			fallbackPatterns.forEach(p -> sb.append("\t" + p).append("\n"));
 			

@@ -22,6 +22,7 @@ public class SchemaInput implements LSInput{
 
 	@Override
 	public InputStream getByteStream() {
+		
 		return SchemaInput.class.getResourceAsStream("/xml.xsd");
 	}
 

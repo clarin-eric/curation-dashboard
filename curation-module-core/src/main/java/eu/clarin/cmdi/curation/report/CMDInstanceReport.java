@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
-import eu.clarin.cmdi.curation.report.CollectionReport.Facet;
+import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
@@ -38,12 +38,6 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
 	@XmlAttribute
 	public Long timeStamp = System.currentTimeMillis();
-
-
-	// for passing values
-	public transient int numOfLinks = 0;
-	public transient int numOfResProxiesLinks = 0;
-	public transient int numOfUniqueLinks = 0;
 
 	// sub reports **************************************
 
@@ -110,17 +104,19 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 		parentReport.xmlReport.totNumOfXMLEmptyElement += xmlReport.numOfXMLEmptyElement;
 
 		// URL
-		parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;
-		parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
-		parentReport.urlReport.totNumOfResProxiesLinks += urlReport.numOfResProxiesLinks;
-		parentReport.urlReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
+//		parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;
+//		parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
+//		parentReport.urlReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
 
 		// Facet		
-		facets.facets.forEach(facet -> {
-			Facet parFacet = parentReport.facetReport.facet.stream().filter(f -> f.name.equals(facet.name)).findFirst().orElse(null);
-			//text is always covered
-			if(parFacet.name.equals("text") || facet.values != null)
-				parFacet.cnt++;			
+		facets.coverage.stream()
+		.filter(facet -> facet.coveredByInstance)
+		.map(facet -> facet.name)
+		.forEach(coveredFacet -> {
+			FacetCollectionStruct parFacet = parentReport.facetReport.facet.stream().filter(f -> f.name.equals(coveredFacet)).findFirst().orElse(null);
+			if(parFacet != null){//in case of derived facet parFacet will be null
+				parFacet.cnt++;
+			}
 		});
 
 		parentReport.handleProfile(header.id, profileScore);
@@ -157,6 +153,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	public static class FileReport {
 		public String location;
 		public long size;
+		public String collection;
 
 		public FileReport() {};
 	}
@@ -205,7 +202,6 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 	public static class URLReport {
 		public int numOfLinks;
 		public int numOfUniqueLinks;
-		public int numOfResProxiesLinks;
 		public int numOfBrokenLinks;
 		public Double percOfValidLinks;
 

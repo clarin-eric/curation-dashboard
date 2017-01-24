@@ -13,18 +13,27 @@ import java.util.Map;
  */
 public class HTTPLinkChecker{
 	
-	static final int timeout = 5000;
+	private int timeout;
 	private HttpURLConnection connection = null;
 	private String redirectLink = null;
 	
+	public HTTPLinkChecker(){
+		this(5000);
+	}
+	
+	public HTTPLinkChecker(final int timeout){
+		HttpURLConnection connection = null;
+		redirectLink = null;
+		this.timeout = timeout;
+	}
 	
 	public int checkLink(String url)throws Exception{
 		connection = (HttpURLConnection) new URL(url).openConnection();
 		connection.setConnectTimeout(timeout);
 		connection.setReadTimeout(timeout);
 		connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0");		
-		connection.setRequestMethod("GET");
-		String redirectLink = connection.getHeaderField("Location");				
+		connection.setRequestMethod("HEAD");
+		String redirectLink = connection.getHeaderField("Location");
 		if (redirectLink != null && !redirectLink.equals(url)){
 			this.redirectLink = redirectLink;
 			return checkLink(redirectLink);

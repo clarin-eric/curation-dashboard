@@ -1,7 +1,6 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,7 +19,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.entities.CMDUrlNode;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.XMLReport;
 import eu.clarin.cmdi.curation.report.Message;
@@ -97,8 +95,6 @@ public class InstanceXMLValidator extends CMDSubprocessor {
 
 	    Locator locator;
 
-	    Collection<CMDUrlNode> values = new ArrayList<CMDUrlNode>();
-
 	    // for handling attributes
 	    // private TypeInfoProvider provider;
 	    // public CMDIContentHandler(TypeInfoProvider provider) {
@@ -159,26 +155,12 @@ public class InstanceXMLValidator extends CMDSubprocessor {
 
 	    @Override
 	    public void characters(char[] ch, int start, int length) throws SAXException {
-			elemWithValue = true;
-			// keeping all values consumes a lot of mem
-			// keep only links for URL validation
-			// mark MDSelflinks and ResourceProxy Links
-			String val = new String(ch, start, length);
-			if (val.startsWith("http://") || val.startsWith("https://")){
-			    report.numOfLinks++;
-			    CMDUrlNode node = new CMDUrlNode(val, (curElem.equals("MdSelfLink") || curElem.equals("ResourceRef")) ? curElem : null);
-			    if(!values.contains(node))
-			    	values.add(node);
-			    
-			    if(curElem.equals("MdSelfLink"))
-			    	report.numOfResProxiesLinks++;
-			}
+			elemWithValue = true;			
 	    }
 
 	    @Override
 	    public void endDocument() throws SAXException {
-		report.numOfUniqueLinks = values.size();		
-		instance.setLinks(values);
+	    	//do nothing
 	    }
     }
 

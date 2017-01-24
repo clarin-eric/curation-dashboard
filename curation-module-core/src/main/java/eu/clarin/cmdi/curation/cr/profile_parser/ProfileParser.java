@@ -12,12 +12,18 @@ import com.ximpleware.NavException;
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDNav;
 
+import ac.at.acdh.cmdi.ccr.CCRConcept;
+import ac.at.acdh.cmdi.ccr.CCRServiceFactory;
+import ac.at.acdh.cmdi.ccr.ICCRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Concept;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 
 public abstract class ProfileParser {
 	
 	private static final Logger _logger = LoggerFactory.getLogger(ProfileParser.class);
+	
+	private ICCRService ccr = CCRServiceFactory.getCCRService();
 	
 	protected VTDNav vn;
 	
@@ -27,16 +33,15 @@ public abstract class ProfileParser {
 		vn = navigator;
 		fillInHeader(vn, header);		
 		Collection<CRElement> nodes = processElements();
-		Map<String, String> xpathConceptMap = createMap(nodes);
-		return new ParsedProfile(header, nodes, xpathConceptMap);
+		return new ParsedProfile(header, createMap(nodes));
 	}
 	
 	protected abstract String getCMDVersion();	
 	protected abstract String conceptAttributeName();
 	protected abstract CRElement processNameAttributeNode() throws VTDException;
-	protected abstract Map<String, String> createMap(Collection<CRElement> nodes) throws VTDException;
+	protected abstract Map<String, CMDINode> createMap(Collection<CRElement> nodes) throws VTDException;
 	
-	private ProfileHeader fillInHeader(VTDNav vn, ProfileHeader header) throws VTDException{
+	protected ProfileHeader fillInHeader(VTDNav vn, ProfileHeader header) throws VTDException{
 		AutoPilot ap = new AutoPilot(vn);
 		header.id = 		evaluateXPath("//Header/ID/text()", ap);		
 		header.name = 		evaluateXPath("//Header/Name/text()", ap);
@@ -55,6 +60,7 @@ public abstract class ProfileParser {
 		ap.selectElement("element");
 		while (ap.iterate()){// process single element
 			CRElement _new = new CRElement();
+			_new.isLeaf = !isComplex();
 
 			_new.name = extractAttributeValue("name");
 			if (_new.name == null) {
@@ -104,12 +110,18 @@ public abstract class ProfileParser {
 					.forEach(attr -> {
 						attr.parent = _new;
 						nodes.add(attr);
-					});
-			
-		}
-		
-		return nodes;
-		
+					});			
+		}		
+		return nodes;		
+	}
+	
+	private boolean isComplex() throws VTDException {
+		vn.push();
+		AutoPilot ap = new AutoPilot(vn);
+		ap.selectXPath("./complexType/sequence");
+		boolean isComplex = ap.evalXPathToBoolean();
+		vn.pop();		
+		return isComplex;		
 	}
 
 	private Collection<CRElement> getAttributes() throws VTDException {
@@ -130,7 +142,7 @@ public abstract class ProfileParser {
 			ap.bind(vn);
 			ap.selectXPath("./complexType/attribute");
 			while (ap.evalXPath() != -1) {
-				CRElement nameAttr = processNameAttributeNode();
+				CRElement nameAttr = processNameAttributeNode();				
 				if (nameAttr != null)
 					attributes.add(nameAttr);
 			}
@@ -148,5 +160,22 @@ public abstract class ProfileParser {
 	protected String extractAttributeValue(String attrName) throws NavException {
 		int ind = vn.getAttrVal(attrName);
 		return ind != -1 ? vn.toNormalizedString(ind) : null;
+	}
+	
+	protected Concept createConcept(String uri){
+		if(uri == null)
+			return null;
+		Concept concept;
+		if(uri.startsWith("http://purl.org/dc/terms/")){
+			concept = new Concept(uri, uri.substring("http://purl.org/dc/terms/".length()), "DC");
+		}else{
+			CCRConcept ccrConcept = ccr.getConcept(uri);
+			if(ccrConcept != null)
+				concept = new Concept(uri, ccrConcept.getPrefLabel(), ccrConcept.getStatus().toString());
+			else
+				concept = new Concept(uri, "invalid concept", "???");
+		}
+		
+		return concept;
 	}
 }

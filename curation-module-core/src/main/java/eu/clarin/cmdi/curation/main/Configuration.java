@@ -1,14 +1,15 @@
 package eu.clarin.cmdi.curation.main;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Properties;
+import java.util.stream.Collectors;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,40 +24,44 @@ public class Configuration {
 	public static boolean SAVE_REPORT;
 	public static Path OUTPUT_DIRECTORY = null;
 	public static Path CACHE_DIRECTORY = null;
+	public static Collection<String> FACETS = null;
 
 	public static boolean COLLECTION_MODE = false; //when true values wont be extracted for facet "text", saves a lot of time in collection assessment
-	
-	public static void init(InputStream is) throws ConfigurationException, IOException {
-		PropertiesConfiguration prop = new PropertiesConfiguration();
-		prop.load(is);
-		readProperties(prop);
-	}
 
-	public static void init(File file) throws ConfigurationException, IOException {
+	public static void init(String file) throws IOException {
 		_logger.info("Initializing configuration from {}", file);
-		readProperties(new PropertiesConfiguration(file));
+		Properties config = new Properties();
+		config.load(new FileInputStream(file));		 
+		readProperties(config);
+		
+		//readProperties(new PropertiesConfiguration(file));
 	}
 	
-	public static void initDefault() throws ConfigurationException, IOException {
-		_logger.info("Initializing configuration from {}", "config.properties");
-		PropertiesConfiguration config = new PropertiesConfiguration("config.properties");
-		readProperties(new PropertiesConfiguration("config.properties"));		
+	public static void initDefault() throws IOException {
+		_logger.info("Initializing configuration with default config file");
+		Properties config = new Properties();
+		config.load(Configuration.class.getResourceAsStream("config.properties"));
+		readProperties(config);
+		//readProperties(new PropertiesConfiguration("config.properties"));
 	}
 	
-	private static void readProperties(PropertiesConfiguration config) throws IOException{
-		SCORE_NUMERIC_DISPLAY_FORMAT = config.getString("SCORE_NUMERIC_DISPLAY_FORMAT");
-		TIMESTAMP_DISPLAY_FORMAT = config.getString("TIMESTAMP_DISPLAY_FORMAT");
-		MAX_FILE_SIZE = config.getLong("MAX_FILE_SIZE");
-		HTTP_VALIDATION = config.getBoolean("HTTP_VALIDATION");
-		SAVE_REPORT = config.getBoolean("SAVE_REPORT");
+	private static void readProperties(Properties config) throws IOException{
 		
-		String outDir = config.getString("OUTPUT_DIRECTORY");
-		String cacheDir = config.getString("CACHE_DIRECTORY");
+		SCORE_NUMERIC_DISPLAY_FORMAT = config.getProperty("SCORE_NUMERIC_DISPLAY_FORMAT");
+		TIMESTAMP_DISPLAY_FORMAT = config.getProperty("TIMESTAMP_DISPLAY_FORMAT");
+		MAX_FILE_SIZE = Long.parseLong(config.getProperty("MAX_FILE_SIZE"));
+		HTTP_VALIDATION = Boolean.parseBoolean(config.getProperty("HTTP_VALIDATION"));
+		SAVE_REPORT = Boolean.parseBoolean(config.getProperty("SAVE_REPORT"));
 		
+		String[] facets = config.getProperty("FACETS").split(",");
+		FACETS = Arrays.asList(facets).stream().map(f -> f.trim()).collect(Collectors.toList());	
 		
-		if(outDir != null)
+		String outDir = config.getProperty("OUTPUT_DIRECTORY");
+		String cacheDir = config.getProperty("CACHE_DIRECTORY");
+		
+		if(outDir != null && !outDir.isEmpty())
 			OUTPUT_DIRECTORY = Files.createDirectories(Paths.get(outDir));
-		if(cacheDir != null)
+		if(cacheDir != null && !cacheDir.isEmpty())
 			CACHE_DIRECTORY = Files.createDirectories(Paths.get(cacheDir));
 		
 		
@@ -65,7 +70,4 @@ public class Configuration {
 		System.setProperty("jsse.enableSNIExtension", "false");
 		
 	}
-	
-	
-	
 }

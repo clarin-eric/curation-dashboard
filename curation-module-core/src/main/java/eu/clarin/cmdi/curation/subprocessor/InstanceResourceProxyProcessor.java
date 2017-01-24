@@ -1,16 +1,16 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.ArrayList;
-
-import com.ximpleware.AutoPilot;
-import com.ximpleware.VTDNav;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
+import eu.clarin.cmdi.curation.instance_parser.ParsedInstance.InstanceNode;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.ResProxyReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.ResourceType;
 import eu.clarin.cmdi.curation.report.Score;
-import eu.clarin.cmdi.curation.xml.CMDXPathService;
 
 public class InstanceResourceProxyProcessor extends CMDSubprocessor {
 
@@ -25,29 +25,58 @@ public class InstanceResourceProxyProcessor extends CMDSubprocessor {
 		
 		int numOfTypeResource = 0;
 		
-		try {
-			CMDXPathService xmlService = new CMDXPathService(entity.getPath());
-			VTDNav nav = xmlService.reset();
-			AutoPilot ap = new AutoPilot(nav);
-			ap.selectXPath("/CMD/Resources/ResourceProxyList/ResourceProxy");
-			while(ap.evalXPath() != -1){
-				report.resProxyReport.numOfResProxies++;
-				
-				String resType = nav.toElement(VTDNav.FC, "ResourceType")? nav.toNormalizedString(nav.getText()) : null;
-				String mimeType = null;
-				if(resType != null && resType.equals("Resource")){
-					int indMime = nav.getAttrVal("mimetype");
-					mimeType= indMime != -1? nav.toNormalizedString(indMime) : null;
-					if(mimeType != null && !mimeType.isEmpty())
-						report.resProxyReport.numOfResourcesWithMime++;
-					numOfTypeResource++;
+		ParsedInstance parsedInstance = entity.getParsedInstance();
+		
+		final String base = "/CMD/Resources/ResourceProxyList/ResourceProxy";
+		
+		Collection<InstanceNode> resProxies = parsedInstance.getNodes()
+				.stream()
+				.filter(n -> n.getXpath().startsWith(base)) 
+				.collect(Collectors.toList());
+		
+		int ind = 1;
+		while(true){
+			String xpath = base + (ind > 1? "[" + ind + "]" : "") + "/";
+			Collection<InstanceNode> singleResProxy = resProxies
+					.stream()
+					.filter(n -> n.getXpath().startsWith(xpath)) 
+					.collect(Collectors.toList());
+			
+			ind++;			
+			
+			if(singleResProxy.isEmpty())
+				break;
+			
+			report.resProxyReport.numOfResProxies++;
+			
+			String resType = null;
+			String mimeType = null;
+			String reference = null;
+			
+			for(InstanceNode elem: singleResProxy){
+				if(elem.getXpath().equals(xpath + "ResourceType/text()")){
+					resType = elem.getValue(); 
+				}else if(elem.getXpath().equals(xpath + "ResourceType/@mimetype")){
+					mimeType = elem.getValue(); 
+				}else if(elem.getXpath().equals(xpath + "ResourceRef/text()")){
+					reference = elem.getValue();
 				}
-				
-				if(report.resProxyReport.resourceType == null)
-					report.resProxyReport.resourceType = new ArrayList<>();
+			}
+			
+			if(resType != null && resType.equals("Resource")){
+				if(mimeType != null)
+					report.resProxyReport.numOfResourcesWithMime++;
+				numOfTypeResource++;
+			}
+			
+			if(report.resProxyReport.resourceType == null)
+				report.resProxyReport.resourceType = new ArrayList<>();
+			
+			String resTypeConst = resType;
+			if(resType != null){
 				ResourceType resource = report
 						.resProxyReport.resourceType
-						.stream().filter(res -> res.type.equals(resType))
+						.stream().filter(res -> res.type.equals(resTypeConst))
 						.findFirst()
 						.orElse(null);
 				if(resource != null)
@@ -58,24 +87,16 @@ public class InstanceResourceProxyProcessor extends CMDSubprocessor {
 					resource.count = 1;
 					report.resProxyReport.resourceType.add(resource);
 				}
-				
-				String resProxy = nav.toElement(VTDNav.NS, "ResourceRef")? nav.toNormalizedString(nav.getText()) : null;
-				if(resProxy != null && !resProxy.isEmpty())
-					report.resProxyReport.numOfResProxiesWithReferences++;
-				nav.toElement(VTDNav.PARENT);
 			}
 			
-			report.resProxyReport.percOfResourcesWithMime = numOfTypeResource > 0? 
-					(double) report.resProxyReport.numOfResourcesWithMime / numOfTypeResource : 0;
-			report.resProxyReport.percOfResProxiesWithReferences = report.resProxyReport.numOfResProxies > 0? 
-					(double) report.resProxyReport.numOfResProxiesWithReferences / report.resProxyReport.numOfResProxies : 0;
-
-			
-		} catch (Exception e) {
-			throw new Exception("Error while processing resource proxies in " + report.fileReport.location, e);
+			if(reference != null)
+				report.resProxyReport.numOfResProxiesWithReferences++;			
 		}
 		
-		
+		report.resProxyReport.percOfResourcesWithMime = numOfTypeResource > 0? 
+				(double) report.resProxyReport.numOfResourcesWithMime / numOfTypeResource : 0;
+		report.resProxyReport.percOfResProxiesWithReferences = report.resProxyReport.numOfResProxies > 0? 
+				(double) report.resProxyReport.numOfResProxiesWithReferences / report.resProxyReport.numOfResProxies : 0;		
 	}
 
 	@Override

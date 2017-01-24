@@ -24,7 +24,7 @@ public class Downloader {
 
 	public void download(String url, File destination) throws IOException {		
 		try {
-			HTTPLinkChecker lc = new HTTPLinkChecker();
+			HTTPLinkChecker lc = new HTTPLinkChecker(15000); //custom timeout for slow CR
 			if(lc.checkLink(url) != 200)//redirection is already handled, 30x status will not be thrown
 				throw new Exception(url + " is not valid! Response from server:\n" + lc.getResponse());	
 			
@@ -40,6 +40,8 @@ public class Downloader {
 					new DecimalFormat("#,##0.#").format(size / 1024));
 			fos.close();
 		} catch (Exception e) {
+			_logger.warn("error while downloading file {}, deleting local file {}", url, destination.getName());
+			destination.delete();
 			throw new IOException("Error while downloading file " + url, e);
 		}
 	}

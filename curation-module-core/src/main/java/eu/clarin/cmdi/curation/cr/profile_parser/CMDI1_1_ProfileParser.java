@@ -1,11 +1,12 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.ximpleware.VTDException;
 
+import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 
 class CMDI1_1_ProfileParser extends ProfileParser{
@@ -28,6 +29,7 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 			return null;
 		
 		CRElement elem = new CRElement();
+		elem.isLeaf = true;
 		elem.lvl = vn.getCurrentDepth();
 		
 		switch (name) {
@@ -42,18 +44,19 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 			default: // attribute
 				elem.type = NodeType.ATTRIBUTE;
 				elem.ref = extractAttributeValue(conceptAttributeName());				
-				elem.name = name;
-				if (elem.ref == null)
-					elem = null;// consider only attributes with datcat
+				elem.name = name;				
 		}
 		
 		return elem;
 	}
 	
 	@Override
-	protected Map<String, String> createMap(Collection<CRElement> nodes) {
-		Map<String, String> map = new HashMap<>();
-		nodes.stream().forEach(node -> {
+	protected Map<String, CMDINode> createMap(Collection<CRElement> nodes) throws VTDException {
+		Map<String, CMDINode> xpaths = new LinkedHashMap<>();
+		
+		nodes.stream()
+		.filter(n -> n.isLeaf || n.type == NodeType.COMPONENT)
+		.forEach(node -> {
 			String xpath = "";
 			CRElement parent = node.parent;
 			while (parent != null) {
@@ -62,12 +65,20 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 			}
 			xpath = "/" + xpath + (node.type == NodeType.ATTRIBUTE || node.type == NodeType.CMD_VERSION_ATTR
 					? "@" + node.name : node.name + "/text()");
+			
+			CMDINode cmdiNode = new CMDINode();
+			cmdiNode.isRequired = node.isRequired;
+			
+			if(node.type == NodeType.COMPONENT)
+				cmdiNode.component = new Component(node.name, node.ref);				
+			else
+				cmdiNode.concept = createConcept(node.ref);
 
-			map.put(xpath, node.getConcept());
+			xpaths.put(xpath, cmdiNode);
 
 		});
 
-		return map;
+		return xpaths;
 	}
 
 }
