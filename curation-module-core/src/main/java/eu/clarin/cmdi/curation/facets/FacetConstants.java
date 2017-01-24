@@ -1,7 +1,8 @@
 package eu.clarin.cmdi.curation.facets;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Definition of facet, resource type and URL constants.
@@ -14,7 +15,6 @@ public class FacetConstants {
     public static final String FIELD_COMPLETE_METADATA = "metadataSource";
     public static final String FIELD_CONTINENT = "continent";
     public static final String FIELD_COUNTRY = "country";
-    public static final String FIELD_DATA_PROVIDER = "dataProvider";
     public static final String FIELD_DESCRIPTION = "description";
     public static final String FIELD_FORMAT = "format";
     public static final String FIELD_GENRE = "genre";
@@ -75,7 +75,6 @@ public class FacetConstants {
             FIELD_COMPLETE_METADATA,
             FIELD_CONTINENT,
             FIELD_COUNTRY,
-            FIELD_DATA_PROVIDER,
             FIELD_DESCRIPTION,
             FIELD_FORMAT,
             FIELD_GENRE,

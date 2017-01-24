@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
@@ -39,19 +40,26 @@ public class FacetConcepts {
 		try{
 			XMLMarshaller<FacetConcepts> facetConceptMarshaller = new XMLMarshaller<>(FacetConcepts.class);
 			Collection<FacetConcept> facetConcepts = facetConceptMarshaller
-					.unmarshal(new URL(FacetConceptMappingService.FACET_CONCEPTS_URL).openStream())
+					//.unmarshal(new URL(FacetConceptMappingService.FACET_CONCEPTS_URL).openStream())
+					.unmarshal(FacetConcepts.class.getResourceAsStream("/facetConcepts.xml"))
 					.facetConcepts;
-			//normalise -> stripe cmd(p) namespace
+			
+			//filter facet concepts
+			facetConcepts = facetConcepts
+					.stream()
+					.filter(fc -> Configuration.FACETS.contains(fc.name))
+					.collect(Collectors.toList());
+			
+			//normalise -> stripe cmd(p) namespace			
 			facetConcepts.forEach(fc->{				
 				fc.patterns = fc.patterns.stream().map(p -> p.replaceAll("cmd:", "").replaceAll("cmdp:", "")).collect(Collectors.toList());
 				fc.blacklistPatterns = fc.blacklistPatterns.stream().map(p -> p.replaceAll("cmd:", "").replaceAll("cmdp:", "")).collect(Collectors.toList());
 				
 			});
 			
-			
 			return facetConcepts;
 		}catch(Exception e){
-			throw new RuntimeException("Unable to read file" + FacetConceptMappingService.FACET_CONCEPTS_URL + "!", e);
+			throw new RuntimeException("Unable to read file facetConcepts.xml!", e);
 		}
 		
 	}

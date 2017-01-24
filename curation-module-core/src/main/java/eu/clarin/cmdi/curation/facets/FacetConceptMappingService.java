@@ -20,7 +20,7 @@ public class FacetConceptMappingService implements IFacetConceptMappingService{
 	static final Logger _logger = LoggerFactory.getLogger(FacetConceptMappingService.class);
 
 	// move this to config
-	public static final String FACET_CONCEPTS_URL = "https://raw.githubusercontent.com/clarin-eric/VLO/master/vlo-commons/src/main/resources/facetConcepts.xml";
+	//public static final String FACET_CONCEPTS_URL = "https://raw.githubusercontent.com/clarin-eric/VLO/master/vlo-commons/src/main/resources/facetConcepts.xml";
 
 	static Collection<FacetConcept> facetConcepts = FacetConcepts.createFacetConcept();
 

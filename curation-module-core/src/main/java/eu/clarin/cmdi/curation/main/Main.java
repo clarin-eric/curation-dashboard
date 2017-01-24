@@ -49,7 +49,7 @@ public class Main {
 
 		// init configuration file
 		if (cmd.hasOption("config"))
-			Configuration.init(new File(cmd.getOptionValue("config")));
+			Configuration.init(cmd.getOptionValue("config"));
 		else
 			Configuration.initDefault();
 

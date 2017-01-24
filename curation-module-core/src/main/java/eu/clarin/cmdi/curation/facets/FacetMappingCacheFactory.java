@@ -1,8 +1,8 @@
 package eu.clarin.cmdi.curation.facets;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -56,22 +56,22 @@ class FacetMappingCacheFactory{
 			ParsedProfile parsedProfile = new CRService().getParsedProfile(header);
 			for(FacetConcept facetConcept: FacetConceptMappingService.facetConcepts){
 				Facet facet = new Facet();
-				Map<String, String> xpaths = new HashMap<>(); //<xpath, concept>
+				Collection<String> xpaths = new ArrayList<>(); //<xpath, concept>
 				//take all patterns for "id" facet				
 				if (FacetConstants.FIELD_ID.equals(facetConcept.getName())) {
-					facetConcept.getPatterns().forEach(pattern -> xpaths.put(pattern, null));
+					facetConcept.getPatterns().forEach(pattern -> xpaths.add(pattern));
 				}
 				
 				//handle concepts
 				for(String concept: facetConcept.getConcepts()){
 					if(!facetConcept.hasContext())
-						parsedProfile.getXPathsForConcept(concept).forEach(xpath -> xpaths.put(xpath, concept));
+						parsedProfile.getXPathsForConcept(concept).forEach(xpath -> xpaths.add(xpath));
 					else//context exists
 						parsedProfile.getXPathsForConcept(concept)
 						.stream()
 						.filter(path -> acceptPath(path, getContext(path, parsedProfile), facetConcept.getAcceptableContext(),
 								facetConcept.getRejectableContext(), facetConcept.getName()))
-						.forEach(xpath -> xpaths.put(xpath, concept));
+						.forEach(xpath -> xpaths.add(xpath));
 						
 				}
 				
@@ -82,7 +82,7 @@ class FacetMappingCacheFactory{
 				// should be replaced by a more intelligent approach in the future
 				for (String blacklistPattern : facetConcept.getBlacklistPatterns()) {
 					//Iterator<String> xpathIterator = xpaths.iterator();
-					Iterator<String> xpathIterator = xpaths.keySet().iterator();
+					Iterator<String> xpathIterator = xpaths.iterator();
 					while (xpathIterator.hasNext()) {
 						String xpath = xpathIterator.next();
 						if (xpath.contains(blacklistPattern)) {
