@@ -30,7 +30,9 @@
 // Example variants can be copy/pasted from https://vaadin.com/wiki/-/wiki/Main/Valo+Examples
 
 
-//.cm-logo a img { width: XXXpx;} 
+//.cm-logo a img { width: XXXpx;}
+
+@import "../valo/valo";
 
 @import "../valo/valo.scss";
 
@@ -74,8 +76,22 @@
   	margin-top:25px;
   }
   
-    .form-top-margin-50 {
+  .form-top-margin-50 {
   	margin-top:50px;
+  }
+  
+  .v-grid-cell.facetCovered {
+     background: #79d61b;
+  }
+  
+  .v-grid-cell.facetNotCovered {
+    background: #f44e42;
+  }
+  
+  .v-textfield-filter {
+   	height: 85%;
+   	width: 90%;
+   	font-weight: 500;
   }
   
 }
