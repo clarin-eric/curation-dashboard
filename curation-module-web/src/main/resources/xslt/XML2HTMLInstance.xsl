@@ -4,16 +4,6 @@
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="./VAADIN/themes/mytheme/xsltStyle.css?v=7.6.4" />
-		
-		<script language="JavaScript">
-			function toggle(){				
-				var lst = document.getElementByClass('noFacet');
-			    for(var i = 0; i &lt; lst.length; ++i) {
-			        lst[i].style.display = lst[i].style.display === 'none' ? '' : 'none';
-			    }
-			}
-			
-		</script>
 	</head>
 	<body>
 		<h1>CMD Record Report</h1>
@@ -69,9 +59,6 @@
 		<font color="#dbd839">&#9873;</font> - derived facet
 		
 		<br/>
-		
-		
-		<button type="button" title="leave only values mapped to facets" onClick="toggle()" >Toggle Values</button>
 		 
 		<table>
 			<thead>
