@@ -94,6 +94,11 @@ public class CollectionReport implements Report<CollectionReport> {
 	public void mergeWithParent(CollectionReport parentReport) {
 
 		parentReport.score += score;
+		if(insMinScore < parentReport.insMinScore)
+			parentReport.insMinScore = insMinScore;
+		
+		if(insMaxScore > parentReport.insMaxScore)
+			parentReport.insMaxScore = insMaxScore;
 
 		// ResProxies
 
@@ -114,7 +119,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
 		// Facet		
 		facetReport.facet.forEach(facet -> {
-			Facet parFacet = parentReport.facetReport.facet.stream().filter(f -> f.name.equals(facet.name)).findFirst().orElse(null);
+			FacetCollectionStruct parFacet = parentReport.facetReport.facet.stream().filter(f -> f.name.equals(facet.name)).findFirst().orElse(null);
 			parFacet.cnt += facet.cnt;	
 		});
 
@@ -259,11 +264,11 @@ public class CollectionReport implements Report<CollectionReport> {
 		public Double coverage = 0.0;
 		
 		@XmlElementWrapper(name="facets")
-		public Collection<Facet> facet;
+		public Collection<FacetCollectionStruct> facet;
 	}
 	
 	@XmlRootElement
-	public static class Facet{
+	public static class FacetCollectionStruct{
 		@XmlAttribute 
 		public String name;
 		
