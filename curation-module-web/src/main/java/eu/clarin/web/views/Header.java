@@ -17,8 +17,10 @@ public class Header extends Panel{
 	public Header(){
 		Design.read(this);
 		
-		acdh.setIcon(new ThemeResource("img/acdh-logo.png"));
-		clarin.setIcon(new ThemeResource("img/clarin-logo.png"));
+		setResponsive(true);
+		
+		acdh.setIcon(new ThemeResource("img/acdh-logo-trans.png"));
+		clarin.setIcon(new ThemeResource("img/clarin-logo-wide.png"));
 		
 	}
 }
