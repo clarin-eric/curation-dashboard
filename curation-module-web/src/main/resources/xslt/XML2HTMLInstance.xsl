@@ -59,6 +59,9 @@
 		<font color="#dbd839">&#9873;</font> - derived facet
 		
 		<br/>
+		
+		
+		<button id="toggle" type="button" onClick="toggle()" >Show Facet Values</button>
 		 
 		<table>
 			<thead>

@@ -1,5 +1,6 @@
 package eu.clarin.web;
 
+import com.vaadin.annotations.JavaScript;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.Widgetset;
@@ -17,19 +18,18 @@ import com.vaadin.ui.VerticalLayout;
 
 import eu.clarin.web.components.LinkButton;
 import eu.clarin.web.views.Collections;
-import eu.clarin.web.views.Instances;
-import eu.clarin.web.views.Instances;
 import eu.clarin.web.views.Footer;
 import eu.clarin.web.views.Header;
 import eu.clarin.web.views.Help;
+import eu.clarin.web.views.Instances;
 import eu.clarin.web.views.Profiles;
 import eu.clarin.web.views.ResultView;
-import eu.clarin.web.views.SMC;
 
 //@SuppressWarnings("serial")
 @Theme("mytheme")
 @Widgetset("eu.clarin.web.MyAppWidgetset")
 @Title("Curation Module")
+@JavaScript("vaadin://js/toggle.js")
 public class MainUI extends UI {
 
 	private VerticalLayout mainMenu, customMenu;

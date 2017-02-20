@@ -28,11 +28,6 @@
 			<version>${vtd-xml.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.ximpleware</groupId>
-			<artifactId>vtd-xml</artifactId>
-			<version>${vtd-xml.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>19.0</version>
