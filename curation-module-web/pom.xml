@@ -90,9 +90,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-server</artifactId>
-			<version>1.9</version>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet</artifactId>
+			<version>2.26-b03</version>
 		</dependency>
 	</dependencies>
 
