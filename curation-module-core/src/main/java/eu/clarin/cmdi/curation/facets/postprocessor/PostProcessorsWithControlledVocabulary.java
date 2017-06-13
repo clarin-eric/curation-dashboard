@@ -24,13 +24,12 @@ public abstract class PostProcessorsWithControlledVocabulary implements PostProc
 
 	private final static Logger _logger = LoggerFactory.getLogger(PostProcessorsWithControlledVocabulary.class);
 	
-	public static final String BASE_URL = "https://raw.githubusercontent.com/clarin-eric/VLO/master/vlo-vocabularies/maps/uniform_maps/";
-
+	private final static String MAPPING_FILES_LOCATION = "https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/";
 	private ControlledVocabularyService vocabulary;
 	
 	public PostProcessorsWithControlledVocabulary(){
 		try {
-			vocabulary = ControlledVocabularyFactory.getControlledVocabulary(new URL(BASE_URL + getVocabularyName()));
+			vocabulary = ControlledVocabularyFactory.getControlledVocabulary(new URL(getVocabularyName().replace("${vloconfig.mappingFilesLocation}", MAPPING_FILES_LOCATION)));
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("Invalid URL", e);
 		}
