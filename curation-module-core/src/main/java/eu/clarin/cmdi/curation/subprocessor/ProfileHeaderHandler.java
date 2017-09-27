@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
+import eu.clarin.cmdi.curation.exception.ProfileNotFoundException;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
@@ -38,7 +39,8 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 			report.header.cmdiVersion = entity.getCmdiVersion();
 			
 			Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(report.header.schemaLocation);
-			matcher.find();
+			if(!matcher.find())
+				throw new ProfileNotFoundException("schema " + report.header.schemaLocation + " is no valid CMD profile!" );
 			String id = matcher.group(0);
 			
 			report.header.isPublic = id == null? false : 
