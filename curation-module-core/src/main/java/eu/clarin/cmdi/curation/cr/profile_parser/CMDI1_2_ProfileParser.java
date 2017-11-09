@@ -1,8 +1,16 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.*;
+import java.nio.file.*;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDGen;
@@ -12,8 +20,10 @@ import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 
 class CMDI1_2_ProfileParser extends ProfileParser{
+	private static final Logger _logger = LoggerFactory.getLogger(CMDI1_2_ProfileParser.class);
+	//private static final String ENVELOPE_URL = "https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd"; 
 	
-	static final String ENVELOPE_URL = "https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd";
+	
 	
 	private static Map<String, CMDINode> envelope = null;
 
@@ -69,7 +79,9 @@ class CMDI1_2_ProfileParser extends ProfileParser{
 		if(envelope == null){
 			CMDI1_1_ProfileParser envelopeParser = new CMDI1_1_ProfileParser();
 			VTDGen vg = new VTDGen();
-			vg.parseHttpUrl(ENVELOPE_URL, false);
+
+			
+			boolean test = vg.parseFile(ClassLoader.getSystemResource("cmd-envelop.xsd").getPath(), false);
 			envelope = envelopeParser.parse(vg.getNav(), new ProfileHeader()).xpaths;
 		}
 		xpaths.putAll(envelope);

@@ -40,7 +40,7 @@ public class Configuration {
 	public static void initDefault() throws IOException {
 		_logger.info("Initializing configuration with default config file");
 		Properties config = new Properties();
-		config.load(Configuration.class.getResourceAsStream("config.properties"));
+		config.load(Configuration.class.getResourceAsStream("/config.properties"));
 		readProperties(config);
 		//readProperties(new PropertiesConfiguration("config.properties"));
 	}
