@@ -21,7 +21,7 @@ import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 
 class CMDI1_2_ProfileParser extends ProfileParser{
 	private static final Logger _logger = LoggerFactory.getLogger(CMDI1_2_ProfileParser.class);
-	//private static final String ENVELOPE_URL = "https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd"; 
+	private static final String ENVELOPE_URL = "http://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd"; 
 	
 	
 	
@@ -81,7 +81,8 @@ class CMDI1_2_ProfileParser extends ProfileParser{
 			VTDGen vg = new VTDGen();
 
 			
-			boolean test = vg.parseFile(ClassLoader.getSystemResource("cmd-envelop.xsd").getPath(), false);
+			//boolean test = vg.parseFile(ClassLoader.getSystemResource("cmd-envelop.xsd").getPath(), false);
+			vg.parseHttpUrl(ENVELOPE_URL, false);
 			envelope = envelopeParser.parse(vg.getNav(), new ProfileHeader()).xpaths;
 		}
 		xpaths.putAll(envelope);
