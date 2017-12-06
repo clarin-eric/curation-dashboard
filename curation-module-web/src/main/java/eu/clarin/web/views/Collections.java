@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.annotations.Title;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.server.StreamResource;
@@ -12,6 +15,7 @@ import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.renderers.ProgressBarRenderer;
 
+import eu.clarin.web.ApplicationInit;
 import eu.clarin.web.Shared;
 import eu.clarin.web.components.GridPanel;
 
@@ -19,6 +23,7 @@ import eu.clarin.web.components.GridPanel;
 public class Collections extends GridPanel {
 
 	private static final long serialVersionUID = -5552612346775775075L;
+	private static final Logger _logger = LoggerFactory.getLogger(Collections.class);
 
 	private StringBuilder sb;
 	
@@ -60,34 +65,38 @@ public class Collections extends GridPanel {
 	@Override
 	protected void fillInData() {
 		Shared.collections.forEach(c -> {
-			Collection<Object> rowValues = new ArrayList<>();
+			try {
+                Collection<Object> rowValues = new ArrayList<>();
 
-			rowValues.add("<a href='#!ResultView/collection//" + c.fileReport.provider + "' target='_top'>"
-					+ c.fileReport.provider + "</a>");
-			rowValues.add(c.avgScore);
-			rowValues.add(c.fileReport.numOfFiles);
-			rowValues.add(c.headerReport.profiles.totNumOfProfiles);
-			rowValues.add(c.resProxyReport.avgNumOfResProxies);
-			rowValues.add(c.xmlReport.avgXMLEmptyElement);
-			rowValues.add(c.facetReport.coverage);
+                rowValues.add("<a href='#!ResultView/collection//" + c.fileReport.provider + "' target='_top'>"
+                		+ c.fileReport.provider + "</a>");
+                rowValues.add(c.avgScore);
+                rowValues.add(c.fileReport.numOfFiles);
+                rowValues.add(c.headerReport.profiles.totNumOfProfiles);
+                rowValues.add(c.resProxyReport.avgNumOfResProxies);
+                rowValues.add(c.xmlReport.avgXMLEmptyElement);
+                rowValues.add(c.facetReport.coverage);
 
-			// add Facet coverage data
-			c.facetReport.facet.forEach(facet -> rowValues.add(facet.coverage));
+                // add Facet coverage data
+                c.facetReport.facet.forEach(facet -> rowValues.add(facet.coverage));
 
-			grid.addRow(rowValues.toArray());
+                grid.addRow(rowValues.toArray());
 
-			// csv data
-			sb.append(c.fileReport.provider).append("\t");
-			sb.append(c.avgScore).append("\t");
-			sb.append(c.fileReport.numOfFiles).append("\t");
-			sb.append(c.headerReport.profiles.totNumOfProfiles).append("\t");
-			sb.append(c.resProxyReport.avgNumOfResProxies).append("\t");
-			sb.append(c.xmlReport.avgXMLEmptyElement).append("\t");
-			sb.append(c.facetReport.coverage).append("\t");
+                // csv data
+                sb.append(c.fileReport.provider).append("\t");
+                sb.append(c.avgScore).append("\t");
+                sb.append(c.fileReport.numOfFiles).append("\t");
+                sb.append(c.headerReport.profiles.totNumOfProfiles).append("\t");
+                sb.append(c.resProxyReport.avgNumOfResProxies).append("\t");
+                sb.append(c.xmlReport.avgXMLEmptyElement).append("\t");
+                sb.append(c.facetReport.coverage).append("\t");
 
-			// add Facet coverage for each facet
-			c.facetReport.facet.forEach(facet -> sb.append(facet.coverage).append("\t"));
-			sb.append("\n");
+                // add Facet coverage for each facet
+                c.facetReport.facet.forEach(facet -> sb.append(facet.coverage).append("\t"));
+                sb.append("\n");
+            } catch (Exception e) {
+                _logger.warn("can't read report for provider " + c.fileReport.provider);
+            }
 		});
 
 	}
