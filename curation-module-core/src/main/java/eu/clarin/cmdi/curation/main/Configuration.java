@@ -64,10 +64,5 @@ public class Configuration {
 		if(cacheDir != null && !cacheDir.isEmpty())
 			CACHE_DIRECTORY = Files.createDirectories(Paths.get(cacheDir));
 		
-		
-		//HTTP Link checker java 1.7+ issue workaround
-		//consider to move it to he command line: java -Djsse.enableSNIExtension=false yourClass
-		System.setProperty("jsse.enableSNIExtension", "false");
-		
 	}
 }
