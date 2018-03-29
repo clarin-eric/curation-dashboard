@@ -9,6 +9,7 @@ import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.instance_parser.InstanceParser;
 import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.main.Configuration;
+import eu.clarin.cmdi.curation.main.Main;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.FileReport;
 import eu.clarin.cmdi.curation.report.Score;
@@ -17,7 +18,7 @@ import eu.clarin.cmdi.curation.report.Severity;
 public class FileSizeValidator extends CMDSubprocessor {
 
 	@Override
-	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception{	
+	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception{
 		if (entity.getSize() > Configuration.MAX_FILE_SIZE) {
 			addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + Configuration.MAX_FILE_SIZE + "B)");
 			//don't assess when assessing collections
@@ -28,17 +29,18 @@ public class FileSizeValidator extends CMDSubprocessor {
 		report.fileReport = new FileReport();
 		report.fileReport.size = entity.getSize();
 		report.fileReport.location = entity.getPath().toString();
-		
 		//different processing for collections
-		if(Configuration.COLLECTION_MODE)
+		if(Configuration.COLLECTION_MODE) {
 			return;
-		
+		}
 		InstanceParser transformer = new InstanceParser();
 		try {
 			entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));
 		} catch (TransformerException | IOException e) {
 			throw new Exception("Unable to parse CMDI instance " + entity.getPath().toString(), e);
 		}
+
+
 	}
 
 	@Override

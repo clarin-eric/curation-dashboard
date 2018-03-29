@@ -37,6 +37,7 @@ public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfil
 		
 		report.components = createComponentSegment(parsedProfile);
 		report.elements = createElementSegment(parsedProfile);
+
 	}
 	
 	@Override

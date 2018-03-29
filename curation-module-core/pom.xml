@@ -42,11 +42,11 @@
 			<artifactId>commons-validator</artifactId>
 			<version>1.5.1</version>
 		</dependency>
-		<dependency>
-			<groupId>com.github.mfornos</groupId>
-			<artifactId>humanize-slim</artifactId>
-			<version>${humanize.version}</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>com.github.mfornos</groupId>-->
+			<!--<artifactId>humanize-slim</artifactId>-->
+			<!--<version>${humanize.version}</version>-->
+		<!--</dependency>-->
 	</dependencies>
 	
 	<build>

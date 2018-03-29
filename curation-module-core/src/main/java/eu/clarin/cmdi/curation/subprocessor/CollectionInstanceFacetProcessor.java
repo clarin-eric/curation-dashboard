@@ -24,6 +24,7 @@ import eu.clarin.cmdi.curation.facets.postprocessor.OrganisationPostProcessor;
 import eu.clarin.cmdi.curation.facets.postprocessor.PostProcessor;
 import eu.clarin.cmdi.curation.facets.postprocessor.ResourceClassPostProcessor;
 import eu.clarin.cmdi.curation.facets.postprocessor.TemporalCoveragePostProcessor;
+import eu.clarin.cmdi.curation.main.Main;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.FacetReport;
 import eu.clarin.cmdi.curation.report.FacetReport.Coverage;
@@ -39,7 +40,7 @@ public class CollectionInstanceFacetProcessor extends CMDSubprocessor {
 
 	@Override
 	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
-		
+
 		entity.setParsedInstance(null);
 		
 		FacetConceptMappingService facetMappingService = new FacetConceptMappingService();		
@@ -57,7 +58,8 @@ public class CollectionInstanceFacetProcessor extends CMDSubprocessor {
 			
 			double numOfCoveredByIns = report.facets.coverage.stream().filter(facet -> facet.coveredByInstance).count();
 			report.facets.instanceCoverage = numOfCoveredByIns / report.facets.numOfFacets;
-		
+
+
 		}catch (Exception e) {
 			throw new Exception("Unable to obtain mapping for " + entity, e);
 		};

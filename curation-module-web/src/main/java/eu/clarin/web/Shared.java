@@ -46,7 +46,7 @@ public class Shared {
 	private static void initPublicProfiles(){
 		try {
 			List<ProfileHeader> profiles = (List<ProfileHeader>) new CRService().getPublicProfiles();
-			publicProfiles = profiles.parallelStream().map(p -> {//.subList(0, 10) 
+			publicProfiles = profiles.stream().map(p -> {//.subList(0, 10)
 				Map<String, Boolean> facetMap = new LinkedHashMap<>();
 				facetNames.forEach(name -> facetMap.put(name, false));				
 				try {					

@@ -18,12 +18,12 @@ import eu.clarin.cmdi.curation.report.Report;
 public class CurationModule implements CurationModuleInterface {		
 
 	@Override
-	public Report processCMDProfile(String profileId) {
+	public Report processCMDProfile(String profileId) throws InterruptedException {
 		return new CMDProfile(CRService.CR_REST_1_2_PROFILES + profileId + "/xsd", "1.2").generateReport();
 	}
 
 	@Override
-	public Report processCMDProfile(URL schemaLocation) {
+	public Report processCMDProfile(URL schemaLocation) throws InterruptedException {
 		String cmdiVersion = "1.1";
 		if(schemaLocation.toString().startsWith(CRService.CR_REST)){
 			String version = schemaLocation.toString().substring(CRService.CR_REST.length(), CRService.CR_REST.length() + 3);
@@ -34,7 +34,7 @@ public class CurationModule implements CurationModuleInterface {
 	}
 
 	@Override
-	public Report processCMDInstance(Path file) throws IOException {
+	public Report processCMDInstance(Path file) throws IOException, InterruptedException {
 		if (Files.notExists(file))
 			throw new IOException(file.toString() + " doesn't exist!");
 		return new CMDInstance(file, Files.size(file)).generateReport();
@@ -42,7 +42,7 @@ public class CurationModule implements CurationModuleInterface {
 	
 
 	@Override
-	public Report processCMDInstance(URL url) throws IOException{		
+	public Report processCMDInstance(URL url) throws IOException, InterruptedException {
 		Path path = Files.createTempFile(null, null);		
 		new Downloader().download(url.toString(), path.toFile());
 		long size = Files.size(path);
@@ -55,11 +55,11 @@ public class CurationModule implements CurationModuleInterface {
 	}
 
 	@Override
-	public Report processCollection(Path path) throws IOException {
+	public Report processCollection(Path path) throws IOException, InterruptedException {
 		CMDFileVisitor entityTree = new CMDFileVisitor();
 		Files.walkFileTree(path, entityTree);
 		CMDCollection collection = entityTree.getRoot();
-		
+
 		return collection.generateReport();
 	}
 

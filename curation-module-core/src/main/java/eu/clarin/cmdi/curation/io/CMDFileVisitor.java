@@ -55,7 +55,11 @@ public class CMDFileVisitor implements FileVisitor<Path> {
 	
 		long startTime = System.currentTimeMillis();
 		// fire processors for children
-		curDir.generateReport();
+		try {
+			curDir.generateReport();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		long end = System.currentTimeMillis();
 		_logger.info("validation for {} lasted {}", dir, TimeUtils.humanizeTime(end - startTime));
 		

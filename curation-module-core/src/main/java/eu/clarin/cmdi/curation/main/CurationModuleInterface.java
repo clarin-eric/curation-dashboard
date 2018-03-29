@@ -10,18 +10,18 @@ import eu.clarin.cmdi.curation.report.Report;
 public interface CurationModuleInterface {
 	
 	
-	public Report processCMDProfile(String profileId);
+	public Report processCMDProfile(String profileId) throws InterruptedException;
 	
-	public Report processCMDProfile(URL schemaLocation);
+	public Report processCMDProfile(URL schemaLocation) throws InterruptedException;
 	
 	/*
 	 * throws Exception if file doesn't exist or is invalid
 	 */
-	public Report processCMDInstance(Path file) throws IOException;
+	public Report processCMDInstance(Path file) throws IOException, InterruptedException;
 	
-	public Report processCMDInstance(URL url) throws IOException;
+	public Report processCMDInstance(URL url) throws IOException, InterruptedException;
 	
-	public Report processCollection(Path path) throws IOException;
+	public Report processCollection(Path path) throws IOException, InterruptedException;
 	
 	public Report aggregateReports(Collection<Report> reports);
 }

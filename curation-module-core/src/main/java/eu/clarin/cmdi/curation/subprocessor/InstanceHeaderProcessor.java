@@ -111,6 +111,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 		report.profileScore = crService.getScore(report.header);
 		
 		report.addSegmentScore(new Score(report.profileScore, CRService.PROFILE_MAX_SCORE, "profiles-score", null));
+
 	}
 
 

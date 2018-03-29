@@ -29,6 +29,7 @@ public class ApplicationInit implements ServletContextListener {
 			}else
 				Configuration.initDefault();
 			Configuration.HTTP_VALIDATION = true;
+			Configuration.enableProfileLoadTimer = true;
 			
 			// init shared
 			Shared.init();

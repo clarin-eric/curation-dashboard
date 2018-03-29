@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.entities;
 
 import java.nio.file.Path;
 
+import eu.clarin.cmdi.curation.main.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +30,12 @@ public abstract class CurationEntity {
 		this.size = size;
 	}
 
-	public Report generateReport() {
+	public Report generateReport() throws InterruptedException {
+
 		if (report == null)
+
 			report = getProcessor().process(this);
+
 		return report;
 	}
 

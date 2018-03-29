@@ -57,7 +57,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 			
 			double numOfCoveredByIns = report.facets.coverage.stream().filter(facet -> facet.coveredByInstance).count();
 			report.facets.instanceCoverage = numOfCoveredByIns / report.facets.numOfFacets;
-		
+
 		}catch (Exception e) {
 			throw new Exception("Unable to obtain mapping for " + entity, e);
 		};

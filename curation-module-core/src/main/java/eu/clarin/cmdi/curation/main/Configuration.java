@@ -26,6 +26,9 @@ public class Configuration {
 	public static Path CACHE_DIRECTORY = null;
 	public static Collection<String> FACETS = null;
 
+	//this is a boolean that is set by core-module(false) and web-module(true)
+	public static boolean enableProfileLoadTimer = false;
+
 	public static boolean COLLECTION_MODE = false; //when true values wont be extracted for facet "text", saves a lot of time in collection assessment
 
 	public static void init(String file) throws IOException {

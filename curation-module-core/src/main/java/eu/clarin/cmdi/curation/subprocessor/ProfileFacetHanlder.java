@@ -29,6 +29,7 @@ public class ProfileFacetHanlder extends ProcessingStep<CMDProfile, CMDProfileRe
 		}
 		
 		report.facet = new FacetReportCreator().createFacetReport(facetMappings);
+
 	}
 	
 	@Override

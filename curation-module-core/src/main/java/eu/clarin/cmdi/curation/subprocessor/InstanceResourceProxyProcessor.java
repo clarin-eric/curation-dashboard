@@ -96,7 +96,8 @@ public class InstanceResourceProxyProcessor extends CMDSubprocessor {
 		report.resProxyReport.percOfResourcesWithMime = numOfTypeResource > 0? 
 				(double) report.resProxyReport.numOfResourcesWithMime / numOfTypeResource : 0;
 		report.resProxyReport.percOfResProxiesWithReferences = report.resProxyReport.numOfResProxies > 0? 
-				(double) report.resProxyReport.numOfResProxiesWithReferences / report.resProxyReport.numOfResProxies : 0;		
+				(double) report.resProxyReport.numOfResProxiesWithReferences / report.resProxyReport.numOfResProxies : 0;
+
 	}
 
 	@Override

@@ -61,6 +61,7 @@ public class URLValidator extends CMDSubprocessor {
 			 report.urlReport = createURLReport(numOfLinks, 0, numOfUniqueLinks);
 			 addMessage(Severity.INFO, "Link validation is disabled");
 		}
+
     }
     
 	@Override

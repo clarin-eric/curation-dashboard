@@ -55,7 +55,7 @@ public class InstanceXMLValidator extends CMDSubprocessor {
 		    report.xmlReport.numOfXMLSimpleElements = numOfXMLSimpleElements;
 		    report.xmlReport.numOfXMLEmptyElement = numOfXMLEmptyElement;
 		    report.xmlReport.percOfPopulatedElements = (numOfXMLSimpleElements - numOfXMLEmptyElement) / (double) numOfXMLSimpleElements;
-			
+
 			
 		} catch (Exception e) {
 		    throw new Exception("Unable to do xml validation for " + entity.toString(), e);
