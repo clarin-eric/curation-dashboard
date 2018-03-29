@@ -21,6 +21,16 @@ public abstract class CurationEntity {
 
 	protected long size = 0;
 
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	protected String url;
+
 	public CurationEntity(Path path) {
 		this.path = path;
 	}

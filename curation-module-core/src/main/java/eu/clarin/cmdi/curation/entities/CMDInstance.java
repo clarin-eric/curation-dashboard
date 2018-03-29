@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.entities;
 
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,4 +46,6 @@ public class CMDInstance extends CurationEntity {
 			name = path.getName(cnt - 2) + "/" + name;
 		return "CMD Instance: " + name;
 	}
+
+
 }

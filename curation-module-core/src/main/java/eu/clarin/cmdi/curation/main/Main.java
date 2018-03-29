@@ -136,6 +136,7 @@ public class Main {
             Files.createDirectories(path);
             path = path.resolve(report.getName() + ".xml");
             report.toXML(Files.newOutputStream(path));
+            System.out.println("Report saved.");
         } else {//print to console
             report.toXML(System.out);
             System.out.println("-----------------------------------------------------------------");

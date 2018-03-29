@@ -28,7 +28,12 @@ public class FileSizeValidator extends CMDSubprocessor {
 
 		report.fileReport = new FileReport();
 		report.fileReport.size = entity.getSize();
-		report.fileReport.location = entity.getPath().toString();
+		if(entity.getUrl()!=null){
+			report.fileReport.location = entity.getUrl().replaceAll("/", "-");
+		}else{
+			report.fileReport.location = entity.getPath().toString();
+		}
+
 		//different processing for collections
 		if(Configuration.COLLECTION_MODE) {
 			return;

@@ -25,7 +25,7 @@ public class CMDInstanceProcessor extends AbstractProcessor<CMDInstanceReport> {
 					new FileSizeValidator(),
 					new CollectionInstanceHeaderProcessor(),
 					new CollectionInstanceResourceProxyProcessor(),
-					//new URLValidator(),
+					//new URLValidator(),//todo
 					new InstanceXMLValidator(),
 					new CollectionInstanceFacetProcessor())
 				:

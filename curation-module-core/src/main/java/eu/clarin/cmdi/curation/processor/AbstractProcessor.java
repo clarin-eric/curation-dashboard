@@ -20,11 +20,11 @@ public abstract class AbstractProcessor<R extends Report<?>> {
 
     public Report<?> process(CurationEntity entity) throws InterruptedException {
 
+
         Report<?> report = createReport();
 
         try {
             for (ProcessingStep step : createPipeline()) {
-
                 step.process(entity, report);
                 report.addSegmentScore(step.calculateScore(report));
             }
@@ -32,11 +32,10 @@ public abstract class AbstractProcessor<R extends Report<?>> {
             return report;
         } catch (FileSizeException e) {
             _logger.error(e.getMessage());
-            return new ErrorReport(entity.toString(), e.getMessage());
+            return new ErrorReport(report.getName(), e.getMessage());
         } catch (Exception e) {
             _logger.error("Error while processing {}", entity, e);
-            //return new ErrorReport(entity.toString(), getStackTrace(e));
-            return new ErrorReport(entity.toString(), e.getMessage());
+            return new ErrorReport(report.getName(), e.getMessage());
         }
 
     }
