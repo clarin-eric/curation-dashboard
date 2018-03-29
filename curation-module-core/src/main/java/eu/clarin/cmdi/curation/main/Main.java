@@ -40,6 +40,19 @@ public class Main {
                 HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("curation module", options);
                 return;
+
+                /*
+                 usage: curation module
+                 -c                 curate a collection
+                 -config <file>     a path to the configuration file
+                 -i                 curate an instance
+                 -id <profilesId>   Space separated CLARIN profile IDs in format:
+                                    clarin.eu:cr1:p_xxx
+                 -p                 curate a profile
+                 -path <path>       Space separated paths to file or folder to be curated
+                 -url <url>         Space separated urls to profile or instance to be
+                                    curated
+                * */
             }
         } catch (org.apache.commons.cli.ParseException e) {
             // do nothing
