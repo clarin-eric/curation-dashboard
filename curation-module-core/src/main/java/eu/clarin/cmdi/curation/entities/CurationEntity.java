@@ -13,7 +13,7 @@ public abstract class CurationEntity {
 	
 	public enum CurationEntityType {PROFILE, INSTANCE, COLLECTION}
 	
-	static final Logger _logger = LoggerFactory.getLogger(CurationEntity.class);
+	static final Logger logger = LoggerFactory.getLogger(CurationEntity.class);
 
 	protected Path path = null;
 

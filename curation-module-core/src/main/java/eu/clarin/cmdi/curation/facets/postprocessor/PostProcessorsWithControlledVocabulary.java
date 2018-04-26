@@ -22,7 +22,7 @@ import eu.clarin.cmdi.curation.facets.controlled_vocabulary.ControlledVocabulary
 
 public abstract class PostProcessorsWithControlledVocabulary implements PostProcessor, ControlledVocabularyService {
 
-	private final static Logger _logger = LoggerFactory.getLogger(PostProcessorsWithControlledVocabulary.class);
+	private final static Logger logger = LoggerFactory.getLogger(PostProcessorsWithControlledVocabulary.class);
 	
 	private final static String MAPPING_FILES_LOCATION = "https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/";
 	private ControlledVocabularyService vocabulary;
@@ -53,7 +53,7 @@ public abstract class PostProcessorsWithControlledVocabulary implements PostProc
 
 	// for debug
 	public void printMap() {
-		_logger.info(vocabulary.toString());
+		logger.info(vocabulary.toString());
 			
 	}
 }

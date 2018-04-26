@@ -28,7 +28,7 @@ import eu.clarin.cmdi.curation.xml.CMDErrorHandler;
 
 public class InstanceXMLPopulatedValidator extends CMDSubprocessor {
 
-    static final Logger _logger = LoggerFactory.getLogger(InstanceXMLPopulatedValidator.class);
+    static final Logger logger = LoggerFactory.getLogger(InstanceXMLPopulatedValidator.class);
     
     int numOfXMLElements = 0;
     int numOfXMLSimpleElements = 0;
@@ -80,7 +80,7 @@ public class InstanceXMLPopulatedValidator extends CMDSubprocessor {
 		    validator.setFeature("http://xml.org/sax/features/validation", true);
 		    validator.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
 		} catch (Exception e) {
-		    _logger.warn("feature is not supported", e);
+		    logger.warn("feature is not supported", e);
 		}
     }
     

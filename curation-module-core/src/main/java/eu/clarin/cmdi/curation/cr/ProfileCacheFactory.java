@@ -33,7 +33,7 @@ class ProfileCacheFactory{
 	
 	static final long HOUR_IN_NS = 3600000000000L;
 	
-	private static final Logger _logger = LoggerFactory.getLogger(ProfileCacheFactory.class);
+	private static final Logger logger = LoggerFactory.getLogger(ProfileCacheFactory.class);
 	
 	private static final SchemaFactory schemaFactory;
 	
@@ -74,7 +74,7 @@ class ProfileCacheFactory{
 		
 		@Override
 		public ProfileCacheEntry load(ProfileHeader header) throws IOException, VTDException, SAXException{			
-			_logger.info("Profile {} is not in the cache, it will be loaded", header.schemaLocation);
+			logger.info("Profile {} is not in the cache, it will be loaded", header.schemaLocation);
 			
 			Path xsd;			
 			
@@ -86,15 +86,15 @@ class ProfileCacheFactory{
 				String fileName = id.substring(CRService.PROFILE_PREFIX.length());
 				xsd = Configuration.CACHE_DIRECTORY.resolve(fileName + ".xsd");
 				//try to load it from the disk
-				_logger.debug("profile {} is public. Loading schema from {}", id, xsd);
+				logger.debug("profile {} is public. Loading schema from {}", id, xsd);
 				if (!Files.exists(xsd)) {// keep public profiles on disk 
 					// if not download it
 					Files.createFile(xsd);
-					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", id);
+					logger.info("XSD for the {} is not in the local cache, it will be downloaded", id);
 					new Downloader().download(header.schemaLocation, xsd.toFile());
 				}
 			}else{//non-public profiles are not cached on disk
-				_logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.schemaLocation);
+				logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.schemaLocation);
 				
 				//keep private schemas on disk
 				
@@ -106,11 +106,11 @@ class ProfileCacheFactory{
 				xsd = Configuration.CACHE_DIRECTORY.resolve("private_profiles");
 				xsd = xsd.resolve(fileName + ".xsd");
 				//try to load it from the disk
-				_logger.debug("Loading schema for non public profile {} from {}", id, xsd);
+				logger.debug("Loading schema for non public profile {} from {}", id, xsd);
 				if (!Files.exists(xsd)) {
 					// if not download it
 					Files.createFile(xsd);
-					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", id);
+					logger.info("XSD for the {} is not in the local cache, it will be downloaded", id);
 					new Downloader().download(header.schemaLocation, xsd.toFile());
 					
 				}

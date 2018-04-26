@@ -16,7 +16,7 @@ import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 
 public abstract class AbstractProcessor<R extends Report<?>> {
 
-    private static final Logger _logger = LoggerFactory.getLogger(AbstractProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractProcessor.class);
 
     public Report<?> process(CurationEntity entity) throws InterruptedException {
 
@@ -31,10 +31,12 @@ public abstract class AbstractProcessor<R extends Report<?>> {
 
             return report;
         } catch (FileSizeException e) {
-            _logger.error(e.getMessage());
+            logger.error(e.getMessage());
             return new ErrorReport(report.getName(), e.getMessage());
         } catch (Exception e) {
-            _logger.error("Error while processing {}", entity, e);
+//            logger.error("Error while processing {}", entity, e);
+            logger.error(e.getMessage());
+            e.printStackTrace();//todo remove this stack trace
             return new ErrorReport(report.getName(), e.getMessage());
         }
 

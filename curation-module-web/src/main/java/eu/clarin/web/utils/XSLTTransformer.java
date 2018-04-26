@@ -18,7 +18,7 @@ import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
 
 public class XSLTTransformer {
 	
-	static final Logger _logger = LoggerFactory.getLogger(XSLTTransformer.class);
+	static final Logger logger = LoggerFactory.getLogger(XSLTTransformer.class);
 	
 	private static Transformer profileTransformer = null;
 	private static Transformer instanceTransformer = null;
@@ -31,7 +31,7 @@ public class XSLTTransformer {
 			instanceTransformer = factory.newTemplates(new StreamSource(XSLTTransformer.class.getResourceAsStream("/xslt/XML2HTMLInstance.xsl"))).newTransformer();
 			collectionTransformer = factory.newTemplates(new StreamSource(XSLTTransformer.class.getResourceAsStream("/xslt/XML2HTMLCollection.xsl"))).newTransformer();
 		} catch (TransformerConfigurationException e) {
-			_logger.error("Unable to create XSLT transformers!", e);
+			logger.error("Unable to create XSLT transformers!", e);
 		}
 	
 	}
@@ -60,7 +60,7 @@ public class XSLTTransformer {
 					t.transform(source, result);
 					return result.getWriter().toString();
 				}catch(TransformerException e){
-					_logger.error("Errow while tranforming {}", type.toString(), e);					
+					logger.error("Errow while tranforming {}", type.toString(), e);
 				}				
 			}
 			return content = "XSL file is missing or invalid, please download report in xml form\n\n";

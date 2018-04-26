@@ -17,7 +17,7 @@ import com.ximpleware.VTDNav;
 
 public class CMDXPathService {
 
-	private static final Logger _logger = LoggerFactory.getLogger(CMDXPathService.class);
+	private static final Logger logger = LoggerFactory.getLogger(CMDXPathService.class);
 
 	private VTDNav navigator = null;
 

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public class InstanceXMLValidator extends CMDSubprocessor {
 
-    static final Logger _logger = LoggerFactory.getLogger(InstanceXMLValidator.class);
+    static final Logger logger = LoggerFactory.getLogger(InstanceXMLValidator.class);
 
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {

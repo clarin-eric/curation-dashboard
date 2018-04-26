@@ -21,7 +21,7 @@ import eu.clarin.cmdi.curation.facets.controlled_vocabulary.VariantsMap.Variant;
 
 public class ControlledVocabularyFactory {
 	
-	private final static Logger _logger = LoggerFactory.getLogger(ControlledVocabularyFactory.class);
+	private final static Logger logger = LoggerFactory.getLogger(ControlledVocabularyFactory.class);
 
 	private static LoadingCache<URL, ControlledVocabulary> vocabulariesCache = CacheBuilder.newBuilder().concurrencyLevel(4).build(new ControlledVocabularyCacheLoader());
 	
@@ -41,7 +41,7 @@ public class ControlledVocabularyFactory {
 		@Override
 		public ControlledVocabulary load(URL key) throws Exception {
 			
-			_logger.info("Creating new controlled vocabulary from " + key.toString());
+			logger.info("Creating new controlled vocabulary from " + key.toString());
 			
 			JAXBContext jc = JAXBContext.newInstance(VariantsMap.class);
 	        Unmarshaller unmarshaller = jc.createUnmarshaller();

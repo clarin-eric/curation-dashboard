@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class DownloaderService {
 
-	static final Logger _logger = LoggerFactory.getLogger(DownloaderService.class);
+	static final Logger logger = LoggerFactory.getLogger(DownloaderService.class);
 
 	// Singleton
 	static DownloaderService instance = new DownloaderService();
@@ -47,18 +47,18 @@ public class DownloaderService {
 		@Override
 		public void run() {
 			long threadId = Thread.currentThread().getId();
-			_logger.info("Thread: {} started", threadId);
-			_logger.trace("Downloading file from {} into {}", url, destination.getName());
+			logger.info("Thread: {} started", threadId);
+			logger.trace("Downloading file from {} into {}", url, destination.getName());
 			try {
 				ReadableByteChannel channel = Channels.newChannel(new URL(url).openStream());
 				FileOutputStream fos = new FileOutputStream(destination);
 				long size = fos.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
-				_logger.trace("File successefully downloaded with size {} KB",
+				logger.trace("File successefully downloaded with size {} KB",
 						new DecimalFormat("#,##0.#").format(size / 1024));
 				fos.close();
-				_logger.info("Thread: {} finished", threadId);
+				logger.info("Thread: {} finished", threadId);
 			} catch (IOException e) {
-				_logger.error("Error while downloading file {}", url);
+				logger.error("Error while downloading file {}", url);
 				exception = e;
 			}
 		}

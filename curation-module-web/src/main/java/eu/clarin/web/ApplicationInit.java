@@ -17,7 +17,7 @@ import eu.clarin.cmdi.curation.main.Configuration;
  */
 public class ApplicationInit implements ServletContextListener {
 	
-	static final Logger _logger = LoggerFactory.getLogger(ApplicationInit.class);
+	static final Logger logger = LoggerFactory.getLogger(ApplicationInit.class);
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
@@ -35,7 +35,7 @@ public class ApplicationInit implements ServletContextListener {
 			Shared.init();
 			
 		} catch (IOException e) {
-			_logger.error("", e);
+			logger.error("", e);
 			throw new RuntimeException("Unable to initialize configuration with default properties file", e);
 		}
 	}

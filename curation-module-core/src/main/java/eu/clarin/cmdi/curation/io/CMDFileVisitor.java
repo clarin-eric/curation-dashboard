@@ -18,7 +18,7 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
 
 public class CMDFileVisitor implements FileVisitor<Path> {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CMDFileVisitor.class);
+    private static final Logger logger = LoggerFactory.getLogger(CMDFileVisitor.class);
 
     private CMDCollection curDir = null;
     private CMDCollection root = null;
@@ -28,7 +28,7 @@ public class CMDFileVisitor implements FileVisitor<Path> {
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-		_logger.trace("visiting {}", dir);
+		logger.trace("visiting {}", dir);
 		if (curDir != null)
 		    stack.push(curDir);
 	
@@ -51,7 +51,7 @@ public class CMDFileVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 
-		_logger.trace("finished visiting {}, number of files: {}", dir, curDir.getNumOfFiles());
+		logger.trace("finished visiting {}, number of files: {}", dir, curDir.getNumOfFiles());
 	
 		long startTime = System.currentTimeMillis();
 		// fire processors for children
@@ -61,7 +61,7 @@ public class CMDFileVisitor implements FileVisitor<Path> {
 			e.printStackTrace();
 		}
 		long end = System.currentTimeMillis();
-		_logger.info("validation for {} lasted {}", dir, TimeUtils.humanizeTime(end - startTime));
+		logger.info("validation for {} lasted {}", dir, TimeUtils.humanizeTime(end - startTime));
 		
 		
 		if(!stack.empty()){
