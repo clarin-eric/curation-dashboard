@@ -103,10 +103,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         parentReport.xmlReport.totNumOfXMLSimpleElements += xmlReport.numOfXMLSimpleElements;
         parentReport.xmlReport.totNumOfXMLEmptyElement += xmlReport.numOfXMLEmptyElement;
 
-        // URL
-        parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;
-        parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
-        parentReport.urlReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
+        // URL //todo remove these comments when url checker enabled
+//        parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;
+//        parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
+//        parentReport.urlReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
 
         // Facet
         facets.coverage.stream()
