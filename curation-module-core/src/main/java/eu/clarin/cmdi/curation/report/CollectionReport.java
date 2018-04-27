@@ -54,9 +54,13 @@ public class CollectionReport implements Report<CollectionReport> {
 	@XmlElement(name = "resProxy-section")
 	public ResProxyReport resProxyReport;
 
+	// XMLPopulatedValidator
+	@XmlElement(name = "xml-populated-section")
+	public XMLPopulatedReport xmlPopulatedReport;
+
 	// XMLValidator
 	@XmlElement(name = "xml-validation-section")
-	public XMLValidationReport xmlReport;
+	public XMLValidationReport xmlValidationReport;
 
 	// URL
 	@XmlElement(name = "url-validation-section")
@@ -107,9 +111,13 @@ public class CollectionReport implements Report<CollectionReport> {
 		parentReport.resProxyReport.totNumOfResProxiesWithReferences += resProxyReport.totNumOfResProxiesWithReferences;
 
 		// XMLValidator
-		parentReport.xmlReport.totNumOfXMLElements += xmlReport.totNumOfXMLElements;
-		parentReport.xmlReport.totNumOfXMLSimpleElements += xmlReport.totNumOfXMLSimpleElements;
-		parentReport.xmlReport.totNumOfXMLEmptyElement += xmlReport.totNumOfXMLEmptyElement;
+		parentReport.xmlValidationReport.totNumOfInstances += xmlValidationReport.totNumOfInstances;
+		parentReport.xmlValidationReport.totNumOfValidInstances += xmlValidationReport.totNumOfValidInstances;
+
+		// XMLPopulatedValidator
+		parentReport.xmlPopulatedReport.totNumOfXMLElements += xmlPopulatedReport.totNumOfXMLElements;
+		parentReport.xmlPopulatedReport.totNumOfXMLSimpleElements += xmlPopulatedReport.totNumOfXMLSimpleElements;
+		parentReport.xmlPopulatedReport.totNumOfXMLEmptyElement += xmlPopulatedReport.totNumOfXMLEmptyElement;
 
 		// URL
 		parentReport.urlReport.totNumOfLinks += urlReport.totNumOfLinks;
@@ -172,11 +180,14 @@ public class CollectionReport implements Report<CollectionReport> {
 				/ fileReport.numOfFiles;
 
 		// XMLValidator
-		xmlReport.avgNumOfXMLElements = (double) xmlReport.totNumOfXMLElements / fileReport.numOfFiles;
-		xmlReport.avgNumOfXMLSimpleElements = (double) xmlReport.totNumOfXMLSimpleElements / fileReport.numOfFiles;
-		xmlReport.avgXMLEmptyElement = (double) xmlReport.totNumOfXMLEmptyElement / fileReport.numOfFiles;
+		xmlValidationReport.avgRateOfValidInstances = (double)xmlValidationReport.totNumOfValidInstances / xmlValidationReport.totNumOfInstances;
 
-		xmlReport.avgRateOfPopulatedElements = (xmlReport.avgNumOfXMLSimpleElements - xmlReport.avgXMLEmptyElement) / xmlReport.avgNumOfXMLSimpleElements;
+		// XMLPopulatedValidator
+		xmlPopulatedReport.avgNumOfXMLElements = (double) xmlPopulatedReport.totNumOfXMLElements / fileReport.numOfFiles;
+		xmlPopulatedReport.avgNumOfXMLSimpleElements = (double) xmlPopulatedReport.totNumOfXMLSimpleElements / fileReport.numOfFiles;
+		xmlPopulatedReport.avgXMLEmptyElement = (double) xmlPopulatedReport.totNumOfXMLEmptyElement / fileReport.numOfFiles;
+
+		xmlPopulatedReport.avgRateOfPopulatedElements = (xmlPopulatedReport.avgNumOfXMLSimpleElements - xmlPopulatedReport.avgXMLEmptyElement) / xmlPopulatedReport.avgNumOfXMLSimpleElements;
 
 		// URL
 		urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
@@ -235,7 +246,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
-	public static class XMLValidationReport {
+	public static class XMLPopulatedReport {
 		public int totNumOfXMLElements;
 		public Double avgNumOfXMLElements = 0.0;
 		public int totNumOfXMLSimpleElements;
@@ -243,6 +254,14 @@ public class CollectionReport implements Report<CollectionReport> {
 		public int totNumOfXMLEmptyElement;
 		public Double avgXMLEmptyElement = 0.0;
 		public Double avgRateOfPopulatedElements = 0.0;
+	}
+
+	@XmlRootElement
+	@XmlAccessorType(XmlAccessType.FIELD)
+	public static class XMLValidationReport {
+		public int totNumOfInstances;
+		public int totNumOfValidInstances;
+		public Double avgRateOfValidInstances = 0.0;
 	}
 
 	@XmlRootElement

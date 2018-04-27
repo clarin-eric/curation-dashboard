@@ -53,7 +53,6 @@ public class InstanceXMLValidator extends CMDSubprocessor {
             reader.setContentHandler(schemaValidator);
             reader.parse(new InputSource(entity.getPath().toUri().toString()));
 
-
             report.xmlPopulatedReport = new CMDInstanceReport.XMLPopulatedReport();
             report.xmlPopulatedReport.numOfXMLElements = numOfXMLElements;
             report.xmlPopulatedReport.numOfXMLSimpleElements = numOfXMLSimpleElements;
@@ -61,6 +60,7 @@ public class InstanceXMLValidator extends CMDSubprocessor {
             report.xmlPopulatedReport.percOfPopulatedElements = (numOfXMLSimpleElements - numOfXMLEmptyElement) / (double) numOfXMLSimpleElements;
 
             for (Message m : msgs) {
+
                 if (m.getLvl().equals(Severity.FATAL) || m.getLvl().equals(Severity.ERROR)) {
                     valid = false;
                 }

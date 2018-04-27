@@ -88,17 +88,24 @@
 		<p>Average number of resource proxies with MIME: <xsl:value-of select="./resProxy-section/avgNumOfResourcesWithMime"/></p>
 		<p>Total number of resource proxies with reference: <xsl:value-of select="./resProxy-section/totNumOfResProxiesWithReferences"/></p>
 		<p>Average number of resource proxies with references: <xsl:value-of select="./resProxy-section/avgNumOfResProxiesWithReferences"/></p>
-		
+
 		<hr/>
-		
+
 		<h2>XML Validation Section</h2>
-		<p>Total number of XML elements: <xsl:value-of select="./xml-validation-section/totNumOfXMLElements"/></p>
-		<p>Average number of XML elements: <xsl:value-of select="./xml-validation-section/avgNumOfXMLElements"/></p>
-		<p>Total number of simple XML elements: <xsl:value-of select="./xml-validation-section/totNumOfXMLSimpleElements"/></p>
-		<p>Average number of simple XML elements: <xsl:value-of select="./xml-validation-section/avgNumOfXMLSimpleElements"/></p>
-		<p>Total number of empty XML elements: <xsl:value-of select="./xml-validation-section/totNumOfXMLEmptyElement"/></p>
-		<p>Average number of empty XML elements: <xsl:value-of select="./xml-validation-section/avgXMLEmptyElement"/></p>
-		<p>Average rate of populated elements: <xsl:value-of select="./xml-validation-section/avgRateOfPopulatedElements"/>%</p>
+		<p>number of instances: <xsl:value-of select="./xml-validation-section/numOfInstances"/></p>
+		<p>number of valid instances: <xsl:value-of select="./xml-validation-section/numOfValidInstances"/></p>
+		<p>percentage of valid instances: <xsl:value-of select="./xml-validation-section/percOfValidInstances"/></p>
+
+		<hr/>
+
+		<h2>XML Populated Section</h2>
+		<p>Total number of XML elements: <xsl:value-of select="./xml-populated-section/totNumOfXMLElements"/></p>
+		<p>Average number of XML elements: <xsl:value-of select="./xml-populated-section/avgNumOfXMLElements"/></p>
+		<p>Total number of simple XML elements: <xsl:value-of select="./xml-populated-section/totNumOfXMLSimpleElements"/></p>
+		<p>Average number of simple XML elements: <xsl:value-of select="./xml-populated-section/avgNumOfXMLSimpleElements"/></p>
+		<p>Total number of empty XML elements: <xsl:value-of select="./xml-populated-section/totNumOfXMLEmptyElement"/></p>
+		<p>Average number of empty XML elements: <xsl:value-of select="./xml-populated-section/avgXMLEmptyElement"/></p>
+		<p>Average rate of populated elements: <xsl:value-of select="./xml-populated-section/avgRateOfPopulatedElements"/>%</p>
 		
 		<!--		
 		<hr/>

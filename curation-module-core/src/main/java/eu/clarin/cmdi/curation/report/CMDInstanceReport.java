@@ -102,10 +102,14 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         parentReport.resProxyReport.totNumOfResourcesWithMime += resProxyReport.numOfResourcesWithMime;
         parentReport.resProxyReport.totNumOfResProxiesWithReferences += resProxyReport.numOfResProxiesWithReferences;
 
+        // XMLPopulatedValidator
+        parentReport.xmlPopulatedReport.totNumOfXMLElements += xmlPopulatedReport.numOfXMLElements;
+        parentReport.xmlPopulatedReport.totNumOfXMLSimpleElements += xmlPopulatedReport.numOfXMLSimpleElements;
+        parentReport.xmlPopulatedReport.totNumOfXMLEmptyElement += xmlPopulatedReport.numOfXMLEmptyElement;
+
         // XMLValidator
-        parentReport.xmlReport.totNumOfXMLElements += xmlPopulatedReport.numOfXMLElements;
-        parentReport.xmlReport.totNumOfXMLSimpleElements += xmlPopulatedReport.numOfXMLSimpleElements;
-        parentReport.xmlReport.totNumOfXMLEmptyElement += xmlPopulatedReport.numOfXMLEmptyElement;
+        parentReport.xmlValidationReport.totNumOfInstances += 1;
+        parentReport.xmlValidationReport.totNumOfValidInstances += xmlValidityReport.valid?1:0;
 
         // URL //todo remove these comments when url checker enabled
 //        parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;

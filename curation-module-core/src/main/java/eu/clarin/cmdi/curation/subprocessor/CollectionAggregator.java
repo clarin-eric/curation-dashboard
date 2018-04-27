@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import eu.clarin.cmdi.curation.main.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +18,7 @@ import eu.clarin.cmdi.curation.report.CollectionReport.FileReport;
 import eu.clarin.cmdi.curation.report.CollectionReport.HeaderReport;
 import eu.clarin.cmdi.curation.report.CollectionReport.ResProxyReport;
 import eu.clarin.cmdi.curation.report.CollectionReport.URLValidationReport;
+import eu.clarin.cmdi.curation.report.CollectionReport.XMLPopulatedReport;
 import eu.clarin.cmdi.curation.report.CollectionReport.XMLValidationReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
@@ -39,7 +39,8 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
         report.fileReport = new FileReport();
         report.headerReport = new HeaderReport();
         report.resProxyReport = new ResProxyReport();
-        report.xmlReport = new XMLValidationReport();
+        report.xmlPopulatedReport = new XMLPopulatedReport();
+        report.xmlValidationReport = new XMLValidationReport();
         report.urlReport = new URLValidationReport();
         report.facetReport = new FacetReport();
 

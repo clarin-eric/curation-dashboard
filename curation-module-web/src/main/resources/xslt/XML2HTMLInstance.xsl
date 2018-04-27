@@ -181,13 +181,18 @@
 			</tbody>
 		</table>
 		
-		<hr/>	
-		
+		<hr/>
+
 		<h2>xml-validation-section</h2>
-		<p>number of XML elements: <xsl:value-of select="./xml-validation-section/numOfXMLElements"/></p>
-		<p>number of simple XML elements: <xsl:value-of select="./xml-validation-section/numOfXMLSimpleElements"/></p>
-		<p>number of empty XML elements: <xsl:value-of select="./xml-validation-section/numOfXMLEmptyElement"/></p>
-		<p>percentage of populated XML elements: <xsl:value-of select="./xml-validation-section/percOfPopulatedElements"/></p>
+		<p>validity according to profile: <xsl:value-of select="./xml-validation-section/valid"/></p>
+
+		<hr/>
+		
+		<h2>xml-populated-section</h2>
+		<p>number of XML elements: <xsl:value-of select="./xml-populated-section/numOfXMLElements"/></p>
+		<p>number of simple XML elements: <xsl:value-of select="./xml-populated-section/numOfXMLSimpleElements"/></p>
+		<p>number of empty XML elements: <xsl:value-of select="./xml-populated-section/numOfXMLEmptyElement"/></p>
+		<p>percentage of populated XML elements: <xsl:value-of select="./xml-populated-section/percOfPopulatedElements"/></p>
 		
 		<hr/>	
 		
