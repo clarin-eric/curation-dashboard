@@ -33,12 +33,12 @@ public class CMDErrorHandler implements ErrorHandler {
 	}
 
 	@Override
-	public void error(SAXParseException exception) throws SAXException {
+	public void error(SAXParseException exception){
 		addMessage(Severity.ERROR, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage());
 	}
 
 	@Override
-	public void warning(SAXParseException exception) throws SAXException {
+	public void warning(SAXParseException exception) {
 		addMessage(Severity.WARNING, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage());
 
 	}

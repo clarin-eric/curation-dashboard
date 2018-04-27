@@ -62,7 +62,7 @@ public class ResultView extends Panel implements View{
 		
 		fileDownloader.extend(export);
 		
-//		BrowserWindowOpener popup = new BrowserWindowOpener(xmlReport);
+//		BrowserWindowOpener popup = new BrowserWindowOpener(xmlPopulatedReport);
 //		popup.setFeatures("");
 //		popup.extend(bXML);	
 

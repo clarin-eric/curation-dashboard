@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 
-import eu.clarin.cmdi.curation.main.Main;
+import eu.clarin.cmdi.curation.subprocessor.InstanceXMLValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +26,9 @@ public abstract class AbstractProcessor<R extends Report<?>> {
         try {
             for (ProcessingStep step : createPipeline()) {
                 step.process(entity, report);
+                if(step instanceof InstanceXMLValidator){
+                    report.addSegmentScore(((InstanceXMLValidator)step).calculateValidityScore());
+                }
                 report.addSegmentScore(step.calculateScore(report));
             }
 
@@ -36,7 +39,6 @@ public abstract class AbstractProcessor<R extends Report<?>> {
         } catch (Exception e) {
 //            logger.error("Error while processing {}", entity, e);
             logger.error(e.getMessage());
-            e.printStackTrace();//todo remove this stack trace
             return new ErrorReport(report.getName(), e.getMessage());
         }
 

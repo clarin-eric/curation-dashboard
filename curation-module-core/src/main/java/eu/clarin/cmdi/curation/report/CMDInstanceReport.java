@@ -52,9 +52,13 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     @XmlElement(name = "resProxy-section")
     public ResProxyReport resProxyReport;
 
-    // XMLValidator
+    // XMLPopulatedValidator
+    @XmlElement(name = "xml-populated-section")
+    public XMLPopulatedReport xmlPopulatedReport;
+
+    // XMLValidityValidator
     @XmlElement(name = "xml-validation-section")
-    public XMLReport xmlReport;
+    public XMLValidityReport xmlValidityReport;
 
     // URL
     @XmlElement(name = "url-validation-section")
@@ -99,9 +103,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         parentReport.resProxyReport.totNumOfResProxiesWithReferences += resProxyReport.numOfResProxiesWithReferences;
 
         // XMLValidator
-        parentReport.xmlReport.totNumOfXMLElements += xmlReport.numOfXMLElements;
-        parentReport.xmlReport.totNumOfXMLSimpleElements += xmlReport.numOfXMLSimpleElements;
-        parentReport.xmlReport.totNumOfXMLEmptyElement += xmlReport.numOfXMLEmptyElement;
+        parentReport.xmlReport.totNumOfXMLElements += xmlPopulatedReport.numOfXMLElements;
+        parentReport.xmlReport.totNumOfXMLSimpleElements += xmlPopulatedReport.numOfXMLSimpleElements;
+        parentReport.xmlReport.totNumOfXMLEmptyElement += xmlPopulatedReport.numOfXMLEmptyElement;
 
         // URL //todo remove these comments when url checker enabled
 //        parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;
@@ -192,13 +196,22 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class XMLReport {
+    public static class XMLPopulatedReport {
         public int numOfXMLElements;
         public int numOfXMLSimpleElements;
         public int numOfXMLEmptyElement;
         public Double percOfPopulatedElements;
 
-        public XMLReport() {
+        public XMLPopulatedReport() {
+        }
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class XMLValidityReport {
+        public boolean valid;
+
+        public XMLValidityReport() {
         }
     }
 
