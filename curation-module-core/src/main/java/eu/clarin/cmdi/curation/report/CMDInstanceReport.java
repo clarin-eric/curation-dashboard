@@ -108,8 +108,8 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         parentReport.xmlPopulatedReport.totNumOfXMLEmptyElement += xmlPopulatedReport.numOfXMLEmptyElement;
 
         // XMLValidator
-        parentReport.xmlValidationReport.totNumOfInstances += 1;
-        parentReport.xmlValidationReport.totNumOfValidInstances += xmlValidityReport.valid?1:0;
+        parentReport.xmlValidationReport.totNumOfRecords += 1;
+        parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidityReport.valid?1:0;
 
         // URL //todo remove these comments when url checker enabled
 //        parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;

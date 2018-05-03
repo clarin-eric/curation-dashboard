@@ -38,7 +38,7 @@ public class Collections extends GridPanel {
 		container.addContainerProperty("NumOfRecords", Long.class, null);
 		container.addContainerProperty("NumOfProfiles", Integer.class, null);
 		container.addContainerProperty("AvgNumOfResProxies", Double.class, null);
-		container.addContainerProperty("AvgNumOfValidInstances", Double.class, null);
+		container.addContainerProperty("AvgNumOfValidRecords", Double.class, null);
 		container.addContainerProperty("AvgNumOfEmptyXMLElements", Double.class, null);
 		container.addContainerProperty("AvgFacetCoverage", Double.class, null);
 		Shared.facetNames.forEach(facetName -> container.addContainerProperty(facetName, Double.class, null));
@@ -47,7 +47,7 @@ public class Collections extends GridPanel {
 		// csv headers
 		sb.append("Name").append("\t").append("Score").append("\t").append("NumOfRecords").append("\t")
 				.append("NumOfProfiles").append("\t").append("AvgNumOfResProxies").append("\t")
-				.append("AvgNumOfValidInstances").append("\t").append("AvgNumOfEmptyXMLElements")
+				.append("AvgNumOfValidRecords").append("\t").append("AvgNumOfEmptyXMLElements")
 				.append("\t").append("AvgFacetCoverage").append("\t");
 		// facets
 		Shared.facetNames.forEach(facetName -> sb.append(facetName + "\t"));
@@ -74,7 +74,7 @@ public class Collections extends GridPanel {
                 rowValues.add(c.fileReport.numOfFiles);
                 rowValues.add(c.headerReport.profiles.totNumOfProfiles);
                 rowValues.add(c.resProxyReport.avgNumOfResProxies);
-                rowValues.add(c.xmlValidationReport.avgRateOfValidInstances);
+                rowValues.add(c.xmlValidationReport.avgRateOfValidRecords);
                 rowValues.add(c.xmlPopulatedReport.avgXMLEmptyElement);
                 rowValues.add(c.facetReport.coverage);
 
@@ -89,7 +89,7 @@ public class Collections extends GridPanel {
                 sb.append(c.fileReport.numOfFiles).append("\t");
                 sb.append(c.headerReport.profiles.totNumOfProfiles).append("\t");
                 sb.append(c.resProxyReport.avgNumOfResProxies).append("\t");
-				sb.append(c.xmlValidationReport.avgRateOfValidInstances).append("\t");
+				sb.append(c.xmlValidationReport.avgRateOfValidRecords).append("\t");
                 sb.append(c.xmlPopulatedReport.avgXMLEmptyElement).append("\t");
                 sb.append(c.facetReport.coverage).append("\t");
 

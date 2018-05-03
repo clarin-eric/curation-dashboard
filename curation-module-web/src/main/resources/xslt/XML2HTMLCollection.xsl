@@ -92,9 +92,9 @@
 		<hr/>
 
 		<h2>XML Validation Section</h2>
-		<p>number of instances: <xsl:value-of select="./xml-validation-section/numOfInstances"/></p>
-		<p>number of valid instances: <xsl:value-of select="./xml-validation-section/numOfValidInstances"/></p>
-		<p>percentage of valid instances: <xsl:value-of select="./xml-validation-section/percOfValidInstances"/></p>
+		<p>Number of Records: <xsl:value-of select="./xml-validation-section/totNumOfRecords"/></p>
+		<p>Number of valid Records: <xsl:value-of select="./xml-validation-section/totNumOfValidRecords"/></p>
+		<p>Percentage of valid Records: <xsl:value-of select="./xml-validation-section/avgRateOfValidRecords"/></p>
 
 		<hr/>
 

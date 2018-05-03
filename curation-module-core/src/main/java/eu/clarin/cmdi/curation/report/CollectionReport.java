@@ -111,8 +111,8 @@ public class CollectionReport implements Report<CollectionReport> {
 		parentReport.resProxyReport.totNumOfResProxiesWithReferences += resProxyReport.totNumOfResProxiesWithReferences;
 
 		// XMLValidator
-		parentReport.xmlValidationReport.totNumOfInstances += xmlValidationReport.totNumOfInstances;
-		parentReport.xmlValidationReport.totNumOfValidInstances += xmlValidationReport.totNumOfValidInstances;
+		parentReport.xmlValidationReport.totNumOfRecords += xmlValidationReport.totNumOfRecords;
+		parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidationReport.totNumOfValidRecords;
 
 		// XMLPopulatedValidator
 		parentReport.xmlPopulatedReport.totNumOfXMLElements += xmlPopulatedReport.totNumOfXMLElements;
@@ -180,7 +180,7 @@ public class CollectionReport implements Report<CollectionReport> {
 				/ fileReport.numOfFiles;
 
 		// XMLValidator
-		xmlValidationReport.avgRateOfValidInstances = (double)xmlValidationReport.totNumOfValidInstances / xmlValidationReport.totNumOfInstances;
+		xmlValidationReport.avgRateOfValidRecords = (double)xmlValidationReport.totNumOfValidRecords / xmlValidationReport.totNumOfRecords;
 
 		// XMLPopulatedValidator
 		xmlPopulatedReport.avgNumOfXMLElements = (double) xmlPopulatedReport.totNumOfXMLElements / fileReport.numOfFiles;
@@ -259,9 +259,9 @@ public class CollectionReport implements Report<CollectionReport> {
 	@XmlRootElement
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class XMLValidationReport {
-		public int totNumOfInstances;
-		public int totNumOfValidInstances;
-		public Double avgRateOfValidInstances = 0.0;
+		public int totNumOfRecords;
+		public int totNumOfValidRecords;
+		public Double avgRateOfValidRecords = 0.0;
 	}
 
 	@XmlRootElement
