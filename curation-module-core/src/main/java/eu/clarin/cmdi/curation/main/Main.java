@@ -101,14 +101,10 @@ public class Main {
             type = CurationEntityType.COLLECTION;
             Configuration.COLLECTION_MODE = true;
             if (cmd.hasOption("path")) {
-                String path =cmd.getOptionValues("path")[0];
 
-                dump(curator.processCollection(Paths.get(path)), type);
-//                for (String path : cmd.getOptionValues("path")) {
-//
-//
-//
-//                }
+                for (String path : cmd.getOptionValues("path")) {
+                    dump(curator.processCollection(Paths.get(path)), type);
+                }
             } else
                 throw new Exception("Only path is allowed for collection curation");
         } else
@@ -136,7 +132,7 @@ public class Main {
             Files.createDirectories(path);
             path = path.resolve(report.getName() + ".xml");
             report.toXML(Files.newOutputStream(path));
-            System.out.println("Report saved.");
+            System.out.println("Report saved:"+report.getName() + ".xml");
         } else {//print to console
             report.toXML(System.out);
             System.out.println("-----------------------------------------------------------------");

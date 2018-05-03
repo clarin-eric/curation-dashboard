@@ -112,6 +112,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidityReport.valid?1:0;
 
         // URL //todo remove these comments when url checker enabled
+        //make it an if check for url checking from config file
 //        parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;
 //        parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
 //        parentReport.urlReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
