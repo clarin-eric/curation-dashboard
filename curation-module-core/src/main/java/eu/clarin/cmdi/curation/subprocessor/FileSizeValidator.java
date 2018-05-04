@@ -19,13 +19,6 @@ public class FileSizeValidator extends CMDSubprocessor {
 
 	@Override
 	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception{
-		if (entity.getSize() > Configuration.MAX_FILE_SIZE) {
-			addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + Configuration.MAX_FILE_SIZE + "B)");
-			//don't assess when assessing collections
-			if(Configuration.COLLECTION_MODE)
-				throw new FileSizeException(entity.getPath().getFileName().toString(), entity.getSize());
-		}
-
 		report.fileReport = new FileReport();
 		report.fileReport.size = entity.getSize();
 		if(entity.getUrl()!=null){
@@ -34,10 +27,14 @@ public class FileSizeValidator extends CMDSubprocessor {
 			report.fileReport.location = entity.getPath().toString();
 		}
 
-		//different processing for collections
-		if(Configuration.COLLECTION_MODE) {
-			return;
+
+		if (report.fileReport.size > Configuration.MAX_FILE_SIZE) {
+			addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + Configuration.MAX_FILE_SIZE + "B)");
+			//don't assess when assessing collections
+			if(Configuration.COLLECTION_MODE)
+				throw new FileSizeException(entity.getPath().getFileName().toString(), entity.getSize());
 		}
+
 		InstanceParser transformer = new InstanceParser();
 		try {
 			entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));

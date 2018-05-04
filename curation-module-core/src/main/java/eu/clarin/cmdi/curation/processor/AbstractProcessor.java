@@ -37,7 +37,6 @@ public abstract class AbstractProcessor<R extends Report<?>> {
             logger.error(e.getMessage());
             return new ErrorReport(report.getName(), e.getMessage());
         } catch (Exception e) {
-//            logger.error("Error while processing {}", entity, e);
             logger.error(e.getMessage());
             return new ErrorReport(report.getName(), e.getMessage());
         }

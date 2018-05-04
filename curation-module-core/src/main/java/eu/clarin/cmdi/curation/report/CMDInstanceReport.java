@@ -75,7 +75,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
     @Override
     public String getName() {
-        if (fileReport.location.contains(".xml")) {
+        if (fileReport.location !=null && fileReport.location.contains(".xml")) {
             String normalisedPath = fileReport.location.replace('\\', '/');
             return normalisedPath.substring(normalisedPath.lastIndexOf('/') + 1, normalisedPath.lastIndexOf('.'));
         } else {
@@ -164,10 +164,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         public long size;
         public String collection;
 
-        public FileReport() {
-        }
-
-        ;
+        public FileReport() {}
     }
 
 
