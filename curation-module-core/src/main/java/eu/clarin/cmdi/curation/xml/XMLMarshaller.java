@@ -23,13 +23,13 @@ public class XMLMarshaller<T> {
 		this.typeParamClass = typeParamClass;
 	}
 
-	public T unmarshal(InputStream is) throws Exception {
+	public T unmarshal(InputStream is) throws JAXBException {
 		JAXBContext jc = JAXBContext.newInstance(typeParamClass);
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		return (T) unmarshaller.unmarshal(is);
 	}
 
-	public void marshal(T object, OutputStream os) throws Exception {
+	public void marshal(T object, OutputStream os)  {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(typeParamClass);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();

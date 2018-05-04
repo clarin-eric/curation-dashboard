@@ -1,5 +1,6 @@
 package eu.clarin.web;
 
+import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +20,10 @@ import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.CollectionReport;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.web.data.PublicProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.JAXBException;
 
 public class Shared {
 
@@ -27,6 +32,8 @@ public class Shared {
 	public static List<CollectionReport> collections;	
 	public static List<PublicProfile> publicProfiles;
 	public static Collection<String> facetNames;
+
+	static final Logger logger = LoggerFactory.getLogger(Shared.class);
 	
 	
 	public static void init(){
@@ -68,11 +75,17 @@ public class Shared {
 		XMLMarshaller<CollectionReport> marshaller = new XMLMarshaller<>(CollectionReport.class);
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(REPORTS_FOLDER)) {
 			for (Path path : ds) {
-				collections.add(marshaller.unmarshal(Files.newInputStream(path)));
+
+				try{
+					collections.add(marshaller.unmarshal(Files.newInputStream(path)));
+				}catch (JAXBException e) {
+					logger.error("Can't read from collection: "+path+" :"+e.getMessage());
+					//keep the for loop going to read the other collections
+				}
+
 			}
-		} catch (Exception e) {
-			System.out.println("Unable to process collection reports from" + REPORTS_FOLDER);
-			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error("Can't read the collections directory: "+e.getMessage());
 		}
 	}
 }
