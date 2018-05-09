@@ -31,11 +31,8 @@ public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
 
             try {
                 step.process(entity, report);
-                if (step instanceof InstanceXMLValidator) {
-                    report.addSegmentScore(((InstanceXMLValidator) step).calculateValidityScore());
-                }
-                report.addSegmentScore(step.calculateScore(report));
 
+                report.addSegmentScore(step.calculateScore(report));
 
             } catch (FileSizeException e) {
                 //if it is a collection report, keep the loop going for the following records, dont just produce an error report
@@ -45,7 +42,6 @@ public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
                     ((CollectionReport) report).addInvalidFile(e.getMessage());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 logger.error("Exception: " + e.getMessage());
                 //if it is a collection report, keep the loop going for the following records, dont just produce an error report
                 if (!(report instanceof CollectionReport)) {

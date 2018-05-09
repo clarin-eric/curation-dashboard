@@ -29,9 +29,10 @@ public abstract class PostProcessorsWithControlledVocabulary implements PostProc
 	
 	public PostProcessorsWithControlledVocabulary(){
 		try {
-			vocabulary = ControlledVocabularyFactory.getControlledVocabulary(new URL(getVocabularyName().replace("${vloconfig.mappingFilesLocation}", MAPPING_FILES_LOCATION)));
+			URL url = new URL(getVocabularyName().replace("${vloconfig.mappingFilesLocation}", MAPPING_FILES_LOCATION));
+			vocabulary = ControlledVocabularyFactory.getControlledVocabulary(url);
 		} catch (MalformedURLException e) {
-			throw new RuntimeException("Invalid URL", e);
+			throw new RuntimeException("Malformed URL", e);
 		}
 	}
 	

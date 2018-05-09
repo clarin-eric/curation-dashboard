@@ -25,7 +25,9 @@ public abstract class AbstractProcessor<R extends Report<?>> {
 
         try {
             for (ProcessingStep step : createPipeline()) {
+
                 step.process(entity, report);
+                logger.info("processed Record: "+report.getName());
                 if(step instanceof InstanceXMLValidator){
                     report.addSegmentScore(((InstanceXMLValidator)step).calculateValidityScore());
                 }

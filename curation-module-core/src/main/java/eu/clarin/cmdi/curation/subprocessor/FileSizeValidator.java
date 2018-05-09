@@ -32,7 +32,7 @@ public class FileSizeValidator extends CMDSubprocessor {
 			addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + Configuration.MAX_FILE_SIZE + "B)");
 			//don't assess when assessing collections
 			if(Configuration.COLLECTION_MODE)
-				throw new FileSizeException(entity.getPath().getFileName().toString(), entity.getSize());
+				throw new FileSizeException(entity.getPath().getFileName().toString(), report.fileReport.size);
 		}
 
 		InstanceParser transformer = new InstanceParser();

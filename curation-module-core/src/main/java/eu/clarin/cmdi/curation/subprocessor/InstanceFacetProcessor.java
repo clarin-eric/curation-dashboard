@@ -30,12 +30,16 @@ import eu.clarin.cmdi.curation.report.FacetReport.FacetValueStruct;
 import eu.clarin.cmdi.curation.report.FacetReport.ValueNode;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author dostojic
  *
  */
 public class InstanceFacetProcessor extends CMDSubprocessor {
+
+	private final static Logger logger = LoggerFactory.getLogger(InstanceFacetProcessor.class);
 
 	int numOfFacetsCoveredByIns = 0;
 
@@ -59,6 +63,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 			report.facets.instanceCoverage = numOfCoveredByIns / report.facets.numOfFacets;
 
 		}catch (Exception e) {
+			logger.error(e.getMessage());
 			throw new Exception("Unable to obtain mapping for " + entity, e);
 		};
 
