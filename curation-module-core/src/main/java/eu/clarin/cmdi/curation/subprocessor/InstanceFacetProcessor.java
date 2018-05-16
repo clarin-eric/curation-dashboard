@@ -43,6 +43,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 
 	int numOfFacetsCoveredByIns = 0;
 
+
 	@Override
 	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
 				

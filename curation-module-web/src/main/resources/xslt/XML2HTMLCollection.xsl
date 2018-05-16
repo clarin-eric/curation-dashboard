@@ -107,11 +107,8 @@
 		<p>Average number of empty XML elements: <xsl:value-of select="./xml-populated-section/avgXMLEmptyElement"/></p>
 		<p>Average rate of populated elements: <xsl:value-of select="./xml-populated-section/avgRateOfPopulatedElements"/>%</p>
 		
-		<!--		
 		<hr/>
-		
-		
-		 
+
 		<h2>URL Validation Section</h2>
 		<p>Total number of links: <xsl:value-of select="./url-validation-section/totNumOfLinks"/></p>
 		<p>Average number of links: <xsl:value-of select="./url-validation-section/avgNumOfLinks"/></p>
@@ -122,8 +119,7 @@
 		<p>Total number of broken links: <xsl:value-of select="./url-validation-section/totNumOfBrokenLinks"/></p>
 		<p>Average number of broken links: <xsl:value-of select="./url-validation-section/avgNumOfBrokenLinks"/></p>
 		<p>Average number of valid links: <xsl:value-of select="./url-validation-section/avgNumOfValidLinks"/></p>
-		-->
-			
+
 		<xsl:if test="./invalid-records/record">
 		
 			<hr/>	

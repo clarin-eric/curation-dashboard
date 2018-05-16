@@ -37,6 +37,7 @@ public class Collections extends GridPanel {
 		container.addContainerProperty("Score", Double.class, null);
 		container.addContainerProperty("NumOfRecords", Long.class, null);
 		container.addContainerProperty("NumOfProfiles", Integer.class, null);
+		container.addContainerProperty("AvgNumOfValidLinks", Double.class, null);
 		container.addContainerProperty("AvgNumOfResProxies", Double.class, null);
 		container.addContainerProperty("AvgNumOfValidRecords", Double.class, null);
 		container.addContainerProperty("AvgNumOfEmptyXMLElements", Double.class, null);
@@ -46,7 +47,7 @@ public class Collections extends GridPanel {
 		sb = new StringBuilder();
 		// csv headers
 		sb.append("Name").append("\t").append("Score").append("\t").append("NumOfRecords").append("\t")
-				.append("NumOfProfiles").append("\t").append("AvgNumOfResProxies").append("\t")
+				.append("NumOfProfiles").append("\t").append("AvgNumOfValidLinks").append("\t").append("AvgNumOfResProxies").append("\t")
 				.append("AvgNumOfValidRecords").append("\t").append("AvgNumOfEmptyXMLElements")
 				.append("\t").append("AvgFacetCoverage").append("\t");
 		// facets
@@ -73,6 +74,7 @@ public class Collections extends GridPanel {
                 rowValues.add(c.avgScore);
                 rowValues.add(c.fileReport.numOfFiles);
                 rowValues.add(c.headerReport.profiles.totNumOfProfiles);
+                rowValues.add(c.urlReport.avgNumOfLinks);
                 rowValues.add(c.resProxyReport.avgNumOfResProxies);
                 rowValues.add(c.xmlValidationReport.avgRateOfValidRecords);
                 rowValues.add(c.xmlPopulatedReport.avgXMLEmptyElement);
@@ -88,6 +90,7 @@ public class Collections extends GridPanel {
                 sb.append(c.avgScore).append("\t");
                 sb.append(c.fileReport.numOfFiles).append("\t");
                 sb.append(c.headerReport.profiles.totNumOfProfiles).append("\t");
+                sb.append(c.urlReport.avgNumOfLinks).append("\t");
                 sb.append(c.resProxyReport.avgNumOfResProxies).append("\t");
 				sb.append(c.xmlValidationReport.avgRateOfValidRecords).append("\t");
                 sb.append(c.xmlPopulatedReport.avgXMLEmptyElement).append("\t");
@@ -97,6 +100,7 @@ public class Collections extends GridPanel {
                 c.facetReport.facet.forEach(facet -> sb.append(facet.coverage).append("\t"));
                 sb.append("\n");
             } catch (Exception e) {
+				e.printStackTrace();
                 logger.warn("can't read report for provider " + c.fileReport.provider);
             }
 		});

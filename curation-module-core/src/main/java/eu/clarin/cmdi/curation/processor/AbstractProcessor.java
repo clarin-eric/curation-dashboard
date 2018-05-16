@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.subprocessor.InstanceXMLValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ public abstract class AbstractProcessor<R extends Report<?>> {
                 if(step instanceof InstanceXMLValidator){
                     report.addSegmentScore(((InstanceXMLValidator)step).calculateValidityScore());
                 }
+
                 report.addSegmentScore(step.calculateScore(report));
             }
 

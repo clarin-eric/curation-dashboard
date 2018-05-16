@@ -115,7 +115,7 @@ public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfil
 		
 		elems.concepts.total = elems.withConcept;
 		elems.concepts.unique = elems.concepts.concepts.size();
-		elems.percWithConcept = ((double) elems.withConcept) / elems.total;
+		elems.percWithConcept = elems.total==0.0?0.0:((double) elems.withConcept) / elems.total;
 		
 		return elems;
 		

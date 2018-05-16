@@ -30,6 +30,7 @@ public class ControlledVocabularyFactory {
 		try {
 			return vocabulariesCache.get(vocabularyURL);
 		} catch (ExecutionException e) {
+			logger.error(e.getMessage());
 			throw new RuntimeException("Unable to create controlled vocabulary from " + vocabularyURL, e);
 		}
 	}

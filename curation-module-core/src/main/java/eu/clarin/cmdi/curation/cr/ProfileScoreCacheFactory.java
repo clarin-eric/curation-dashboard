@@ -52,7 +52,7 @@ class ProfileScoreCacheFactory{
 			
 			if(report instanceof ErrorReport)
 				throw new Exception(((ErrorReport)report).error);
-			
+
 			if(CRService.PROFILE_MAX_SCORE.equals(Double.NaN)){
 				CRService.PROFILE_MAX_SCORE = ((CMDProfileReport)report).segmentScores.stream().mapToDouble(Score::getMaxScore).sum();
 			}

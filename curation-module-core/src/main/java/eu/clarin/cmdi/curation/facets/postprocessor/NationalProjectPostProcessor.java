@@ -34,7 +34,7 @@ public class NationalProjectPostProcessor extends PostProcessorsWithControlledVo
 
 	@Override
 	public String getVocabularyName() {
-		return VLOConfigFactory.getVloConfig().getNationalProjectMapping();
+        return VLOConfigFactory.getVloConfig().getNationalProjectMapping();
 	}
     
 }

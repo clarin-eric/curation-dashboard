@@ -139,7 +139,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 	public void addSegmentScore(Score segmentScore) {
 		if(segmentScores == null)
 			segmentScores = new ArrayList<>();
-		
+
 		segmentScores.add(segmentScore);
 		maxScore += segmentScore.maxScore;
 		score += segmentScore.score;

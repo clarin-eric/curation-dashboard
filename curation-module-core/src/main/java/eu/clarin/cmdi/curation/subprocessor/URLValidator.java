@@ -77,7 +77,6 @@ public class URLValidator extends CMDSubprocessor {
     	report.numOfLinks = numOfLinks;
     	report.numOfBrokenLinks = numOfBrokenLinks;
     	report.numOfUniqueLinks = numOfUniqueLinks;
-    	report.percOfValidLinks = Double.NaN;		
     	if (Configuration.HTTP_VALIDATION)
     		report.percOfValidLinks = (numOfUniqueLinks - numOfBrokenLinks) / (double) numOfUniqueLinks;
     	
