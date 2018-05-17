@@ -9,7 +9,6 @@ import eu.clarin.cmdi.curation.report.CollectionReport;
 import eu.clarin.cmdi.curation.report.ErrorReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.subprocessor.CollectionAggregator;
-import eu.clarin.cmdi.curation.subprocessor.InstanceXMLValidator;
 import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +38,7 @@ public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
                 if (!(report instanceof CollectionReport)) {
                     return new ErrorReport(report.getName(), e.getMessage());
                 } else {
-                    ((CollectionReport) report).addInvalidFile(e.getMessage());
+                    addInvalidFile(report, e);
                 }
             } catch (Exception e) {
                 logger.error("Exception: " + e.getMessage());
@@ -47,7 +46,7 @@ public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
                 if (!(report instanceof CollectionReport)) {
                     return new ErrorReport(report.getName(), e.getMessage());
                 } else {
-                    ((CollectionReport) report).addInvalidFile(e.getMessage());
+                    addInvalidFile(report, e);
                 }
             }
         }
@@ -55,6 +54,13 @@ public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
         return report;
 
 
+    }
+
+    private void addInvalidFile(Report<?> report, Exception e) {
+        CollectionReport.InvalidFile invalidFile = new CollectionReport.InvalidFile();
+        invalidFile.recordName = e.getMessage();
+        invalidFile.reason = e.getCause().getMessage();//todo check if works correctly
+        ((CollectionReport) report).addInvalidFile(invalidFile);
     }
 
     @Override

@@ -62,7 +62,7 @@ public class CollectionInstanceHeaderProcessor extends CMDSubprocessor {
 			schemaInCR = crService.isSchemaCRResident(schemaLocation);
 
 		if (cmdVersion != null && !cmdVersion.isEmpty() && !cmdVersion.equals("1.2"))
-			addMessage(Severity.WARNING, "Current CMD version is 1.2 but this record is using " + cmdVersion);		
+			addMessage(Severity.WARNING, "Current CMD version is 1.2 but this recordName is using " + cmdVersion);
 
 		if (!missingMdprofile) {
 			if(!mdprofile.matches(PROFILE_ID_FORMAT)){			

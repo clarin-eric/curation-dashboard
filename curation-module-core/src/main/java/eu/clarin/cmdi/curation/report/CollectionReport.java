@@ -5,12 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
@@ -69,17 +64,46 @@ public class CollectionReport implements Report<CollectionReport> {
     @XmlElement(name = "facet-section")
     public FacetReport facetReport;
 
-    @XmlElementWrapper(name = "invalid-records")
-    @XmlElement(name = "record")
-    public List<String> invalidFiles;
+//    @XmlRootElement
+//    @XmlAccessorType(XmlAccessType.FIELD)
+//    public static class FacetReport {
+//        public Double coverage = 0.0;
+//
+//        @XmlElementWrapper(name = "facets")
+//        public Collection<FacetCollectionStruct> facet;
+//    }
+//
+//    @XmlRootElement
+//    public static class FacetCollectionStruct {
+//        @XmlAttribute
+//        public String name;
+//
+//        @XmlAttribute
+//        public int cnt; //num of records covering it
+//
+//        @XmlAttribute
+//        public Double coverage;
+//
+//    }
 
-    public void addInvalidFile(String fileName) {
-        if (this.invalidFiles == null) {
-            this.invalidFiles = new ArrayList<>();
+    // Invalid Files
+    @XmlElementWrapper(name = "invalid-files")
+    public Collection<InvalidFile> record;
+
+    @XmlRootElement
+    public static class InvalidFile {
+        @XmlValue
+        public String recordName;
+
+        @XmlAttribute(name = "reason")
+        public String reason;
+    }
+
+    public void addInvalidFile(InvalidFile invalidFile) {
+        if (this.record == null) {
+            this.record = new ArrayList<>();
         }
-
-        this.invalidFiles.add(fileName);
-
+        this.record.add(invalidFile);
     }
 
     public void handleProfile(String profile, double score) {
@@ -156,10 +180,10 @@ public class CollectionReport implements Report<CollectionReport> {
         }
 
         // invalid files
-        if (invalidFiles != null) {
-            if (parentReport.invalidFiles == null)
-                parentReport.invalidFiles = new ArrayList<>();
-            parentReport.invalidFiles.addAll(invalidFiles);
+        if (this.record != null) {
+            if (parentReport.record == null)
+                parentReport.record = new ArrayList<>();
+            parentReport.record.addAll(this.record);
         }
 
     }

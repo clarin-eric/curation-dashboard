@@ -102,9 +102,9 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
     @Override
     public Score calculateScore(CollectionReport report) {
         double score = report.fileReport.numOfFiles;
-        if (report.invalidFiles != null) {
-            report.invalidFiles.forEach(ir -> addMessage(Severity.ERROR, ir));
-            score = (score - report.invalidFiles.size()) / score;
+        if (report.record != null) {
+            report.record.forEach(ir -> addMessage(Severity.ERROR, "Invalid file:" + ir.recordName + ", reason: " + ir.reason));
+            score = (score - report.record.size()) / score;
         }
 
         return new Score(score, (double) report.fileReport.numOfFiles, "invalid-files", msgs);

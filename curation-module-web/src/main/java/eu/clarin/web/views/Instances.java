@@ -45,7 +45,7 @@ public class Instances extends VerticalLayout implements View{
 		assessButton = new Button("Assess");
 		assessButton.addClickListener(event -> assess());
 		
-		final Label infoLabel = new Label("Drag here a CMDI record");
+		final Label infoLabel = new Label("Drag here a CMDI recordName");
 		
 		
 		final HorizontalLayout dropPaneContainer = new HorizontalLayout();

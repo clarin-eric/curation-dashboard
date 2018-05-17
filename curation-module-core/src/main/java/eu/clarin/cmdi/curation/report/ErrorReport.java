@@ -53,9 +53,14 @@ public class ErrorReport implements Report<CollectionReport>{
 	
 	@Override
 	public void mergeWithParent(CollectionReport parentReport) {
-		if(parentReport.invalidFiles == null)
-			parentReport.invalidFiles = new ArrayList<>();
-		parentReport.invalidFiles.add(name);
+		if(parentReport.record == null){
+			parentReport.record = new ArrayList<>();
+		}
+
+		CollectionReport.InvalidFile invalidFile = new CollectionReport.InvalidFile();
+		invalidFile.recordName = name;
+		invalidFile.reason = error;//todo check if works correctly
+		parentReport.addInvalidFile(invalidFile);
 	}
 
 }

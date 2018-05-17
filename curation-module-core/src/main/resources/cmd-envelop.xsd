@@ -34,11 +34,11 @@
             </xs:enumeration>
         </xs:restriction>
     </xs:simpleType>
-    <!-- the root of a CMD record -->
+    <!-- the root of a CMD recordName -->
     <xs:element name="CMD">
         <xs:complexType>
             <xs:sequence>
-                <!-- metadata of the CMD record -->
+                <!-- metadata of the CMD recordName -->
                 <xs:element name="Header" minOccurs="1" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
@@ -90,7 +90,7 @@
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <!-- this CMD record is related to these resources -->
+                <!-- this CMD recordName is related to these resources -->
                 <xs:element name="Resources" minOccurs="1" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
@@ -198,7 +198,7 @@
                         <xs:anyAttribute namespace="##other" processContents="lax"/>
                     </xs:complexType>
                 </xs:element>
-                <!-- this CMD record can be part of ... -->
+                <!-- this CMD recordName can be part of ... -->
                 <xs:element name="IsPartOfList" minOccurs="0" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>

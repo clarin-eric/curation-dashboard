@@ -13,6 +13,8 @@ import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.URLReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author dostojic
@@ -20,6 +22,8 @@ import eu.clarin.cmdi.curation.report.Severity;
  */
 
 public class URLValidator extends CMDSubprocessor {
+
+	private final static Logger logger = LoggerFactory.getLogger(URLValidator.class);
 
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report) {
@@ -35,12 +39,12 @@ public class URLValidator extends CMDSubprocessor {
     	
     	links = links.stream().distinct().collect(Collectors.toList());
     	int numOfUniqueLinks = links.size();
-    	
-		// links are unique
-		if (!Configuration.COLLECTION_MODE && Configuration.HTTP_VALIDATION) {
-		    AtomicInteger numOfBrokenLinks = new AtomicInteger(0);
+
+    	// links are unique
+		if (Configuration.HTTP_VALIDATION) {
+			AtomicInteger numOfBrokenLinks = new AtomicInteger(0);
 		    links.stream().forEach(url -> {
-		
+
 				try {// check if URL is broken					
 				    int responseCode = new HTTPLinkChecker().checkLink(url);		
 				    if (responseCode == 200 || responseCode == 302) {
@@ -68,7 +72,7 @@ public class URLValidator extends CMDSubprocessor {
 	public Score calculateScore(CMDInstanceReport report) {
 		// it can influence the score, if one collection was done with enabled and the other without
 		
-		double score = !Double.isNaN(report.urlReport.percOfValidLinks)? report.urlReport.percOfValidLinks : 0;
+		double score = report.urlReport.percOfValidLinks != null && !Double.isNaN(report.urlReport.percOfValidLinks)? report.urlReport.percOfValidLinks : 0;
 		return new Score(score, 1.0, "url-validation", msgs);
 	}	
     

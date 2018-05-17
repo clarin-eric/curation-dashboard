@@ -5,7 +5,9 @@ import java.io.StringWriter;
 import java.util.Collection;
 
 import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.subprocessor.InstanceXMLValidator;
+import eu.clarin.cmdi.curation.subprocessor.URLValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +30,21 @@ public abstract class AbstractProcessor<R extends Report<?>> {
             for (ProcessingStep step : createPipeline()) {
 
                 step.process(entity, report);
-                logger.info("processed Record: "+report.getName());
+                logger.info("processed Record: "+report.getName() + ", step: "+ step.getClass().getSimpleName());
                 if(step instanceof InstanceXMLValidator){
                     report.addSegmentScore(((InstanceXMLValidator)step).calculateValidityScore());
                 }
 
-                report.addSegmentScore(step.calculateScore(report));
+
+                if(step instanceof URLValidator){
+                    if(Configuration.HTTP_VALIDATION){
+                        report.addSegmentScore(step.calculateScore(report));
+                    }
+                }else {
+                    report.addSegmentScore(step.calculateScore(report));
+                }
+
+
             }
 
             return report;
@@ -41,8 +52,12 @@ public abstract class AbstractProcessor<R extends Report<?>> {
             logger.error(e.getMessage());
             return new ErrorReport(report.getName(), e.getMessage());
         } catch (Exception e) {
-            logger.error(e.getMessage());
-            return new ErrorReport(report.getName(), e.getMessage());
+            String message = e.getMessage();
+            if(message==null || message.isEmpty()){
+                message = "There was an unknown error. Please report it.";
+            }
+            logger.error(message);
+            return new ErrorReport(report.getName(), message);
         }
 
     }

@@ -46,7 +46,7 @@ public class InstanceParser {
 		Collection<InstanceNode> nodes = new ArrayList<>();
 		BufferedReader br = new BufferedReader(new StringReader(writer.toString()));
 		while((line = br.readLine()) != null){
-			//new record, save old
+			//new recordName, save old
 			if(line.startsWith("/CMD") || line.startsWith("/cmd:CMD")){
 				if(record != null){
 					int equalInd = record.indexOf('=');
