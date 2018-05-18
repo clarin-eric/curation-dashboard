@@ -78,8 +78,8 @@ public class Shared {
 
 				try{
 					collections.add(marshaller.unmarshal(Files.newInputStream(path)));
-				}catch (JAXBException e) {
-					logger.error("Can't read from collection: "+path+" :"+e.getMessage());
+				}catch (JAXBException | NumberFormatException e) {
+					logger.error("Can't read from collection report: "+path+" :"+e.getMessage());
 					//keep the for loop going to read the other collections
 				}
 

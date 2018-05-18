@@ -64,30 +64,8 @@ public class CollectionReport implements Report<CollectionReport> {
     @XmlElement(name = "facet-section")
     public FacetReport facetReport;
 
-//    @XmlRootElement
-//    @XmlAccessorType(XmlAccessType.FIELD)
-//    public static class FacetReport {
-//        public Double coverage = 0.0;
-//
-//        @XmlElementWrapper(name = "facets")
-//        public Collection<FacetCollectionStruct> facet;
-//    }
-//
-//    @XmlRootElement
-//    public static class FacetCollectionStruct {
-//        @XmlAttribute
-//        public String name;
-//
-//        @XmlAttribute
-//        public int cnt; //num of records covering it
-//
-//        @XmlAttribute
-//        public Double coverage;
-//
-//    }
-
     // Invalid Files
-    @XmlElementWrapper(name = "invalid-files")
+    @XmlElementWrapper(name = "invalid-records")
     public Collection<InvalidFile> record;
 
     @XmlRootElement

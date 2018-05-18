@@ -121,12 +121,12 @@
 		<p>Average number of valid links: <xsl:value-of select="./url-validation-section/avgNumOfValidLinks"/></p>
 
 		<xsl:if test="./invalid-records/record">
-		
 			<hr/>	
-			<h2>Invalid files in collection</h2>
+			<h2>Invalid Records Section</h2>
 			 <ol>
 			  <xsl:for-each select="./invalid-records/record">
-			  <li><font color="#dbd839"><xsl:copy-of select="." /></font></li>
+			  <!--<li><font color="#dbd839"><xsl:copy-of select="." />, reason: <xsl:value-of select="./@reason"/></font></li>-->
+			  <li><font color="#dbd839">Invalid file: <xsl:copy-of select="." /><br/>Reason: <xsl:value-of select="./@reason"/></font></li>
 			  </xsl:for-each>
 			</ol>
 		</xsl:if>
