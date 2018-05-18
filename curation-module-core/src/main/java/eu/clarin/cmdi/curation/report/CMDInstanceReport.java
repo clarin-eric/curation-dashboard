@@ -78,20 +78,23 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         @XmlValue
         public String url;
 
+        @XmlAttribute(name="message")
+        public String message;
+
         @XmlAttribute(name = "http-status")
-        public String status;
+        public int status;
 
         @XmlAttribute(name = "content-type")
         public String contentType;
 
         @XmlAttribute(name = "byte-size")
-        public String byteSize;
+        public long byteSize;
 
         @XmlAttribute(name = "request-duration")
-        public String duration;
+        public long duration;//either duration in milliseconds or 'timeout'
 
         @XmlAttribute(name = "timestamp")
-        public String timestamp;
+        public long timestamp;
     }
 
     public void addURLElement(URLElement urlElementToBeAdded) {

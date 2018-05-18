@@ -25,6 +25,7 @@ public class Configuration {
 	public static Path OUTPUT_DIRECTORY = null;
 	public static Path CACHE_DIRECTORY = null;
 	public static Collection<String> FACETS = null;
+	public static int REDIRECT_FOLLOW_LIMIT;//todo
 
 	//this is a boolean that is set by core-module(false) and web-module(true)
 	public static boolean enableProfileLoadTimer = false;
@@ -61,11 +62,18 @@ public class Configuration {
 		
 		String outDir = config.getProperty("OUTPUT_DIRECTORY");
 		String cacheDir = config.getProperty("CACHE_DIRECTORY");
-		
-		if(outDir != null && !outDir.isEmpty())
+
+		if(outDir != null && !outDir.isEmpty()){
 			OUTPUT_DIRECTORY = Files.createDirectories(Paths.get(outDir));
-		if(cacheDir != null && !cacheDir.isEmpty())
+		}
+		if(cacheDir != null && !cacheDir.isEmpty()){
 			CACHE_DIRECTORY = Files.createDirectories(Paths.get(cacheDir));
+		}
+
+		String redirectFollowLimit = config.getProperty("REDIRECT_FOLLOW_LIMIT");
+		if(redirectFollowLimit != null && !redirectFollowLimit.isEmpty()){
+			REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
+		}
 		
 	}
 }
