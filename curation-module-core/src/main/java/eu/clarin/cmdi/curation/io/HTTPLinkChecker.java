@@ -38,6 +38,8 @@ public class HTTPLinkChecker {
 
         //try get if head doesnt work
         //todo really?
+        //valid-example.xml has this url: http://clarin.oeaw.ac.at/lrp/dict-gate/index.html
+        //returns 400 for head but browser opens fine
 
         HttpHead head = new HttpHead(url);
 

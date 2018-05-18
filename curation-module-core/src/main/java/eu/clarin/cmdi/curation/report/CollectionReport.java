@@ -85,7 +85,7 @@ public class CollectionReport implements Report<CollectionReport> {
     }
 
     // URLs
-    @XmlElementWrapper(name = "urls")
+    @XmlElementWrapper(name = "single-url-report")
     public Collection<CMDInstanceReport.URLElement> url;
 
     @XmlRootElement

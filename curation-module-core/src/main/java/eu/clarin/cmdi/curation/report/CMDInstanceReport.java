@@ -70,7 +70,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     public Collection<Score> segmentScores;
 
     // URLs
-    @XmlElementWrapper(name = "urls")
+    @XmlElementWrapper(name = "single-url-report")
     public Collection<URLElement> url;
 
     @XmlRootElement

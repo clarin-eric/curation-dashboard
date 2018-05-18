@@ -120,6 +120,35 @@
 		<p>Average number of broken links: <xsl:value-of select="./url-validation-section/avgNumOfBrokenLinks"/></p>
 		<p>Average number of valid links: <xsl:value-of select="./url-validation-section/avgNumOfValidLinks"/></p>
 
+		<hr/>
+		<h2>Single URL Section</h2>
+		<table border="1" cellpadding="1" cellspacing="1">
+			<thead>
+				<tr>
+					<th scope="col">url</th>
+					<th scope="col">message</th>
+					<th scope="col">http-status</th>
+					<th scope="col">content-type</th>
+					<th scope="col">byte-size</th>
+					<th scope="col">request-duration</th>
+					<th scope="col">timestamp</th>
+				</tr>
+			</thead>
+			<tbody>
+				<xsl:for-each select="./single-url-report/url">
+					<tr>
+						<td><xsl:copy-of select="."/></td>
+						<td><xsl:value-of select="./@message" /></td>
+						<td><xsl:value-of select="./@http-status" /></td>
+						<td><xsl:value-of select="./@content-type" /></td>
+						<td><xsl:value-of select="./@byte-size" /></td>
+						<td><xsl:value-of select="./@request-duration" /></td>
+						<td><xsl:value-of select="./@timestamp" /></td>
+					</tr>
+				</xsl:for-each>
+			</tbody>
+		</table>
+
 		<xsl:if test="./invalid-records/record">
 			<hr/>	
 			<h2>Invalid Records Section</h2>
