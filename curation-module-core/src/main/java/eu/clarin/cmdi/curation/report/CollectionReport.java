@@ -84,6 +84,38 @@ public class CollectionReport implements Report<CollectionReport> {
         this.record.add(invalidFile);
     }
 
+    // URLs
+    @XmlElementWrapper(name = "urls")
+    public Collection<CMDInstanceReport.URLElement> url;
+
+    @XmlRootElement
+    public static class URLElement {
+        @XmlValue
+        public String url;
+
+        @XmlAttribute(name = "http-status")
+        public String status;
+
+        @XmlAttribute(name = "content-type")
+        public String contentType;
+
+        @XmlAttribute(name = "byte-size")
+        public String byteSize;
+
+        @XmlAttribute(name = "request-duration")
+        public String duration;
+
+        @XmlAttribute(name = "timestamp")
+        public String timestamp;
+    }
+
+    public void addURLElement(CMDInstanceReport.URLElement urlElement) {
+        if (this.url == null) {
+            this.url = new ArrayList<>();
+        }
+        this.url.add(urlElement);
+    }
+
     public void handleProfile(String profile, double score) {
         if (headerReport == null)
             headerReport = new HeaderReport();
@@ -162,6 +194,13 @@ public class CollectionReport implements Report<CollectionReport> {
             if (parentReport.record == null)
                 parentReport.record = new ArrayList<>();
             parentReport.record.addAll(this.record);
+        }
+
+        // urls
+        if (this.url != null) {
+            if (parentReport.url == null)
+                parentReport.url = new ArrayList<>();
+            parentReport.url.addAll(this.url);
         }
 
     }

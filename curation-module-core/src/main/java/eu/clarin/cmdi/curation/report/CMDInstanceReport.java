@@ -4,12 +4,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.main.Configuration;
@@ -74,13 +69,45 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     @XmlElement(name = "score")
     public Collection<Score> segmentScores;
 
+    // URLs
+    @XmlElementWrapper(name = "urls")
+    public Collection<URLElement> url;
+
+    @XmlRootElement
+    public static class URLElement {
+        @XmlValue
+        public String url;
+
+        @XmlAttribute(name = "http-status")
+        public String status;
+
+        @XmlAttribute(name = "content-type")
+        public String contentType;
+
+        @XmlAttribute(name = "byte-size")
+        public String byteSize;
+
+        @XmlAttribute(name = "request-duration")
+        public String duration;
+
+        @XmlAttribute(name = "timestamp")
+        public String timestamp;
+    }
+
+    public void addURLElement(URLElement urlElementToBeAdded) {
+        if (this.url == null) {
+            this.url = new ArrayList<>();
+        }
+        this.url.add(urlElementToBeAdded);
+    }
+
     @Override
     public String getName() {
-        if (fileReport.location !=null && fileReport.location.contains(".xml")) {
+        if (fileReport.location != null && fileReport.location.contains(".xml")) {
             String normalisedPath = fileReport.location.replace('\\', '/');
             return normalisedPath.substring(normalisedPath.lastIndexOf('/') + 1, normalisedPath.lastIndexOf('.'));
         } else {
-			return fileReport.location;
+            return fileReport.location;
         }
 
     }
@@ -110,9 +137,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
         // XMLValidator
         parentReport.xmlValidationReport.totNumOfRecords += 1;
-        parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidityReport.valid?1:0;
+        parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidityReport.valid ? 1 : 0;
 
-        if(Configuration.HTTP_VALIDATION){
+        if (Configuration.HTTP_VALIDATION) {
             parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;
             parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
             parentReport.urlReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
@@ -130,6 +157,13 @@ public class CMDInstanceReport implements Report<CollectionReport> {
                 });
 
         parentReport.handleProfile(header.id, profileScore);
+
+        // urls
+        if (this.url != null) {
+            if (parentReport.url == null)
+                parentReport.url = new ArrayList<>();
+            parentReport.url.addAll(this.url);
+        }
 
     }
 
@@ -165,7 +199,8 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         public long size;
         public String collection;
 
-        public FileReport() {}
+        public FileReport() {
+        }
     }
 
 
