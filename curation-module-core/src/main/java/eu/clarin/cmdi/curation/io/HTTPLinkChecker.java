@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.io;
 
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
+import eu.clarin.cmdi.curation.utils.TimeUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpHead;
@@ -83,8 +84,8 @@ public class HTTPLinkChecker {
         } catch (NumberFormatException e) {
             urlElement.byteSize = 0;
         }
-        urlElement.duration = duration;
-        urlElement.timestamp = start;
+        urlElement.duration = TimeUtils.humanizeToTime(duration);
+        urlElement.timestamp = TimeUtils.humanizeToDate(start);
 
         report.addURLElement(urlElement);
 

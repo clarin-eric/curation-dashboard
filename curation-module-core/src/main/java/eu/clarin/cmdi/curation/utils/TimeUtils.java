@@ -3,6 +3,9 @@
  */
 package eu.clarin.cmdi.curation.utils;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -11,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class TimeUtils {
     
-    public static String humanizeTime(long millis){
+    public static String humanizeToTime(long millis){
 	if(millis < 1000)
 	    return millis + " ms";
 	
@@ -26,5 +29,13 @@ public class TimeUtils {
 		    millis
 		);
     }
+
+    public static String humanizeToDate(long millis){
+		Instant instant = Instant.ofEpochMilli( millis );
+		ZoneId zoneId = ZoneId.systemDefault();
+		ZonedDateTime zdt = ZonedDateTime.ofInstant( instant , zoneId );
+
+		return zdt.toString();
+	}
 
 }

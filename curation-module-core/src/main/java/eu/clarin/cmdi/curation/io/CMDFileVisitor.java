@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.entities.CMDProfile;
-import eu.clarin.cmdi.curation.entities.CurationEntity;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 
 public class CMDFileVisitor implements FileVisitor<Path> {
@@ -61,7 +59,7 @@ public class CMDFileVisitor implements FileVisitor<Path> {
 			e.printStackTrace();
 		}
 		long end = System.currentTimeMillis();
-		logger.info("validation for {} lasted {}", dir, TimeUtils.humanizeTime(end - startTime));
+		logger.info("validation for {} lasted {}", dir, TimeUtils.humanizeToTime(end - startTime));
 		
 		
 		if(!stack.empty()){

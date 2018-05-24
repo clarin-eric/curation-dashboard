@@ -91,10 +91,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         public long byteSize;
 
         @XmlAttribute(name = "request-duration")
-        public long duration;//either duration in milliseconds or 'timeout'
+        public String duration;//either duration in milliseconds or 'timeout'
 
         @XmlAttribute(name = "timestamp")
-        public long timestamp;
+        public String timestamp;
     }
 
     public void addURLElement(URLElement urlElementToBeAdded) {

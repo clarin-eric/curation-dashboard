@@ -75,7 +75,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
             }
 
             long end = System.currentTimeMillis();
-            logger.info("validation for {} files lasted {}", chunk.size(), TimeUtils.humanizeTime(end - startTime));
+            logger.info("validation for {} files lasted {}", chunk.size(), TimeUtils.humanizeToTime(end - startTime));
             chunk.stream().forEach(child -> {
                 try {
                     child.generateReport().mergeWithParent(report);
