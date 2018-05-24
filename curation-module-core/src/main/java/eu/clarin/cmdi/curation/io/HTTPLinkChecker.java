@@ -5,6 +5,7 @@ import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -37,8 +38,8 @@ public class HTTPLinkChecker {
     public int checkLink(String url, CMDInstanceReport report, int redirectFollowLevel) throws Exception {
         HttpClient client = HttpClientBuilder.create().build();
 
-        //try get if head doesnt work
-        //todo really?
+        //try get if head doesnt work todo
+
         //valid-example.xml has this url: http://clarin.oeaw.ac.at/lrp/dict-gate/index.html
         //returns 400 for head but browser opens fine
 
@@ -56,6 +57,7 @@ public class HTTPLinkChecker {
         urlElement.url = url;
         urlElement.status = statusCode;
 
+        //deal with redirect
         if (redirectStatusCodes.contains(statusCode)) {
             if (redirectFollowLevel >= REDIRECT_FOLLOW_LIMIT) {
                 urlElement.message = "Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")";
@@ -72,6 +74,41 @@ public class HTTPLinkChecker {
                     urlElement.message = "There is no redirect link('Location' header)";
                 }
             }
+        }
+
+
+        //HEAD didnt work, try the same thing with get
+        if (statusCode != 200 || statusCode != 302) {
+            HttpGet get = new HttpGet(url);
+
+            start = System.currentTimeMillis();
+            response = client.execute(get);
+            end = System.currentTimeMillis();
+            duration += end - start;
+
+            statusCode = response.getStatusLine().getStatusCode();
+
+            urlElement.status = statusCode;
+
+            //deal with redirect
+            if (redirectStatusCodes.contains(statusCode)) {
+                if (redirectFollowLevel >= REDIRECT_FOLLOW_LIMIT) {
+                    urlElement.message = "Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")";
+                } else {
+                    String redirectLink = response.getHeaders("Location")[0].getValue();
+                    if (redirectLink != null) {
+                        if (redirectLink.equals(url)) {
+                            urlElement.message = "Redirect link is the same";
+                        } else {
+                            this.redirectLink = redirectLink;
+                            return checkLink(redirectLink, report, redirectFollowLevel + 1);
+                        }
+                    } else {
+                        urlElement.message = "There is no redirect link('Location' header)";
+                    }
+                }
+            }
+
         }
 
         String contentType = response.getHeaders("Content-Type")[0].getValue();
@@ -91,6 +128,8 @@ public class HTTPLinkChecker {
 
         return statusCode;
     }
+
+
 
     //todo change this also for downloader
     //this is legacy for downloader
