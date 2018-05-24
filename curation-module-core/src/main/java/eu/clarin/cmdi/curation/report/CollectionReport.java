@@ -232,7 +232,7 @@ public class CollectionReport implements Report<CollectionReport> {
                 / fileReport.numOfFiles;
 
         // XMLValidator
-        xmlValidationReport.avgRateOfValidRecords = (double) xmlValidationReport.totNumOfValidRecords / xmlValidationReport.totNumOfRecords;
+        xmlValidationReport.ratioOfValidRecords = (double) xmlValidationReport.totNumOfValidRecords / xmlValidationReport.totNumOfRecords;
 
         // XMLPopulatedValidator
         xmlPopulatedReport.avgNumOfXMLElements = (double) xmlPopulatedReport.totNumOfXMLElements / fileReport.numOfFiles;
@@ -313,7 +313,7 @@ public class CollectionReport implements Report<CollectionReport> {
     public static class XMLValidationReport {
         public int totNumOfRecords;
         public int totNumOfValidRecords;
-        public Double avgRateOfValidRecords = 0.0;
+        public Double ratioOfValidRecords = 0.0;
     }
 
     @XmlRootElement

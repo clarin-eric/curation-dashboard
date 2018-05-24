@@ -31,13 +31,14 @@ public class URLValidator extends CMDSubprocessor {
     	Collection<String> links = parsedInstance.getNodes()
     			.stream()
     			.filter(node -> !node.getXpath().equals("/CMD/@xsi:schemaLocation"))
+				.filter(node -> !node.getXpath().equals("/CMD/@xmlns:xsi"))
     			.map(InstanceNode::getValue)
-    			.filter(url -> url.startsWith("http"))    			
+    			.filter(url -> url.startsWith("http"))
     			.collect(Collectors.toList());
     	
     	int numOfLinks = links.size();
-    	
-    	links = links.stream().distinct().collect(Collectors.toList());
+		links = links.stream().distinct().collect(Collectors.toList());
+
     	int numOfUniqueLinks = links.size();
 
     	// links are unique
