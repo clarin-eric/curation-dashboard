@@ -31,6 +31,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     @XmlAttribute(name = "max-score")
     public double maxScore;
 
+    @XmlAttribute (name = "score-percentage")
+    public double scorePercentage;
+
     @XmlAttribute
     public Long timeStamp = System.currentTimeMillis();
 
@@ -88,7 +91,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         public String contentType;
 
         @XmlAttribute(name = "byte-size")
-        public long byteSize;
+        public String byteSize;
 
         @XmlAttribute(name = "request-duration")
         public String duration;//either duration in milliseconds or 'timeout'
@@ -125,7 +128,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         if (score < parentReport.insMinScore)
             parentReport.insMinScore = score;
 
-        parentReport.maxScoreInstance = maxScore;
+        parentReport.maxPossibleScoreInstance = maxScore;
 
         // ResProxies
         parentReport.resProxyReport.totNumOfResProxies += resProxyReport.numOfResProxies;
@@ -189,6 +192,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         segmentScores.add(segmentScore);
         maxScore += segmentScore.maxScore;
         score += segmentScore.score;
+        scorePercentage = score/maxScore;
         if (!segmentScore.segment.equals("profiles-score"))
             instanceScore += segmentScore.score;
 

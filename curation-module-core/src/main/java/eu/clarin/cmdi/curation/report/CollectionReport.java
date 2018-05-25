@@ -32,8 +32,11 @@ public class CollectionReport implements Report<CollectionReport> {
     @XmlAttribute(name = "col-max-score")
     public Double maxScore = 0.0;
 
+    @XmlAttribute(name="score-percentage")
+    public Double scorePercentage;
+
     @XmlAttribute(name = "ins-max-score")
-    public Double maxScoreInstance = 0.0;
+    public Double maxPossibleScoreInstance = 0.0;
 
     @XmlAttribute
     public Long timeStamp = System.currentTimeMillis();
@@ -103,7 +106,7 @@ public class CollectionReport implements Report<CollectionReport> {
         public String contentType;
 
         @XmlAttribute(name = "byte-size")
-        public long byteSize;
+        public String byteSize;
 
         @XmlAttribute(name = "request-duration")
         public String duration;//either duration in milliseconds or 'timeout'
@@ -255,7 +258,9 @@ public class CollectionReport implements Report<CollectionReport> {
         facetReport.coverage = facetReport.facet.stream().mapToDouble(f -> f.cnt != 0 ? 1.0 : 0).sum() / facetReport.facet.size();
 
         avgScore = score / fileReport.numOfFiles;
-        maxScore = fileReport.numOfFiles * maxScoreInstance;
+        maxScore = fileReport.numOfFiles * maxPossibleScoreInstance;
+
+        scorePercentage = score/maxScore;
 
     }
 

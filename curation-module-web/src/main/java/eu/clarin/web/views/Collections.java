@@ -71,7 +71,7 @@ public class Collections extends GridPanel {
 
                 rowValues.add("<a href='#!ResultView/collection//" + c.fileReport.provider + "' target='_top'>"
                 		+ c.fileReport.provider + "</a>");
-                rowValues.add(c.avgScore);
+                rowValues.add(c.scorePercentage);
                 rowValues.add(c.fileReport.numOfFiles);
                 rowValues.add(c.headerReport.profiles.totNumOfProfiles);
                 rowValues.add(c.urlReport.avgNumOfLinks);
@@ -87,7 +87,7 @@ public class Collections extends GridPanel {
 
                 // csv data
                 sb.append(c.fileReport.provider).append("\t");
-                sb.append(c.avgScore).append("\t");
+                sb.append(c.scorePercentage).append("\t");
                 sb.append(c.fileReport.numOfFiles).append("\t");
                 sb.append(c.headerReport.profiles.totNumOfProfiles).append("\t");
                 sb.append(c.urlReport.avgNumOfLinks).append("\t");

@@ -13,6 +13,8 @@ import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.URLReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
+import eu.clarin.cmdi.curation.utils.TimeUtils;
+import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,14 +33,14 @@ public class URLValidator extends CMDSubprocessor {
                 .stream()
                 .filter(node -> !node.getXpath().equals("/CMD/@xsi:schemaLocation"))
                 .filter(node -> !node.getXpath().equals("/CMD/@xmlns:xsi"))
+                .filter(node -> !node.getXpath().equals("/CMD/@xml:xsi"))
                 .map(InstanceNode::getValue)
                 .filter(url -> url.startsWith("http"))
                 .collect(Collectors.toList());
-
         int numOfLinks = links.size();
         links = links.stream().distinct().collect(Collectors.toList());
-
         int numOfUniqueLinks = links.size();
+
 
         // links are unique
         if (Configuration.HTTP_VALIDATION) {
@@ -55,7 +57,23 @@ public class URLValidator extends CMDSubprocessor {
                         numOfBrokenLinks.incrementAndGet();
                         addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + responseCode);
                     }
-                } catch (Exception e) {
+
+                } catch (HttpHostConnectException e) {
+                    CMDInstanceReport.URLElement urlElement = new CMDInstanceReport.URLElement();
+                    urlElement.message = "Connection refused";
+                    urlElement.url = url;
+                    urlElement.status = 0;
+                    urlElement.contentType=null;
+                    urlElement.byteSize="0";
+                    urlElement.timestamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
+                    urlElement.duration = "0 ms";
+                    report.addURLElement(urlElement);
+
+                    numOfBrokenLinks.incrementAndGet();
+                    addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + e.toString());
+                }catch (Exception e) {
+                    logger.error("URLValidator shouldn't catch other exceptions, So it shouldn't come here!");
+                    e.printStackTrace();
                     numOfBrokenLinks.incrementAndGet();
                     addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + e.toString());
                 }

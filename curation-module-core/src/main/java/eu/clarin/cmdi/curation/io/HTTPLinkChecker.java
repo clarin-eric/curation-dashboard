@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.io;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -35,10 +36,11 @@ public class HTTPLinkChecker {
         this.timeout = timeout;
     }
 
+    //this method checks link with HEAD, if it fails it calls a check link with GET method
     public int checkLink(String url, CMDInstanceReport report, int redirectFollowLevel) throws Exception {
         HttpClient client = HttpClientBuilder.create().build();
 
-        //try get if head doesnt work todo
+        //try get if head doesnt work
 
         //valid-example.xml has this url: http://clarin.oeaw.ac.at/lrp/dict-gate/index.html
         //returns 400 for head but browser opens fine
@@ -76,51 +78,64 @@ public class HTTPLinkChecker {
             }
         }
 
-
-        //HEAD didnt work, try the same thing with get
+        //IF HEAD doesnt work and we are not over the redirect limit, try the same thing with get
         if (statusCode != 200 || statusCode != 302) {
-            HttpGet get = new HttpGet(url);
+            if (redirectFollowLevel < REDIRECT_FOLLOW_LIMIT) {
+                HttpGet get = new HttpGet(url);
 
-            start = System.currentTimeMillis();
-            response = client.execute(get);
-            end = System.currentTimeMillis();
-            duration += end - start;
+                start = System.currentTimeMillis();
+                response = client.execute(get);
+                end = System.currentTimeMillis();
+                duration += end - start;
 
-            statusCode = response.getStatusLine().getStatusCode();
+                statusCode = response.getStatusLine().getStatusCode();
 
-            urlElement.status = statusCode;
+                urlElement.status = statusCode;
 
-            //deal with redirect
-            if (redirectStatusCodes.contains(statusCode)) {
-                if (redirectFollowLevel >= REDIRECT_FOLLOW_LIMIT) {
-                    urlElement.message = "Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")";
-                } else {
-                    String redirectLink = response.getHeaders("Location")[0].getValue();
-                    if (redirectLink != null) {
-                        if (redirectLink.equals(url)) {
-                            urlElement.message = "Redirect link is the same";
-                        } else {
-                            this.redirectLink = redirectLink;
-                            return checkLink(redirectLink, report, redirectFollowLevel + 1);
-                        }
+                //deal with redirect
+                if (redirectStatusCodes.contains(statusCode)) {
+                    if (redirectFollowLevel >= REDIRECT_FOLLOW_LIMIT) {
+                        urlElement.message = "Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")";
                     } else {
-                        urlElement.message = "There is no redirect link('Location' header)";
+                        String redirectLink = response.getHeaders("Location")[0].getValue();
+                        if (redirectLink != null) {
+                            if (redirectLink.equals(url)) {
+                                urlElement.message = "Redirect link is the same";
+                            } else {
+                                this.redirectLink = redirectLink;
+                                return checkLink(redirectLink, report, redirectFollowLevel + 1);
+                            }
+                        } else {
+                            urlElement.message = "There is no redirect link('Location' header)";
+                        }
                     }
                 }
-            }
 
+            } else {
+                urlElement.message = "Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")";
+            }
         }
 
-        String contentType = response.getHeaders("Content-Type")[0].getValue();
-        String contentLength = response.getHeaders("Content-Length")[0].getValue();
+
+        String contentType;
+        Header[] contentTypeArray = response.getHeaders("Content-Type");
+        if (contentTypeArray.length == 0) {
+            contentType = "Not specified";
+        } else {
+            contentType = contentTypeArray[0].getValue();
+        }
+
+        String contentLength;
+        Header[] contentLengthArray = response.getHeaders("Content-Length");
+        if(contentLengthArray.length==0){
+            contentLength="Not specified";
+        }else{
+            contentLength = contentLengthArray[0].getValue();
+        }
 
 
         urlElement.contentType = contentType;
-        try {
-            urlElement.byteSize = Long.parseLong(contentLength);
-        } catch (NumberFormatException e) {
-            urlElement.byteSize = 0;
-        }
+        urlElement.byteSize=contentLength;
         urlElement.duration = TimeUtils.humanizeToTime(duration);
         urlElement.timestamp = TimeUtils.humanizeToDate(start);
 
@@ -128,7 +143,6 @@ public class HTTPLinkChecker {
 
         return statusCode;
     }
-
 
 
     //todo change this also for downloader

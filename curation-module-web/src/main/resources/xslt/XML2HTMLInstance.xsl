@@ -39,6 +39,7 @@
 					instance: <xsl:value-of select="./@ins-score"/>
 					total: <xsl:value-of select="./@score"/>
 					max: <xsl:value-of select="./@max-score"/>
+					scorePercentage: <xsl:value-of select="./@score-percentage"/>
 				</b></td></tr>
 			</tfoot>
 			<tbody>

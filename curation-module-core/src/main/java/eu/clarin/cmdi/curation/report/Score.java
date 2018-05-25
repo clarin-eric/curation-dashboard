@@ -15,7 +15,7 @@ public class Score {
 
 	@XmlAttribute String segment;
 	@XmlAttribute Double score;
-	@XmlAttribute Double maxScore;	
+	@XmlAttribute Double maxScore;
 	
 	@XmlElement(name = "issue")
 	public Collection<Message> messages;
