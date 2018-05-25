@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -48,7 +49,7 @@ public class URLValidator extends CMDSubprocessor {
             links.stream().forEach(url -> {
 
                 try {// check if URL is broken
-                    logger.info("Checking url: "+url);
+                    logger.info("Checking url: " + url);
                     int responseCode = new HTTPLinkChecker().checkLink(url, report, 0);//redirect follow level is current level, because this is the first request it is set to 0
                     if (responseCode == 200 || responseCode == 302) {
                     } // OK
@@ -59,9 +60,9 @@ public class URLValidator extends CMDSubprocessor {
                         addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + responseCode);
                     }
 
-                } catch (HttpHostConnectException e) {
+                } catch (IOException e) {
                     CMDInstanceReport.URLElement urlElement = new CMDInstanceReport.URLElement();
-                    urlElement.message = "Connection refused";
+                    urlElement.message = "No Response";
                     urlElement.url = url;
                     urlElement.status = 0;
                     urlElement.contentType = null;
@@ -70,11 +71,6 @@ public class URLValidator extends CMDSubprocessor {
                     urlElement.duration = "0 ms";
                     report.addURLElement(urlElement);
 
-                    numOfBrokenLinks.incrementAndGet();
-                    addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + e.toString());
-                } catch (Exception e) {
-                    logger.error("URLValidator shouldn't catch other exceptions, So it shouldn't come here!");
-                    e.printStackTrace();
                     numOfBrokenLinks.incrementAndGet();
                     addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + e.toString());
                 }

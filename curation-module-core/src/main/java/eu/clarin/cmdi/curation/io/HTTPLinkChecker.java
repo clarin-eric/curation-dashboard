@@ -37,7 +37,7 @@ public class HTTPLinkChecker {
     }
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
-    public int checkLink(String url, CMDInstanceReport report, int redirectFollowLevel) throws Exception {
+    public int checkLink(String url, CMDInstanceReport report, int redirectFollowLevel) throws IOException {
         HttpClient client = HttpClientBuilder.create().build();
 
         //try get if head doesnt work
