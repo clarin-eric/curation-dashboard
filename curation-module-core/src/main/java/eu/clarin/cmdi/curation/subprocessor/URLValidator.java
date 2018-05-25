@@ -63,15 +63,15 @@ public class URLValidator extends CMDSubprocessor {
                     urlElement.message = "Connection refused";
                     urlElement.url = url;
                     urlElement.status = 0;
-                    urlElement.contentType=null;
-                    urlElement.byteSize="0";
+                    urlElement.contentType = null;
+                    urlElement.byteSize = "0";
                     urlElement.timestamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
                     urlElement.duration = "0 ms";
                     report.addURLElement(urlElement);
 
                     numOfBrokenLinks.incrementAndGet();
                     addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + e.toString());
-                }catch (Exception e) {
+                } catch (Exception e) {
                     logger.error("URLValidator shouldn't catch other exceptions, So it shouldn't come here!");
                     e.printStackTrace();
                     numOfBrokenLinks.incrementAndGet();
@@ -99,9 +99,9 @@ public class URLValidator extends CMDSubprocessor {
         report.numOfLinks = numOfLinks;
         report.numOfBrokenLinks = numOfBrokenLinks;
         report.numOfUniqueLinks = numOfUniqueLinks;
-        if (Configuration.HTTP_VALIDATION)
+        if (Configuration.HTTP_VALIDATION) {
             report.percOfValidLinks = (numOfUniqueLinks - numOfBrokenLinks) / (double) numOfUniqueLinks;
-
+        }
         return report;
     }
 

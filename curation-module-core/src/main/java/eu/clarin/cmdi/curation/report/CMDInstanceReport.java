@@ -144,6 +144,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         // XMLValidator
         parentReport.xmlValidationReport.totNumOfRecords += 1;
         parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidityReport.valid ? 1 : 0;
+        if(!xmlValidityReport.valid){
+            parentReport.xmlValidationReport.record.add(this.getName());
+        }
 
         if (Configuration.HTTP_VALIDATION) {
             parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;

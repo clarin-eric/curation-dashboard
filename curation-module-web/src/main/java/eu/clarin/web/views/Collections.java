@@ -37,8 +37,9 @@ public class Collections extends GridPanel {
 		container.addContainerProperty("Score", Double.class, null);
 		container.addContainerProperty("NumOfRecords", Long.class, null);
 		container.addContainerProperty("NumOfProfiles", Integer.class, null);
-		container.addContainerProperty("AvgNumOfValidLinks", Double.class, null);
+		container.addContainerProperty("RatioOfValidLinks", Double.class, null);
 		container.addContainerProperty("AvgNumOfResProxies", Double.class, null);
+		container.addContainerProperty("TotalNumOfResProxies", Integer.class, null);
 		container.addContainerProperty("RatioOfValidRecords", Double.class, null);
 		container.addContainerProperty("AvgNumOfEmptyXMLElements", Double.class, null);
 		container.addContainerProperty("AvgFacetCoverage", Double.class, null);
@@ -47,7 +48,8 @@ public class Collections extends GridPanel {
 		sb = new StringBuilder();
 		// csv headers
 		sb.append("Name").append("\t").append("Score").append("\t").append("NumOfRecords").append("\t")
-				.append("NumOfProfiles").append("\t").append("AvgNumOfValidLinks").append("\t").append("AvgNumOfResProxies").append("\t")
+				.append("NumOfProfiles").append("\t").append("RatioOfValidLinks").append("\t")
+				.append("AvgNumOfResProxies").append("\t").append("TotalNumOfResProxies").append("\t")
 				.append("RatioOfValidRecords").append("\t").append("AvgNumOfEmptyXMLElements")
 				.append("\t").append("AvgFacetCoverage").append("\t");
 		// facets
@@ -74,8 +76,9 @@ public class Collections extends GridPanel {
                 rowValues.add(c.scorePercentage);
                 rowValues.add(c.fileReport.numOfFiles);
                 rowValues.add(c.headerReport.profiles.totNumOfProfiles);
-                rowValues.add(c.urlReport.avgNumOfLinks);
+                rowValues.add(c.urlReport.ratioOfValidLinks);
                 rowValues.add(c.resProxyReport.avgNumOfResProxies);
+				rowValues.add(c.resProxyReport.totNumOfResProxies);
                 rowValues.add(c.xmlValidationReport.ratioOfValidRecords);
                 rowValues.add(c.xmlPopulatedReport.avgXMLEmptyElement);
                 rowValues.add(c.facetReport.coverage);
@@ -90,8 +93,9 @@ public class Collections extends GridPanel {
                 sb.append(c.scorePercentage).append("\t");
                 sb.append(c.fileReport.numOfFiles).append("\t");
                 sb.append(c.headerReport.profiles.totNumOfProfiles).append("\t");
-                sb.append(c.urlReport.avgNumOfLinks).append("\t");
+                sb.append(c.urlReport.ratioOfValidLinks).append("\t");
                 sb.append(c.resProxyReport.avgNumOfResProxies).append("\t");
+				sb.append(c.resProxyReport.totNumOfResProxies).append("\t");
 				sb.append(c.xmlValidationReport.ratioOfValidRecords).append("\t");
                 sb.append(c.xmlPopulatedReport.avgXMLEmptyElement).append("\t");
                 sb.append(c.facetReport.coverage).append("\t");

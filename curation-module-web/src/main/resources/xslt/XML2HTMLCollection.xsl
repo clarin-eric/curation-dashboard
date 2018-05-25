@@ -95,7 +95,16 @@
 		<h2>XML Validation Section</h2>
 		<p>Number of Records: <xsl:value-of select="./xml-validation-section/totNumOfRecords"/></p>
 		<p>Number of valid Records: <xsl:value-of select="./xml-validation-section/totNumOfValidRecords"/></p>
-		<p>Percentage of valid Records: <xsl:value-of select="./xml-validation-section/avgRateOfValidRecords"/></p>
+		<p>Ratio valid Records: <xsl:value-of select="./xml-validation-section/ratioOfValidRecords"/></p>
+
+		<xsl:if test="./xml-validation-section/invalid-records/record">
+			<h3>Invalid Records:</h3>
+			<ol>
+				<xsl:for-each select="./xml-validation-section/invalid-records/record">
+					<li><xsl:copy-of select="." /></li>
+				</xsl:for-each>
+			</ol>
+		</xsl:if>
 
 		<hr/>
 
@@ -119,7 +128,7 @@
 		<p>Average number of resourceProxy links: <xsl:value-of select="./url-validation-section/avgNumOfResProxiesLinks"/></p>
 		<p>Total number of broken links: <xsl:value-of select="./url-validation-section/totNumOfBrokenLinks"/></p>
 		<p>Average number of broken links: <xsl:value-of select="./url-validation-section/avgNumOfBrokenLinks"/></p>
-		<p>Average number of valid links: <xsl:value-of select="./url-validation-section/avgNumOfValidLinks"/></p>
+		<p>Ratio of valid links: <xsl:value-of select="./url-validation-section/ratioOfValidLinks"/></p>
 
 		<hr/>
 		<h2>Single URL Section</h2>
@@ -150,13 +159,13 @@
 			</tbody>
 		</table>
 
-		<xsl:if test="./invalid-records/record">
+		<xsl:if test="./invalid-files/file">
 			<hr/>	
-			<h2>Invalid Records Section</h2>
+			<h2>Invalid Files Section</h2>
 			 <ol>
-			  <xsl:for-each select="./invalid-records/record">
+			  <xsl:for-each select="./invalid-files/file">
 			  <!--<li><font color="#dbd839"><xsl:copy-of select="." />, reason: <xsl:value-of select="./@reason"/></font></li>-->
-			  <li><font color="#dbd839">Invalid file: <xsl:copy-of select="." /><br/>Reason: <xsl:value-of select="./@reason"/></font></li>
+			  <li>Invalid file: <xsl:copy-of select="." /><br/><font color="#dbd839">Reason: <xsl:value-of select="./@reason"/></font></li>
 			  </xsl:for-each>
 			</ol>
 		</xsl:if>

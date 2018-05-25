@@ -68,8 +68,8 @@ public class CollectionReport implements Report<CollectionReport> {
     public FacetReport facetReport;
 
     // Invalid Files
-    @XmlElementWrapper(name = "invalid-records")
-    public Collection<InvalidFile> record;
+    @XmlElementWrapper(name = "invalid-files")
+    public Collection<InvalidFile> file;
 
     @XmlRootElement
     public static class InvalidFile {
@@ -81,10 +81,10 @@ public class CollectionReport implements Report<CollectionReport> {
     }
 
     public void addInvalidFile(InvalidFile invalidFile) {
-        if (this.record == null) {
-            this.record = new ArrayList<>();
+        if (this.file == null) {
+            this.file = new ArrayList<>();
         }
-        this.record.add(invalidFile);
+        this.file.add(invalidFile);
     }
 
     // URLs
@@ -161,6 +161,7 @@ public class CollectionReport implements Report<CollectionReport> {
         // XMLValidator
         parentReport.xmlValidationReport.totNumOfRecords += xmlValidationReport.totNumOfRecords;
         parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidationReport.totNumOfValidRecords;
+        parentReport.xmlValidationReport.record.addAll(this.xmlValidationReport.record);
 
         // XMLPopulatedValidator
         parentReport.xmlPopulatedReport.totNumOfXMLElements += xmlPopulatedReport.totNumOfXMLElements;
@@ -196,10 +197,10 @@ public class CollectionReport implements Report<CollectionReport> {
         }
 
         // invalid files
-        if (this.record != null) {
-            if (parentReport.record == null)
-                parentReport.record = new ArrayList<>();
-            parentReport.record.addAll(this.record);
+        if (this.file != null) {
+            if (parentReport.file == null)
+                parentReport.file = new ArrayList<>();
+            parentReport.file.addAll(this.file);
         }
 
         // urls
@@ -250,8 +251,8 @@ public class CollectionReport implements Report<CollectionReport> {
         urlReport.avgNumOfResProxiesLinks = (double) urlReport.totNumOfResProxiesLinks / fileReport.numOfFiles;
         urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
 
-        urlReport.avgNumOfValidLinks = (double) (urlReport.totNumOfUniqueLinks - urlReport.totNumOfBrokenLinks)
-                / fileReport.numOfFiles;
+        urlReport.ratioOfValidLinks = (double) (urlReport.totNumOfUniqueLinks - urlReport.totNumOfBrokenLinks)
+                / urlReport.totNumOfUniqueLinks;
 
         // Facets
         facetReport.facet.forEach(facet -> facet.coverage = (double) facet.cnt / fileReport.numOfFiles);
@@ -319,6 +320,8 @@ public class CollectionReport implements Report<CollectionReport> {
         public int totNumOfRecords;
         public int totNumOfValidRecords;
         public Double ratioOfValidRecords = 0.0;
+        @XmlElementWrapper(name = "invalid-records")
+        public Collection<String> record = new ArrayList<>();
     }
 
     @XmlRootElement
@@ -331,7 +334,7 @@ public class CollectionReport implements Report<CollectionReport> {
         public Double avgNumOfResProxiesLinks = 0.0;
         public int totNumOfBrokenLinks;
         public Double avgNumOfBrokenLinks = 0.0;
-        public Double avgNumOfValidLinks = 0.0;
+        public Double ratioOfValidLinks = 0.0;
     }
 
     @XmlRootElement
