@@ -48,6 +48,7 @@ public class URLValidator extends CMDSubprocessor {
             links.stream().forEach(url -> {
 
                 try {// check if URL is broken
+                    logger.info("Checking url: "+url);
                     int responseCode = new HTTPLinkChecker().checkLink(url, report, 0);//redirect follow level is current level, because this is the first request it is set to 0
                     if (responseCode == 200 || responseCode == 302) {
                     } // OK
