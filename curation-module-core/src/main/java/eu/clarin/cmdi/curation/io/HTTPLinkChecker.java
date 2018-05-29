@@ -6,9 +6,12 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -26,8 +29,10 @@ public class HTTPLinkChecker {
     private int REDIRECT_FOLLOW_LIMIT = Configuration.REDIRECT_FOLLOW_LIMIT;
     private List<Integer> redirectStatusCodes = new ArrayList<>(Arrays.asList(301, 302, 303, 307, 308));
 
+    private final static Logger logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
+
     public HTTPLinkChecker() {
-        this(5000);
+        this(Configuration.TIMEOUT);
     }
 
     public HTTPLinkChecker(final int timeout) {
@@ -38,7 +43,9 @@ public class HTTPLinkChecker {
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
     public int checkLink(String url, CMDInstanceReport report, int redirectFollowLevel) throws IOException {
-        HttpClient client = HttpClientBuilder.create().build();
+        logger.info("Check link requested with url: "+url+" , redirectFollowLevel: "+redirectFollowLevel);
+        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(timeout).build();
+        HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
 
         //try get if head doesnt work
 

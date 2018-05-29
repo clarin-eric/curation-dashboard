@@ -25,7 +25,8 @@ public class Configuration {
 	public static Path OUTPUT_DIRECTORY = null;
 	public static Path CACHE_DIRECTORY = null;
 	public static Collection<String> FACETS = null;
-	public static int REDIRECT_FOLLOW_LIMIT;//todo
+	public static int REDIRECT_FOLLOW_LIMIT;
+	public static int TIMEOUT;
 
 	//this is a boolean that is set by core-module(false) and web-module(true)
 	public static boolean enableProfileLoadTimer = false;
@@ -56,6 +57,7 @@ public class Configuration {
 		MAX_FILE_SIZE = Long.parseLong(config.getProperty("MAX_FILE_SIZE"));
 		HTTP_VALIDATION = Boolean.parseBoolean(config.getProperty("HTTP_VALIDATION"));
 		SAVE_REPORT = Boolean.parseBoolean(config.getProperty("SAVE_REPORT"));
+		TIMEOUT = Integer.parseInt(config.getProperty("TIMEOUT"));
 		
 		String[] facets = config.getProperty("FACETS").split(",");
 		FACETS = Arrays.asList(facets).stream().map(f -> f.trim()).collect(Collectors.toList());	
