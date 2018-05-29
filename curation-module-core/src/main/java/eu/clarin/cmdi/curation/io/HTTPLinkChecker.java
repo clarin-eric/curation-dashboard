@@ -43,8 +43,12 @@ public class HTTPLinkChecker {
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
     public int checkLink(String url, CMDInstanceReport report, int redirectFollowLevel) throws IOException {
-        logger.info("Check link requested with url: "+url+" , redirectFollowLevel: "+redirectFollowLevel);
-        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(timeout).build();
+        logger.info("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
+        RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
+                .setConnectTimeout(timeout)
+                .setConnectionRequestTimeout(timeout)
+                .setSocketTimeout(timeout)
+                .build();
         HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
 
         //try get if head doesnt work
@@ -86,7 +90,7 @@ public class HTTPLinkChecker {
         }
 
         //IF HEAD doesnt work and we are not over the redirect limit, try the same thing with get
-        if (statusCode != 200 || statusCode != 302) {
+        if (statusCode != 200) {
             if (redirectFollowLevel < REDIRECT_FOLLOW_LIMIT) {
                 HttpGet get = new HttpGet(url);
 
@@ -116,6 +120,8 @@ public class HTTPLinkChecker {
                             urlElement.message = "There is no redirect link('Location' header)";
                         }
                     }
+                } else {
+                    urlElement.message = "Broken Link";
                 }
 
             } else {
@@ -134,15 +140,15 @@ public class HTTPLinkChecker {
 
         String contentLength;
         Header[] contentLengthArray = response.getHeaders("Content-Length");
-        if(contentLengthArray.length==0){
-            contentLength="Not specified";
-        }else{
+        if (contentLengthArray.length == 0) {
+            contentLength = "Not specified";
+        } else {
             contentLength = contentLengthArray[0].getValue();
         }
 
 
         urlElement.contentType = contentType;
-        urlElement.byteSize=contentLength;
+        urlElement.byteSize = contentLength;
         urlElement.duration = TimeUtils.humanizeToTime(duration);
         urlElement.timestamp = TimeUtils.humanizeToDate(start);
 
