@@ -36,9 +36,8 @@ public class Configuration {
 	public static void init(String file) throws IOException {
 		logger.info("Initializing configuration from {}", file);
 		Properties config = new Properties();
-		config.load(new FileInputStream(file));		 
+		config.load(new FileInputStream(file));
 		readProperties(config);
-		
 		//readProperties(new PropertiesConfiguration(file));
 	}
 	
@@ -51,17 +50,17 @@ public class Configuration {
 	}
 	
 	private static void readProperties(Properties config) throws IOException{
-		
+
 		SCORE_NUMERIC_DISPLAY_FORMAT = config.getProperty("SCORE_NUMERIC_DISPLAY_FORMAT");
 		TIMESTAMP_DISPLAY_FORMAT = config.getProperty("TIMESTAMP_DISPLAY_FORMAT");
 		MAX_FILE_SIZE = Long.parseLong(config.getProperty("MAX_FILE_SIZE"));
 		HTTP_VALIDATION = Boolean.parseBoolean(config.getProperty("HTTP_VALIDATION"));
 		SAVE_REPORT = Boolean.parseBoolean(config.getProperty("SAVE_REPORT"));
 		TIMEOUT = Integer.parseInt(config.getProperty("TIMEOUT"));
-		
+
 		String[] facets = config.getProperty("FACETS").split(",");
-		FACETS = Arrays.asList(facets).stream().map(f -> f.trim()).collect(Collectors.toList());	
-		
+		FACETS = Arrays.asList(facets).stream().map(f -> f.trim()).collect(Collectors.toList());
+
 		String outDir = config.getProperty("OUTPUT_DIRECTORY");
 		String cacheDir = config.getProperty("CACHE_DIRECTORY");
 
@@ -76,6 +75,6 @@ public class Configuration {
 		if(redirectFollowLimit != null && !redirectFollowLimit.isEmpty()){
 			REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
 		}
-		
+
 	}
 }

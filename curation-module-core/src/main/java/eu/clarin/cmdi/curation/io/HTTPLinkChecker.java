@@ -42,7 +42,7 @@ public class HTTPLinkChecker {
     }
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
-    public int checkLink(String url, CMDInstanceReport report, int redirectFollowLevel) throws IOException {
+    public int checkLink(String url, CMDInstanceReport report, int redirectFollowLevel, long durationPassed) throws IOException {
         logger.info("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
         RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
                 .setConnectTimeout(timeout)
@@ -63,6 +63,8 @@ public class HTTPLinkChecker {
         long end = System.currentTimeMillis();
         long duration = end - start;
 
+        duration += durationPassed;//durationPassed is for previous requests if any that led to a redirect
+
         int statusCode = response.getStatusLine().getStatusCode();
 
         CMDInstanceReport.URLElement urlElement = new CMDInstanceReport.URLElement();
@@ -81,7 +83,7 @@ public class HTTPLinkChecker {
                         urlElement.message = "Redirect link is the same";
                     } else {
                         this.redirectLink = redirectLink;
-                        return checkLink(redirectLink, report, redirectFollowLevel + 1);
+                        return checkLink(redirectLink, report, redirectFollowLevel + 1, duration);
                     }
                 } else {
                     urlElement.message = "There is no redirect link('Location' header)";
@@ -114,7 +116,7 @@ public class HTTPLinkChecker {
                                 urlElement.message = "Redirect link is the same";
                             } else {
                                 this.redirectLink = redirectLink;
-                                return checkLink(redirectLink, report, redirectFollowLevel + 1);
+                                return checkLink(redirectLink, report, redirectFollowLevel + 1, duration);
                             }
                         } else {
                             urlElement.message = "There is no redirect link('Location' header)";
