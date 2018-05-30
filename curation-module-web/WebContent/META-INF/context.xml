@@ -2,7 +2,5 @@
 <Context>
   <!--server instance-->
   <Parameter name="config.location" value="/usr/local/curation-module/conf/config.properties" override="false"/>
-
-  <!--localhost instance on dev computer-->
-  <!--<Parameter name="config.location" value="/home/can/workspace/clarin-curation-module/curation-module-core/src/main/resources/config.properties" override="false"/>-->
+  
 </Context>
