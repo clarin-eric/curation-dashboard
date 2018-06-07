@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.*;
 
+import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
@@ -39,7 +40,7 @@ public class CollectionReport implements Report<CollectionReport> {
     public Double maxPossibleScoreInstance = 0.0;
 
     @XmlAttribute
-    public Long timeStamp = System.currentTimeMillis();
+    public String timeStamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
     @XmlElement(name = "file-section")
     public FileReport fileReport;

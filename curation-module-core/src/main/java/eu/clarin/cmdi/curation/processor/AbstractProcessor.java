@@ -53,6 +53,7 @@ public abstract class AbstractProcessor<R extends Report<?>> {
             return new ErrorReport(report.getName(), e.getMessage());
         } catch (Exception e) {
             String message = e.getMessage();
+            message = message.replace(" java.lang.Exception","");
             if(message==null || message.isEmpty()){
                 message = "There was an unknown error. Please report it.";
             }

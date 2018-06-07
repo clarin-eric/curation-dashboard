@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.*;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
+import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
@@ -35,7 +36,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     public double scorePercentage;
 
     @XmlAttribute
-    public Long timeStamp = System.currentTimeMillis();
+    public String timeStamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
     // sub reports **************************************
 
