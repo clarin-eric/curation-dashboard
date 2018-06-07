@@ -23,6 +23,8 @@ import java.util.*;
  */
 public class HTTPLinkChecker {
 
+    //TODO decide if you want to move redirect handling from self written code to httpclient, it has different strategies apparently
+
     private int timeout;
     private HttpURLConnection connection = null;
     private String redirectLink = null;
@@ -49,7 +51,7 @@ public class HTTPLinkChecker {
                 .setConnectionRequestTimeout(timeout)
                 .setSocketTimeout(timeout)
                 .build();
-        HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
+        HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).disableRedirectHandling().build();
 
         //try get if head doesnt work
 
@@ -68,6 +70,7 @@ public class HTTPLinkChecker {
         int statusCode = response.getStatusLine().getStatusCode();
 
         CMDInstanceReport.URLElement urlElement = new CMDInstanceReport.URLElement();
+        urlElement.method = "HEAD";
         urlElement.message = "Ok";
         urlElement.url = url;
         urlElement.status = statusCode;
@@ -92,8 +95,10 @@ public class HTTPLinkChecker {
         }
 
         //IF HEAD doesnt work and we are not over the redirect limit, try the same thing with get
-        if (statusCode != 200) {
+        if (statusCode != 200 && statusCode != 304) {
             if (redirectFollowLevel < REDIRECT_FOLLOW_LIMIT) {
+
+
                 HttpGet get = new HttpGet(url);
 
                 start = System.currentTimeMillis();
@@ -104,30 +109,39 @@ public class HTTPLinkChecker {
                 statusCode = response.getStatusLine().getStatusCode();
 
                 urlElement.status = statusCode;
+                urlElement.method = "GET";
 
                 //deal with redirect
-                if (redirectStatusCodes.contains(statusCode)) {
+                if (statusCode == 200 || statusCode == 304) {
+                    urlElement.message = "Ok";
+                    urlElement.url = url;
+                } else if (redirectStatusCodes.contains(statusCode)) {
                     if (redirectFollowLevel >= REDIRECT_FOLLOW_LIMIT) {
                         urlElement.message = "Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")";
+                        urlElement.status = 0;
                     } else {
                         String redirectLink = response.getHeaders("Location")[0].getValue();
                         if (redirectLink != null) {
                             if (redirectLink.equals(url)) {
                                 urlElement.message = "Redirect link is the same";
+                                urlElement.status = 0;
                             } else {
                                 this.redirectLink = redirectLink;
                                 return checkLink(redirectLink, report, redirectFollowLevel + 1, duration);
                             }
                         } else {
                             urlElement.message = "There is no redirect link('Location' header)";
+                            urlElement.status = 0;
                         }
                     }
                 } else {
                     urlElement.message = "Broken Link";
+
                 }
 
             } else {
                 urlElement.message = "Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")";
+                urlElement.status = 0;
             }
         }
 
@@ -159,21 +173,79 @@ public class HTTPLinkChecker {
         return statusCode;
     }
 
+    //this is the check link method for downloader
+    //this method checks link with HEAD, if it fails it calls a check link with GET method
+    public int checkLink(String url, int redirectFollowLevel) throws IOException {
+        logger.info("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
+        RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
+                .setConnectTimeout(timeout)
+                .setConnectionRequestTimeout(timeout)
+                .setSocketTimeout(timeout)
+                .build();
+        HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).disableRedirectHandling().build();
 
-    //todo change this also for downloader
-    //this is legacy for downloader
-    public int checkLink(String url) throws Exception {
-        connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.setConnectTimeout(timeout);
-        connection.setReadTimeout(timeout);
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0");
-        connection.setRequestMethod("HEAD");
-        String redirectLink = connection.getHeaderField("Location");
-        if (redirectLink != null && !redirectLink.equals(url)) {
-            this.redirectLink = redirectLink;
-            return checkLink(redirectLink);
-        } else
-            return connection.getResponseCode();
+        //try get if head doesnt work
+
+        HttpHead head = new HttpHead(url);
+
+        HttpResponse response = client.execute(head);
+
+        int statusCode = response.getStatusLine().getStatusCode();
+
+        //deal with redirect
+        if (redirectStatusCodes.contains(statusCode)) {
+            if (redirectFollowLevel >= REDIRECT_FOLLOW_LIMIT) {
+                throw new IOException("Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")");
+            } else {
+                String redirectLink = response.getHeaders("Location")[0].getValue();
+                if (redirectLink != null) {
+                    if (redirectLink.equals(url)) {
+                        throw new IOException("Redirect link is the same");
+                    } else {
+                        this.redirectLink = redirectLink;
+                        return checkLink(redirectLink, redirectFollowLevel + 1);
+                    }
+                } else {
+                    throw new IOException("There is no redirect link('Location' header)");
+                }
+            }
+        }
+
+        //IF HEAD doesnt work and we are not over the redirect limit, try the same thing with get
+        if (statusCode != 200 && statusCode != 304) {
+            if (redirectFollowLevel < REDIRECT_FOLLOW_LIMIT) {
+
+                HttpGet get = new HttpGet(url);
+                response = client.execute(get);
+                statusCode = response.getStatusLine().getStatusCode();
+
+                //deal with redirect
+                if (redirectStatusCodes.contains(statusCode)) {
+                    if (redirectFollowLevel >= REDIRECT_FOLLOW_LIMIT) {
+                        throw new IOException("Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")");
+                    } else {
+                        String redirectLink = response.getHeaders("Location")[0].getValue();
+                        if (redirectLink != null) {
+                            if (redirectLink.equals(url)) {
+                                throw new IOException("Redirect link is the same");
+                            } else {
+                                this.redirectLink = redirectLink;
+                                return checkLink(redirectLink, redirectFollowLevel + 1);
+                            }
+                        } else {
+                            throw new IOException("There is no redirect link('Location' header)");
+                        }
+                    }
+                } else {
+                    return statusCode;
+                }
+
+            } else {
+                throw new IOException("Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")");
+            }
+        }
+
+        return statusCode;
     }
 
     public String getRedirectLink() {

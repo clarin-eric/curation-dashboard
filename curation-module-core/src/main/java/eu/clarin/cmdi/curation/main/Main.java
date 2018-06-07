@@ -130,9 +130,10 @@ public class Main {
             }
 
             Files.createDirectories(path);
-            path = path.resolve(report.getName() + ".xml");
+            String filename = report.getName().replaceAll("/","-") + ".xml";
+            path = path.resolve(filename);
             report.toXML(Files.newOutputStream(path));
-            System.out.println("Report saved:"+report.getName() + ".xml");
+            System.out.println(filename);
         } else {//print to console
             report.toXML(System.out);
             System.out.println("-----------------------------------------------------------------");

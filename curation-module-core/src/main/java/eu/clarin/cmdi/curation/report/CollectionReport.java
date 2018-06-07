@@ -96,6 +96,9 @@ public class CollectionReport implements Report<CollectionReport> {
         @XmlValue
         public String url;
 
+        @XmlAttribute(name = "method")
+        public String method;
+
         @XmlAttribute(name="message")
         public String message;
 

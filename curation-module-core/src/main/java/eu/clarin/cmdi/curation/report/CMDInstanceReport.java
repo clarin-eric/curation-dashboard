@@ -31,7 +31,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     @XmlAttribute(name = "max-score")
     public double maxScore;
 
-    @XmlAttribute (name = "score-percentage")
+    @XmlAttribute(name = "score-percentage")
     public double scorePercentage;
 
     @XmlAttribute
@@ -81,7 +81,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         @XmlValue
         public String url;
 
-        @XmlAttribute(name="message")
+        @XmlAttribute(name = "method")
+        public String method;
+
+        @XmlAttribute(name = "message")
         public String message;
 
         @XmlAttribute(name = "http-status")
@@ -144,7 +147,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         // XMLValidator
         parentReport.xmlValidationReport.totNumOfRecords += 1;
         parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidityReport.valid ? 1 : 0;
-        if(!xmlValidityReport.valid){
+        if (!xmlValidityReport.valid) {
             parentReport.xmlValidationReport.record.add(this.getName());
         }
 
@@ -195,7 +198,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         segmentScores.add(segmentScore);
         maxScore += segmentScore.maxScore;
         score += segmentScore.score;
-        scorePercentage = score/maxScore;
+        scorePercentage = score / maxScore;
         if (!segmentScore.segment.equals("profiles-score"))
             instanceScore += segmentScore.score;
 

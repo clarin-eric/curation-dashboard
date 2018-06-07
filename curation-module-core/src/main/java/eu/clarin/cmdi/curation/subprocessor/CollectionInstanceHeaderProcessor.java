@@ -53,7 +53,7 @@ public class CollectionInstanceHeaderProcessor extends CMDSubprocessor {
 		missingMdSelfLink = mdSelfLink == null || mdSelfLink.isEmpty();
 
 		if (missingSchema && missingMdprofile)
-			throw new Exception("Unable to process " + entity + ", both, schema and profile are not specified");
+			throw new Exception("Unable to process " + entity + ", both schema and profile are not specified");
 
 		if (missingSchema){
 			schemaLocation = CRService.CR_REST_1_2_PROFILES + mdprofile + "/xsd";

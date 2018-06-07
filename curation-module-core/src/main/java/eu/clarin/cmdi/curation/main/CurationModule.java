@@ -13,7 +13,6 @@ import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.io.CMDFileVisitor;
 import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
-import eu.clarin.cmdi.curation.report.ErrorReport;
 import eu.clarin.cmdi.curation.report.Report;
 
 public class CurationModule implements CurationModuleInterface {		
@@ -44,7 +43,7 @@ public class CurationModule implements CurationModuleInterface {
 
 	@Override
 	public Report processCMDInstance(URL url) throws IOException, InterruptedException {
-		Path path = Files.createTempFile(null, null);		
+		Path path = Files.createTempFile(null, null);
 		new Downloader().download(url.toString(), path.toFile());
 		long size = Files.size(path);
 		CMDInstance cmdInstance =new CMDInstance(path, size);
@@ -52,8 +51,9 @@ public class CurationModule implements CurationModuleInterface {
 		Report r = cmdInstance.generateReport();
 		Files.delete(path);
 
-		if(r instanceof CMDInstanceReport)
+		if(r instanceof CMDInstanceReport){
 			((CMDInstanceReport)r).fileReport.location = url.toString();
+		}
 
 		return r;
 	}

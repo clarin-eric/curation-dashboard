@@ -62,7 +62,7 @@ public class URLValidator extends CMDSubprocessor {
 
                 } catch (IOException e) {
                     CMDInstanceReport.URLElement urlElement = new CMDInstanceReport.URLElement();
-                    urlElement.message = "No Response";
+                    urlElement.message = e.getLocalizedMessage();
                     urlElement.url = url;
                     urlElement.status = 0;
                     urlElement.contentType = null;

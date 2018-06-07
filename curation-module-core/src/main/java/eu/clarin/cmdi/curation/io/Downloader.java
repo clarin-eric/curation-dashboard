@@ -24,14 +24,17 @@ public class Downloader {
 
 	public void download(String url, File destination) throws IOException {		
 		try {
-			HTTPLinkChecker lc = new HTTPLinkChecker(15000); //custom timeout for slow CR
-			if(lc.checkLink(url) != 200)//redirection is already handled, 30x status will not be thrown
-				throw new Exception(url + " is not valid! Response from server:\n" + lc.getResponse());	
-			
+			HTTPLinkChecker linkChecker = new HTTPLinkChecker(15000); //custom timeout for slow CR
+			int statusCode = linkChecker.checkLink(url,0);
+			if(statusCode != 200 && statusCode != 304){
+				throw new Exception(url + " is not valid! Response from server:\n" + linkChecker.getResponse());
+			}
+
 			logger.trace("Downloading file from {} into {}", url, destination.getName());
 			
-			if(lc.getRedirectLink() != null)//if redirection issued use new link
-				url = lc.getRedirectLink();
+			if(linkChecker.getRedirectLink() != null){
+				url = linkChecker.getRedirectLink();
+			}
 			
 			ReadableByteChannel channel = Channels.newChannel(new URL(url).openStream());
 			FileOutputStream fos = new FileOutputStream(destination);
