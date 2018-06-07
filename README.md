@@ -19,6 +19,24 @@
 -url <url>         Space separated urls to profile or instance to be curated
 ```             
 
+ **Configuration**
+ 
+ Configuration is done through a properties file that consists of the following variables. Don't forget to set **OUTPUT_DIRECTORY and CACHE_DIRECTORY**.
+ 
+ ```
+  SCORE_NUMERIC_DISPLAY_FORMAT=#0.0000
+  TIMESTAMP_DISPLAY_FORMAT=dd-MM-yyyy HH.mm.ss
+  MAX_FILE_SIZE=10000000
+  HTTP_VALIDATION=false
+  SAVE_REPORT=true
+  OUTPUT_DIRECTORY=
+  CACHE_DIRECTORY=
+  FACETS=languageCode, collection, resourceClass, modality, format, keywords, genre, subject, country, organisation,  nationalProject, name, description, license, availability
+  REDIRECT_FOLLOW_LIMIT=5
+  #Timeout in ms
+  TIMEOUT=5000
+ ```
+
   **Examples:**
   
  - Local instance: `java -jar curation-module-core-1.2-SNAPSHOT-jar-with-dependencies.jar -config /path/to/clarin-curation-module/curation-module-core/src/main/resources/config.properties -i -path /path/to/instance/instance.xml`
