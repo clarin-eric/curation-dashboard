@@ -33,7 +33,7 @@ public class CollectionReport implements Report<CollectionReport> {
     @XmlAttribute(name = "col-max-score")
     public Double maxScore = 0.0;
 
-    @XmlAttribute(name="score-percentage")
+    @XmlAttribute(name = "score-percentage")
     public Double scorePercentage;
 
     @XmlAttribute(name = "ins-max-score")
@@ -100,7 +100,7 @@ public class CollectionReport implements Report<CollectionReport> {
         @XmlAttribute(name = "method")
         public String method;
 
-        @XmlAttribute(name="message")
+        @XmlAttribute(name = "message")
         public String message;
 
         @XmlAttribute(name = "http-status")
@@ -255,8 +255,8 @@ public class CollectionReport implements Report<CollectionReport> {
         urlReport.avgNumOfResProxiesLinks = (double) urlReport.totNumOfResProxiesLinks / fileReport.numOfFiles;
         urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
 
-        urlReport.ratioOfValidLinks = (double) (urlReport.totNumOfUniqueLinks - urlReport.totNumOfBrokenLinks)
-                / urlReport.totNumOfUniqueLinks;
+        urlReport.ratioOfValidLinks = urlReport.totNumOfUniqueLinks == 0 ? 0 :
+                (double) (urlReport.totNumOfUniqueLinks - urlReport.totNumOfBrokenLinks) / urlReport.totNumOfUniqueLinks;
 
         // Facets
         facetReport.facet.forEach(facet -> facet.coverage = (double) facet.cnt / fileReport.numOfFiles);
@@ -265,7 +265,7 @@ public class CollectionReport implements Report<CollectionReport> {
         avgScore = score / fileReport.numOfFiles;
         maxScore = fileReport.numOfFiles * maxPossibleScoreInstance;
 
-        scorePercentage = score/maxScore;
+        scorePercentage = score / maxScore;
 
     }
 
