@@ -23,6 +23,7 @@
 		</p>
 		<p>profileID: <a href="#!ResultView/profile/id/{$profileID}"><xsl:copy-of select="$profileID"/></a></p>
 		<p>file size: <xsl:value-of select="./file-section/size"/> B</p>
+		<p>timestamp: <xsl:value-of select="./@timeStamp"/></p>
 		<hr/>
 
 		<h2>score-section</h2>

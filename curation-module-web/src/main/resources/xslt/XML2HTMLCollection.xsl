@@ -10,13 +10,16 @@
 		
 		<h3>Collection name: <xsl:value-of select="./file-section/provider"/></h3>
 		
-		
 		<p>Total Score: <xsl:value-of select="./@score"/> out of <xsl:value-of select="./@col-max-score"/></p>
 		<p>Score percentage: <xsl:value-of select="./@score-percentage"/></p>
 		<p>Average Score: <xsl:value-of select="./@avg-score"/> out of <xsl:value-of select="./@ins-max-score"/></p>
 		<p>Maximal score in collection: <xsl:value-of select="./@max-score"/></p>
 		<p>Minimal score in collection: <xsl:value-of select="./@min-score"/></p>
 		
+		<hr/>
+
+		<p>Timestamp: <xsl:value-of select="./@timeStamp"/></p>
+
 		<hr/>
 		
 		<h2>File Section</h2>

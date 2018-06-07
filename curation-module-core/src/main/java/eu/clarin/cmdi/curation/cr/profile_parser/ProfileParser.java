@@ -13,9 +13,9 @@ import com.ximpleware.NavException;
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDNav;
 
-import ac.at.acdh.cmdi.ccr.CCRConcept;
-import ac.at.acdh.cmdi.ccr.CCRServiceFactory;
-import ac.at.acdh.cmdi.ccr.ICCRService;
+import eu.clarin.cmdi.curation.ccr_service.CCRConcept;
+import eu.clarin.cmdi.curation.ccr_service.CCRServiceFactory;
+import eu.clarin.cmdi.curation.ccr_service.ICCRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Concept;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
