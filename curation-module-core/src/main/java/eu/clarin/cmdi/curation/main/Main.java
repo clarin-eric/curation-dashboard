@@ -54,7 +54,9 @@ public class Main {
                 * */
             }
         } catch (org.apache.commons.cli.ParseException e) {
-            // do nothing
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("curation module", options);
+            return;
         }
 
 
