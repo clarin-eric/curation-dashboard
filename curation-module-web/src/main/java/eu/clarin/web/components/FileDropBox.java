@@ -14,7 +14,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.Html5File;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.ProgressBar;
+import com.vaadin.v7.ui.ProgressBar;
 import com.vaadin.ui.UI;
 
 public class FileDropBox extends DragAndDropWrapper implements DropHandler{

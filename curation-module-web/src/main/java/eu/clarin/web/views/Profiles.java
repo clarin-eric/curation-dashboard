@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.vaadin.annotations.Title;
-import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.v7.data.util.IndexedContainer;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.ui.renderers.HtmlRenderer;
+import com.vaadin.v7.ui.renderers.HtmlRenderer;
 import eu.clarin.web.Shared;
 import eu.clarin.web.components.GridPanel;
 import eu.clarin.web.components.LinkButton;

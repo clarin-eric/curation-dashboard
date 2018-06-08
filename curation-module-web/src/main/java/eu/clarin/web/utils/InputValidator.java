@@ -1,6 +1,6 @@
 package eu.clarin.web.utils;
 
-import com.vaadin.data.Validator;
+import com.vaadin.v7.data.Validator;
 
 public class InputValidator implements Validator{
 	
