@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Downloader {
 
-	static final Logger logger = LoggerFactory.getLogger(Downloader.class);
+	private static final Logger logger = LoggerFactory.getLogger(Downloader.class);
 
 	public void download(String url, File destination) throws IOException {		
 		try {
