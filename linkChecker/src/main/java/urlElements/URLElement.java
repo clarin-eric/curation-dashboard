@@ -22,6 +22,18 @@ public class URLElement {
 
     private String collection;
 
+    public URLElement(Document document){
+        this.url = document.getString("url");
+        this.method = document.getString("method");
+        this.message = document.getString("message");
+        this.status = document.getInteger("status");
+        this.contentType = document.getString("contentType");
+        this.byteSize = document.getString("byteSize");
+        this.duration = document.getLong("duration");
+        this.timestamp = document.getLong("timestamp");
+        this.collection = document.getString("collection");
+    }
+
     public URLElement(){}
 
     public URLElement(String url, String method, String message, int status, String contentType, String byteSize, long duration, long timestamp, String collection) {
