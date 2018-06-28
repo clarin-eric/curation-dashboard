@@ -28,6 +28,7 @@ public class Configuration {
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;
     private static final int TIMEOUTDEFAULT = 5000;//in ms(if config file doesnt have it)
+    public static boolean DATABASE;
 
     //this is a boolean that is set by core-module(false) and web-module(true)
     public static boolean enableProfileLoadTimer = false;
@@ -84,6 +85,8 @@ public class Configuration {
         if (redirectFollowLimit != null && !redirectFollowLimit.isEmpty()) {
             REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
         }
+
+        DATABASE = Boolean.parseBoolean(config.getProperty("DATABASE"));
 
     }
 }

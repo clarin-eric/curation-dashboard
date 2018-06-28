@@ -22,7 +22,7 @@ public class URLElement {
 
     private String collection;
 
-    public URLElement(Document document){
+    public URLElement(Document document) {
         this.url = document.getString("url");
         this.method = document.getString("method");
         this.message = document.getString("message");
@@ -34,7 +34,8 @@ public class URLElement {
         this.collection = document.getString("collection");
     }
 
-    public URLElement(){}
+    public URLElement() {
+    }
 
     public URLElement(String url, String method, String message, int status, String contentType, String byteSize, long duration, long timestamp, String collection) {
         this.url = url;
@@ -122,7 +123,7 @@ public class URLElement {
                 .append("byteSize", byteSize)
                 .append("duration", duration)
                 .append("timestamp", timestamp)
-                .append("collection",collection);
+                .append("collection", collection);
 
         return document;
     }

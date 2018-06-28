@@ -29,10 +29,6 @@ public class HTTPLinkChecker {
 
     private final static Logger logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
 
-//    public HTTPLinkChecker() {
-//        this(Configuration.TIMEOUT);//todo
-//    }
-
     public HTTPLinkChecker() {
         this(5000);
     }
@@ -40,6 +36,20 @@ public class HTTPLinkChecker {
     public HTTPLinkChecker(final int timeout) {
         redirectLink = null;
         this.timeout = timeout;
+    }
+
+    //this method lets httpclient handle the redirects by itself
+    public int checkLinkAndGetResponseCode(String url) throws IOException {
+        RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
+                .setConnectTimeout(timeout)
+                .setConnectionRequestTimeout(timeout)
+                .setSocketTimeout(timeout)
+                .build();
+        HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
+        HttpHead head = new HttpHead(url);
+        HttpResponse response = client.execute(head);
+        return response.getStatusLine().getStatusCode();
+
     }
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
