@@ -1,3 +1,4 @@
+import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
@@ -46,12 +47,12 @@ public class Main {
         MongoDatabase database = getMongoDatabase();
 
         //get links from linksToBeChecked
-        MongoCollection<Document> linksToBeChecked = database.getCollection(properties.getProperty("linksToBeCheckedCollectionName"));
+        MongoCollection<Document> linksToBeChecked = database.getCollection("linksToBeChecked");
 
         //get linksChecked
-        MongoCollection<Document> linksChecked = database.getCollection(properties.getProperty("linksCheckedCollectionName"));
+        MongoCollection<Document> linksChecked = database.getCollection("linksChecked");
 
-//        while (true) {
+        while (true) {
 
             //todo make this paralel with taking collections into account
             MongoCursor<Document> cursor = linksToBeChecked.find().iterator();
@@ -66,15 +67,21 @@ public class Main {
                     try {
 
                         //todo stream according to collection or something
-                        //check the link
-                        URLElement urlElement = httpLinkChecker.checkLink(urlElementToBeChecked.getUrl(), 0, 0);
-                        urlElement.setCollection(urlElementToBeChecked.getCollection());
 
-                        //replace if the url is in linksChecked already
-                        //if not add new
-                        FindOneAndReplaceOptions findOneAndReplaceOptions = new FindOneAndReplaceOptions();
-                        Bson filter = Filters.eq("url", urlElement.getUrl());
-                        linksChecked.findOneAndReplace(filter, urlElement.getMongoDocument(), findOneAndReplaceOptions.upsert(true));
+                        String url = urlElementToBeChecked.getUrl();
+                        if (url == null) {
+                            logger.error("The URL is null: " + urlElementToBeChecked.getUrl() + " .");
+                        } else {
+                            URLElement urlElement = httpLinkChecker.checkLink(url, 0, 0, url);
+                            urlElement.setCollection(urlElementToBeChecked.getCollection());
+
+                            //replace if the url is in linksChecked already
+                            //if not add new
+                            FindOneAndReplaceOptions findOneAndReplaceOptions = new FindOneAndReplaceOptions();
+                            Bson filter = Filters.eq("url", urlElement.getUrl());
+                            linksChecked.findOneAndReplace(filter, urlElement.getMongoDocument(), findOneAndReplaceOptions.upsert(true));
+                        }
+
 
                     } catch (IOException e) {
                         logger.error("There is an error with the URL: " + urlElementToBeChecked.getUrl() + " . It is not being checked.");
@@ -99,7 +106,13 @@ public class Main {
                     logger.info("Adding " + url + " to linksToBeChecked.");
 
                     URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, urlElement.getCollection());
-                    linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
+                    try{
+                        linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
+                    }catch (MongoException e){
+                        //duplicate key error
+                        //url is already in the database, do nothing
+                    }
+
 
                 }
 
@@ -110,7 +123,7 @@ public class Main {
             logger.info("Done with the run. Running all of it again...");
 
 
-//        }
+        }
 
     }
 

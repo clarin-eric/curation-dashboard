@@ -29,6 +29,7 @@ public class Configuration {
     public static int TIMEOUT;
     private static final int TIMEOUTDEFAULT = 5000;//in ms(if config file doesnt have it)
     public static boolean DATABASE;
+    public static String DATABASE_NAME;
 
     //this is a boolean that is set by core-module(false) and web-module(true)
     public static boolean enableProfileLoadTimer = false;
@@ -61,9 +62,9 @@ public class Configuration {
 
         String timeout = config.getProperty("TIMEOUT");
         if (timeout == null || timeout.isEmpty()) {
-            logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: "+TIMEOUTDEFAULT+"ms.");
+            logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT + "ms.");
             TIMEOUT = TIMEOUTDEFAULT;
-        }else{
+        } else {
             TIMEOUT = Integer.parseInt(timeout);
         }
 
@@ -87,6 +88,9 @@ public class Configuration {
         }
 
         DATABASE = Boolean.parseBoolean(config.getProperty("DATABASE"));
+        if (DATABASE) {
+            DATABASE_NAME = config.getProperty("DATABASE_NAME");
+        }
 
     }
 }

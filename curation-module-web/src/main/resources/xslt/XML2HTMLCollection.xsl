@@ -126,6 +126,7 @@
 		<p>Total number of links: <xsl:value-of select="./url-validation-section/totNumOfLinks"/></p>
 		<p>Average number of links: <xsl:value-of select="./url-validation-section/avgNumOfLinks"/></p>
 		<p>Total number of unique links: <xsl:value-of select="./url-validation-section/totNumOfUniqueLinks"/></p>
+		<p>Total number of checked links: <xsl:value-of select="./url-validation-section/totNumOfCheckedLinks"/></p>
 		<p>Average number of unique links: <xsl:value-of select="./url-validation-section/avgNumOfUniqueLinks"/></p>
 		<p>Total number of resourceProxy links: <xsl:value-of select="./url-validation-section/totNumOfResProxiesLinks"/></p>
 		<p>Average number of resourceProxy links: <xsl:value-of select="./url-validation-section/avgNumOfResProxiesLinks"/></p>

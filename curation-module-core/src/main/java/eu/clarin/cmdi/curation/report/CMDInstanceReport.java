@@ -170,6 +170,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;
             parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
             parentReport.urlReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
+            parentReport.urlReport.totNumOfCheckedLinks += urlReport.numOfCheckedLinks;
         }
 
         // Facet
@@ -286,6 +287,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     public static class URLReport {
         public int numOfLinks;
         public int numOfUniqueLinks;
+        public int numOfCheckedLinks;
         public int numOfBrokenLinks;
         public Double percOfValidLinks;
 

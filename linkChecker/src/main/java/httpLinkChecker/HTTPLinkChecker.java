@@ -53,8 +53,11 @@ public class HTTPLinkChecker {
     }
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
-    public URLElement checkLink(String url, int redirectFollowLevel, long durationPassed) throws IOException {
+    public URLElement checkLink(String url, int redirectFollowLevel, long durationPassed, String originalURL) throws IOException {
         logger.info("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
+        if (url == null) {
+            throw new IOException("The requested url is null.");
+        }
         RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
                 .setConnectTimeout(timeout)
                 .setConnectionRequestTimeout(timeout)
@@ -81,7 +84,7 @@ public class HTTPLinkChecker {
         URLElement urlElement = new URLElement();
         urlElement.setMethod("HEAD");
         urlElement.setMessage("Ok");
-        urlElement.setUrl(url);
+        urlElement.setUrl(originalURL);
         urlElement.setStatus(statusCode);
 
         //deal with redirect
@@ -95,7 +98,7 @@ public class HTTPLinkChecker {
                         urlElement.setMessage("Redirect link is the same");
                     } else {
                         this.redirectLink = redirectLink;
-                        return checkLink(redirectLink, redirectFollowLevel + 1, duration);
+                        return checkLink(redirectLink, redirectFollowLevel + 1, duration, originalURL);
                     }
                 } else {
                     urlElement.setMessage("There is no redirect link('Location' header)");
@@ -123,7 +126,7 @@ public class HTTPLinkChecker {
                 //deal with redirect
                 if (statusCode == 200 || statusCode == 304) {
                     urlElement.setMessage("Ok");
-                    urlElement.setUrl(url);
+                    urlElement.setUrl(originalURL);
                 } else if (redirectStatusCodes.contains(statusCode)) {
                     if (redirectFollowLevel >= REDIRECT_FOLLOW_LIMIT) {
                         urlElement.setMessage("Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")");
@@ -136,7 +139,7 @@ public class HTTPLinkChecker {
                                 urlElement.setStatus(0);
                             } else {
                                 this.redirectLink = redirectLink;
-                                return checkLink(redirectLink, redirectFollowLevel + 1, duration);
+                                return checkLink(redirectLink, redirectFollowLevel + 1, duration, originalURL);
                             }
                         } else {
                             urlElement.setMessage("There is no redirect link('Location' header)");

@@ -201,6 +201,7 @@
 		<h2>url-validation-section</h2>
 		<p>number of links: <xsl:value-of select="./url-validation-section/numOfLinks"/></p>
 		<p>number of unique links: <xsl:value-of select="./url-validation-section/numOfUniqueLinks"/></p>
+		<p>number of checked links: <xsl:value-of select="./url-validation-section/numOfCheckedLinks"/></p>
 		<p>number of broken links <xsl:value-of select="./url-validation-section/numOfBrokenLinks"/></p>
 		<p>percentage of valid links XML elements: <xsl:value-of select="./url-validation-section/percOfValidLinks"/></p>
 
