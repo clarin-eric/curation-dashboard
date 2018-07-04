@@ -60,13 +60,13 @@ public class Configuration {
         HTTP_VALIDATION = Boolean.parseBoolean(config.getProperty("HTTP_VALIDATION"));
         SAVE_REPORT = Boolean.parseBoolean(config.getProperty("SAVE_REPORT"));
 
-        String timeout = config.getProperty("TIMEOUT");
-        if (timeout == null || timeout.isEmpty()) {
-            logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT + "ms.");
-            TIMEOUT = TIMEOUTDEFAULT;
-        } else {
-            TIMEOUT = Integer.parseInt(timeout);
-        }
+//        String timeout = config.getProperty("TIMEOUT");
+//        if (timeout == null || timeout.isEmpty()) {
+//            logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT + "ms.");
+//            TIMEOUT = TIMEOUTDEFAULT;
+//        } else {
+//            TIMEOUT = Integer.parseInt(timeout);
+//        }
 
 
         String[] facets = config.getProperty("FACETS").split(",");
@@ -82,10 +82,10 @@ public class Configuration {
             CACHE_DIRECTORY = Files.createDirectories(Paths.get(cacheDir));
         }
 
-        String redirectFollowLimit = config.getProperty("REDIRECT_FOLLOW_LIMIT");
-        if (redirectFollowLimit != null && !redirectFollowLimit.isEmpty()) {
-            REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
-        }
+//        String redirectFollowLimit = config.getProperty("REDIRECT_FOLLOW_LIMIT");
+//        if (redirectFollowLimit != null && !redirectFollowLimit.isEmpty()) {
+//            REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
+//        }
 
         DATABASE = Boolean.parseBoolean(config.getProperty("DATABASE"));
         if (DATABASE) {

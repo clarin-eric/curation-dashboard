@@ -85,9 +85,12 @@ public class URLValidator extends CMDSubprocessor {
                     } else {
                         URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, report.getName());
 
-                        try{
+                        try {
+
+                            //TODO curation module populates with wrong collection names... todo in core module
+
                             linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
-                        }catch(MongoException e){
+                        } catch (MongoException e) {
                             //duplicate key error
                             //the url is already in the database, do nothing
                         }
@@ -103,7 +106,7 @@ public class URLValidator extends CMDSubprocessor {
                     try {// check if URL is broken
                         logger.info("Checking url: " + url);
 
-                        URLElement urlElement = new HTTPLinkChecker().checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
+                        URLElement urlElement = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT).checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
 
                         addMessageForStatusCode(urlElement.getStatus(), numOfBrokenLinks, url);
 

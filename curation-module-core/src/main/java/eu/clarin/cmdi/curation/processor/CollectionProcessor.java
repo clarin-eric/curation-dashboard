@@ -59,7 +59,7 @@ public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
     private void addInvalidFile(Report<?> report, Exception e) {
         CollectionReport.InvalidFile invalidFile = new CollectionReport.InvalidFile();
         invalidFile.recordName = e.getMessage();
-        invalidFile.reason = e.getCause().getMessage();//todo check if works correctly
+        invalidFile.reason = e.getCause().getMessage();
         ((CollectionReport) report).addInvalidFile(invalidFile);
     }
 

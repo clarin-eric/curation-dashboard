@@ -1,5 +1,6 @@
 package httpLinkChecker;
 
+import helpers.Configuration;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -23,19 +24,20 @@ public class HTTPLinkChecker {
     private int timeout;
     private HttpURLConnection connection = null;
     private String redirectLink = null;
-    //    private int REDIRECT_FOLLOW_LIMIT = Configuration.REDIRECT_FOLLOW_LIMIT;//todo
-    private int REDIRECT_FOLLOW_LIMIT = 5;
+    private int REDIRECT_FOLLOW_LIMIT;
     private List<Integer> redirectStatusCodes = new ArrayList<>(Arrays.asList(301, 302, 303, 307, 308));
 
     private final static Logger logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
 
+    //this is only for link-checker module, don't use it from core-module(will throw nullpointer because it can't find properties)
     public HTTPLinkChecker() {
-        this(5000);
+        this(Configuration.TIMEOUT,Configuration.REDIRECT_FOLLOW_LIMIT);
     }
 
-    public HTTPLinkChecker(final int timeout) {
+    public HTTPLinkChecker(final int timeout, final int REDIRECT_FOLLOW_LIMIT) {
         redirectLink = null;
         this.timeout = timeout;
+        this.REDIRECT_FOLLOW_LIMIT=REDIRECT_FOLLOW_LIMIT;
     }
 
     //this method lets httpclient handle the redirects by itself

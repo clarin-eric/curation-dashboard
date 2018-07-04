@@ -59,7 +59,7 @@ public class ErrorReport implements Report<CollectionReport>{
 
 		CollectionReport.InvalidFile invalidFile = new CollectionReport.InvalidFile();
 		invalidFile.recordName = name;
-		invalidFile.reason = error;//todo check if works correctly
+		invalidFile.reason = error;
 		parentReport.addInvalidFile(invalidFile);
 	}
 
