@@ -109,25 +109,30 @@ public class Main {
                 logger.info("All threads are finished.");
                 logger.info("Checked all links.");
 
-                logger.info("Copying all links back to linksToBeChecked from linksChecked.");
-                cursor = linksChecked.find().iterator();
+                if (linksToBeChecked.count() == 0) {
+                    logger.info("Copying all links back to linksToBeChecked from linksChecked.");
+                    cursor = linksChecked.find().iterator();
 
-                while (cursor.hasNext()) {
+                    while (cursor.hasNext()) {
 
-                    URLElement urlElement = new URLElement(cursor.next());
-                    String url = urlElement.getUrl();
-                    logger.info("Adding " + url + " to linksToBeChecked.");
+                        URLElement urlElement = new URLElement(cursor.next());
+                        String url = urlElement.getUrl();
+                        logger.info("Adding " + url + " to linksToBeChecked.");
 
-                    URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, urlElement.getCollection());
-                    try {
-                        linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
-                    } catch (MongoException e) {
-                        //duplicate key error
-                        //url is already in the database, do nothing
+                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, urlElement.getCollection());
+                        try {
+                            linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
+                        } catch (MongoException e) {
+                            //duplicate key error
+                            //url is already in the database, do nothing
+                        }
+
+
                     }
-
-
+                } else {
+                    logger.info("There are new links in linksToBeChecked. Not copying links back from linksChecked. Will do it in the next run if linksToBeChecked is empty.");
                 }
+
 
             } finally {
                 cursor.close();
