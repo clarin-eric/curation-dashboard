@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import urlElements.URLElement;
 import urlElements.URLElementToBeChecked;
 
+import java.util.concurrent.CountDownLatch;
+
 public class Main {
 
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -21,8 +23,6 @@ public class Main {
 
         Configuration.loadConfigVariables(args[0]);
 
-        //TODO curation module populates with wrong collection names... todo in core module
-        
         //todo make sure url is unique(done in database)(document it somewhere)
         //db.foo.createIndex({name:1}, {unique:true});
 
@@ -37,6 +37,7 @@ public class Main {
 
         while (true) {
 
+            int threadCount = 0;
             MongoCursor<Document> cursor = linksToBeChecked.find().iterator();
             try {
                 while (cursor.hasNext()) {
@@ -51,26 +52,61 @@ public class Main {
                     if (t == null) {
                         t = new CollectionThread(collection, linksToBeChecked, linksChecked);
                         t.urlQueue.add(url);
+
+                        threadCount++;
+                        CountDownLatch latch = new CountDownLatch(threadCount);
                         t.start();
                     } else {
-                        t.urlQueue.add(url);
-                    }
-
-
-                    //todo OK THIS WORKS AS EXPECTED BUT JUST SEE IF IT WORKS CORRECTLY AGAIN...
-                    //todo delete this, this is just for testing
-                    logger.info("Say what?");
-                    for (Thread tr : Thread.getAllStackTraces().keySet()) {
-                        logger.info("###############################" + "Thread: " + tr.getName() + " is running." + "###############################");
-                        if (tr.getClass().equals(CollectionThread.class)) {
-                            logger.info("###############################" + "Collection thread: " + tr.getName() + " is running." + "###############################");
-                            logger.info("###############################" + "It has " + ((CollectionThread) tr).urlQueue.size() + " in its queue." + "###############################");
+                        if (!t.urlQueue.contains(url)) {
+                            t.urlQueue.add(url);
                         }
                     }
-                    //todo delete until here
+
                 }
 
+                logger.info("Added all links to respective threads.");
 
+
+                //Create a logger thread that outputs every 10 seconds the current state of Collection threads...
+                (new Thread() {
+                    public void run() {
+
+                        while (true) {
+                            //log current state
+                            for (Thread tr : Thread.getAllStackTraces().keySet()) {
+                                if (tr.getClass().equals(CollectionThread.class)) {
+                                    logger.info("Collection thread: " + tr.getName() + " is running.");
+                                    logger.info("It has " + ((CollectionThread) tr).urlQueue.size() + " links in its queue.");
+                                }
+                            }
+
+                            synchronized (this) {
+                                try {
+                                    wait(10000);
+                                } catch (InterruptedException e) {
+                                    //dont do anything, this thread is not that important.
+                                }
+                            }
+                        }
+                    }
+                }).start();
+
+
+                logger.info("Waiting for all threads to finish...");//logger thread not included
+
+                //wait for collectionThreads to finish...
+                for (Thread tr : Thread.getAllStackTraces().keySet()) {
+                    if (tr.getClass().equals(CollectionThread.class)) {
+                        try {
+                            tr.join();
+                        } catch (InterruptedException e) {
+                            //this shouldn't happen but if it does, the program keeps running.
+                            logger.error(tr.toString() + "was interrupted.");
+                        }
+                    }
+                }
+
+                logger.info("All threads are finished.");
                 logger.info("Checked all links.");
 
                 logger.info("Copying all links back to linksToBeChecked from linksChecked.");
@@ -98,7 +134,6 @@ public class Main {
             }
 
             logger.info("Done with the run. Running all of it again...");
-
 
         }
 

@@ -66,14 +66,13 @@ public class CollectionThread extends Thread {
                     urlElement.setCollection(collection);
 
 
-                } catch (IOException e) {
+                } catch (IOException | IllegalArgumentException e) {
                     logger.error("There is an error with the URL: " + url + " . It is not being checked.");
 
                     urlElement = new URLElement(url, null, e.getLocalizedMessage(), 0,
                             null, "0", 0, System.currentTimeMillis(), collection);
 
                 }
-
                 //replace if the url is in linksChecked already
                 //if not add new
                 FindOneAndReplaceOptions findOneAndReplaceOptions = new FindOneAndReplaceOptions();

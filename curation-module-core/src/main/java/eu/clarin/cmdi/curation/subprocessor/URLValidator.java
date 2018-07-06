@@ -95,8 +95,6 @@ public class URLValidator extends CMDSubprocessor {
 
                         try {
 
-                            //TODO curation module populates with wrong collection names... todo in core module
-
                             linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
                         } catch (MongoException e) {
                             //duplicate key error
