@@ -25,6 +25,16 @@ public class ErrorReport implements Report<CollectionReport>{
 	ErrorReport(){}
 
 	@Override
+	public void setParentName(String parentName) {
+		//dont do anything, error reports dont have parent reports
+	}
+
+	@Override
+	public String getParentName() {
+		return null;
+	}
+
+	@Override
 	public String getName() {
 		return name;
 	}

@@ -21,6 +21,8 @@ import urlElements.URLElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDInstanceReport implements Report<CollectionReport> {
 
+    public String parentName;
+
     @XmlAttribute
     public Double score = 0.0;
 
@@ -135,6 +137,17 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         }
 
     }
+
+    @Override
+    public String getParentName(){
+        return parentName;
+    }
+
+    @Override
+    public void setParentName(String parentName){
+        this.parentName=parentName;
+    }
+
 
     @Override
     public void mergeWithParent(CollectionReport parentReport) {

@@ -34,7 +34,11 @@ public class URLValidator extends CMDSubprocessor {
     private final static Logger logger = LoggerFactory.getLogger(URLValidator.class);
 
     @Override
-    public void process(CMDInstance entity, CMDInstanceReport report) {
+    public void process(CMDInstance entity, CMDInstanceReport report){
+        //do nothing this is not used
+    }
+
+    public void process(CMDInstance entity, CMDInstanceReport report, String parentName) {
         ParsedInstance parsedInstance = entity.getParsedInstance();
         Collection<String> links = parsedInstance.getNodes()
                 .stream()
@@ -47,8 +51,6 @@ public class URLValidator extends CMDSubprocessor {
         int numOfLinks = links.size();
         links = links.stream().distinct().collect(Collectors.toList());
         int numOfUniqueLinks = links.size();
-
-        //todo  and then add database checking before it, with database config variable
 
         // links are unique
         if (Configuration.HTTP_VALIDATION) {
@@ -83,7 +85,13 @@ public class URLValidator extends CMDSubprocessor {
                         numOfCheckedLinks.incrementAndGet();
 
                     } else {
-                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, report.getName());
+
+                        String collection = parentName;
+
+                        if(collection==null){
+                            collection=report.getName();
+                        }
+                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, collection);
 
                         try {
 

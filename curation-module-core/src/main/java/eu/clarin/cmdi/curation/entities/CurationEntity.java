@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.entities;
 import java.nio.file.Path;
 
 import eu.clarin.cmdi.curation.main.Main;
+import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,64 +11,66 @@ import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.report.Report;
 
 public abstract class CurationEntity {
-	
-	public enum CurationEntityType {PROFILE, INSTANCE, COLLECTION}
-	
-	static final Logger logger = LoggerFactory.getLogger(CurationEntity.class);
 
-	protected Path path = null;
+    public enum CurationEntityType {PROFILE, INSTANCE, COLLECTION}
 
-	protected Report report = null;
+    static final Logger logger = LoggerFactory.getLogger(CurationEntity.class);
 
-	protected long size = 0;
+    protected Path path = null;
 
-	public String getUrl() {
-		return url;
-	}
+    protected Report report = null;
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    protected long size = 0;
 
-	protected String url;
+    public String getUrl() {
+        return url;
+    }
 
-	public CurationEntity(Path path) {
-		this.path = path;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public CurationEntity(Path path, long size) {
-		this.path = path;
-		this.size = size;
-	}
+    protected String url;
 
-	public Report generateReport() throws InterruptedException {
+    public CurationEntity(Path path) {
+        this.path = path;
+    }
 
-		if (report == null)
+    public CurationEntity(Path path, long size) {
+        this.path = path;
+        this.size = size;
+    }
 
-			report = getProcessor().process(this);
+    public Report generateReport(String parentName) throws InterruptedException {
 
-		return report;
-	}
+        if (report == null) {
 
-	protected abstract AbstractProcessor getProcessor();
+            report = getProcessor().process(this,parentName);
 
-	public Path getPath() {
-		return path;
-	}
+        }
 
-	public void setPath(Path path) {
-		this.path = path;
-	}
+        return report;
+    }
 
-	public long getSize() {
-		return size;
-	}
+    protected abstract AbstractProcessor getProcessor();
 
-	public void setSize(long size) {
-		this.size = size;
-	}
-	
-	@Override
-	public abstract String toString();
+    public Path getPath() {
+        return path;
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    @Override
+    public abstract String toString();
 
 }

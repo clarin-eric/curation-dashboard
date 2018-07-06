@@ -1,20 +1,12 @@
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.FindOneAndReplaceOptions;
 import helpers.Configuration;
 import httpLinkChecker.CollectionThread;
-import httpLinkChecker.HTTPLinkChecker;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import urlElements.URLElement;
 import urlElements.URLElementToBeChecked;
-
-import java.io.IOException;
-
-import static com.mongodb.client.model.Filters.eq;
 
 public class Main {
 
@@ -30,9 +22,7 @@ public class Main {
         Configuration.loadConfigVariables(args[0]);
 
         //TODO curation module populates with wrong collection names... todo in core module
-
-        //todo add test databases and collections and write tests for them
-
+        
         //todo make sure url is unique(done in database)(document it somewhere)
         //db.foo.createIndex({name:1}, {unique:true});
 

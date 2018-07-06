@@ -145,6 +145,16 @@ public class CollectionReport implements Report<CollectionReport> {
         return fileReport.provider;
     }
 
+    @Override
+    public void setParentName(String parentName) {
+        //don't do anything, there is no parent to a collection
+    }
+
+    @Override
+    public String getParentName(){
+        return null;
+    }
+
 
     @Override
     public void mergeWithParent(CollectionReport parentReport) {
