@@ -70,7 +70,7 @@ public class CollectionThread extends Thread {
                     logger.error("There is an error with the URL: " + url + " . It is not being checked.");
 
                     urlElement = new URLElement(url, null, e.getLocalizedMessage(), 0,
-                            null, "0", 0, System.currentTimeMillis(), collection);
+                            null, "0", 0, System.currentTimeMillis(), collection, 0);
 
                 }
                 //replace if the url is in linksChecked already

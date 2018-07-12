@@ -39,7 +39,7 @@ public class URLElement {
     public URLElement() {
     }
 
-    public URLElement(String url, String method, String message, int status, String contentType, String byteSize, long duration, long timestamp, String collection) {
+    public URLElement(String url, String method, String message, int status, String contentType, String byteSize, long duration, long timestamp, String collection, int redirectCount) {
         this.url = url;
         this.method = method;
         this.message = message;
@@ -49,6 +49,7 @@ public class URLElement {
         this.duration = duration;
         this.timestamp = timestamp;
         this.collection = collection;
+        this.redirectCount = redirectCount;
     }
 
     public String getUrl() {
