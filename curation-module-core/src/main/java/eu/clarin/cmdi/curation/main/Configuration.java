@@ -30,6 +30,7 @@ public class Configuration {
     private static final int TIMEOUTDEFAULT = 5000;//in ms(if config file doesnt have it)
     public static boolean DATABASE;
     public static String DATABASE_NAME;
+    public static String DATABASE_URI;
 
     //this is a boolean that is set by core-module(false) and web-module(true)
     public static boolean enableProfileLoadTimer = false;
@@ -90,6 +91,7 @@ public class Configuration {
         DATABASE = Boolean.parseBoolean(config.getProperty("DATABASE"));
         if (DATABASE) {
             DATABASE_NAME = config.getProperty("DATABASE_NAME");
+            DATABASE_URI = config.getProperty("DATABASE_URI");
         }
 
     }

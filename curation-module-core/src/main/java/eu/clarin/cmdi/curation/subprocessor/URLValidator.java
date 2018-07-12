@@ -168,7 +168,12 @@ public class URLValidator extends CMDSubprocessor {
 
     private static MongoDatabase getMongoDatabase() {
         logger.info("Connecting to database...");
-        MongoClient mongoClient = MongoClients.create();
+        MongoClient mongoClient;
+        if (Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
+            mongoClient = MongoClients.create();
+        } else {
+            mongoClient = MongoClients.create(Configuration.DATABASE_URI);
+        }
 
         MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
         logger.info("Connected to database.");

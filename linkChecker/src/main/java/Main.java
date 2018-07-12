@@ -1,5 +1,7 @@
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 import helpers.Configuration;
 import httpLinkChecker.CollectionThread;
 import org.bson.Document;
@@ -23,9 +25,6 @@ public class Main {
 
         Configuration.loadConfigVariables(args[0]);
 
-        //todo make sure url is unique(done in database)(document it somewhere)
-        //db.foo.createIndex({name:1}, {unique:true});
-
         //connect to mongod and get database
         MongoDatabase database = getMongoDatabase();
 
@@ -34,6 +33,11 @@ public class Main {
 
         //get linksChecked
         MongoCollection<Document> linksChecked = database.getCollection("linksChecked");
+
+        //Ensure that "url" is a unique index
+        IndexOptions indexOptions = new IndexOptions().unique(true);
+        linksChecked.createIndex(new Document("url", 1), indexOptions);
+        linksToBeChecked.createIndex(new Document("url", 1), indexOptions);
 
         while (true) {
 
@@ -157,10 +161,18 @@ public class Main {
 
     private static MongoDatabase getMongoDatabase() {
         logger.info("Connecting to database...");
-        MongoClient mongoClient = MongoClients.create();
+
+        MongoClient mongoClient;
+        if (Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
+            mongoClient = MongoClients.create();
+        } else {
+            mongoClient = MongoClients.create(Configuration.DATABASE_URI);
+        }
 
         MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
+
         logger.info("Connected to database.");
+
         return database;
 
     }
