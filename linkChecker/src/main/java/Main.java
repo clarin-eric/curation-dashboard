@@ -41,7 +41,7 @@ public class Main {
 
         while (true) {
 
-            int threadCount = 0;
+
             MongoCursor<Document> cursor = linksToBeChecked.find().iterator();
             try {
                 while (cursor.hasNext()) {
@@ -57,8 +57,6 @@ public class Main {
                         t = new CollectionThread(collection, linksToBeChecked, linksChecked);
                         t.urlQueue.add(url);
 
-                        threadCount++;
-                        CountDownLatch latch = new CountDownLatch(threadCount);
                         t.start();
                     } else {
                         if (!t.urlQueue.contains(url)) {

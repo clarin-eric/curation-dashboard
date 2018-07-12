@@ -129,6 +129,7 @@ public class URLValidator extends CMDSubprocessor {
                         urlElement.byteSize = "0";
                         urlElement.timestamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
                         urlElement.duration = "0 ms";
+                        urlElement.redirectCount = 0;
                         report.addURLElement(urlElement);
 
                         numOfBrokenLinks.incrementAndGet();

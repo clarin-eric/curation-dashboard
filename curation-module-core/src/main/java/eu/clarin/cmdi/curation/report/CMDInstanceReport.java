@@ -11,7 +11,6 @@ import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
-import urlElements.URLElement;
 
 /**
  * @author dostojic
@@ -106,6 +105,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         @XmlAttribute(name = "timestamp")
         public String timestamp;
 
+        @XmlAttribute(name = "redirectCount")
+        public int redirectCount;
+
         public URLElement convertFromLinkCheckerURLElement(urlElements.URLElement urlElement) {
             url = urlElement.getUrl();
             method = urlElement.getMethod();
@@ -115,6 +117,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             byteSize = urlElement.getByteSize();
             duration = TimeUtils.humanizeToTime(urlElement.getDuration());
             timestamp = TimeUtils.humanizeToDate(urlElement.getTimestamp());
+            redirectCount = urlElement.getRedirectCount();
 
             return this;
         }

@@ -20,6 +20,8 @@ public class URLElement {
 
     private long timestamp;
 
+    private int redirectCount;
+
     private String collection;
 
     public URLElement(Document document) {
@@ -123,6 +125,7 @@ public class URLElement {
                 .append("byteSize", byteSize)
                 .append("duration", duration)
                 .append("timestamp", timestamp)
+                .append("redirectCount", redirectCount)
                 .append("collection", collection);
 
         return document;
@@ -134,5 +137,13 @@ public class URLElement {
 
     public void setCollection(String collection) {
         this.collection = collection;
+    }
+
+    public int getRedirectCount() {
+        return redirectCount;
+    }
+
+    public void setRedirectCount(int redirectCount) {
+        this.redirectCount = redirectCount;
     }
 }

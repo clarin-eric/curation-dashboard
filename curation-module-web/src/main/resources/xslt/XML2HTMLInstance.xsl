@@ -218,6 +218,8 @@
 					<th scope="col">request-duration</th>
 					<th scope="col">timestamp</th>
 					<th scope="col">method</th>
+					<th scope="col">redirect-count</th>
+
 				</tr>
 			</thead>
 			<tbody>
@@ -231,6 +233,7 @@
                         <td><xsl:value-of select="./@request-duration" /></td>
                         <td><xsl:value-of select="./@timestamp" /></td>
 						<td><xsl:value-of select="./@method" /></td>
+						<td><xsl:value-of select="./@redirectCount" /></td>
 					</tr>
 				</xsl:for-each>
 			</tbody>

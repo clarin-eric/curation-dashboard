@@ -117,6 +117,9 @@ public class CollectionReport implements Report<CollectionReport> {
 
         @XmlAttribute(name = "timestamp")
         public String timestamp;
+
+        @XmlAttribute(name = "redirectCount")
+        public int redirectCount;
     }
 
     public void addURLElement(CMDInstanceReport.URLElement urlElement) {

@@ -67,8 +67,6 @@ public class HTTPLinkChecker {
                 .build();
         HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).disableRedirectHandling().build();
 
-        //try get if head doesnt work
-
         //valid-example.xml has this url: http://clarin.oeaw.ac.at/lrp/dict-gate/index.html
         //returns 400 for head but browser opens fine
 
@@ -181,6 +179,7 @@ public class HTTPLinkChecker {
         urlElement.setByteSize(contentLength);
         urlElement.setDuration(duration);//dont forget to humanize to time
         urlElement.setTimestamp(start);//dont forget to humanize to date
+        urlElement.setRedirectCount(redirectFollowLevel);
 
         return urlElement;
     }
