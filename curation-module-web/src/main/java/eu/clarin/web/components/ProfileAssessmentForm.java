@@ -1,12 +1,12 @@
 package eu.clarin.web.components;
 
-import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.v7.data.Validator.InvalidValueException;
 import com.vaadin.server.UserError;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 import eu.clarin.web.utils.InputValidator;
