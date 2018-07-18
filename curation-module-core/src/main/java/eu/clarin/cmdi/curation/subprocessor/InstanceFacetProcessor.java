@@ -7,10 +7,9 @@ import java.util.Map;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
+
 import eu.clarin.cmdi.curation.facets.FacetConstants;
-import eu.clarin.cmdi.curation.facets.Profile2FacetMap;
-import eu.clarin.cmdi.curation.facets.Profile2FacetMap.Facet;
+import eu.clarin.cmdi.curation.facets.FacetMappingCacheFactory;
 import eu.clarin.cmdi.curation.facets.postprocessor.AvailabilityPostProcessor;
 import eu.clarin.cmdi.curation.facets.postprocessor.ContinentNamePostProcessor;
 import eu.clarin.cmdi.curation.facets.postprocessor.CountryNamePostProcessor;
@@ -30,6 +29,10 @@ import eu.clarin.cmdi.curation.report.FacetReport.FacetValueStruct;
 import eu.clarin.cmdi.curation.report.FacetReport.ValueNode;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
+import eu.clarin.cmdi.vlo.importer.Pattern;
+import eu.clarin.cmdi.vlo.importer.mapping.FacetConfiguration;
+import eu.clarin.cmdi.vlo.importer.mapping.FacetMapping;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,18 +50,17 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	@Override
 	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
 				
-		FacetConceptMappingService facetMappingService = new FacetConceptMappingService();
 		Map<String, CMDINode> elements = new CRService().getParsedProfile(report.header).getElements();
 		ParsedInstance parsedInstance = entity.getParsedInstance();
-		Profile2FacetMap facetMappings;
+		FacetMapping facetMapping;
 		
 		try{
-			facetMappings = facetMappingService.getFacetMapping(report.header);
+			facetMapping = FacetMappingCacheFactory.getInstance().getFacetMapping(report.header);
 						
-			report.facets = new FacetReportCreator().createFacetReport(facetMappings.getMappings());			
+			report.facets = new FacetReportCreator().createFacetReport(facetMapping);			
 						
 			createValueNodes(parsedInstance, elements, report.facets);			
-			joinFacetsToValues(facetMappings.getMappings(), report.facets);
+			joinFacetsToValues(facetMapping, report.facets);
 			
 			double numOfCoveredByIns = report.facets.coverage.stream().filter(facet -> facet.coveredByInstance).count();
 			report.facets.instanceCoverage = numOfCoveredByIns / report.facets.numOfFacets;
@@ -98,24 +100,24 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 		
 	}
 
-	private void joinFacetsToValues(Map<String, Facet> facetMappings, FacetReport facetReport){
+	private void joinFacetsToValues(FacetMapping facetMapping, FacetReport facetReport){
 		facetReport.coverage.stream().filter(f -> f.coveredByProfile).map(f -> f.name).forEach(facetName -> {
-			Facet facet = facetMappings.get(facetName);
+			FacetConfiguration facetConfig = facetMapping.getFacetConfiguration(facetName);
 			
 			boolean matchedPattern = false;
-			Collection<String> patterns = facet.getPatterns();
-			for (String pattern : patterns) {
-				matchedPattern = matchPattern(facetName, pattern, facet, facetReport);
-				if (matchedPattern && !facet.getAllowMultipleValues()) {
+			Collection<Pattern> patterns = facetConfig.getPatterns();
+			for (Pattern pattern : patterns) {
+				matchedPattern = matchPattern(facetConfig, pattern.getPattern(), facetReport);
+				if (matchedPattern && !facetConfig.getAllowMultipleValues()) {
 					break;
 				}
 			}
 
 			// using fallback patterns if extraction failed
 			if (matchedPattern == false) {
-				for (String pattern : facet.getFallbackPatterns()) {
-					matchedPattern = matchPattern(facetName, pattern, facet, facetReport);
-					if (matchedPattern && !facet.getAllowMultipleValues()) {
+				for (Pattern pattern : facetConfig.getFallbackPatterns()) {
+					matchedPattern = matchPattern(facetConfig, pattern.getPattern(), facetReport);
+					if (matchedPattern && !facetConfig.getAllowMultipleValues()) {
 						break;
 					}
 				}
@@ -123,7 +125,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 		});
 	}
 	
-	private boolean matchPattern(String facetName, String pattern, Facet facet, FacetReport facetReport){
+	private boolean matchPattern(FacetConfiguration facetConfig, String pattern, FacetReport facetReport){
 		
 		boolean matchedPattern = false;
 		
@@ -159,10 +161,10 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 			//final String languageCode = extractLanguageCode(navigator);
 			
 			//normalisation is done in this method
-			FacetValueStruct facetNode = createFacetValueStruct(facetName, valueNode.value, false);
+			FacetValueStruct facetNode = createFacetValueStruct(facetConfig.getName(), valueNode.value, false);
 			
 			if(facetNode != null){
-				facetReport.coverage.stream().filter(f -> f.name.equals(facetName)).findFirst().ifPresent(f -> f.coveredByInstance = true);
+				facetReport.coverage.stream().filter(f -> f.name.equals(facetConfig.getName())).findFirst().ifPresent(f -> f.coveredByInstance = true);
 				matchedPattern = true;			
 				
 				if(valueNode.facet == null){
@@ -172,8 +174,8 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 				valueNode.facet.add(facetNode);				
 				
 				//create derived facets and assigned values
-				facet.getDerivedFacets().forEach(df -> {
-					FacetValueStruct derivedFacetNode = createFacetValueStruct(df, facetNode.normalisedValue, true);				
+				facetConfig.getDerivedFacets().forEach(df -> {
+					FacetValueStruct derivedFacetNode = createFacetValueStruct(df.getName(), facetNode.normalisedValue, true);				
 					
 					if(derivedFacetNode != null){
 						valueNode.facet.add(derivedFacetNode);
@@ -183,7 +185,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 				});				
 			}
 			
-			if (!facet.getAllowMultipleValues())
+			if (!facetConfig.getAllowMultipleValues())
 				break;
 			
 			
