@@ -9,7 +9,6 @@ import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.instance_parser.InstanceParser;
 import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.main.Configuration;
-import eu.clarin.cmdi.curation.main.Main;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.FileReport;
 import eu.clarin.cmdi.curation.report.Score;
