@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
-import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
@@ -39,7 +38,8 @@ public class Shared {
 	public static void init(){
 		REPORTS_FOLDER = Configuration.OUTPUT_DIRECTORY.resolve("collections");
 		//init facetNames
-		facetNames = new FacetConceptMappingService().getFacetNames();		
+		//facetNames = new FacetConceptMappingService().getFacetNames();	
+		facetNames = Configuration.FACETS;
 		initPublicProfiles();
 		initCollections();
 		
