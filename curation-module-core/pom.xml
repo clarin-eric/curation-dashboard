@@ -13,7 +13,6 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		
 		<humanize.version>1.2.2</humanize.version>
-		<vtd-xml.version>2.12</vtd-xml.version>
 		<slf4j.version>1.7.25</slf4j.version>
 	</properties>
 
@@ -46,7 +45,7 @@
 		<dependency>
 			<groupId>com.ximpleware</groupId>
 			<artifactId>vtd-xml</artifactId>
-			<version>${vtd-xml.version}</version>
+			<version>2.13.4</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -76,7 +75,7 @@
 		<dependency>
 			<groupId>eu.clarin.cmdi</groupId>
 			<artifactId>vlo-importer</artifactId>
-			<version>4.4.3</version>
+			<version>4.6-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	

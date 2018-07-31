@@ -26,7 +26,7 @@ public class ProfileFacetHanlder extends ProcessingStep<CMDProfile, CMDProfileRe
 			throw new Exception("Unable to create facet mapping for " + entity.toString(), e);
 		}
 		
-		report.facet = new FacetReportCreator().createFacetReport(facetMapping);
+		report.facet = new FacetReportCreator().createFacetReport(report.header, facetMapping);
 
 	}
 	

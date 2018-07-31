@@ -38,7 +38,7 @@ public class CollectionInstanceFacetProcessor extends CMDSubprocessor {
 			facetMapping = FacetMappingCacheFactory.getInstance().getFacetMapping(report.header);
 		
 		
-			report.facets = new FacetReportCreator().createFacetReport(facetMapping);	
+			report.facets = new FacetReportCreator().createFacetReport(report.header, facetMapping);	
 			
 			//parse instance
 			CMDXPathService xmlService = new CMDXPathService(entity.getPath());

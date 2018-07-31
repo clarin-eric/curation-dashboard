@@ -20,7 +20,7 @@ public class ParsedInstance {
 		
 		public InstanceNode(String xpath, String value) {
 			//remove namespaces from xpath
-			//xpath = xpath.replaceAll("cmd:", "").replaceAll("cmdp:", "");
+			xpath = xpath.replaceAll("cmd:", "").replaceAll("cmdp:", "");
 			
 			this.xpath = xpath;
 			this.value = value;
