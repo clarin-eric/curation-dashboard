@@ -22,28 +22,24 @@ import eu.clarin.cmdi.curation.report.FacetReport.ValueNode;
 import eu.clarin.cmdi.curation.xml.CMDXPathService;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.vlo.FieldKey;
 import eu.clarin.cmdi.vlo.LanguageCodeUtils;
 import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
 import eu.clarin.cmdi.vlo.config.FieldNameService;
 import eu.clarin.cmdi.vlo.config.FieldNameServiceImpl;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.MetadataImporter;
-import eu.clarin.cmdi.vlo.importer.Pattern;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetConfiguration;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetMapping;
-import eu.clarin.cmdi.vlo.importer.mapping.TargetFacet;
-import eu.clarin.cmdi.vlo.importer.normalizer.AbstractPostNormalizer;
-import eu.clarin.cmdi.vlo.importer.normalizer.AbstractPostNormalizerWithVocabularyMap;
+
+import eu.clarin.cmdi.vlo.importer.processor.CMDIParserVTDXML;
+import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ximpleware.AutoPilot;
-import com.ximpleware.NavException;
 import com.ximpleware.VTDNav;
-import com.ximpleware.XPathEvalException;
-import com.ximpleware.XPathParseException;
+
 
 
 /**
@@ -53,7 +49,7 @@ import com.ximpleware.XPathParseException;
 public class InstanceFacetProcessor extends CMDSubprocessor {
 
 	private final static Logger _logger = LoggerFactory.getLogger(InstanceFacetProcessor.class);
-	private static final Map<String, AbstractPostNormalizer> _postNormalizers;
+	private static CMDIParserVTDXML _parser;
 
 	int numOfFacetsCoveredByIns = 0;
 	
@@ -65,14 +61,24 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
         try {
             vloConfig = new DefaultVloConfigFactory().newConfig();
             fieldNameService = new FieldNameServiceImpl(vloConfig);
-            languageCodeUtils = new LanguageCodeUtils(vloConfig);                    
+            languageCodeUtils = new LanguageCodeUtils(vloConfig);     
+            
+            _parser = new CMDIParserVTDXML(
+                    MetadataImporter.registerPostProcessors(vloConfig, fieldNameService, languageCodeUtils),
+                    vloConfig,
+                    FacetMappingCacheFactory.getInstance(), 
+                    null,
+                    false
+                );
+ 
+            
+            
         } 
         catch (IOException ex) {
-            // TODO Auto-generated catch block
-            _logger.error("couldn't initialisze facet mapping cache!", ex);
+
+            _logger.error("couldn't instantiate CMDIParserVTDXML!", ex);
 
         }   
-        _postNormalizers = MetadataImporter.registerPostProcessors(vloConfig, fieldNameService, languageCodeUtils);
 
     }
 
@@ -149,116 +155,43 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 
 	    FacetMapping facetMapping = FacetMappingCacheFactory.getInstance().getFacetMapping(report.header);
 	    
-	    report.facets = new FacetReportCreator().createFacetReport(report.header, facetMapping);  
-        
+	    Map<FacetConfiguration, List<ValueSet>> facetValuesMap = _parser.getFacetValuesMap(null, nav, facetMapping);
+	    
+
+	    
+	    //regrouping by VDTIndex, target facet configuration
+	    Map<Integer, Map<FacetConfiguration,List<ValueSet>>> indexValuesMap = new HashMap<Integer, Map<FacetConfiguration,List<ValueSet>>>();
+	    
+
 	    for(Coverage coverage : report.facets.coverage) {
-            FacetConfiguration facetConfig = facetMapping.getFacetConfiguration(coverage.name);
-            coverage.coveredByInstance = false;
+	        List<ValueSet> values = facetValuesMap.get(facetMapping.getFacetConfiguration(coverage.name));
+	        
+	        if(values != null) {
+	            values.forEach(value -> {
+	                indexValuesMap.computeIfAbsent(value.getVtdIndex(), k -> new HashMap<FacetConfiguration,List<ValueSet>>()).computeIfAbsent(value.getOriginFacetConfig(), v -> new ArrayList<ValueSet>()).add(value);
+	            });
+	            
+	        }
+	    }
+	    
+	    report.facets = new FacetReportCreator().createFacetReport(report.header, facetMapping);  
+	    
+	    indexValuesMap.forEach((index, reducedFacetValueMap) -> {
+	        ValueNode node = nodesMap.get(index);
             
-            for(Pattern pattern : facetConfig.getPatterns()) {
-                coverage.coveredByInstance = matchPattern(facetConfig, pattern, report, nav, nodesMap);                
+            if(node != null) {  //might be null if the node has no value
+                node.facet = new ArrayList<FacetValueStruct>();
+                
+                reducedFacetValueMap.forEach((facetConfig, values) -> {
+                    node.facet.add(createFacetValueStruct(facetConfig.getName(), node.value, values.stream().map(valueSet -> valueSet.getValueLanguagePair().getLeft()).collect(Collectors.joining(" ;")), false));
+                });
+                //
             }
-            
-            if(!coverage.coveredByInstance) {
-                for(Pattern pattern : facetConfig.getFallbackPatterns()) {
-                    coverage.coveredByInstance = matchPattern(facetConfig, pattern, report, nav, nodesMap);                
-                }
-            }
-        }
+
+	        
+	    });        
 	}
-	
-	private boolean matchPattern(FacetConfiguration facetConfig, Pattern pattern, CMDInstanceReport report, VTDNav nav, Map<Integer, ValueNode> nodesMap) throws XPathEvalException, NavException, XPathParseException {
-        final AutoPilot ap = new AutoPilot(nav);
 
-        ap.selectXPath(pattern.getPattern().replaceAll("\\w+:", ""));
-        
-        int index = ap.evalXPath();
-        
-        _logger.trace("pattern: {}, index: {}", pattern.getPattern().replaceAll("\\w+:", ""), index);
-        
-        boolean matchedPattern = false;
-        
-        while (index != -1) {
-            matchedPattern = true;
-            ValueNode node = nodesMap.get(index);
-            
-            if(node != null)  //might be null if the node has no value
-                processRawValue(node, facetConfig);
-
-        
-            
-            index = ap.evalXPath();
-        
-        }
-        
-        return matchedPattern;
-        
-	}
-	
-	
-	
-    private void processRawValue(ValueNode node, FacetConfiguration facetConfig) {
-        Map<FacetConfiguration, List<String>> facetValuesMap = new HashMap<FacetConfiguration, List<String>>();
-
-        boolean removeSourceValue = false;
-
-        List<String> normalizedValues = postNormalize(facetConfig.getName(), node.value);
-
-        if (facetConfig.getConditionTargetSet() != null) {
-
-            if (_postNormalizers.containsKey(facetConfig.getName()) && !(_postNormalizers.get(facetConfig.getName()) instanceof AbstractPostNormalizerWithVocabularyMap)) {
-                for (String normalizedValue : normalizedValues) {
-                    for (TargetFacet target : facetConfig.getConditionTargetSet().getTargetsFor(normalizedValue)) {
-                        removeSourceValue |= target.getRemoveSourceValue();
-                        
-                        facetValuesMap.computeIfAbsent(facetConfig, k -> new ArrayList<String>()).add(target.getValue());
-
-                    }
-                }
-            } 
-            else{
-                for (TargetFacet target : facetConfig.getConditionTargetSet().getTargetsFor(node.value)) {
-                    removeSourceValue |= target.getRemoveSourceValue();
-
-                    facetValuesMap.computeIfAbsent(facetConfig, k -> new ArrayList<String>()).add(target.getValue());
-
-                }
-            }
-
-        }
-
-
-        
-        
-        node.facet = new ArrayList<FacetValueStruct>();
-        
-        // adding value for origin facet mapping if not skipped
-        if (!removeSourceValue) { // positive 'removeSourceValue' means skip adding value to origin facet
-            node.facet.add(createFacetValueStruct(facetConfig.getName(), node.value, normalizedValues, false));
-        }
-        
-        // adding facet/value from value mappings 
-        for(Map.Entry<FacetConfiguration, List<String>> entry : facetValuesMap.entrySet()) {
-            node.facet.add(createFacetValueStruct(facetConfig.getName(), node.value, entry.getValue(), false));     
-        }
-        
-        //adding values for derived facets
-        for(FacetConfiguration derivedFacetConfig : facetConfig.getDerivedFacets()) {
-            normalizedValues = postNormalize(derivedFacetConfig.getName(), node.value);
-            node.facet.add(createFacetValueStruct(derivedFacetConfig.getName(), node.value, normalizedValues, true));
-        }
-    }
-    
-    private List<String> postNormalize(String facetName, String extractedValue) {
-        List<String> resultList = new ArrayList<>();
-        if (_postNormalizers.containsKey(facetName)) {
-            AbstractPostNormalizer processor = _postNormalizers.get(facetName);
-            resultList = processor.process(extractedValue, null);
-        } else {
-            resultList.add(extractedValue);
-        }
-        return resultList;
-    }
 	
 	@Override
 	public Score calculateScore(CMDInstanceReport report) {
@@ -269,7 +202,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	 * 
 	 */
 	
-	private FacetValueStruct createFacetValueStruct(String facetName, String value, List<String> normalizedValues, boolean isDerived){
+	private FacetValueStruct createFacetValueStruct(String facetName, String value, String normalizedValue, boolean isDerived){
 		
 		FacetValueStruct facetNode = new FacetValueStruct();
 		facetNode.name = facetName;
@@ -278,10 +211,10 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 		
 
 		
-		String normalisedValue = normalizedValues.stream().collect(Collectors.joining(";"));
-		if(normalisedValue != null && !normalisedValue.trim().isEmpty() && !normalisedValue.equals("--") && !value.equals(normalisedValue)){
-			addMessage(Severity.INFO, "Normalised value for facet " + facetName + ": '" + value + "' into '" + normalisedValue + "'");
-			facetNode.normalisedValue = normalisedValue;
+
+		if(normalizedValue != null && !normalizedValue.trim().isEmpty() && !normalizedValue.equals("--") && !value.equals(normalizedValue)){
+			addMessage(Severity.INFO, "Normalised value for facet " + facetName + ": '" + value + "' into '" + normalizedValue + "'");
+			facetNode.normalisedValue = normalizedValue;
 		}
 			
 		return facetNode;	
