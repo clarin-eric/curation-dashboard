@@ -48,7 +48,7 @@ class ProfileScoreCacheFactory{
 			CMDProfile profile = new CMDProfile(header.schemaLocation, header.cmdiVersion);			
 			logger.info("Calculating and caching score for {}", profile);
 			
-			Report<?> report = profile.generateReport(null);
+			Report<?> report = profile.generateReport();
 			
 			if(report instanceof ErrorReport)
 				throw new Exception(((ErrorReport)report).error);

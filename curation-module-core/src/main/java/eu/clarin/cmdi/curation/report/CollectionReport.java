@@ -117,9 +117,6 @@ public class CollectionReport implements Report<CollectionReport> {
 
         @XmlAttribute(name = "timestamp")
         public String timestamp;
-
-        @XmlAttribute(name = "redirectCount")
-        public int redirectCount;
     }
 
     public void addURLElement(CMDInstanceReport.URLElement urlElement) {
@@ -146,16 +143,6 @@ public class CollectionReport implements Report<CollectionReport> {
     @Override
     public String getName() {
         return fileReport.provider;
-    }
-
-    @Override
-    public void setParentName(String parentName) {
-        //don't do anything, there is no parent to a collection
-    }
-
-    @Override
-    public String getParentName(){
-        return null;
     }
 
 
@@ -188,7 +175,6 @@ public class CollectionReport implements Report<CollectionReport> {
         // URL
         parentReport.urlReport.totNumOfLinks += urlReport.totNumOfLinks;
         parentReport.urlReport.totNumOfUniqueLinks += urlReport.totNumOfUniqueLinks;
-        parentReport.urlReport.totNumOfCheckedLinks += urlReport.totNumOfCheckedLinks;
         parentReport.urlReport.totNumOfResProxiesLinks += urlReport.totNumOfResProxiesLinks;
         parentReport.urlReport.totNumOfBrokenLinks += urlReport.totNumOfBrokenLinks;
 
@@ -254,14 +240,14 @@ public class CollectionReport implements Report<CollectionReport> {
                 / fileReport.numOfFiles;
 
         // XMLValidator
-        xmlValidationReport.ratioOfValidRecords = xmlValidationReport.totNumOfRecords == 0 ? 0 : (double) xmlValidationReport.totNumOfValidRecords / xmlValidationReport.totNumOfRecords;
+        xmlValidationReport.ratioOfValidRecords = (double) xmlValidationReport.totNumOfValidRecords / xmlValidationReport.totNumOfRecords;
 
         // XMLPopulatedValidator
         xmlPopulatedReport.avgNumOfXMLElements = (double) xmlPopulatedReport.totNumOfXMLElements / fileReport.numOfFiles;
         xmlPopulatedReport.avgNumOfXMLSimpleElements = (double) xmlPopulatedReport.totNumOfXMLSimpleElements / fileReport.numOfFiles;
         xmlPopulatedReport.avgXMLEmptyElement = (double) xmlPopulatedReport.totNumOfXMLEmptyElement / fileReport.numOfFiles;
 
-        xmlPopulatedReport.avgRateOfPopulatedElements = xmlPopulatedReport.avgNumOfXMLSimpleElements == 0 ? 0 : (xmlPopulatedReport.avgNumOfXMLSimpleElements - xmlPopulatedReport.avgXMLEmptyElement) / xmlPopulatedReport.avgNumOfXMLSimpleElements;
+        xmlPopulatedReport.avgRateOfPopulatedElements = (xmlPopulatedReport.avgNumOfXMLSimpleElements - xmlPopulatedReport.avgXMLEmptyElement) / xmlPopulatedReport.avgNumOfXMLSimpleElements;
 
         // URL
         urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
@@ -269,11 +255,8 @@ public class CollectionReport implements Report<CollectionReport> {
         urlReport.avgNumOfResProxiesLinks = (double) urlReport.totNumOfResProxiesLinks / fileReport.numOfFiles;
         urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
 
-//        urlReport.ratioOfValidLinks = urlReport.totNumOfUniqueLinks == 0 ? 0 :
-//                (double) (urlReport.totNumOfUniqueLinks - urlReport.totNumOfBrokenLinks) / urlReport.totNumOfUniqueLinks;
-
-        urlReport.ratioOfValidLinks = urlReport.totNumOfCheckedLinks == 0 ? 0 :
-                (double) (urlReport.totNumOfCheckedLinks - urlReport.totNumOfBrokenLinks) / urlReport.totNumOfCheckedLinks;
+        urlReport.ratioOfValidLinks = urlReport.totNumOfUniqueLinks == 0 ? 0 :
+                (double) (urlReport.totNumOfUniqueLinks - urlReport.totNumOfBrokenLinks) / urlReport.totNumOfUniqueLinks;
 
         // Facets
         facetReport.facet.forEach(facet -> facet.coverage = (double) facet.cnt / fileReport.numOfFiles);
@@ -350,7 +333,6 @@ public class CollectionReport implements Report<CollectionReport> {
         public int totNumOfLinks;
         public Double avgNumOfLinks = 0.0;
         public int totNumOfUniqueLinks;
-        public int totNumOfCheckedLinks;
         public Double avgNumOfUniqueLinks = 0.0;
         public int totNumOfResProxiesLinks;
         public Double avgNumOfResProxiesLinks = 0.0;

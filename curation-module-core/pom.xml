@@ -68,13 +68,7 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.5.5</version>
 		</dependency>
-        <dependency>
-            <groupId>eu.clarin.cmdi</groupId>
-            <artifactId>linkChecker</artifactId>
-            <version>1.2-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <!--<dependency>-->
+		<!--<dependency>-->
 			<!--<groupId>com.github.mfornos</groupId>-->
 			<!--<artifactId>humanize-slim</artifactId>-->
 			<!--<version>${humanize.version}</version>-->
