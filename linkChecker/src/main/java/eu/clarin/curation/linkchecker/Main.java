@@ -1,14 +1,24 @@
+package eu.clarin.curation.linkchecker;
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
-import helpers.Configuration;
-import httpLinkChecker.CollectionThread;
+
+import eu.clarin.curation.linkchecker.helpers.Configuration;
+import eu.clarin.curation.linkchecker.httpLinkChecker.CollectionThread;
+import eu.clarin.curation.linkchecker.urlElements.URLElement;
+import eu.clarin.curation.linkchecker.urlElements.URLElementToBeChecked;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import urlElements.URLElement;
-import urlElements.URLElementToBeChecked;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -16,14 +26,26 @@ public class Main {
 
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
+        
+     // create Options object
+        Options options = new Options();
 
-        if (args.length == 0) {
+        // add t option
+        options.addOption(Option.builder("config")
+                .required(true)
+                .hasArg(true)
+                .build());
+        
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = parser.parse( options, args);
+
+        if (!cmd.hasOption("config")) {
             logger.info("Usage: Please provide the config file path as a parameter.");
             System.exit(1);
         }
 
-        Configuration.loadConfigVariables(args[0]);
+        Configuration.loadConfigVariables(cmd.getOptionValue("config"));
 
         //connect to mongod and get database
         MongoDatabase database = getMongoDatabase();

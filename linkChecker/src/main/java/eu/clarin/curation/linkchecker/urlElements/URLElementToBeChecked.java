@@ -1,4 +1,4 @@
-package urlElements;
+package eu.clarin.curation.linkchecker.urlElements;
 
 import org.bson.Document;
 

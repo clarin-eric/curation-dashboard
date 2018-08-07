@@ -1,13 +1,15 @@
-package httpLinkChecker;
+package eu.clarin.curation.linkchecker.httpLinkChecker;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
+
+import eu.clarin.curation.linkchecker.urlElements.URLElement;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import urlElements.URLElement;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;

@@ -1,6 +1,5 @@
-package httpLinkChecker;
+package eu.clarin.curation.linkchecker.httpLinkChecker;
 
-import helpers.Configuration;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -10,7 +9,9 @@ import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import urlElements.URLElement;
+
+import eu.clarin.curation.linkchecker.helpers.Configuration;
+import eu.clarin.curation.linkchecker.urlElements.URLElement;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

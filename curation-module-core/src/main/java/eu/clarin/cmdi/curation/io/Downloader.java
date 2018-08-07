@@ -11,9 +11,10 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.text.DecimalFormat;
 
-import httpLinkChecker.HTTPLinkChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import eu.clarin.curation.linkchecker.httpLinkChecker.HTTPLinkChecker;
 
 /**
  * @author dostojic

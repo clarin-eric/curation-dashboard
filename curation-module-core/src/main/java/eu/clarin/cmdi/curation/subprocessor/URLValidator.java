@@ -17,13 +17,14 @@ import eu.clarin.cmdi.curation.report.CMDInstanceReport.URLReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
-import httpLinkChecker.HTTPLinkChecker;
+import eu.clarin.curation.linkchecker.httpLinkChecker.HTTPLinkChecker;
+import eu.clarin.curation.linkchecker.urlElements.URLElement;
+import eu.clarin.curation.linkchecker.urlElements.URLElementToBeChecked;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import urlElements.URLElement;
-import urlElements.URLElementToBeChecked;
 
 /**
  * @author dostojic
