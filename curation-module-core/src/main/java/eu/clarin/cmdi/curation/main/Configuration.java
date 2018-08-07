@@ -28,9 +28,6 @@ public class Configuration {
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;
     private static final int TIMEOUTDEFAULT = 5000;//in ms(if config file doesnt have it)
-    public static boolean DATABASE;
-    public static String DATABASE_NAME;
-    public static String DATABASE_URI;
 
     //this is a boolean that is set by core-module(false) and web-module(true)
     public static boolean enableProfileLoadTimer = false;
@@ -61,13 +58,13 @@ public class Configuration {
         HTTP_VALIDATION = Boolean.parseBoolean(config.getProperty("HTTP_VALIDATION"));
         SAVE_REPORT = Boolean.parseBoolean(config.getProperty("SAVE_REPORT"));
 
-//        String timeout = config.getProperty("TIMEOUT");
-//        if (timeout == null || timeout.isEmpty()) {
-//            logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT + "ms.");
-//            TIMEOUT = TIMEOUTDEFAULT;
-//        } else {
-//            TIMEOUT = Integer.parseInt(timeout);
-//        }
+        String timeout = config.getProperty("TIMEOUT");
+        if (timeout == null || timeout.isEmpty()) {
+            logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: "+TIMEOUTDEFAULT+"ms.");
+            TIMEOUT = TIMEOUTDEFAULT;
+        }else{
+            TIMEOUT = Integer.parseInt(timeout);
+        }
 
 
         String[] facets = config.getProperty("FACETS").split(",");
@@ -83,15 +80,9 @@ public class Configuration {
             CACHE_DIRECTORY = Files.createDirectories(Paths.get(cacheDir));
         }
 
-//        String redirectFollowLimit = config.getProperty("REDIRECT_FOLLOW_LIMIT");
-//        if (redirectFollowLimit != null && !redirectFollowLimit.isEmpty()) {
-//            REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
-//        }
-
-        DATABASE = Boolean.parseBoolean(config.getProperty("DATABASE"));
-        if (DATABASE) {
-            DATABASE_NAME = config.getProperty("DATABASE_NAME");
-            DATABASE_URI = config.getProperty("DATABASE_URI");
+        String redirectFollowLimit = config.getProperty("REDIRECT_FOLLOW_LIMIT");
+        if (redirectFollowLimit != null && !redirectFollowLimit.isEmpty()) {
+            REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
         }
 
     }

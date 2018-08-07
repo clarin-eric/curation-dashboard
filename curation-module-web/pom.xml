@@ -94,7 +94,6 @@
 			<artifactId>jersey-container-servlet</artifactId>
 			<version>2.26-b03</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>

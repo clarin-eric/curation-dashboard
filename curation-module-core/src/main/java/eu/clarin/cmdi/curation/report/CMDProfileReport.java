@@ -58,18 +58,8 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 		XMLMarshaller<CMDProfileReport> instanceMarshaller = new XMLMarshaller<>(CMDProfileReport.class);
 		instanceMarshaller.marshal(this, os);
 	}
-
-
-	@Override
-	public void setParentName(String parentName) {
-		//dont do anything, profile reports dont have parent reports
-	}
-
-	@Override
-	public String getParentName() {
-		return null;
-	}
-
+	
+	
 	@Override
 	public String getName() {
 		return header.id + ": " + header.name;

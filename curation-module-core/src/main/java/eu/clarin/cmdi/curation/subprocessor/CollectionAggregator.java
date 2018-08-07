@@ -71,14 +71,14 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
 
             long startTime = System.currentTimeMillis();
             for (CurationEntity curationEntity : chunk) {
-                curationEntity.generateReport(report.getName());
+                curationEntity.generateReport();
             }
 
             long end = System.currentTimeMillis();
             logger.info("validation for {} files lasted {}", chunk.size(), TimeUtils.humanizeToTime(end - startTime));
             chunk.stream().forEach(child -> {
                 try {
-                    child.generateReport(report.getName()).mergeWithParent(report);
+                    child.generateReport().mergeWithParent(report);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

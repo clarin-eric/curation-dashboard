@@ -25,16 +25,6 @@ public class ErrorReport implements Report<CollectionReport>{
 	ErrorReport(){}
 
 	@Override
-	public void setParentName(String parentName) {
-		//dont do anything, error reports dont have parent reports
-	}
-
-	@Override
-	public String getParentName() {
-		return null;
-	}
-
-	@Override
 	public String getName() {
 		return name;
 	}
@@ -69,7 +59,7 @@ public class ErrorReport implements Report<CollectionReport>{
 
 		CollectionReport.InvalidFile invalidFile = new CollectionReport.InvalidFile();
 		invalidFile.recordName = name;
-		invalidFile.reason = error;
+		invalidFile.reason = error;//todo check if works correctly
 		parentReport.addInvalidFile(invalidFile);
 	}
 
