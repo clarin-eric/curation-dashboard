@@ -21,7 +21,7 @@ public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
     private static final Logger logger = LoggerFactory.getLogger(CollectionProcessor.class);
 
     @Override
-    public Report<?> process(CurationEntity entity) throws InterruptedException {
+    public Report<?> process(CurationEntity entity, String parentName) {
 
         Report<?> report = createReport();
 
@@ -34,7 +34,7 @@ public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
                 report.addSegmentScore(step.calculateScore(report));
 
             } catch (FileSizeException e) {
-                //if it is a collection report, keep the loop going for the following records, dont just produce an error report
+                //if it is not a collection report, keep the loop going for the following records, dont just produce an error report
                 if (!(report instanceof CollectionReport)) {
                     return new ErrorReport(report.getName(), e.getMessage());
                 } else {
@@ -59,7 +59,7 @@ public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
     private void addInvalidFile(Report<?> report, Exception e) {
         CollectionReport.InvalidFile invalidFile = new CollectionReport.InvalidFile();
         invalidFile.recordName = e.getMessage();
-        invalidFile.reason = e.getCause().getMessage();//todo check if works correctly
+        invalidFile.reason = e.getCause().getMessage();
         ((CollectionReport) report).addInvalidFile(invalidFile);
     }
 

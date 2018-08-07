@@ -10,7 +10,11 @@ import java.io.OutputStream;
  *
  */
 public interface Report<R extends Report> {
-	
+
+	public void setParentName(String parentName);
+
+	public String getParentName();
+
 	public String getName();
 	
 	public boolean isValid();

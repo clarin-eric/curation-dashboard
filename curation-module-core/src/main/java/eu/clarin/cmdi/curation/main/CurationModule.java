@@ -19,7 +19,7 @@ public class CurationModule implements CurationModuleInterface {
 
 	@Override
 	public Report processCMDProfile(String profileId) throws InterruptedException {
-		return new CMDProfile(CRService.CR_REST_1_2_PROFILES + profileId + "/xsd", "1.2").generateReport();
+		return new CMDProfile(CRService.CR_REST_1_2_PROFILES + profileId + "/xsd", "1.2").generateReport(null);
 	}
 
 	@Override
@@ -30,14 +30,14 @@ public class CurationModule implements CurationModuleInterface {
 			if(version.startsWith("1."))
 				cmdiVersion = version;
 		}
-		return new CMDProfile(schemaLocation.toString(), cmdiVersion).generateReport();
+		return new CMDProfile(schemaLocation.toString(), cmdiVersion).generateReport(null);
 	}
 
 	@Override
 	public Report processCMDInstance(Path file) throws IOException, InterruptedException {
 		if (Files.notExists(file))
 			throw new IOException(file.toString() + " doesn't exist!");
-		return new CMDInstance(file, Files.size(file)).generateReport();
+		return new CMDInstance(file, Files.size(file)).generateReport(null);
 	}
 	
 
@@ -48,7 +48,7 @@ public class CurationModule implements CurationModuleInterface {
 		long size = Files.size(path);
 		CMDInstance cmdInstance =new CMDInstance(path, size);
 		cmdInstance.setUrl(url.toString());
-		Report r = cmdInstance.generateReport();
+		Report r = cmdInstance.generateReport(null);
 		Files.delete(path);
 
 		if(r instanceof CMDInstanceReport){
@@ -64,7 +64,7 @@ public class CurationModule implements CurationModuleInterface {
 		Files.walkFileTree(path, entityTree);
 		CMDCollection collection = entityTree.getRoot();
 
-		return collection.generateReport();
+		return collection.generateReport(null);
 	}
 
 	@Override
