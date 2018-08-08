@@ -32,7 +32,18 @@ import org.slf4j.LoggerFactory;
 
 public class URLValidator extends CMDSubprocessor {
 
-    private final static Logger logger = LoggerFactory.getLogger(URLValidator.class);
+    private static final  Logger _logger = LoggerFactory.getLogger(URLValidator.class);
+    
+    private static final MongoClient _mongoClient;
+    
+    static { //since MongoClient is already a connection pool only one instance should exist in the application
+        _logger.info("Connecting to database...");
+        if (Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
+            _mongoClient = MongoClients.create();
+        } else {
+            _mongoClient = MongoClients.create(Configuration.DATABASE_URI);
+        }
+    }
 
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report){
@@ -59,8 +70,9 @@ public class URLValidator extends CMDSubprocessor {
             AtomicInteger numOfBrokenLinks = new AtomicInteger(0);
             if (Configuration.DATABASE) {
 
-                //connect to mongod and get database
-                MongoDatabase database = getMongoDatabase();
+                MongoDatabase database = _mongoClient.getDatabase(Configuration.DATABASE_NAME);
+                _logger.info("Connected to database.");
+                
 
                 //get links from linksToBeChecked
                 MongoCollection<Document> linksToBeChecked = database.getCollection("linksToBeChecked");
@@ -70,7 +82,7 @@ public class URLValidator extends CMDSubprocessor {
 
                 links.stream().forEach(url -> {
 
-                    logger.info("Checking database for url: " + url);
+                    _logger.info("Checking database for url: " + url);
 
                     Bson filter = Filters.eq("url", url);
                     MongoCursor<Document> cursor = linksChecked.find(filter).iterator();
@@ -111,7 +123,7 @@ public class URLValidator extends CMDSubprocessor {
                 links.stream().forEach(url -> {
 
                     try {// check if URL is broken
-                        logger.info("Checking url: " + url);
+                        _logger.info("Checking url: " + url);
 
                         URLElement urlElement = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT).checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
 
@@ -168,19 +180,6 @@ public class URLValidator extends CMDSubprocessor {
         return new Score(score, 1.0, "url-validation", msgs);
     }
 
-    private static MongoDatabase getMongoDatabase() {
-        logger.info("Connecting to database...");
-        MongoClient mongoClient;
-        if (Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
-            mongoClient = MongoClients.create();
-        } else {
-            mongoClient = MongoClients.create(Configuration.DATABASE_URI);
-        }
-
-        MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
-        logger.info("Connected to database.");
-        return database;
-    }
 
     private URLReport createURLReport(int numOfLinks, int numOfBrokenLinks, int numOfUniqueLinks, int numOfCheckedLinks) {
         URLReport report = new URLReport();
