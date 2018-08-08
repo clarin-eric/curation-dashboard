@@ -1,12 +1,18 @@
 # Clarin Curation Module
- 
- The goal of this project is to implement software component for curation and quality assessment which can be integrated in the CLARINs VLO workflow. Project is initialized by Metadata Curation Task Force. Specification for the Curation Module is based on the Metadata Quality Assessement Service proposal. Curation Module validates and normalizes single MD records, repositories and profiles, to assess their quality and to produce reports with different information for different actors in VLO workflow. For implementation this project will use some of the existing CLARIN components. 
+
+
+The goal of this project is to implement software component for curation and quality assessment which can be integrated in the CLARINs VLO workflow. Project is initialized by Metadata Curation Task Force. Specification for the Curation Module is based on the Metadata Quality Assessement Service proposal. Curation Module validates and normalizes single MD records, repositories and profiles, to assess their quality and to produce reports with different information for different actors in VLO workflow. For implementation this project will use some of the existing CLARIN components. 
+
+### Requirements
+
+Java Standard Edition, version 8 or higher
  
  ### Running curation module
  
  1. `mvn install` in the working directory
  2. `cd curation-module-core/target`
- 3. `java -jar curation-module-core-1.2-SNAPSHOT-jar-with-dependencies.jar [flags]`
+ 3. java 8`java -jar curation-module-core-1.2-SNAPSHOT-jar-with-dependencies.jar [flags]`
+    java 9/10`java --add-modules java.xml.bind -jar curation-module-core-1.2-SNAPSHOT-jar-with-dependencies.jar [flags]`
  
    **Usage:**
 ```
@@ -26,15 +32,34 @@
  ```
   SCORE_NUMERIC_DISPLAY_FORMAT=#0.0000
   TIMESTAMP_DISPLAY_FORMAT=dd-MM-yyyy HH.mm.ss
+  
+  # files with file-size > MAX_FILE_SIZE won't be analyzed for performance reason
   MAX_FILE_SIZE=10000000
+  
+  # validation of all http-links of the analyzed CMDI file
+  # if HTTP_VALIDATION=true you should use a database and the linkChecker to externalize link-ckecking
   HTTP_VALIDATION=false
+  
+  # If SAVE_REPORT=true you must specify an output directory
   SAVE_REPORT=true
+  
+  # reports are stored in xml-format in this directory
   OUTPUT_DIRECTORY=
+  
+  # necessary to cache xsd profiles
   CACHE_DIRECTORY=
+  
+  # facets to analyze (a subset of the facets configured in facetConcepts.xml)s
   FACETS=languageCode, collection, resourceClass, modality, format, keywords, genre, subject, country, organisation,  nationalProject, name, description, license, availability
   REDIRECT_FOLLOW_LIMIT=5
-  #Timeout in ms
-  TIMEOUT=5000
+  #Timeout for linkchecking in millisecondss
+  TIMEOUT=50000
+  # MonoDB database configuration (recommeded if HTTP_VALIDATION is true!!!)
+  DATABASE=truee
+  DATABASE_NAME=dbnamee
+
+  # if this is empty, it will try localhost:27017
+  DATABASE_URI=mongodb://<username:password>@<MongoDB server>:<port>
  ```
 
   **Examples:**
