@@ -20,6 +20,8 @@ import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDInstanceReport implements Report<CollectionReport> {
 
+    public String parentName;
+
     @XmlAttribute
     public Double score = 0.0;
 
@@ -102,6 +104,23 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
         @XmlAttribute(name = "timestamp")
         public String timestamp;
+
+        @XmlAttribute(name = "redirectCount")
+        public int redirectCount;
+
+        public URLElement convertFromLinkCheckerURLElement(eu.clarin.curation.linkchecker.urlElements.URLElement urlElement) {
+            url = urlElement.getUrl();
+            method = urlElement.getMethod();
+            message = urlElement.getMessage();
+            status = urlElement.getStatus();
+            contentType = urlElement.getContentType();
+            byteSize = urlElement.getByteSize();
+            duration = TimeUtils.humanizeToTime(urlElement.getDuration());
+            timestamp = TimeUtils.humanizeToDate(urlElement.getTimestamp());
+            redirectCount = urlElement.getRedirectCount();
+
+            return this;
+        }
     }
 
     public void addURLElement(URLElement urlElementToBeAdded) {
@@ -121,6 +140,17 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         }
 
     }
+
+    @Override
+    public String getParentName(){
+        return parentName;
+    }
+
+    @Override
+    public void setParentName(String parentName){
+        this.parentName=parentName;
+    }
+
 
     @Override
     public void mergeWithParent(CollectionReport parentReport) {
@@ -156,6 +186,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;
             parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
             parentReport.urlReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
+            parentReport.urlReport.totNumOfCheckedLinks += urlReport.numOfCheckedLinks;
         }
 
         // Facet
@@ -272,6 +303,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     public static class URLReport {
         public int numOfLinks;
         public int numOfUniqueLinks;
+        public int numOfCheckedLinks;
         public int numOfBrokenLinks;
         public Double percOfValidLinks;
 

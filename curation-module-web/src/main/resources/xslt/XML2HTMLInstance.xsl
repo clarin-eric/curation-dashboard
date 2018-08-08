@@ -201,6 +201,7 @@
 		<h2>url-validation-section</h2>
 		<p>number of links: <xsl:value-of select="./url-validation-section/numOfLinks"/></p>
 		<p>number of unique links: <xsl:value-of select="./url-validation-section/numOfUniqueLinks"/></p>
+		<p>number of checked links: <xsl:value-of select="./url-validation-section/numOfCheckedLinks"/></p>
 		<p>number of broken links <xsl:value-of select="./url-validation-section/numOfBrokenLinks"/></p>
 		<p>percentage of valid links XML elements: <xsl:value-of select="./url-validation-section/percOfValidLinks"/></p>
 
@@ -217,6 +218,8 @@
 					<th scope="col">request-duration</th>
 					<th scope="col">timestamp</th>
 					<th scope="col">method</th>
+					<th scope="col">redirect-count</th>
+
 				</tr>
 			</thead>
 			<tbody>
@@ -230,6 +233,7 @@
                         <td><xsl:value-of select="./@request-duration" /></td>
                         <td><xsl:value-of select="./@timestamp" /></td>
 						<td><xsl:value-of select="./@method" /></td>
+						<td><xsl:value-of select="./@redirectCount" /></td>
 					</tr>
 				</xsl:for-each>
 			</tbody>
