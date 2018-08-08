@@ -59,29 +59,27 @@ public class CollectionThread extends Thread {
 
             URLElement urlElement;
 
-            if (url == null) {
-                logger.error("The URL is null: " + url + " .");
-            } else {
-                try {
 
-                    urlElement = httpLinkChecker.checkLink(url, 0, 0, url);
-                    urlElement.setCollection(collection);
+            try {
+
+                urlElement = httpLinkChecker.checkLink(url, 0, 0, url);
+                urlElement.setCollection(collection);
 
 
-                } catch (IOException | IllegalArgumentException e) {
-                    logger.error("There is an error with the URL: " + url + " . It is not being checked.");
+            } catch (IOException | IllegalArgumentException e) {
+                logger.error("There is an error with the URL: " + url + " . It is not being checked.");
 
-                    urlElement = new URLElement(url, null, e.getLocalizedMessage(), 0,
-                            null, "0", 0, System.currentTimeMillis(), collection, 0);
-
-                }
-                //replace if the url is in linksChecked already
-                //if not add new
-                FindOneAndReplaceOptions findOneAndReplaceOptions = new FindOneAndReplaceOptions();
-                Bson filter = Filters.eq("url", urlElement.getUrl());
-                linksChecked.findOneAndReplace(filter, urlElement.getMongoDocument(), findOneAndReplaceOptions.upsert(true));
+                urlElement = new URLElement(url, null, e.getLocalizedMessage(), 0,
+                        null, "0", 0, System.currentTimeMillis(), collection, 0);
 
             }
+            //replace if the url is in linksChecked already
+            //if not add new
+            FindOneAndReplaceOptions findOneAndReplaceOptions = new FindOneAndReplaceOptions();
+            Bson filter = Filters.eq("url", urlElement.getUrl());
+            linksChecked.findOneAndReplace(filter, urlElement.getMongoDocument(), findOneAndReplaceOptions.upsert(true));
+
+
 
             //delete from linksToBeChecked(whether successful or there was an error, ist wuascht)
             linksToBeChecked.deleteOne(eq("url", url));
