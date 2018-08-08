@@ -7,7 +7,7 @@ The goal of this project is to implement software component for curation and qua
 
 Java Standard Edition, version 8 or higher
  
- ### Running curation module
+### Running curation module
  
  1. `mvn install` in the working directory
  2. `cd curation-module-core/target`
