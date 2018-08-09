@@ -5,7 +5,7 @@
 	<artifactId>curation-module</artifactId>
 	<name>Curation Module</name>
 	<packaging>pom</packaging>
-	<version>1.3-SNAPSHOT</version>
+	<version>${project.version}</version>
 	
 	<organization>
 		<name>CLARIN</name>
@@ -25,6 +25,7 @@
 		
 		<junit.version>4.12</junit.version>
 		<slf4j.version>1.7.12</slf4j.version>
+		<project.version>1.3-SNAPSHOT</project.version>
 	</properties>
 	
 	<dependencies>
