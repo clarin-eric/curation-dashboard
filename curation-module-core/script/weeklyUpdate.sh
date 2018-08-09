@@ -61,7 +61,7 @@ find $XSD_CACHE -name '*.xsd' -exec rm {} \;
 find $REPORTS_DIR -name '*.xml' -exec rm {} \;
 
 echo "generating new reports, downloading necessary profiles..."
-ls -d $DATA_DIR/$CMDI_PATH/*|xargs -i -P $NUMBER_OF_PROCESSES java $VM_ARGS $LOG4J -jar $BIN_DIR/curation-module-core-1.2.jar -config $CONF_DIR/config.properties -c -path {}
+ls -d $DATA_DIR/$CMDI_PATH/*|xargs -i -P $NUMBER_OF_PROCESSES java $VM_ARGS $LOG4J -jar $BIN_DIR/curation-module-core-1.3.jar -config $CONF_DIR/config.properties -c -path {}
 
 cd $WORK_DIR
 

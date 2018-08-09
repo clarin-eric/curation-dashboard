@@ -151,7 +151,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<xsl:for-each select="./single-url-report/url">
+				<xsl:for-each select="./single-url-report/url[position() &lt; 51]">
 					<tr>
 						<td><xsl:copy-of select="."/></td>
 						<td><xsl:value-of select="./@message" /></td>
@@ -164,6 +164,11 @@
 						<td><xsl:value-of select="./@redirectCount" /></td>
 					</tr>
 				</xsl:for-each>
+				<xsl:if test="./single-url-report/url[51]">
+					<tr>
+						<td colspan="9">please download Report for complete list of url checking results</td>
+					</tr>
+				</xsl:if>
 			</tbody>
 		</table>
 

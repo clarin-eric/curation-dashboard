@@ -6,4 +6,4 @@ CONF_DIR=$WORK_DIR/conf
 
 LOG4J="-Dprojectname=linkChecker -Dlog4j.configuration=file:$CONF_DIR/log4j.properties"
 
-java $LOG4J -jar $BIN_DIR/linkChecker-1.2.jar -config $CONF_DIR/linkChecker.properties
+java $LOG4J -jar $BIN_DIR/linkChecker-1.3.jar -config $CONF_DIR/linkChecker.properties
