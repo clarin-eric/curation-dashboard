@@ -68,7 +68,7 @@ public class URLValidator extends CMDSubprocessor {
         if (Configuration.HTTP_VALIDATION) {
             AtomicInteger numOfCheckedLinks = new AtomicInteger(0);
             AtomicInteger numOfBrokenLinks = new AtomicInteger(0);
-            if (Configuration.DATABASE) {
+            if (Configuration.DATABASE && Configuration.COLLECTION_MODE) {
 
                 MongoDatabase database = _mongoClient.getDatabase(Configuration.DATABASE_NAME);
                 _logger.info("Connected to database.");

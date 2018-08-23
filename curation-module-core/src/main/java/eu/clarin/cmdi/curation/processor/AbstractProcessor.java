@@ -48,7 +48,7 @@ public abstract class AbstractProcessor<R extends Report<?>> {
                 }
 
 
-                if (!(step instanceof URLValidator) || (step instanceof URLValidator & Configuration.HTTP_VALIDATION)) {
+                if (!(step instanceof URLValidator) || Configuration.HTTP_VALIDATION) {
                     report.addSegmentScore(step.calculateScore(report));
                 }
 
