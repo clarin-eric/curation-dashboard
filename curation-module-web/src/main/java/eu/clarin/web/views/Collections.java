@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.vaadin.v7.ui.renderers.NumberRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +71,15 @@ public class Collections extends GridPanel {
     @Override
     protected void customRendering() {
         grid.getColumn("Name").setRenderer(new HtmlRenderer());
+
         Shared.facetNames.forEach(facetName -> grid.getColumn(facetName).setExpandRatio(1));
+
+        grid.getColumn("Score").setRenderer(new NumberRenderer("%.4f%n"));
+        grid.getColumn("RatioOfValidLinks").setRenderer(new NumberRenderer("%.4f%n"));
+        grid.getColumn("RatioOfValidRecords").setRenderer(new NumberRenderer("%.4f%n"));
+        grid.getColumn("AvgNumOfResProxies").setRenderer(new NumberRenderer("%.4f%n"));
+        grid.getColumn("AvgNumOfEmptyXMLElements").setRenderer(new NumberRenderer("%.4f%n"));
+        grid.getColumn("AvgFacetCoverage").setRenderer(new NumberRenderer("%.4f%n"));
 
     }
 
