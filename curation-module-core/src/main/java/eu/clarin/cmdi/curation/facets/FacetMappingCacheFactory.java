@@ -26,7 +26,7 @@ class FacetMappingCacheFactory{
 	
 	static final long HOUR_IN_NS = 3600000000000L;
 	
-	private static final Logger logger = LoggerFactory.getLogger(FacetMappingCacheFactory.class);
+	private static final Logger _logger = LoggerFactory.getLogger(FacetMappingCacheFactory.class);
 	
 	static LoadingCache<ProfileHeader, Profile2FacetMap> createFacetMappingCache(boolean isPublicProfilesCache){
 		return isPublicProfilesCache?
@@ -50,7 +50,7 @@ class FacetMappingCacheFactory{
 		
 		@Override
 		public Profile2FacetMap load(ProfileHeader header) throws Exception{
-			logger.info("Mapping for {} is not in the cache, it will be created", header);
+			_logger.info("Mapping for {} is not in the cache, it will be created", header);
 			
 			Profile2FacetMap mapping = new Profile2FacetMap();
 			ParsedProfile parsedProfile = new CRService().getParsedProfile(header);
@@ -86,7 +86,7 @@ class FacetMappingCacheFactory{
 					while (xpathIterator.hasNext()) {
 						String xpath = xpathIterator.next();
 						if (xpath.contains(blacklistPattern)) {
-							//logger.debug("Rejecting {} because of blacklisted substring {}", xpath, blacklistPattern);
+							//_logger.debug("Rejecting {} because of blacklisted substring {}", xpath, blacklistPattern);
 							xpathIterator.remove();
 							
 							//remove it from map as well

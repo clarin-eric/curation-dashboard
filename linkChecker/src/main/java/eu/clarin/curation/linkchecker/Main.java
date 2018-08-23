@@ -24,7 +24,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class Main {
 
-    private final static Logger logger = LoggerFactory.getLogger(Main.class);
+    private final static Logger _logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws ParseException {
         
@@ -41,7 +41,7 @@ public class Main {
         CommandLine cmd = parser.parse( options, args);
 
         if (!cmd.hasOption("config")) {
-            logger.info("Usage: Please provide the config file path as a parameter.");
+            _logger.info("Usage: Please provide the config file path as a parameter.");
             System.exit(1);
         }
 
@@ -71,7 +71,7 @@ public class Main {
 
                     String collection = urlElementToBeChecked.getCollection();
                     String url = urlElementToBeChecked.getUrl();
-                    logger.info("URL to be checked: " + url + ", from collection: " + collection);
+                    _logger.info("URL to be checked: " + url + ", from collection: " + collection);
 
 
                     CollectionThread t = getCollectionThreadByName(collection);
@@ -88,10 +88,10 @@ public class Main {
 
                 }
 
-                logger.info("Added all links to respective threads.");
+                _logger.info("Added all links to respective threads.");
 
 
-                //Create a logger thread that outputs every 10 seconds the current state of Collection threads...
+                //Create a _logger thread that outputs every 10 seconds the current state of Collection threads...
                 (new Thread() {
                     public void run() {
 
@@ -99,8 +99,8 @@ public class Main {
                             //log current state
                             for (Thread tr : Thread.getAllStackTraces().keySet()) {
                                 if (tr.getClass().equals(CollectionThread.class)) {
-                                    logger.info("Collection thread: " + tr.getName() + " is running.");
-                                    logger.info("It has " + ((CollectionThread) tr).urlQueue.size() + " links in its queue.");
+                                    _logger.info("Collection thread: " + tr.getName() + " is running.");
+                                    _logger.info("It has " + ((CollectionThread) tr).urlQueue.size() + " links in its queue.");
                                 }
                             }
 
@@ -116,7 +116,7 @@ public class Main {
                 }).start();
 
 
-                logger.info("Waiting for all threads to finish...");//logger thread not included
+                _logger.info("Waiting for all threads to finish...");//_logger thread not included
 
                 //wait for collectionThreads to finish...
                 for (Thread tr : Thread.getAllStackTraces().keySet()) {
@@ -125,23 +125,23 @@ public class Main {
                             tr.join();
                         } catch (InterruptedException e) {
                             //this shouldn't happen but if it does, the program keeps running.
-                            logger.error(tr.toString() + "was interrupted.");
+                            _logger.error(tr.toString() + "was interrupted.");
                         }
                     }
                 }
 
-                logger.info("All threads are finished.");
-                logger.info("Checked all links.");
+                _logger.info("All threads are finished.");
+                _logger.info("Checked all links.");
 
                 if (linksToBeChecked.count() == 0) {
-                    logger.info("Copying all links back to linksToBeChecked from linksChecked.");
+                    _logger.info("Copying all links back to linksToBeChecked from linksChecked.");
                     cursor = linksChecked.find().iterator();
 
                     while (cursor.hasNext()) {
 
                         URLElement urlElement = new URLElement(cursor.next());
                         String url = urlElement.getUrl();
-                        logger.info("Adding " + url + " to linksToBeChecked.");
+                        _logger.info("Adding " + url + " to linksToBeChecked.");
 
                         URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, urlElement.getCollection());
                         try {
@@ -154,7 +154,7 @@ public class Main {
 
                     }
                 } else {
-                    logger.info("There are new links in linksToBeChecked. Not copying links back from linksChecked. Will do it in the next run if linksToBeChecked is empty.");
+                    _logger.info("There are new links in linksToBeChecked. Not copying links back from linksChecked. Will do it in the next run if linksToBeChecked is empty.");
                 }
 
 
@@ -162,7 +162,7 @@ public class Main {
                 cursor.close();
             }
 
-            logger.info("Done with the run. Running all of it again...");
+            _logger.info("Done with the run. Running all of it again...");
 
         }
 
@@ -180,7 +180,7 @@ public class Main {
 
 
     private static MongoDatabase getMongoDatabase() {
-        logger.info("Connecting to database...");
+        _logger.info("Connecting to database...");
 
         MongoClient mongoClient;
         if (Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
@@ -191,7 +191,7 @@ public class Main {
 
         MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
 
-        logger.info("Connected to database.");
+        _logger.info("Connected to database.");
 
         return database;
 

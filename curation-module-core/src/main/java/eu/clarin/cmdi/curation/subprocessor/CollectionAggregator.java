@@ -29,7 +29,7 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
  */
 public class CollectionAggregator extends ProcessingStep<CMDCollection, CollectionReport> {
 
-    private static final Logger logger = LoggerFactory.getLogger(CollectionAggregator.class);
+    private static final Logger _logger = LoggerFactory.getLogger(CollectionAggregator.class);
 
     private final int CHUNK_SIZE = 10000;
 
@@ -75,7 +75,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
             }
 
             long end = System.currentTimeMillis();
-            logger.info("validation for {} files lasted {}", chunk.size(), TimeUtils.humanizeToTime(end - startTime));
+            _logger.info("validation for {} files lasted {}", chunk.size(), TimeUtils.humanizeToTime(end - startTime));
             chunk.stream().forEach(child -> {
                 try {
                     child.generateReport(report.getName()).mergeWithParent(report);
@@ -85,7 +85,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
             });
 
             processed += chunk.size();
-            logger.debug("{} records are processed so far, rest {}", processed, dir.getChildren().size() - processed);
+            _logger.debug("{} records are processed so far, rest {}", processed, dir.getChildren().size() - processed);
 
         }
 

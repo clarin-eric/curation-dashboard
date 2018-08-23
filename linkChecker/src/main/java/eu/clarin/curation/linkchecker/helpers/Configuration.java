@@ -10,7 +10,7 @@ import java.util.Properties;
 public class Configuration {
 
     private static Properties properties = new Properties();
-    private final static Logger logger = LoggerFactory.getLogger(Configuration.class);
+    private final static Logger _logger = LoggerFactory.getLogger(Configuration.class);
 
 
     public static String DATABASE_NAME;
@@ -23,7 +23,7 @@ public class Configuration {
         try {
             properties.load(new FileInputStream(configPath));
         } catch (IOException e) {
-            logger.error("Can't load properties file: " + e.getMessage());
+            _logger.error("Can't load properties file: " + e.getMessage());
             System.exit(1);
         }
 

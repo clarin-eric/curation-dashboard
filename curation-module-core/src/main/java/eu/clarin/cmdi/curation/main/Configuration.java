@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class Configuration {
 
-    private static Logger logger = LoggerFactory.getLogger(Configuration.class);
+    private static Logger _logger = LoggerFactory.getLogger(Configuration.class);
 
     public static String SCORE_NUMERIC_DISPLAY_FORMAT;
     public static String TIMESTAMP_DISPLAY_FORMAT;
@@ -38,7 +38,7 @@ public class Configuration {
     public static boolean COLLECTION_MODE = false; //when true values wont be extracted for facet "text", saves a lot of time in collection assessment
 
     public static void init(String file) throws IOException {
-        logger.info("Initializing configuration from {}", file);
+        _logger.info("Initializing configuration from {}", file);
         Properties config = new Properties();
         config.load(new FileInputStream(file));
         readProperties(config);
@@ -46,7 +46,7 @@ public class Configuration {
     }
 
     public static void initDefault() throws IOException {
-        logger.info("Initializing configuration with default config file");
+        _logger.info("Initializing configuration with default config file");
         Properties config = new Properties();
         config.load(Configuration.class.getResourceAsStream("/config.properties"));
         readProperties(config);
@@ -63,7 +63,7 @@ public class Configuration {
 
 //        String timeout = config.getProperty("TIMEOUT");
 //        if (timeout == null || timeout.isEmpty()) {
-//            logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT + "ms.");
+//            _logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT + "ms.");
 //            TIMEOUT = TIMEOUTDEFAULT;
 //        } else {
 //            TIMEOUT = Integer.parseInt(timeout);

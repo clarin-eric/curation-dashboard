@@ -4,7 +4,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 
-import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
@@ -21,7 +20,7 @@ import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 
 public abstract class AbstractProcessor<R extends Report<?>> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractProcessor.class);
+    private static final Logger _logger = LoggerFactory.getLogger(AbstractProcessor.class);
 
     public Report<?> process(CurationEntity entity, String parentName) throws InterruptedException {
 
@@ -42,7 +41,7 @@ public abstract class AbstractProcessor<R extends Report<?>> {
                     step.process(entity, report);
                 }
 
-                logger.info("processed Record: " + report.getName() + ", step: " + step.getClass().getSimpleName());
+                _logger.info("processed Record: " + report.getName() + ", step: " + step.getClass().getSimpleName());
                 if (step instanceof InstanceXMLValidator) {
                     report.addSegmentScore(((InstanceXMLValidator) step).calculateValidityScore());
                 }
@@ -56,7 +55,7 @@ public abstract class AbstractProcessor<R extends Report<?>> {
 
             return report;
         } catch (FileSizeException e) {
-            logger.error(e.getMessage());
+            _logger.error(e.getMessage());
             return new ErrorReport(report.getName(), e.getMessage());
         } catch (Exception e) {
             String message = e.getMessage();
@@ -64,7 +63,7 @@ public abstract class AbstractProcessor<R extends Report<?>> {
             if (message == null || message.isEmpty()) {
                 message = "There was an unknown error. Please report it.";
             }
-            logger.error(message);
+            _logger.error(message);
             return new ErrorReport(report.getName(), message);
         }
 

@@ -29,7 +29,7 @@ import eu.clarin.cmdi.curation.xml.CMDErrorHandler;
 
 public class InstanceXMLValidator extends CMDSubprocessor {
 
-    static final Logger logger = LoggerFactory.getLogger(InstanceXMLValidator.class);
+    static final Logger _logger = LoggerFactory.getLogger(InstanceXMLValidator.class);
 
     int numOfXMLElements = 0;
     int numOfXMLSimpleElements = 0;
@@ -100,7 +100,7 @@ public class InstanceXMLValidator extends CMDSubprocessor {
 //		    validator.setFeature("http://xml.org/sax/features/validation", true);
 //		    validator.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
 //		} catch (Exception e) {
-//		    logger.warn("feature is not supported", e);
+//		    _logger.warn("feature is not supported", e);
 //		}
 //    }
 

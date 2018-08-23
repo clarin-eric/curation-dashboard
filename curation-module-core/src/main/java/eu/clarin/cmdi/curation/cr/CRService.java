@@ -14,7 +14,7 @@ import eu.clarin.cmdi.curation.cr.ProfileCacheFactory.ProfileCacheEntry;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 
 public class CRService implements ICRService {
-	static final Logger logger = LoggerFactory.getLogger(CRService.class);
+	static final Logger _logger = LoggerFactory.getLogger(CRService.class);
 	
 	public static final String CR_REST = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/";
 	public static final String CR_REST_1_2_PROFILES = CR_REST + "1.2/profiles/";
@@ -63,7 +63,7 @@ public class CRService implements ICRService {
 
 	@Override
 	public ParsedProfile getParsedProfile(ProfileHeader header) throws Exception{
-		//logger.debug("parsed profile lookup for {} from cache", header);
+		//_logger.debug("parsed profile lookup for {} from cache", header);
 		return (header.isPublic && isTheNewestCMDIVersion(header.cmdiVersion) ? publicProfilesCache : nonpublicProfilesCache).get(header).parsedProfile;		
 	}
 	
@@ -73,12 +73,12 @@ public class CRService implements ICRService {
 	
 	@Override
 	public Schema getSchema(ProfileHeader header) throws Exception{
-		//logger.debug("schema lookup for {} from cache", header);
+		//_logger.debug("schema lookup for {} from cache", header);
 		return (header.isPublic? publicProfilesCache : nonpublicProfilesCache).get(header).schema;		
 	}
 	
 	public double getScore(ProfileHeader header) throws Exception{
-		//logger.debug("score lookup for {} from cache", header);
+		//_logger.debug("score lookup for {} from cache", header);
 		return (header.isPublic? publicScoreCache : nonpublicScoreCache).get(header);
 	}
 

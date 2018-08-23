@@ -22,7 +22,7 @@ import eu.clarin.web.components.GridPanel;
 public class Collections extends GridPanel {
 
     private static final long serialVersionUID = -5552612346775775075L;
-    private static final Logger logger = LoggerFactory.getLogger(Collections.class);
+    private static final Logger _logger = LoggerFactory.getLogger(Collections.class);
 
     private StringBuilder sb;
 
@@ -127,7 +127,7 @@ public class Collections extends GridPanel {
                 sb.append("\n");
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.warn("can't read report for provider " + c.fileReport.provider);
+                _logger.warn("can't read report for provider " + c.fileReport.provider);
             }
         });
 

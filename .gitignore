@@ -3,4 +3,4 @@
 /.project
 .idea/
 *.iml
-*target
+/target/

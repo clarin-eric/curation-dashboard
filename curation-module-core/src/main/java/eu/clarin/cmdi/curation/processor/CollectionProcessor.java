@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
 
-    private static final Logger logger = LoggerFactory.getLogger(CollectionProcessor.class);
+    private static final Logger _logger = LoggerFactory.getLogger(CollectionProcessor.class);
 
     @Override
     public Report<?> process(CurationEntity entity, String parentName) {
@@ -41,7 +41,7 @@ public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
                     addInvalidFile(report, e);
                 }
             } catch (Exception e) {
-                logger.error("Exception: " + e.getMessage());
+                _logger.error("Exception: " + e.getMessage());
                 //if it is a collection report, keep the loop going for the following records, dont just produce an error report
                 if (!(report instanceof CollectionReport)) {
                     return new ErrorReport(report.getName(), e.getMessage());

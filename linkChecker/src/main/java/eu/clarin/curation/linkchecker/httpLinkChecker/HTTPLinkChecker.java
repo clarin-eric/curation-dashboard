@@ -28,7 +28,7 @@ public class HTTPLinkChecker {
     private int REDIRECT_FOLLOW_LIMIT;
     private List<Integer> redirectStatusCodes = new ArrayList<>(Arrays.asList(301, 302, 303, 307, 308));
 
-    private final static Logger logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
+    private final static Logger _logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
 
     //this is only for link-checker module, don't use it from core-module(will throw nullpointer because it can't find properties)
     public HTTPLinkChecker() {
@@ -57,7 +57,7 @@ public class HTTPLinkChecker {
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
     public URLElement checkLink(String url, int redirectFollowLevel, long durationPassed, String originalURL) throws IOException {
-        logger.info("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
+        _logger.info("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
         if (url == null) {
             throw new IOException("The requested url is null.");
         }

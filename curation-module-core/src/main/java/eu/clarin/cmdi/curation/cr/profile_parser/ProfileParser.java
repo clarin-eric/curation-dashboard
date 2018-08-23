@@ -22,7 +22,7 @@ import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 
 public abstract class ProfileParser {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProfileParser.class);
+    private static final Logger _logger = LoggerFactory.getLogger(ProfileParser.class);
 
     private ICCRService ccr = CCRServiceFactory.getCCRService(Configuration.enableProfileLoadTimer);
 
@@ -69,7 +69,7 @@ public abstract class ProfileParser {
             _new.name = extractAttributeValue("name");
             if (_new.name == null) {
                 _new.name = "";
-                logger.error("Element at {} doenst have specified name, xpaths will be invalid", vn.getCurrentIndex());
+                _logger.error("Element at {} doenst have specified name, xpaths will be invalid", vn.getCurrentIndex());
             }
 
 

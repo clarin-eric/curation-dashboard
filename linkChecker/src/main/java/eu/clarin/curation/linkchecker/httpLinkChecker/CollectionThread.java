@@ -18,7 +18,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 public class CollectionThread extends Thread {
 
-    private final static Logger logger = LoggerFactory.getLogger(CollectionThread.class);
+    private final static Logger _logger = LoggerFactory.getLogger(CollectionThread.class);
 
     public ConcurrentLinkedQueue<String> urlQueue = new ConcurrentLinkedQueue<>();
 
@@ -39,15 +39,15 @@ public class CollectionThread extends Thread {
         //i do this because if we don't wait and let the thread run for only one url, i'm afraid the thread
         // will be closed after one url check and it will be necessary to create a new thread for each url, which
         //is not the aim of this multithreading.
-        logger.info("waiting...");
+        _logger.info("waiting...");
         synchronized (this) {
             try {
                 wait(5000);
             } catch (InterruptedException e) {
-                logger.error("Waiting for thread " + getName() + " interrupted");
+                _logger.error("Waiting for thread " + getName() + " interrupted");
             }
         }
-        logger.info("done waiting.");
+        _logger.info("done waiting.");
 
         //name of the thread is also name of the collection
         String collection = getName();
@@ -67,7 +67,7 @@ public class CollectionThread extends Thread {
 
 
             } catch (IOException | IllegalArgumentException e) {
-                logger.error("There is an error with the URL: " + url + " . It is not being checked.");
+                _logger.error("There is an error with the URL: " + url + " . It is not being checked.");
 
                 urlElement = new URLElement(url, null, e.getLocalizedMessage(), 0,
                         null, "0", 0, System.currentTimeMillis(), collection, 0);
@@ -83,7 +83,7 @@ public class CollectionThread extends Thread {
 
             //delete from linksToBeChecked(whether successful or there was an error, ist wuascht)
             linksToBeChecked.deleteOne(eq("url", url));
-            logger.info("done checking url.");
+            _logger.info("done checking url.");
 
         }
 

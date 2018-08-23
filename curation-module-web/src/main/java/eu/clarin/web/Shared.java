@@ -33,7 +33,7 @@ public class Shared {
 	public static List<PublicProfile> publicProfiles;
 	public static Collection<String> facetNames;
 
-	static final Logger logger = LoggerFactory.getLogger(Shared.class);
+	static final Logger _logger = LoggerFactory.getLogger(Shared.class);
 	
 	
 	public static void init(){
@@ -79,13 +79,13 @@ public class Shared {
 				try{
 					collections.add(marshaller.unmarshal(Files.newInputStream(path)));
 				}catch (JAXBException | NumberFormatException e) {
-					logger.error("Can't read from collection report: "+path+" :"+e.getMessage());
+					_logger.error("Can't read from collection report: "+path+" :"+e.getMessage());
 					//keep the for loop going to read the other collections
 				}
 
 			}
 		} catch (IOException e) {
-			logger.error("Can't read the collections directory: "+e.getMessage());
+			_logger.error("Can't read the collections directory: "+e.getMessage());
 		}
 	}
 }
