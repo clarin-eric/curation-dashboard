@@ -30,6 +30,7 @@ public class Configuration {
         DATABASE_NAME = properties.getProperty("DATABASE_NAME");
         TIMEOUT = Integer.parseInt(properties.getProperty("TIMEOUT"));
         REDIRECT_FOLLOW_LIMIT = Integer.parseInt(properties.getProperty("REDIRECT_FOLLOW_LIMIT"));
+        _logger.info("redirect limit:"+REDIRECT_FOLLOW_LIMIT);
         DATABASE_URI = properties.getProperty("DATABASE_URI");
 
 

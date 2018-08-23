@@ -28,7 +28,6 @@ public class CMDInstanceProcessor extends AbstractProcessor<CMDInstanceReport> {
 					new InstanceXMLValidator(),
 					new InstanceFacetProcessor()
 				);
-				
 			
     }
 

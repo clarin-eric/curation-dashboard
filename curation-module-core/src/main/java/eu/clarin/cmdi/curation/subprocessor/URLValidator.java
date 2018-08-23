@@ -32,21 +32,25 @@ import org.slf4j.LoggerFactory;
 
 public class URLValidator extends CMDSubprocessor {
 
-    private static final  Logger _logger = LoggerFactory.getLogger(URLValidator.class);
-    
-    private static final MongoClient _mongoClient;
-    
+    private static final Logger _logger = LoggerFactory.getLogger(URLValidator.class);
+
+    private static final MongoClient mongoClient;
+
     static { //since MongoClient is already a connection pool only one instance should exist in the application
-        _logger.info("Connecting to database...");
-        if (Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
-            _mongoClient = MongoClients.create();
-        } else {
-            _mongoClient = MongoClients.create(Configuration.DATABASE_URI);
+        if (Configuration.DATABASE) {
+            _logger.info("Connecting to database...");
+            if (Configuration.DATABASE_URI == null || Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
+                mongoClient = MongoClients.create();
+            } else {
+                mongoClient = MongoClients.create(Configuration.DATABASE_URI);
+            }
+        }else{
+            mongoClient =null;
         }
     }
 
     @Override
-    public void process(CMDInstance entity, CMDInstanceReport report){
+    public void process(CMDInstance entity, CMDInstanceReport report) {
         //do nothing this is not used
     }
 
@@ -70,9 +74,9 @@ public class URLValidator extends CMDSubprocessor {
             AtomicInteger numOfBrokenLinks = new AtomicInteger(0);
             if (Configuration.DATABASE && Configuration.COLLECTION_MODE) {
 
-                MongoDatabase database = _mongoClient.getDatabase(Configuration.DATABASE_NAME);
+                MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
                 _logger.info("Connected to database.");
-                
+
 
                 //get links from linksToBeChecked
                 MongoCollection<Document> linksToBeChecked = database.getCollection("linksToBeChecked");
@@ -101,8 +105,8 @@ public class URLValidator extends CMDSubprocessor {
 
                         String collection = parentName;
 
-                        if(collection==null){
-                            collection=report.getName();
+                        if (collection == null) {
+                            collection = report.getName();
                         }
                         URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, collection);
 
