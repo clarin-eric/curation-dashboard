@@ -18,6 +18,7 @@ public class Configuration {
     public static int TIMEOUT;
     public static int REDIRECT_FOLLOW_LIMIT;
     public static String USERAGENT;
+    public static long CRAWLDELAY;
 
 
     public static void loadConfigVariables(String configPath) {
@@ -31,9 +32,9 @@ public class Configuration {
         DATABASE_NAME = properties.getProperty("DATABASE_NAME");
         TIMEOUT = Integer.parseInt(properties.getProperty("TIMEOUT"));
         REDIRECT_FOLLOW_LIMIT = Integer.parseInt(properties.getProperty("REDIRECT_FOLLOW_LIMIT"));
-        _logger.info("redirect limit:" + REDIRECT_FOLLOW_LIMIT);
         DATABASE_URI = properties.getProperty("DATABASE_URI");
         USERAGENT = properties.getProperty("USERAGENT");
+        CRAWLDELAY = Long.parseLong(properties.getProperty("CRAWLDELAY"));
 
 
     }

@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 
+import eu.clarin.curation.linkchecker.helpers.Configuration;
 import eu.clarin.curation.linkchecker.urlElements.URLElement;
 
 import org.bson.Document;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -24,11 +26,13 @@ public class CollectionThread extends Thread {
 
     private MongoCollection<Document> linksChecked;
     private MongoCollection<Document> linksToBeChecked;
+    private long CRAWLDELAY;
 
-    public CollectionThread(String name, MongoCollection<Document> linksToBeChecked, MongoCollection<Document> linksChecked) {
+    public CollectionThread(String name, MongoCollection<Document> linksToBeChecked, MongoCollection<Document> linksChecked, long CRAWLDELAY) {
         super(name);
         this.linksToBeChecked = linksToBeChecked;
         this.linksChecked = linksChecked;
+        this.CRAWLDELAY = CRAWLDELAY;
     }
 
 
@@ -73,6 +77,9 @@ public class CollectionThread extends Thread {
                         null, "0", 0, System.currentTimeMillis(), collection, 0);
 
             }
+
+            long startTime = System.currentTimeMillis();
+
             //replace if the url is in linksChecked already
             //if not add new
             FindOneAndReplaceOptions findOneAndReplaceOptions = new FindOneAndReplaceOptions();
@@ -80,10 +87,25 @@ public class CollectionThread extends Thread {
             linksChecked.findOneAndReplace(filter, urlElement.getMongoDocument(), findOneAndReplaceOptions.upsert(true));
 
 
-
             //delete from linksToBeChecked(whether successful or there was an error, ist wuascht)
             linksToBeChecked.deleteOne(eq("url", url));
             _logger.info("done checking url.");
+
+            long estimatedTime = System.currentTimeMillis() - startTime;
+
+
+            //I measure the time it takes to handle the mongodb operations.
+            //If it takes longer than the crawldelay, we go to the next url.
+            //If not, then we wait max CRAWLDELAY-estimatedTime, so that we don't lose
+            //extra time with database operations.
+            if (estimatedTime < CRAWLDELAY) {
+                try {
+                    sleep(CRAWLDELAY - estimatedTime);
+                } catch (InterruptedException e) {
+                    //do nothing, shouldnt get interrupted
+                }
+            }
+
 
         }
 

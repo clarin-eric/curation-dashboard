@@ -76,7 +76,7 @@ public class Main {
 
                     CollectionThread t = getCollectionThreadByName(collection);
                     if (t == null) {
-                        t = new CollectionThread(collection, linksToBeChecked, linksChecked);
+                        t = new CollectionThread(collection, linksToBeChecked, linksChecked, Configuration.CRAWLDELAY);
                         t.urlQueue.add(url);
 
                         t.start();
