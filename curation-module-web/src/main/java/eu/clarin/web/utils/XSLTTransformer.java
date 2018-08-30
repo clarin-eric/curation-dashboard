@@ -60,7 +60,7 @@ public class XSLTTransformer {
 					t.transform(source, result);
 					return result.getWriter().toString();
 				}catch(TransformerException e){
-					_logger.error("Errow while tranforming {}", type.toString(), e);
+					_logger.error("Errow while transforming {}", type.toString(), e);
 				}				
 			}
 			return content = "XSL file is missing or invalid, please download report in xml form\n\n";

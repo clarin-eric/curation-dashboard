@@ -2,6 +2,7 @@ package eu.clarin.web.views;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,6 +19,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.v7.ui.VerticalLayout;
 
 import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
@@ -112,6 +114,7 @@ public class ResultView extends Panel implements View {
     private void curate(CurationEntityType curationType, SourceType sourceType, String input) {
         Report r = null;
         try {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
             switch (curationType) {
                 case INSTANCE:
                     switch (sourceType) {
@@ -126,6 +129,19 @@ public class ResultView extends Panel implements View {
                             r = new CurationModule().processCMDInstance(new URL(input));
                             break;
                     }
+
+                    r.toXML(result);
+
+                    label.setValue(transformer.transform(curationType, result.toString()));
+
+
+                    xmlReport.setStreamSource(new StreamSource() {
+                        @Override
+                        public InputStream getStream() {
+                            return new ByteArrayInputStream(result.toByteArray());
+                        }
+                    });
+
                     break;
                 case PROFILE:
                     switch (sourceType) {
@@ -136,38 +152,61 @@ public class ResultView extends Panel implements View {
                             r = new CurationModule().processCMDProfile(new URL(input));
                             break;
                     }
+
+                    r.toXML(result);
+
+                    label.setValue(transformer.transform(curationType, result.toString()));
+
+
+                    xmlReport.setStreamSource(new StreamSource() {
+                        @Override
+                        public InputStream getStream() {
+                            return new ByteArrayInputStream(result.toByteArray());
+                        }
+                    });
+
                     break;
                 case COLLECTION:
-                    r = Shared.getCollectionReport(input);
+
+//                    r = Shared.getCollectionReport(input);
+
+                    byte[] out;
+                    Path REPORTS_FOLDER = Configuration.OUTPUT_DIRECTORY.resolve("collections");
+                    try (DirectoryStream<Path> ds = Files.newDirectoryStream(REPORTS_FOLDER)) {
+                        for (Path path : ds) {
+                            if (path.getFileName().toString().equals(input+".xml")) {
+
+                                out = Files.readAllBytes(path);
+
+
+                                if (out.length > 5000000) {//bigger than 5 mb
+                                    System.out.println("Report is bigger than 5 mb, doing stax trimming.");
+
+                                    out = trimURLS(out);
+
+                                }
+
+                                label.setValue(transformer.transform(curationType, new String(out)));
+
+
+                                byte[] finalOut = out;
+                                xmlReport.setStreamSource(new StreamSource() {
+                                    @Override
+                                    public InputStream getStream() {
+                                        return new ByteArrayInputStream(finalOut);
+                                    }
+                                });
+
+                                break;
+                            }
+
+                        }
+                    }
+
+
                     break;
             }
 
-            //todo put this for instance and profile but for collection read file directly
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            r.toXML(out);
-
-
-            ByteArrayOutputStream result;
-            if (out.size() > 5000000) {//bigger than 5 mb
-                System.out.println("Report is bigger than 5 mb, doing stax trimming.");
-
-                result = trimURLS(out.toByteArray());
-
-//                System.out.println(result.toString());
-            } else {
-                result = out;
-            }
-
-
-            label.setValue(transformer.transform(curationType, result.toString()));
-
-
-            xmlReport.setStreamSource(new StreamSource() {
-                @Override
-                public InputStream getStream() {
-                    return new ByteArrayInputStream(result.toByteArray());
-                }
-            });
 
 
         } catch (Exception e) {
@@ -182,8 +221,9 @@ public class ResultView extends Panel implements View {
     }
 
     //this method trims the irl list into 50 urls to save from memory consumption when processing the xml.
-    //otherwise reports can grow to 80 mbs.
-    private ByteArrayOutputStream trimURLS(byte[] in) throws XMLStreamException, IOException {
+    //otherwise reports can grow to 700 mbs.
+    private byte[] trimURLS(byte[] in) throws XMLStreamException, IOException {
+
 
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader eventReader =
@@ -193,11 +233,12 @@ public class ResultView extends Panel implements View {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         XMLEventWriter writer = outputFactory.createXMLEventWriter(result);
 
-        XMLEventFactory  eventFactory = XMLEventFactory.newInstance();
+        XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+
 
 
         int urlCount = 0;
-        boolean saveURL=false;
+        boolean saveURL = false;
         while (eventReader.hasNext()) {
             XMLEvent event = eventReader.nextEvent();
 
@@ -206,7 +247,7 @@ public class ResultView extends Panel implements View {
 
                 if (event.asStartElement().getName().getLocalPart().equalsIgnoreCase("url")) {
                     if (urlCount < 50) {
-                        saveURL=true;
+                        saveURL = true;
                         writer.add(event);
                     }
 
@@ -226,7 +267,7 @@ public class ResultView extends Panel implements View {
 
                 if (event.asEndElement().getName().getLocalPart().equalsIgnoreCase("url")) {
                     if (urlCount < 50) {
-                        saveURL=false;
+                        saveURL = false;
                         writer.add(event);
                     }
                     urlCount++;
@@ -235,11 +276,11 @@ public class ResultView extends Panel implements View {
                     writer.add(event);
                 }
 
-            }else{
-                if(urlCount<50){
+            } else {
+                if (urlCount < 50) {
                     writer.add(event);
-                }else{
-                    if(saveURL){
+                } else {
+                    if (saveURL) {
                         writer.add(event);
                     }
                 }
@@ -257,7 +298,6 @@ public class ResultView extends Panel implements View {
 //        result.writeTo(fos);
 //        fos.close();
 
-
-        return result;
+        return result.toByteArray();
     }
 }
