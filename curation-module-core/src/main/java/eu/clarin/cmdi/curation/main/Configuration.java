@@ -31,6 +31,7 @@ public class Configuration {
     public static boolean DATABASE;
     public static String DATABASE_NAME;
     public static String DATABASE_URI;
+    public static String USERAGENT;
 
     //this is a boolean that is set by core-module(false) and web-module(true)
     public static boolean enableProfileLoadTimer = false;
@@ -93,6 +94,8 @@ public class Configuration {
             DATABASE_NAME = config.getProperty("DATABASE_NAME");
             DATABASE_URI = config.getProperty("DATABASE_URI");
         }
+
+        USERAGENT = config.getProperty("USERAGENT");
 
     }
 }

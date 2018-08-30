@@ -142,6 +142,7 @@ public class ResultView extends Panel implements View {
                     break;
             }
 
+            //todo put this for instance and profile but for collection read file directly
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             r.toXML(out);
 
