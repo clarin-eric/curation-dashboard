@@ -96,7 +96,7 @@ public class CollectionThread extends Thread {
 
             //I measure the time it takes to handle the mongodb operations.
             //If it takes longer than the crawldelay, we go to the next url.
-            //If not, then we wait max CRAWLDELAY-estimatedTime, so that we don't lose
+            //If not, then we wait CRAWLDELAY-estimatedTime, so that we don't lose
             //extra time with database operations.
             if (estimatedTime < CRAWLDELAY) {
                 try {

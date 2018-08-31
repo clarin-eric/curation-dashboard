@@ -63,7 +63,6 @@ public class Main {
 
         while (true) {
 
-
             MongoCursor<Document> cursor = linksToBeChecked.find().iterator();
             try {
                 while (cursor.hasNext()) {

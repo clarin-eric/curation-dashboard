@@ -89,6 +89,8 @@ public class Collections extends GridPanel {
             try {
                 Collection<Object> rowValues = new ArrayList<>();
 
+                //TODO replace this with stax
+
                 rowValues.add("<a href='#!ResultView/collection//" + c.fileReport.provider + "' target='_top'>"
                         + c.fileReport.provider + "</a>");
                 rowValues.add(c.scorePercentage);

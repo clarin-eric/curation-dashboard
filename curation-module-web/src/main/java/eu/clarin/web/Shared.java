@@ -29,7 +29,7 @@ public class Shared {
 
 	public static Path REPORTS_FOLDER = null; //make it configurable, or use from config
 	
-	public static List<CollectionReport> collections;	
+	public static List<CollectionReport> collections;
 	public static List<PublicProfile> publicProfiles;
 	public static Collection<String> facetNames;
 
@@ -49,7 +49,7 @@ public class Shared {
 	public static CollectionReport getCollectionReport(final String name){
 		return collections.stream().filter(c -> c.fileReport.provider.equals(name)).findFirst().get();
 	}
-	
+
 	private static void initPublicProfiles(){
 		try {
 			List<ProfileHeader> profiles = (List<ProfileHeader>) new CRService().getPublicProfiles();

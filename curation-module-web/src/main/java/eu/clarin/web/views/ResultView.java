@@ -203,7 +203,6 @@ public class ResultView extends Panel implements View {
                         }
                     }
 
-
                     break;
             }
 
