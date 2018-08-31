@@ -11,6 +11,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.text.DecimalFormat;
 
+import eu.clarin.cmdi.curation.main.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,7 @@ public class Downloader {
 
     public void download(String url, File destination) throws IOException {
         try {
-            HTTPLinkChecker linkChecker = new HTTPLinkChecker(5000,5); //custom timeout for slow CR
+            HTTPLinkChecker linkChecker = new HTTPLinkChecker(5000,5, Configuration.USERAGENT); //custom timeout for slow CR
             int statusCode = linkChecker.checkLinkAndGetResponseCode(url);
             if (statusCode != 200 && statusCode != 304) {
                 throw new Exception(url + " is not valid! Response from server:\n" + linkChecker.getResponse());

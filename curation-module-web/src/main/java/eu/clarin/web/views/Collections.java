@@ -89,47 +89,45 @@ public class Collections extends GridPanel {
             try {
                 Collection<Object> rowValues = new ArrayList<>();
 
-                //TODO replace this with stax
-
-                rowValues.add("<a href='#!ResultView/collection//" + c.fileReport.provider + "' target='_top'>"
-                        + c.fileReport.provider + "</a>");
-                rowValues.add(c.scorePercentage);
-                rowValues.add(c.fileReport.numOfFiles);
-                rowValues.add(c.headerReport.profiles.totNumOfProfiles);
-                rowValues.add(c.urlReport.totNumOfUniqueLinks);
-                rowValues.add(c.urlReport.totNumOfCheckedLinks);
-                rowValues.add(c.urlReport.ratioOfValidLinks);
-                rowValues.add(c.resProxyReport.avgNumOfResProxies);
-                rowValues.add(c.resProxyReport.totNumOfResProxies);
-                rowValues.add(c.xmlValidationReport.ratioOfValidRecords);
-                rowValues.add(c.xmlPopulatedReport.avgXMLEmptyElement);
-                rowValues.add(c.facetReport.coverage);
+                rowValues.add("<a href='#!ResultView/collection//" + c.getFileReport_provider()+ "' target='_top'>"
+                        + c.getFileReport_provider()+ "</a>");
+                rowValues.add(c.getScorePercentage());
+                rowValues.add(c.getFileReport_numOfFiles());
+                rowValues.add(c.getHeaderReport_profiles_totNumOfProfiles());
+                rowValues.add(c.getUrlReport_totNumOfUniqueLinks());
+                rowValues.add(c.getUrlReport_totNumOfCheckedLinks());
+                rowValues.add(c.getUrlReport_ratioOfValidLinks());
+                rowValues.add(c.getResProxyReport_avgNumOfResProxies());
+                rowValues.add(c.getResProxyReport_totNumOfResProxies());
+                rowValues.add(c.getXmlValidationReport_ratioOfValidRecords());
+                rowValues.add(c.getXmlPopulatedReport_avgXMLEmptyElement());
+                rowValues.add(c.getFacetReport_coverage());
 
                 // add Facet coverage data
-                c.facetReport.facet.forEach(facet -> rowValues.add(facet.coverage));
+                c.getFacetReport_facet().forEach(facet -> rowValues.add(facet));
 
                 grid.addRow(rowValues.toArray());
 
                 // csv data
-                sb.append(c.fileReport.provider).append("\t");
-                sb.append(c.scorePercentage).append("\t");
-                sb.append(c.fileReport.numOfFiles).append("\t");
-                sb.append(c.headerReport.profiles.totNumOfProfiles).append("\t");
-                sb.append(c.urlReport.totNumOfUniqueLinks).append("\t");
-                sb.append(c.urlReport.totNumOfCheckedLinks).append("\t");
-                sb.append(c.urlReport.ratioOfValidLinks).append("\t");
-                sb.append(c.resProxyReport.avgNumOfResProxies).append("\t");
-                sb.append(c.resProxyReport.totNumOfResProxies).append("\t");
-                sb.append(c.xmlValidationReport.ratioOfValidRecords).append("\t");
-                sb.append(c.xmlPopulatedReport.avgXMLEmptyElement).append("\t");
-                sb.append(c.facetReport.coverage).append("\t");
+                sb.append(c.getFileReport_provider()).append("\t");
+                sb.append(c.getScorePercentage()).append("\t");
+                sb.append(c.getFileReport_numOfFiles()).append("\t");
+                sb.append(c.getHeaderReport_profiles_totNumOfProfiles()).append("\t");
+                sb.append(c.getUrlReport_totNumOfUniqueLinks()).append("\t");
+                sb.append(c.getUrlReport_totNumOfCheckedLinks()).append("\t");
+                sb.append(c.getUrlReport_ratioOfValidLinks()).append("\t");
+                sb.append(c.getResProxyReport_avgNumOfResProxies()).append("\t");
+                sb.append(c.getResProxyReport_totNumOfResProxies()).append("\t");
+                sb.append(c.getXmlValidationReport_ratioOfValidRecords()).append("\t");
+                sb.append(c.getXmlPopulatedReport_avgXMLEmptyElement()).append("\t");
+                sb.append(c.getFacetReport_coverage()).append("\t");
 
                 // add Facet coverage for each facet
-                c.facetReport.facet.forEach(facet -> sb.append(facet.coverage).append("\t"));
+                c.getFacetReport_facet().forEach(facet -> sb.append(facet).append("\t"));
                 sb.append("\n");
             } catch (Exception e) {
                 e.printStackTrace();
-                _logger.warn("can't read report for provider " + c.fileReport.provider);
+                _logger.warn("can't read report for provider " + c.getFileReport_provider());
             }
         });
 

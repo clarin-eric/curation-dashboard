@@ -24,6 +24,7 @@ public class Configuration {
     public static boolean SAVE_REPORT;
     public static Path OUTPUT_DIRECTORY = null;
     public static Path CACHE_DIRECTORY = null;
+    public static Path COLLECTION_HTML_DIRECTORY = null;
     public static Collection<String> FACETS = null;
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;
@@ -76,12 +77,17 @@ public class Configuration {
 
         String outDir = config.getProperty("OUTPUT_DIRECTORY");
         String cacheDir = config.getProperty("CACHE_DIRECTORY");
+        String htmlDir = config.getProperty("COLLECTION_HTML_DIRECTORY");
 
         if (outDir != null && !outDir.isEmpty()) {
             OUTPUT_DIRECTORY = Files.createDirectories(Paths.get(outDir));
         }
         if (cacheDir != null && !cacheDir.isEmpty()) {
             CACHE_DIRECTORY = Files.createDirectories(Paths.get(cacheDir));
+        }
+
+        if(htmlDir !=null && !htmlDir.isEmpty()){
+            COLLECTION_HTML_DIRECTORY = Files.createDirectories(Paths.get(htmlDir));
         }
 
         String redirectFollowLimit = config.getProperty("REDIRECT_FOLLOW_LIMIT");

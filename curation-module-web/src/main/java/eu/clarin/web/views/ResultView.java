@@ -168,26 +168,14 @@ public class ResultView extends Panel implements View {
                     break;
                 case COLLECTION:
 
-//                    r = Shared.getCollectionReport(input);
 
-                    byte[] out;
-                    Path REPORTS_FOLDER = Configuration.OUTPUT_DIRECTORY.resolve("collections");
-                    try (DirectoryStream<Path> ds = Files.newDirectoryStream(REPORTS_FOLDER)) {
+                    try (DirectoryStream<Path> ds = Files.newDirectoryStream(Configuration.COLLECTION_HTML_DIRECTORY)) {
                         for (Path path : ds) {
-                            if (path.getFileName().toString().equals(input+".xml")) {
+                            if (path.getFileName().toString().equals(input + ".html")) {
 
-                                out = Files.readAllBytes(path);
+                                byte[] out = Files.readAllBytes(path);
 
-
-                                if (out.length > 5000000) {//bigger than 5 mb
-                                    System.out.println("Report is bigger than 5 mb, doing stax trimming.");
-
-                                    out = trimURLS(out);
-
-                                }
-
-                                label.setValue(transformer.transform(curationType, new String(out)));
-
+                                label.setValue(new String(out));
 
                                 byte[] finalOut = out;
                                 xmlReport.setStreamSource(new StreamSource() {
@@ -197,15 +185,12 @@ public class ResultView extends Panel implements View {
                                     }
                                 });
 
-                                break;
                             }
-
                         }
                     }
 
                     break;
             }
-
 
 
         } catch (Exception e) {
@@ -233,7 +218,6 @@ public class ResultView extends Panel implements View {
         XMLEventWriter writer = outputFactory.createXMLEventWriter(result);
 
         XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-
 
 
         int urlCount = 0;
