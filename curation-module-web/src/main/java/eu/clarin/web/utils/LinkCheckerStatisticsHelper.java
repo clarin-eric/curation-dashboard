@@ -130,9 +130,17 @@ public class LinkCheckerStatisticsHelper {
                 rows = new ArrayList<>();
 
                 String collectionName = path.getFileName().toString().split("\\.")[0];
-                sb.append("<h3>" + collectionName + ":</h3>");
+
                 iterable = getStatusStatistics(collectionName);
+
+
+                boolean empty = true;
                 for (Document doc : iterable) {
+                    if (empty) {
+                        sb.append("<h3>" + collectionName + ":</h3>");
+                        empty = false;
+                    }
+
                     List<Number> row = new ArrayList<>();
 
                     row.add(doc.getInteger("_id"));
@@ -142,8 +150,10 @@ public class LinkCheckerStatisticsHelper {
 
                     rows.add(row);
                 }
-                sb.append(createTable(columnNames, rows));
-
+                if(!empty){
+                    sb.append(createTable(columnNames, rows));
+                }
+                
 
             }
 
