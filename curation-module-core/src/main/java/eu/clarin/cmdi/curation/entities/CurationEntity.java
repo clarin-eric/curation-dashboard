@@ -12,7 +12,7 @@ import eu.clarin.cmdi.curation.report.Report;
 
 public abstract class CurationEntity {
 
-    public enum CurationEntityType {PROFILE, INSTANCE, COLLECTION}
+    public enum CurationEntityType {PROFILE, INSTANCE, COLLECTION, STATISTICS}
 
     static final Logger _logger = LoggerFactory.getLogger(CurationEntity.class);
 

@@ -105,6 +105,9 @@ public class ResultView extends Panel implements View {
             case "collection":
                 curate(CurationEntityType.COLLECTION, sourceType, value);
                 break;
+            case "statistics":
+                curate(CurationEntityType.STATISTICS, sourceType, value);
+                break;
         }
 
         ((MainUI) getUI()).setCustomMenu(sideMenu);
@@ -190,6 +193,23 @@ public class ResultView extends Panel implements View {
                     }
 
                     break;
+
+                case STATISTICS:
+
+                    byte[] out = Files.readAllBytes(Paths.get(Configuration.OUTPUT_DIRECTORY.toString()+"/statistics/linkCheckerStatistics.html"));
+
+                    label.setValue(new String(out));
+
+                    byte[] finalOut = out;
+                    xmlReport.setStreamSource(new StreamSource() {
+                        @Override
+                        public InputStream getStream() {
+                            return new ByteArrayInputStream(finalOut);
+                        }
+                    });
+
+                    break;
+
             }
 
 

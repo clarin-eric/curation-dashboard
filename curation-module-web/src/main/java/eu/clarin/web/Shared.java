@@ -4,24 +4,27 @@ import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.mongodb.client.AggregateIterable;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
-import eu.clarin.cmdi.curation.report.CollectionReport;
-import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.web.data.CollectionStatistics;
 import eu.clarin.web.data.PublicProfile;
+import eu.clarin.web.utils.LinkCheckerStatisticsHelper;
 import eu.clarin.web.utils.StaxParser;
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +47,7 @@ public class Shared {
         facetNames = new FacetConceptMappingService().getFacetNames();
         initPublicProfiles();
         initCollections();
-
-
+        initLinkCheckerStatistics();
     }
 
     private static void initPublicProfiles() {
@@ -70,19 +72,18 @@ public class Shared {
 
     private static void initCollections() {
         collections = new ArrayList<>();
-        XMLMarshaller<CollectionReport> marshaller = new XMLMarshaller<>(CollectionReport.class);
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(REPORTS_FOLDER)) {
 
             for (Path path : ds) {
 
-                _logger.info("Parsing collection with stax: "+path.getFileName());
+                _logger.info("Parsing collection with stax: " + path.getFileName());
 
                 InputStream inputStream = Files.newInputStream(path);
 
                 String provider = path.getFileName().toString().split("\\.")[0];
 
                 try {
-                    CollectionStatistics cs = StaxParser.handleCollectionXMLs(inputStream,provider);
+                    CollectionStatistics cs = StaxParser.handleCollectionXMLs(inputStream, provider);
                     collections.add(cs);
 
                 } catch (XMLStreamException e) {
@@ -96,6 +97,19 @@ public class Shared {
 
         } catch (IOException e) {
             _logger.error("Can't read the collections directory: " + e.getMessage());
+        }
+    }
+
+    private static void initLinkCheckerStatistics() {
+
+        LinkCheckerStatisticsHelper helper = new LinkCheckerStatisticsHelper();
+
+        String html = helper.createHTML();
+
+        try (PrintStream ps = new PrintStream(Files.newOutputStream(Paths.get(Configuration.OUTPUT_DIRECTORY.toString()+"/statistics/linkCheckerStatistics.html")))) {
+            ps.println(html);
+        } catch (IOException e) {
+            _logger.error("Problem writing to the statistics.html");
         }
     }
 

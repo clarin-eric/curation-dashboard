@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.vaadin.server.ExternalResource;
+import com.vaadin.ui.Link;
 import com.vaadin.v7.ui.renderers.NumberRenderer;
+import eu.clarin.web.components.LinkButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +30,11 @@ public class Collections extends GridPanel {
     private StringBuilder sb;
 
     public Collections() {
+
         super();
+        Link statistics = new Link("URL Statistics", new ExternalResource("#!ResultView/statistics//stat"));
+        sideMenu.addComponent(statistics);
+
     }
 
     @Override
@@ -127,7 +134,7 @@ public class Collections extends GridPanel {
                 sb.append("\n");
             } catch (Exception e) {
                 e.printStackTrace();
-                _logger.warn("can't read report for provider " + c.getFileReport_provider());
+                _logger.warn("Can't read report for provider " + c.getFileReport_provider());
             }
         });
 

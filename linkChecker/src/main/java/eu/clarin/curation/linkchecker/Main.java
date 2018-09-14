@@ -70,7 +70,7 @@ public class Main {
 
                     String collection = urlElementToBeChecked.getCollection();
                     String url = urlElementToBeChecked.getUrl();
-                    _logger.info("URL to be checked: " + url + ", from collection: " + collection);
+//                    _logger.info("URL to be checked: " + url + ", from collection: " + collection);
 
 
                     CollectionThread t = getCollectionThreadByName(collection);
@@ -94,7 +94,9 @@ public class Main {
                 (new Thread() {
                     public void run() {
 
-                        while (true) {
+                        final Logger _logger = LoggerFactory.getLogger(Thread.class);
+
+                        while (true) {//todo check why in minerva the logs of this thread are not showing
                             //log current state
                             for (Thread tr : Thread.getAllStackTraces().keySet()) {
                                 if (tr.getClass().equals(CollectionThread.class)) {

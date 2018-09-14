@@ -1,8 +1,5 @@
 package eu.clarin.web.data;
 
-import eu.clarin.cmdi.curation.report.CollectionReport;
-
-import java.util.Collection;
 import java.util.List;
 
 public class CollectionStatistics {

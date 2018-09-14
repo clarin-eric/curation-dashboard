@@ -43,7 +43,7 @@ public class CollectionThread extends Thread {
         //i do this because if we don't wait and let the thread run for only one url, i'm afraid the thread
         // will be closed after one url check and it will be necessary to create a new thread for each url, which
         //is not the aim of this multithreading.
-        _logger.info("waiting...");
+        _logger.info("waiting for url queues to be filled...");
         synchronized (this) {
             try {
                 wait(5000);
@@ -89,7 +89,6 @@ public class CollectionThread extends Thread {
 
             //delete from linksToBeChecked(whether successful or there was an error, ist wuascht)
             linksToBeChecked.deleteOne(eq("url", url));
-            _logger.info("done checking url.");
 
             long estimatedTime = System.currentTimeMillis() - startTime;
 

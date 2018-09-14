@@ -61,7 +61,7 @@ public class HTTPLinkChecker {
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
     public URLElement checkLink(String url, int redirectFollowLevel, long durationPassed, String originalURL) throws IOException {
-        _logger.info("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
+        _logger.trace("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
         if (url == null) {
             throw new IOException("The requested url is null.");
         }
