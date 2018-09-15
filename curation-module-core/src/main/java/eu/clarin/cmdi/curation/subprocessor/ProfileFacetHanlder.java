@@ -4,9 +4,9 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
 import eu.clarin.cmdi.curation.entities.CMDProfile;
-import eu.clarin.cmdi.curation.facets.FacetMappingCacheFactory;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Score;
+import eu.clarin.cmdi.curation.vlo_extensions.FacetMappingCacheFactory;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetMapping;
 
 /**
@@ -23,6 +23,7 @@ public class ProfileFacetHanlder extends ProcessingStep<CMDProfile, CMDProfileRe
 		try {
 			facetMapping = FacetMappingCacheFactory.getInstance().getFacetMapping(report.header);
 		} catch (Exception e) {
+		    e.printStackTrace();
 			throw new Exception("Unable to create facet mapping for " + entity.toString(), e);
 		}
 		

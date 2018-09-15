@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.facets;
+package eu.clarin.cmdi.curation.vlo_extensions;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.cr;
 
 import java.util.Collection;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.validation.Schema;
@@ -54,7 +55,11 @@ public class CRService implements ICRService {
 			header = new ProfileHeader();
 			header.schemaLocation = schemaLocation;
 			header.cmdiVersion = cmdiVersion;
-			header.isPublic = false;			
+			header.isPublic = false;
+
+			Matcher matcher = PROFILE_ID_PATTERN.matcher(header.schemaLocation);
+            if(matcher.find())
+                header.id = matcher.group(0);
 		}
 		header.isLocalFile = isLocalFile;		
 		return header;		

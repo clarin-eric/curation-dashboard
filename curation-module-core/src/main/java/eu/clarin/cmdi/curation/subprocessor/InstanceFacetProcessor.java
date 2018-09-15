@@ -2,7 +2,6 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,6 @@ import java.util.stream.Collectors;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.facets.FacetMappingCacheFactory;
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance.InstanceNode;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
@@ -19,19 +17,12 @@ import eu.clarin.cmdi.curation.report.Concept;
 import eu.clarin.cmdi.curation.report.FacetReport.Coverage;
 import eu.clarin.cmdi.curation.report.FacetReport.FacetValueStruct;
 import eu.clarin.cmdi.curation.report.FacetReport.ValueNode;
+import eu.clarin.cmdi.curation.vlo_extensions.FacetMappingCacheFactory;
 import eu.clarin.cmdi.curation.xml.CMDXPathService;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.vlo.LanguageCodeUtils;
-import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
-import eu.clarin.cmdi.vlo.config.FieldNameService;
-import eu.clarin.cmdi.vlo.config.FieldNameServiceImpl;
-import eu.clarin.cmdi.vlo.config.VloConfig;
-import eu.clarin.cmdi.vlo.importer.MetadataImporter;
-import eu.clarin.cmdi.vlo.importer.mapping.FacetConfiguration;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetMapping;
 
-import eu.clarin.cmdi.vlo.importer.processor.CMDIParserVTDXML;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
 import org.slf4j.Logger;
@@ -43,45 +34,12 @@ import com.ximpleware.VTDNav;
 
 
 /**
- * @author dostojic
+ * @author dostojic/wowasa
  *
  */
 public class InstanceFacetProcessor extends CMDSubprocessor {
 
 	private final static Logger _logger = LoggerFactory.getLogger(InstanceFacetProcessor.class);
-	private static CMDIParserVTDXML _parser;
-
-	int numOfFacetsCoveredByIns = 0;
-	
-    static{
-        
-        VloConfig vloConfig = null;
-        FieldNameService fieldNameService = null;
-        LanguageCodeUtils languageCodeUtils = null;
-        try {
-            vloConfig = new DefaultVloConfigFactory().newConfig();
-            fieldNameService = new FieldNameServiceImpl(vloConfig);
-            languageCodeUtils = new LanguageCodeUtils(vloConfig);     
-            
-            _parser = new CMDIParserVTDXML(
-                    MetadataImporter.registerPostProcessors(vloConfig, fieldNameService, languageCodeUtils),
-                    vloConfig,
-                    FacetMappingCacheFactory.getInstance(), 
-                    null,
-                    false
-                );
- 
-            
-            
-        } 
-        catch (IOException ex) {
-
-            _logger.error("couldn't instantiate CMDIParserVTDXML!", ex);
-
-        }   
-
-    }
-
 
 
 	@Override
@@ -103,7 +61,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 		     
 		     _logger.trace("nodes map: \n{}", nodesMap);
 		     
-		     facetsToNodes(report, nodesMap, nav);
+		     facetsToNodes(entity, report, nodesMap, nav);
 
 
 			
@@ -151,45 +109,60 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
          return nodesMap;
 	}
 	
-	private void facetsToNodes(CMDInstanceReport report, Map<Integer, ValueNode> nodesMap, VTDNav nav) throws Exception {
+	private void facetsToNodes(CMDInstance entity, CMDInstanceReport report, Map<Integer, ValueNode> nodesMap, VTDNav nav) throws Exception {
 
-	    FacetMapping facetMapping = FacetMappingCacheFactory.getInstance().getFacetMapping(report.header);
-	    
-	    Map<FacetConfiguration, List<ValueSet>> facetValuesMap = _parser.getFacetValuesMap(null, nav, facetMapping);
-	    
+	    FacetMapping facetMapping = FacetMappingCacheFactory.getInstance().getFacetMapping(report.header);	   
 
 	    
-	    //regrouping by VDTIndex, target facet configuration
-	    Map<Integer, Map<FacetConfiguration,List<ValueSet>>> indexValuesMap = new HashMap<Integer, Map<FacetConfiguration,List<ValueSet>>>();
+	    Map<String, List<ValueSet>> facetValuesMap = entity.getCMDIData().getDocument();
+	    
+
+	    report.facets = new FacetReportCreator().createFacetReport(report.header, facetMapping);  
+	    
+	    int numOfCoveredByIns = 0;
 	    
 
 	    for(Coverage coverage : report.facets.coverage) {
-	        List<ValueSet> values = facetValuesMap.get(facetMapping.getFacetConfiguration(coverage.name));
+	        List<ValueSet> values = facetValuesMap.get(coverage.name);
 	        
-	        if(values != null) {
-	            values.forEach(value -> {
-	                indexValuesMap.computeIfAbsent(value.getVtdIndex(), k -> new HashMap<FacetConfiguration,List<ValueSet>>()).computeIfAbsent(value.getOriginFacetConfig(), v -> new ArrayList<ValueSet>()).add(value);
-	            });
-	            
-	        }
-	    }
-	    
-	    report.facets = new FacetReportCreator().createFacetReport(report.header, facetMapping);  
-	    
-	    indexValuesMap.forEach((index, reducedFacetValueMap) -> {
-	        ValueNode node = nodesMap.get(index);
-            
-            if(node != null) {  //might be null if the node has no value
-                node.facet = new ArrayList<FacetValueStruct>();
-                
-                reducedFacetValueMap.forEach((facetConfig, values) -> {
-                    node.facet.add(createFacetValueStruct(facetConfig.getName(), node.value, values.stream().map(valueSet -> valueSet.getValueLanguagePair().getLeft()).collect(Collectors.joining(" ;")), false));
-                });
-                //
-            }
+           if(values == null) //no values from instance for this facet
+                continue;
+           
+           coverage.coveredByInstance = true; //one or more values for the specific facet
+           numOfCoveredByIns++;
+           
+           //in the next step the value(s) have to be mapped to the right node
+	        
+	        Map<Integer, List<ValueSet>> facetMap = values.stream().collect(Collectors.groupingBy(ValueSet::getVtdIndex)); //groups valueSets by vtdIndex
+	        
 
 	        
-	    });        
+	        for(Map.Entry<Integer, List<ValueSet>> entry : facetMap.entrySet()) {
+	            
+	            if(nodesMap.containsKey(entry.getKey())){ //there is a node where the xpath has the same vtdIndex
+	                ValueNode node = nodesMap.get(entry.getKey());
+	                
+	                //initializing node.facet if not done already:
+	                if(node.facet == null)
+	                    node.facet = new ArrayList<FacetValueStruct>();
+	                
+	                node.facet.add(
+	                        createFacetValueStruct(
+	                                coverage.name, 
+	                                node.value, 
+	                                entry.getValue().stream().map(valueSet -> valueSet.getValueLanguagePair().getLeft()).collect(Collectors.joining(" ;")), 
+	                                entry.getValue().get(0).isDerived() //assumes that a facet isn't defined as origin and derived at the same time
+                                )
+                        );
+	                
+	            }
+	            
+	        }
+
+	    }
+	    
+	    report.facets.instanceCoverage = report.facets.numOfFacets == 0? 0.0:(numOfCoveredByIns / (double)report.facets.numOfFacets); //cast to double to get a double as result
+
 	}
 
 	

@@ -22,8 +22,8 @@ class FacetReportCreator {
 		for(String facetName : Configuration.FACETS) {
 		    Coverage facet = new Coverage();
             facet.name = facetName;
-            facet.coveredByProfile = facetMapping.getFacetConfiguration(facetName).getPatterns().stream().anyMatch(p -> elements.containsKey(p.getPattern().replaceAll("\\w+:", ""))) || 
-                    facetMapping.getFacetConfiguration(facetName).getFallbackPatterns().stream().anyMatch(p -> elements.containsKey(p.getPattern().replaceAll("\\w+:", "")));         
+            facet.coveredByProfile = facetMapping.getFacetConfiguration(facetName).getPatterns().stream().anyMatch(p -> elements.containsKey(p.getPattern())) || 
+                    facetMapping.getFacetConfiguration(facetName).getFallbackPatterns().stream().anyMatch(p -> elements.containsKey(p.getPattern()));         
             facetReport.coverage.add(facet);
 		}
 		

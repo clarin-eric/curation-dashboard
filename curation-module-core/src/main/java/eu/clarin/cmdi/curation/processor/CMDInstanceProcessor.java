@@ -14,7 +14,7 @@ public class CMDInstanceProcessor extends AbstractProcessor<CMDInstanceReport> {
 		return (Configuration.COLLECTION_MODE)?
 				Arrays.asList(
 					new FileSizeValidator(),
-					new CollectionInstanceHeaderProcessor(),
+					new InstanceHeaderProcessor(),
 					new CollectionInstanceResourceProxyProcessor(),
 					new URLValidator(),
 					new InstanceXMLValidator(),
@@ -23,7 +23,7 @@ public class CMDInstanceProcessor extends AbstractProcessor<CMDInstanceReport> {
 				Arrays.asList(
 					new FileSizeValidator(),
 					new InstanceHeaderProcessor(),
-					new InstanceResourceProxyProcessor(),
+					new CollectionInstanceResourceProxyProcessor(),
 					new URLValidator(),
 					new InstanceXMLValidator(),
 					new InstanceFacetProcessor()

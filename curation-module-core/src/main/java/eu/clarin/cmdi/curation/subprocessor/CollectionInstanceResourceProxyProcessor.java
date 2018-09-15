@@ -1,21 +1,24 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.ArrayList;
-
-import com.ximpleware.AutoPilot;
-import com.ximpleware.VTDNav;
+import java.util.List;
+import java.util.Map;
 
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.ResProxyReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.ResourceType;
 import eu.clarin.cmdi.curation.report.Score;
-import eu.clarin.cmdi.curation.xml.CMDXPathService;
+import eu.clarin.cmdi.vlo.importer.CMDIData;
+import eu.clarin.cmdi.vlo.importer.Resource;
+import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
 public class CollectionInstanceResourceProxyProcessor extends CMDSubprocessor {
 
 	@Override
 	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
+	    CMDIData<Map<String, List<ValueSet>>> cmdiData = entity.getCMDIData();
+	    
 		report.resProxyReport = new ResProxyReport();
 		
 		report.resProxyReport.numOfResProxies = 0;
@@ -23,66 +26,47 @@ public class CollectionInstanceResourceProxyProcessor extends CMDSubprocessor {
 		report.resProxyReport.numOfResProxiesWithReferences = 0;
 		report.resProxyReport.resourceType = null;
 		
-		int numOfTypeResource = 0;
+		int numOfTypeResource = cmdiData.getDataResources().size();
 		
-		try {
-			CMDXPathService xmlService = new CMDXPathService(entity.getPath());
-			VTDNav nav = xmlService.reset();
-			AutoPilot ap = new AutoPilot(nav);
-			ap.selectXPath("/CMD/Resources/ResourceProxyList/ResourceProxy");
-			while(ap.evalXPath() != -1){
-				report.resProxyReport.numOfResProxies++;
-				
-				String resType = nav.toElement(VTDNav.FC, "ResourceType")? nav.toNormalizedString(nav.getText()) : null;
-				String mimeType = null;
-				if(resType != null && resType.equals("Resource")){
-					int indMime = nav.getAttrVal("mimetype");
-					mimeType= indMime != -1? nav.toNormalizedString(indMime) : null;
-					if(mimeType != null && !mimeType.isEmpty())
-						report.resProxyReport.numOfResourcesWithMime++;
-					numOfTypeResource++;
-				}
-				
-				if(report.resProxyReport.resourceType == null)
-					report.resProxyReport.resourceType = new ArrayList<>();
-				ResourceType resource = report
-						.resProxyReport.resourceType
-						.stream().filter(res -> res.type.equals(resType))
-						.findFirst()
-						.orElse(null);
-				if(resource != null)
-					resource.count++;
-				else{
-					resource = new ResourceType();
-					resource.type = resType;
-					resource.count = 1;
-					report.resProxyReport.resourceType.add(resource);
-				}
-				
-				String resProxy = null;
-				if(nav.toElement(VTDNav.NS, "ResourceRef")){
-					int ind = nav.getText();
-					if(ind != -1){
-						resProxy = nav.toNormalizedString(ind);
-					}
-				}
-				
-				if(resProxy != null && !resProxy.isEmpty())
-					report.resProxyReport.numOfResProxiesWithReferences++;
-				nav.toElement(VTDNav.PARENT);
-			}
+		for(Resource resource : cmdiData.getDataResources()) {
+		    if(resource.getMimeType() != null)
+		        report.resProxyReport.numOfResourcesWithMime++;
+		    if(resource.getResourceName() != null && !resource.getResourceName().isEmpty())
+		        report.resProxyReport.numOfResProxiesWithReferences++;
+		    
+		}
+		
+		
+		addResourceType(cmdiData.getLandingPageResources(), report);
+		addResourceType(cmdiData.getMetadataResources(), report);
+		addResourceType(cmdiData.getSearchPageResources(), report);
+		addResourceType(cmdiData.getSearchResources(), report);
 			
 			report.resProxyReport.percOfResourcesWithMime = numOfTypeResource > 0? 
 					(double) report.resProxyReport.numOfResourcesWithMime / numOfTypeResource : 0;
 			report.resProxyReport.percOfResProxiesWithReferences = report.resProxyReport.numOfResProxies > 0? 
 					(double) report.resProxyReport.numOfResProxiesWithReferences / report.resProxyReport.numOfResProxies : 0;
 
-			
-		} catch (Exception e) {
-			throw new Exception("Error while processing resource proxies in " + report.fileReport.location, e);
-		}
 		
-		
+	}
+	
+	private void addResourceType(List<Resource> resources, CMDInstanceReport report) {
+	    if(!resources.isEmpty())
+	        return;
+	    if(report.resProxyReport.resourceType == null)
+            report.resProxyReport.resourceType = new ArrayList<>();
+	    
+	    ResourceType resourceType = new ResourceType();
+	    resourceType.type = resources.get(0).getType();
+	    resourceType.count = resources.size();
+	    
+	    for(Resource resource : resources) {
+	           if(resource.getResourceName() != null && !resource.getResourceName().isEmpty())
+	                report.resProxyReport.numOfResProxiesWithReferences++;
+	    }
+	    
+	    report.resProxyReport.resourceType.add(resourceType);
+	    
 	}
 
 	@Override

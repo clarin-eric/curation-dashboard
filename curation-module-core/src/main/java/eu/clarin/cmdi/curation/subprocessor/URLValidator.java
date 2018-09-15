@@ -32,9 +32,9 @@ public class URLValidator extends CMDSubprocessor {
         ParsedInstance parsedInstance = entity.getParsedInstance();
         Collection<String> links = parsedInstance.getNodes()
                 .stream()
-                .filter(node -> !node.getXpath().equals("/CMD/@xsi:schemaLocation"))
-                .filter(node -> !node.getXpath().equals("/CMD/@xmlns:xsi"))
-                .filter(node -> !node.getXpath().equals("/CMD/@xml:xsi"))
+                .filter(node -> !node.getXpath().equals("/cmd:CMD/@xsi:schemaLocation"))
+                .filter(node -> !node.getXpath().equals("/cmd:CMD/@xmlns:xsi"))
+                .filter(node -> !node.getXpath().equals("/cmd:CMD/@xml:xsi"))
                 .map(InstanceNode::getValue)
                 .filter(url -> url.startsWith("http"))
                 .collect(Collectors.toList());

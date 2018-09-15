@@ -47,10 +47,13 @@ public abstract class ProfileParser {
 
     protected ProfileHeader fillInHeader(VTDNav vn, ProfileHeader header) throws VTDException {
         AutoPilot ap = new AutoPilot(vn);
-        header.id = evaluateXPath("//Header/ID/text()", ap);
-        header.name = evaluateXPath("//Header/Name/text()", ap);
-        header.description = evaluateXPath("//Header/Description/text()", ap);
-        header.status = evaluateXPath("//Header/Status/text()", ap);
+        ap.declareXPathNameSpace("cmd", "http://www.clarin.eu/cmdi/cues/1");
+        ap.declareXPathNameSpace("xs", "http://www.w3.org/2001/XMLSchema");
+        
+        header.id = evaluateXPath("//cmd:Header/cmd:ID/text()", ap);
+        header.name = evaluateXPath("//cmd:Header/cmd:Name/text()", ap);
+        header.description = evaluateXPath("//cmd:Header/cmd:Description/text()", ap);
+        header.status = evaluateXPath("//cmd:Header/cmd:Status/text()", ap);
         header.cmdiVersion = getCMDVersion();
         return header;
 
@@ -61,7 +64,7 @@ public abstract class ProfileParser {
         vn.toElement(VTDNav.ROOT);// reset
         AutoPilot ap = new AutoPilot(vn);
 
-        ap.selectElement("element");
+        ap.selectElement("xs:element");
         while (ap.iterate()) {// process single element
             CRElement _new = new CRElement();
             _new.isLeaf = !isComplex();
@@ -122,7 +125,8 @@ public abstract class ProfileParser {
     private boolean isComplex() throws VTDException {
         vn.push();
         AutoPilot ap = new AutoPilot(vn);
-        ap.selectXPath("./complexType/sequence");
+        ap.declareXPathNameSpace("xs", "http://www.w3.org/2001/XMLSchema");
+        ap.selectXPath("./xs:complexType/xs:sequence");
         boolean isComplex = ap.evalXPathToBoolean();
         vn.pop();
         return isComplex;
@@ -133,7 +137,8 @@ public abstract class ProfileParser {
 
         vn.push();
         AutoPilot ap = new AutoPilot(vn);
-        ap.selectXPath("./complexType/simpleContent/extension/attribute");
+        ap.declareXPathNameSpace("xs", "http://www.w3.org/2001/XMLSchema");
+        ap.selectXPath("./xs:complexType/xs:simpleContent/xs:extension/xs:attribute");
         while (ap.evalXPath() != -1) {
             CRElement nameAttr = processNameAttributeNode();
             if (nameAttr != null)
@@ -144,7 +149,8 @@ public abstract class ProfileParser {
         // teiHeader.xsd has attributes on different xpath
         if (attributes.isEmpty()) {// paths are exclusive
             ap.bind(vn);
-            ap.selectXPath("./complexType/attribute");
+            ap.declareXPathNameSpace("xs", "http://www.w3.org/2001/XMLSchema");
+            ap.selectXPath("./xs:complexType/xs:attribute");
             while (ap.evalXPath() != -1) {
                 CRElement nameAttr = processNameAttributeNode();
                 if (nameAttr != null)

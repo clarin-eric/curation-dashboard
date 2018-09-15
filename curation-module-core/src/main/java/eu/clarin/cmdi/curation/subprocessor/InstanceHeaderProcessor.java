@@ -11,7 +11,7 @@ import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.curation.xml.CMDXPathService;
+
 
 public class InstanceHeaderProcessor extends CMDSubprocessor {
 
@@ -30,11 +30,11 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 		CRService crService = new CRService();
 		ParsedInstance parsedInstance = entity.getParsedInstance();
 
-		InstanceNode instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/CMD/@xsi:schemaLocation")).findFirst().orElse(null); 
+		InstanceNode instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/cmd:CMD/@xsi:schemaLocation")).findFirst().orElse(null); 
 		String schemaLocation = instanceNode != null? instanceNode.getValue() : null;
 		String profileIdFromSchema = null;
 		if (schemaLocation == null || schemaLocation.isEmpty()){
-			instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/CMD/@xsi:noNamespaceSchemaLocation")).findFirst().orElse(null);
+			instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/cmd:CMD/@xsi:noNamespaceSchemaLocation")).findFirst().orElse(null);
 			schemaLocation = instanceNode != null? instanceNode.getValue() : null;
 		}else{
 			String[] locations = schemaLocation.split(" ");
@@ -44,14 +44,14 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 		} 
 
 		
-		instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/CMD/@CMDVersion")).findFirst().orElse(null);
+		instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/cmd:CMD/@CMDVersion")).findFirst().orElse(null);
 		String cmdVersion = instanceNode != null? instanceNode.getValue() : null;
 
-		instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/CMD/Header/MdProfile/text()")).findFirst().orElse(null);
+		instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/cmd:CMD/cmd:Header/cmd:MdProfile/text()")).findFirst().orElse(null);
 		String mdprofile = instanceNode != null? instanceNode.getValue() : null;
-		instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/CMD/Header/MdCollectionDisplayName/text()")).findFirst().orElse(null);
+		instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/cmd:CMD/cmd:Header/cmd:MdCollectionDisplayName/text()")).findFirst().orElse(null);
 		String mdCollectionDisplayName = instanceNode != null? instanceNode.getValue() : null;
-		instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/CMD/Header/MdSelfLink/text()")).findFirst().orElse(null);
+		instanceNode = parsedInstance.getNodes().stream().filter(n -> n.getXpath().equals("/cmd:CMD/cmd:Header/cmd:MdSelfLink/text()")).findFirst().orElse(null);
 		String mdSelfLink = instanceNode != null? instanceNode.getValue() : null;
 
 		

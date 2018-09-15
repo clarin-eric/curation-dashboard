@@ -1,14 +1,10 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.*;
-import java.nio.file.*;
+
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,11 +88,11 @@ class CMDI1_2_ProfileParser extends ProfileParser{
 			String xpath = "";
 			CRElement parent = node.parent;
 			while (parent != null) {
-				xpath = parent.name + "/" + xpath;
+				xpath = "cmdp:" + parent.name + "/" + xpath;
 				parent = parent.parent;
 			}
-			xpath = "/CMD/Components/" + xpath + (node.type == NodeType.ATTRIBUTE || node.type == NodeType.CMD_VERSION_ATTR
-					? "@" + node.name : node.name + "/text()");
+			xpath = "/cmd:CMD/cmd:Components/" + xpath + (node.type == NodeType.ATTRIBUTE || node.type == NodeType.CMD_VERSION_ATTR
+					? "@" + node.name : "cmdp:" + node.name + "/text()");
 			
 			CMDINode cmdiNode = new CMDINode();
 			cmdiNode.isRequired = node.isRequired;

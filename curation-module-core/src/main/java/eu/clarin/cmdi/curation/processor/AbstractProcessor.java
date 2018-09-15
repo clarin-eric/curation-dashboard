@@ -4,7 +4,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 
-import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.subprocessor.InstanceXMLValidator;
 import eu.clarin.cmdi.curation.subprocessor.URLValidator;

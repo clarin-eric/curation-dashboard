@@ -98,19 +98,19 @@ class ProfileCacheFactory{
 				
 				//keep private schemas on disk
 				
-				Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(header.schemaLocation);
+/*				Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(header.schemaLocation);
 				matcher.find();
-				String id = matcher.group(0);					
+				String id = matcher.group(0);		*/			
 				
-				String fileName = id.substring(CRService.PROFILE_PREFIX.length());
+				String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
 				xsd = Configuration.CACHE_DIRECTORY.resolve("private_profiles");
 				xsd = xsd.resolve(fileName + ".xsd");
 				//try to load it from the disk
-				logger.debug("Loading schema for non public profile {} from {}", id, xsd);
+				logger.debug("Loading schema for non public profile {} from {}", header.id, xsd);
 				if (!Files.exists(xsd)) {
 					// if not download it
 					Files.createFile(xsd);
-					logger.info("XSD for the {} is not in the local cache, it will be downloaded", id);
+					logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
 					new Downloader().download(header.schemaLocation, xsd.toFile());
 					
 				}
@@ -118,8 +118,10 @@ class ProfileCacheFactory{
 			
 			VTDGen vg = new VTDGen();
 			vg.setDoc(Files.readAllBytes(xsd));
-			vg.parse(false);
+			vg.parse(true);
+			
 			ProfileParser parser = ProfileParserFactory.createParser(header.cmdiVersion);
+			
 			ParsedProfile parsedProfile = parser.parse(vg.getNav(), header);
 			Schema schema = createSchema(xsd.toFile());
 			
