@@ -63,7 +63,7 @@ public class CurationModuleTest {
             // TODO Auto-generated catch block
             ex.printStackTrace();
         }
-        assertFalse(this.report instanceof CMDInstanceReport);
+        assertTrue(this.report instanceof CMDInstanceReport);
     }
 
 }

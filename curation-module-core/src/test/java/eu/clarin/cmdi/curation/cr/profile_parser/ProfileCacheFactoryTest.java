@@ -15,13 +15,42 @@ import eu.clarin.cmdi.curation.main.Configuration;
 public class ProfileCacheFactoryTest {
     
     @Test
-    public void testProfileCachEntry() {
+    public void testParsedPublicProfile() {
         CRService crService = new CRService();
         
         ProfileHeader ph = new ProfileHeader();
         
         ph.schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.2/profiles/clarin.eu:cr1:p_1361876010587";
         ph.id = "clarin.eu:cr1:p_1361876010587";
+        ph.cmdiVersion = "1.2";
+        
+        try {
+            Configuration.initDefault();
+            
+            ParsedProfile pp = crService.getParsedProfile(ph);
+            
+
+            
+            assertNotNull(pp.xpaths);
+            
+            assertFalse(pp.xpaths.isEmpty());
+            
+            assertTrue(ph.isPublic);
+        }
+        catch (Exception ex) {
+            // TODO Auto-generated catch block
+            ex.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void testParsedPrivateProfile() {
+        CRService crService = new CRService();
+        
+        ProfileHeader ph = new ProfileHeader();
+        
+        ph.schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.2/profiles/clarin.eu:cr1:p_1493735943947";
+        ph.id = "clarin.eu:cr1:p_1493735943947";
         ph.cmdiVersion = "1.2";
         
         try {

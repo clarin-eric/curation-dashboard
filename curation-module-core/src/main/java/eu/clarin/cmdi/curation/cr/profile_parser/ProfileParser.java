@@ -47,7 +47,7 @@ public abstract class ProfileParser {
 
     protected ProfileHeader fillInHeader(VTDNav vn, ProfileHeader header) throws VTDException {
         AutoPilot ap = new AutoPilot(vn);
-        ap.declareXPathNameSpace("cmd", "http://www.clarin.eu/cmdi/cues/1");
+        ap.declareXPathNameSpace("cmd", "http://www.clarin.eu/cmd/1");
         ap.declareXPathNameSpace("xs", "http://www.w3.org/2001/XMLSchema");
         
         header.id = evaluateXPath("//cmd:Header/cmd:ID/text()", ap);

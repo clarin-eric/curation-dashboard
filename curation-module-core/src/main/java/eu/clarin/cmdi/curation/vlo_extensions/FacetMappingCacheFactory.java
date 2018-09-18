@@ -91,7 +91,8 @@ public class FacetMappingCacheFactory extends FacetMappingFactory{
                         }
                         
                         for(Map.Entry<String, CMDINode> element : elements.entrySet()) {
-                            result.computeIfAbsent(element.getValue().concept.uri, k -> new ArrayList<Pattern>()).add(new Pattern(element.getKey()));
+                            if(element.getValue().concept != null)
+                                result.computeIfAbsent(element.getValue().concept.uri, k -> new ArrayList<Pattern>()).add(new Pattern(element.getKey()));
                         }
                         
                         return result;

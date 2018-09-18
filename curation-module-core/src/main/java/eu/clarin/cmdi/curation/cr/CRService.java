@@ -17,8 +17,12 @@ import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 public class CRService implements ICRService {
 	static final Logger logger = LoggerFactory.getLogger(CRService.class);
 	
+	//https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles?registrySpace=published&status=*
+	//https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles?registrySpace=published&status=production
+	//https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles?registrySpace=published&status=development
+	
 	public static final String CR_REST = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/";
-	public static final String CR_REST_1_2_PROFILES = CR_REST + "1.2/profiles/";
+	public static final String CR_REST_1_2_PROFILES = CR_REST + "1.x/profiles?registrySpace=published&status=*";
 	public static final String PROFILE_PREFIX = "clarin.eu:cr1:";
 	public static final String PROFILE_ID_FORMAT = "clarin\\.eu:cr1:p_[0-9]+";
 	public static final Pattern PROFILE_ID_PATTERN = Pattern.compile(PROFILE_ID_FORMAT);
@@ -57,9 +61,6 @@ public class CRService implements ICRService {
 			header.cmdiVersion = cmdiVersion;
 			header.isPublic = false;
 
-			Matcher matcher = PROFILE_ID_PATTERN.matcher(header.schemaLocation);
-            if(matcher.find())
-                header.id = matcher.group(0);
 		}
 		header.isLocalFile = isLocalFile;		
 		return header;		

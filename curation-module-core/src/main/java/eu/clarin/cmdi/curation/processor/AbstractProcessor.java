@@ -56,7 +56,7 @@ public abstract class AbstractProcessor<R extends Report<?>> {
             if(message==null || message.isEmpty()){
                 message = "There was an unknown error. Please report it.";
             }
-            logger.error(message);
+            logger.error("", e);
             return new ErrorReport(report.getName(), message);
         }
 

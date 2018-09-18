@@ -29,7 +29,7 @@ class CMDI1_2_ProfileParser extends ProfileParser{
 	
 	@Override
 	protected String conceptAttributeName(){
-		return "ConceptLink";
+		return "cmd:ConceptLink";
 	}	
 	
 	@Override
@@ -53,7 +53,7 @@ class CMDI1_2_ProfileParser extends ProfileParser{
 		//name attribute
 		String name = extractAttributeValue("name");
 		if(name != null){
-			String concept = extractAttributeValue("ConceptLink");
+			String concept = extractAttributeValue("cmd:ConceptLink");
 			CRElement elem = new CRElement();
 			elem.isLeaf = true;
 			elem.lvl = vn.getCurrentDepth();
@@ -77,7 +77,7 @@ class CMDI1_2_ProfileParser extends ProfileParser{
 
 			
 			//boolean test = vg.parseFile(ClassLoader.getSystemResource("cmd-envelop.xsd").getPath(), false);
-			vg.parseHttpUrl(ENVELOPE_URL, false);
+			vg.parseHttpUrl(ENVELOPE_URL, true);
 			envelope = envelopeParser.parse(vg.getNav(), new ProfileHeader()).xpaths;
 		}
 		xpaths.putAll(envelope);

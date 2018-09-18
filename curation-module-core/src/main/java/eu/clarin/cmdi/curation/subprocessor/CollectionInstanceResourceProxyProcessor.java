@@ -51,7 +51,7 @@ public class CollectionInstanceResourceProxyProcessor extends CMDSubprocessor {
 	}
 	
 	private void addResourceType(List<Resource> resources, CMDInstanceReport report) {
-	    if(!resources.isEmpty())
+	    if(resources.isEmpty())
 	        return;
 	    if(report.resProxyReport.resourceType == null)
             report.resProxyReport.resourceType = new ArrayList<>();

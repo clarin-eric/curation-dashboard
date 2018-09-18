@@ -56,7 +56,7 @@ public class FileSizeValidatorTest {
 
             
             assertTrue(entity.getPath().toString().endsWith("cmdi/cbmetadata_00024_cmdi.xml"));
-            assertEquals(10082, entity.getSize());
+            assertEquals(9925, entity.getSize());
             
 
             

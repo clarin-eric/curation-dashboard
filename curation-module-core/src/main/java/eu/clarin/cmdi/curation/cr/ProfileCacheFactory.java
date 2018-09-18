@@ -98,11 +98,11 @@ class ProfileCacheFactory{
 				
 				//keep private schemas on disk
 				
-/*				Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(header.schemaLocation);
+				Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(header.schemaLocation);
 				matcher.find();
-				String id = matcher.group(0);		*/			
+				String id = matcher.group(0);					
 				
-				String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
+				String fileName = id.substring(CRService.PROFILE_PREFIX.length());
 				xsd = Configuration.CACHE_DIRECTORY.resolve("private_profiles");
 				xsd = xsd.resolve(fileName + ".xsd");
 				//try to load it from the disk
