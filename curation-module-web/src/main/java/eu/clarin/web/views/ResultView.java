@@ -204,9 +204,6 @@ public class ResultView extends Panel implements View {
                     String resultHTML = helper.createURLTable(collectionName,status);
                     label.setValue(resultHTML);
 
-
-
-
                     break;
 
             }

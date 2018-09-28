@@ -55,7 +55,6 @@ public class MainUI extends UI {
 		addView("Instances", new Instances());
 		addView("Profiles", new Profiles());
 		addView("Collections", new Collections());
-		Link statistics = new Link("URL Statistics", new ExternalResource("#!ResultView/statistics//stat"));
 		addView("Link Checking Statistics",new Statistics());
 		//addView("SMC Browser", new SMC());
 		addView("Help", new Help());
@@ -63,7 +62,7 @@ public class MainUI extends UI {
 		getNavigator().addView("ResultView", new ResultView());
 		
 		//reset visibility for exportMenu
-		//it is automatically set for coresponding views
+		//it is automatically set for corresponding views
 		getNavigator().addViewChangeListener(new ViewChangeListener(){
 			
 			@Override

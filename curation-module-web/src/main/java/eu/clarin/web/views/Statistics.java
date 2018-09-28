@@ -19,13 +19,14 @@ public class Statistics extends Panel implements View {
     Label label;
 
     public Statistics() {
+        setSizeFull();
         label = new Label();
         label.setContentMode(ContentMode.HTML);
+
 
         setContent(label);
     }
 
-    //new ExternalResource("#!ResultView/statistics//stat")
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         try {
