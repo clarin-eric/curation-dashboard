@@ -32,9 +32,6 @@ public class Collections extends GridPanel {
     public Collections() {
 
         super();
-        Link statistics = new Link("URL Statistics", new ExternalResource("#!ResultView/statistics//stat"));
-        sideMenu.addComponent(statistics);
-
     }
 
     @Override

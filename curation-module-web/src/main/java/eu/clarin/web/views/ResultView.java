@@ -26,6 +26,7 @@ import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.web.MainUI;
 import eu.clarin.web.Shared;
 import eu.clarin.web.components.LinkButton;
+import eu.clarin.web.utils.LinkCheckerStatisticsHelper;
 import eu.clarin.web.utils.XSLTTransformer;
 
 import javax.xml.namespace.QName;
@@ -37,8 +38,6 @@ import javax.xml.stream.events.XMLEvent;
 public class ResultView extends Panel implements View {
 
     private enum SourceType {PROFILE_ID, URL, FILE}
-
-    ;
 
     private VerticalLayout sideMenu;
 
@@ -196,17 +195,17 @@ public class ResultView extends Panel implements View {
 
                 case STATISTICS:
 
-                    byte[] out = Files.readAllBytes(Paths.get(Configuration.OUTPUT_DIRECTORY.toString()+"/statistics/linkCheckerStatistics.html"));
 
-                    label.setValue(new String(out));
+                    String collectionName = input.split("/")[0];
+                    int status = Integer.parseInt(input.split("/")[1]);
 
-                    byte[] finalOut = out;
-                    xmlReport.setStreamSource(new StreamSource() {
-                        @Override
-                        public InputStream getStream() {
-                            return new ByteArrayInputStream(finalOut);
-                        }
-                    });
+                    LinkCheckerStatisticsHelper helper = new LinkCheckerStatisticsHelper();
+
+                    String resultHTML = helper.createURLTable(collectionName,status);
+                    label.setValue(resultHTML);
+
+
+
 
                     break;
 
@@ -222,85 +221,5 @@ public class ResultView extends Panel implements View {
                     + errors.toString();
             label.setValue("<pre>" + msg + "</pre>");
         }
-    }
-
-    //this method trims the irl list into 50 urls to save from memory consumption when processing the xml.
-    //otherwise reports can grow to 700 mbs.
-    private byte[] trimURLS(byte[] in) throws XMLStreamException, IOException {
-
-
-        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        XMLEventReader eventReader =
-                inputFactory.createXMLEventReader(new ByteArrayInputStream(in));
-
-        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        XMLEventWriter writer = outputFactory.createXMLEventWriter(result);
-
-        XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-
-
-        int urlCount = 0;
-        boolean saveURL = false;
-        while (eventReader.hasNext()) {
-            XMLEvent event = eventReader.nextEvent();
-
-            if (event.getEventType() == XMLStreamConstants.START_ELEMENT) {//only startelement is needed because urls are empty elements
-
-
-                if (event.asStartElement().getName().getLocalPart().equalsIgnoreCase("url")) {
-                    if (urlCount < 50) {
-                        saveURL = true;
-                        writer.add(event);
-                    }
-
-
-                } else if (event.asStartElement().getName().getLocalPart().equalsIgnoreCase("single-url-report")) {
-
-                    writer.add(event);
-                    event = eventFactory.createAttribute
-                            ("trim", "true");
-                    writer.add(event);
-
-                } else {
-                    writer.add(event);
-                }
-
-            } else if (event.getEventType() == XMLStreamConstants.END_ELEMENT) {
-
-                if (event.asEndElement().getName().getLocalPart().equalsIgnoreCase("url")) {
-                    if (urlCount < 50) {
-                        saveURL = false;
-                        writer.add(event);
-                    }
-                    urlCount++;
-
-                } else {
-                    writer.add(event);
-                }
-
-            } else {
-                if (urlCount < 50) {
-                    writer.add(event);
-                } else {
-                    if (saveURL) {
-                        writer.add(event);
-                    }
-                }
-
-            }
-
-        }
-
-        writer.flush();
-        writer.close();
-
-        //this is just to see what the xml looks like after stax transformation(its normally not saved anywhere)
-//        FileOutputStream fos = null;
-//        fos = new FileOutputStream(new File(path to xml file));
-//        result.writeTo(fos);
-//        fos.close();
-
-        return result.toByteArray();
     }
 }

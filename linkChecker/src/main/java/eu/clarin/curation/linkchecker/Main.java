@@ -97,6 +97,7 @@ public class Main {
                         final Logger _logger = LoggerFactory.getLogger(Thread.class);
 
                         while (true) {//todo check why in minerva the logs of this thread are not showing
+                            //todo probably inner class for loggerfactory, change its class to owner or something
                             //log current state
                             for (Thread tr : Thread.getAllStackTraces().keySet()) {
                                 if (tr.getClass().equals(CollectionThread.class)) {

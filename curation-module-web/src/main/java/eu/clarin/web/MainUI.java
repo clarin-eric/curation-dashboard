@@ -7,23 +7,19 @@ import com.vaadin.annotations.Widgetset;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Link;
 import com.vaadin.v7.ui.HorizontalLayout;
 import com.vaadin.v7.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.v7.ui.VerticalLayout;
 
 import eu.clarin.web.components.LinkButton;
-import eu.clarin.web.views.Collections;
-import eu.clarin.web.views.Footer;
-import eu.clarin.web.views.Header;
-import eu.clarin.web.views.Help;
-import eu.clarin.web.views.Instances;
-import eu.clarin.web.views.Profiles;
-import eu.clarin.web.views.ResultView;
+import eu.clarin.web.views.*;
 
 //@SuppressWarnings("serial")
 @Theme("mytheme")
@@ -59,6 +55,8 @@ public class MainUI extends UI {
 		addView("Instances", new Instances());
 		addView("Profiles", new Profiles());
 		addView("Collections", new Collections());
+		Link statistics = new Link("URL Statistics", new ExternalResource("#!ResultView/statistics//stat"));
+		addView("Link Checking Statistics",new Statistics());
 		//addView("SMC Browser", new SMC());
 		addView("Help", new Help());
 		
