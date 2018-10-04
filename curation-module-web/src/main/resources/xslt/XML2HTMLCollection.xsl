@@ -7,8 +7,9 @@
 	</head>
 	<body>
 		<h1>Collection Report</h1>
-		
-		<h3>Collection name: <xsl:value-of select="./file-section/provider"/></h3>
+		<xsl:variable name="collectionName"><xsl:value-of select="./file-section/provider"/></xsl:variable>
+
+		<h3>Collection name: {$collectionName}</h3>
 		
 		<p>Total Score: <xsl:value-of select="./@score"/> out of <xsl:value-of select="./@col-max-score"/></p>
 		<p>Score percentage: <xsl:value-of select="./@score-percentage"/></p>
@@ -133,6 +134,43 @@
 		<p>Total number of broken links: <xsl:value-of select="./url-validation-section/totNumOfBrokenLinks"/></p>
 		<p>Average number of broken links: <xsl:value-of select="./url-validation-section/avgNumOfBrokenLinks"/></p>
 		<p>Ratio of valid links: <xsl:value-of select="./url-validation-section/ratioOfValidLinks"/></p>
+
+
+
+		<!--
+		<xsl:variable name="profileID"><xsl:value-of select="./@name"/></xsl:variable>
+				<tr>
+					<td><a href="#!ResultView/profile/id/{$profileID}"><xsl:copy-of select="$profileID"/></a></td>
+
+		-->
+
+		<h3>Status Codes Table</h3>
+		<table border="1" cellpadding="1" cellspacing="1">
+			<thead>
+				<tr>
+					<th scope="col">Status</th>
+					<th scope="col">Count</th>
+					<th scope="col">Average Response Duration(ms)</th>
+					<th scope="col">Max Response Duration(ms)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<xsl:for-each select="./url-validation-section/statistics/status">
+					<xsl:variable name="status"><xsl:value-of select="./@statusCode"/></xsl:variable>
+					<tr>
+						<td><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:value-of select="./@statusCode"/></a></td>
+						<td><xsl:value-of select="./@count" /></td>
+						<td><xsl:value-of select="./@avgRespTime" /></td>
+						<td><xsl:value-of select="./@maxRespTime" /></td>
+					</tr>
+				</xsl:for-each>
+				<xsl:if test="./single-url-report[@trim='true']">
+					<tr>
+						<td colspan="9">Please download Report for complete list of url checking results.</td>
+					</tr>
+				</xsl:if>
+			</tbody>
+		</table>
 
 		<hr/>
 		<h2>Single URL Section</h2>

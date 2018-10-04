@@ -2,13 +2,23 @@ package eu.clarin.cmdi.curation.report;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.*;
 
+import com.mongodb.client.*;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+import org.bson.Document;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Sorts.ascending;
+import static com.mongodb.client.model.Sorts.orderBy;
 
 /**
  * @author dostojic
@@ -154,7 +164,7 @@ public class CollectionReport implements Report<CollectionReport> {
     }
 
     @Override
-    public String getParentName(){
+    public String getParentName() {
         return null;
     }
 
@@ -269,6 +279,42 @@ public class CollectionReport implements Report<CollectionReport> {
         urlReport.avgNumOfResProxiesLinks = (double) urlReport.totNumOfResProxiesLinks / fileReport.numOfFiles;
         urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
 
+        //statistics
+
+        if (Configuration.DATABASE) {
+            MongoClient mongoClient;
+            if (Configuration.DATABASE_URI == null || Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
+                mongoClient = MongoClients.create();
+            } else {
+                mongoClient = MongoClients.create(Configuration.DATABASE_URI);
+            }
+
+            MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
+
+            MongoCollection<Document> linksChecked = database.getCollection("linksChecked");
+
+            AggregateIterable<Document> iterable = linksChecked.aggregate(Arrays.asList(
+                    Aggregates.match(eq("collection", getName())),
+                    Aggregates.group("$status",
+                            Accumulators.sum("count", 1),
+                            Accumulators.avg("avg_resp", "$duration"),
+                            Accumulators.max("max_resp", "$duration")
+                    ),
+                    Aggregates.sort(orderBy(ascending("_id")))
+            ));
+
+            for (Document doc : iterable) {
+                Statistics statistics = new Statistics();
+                statistics.avgRespTime = doc.getDouble("avg_resp");
+                statistics.maxRespTime = doc.getLong("max_resp");
+                statistics.statusCode = doc.getInteger("_id");
+                statistics.count = doc.getInteger("count");
+                urlReport.status.add(statistics);
+            }
+
+        }
+
+
 //        urlReport.ratioOfValidLinks = urlReport.totNumOfUniqueLinks == 0 ? 0 :
 //                (double) (urlReport.totNumOfUniqueLinks - urlReport.totNumOfBrokenLinks) / urlReport.totNumOfUniqueLinks;
 
@@ -357,6 +403,24 @@ public class CollectionReport implements Report<CollectionReport> {
         public int totNumOfBrokenLinks;
         public Double avgNumOfBrokenLinks = 0.0;
         public Double ratioOfValidLinks = 0.0;
+        @XmlElementWrapper(name = "statistics")
+        public Collection<Statistics> status = new ArrayList<>();
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Statistics {
+        @XmlAttribute
+        public int count;
+
+        @XmlAttribute
+        public double avgRespTime;
+
+        @XmlAttribute
+        public double maxRespTime;
+
+        @XmlAttribute
+        public int statusCode;
     }
 
     @XmlRootElement
