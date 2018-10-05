@@ -158,17 +158,12 @@
 				<xsl:for-each select="./url-validation-section/statistics/status">
 					<xsl:variable name="status"><xsl:value-of select="./@statusCode"/></xsl:variable>
 					<tr>
-						<td><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:value-of select="./@statusCode"/></a></td>
-						<td><xsl:value-of select="./@count" /></td>
-						<td><xsl:value-of select="./@avgRespTime" /></td>
-						<td><xsl:value-of select="./@maxRespTime" /></td>
+						<td align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:value-of select="./@statusCode"/></a></td>
+						<td align="right"><xsl:value-of select="./@count" /></td>
+						<td align="right"><xsl:value-of select="format-number(./@avgRespTime, '###,##0.##')" /></td>
+						<td align="right"><xsl:value-of select="format-number(./@maxRespTime, '###,##0.##')" /></td>
 					</tr>
 				</xsl:for-each>
-				<xsl:if test="./single-url-report[@trim='true']">
-					<tr>
-						<td colspan="9">Please download Report for complete list of url checking results.</td>
-					</tr>
-				</xsl:if>
 			</tbody>
 		</table>
 

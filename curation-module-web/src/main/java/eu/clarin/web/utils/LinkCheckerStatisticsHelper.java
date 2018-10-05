@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.not;
 import static com.mongodb.client.model.Sorts.ascending;
 import static com.mongodb.client.model.Sorts.orderBy;
 
@@ -89,10 +90,21 @@ public class LinkCheckerStatisticsHelper {
         AggregateIterable<Document> iterable = linksChecked.aggregate(Arrays.asList(
                 Aggregates.match(eq("collection", collectionName)),
                 Aggregates.group("_id",
-                        Accumulators.sum("count", 1),
+                        Accumulators.sum("count", 1)
+                )
+        ));
+
+        return iterable;
+
+    }
+
+    //this method doensn't take 0 status codes into consideration. 0 means there was an error in the URL and there was no request sent.
+    private AggregateIterable<Document> getStatusStatisticsAvg(String collectionName) {
+        AggregateIterable<Document> iterable = linksChecked.aggregate(Arrays.asList(
+                Aggregates.match(and(eq("collection", collectionName),not(eq("status",0)))),
+                Aggregates.group("_id",
                         Accumulators.avg("avg_resp", "$duration")
-                ),
-                Aggregates.sort(orderBy(ascending("_id")))
+                )
         ));
 
         return iterable;
@@ -273,12 +285,19 @@ public class LinkCheckerStatisticsHelper {
                 if (!empty) {
                     total = 0;
                     avgResp = 0.0;
+
                     iterable = getStatusStatisticsTotal(collectionName);
                     for (Document doc : iterable) {
                         //there is only one document
                         total = doc.getInteger("count");
+                    }
+
+                    iterable = getStatusStatisticsAvg(collectionName);
+                    for (Document doc : iterable) {
+                        //there is only one document
                         avgResp = doc.getDouble("avg_resp");
                     }
+
 
                     sb.append(createStatisticsTable(collectionName, columnNames, rows, total, avgResp));
                 }
