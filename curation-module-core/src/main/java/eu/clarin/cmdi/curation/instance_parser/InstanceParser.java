@@ -19,6 +19,12 @@ import javax.xml.transform.stream.StreamSource;
 
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance.InstanceNode;
 
+/**
+ * @author Davor
+ * The InstanceParser uses XSLT to transform the CMDInstance into a list of xpath/value pairs follwing the pattern <xpath>=<value>. 
+ * These pairs are stored in a List of InstanceNode
+ *
+ */
 public class InstanceParser {
 	
 	private static Transformer tranformer = null;

@@ -21,10 +21,10 @@ public class CMDProfile extends CurationEntity {
 		this.cmdiVersion = cmdiVersion;
 	}
 
-	public CMDProfile(Path path, String cmdiVersion) {
+/*	public CMDProfile(Path path, String cmdiVersion) {
 		super(path);
 		this.cmdiVersion = cmdiVersion;
-	}	
+	}	*/
 	
 	public String getSchemaLocation() {
 		return schemaLocation;

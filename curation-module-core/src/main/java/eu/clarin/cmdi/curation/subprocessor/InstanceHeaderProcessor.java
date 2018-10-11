@@ -64,7 +64,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 			throw new Exception("Unable to process " + entity + ", both schema and profile are not specified");
 
 		if (missingSchema){
-			schemaLocation = CRService.CR_REST_1_2_PROFILES + mdprofile + "/xsd";
+			schemaLocation = Configuration.vloConfig.getComponentRegistryProfileSchema(mdprofile);
 			addMessage(Severity.ERROR, "Attribute schemaLocation is missing. " + schemaLocation + " is assumed");
 		}else
 			schemaInCR = crService.isSchemaCRResident(schemaLocation);

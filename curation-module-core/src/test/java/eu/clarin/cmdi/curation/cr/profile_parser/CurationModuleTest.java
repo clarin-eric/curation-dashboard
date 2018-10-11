@@ -53,7 +53,7 @@ public class CurationModuleTest {
         
     }
     
-    @Test
+/*    @Test
     public void testIsCMDInstanceReport() { 
         
         try {
@@ -65,5 +65,5 @@ public class CurationModuleTest {
         }
         assertTrue(this.report instanceof CMDInstanceReport);
     }
-
+*/
 }

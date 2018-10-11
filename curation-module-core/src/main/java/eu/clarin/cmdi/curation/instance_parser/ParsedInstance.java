@@ -2,6 +2,12 @@ package eu.clarin.cmdi.curation.instance_parser;
 
 import java.util.Collection;
 
+/**
+ * @author Davor
+ * 
+ * The ParsedInstance is a wrapper for a Collection of InstanceNode. Each InstanceNode contains an xpath/value-pair generated from a CMDInstance. 
+ *
+ */
 public class ParsedInstance {
 	
 	private final Collection<InstanceNode> nodes;

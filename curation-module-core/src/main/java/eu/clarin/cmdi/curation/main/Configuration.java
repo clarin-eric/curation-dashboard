@@ -13,6 +13,9 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
+import eu.clarin.cmdi.vlo.config.VloConfig;
+
 public class Configuration {
 
     private static Logger logger = LoggerFactory.getLogger(Configuration.class);
@@ -28,6 +31,8 @@ public class Configuration {
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;
     private static final int TIMEOUTDEFAULT = 5000;//in ms(if config file doesnt have it)
+    
+    public static final VloConfig vloConfig = getVloConfig();
 
     //this is a boolean that is set by core-module(false) and web-module(true)
     public static boolean enableProfileLoadTimer = false;
@@ -85,5 +90,15 @@ public class Configuration {
             REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
         }
 
+    }
+    
+    private static VloConfig getVloConfig() {
+        try {
+            return new DefaultVloConfigFactory().newConfig();
+        }
+        catch (IOException ex) {
+            logger.error("can't instantiate default VloConfig");
+            return null;
+        }
     }
 }
