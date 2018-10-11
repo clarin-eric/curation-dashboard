@@ -9,7 +9,7 @@
 		<h1>Collection Report</h1>
 		<xsl:variable name="collectionName"><xsl:value-of select="./file-section/provider"/></xsl:variable>
 
-		<h3>Collection name: {$collectionName}</h3>
+		<h3>Collection name: <xsl:copy-of select="$collectionName" /></h3>
 		
 		<p>Total Score: <xsl:value-of select="./@score"/> out of <xsl:value-of select="./@col-max-score"/></p>
 		<p>Score percentage: <xsl:value-of select="./@score-percentage"/></p>
@@ -136,14 +136,6 @@
 		<p>Ratio of valid links: <xsl:value-of select="./url-validation-section/ratioOfValidLinks"/></p>
 
 
-
-		<!--
-		<xsl:variable name="profileID"><xsl:value-of select="./@name"/></xsl:variable>
-				<tr>
-					<td><a href="#!ResultView/profile/id/{$profileID}"><xsl:copy-of select="$profileID"/></a></td>
-
-		-->
-
 		<h3>Status Codes Table</h3>
 		<table border="1" cellpadding="1" cellspacing="1">
 			<thead>
@@ -158,7 +150,7 @@
 				<xsl:for-each select="./url-validation-section/statistics/status">
 					<xsl:variable name="status"><xsl:value-of select="./@statusCode"/></xsl:variable>
 					<tr>
-						<td align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:value-of select="./@statusCode"/></a></td>
+						<td align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status" /></a></td>
 						<td align="right"><xsl:value-of select="./@count" /></td>
 						<td align="right"><xsl:value-of select="format-number(./@avgRespTime, '###,##0.##')" /></td>
 						<td align="right"><xsl:value-of select="format-number(./@maxRespTime, '###,##0.##')" /></td>
@@ -185,8 +177,9 @@
 			</thead>
 			<tbody>
 				<xsl:for-each select="./single-url-report/url">
+					<xsl:variable name="url"><xsl:value-of select="."/></xsl:variable>
 					<tr>
-						<td><xsl:copy-of select="."/></td>
+						<td><a href="{$url}"><xsl:copy-of select="$url" /></a></td>
 						<td><xsl:value-of select="./@message" /></td>
 						<td><xsl:value-of select="./@http-status" /></td>
 						<td><xsl:value-of select="./@content-type" /></td>

@@ -173,7 +173,7 @@ public class LinkCheckerStatisticsHelper {
                 URLElement urlElement = new URLElement(doc);
 
                 sb.append("<td>");
-                sb.append(urlElement.getUrl());
+                sb.append("<a href='").append(urlElement.getUrl()).append("'>").append(urlElement.getUrl()).append("</a>");
                 sb.append("</td>");
                 sb.append("<td>");
                 sb.append(urlElement.getMessage());
