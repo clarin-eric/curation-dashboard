@@ -45,7 +45,7 @@ public class CurationModule implements CurationModuleInterface {
 
 	@Override
 	public Report<?> processCMDProfile(String profileId) throws InterruptedException {
-	    return new CMDProfile(Configuration.vloConfig.getComponentRegistryProfileSchema(profileId), "1.2").generateReport();
+	    return new CMDProfile(profileId, "1.x").generateReport();
 	}
 
 	@Override
@@ -62,12 +62,7 @@ public class CurationModule implements CurationModuleInterface {
 	@Override
 	public Report<?> processCMDInstance(Path path) throws IOException, InterruptedException, TransformerException {
 		if (Files.notExists(path))
-			throw new IOException(path.toString() + " doesn't exist!");
-		
-		if(getCMDIVersion(path).equals("1.1")) {
-		    path = transformCMDI(path);
-		}
-		
+			throw new IOException(path.toString() + " doesn't exist!");		
 		
 		return new CMDInstance(path, Files.size(path)).generateReport();
 	}
@@ -104,36 +99,5 @@ public class CurationModule implements CurationModuleInterface {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-    private String getCMDIVersion(Path path) throws IOException {
-        
-        try(Reader reader = new FileReader(path.toFile())){
-
-            char[] charBuffer = new char[1024];
-         
-            reader.read(charBuffer);
-        
-            Matcher matcher = pattern.matcher(String.valueOf(charBuffer)); 
-        
-            if(matcher.find()) {
-                return matcher.group(1).trim();
-            }
-        }
-        catch(IOException ex) {
-            throw ex;
-        }
-                   
-        
-        return null;
-    }
-    
-    private Path transformCMDI(Path inPath) throws IOException, TransformerException {
-        Path outPath = Files.createTempFile(null, null);
-        
-        _transformer.transform(new StreamSource(inPath.toFile()), new StreamResult(outPath.toFile()));
-        
-        
-        return outPath;
-    }
 
 }

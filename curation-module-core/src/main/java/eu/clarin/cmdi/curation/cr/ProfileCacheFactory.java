@@ -74,35 +74,30 @@ class ProfileCacheFactory{
 		
 		@Override
 		public ProfileCacheEntry load(ProfileHeader header) throws IOException, VTDException, SAXException{			
-			logger.info("Profile {} is not in the cache, it will be loaded", header.schemaLocation);
+			logger.info("Profile {} is not in the cache, it will be loaded", header.id);
 			
 			Path xsd;			
 			
-			if(isPublicProfilesCache){
-				Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(header.schemaLocation);
-				matcher.find();
-				String id = matcher.group(0);					
+			if(isPublicProfilesCache){			
 				
-				String fileName = id.substring(CRService.PROFILE_PREFIX.length());
+				String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
 				xsd = Configuration.CACHE_DIRECTORY.resolve(fileName + ".xsd");
 				//try to load it from the disk
-				logger.debug("profile {} is public. Loading schema from {}", id, xsd);
+				logger.debug("profile {} is public. Loading schema from {}", header.id, xsd);
 				if (!Files.exists(xsd)) {// keep public profiles on disk 
 					// if not download it
 					Files.createFile(xsd);
-					logger.info("XSD for the {} is not in the local cache, it will be downloaded", id);
-					new Downloader().download(header.schemaLocation, xsd.toFile());
+					logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
+					new Downloader().download(Configuration.vloConfig.getComponentRegistryProfileSchema(header.id), xsd.toFile());
 				}
-			}else{//non-public profiles are not cached on disk
-				logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.schemaLocation);
+			}
+			else{//non-public profiles are not cached on disk
+				logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.id);
 				
 				//keep private schemas on disk
+								
 				
-				Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(header.schemaLocation);
-				matcher.find();
-				String id = matcher.group(0);					
-				
-				String fileName = id.substring(CRService.PROFILE_PREFIX.length());
+				String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
 				xsd = Configuration.CACHE_DIRECTORY.resolve("private_profiles");
 				xsd = xsd.resolve(fileName + ".xsd");
 				//try to load it from the disk
@@ -111,7 +106,7 @@ class ProfileCacheFactory{
 					// if not download it
 					Files.createFile(xsd);
 					logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
-					new Downloader().download(header.schemaLocation, xsd.toFile());
+					new Downloader().download(Configuration.vloConfig.getComponentRegistryProfileSchema(header.id), xsd.toFile());
 					
 				}
 			}

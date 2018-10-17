@@ -29,7 +29,8 @@ public abstract class AbstractProcessor<R extends Report<?>> {
             for (ProcessingStep step : createPipeline()) {
 
                 step.process(entity, report);
-                logger.info("processed Record: "+report.getName() + ", step: "+ step.getClass().getSimpleName());
+                //logger.info("processed Record: "+report.getName() + ", step: "+ step.getClass().getSimpleName());
+                //logger.info("processed Record: "+ entity.getUrl() != null?entity.getUrl().replaceAll("/", "-"):entity.getPath() + ", step: "+ step.getClass().getSimpleName());
                 if(step instanceof InstanceXMLValidator){
                     report.addSegmentScore(((InstanceXMLValidator)step).calculateValidityScore());
                 }
@@ -51,6 +52,7 @@ public abstract class AbstractProcessor<R extends Report<?>> {
             logger.error(e.getMessage());
             return new ErrorReport(report.getName(), e.getMessage());
         } catch (Exception e) {
+            logger.error("", e);
             String message = e.getMessage();
             message = message.replace(" java.lang.Exception","");
             if(message==null || message.isEmpty()){

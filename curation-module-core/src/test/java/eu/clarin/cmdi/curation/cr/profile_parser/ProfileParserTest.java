@@ -22,7 +22,7 @@ public class ProfileParserTest {
         
         ProfileHeader header = new ProfileHeader();
         
-        header.schemaLocation = " https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1345561703620/xsd";
+        header.id = "clarin.eu:cr1:p_1345561703620";
         header.cmdiVersion = "1.2";
 
         

@@ -26,7 +26,7 @@ public class PublicProfiles {
 					.profileDescription;
 			
 			publicProfiles.forEach(p -> {
-			    p.schemaLocation = Configuration.vloConfig.getComponentRegistryProfileSchema(p.id);
+			    //p.schemaLocation = Configuration.vloConfig.getComponentRegistryProfileSchema(p.id);
 				p.cmdiVersion = "1.2";
 			});
 			

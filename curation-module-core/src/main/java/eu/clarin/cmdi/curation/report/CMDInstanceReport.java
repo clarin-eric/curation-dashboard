@@ -43,6 +43,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     // Header
     @XmlElement(name = "profile-section")
     public ProfileHeader header;
+    
+    // Transformation section
+    @XmlElement(name = "transformation-section")
+    public TransformationReport transformationReport;
 
     // file
     @XmlElement(name = "file-section")
@@ -205,6 +209,13 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
     }
 
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class TransformationReport {
+
+        public TransformationReport() {
+        }
+    }
 
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)

@@ -27,7 +27,6 @@ public class ProfileCacheFactoryTest {
         
         ProfileHeader ph = new ProfileHeader();
         
-        ph.schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.2/profiles/clarin.eu:cr1:p_1361876010587";
         ph.id = "clarin.eu:cr1:p_1361876010587";
         ph.cmdiVersion = "1.2";
         
@@ -50,13 +49,12 @@ public class ProfileCacheFactoryTest {
         }
     }
     
-    @Test
+    //@Test
     public void testParsedPrivateProfile() {
         CRService crService = new CRService();
         
         ProfileHeader ph = new ProfileHeader();
         
-        ph.schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.2/profiles/clarin.eu:cr1:p_1493735943947";
         ph.id = "clarin.eu:cr1:p_1493735943947";
         ph.cmdiVersion = "1.2";
         

@@ -10,13 +10,11 @@ import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
-import eu.clarin.cmdi.curation.subprocessor.FileSizeValidator;
 
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -30,8 +28,10 @@ public class CurationModuleTest {
         try {
             
             Configuration.initDefault();
+;
         
             path = Paths.get(getClass().getClassLoader().getResource("cmdi/cbmetadata_00024_cmdi.xml").toURI());
+            //path = Paths.get(getClass().getClassLoader().getResource("cmdi/http_hdl_handle_net_11022_0000_0000_001B_2.xml").toURI());
 
             CurationModule curation = new CurationModule();
             
@@ -53,7 +53,7 @@ public class CurationModuleTest {
         
     }
     
-/*    @Test
+    @Test
     public void testIsCMDInstanceReport() { 
         
         try {
@@ -65,5 +65,4 @@ public class CurationModuleTest {
         }
         assertTrue(this.report instanceof CMDInstanceReport);
     }
-*/
 }

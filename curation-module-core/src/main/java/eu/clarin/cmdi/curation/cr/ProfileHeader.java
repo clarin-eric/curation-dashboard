@@ -15,7 +15,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 public class ProfileHeader {
 	
 	public String id;
-	public String schemaLocation;	
+//	public String schemaLocation;	
 	public String name;
 	public String description;
 	public String cmdiVersion;
@@ -37,20 +37,20 @@ public class ProfileHeader {
 		}
 		ProfileHeader rhs = (ProfileHeader) obj;
 		return new EqualsBuilder()
-				.append(schemaLocation, rhs.schemaLocation)
+				.append(id, rhs.id)
 				.isEquals();
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.schemaLocation);
+		return Objects.hash(this.id);
 	}
 	
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
 				.append(id)
-				.append(schemaLocation)
+				//.append(schemaLocation)
 				.append(cmdiVersion)
 				.toString();
 	}

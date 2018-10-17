@@ -14,9 +14,6 @@ import eu.clarin.cmdi.curation.report.Severity;
 
 
 public class InstanceHeaderProcessor extends CMDSubprocessor {
-
-	private static final String PROFILE_ID_FORMAT = "clarin\\.eu:cr1:p_[0-9]+";
-	private static final Pattern PROFILE_ID_PATTERN = Pattern.compile(PROFILE_ID_FORMAT);
 	
 	boolean missingSchema = false;
 	boolean schemaInCR = false;
@@ -73,7 +70,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 			addMessage(Severity.WARNING, "Current CMD version is 1.2 but this recordName is using " + cmdVersion);
 
 		if (!missingMdprofile) {
-			if(!mdprofile.matches(PROFILE_ID_FORMAT)){			
+			if(!mdprofile.matches(CRService.PROFILE_ID_FORMAT)){			
 				invalidMdprofile = true;
 				addMessage(Severity.ERROR, "Format for value in the element CMD/Header/MdProfile must be: clarin.eu:cr1:p_xxxxxxxxxxxxx!");
 				mdprofile = extractProfile(mdprofile);
@@ -103,7 +100,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 		}
 
 		// at this point profile will be processed and cached		
-		report.header = crService.createProfileHeader(schemaLocation, cmdVersion, false);
+		report.header = crService.createProfileHeader(mdprofile, cmdVersion, false);
 		report.header.id = mdprofile;
 		report.header.cmdiVersion = cmdVersion;
 		report.fileReport.collection = mdCollectionDisplayName;
@@ -124,6 +121,8 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 			score++; // * weight
 			if(schemaInCR)//schema comes from Component Registry
 				score++;
+			else
+			    addMessage(Severity.INFO, "Schema no from component registry. Using default schema " + Configuration.vloConfig.getComponentRegistryProfileSchema(report.header.id));
 		}
 		
 		//mdprofile exists and in correct format
@@ -139,7 +138,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 	
 	
 	private String extractProfile(String str){
-		Matcher m = PROFILE_ID_PATTERN.matcher(str);
+		Matcher m = CRService.PROFILE_ID_PATTERN.matcher(str);
 		return m.find() ? m.group() : null;
 
 	}
