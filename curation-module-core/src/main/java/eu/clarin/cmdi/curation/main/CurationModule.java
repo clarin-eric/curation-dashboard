@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.transform.TransformerException;
 
@@ -19,9 +18,7 @@ import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
 
-public class CurationModule implements CurationModuleInterface {
-    Pattern pattern = Pattern.compile("CMDVersion=\"(\\d{1}\\..{1})\"");
-    
+public class CurationModule implements CurationModuleInterface {    
 
 	@Override
 	public Report<?> processCMDProfile(String profileId) throws InterruptedException {
