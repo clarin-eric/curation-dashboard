@@ -1,8 +1,6 @@
 package eu.clarin.cmdi.curation.main;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,19 +8,12 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
-import eu.clarin.cmdi.curation.instance_parser.InstanceParser;
 import eu.clarin.cmdi.curation.io.CMDFileVisitor;
 import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
@@ -31,17 +22,6 @@ import eu.clarin.cmdi.curation.report.Report;
 public class CurationModule implements CurationModuleInterface {
     Pattern pattern = Pattern.compile("CMDVersion=\"(\\d{1}\\..{1})\"");
     
-    private static Transformer _transformer = null;
-    
-    static{
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/cmd-record-1_1-to-1_2.xsl"));       
-        try {
-            _transformer = factory.newTransformer(xslt);
-        } catch (TransformerConfigurationException e) {
-            throw new RuntimeException("Unable to open cmd-record-1_1-to-1_2.xsl", e);
-        }
-    }
 
 	@Override
 	public Report<?> processCMDProfile(String profileId) throws InterruptedException {
