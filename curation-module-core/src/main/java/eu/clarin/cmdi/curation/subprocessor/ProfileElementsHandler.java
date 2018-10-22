@@ -79,7 +79,7 @@ public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfil
 	private Elements createElementSegment(ParsedProfile parsedProfile){
 		Collection<CMDINode> elemNodes = parsedProfile.getElements().entrySet()
 				.stream() //dont consider elements from header and resources, they dont have concept
-				.filter(e -> e.getKey().startsWith("/CMD/Components/"))
+				.filter(e -> e.getKey().startsWith("/cmd:CMD/cmd:Components/"))
 				.map(Entry::getValue)
 				.collect(Collectors.toList());
 		Elements elems = new Elements();		

@@ -50,13 +50,18 @@ public class CurationModule implements CurationModuleInterface {
 
 	@Override
 	public Report<?> processCMDProfile(URL schemaLocation) throws InterruptedException {
-		String cmdiVersion = "1.1";
+	    Matcher matcher; 
+	    if((matcher = CRService.PROFILE_ID_PATTERN.matcher(schemaLocation.toString())).find())
+	        return new CMDProfile(matcher.group(0), "1.x").generateReport();
+	    
+	    return null;
+/*		String cmdiVersion = "1.1";
 		if(schemaLocation.toString().startsWith(Configuration.vloConfig.getComponentRegistryRESTURL())){
 			String version = schemaLocation.toString().substring(Configuration.vloConfig.getComponentRegistryRESTURL().length(), Configuration.vloConfig.getComponentRegistryRESTURL().length() + 3);
 			if(version.startsWith("1."))
 				cmdiVersion = version;
 		}
-		return new CMDProfile(schemaLocation.toString(), cmdiVersion).generateReport();
+		return new CMDProfile(schemaLocation.toString(), cmdiVersion).generateReport();*/
 	}
 
 	@Override
