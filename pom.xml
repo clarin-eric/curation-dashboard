@@ -15,6 +15,7 @@
 	<modules>
 		<module>curation-module-core</module>
 		<module>curation-module-web</module>
+		<module>linkChecker</module>
 	</modules>
 	
 	<properties>
@@ -45,4 +46,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
 </project>

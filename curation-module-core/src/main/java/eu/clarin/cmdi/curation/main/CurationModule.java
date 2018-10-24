@@ -22,31 +22,28 @@ public class CurationModule implements CurationModuleInterface {
 
 	@Override
 	public Report<?> processCMDProfile(String profileId) throws InterruptedException {
-	    return new CMDProfile(profileId, "1.x").generateReport();
+	    return new CMDProfile(profileId, "1.x").generateReport(null);
+
 	}
 
 	@Override
 	public Report<?> processCMDProfile(URL schemaLocation) throws InterruptedException {
 	    Matcher matcher; 
 	    if((matcher = CRService.PROFILE_ID_PATTERN.matcher(schemaLocation.toString())).find())
-	        return new CMDProfile(matcher.group(0), "1.x").generateReport();
+	        return new CMDProfile(matcher.group(0), "1.x").generateReport(null);
 	    
 	    return null;
-/*		String cmdiVersion = "1.1";
-		if(schemaLocation.toString().startsWith(Configuration.vloConfig.getComponentRegistryRESTURL())){
-			String version = schemaLocation.toString().substring(Configuration.vloConfig.getComponentRegistryRESTURL().length(), Configuration.vloConfig.getComponentRegistryRESTURL().length() + 3);
-			if(version.startsWith("1."))
-				cmdiVersion = version;
-		}
-		return new CMDProfile(schemaLocation.toString(), cmdiVersion).generateReport();*/
+
 	}
 
 	@Override
+
 	public Report<?> processCMDInstance(Path path) throws IOException, InterruptedException, TransformerException {
 		if (Files.notExists(path))
 			throw new IOException(path.toString() + " doesn't exist!");		
 		
-		return new CMDInstance(path, Files.size(path)).generateReport();
+		return new CMDInstance(path, Files.size(path)).generateReport(null);
+
 	}
 	
 
@@ -57,7 +54,9 @@ public class CurationModule implements CurationModuleInterface {
 		long size = Files.size(path);
 		CMDInstance cmdInstance = new CMDInstance(path, size);
 		cmdInstance.setUrl(url.toString());
-		Report<?> r = cmdInstance.generateReport();
+
+		Report<?> r = cmdInstance.generateReport(null);
+
 		Files.delete(path);
 
 		if(r instanceof CMDInstanceReport){
@@ -73,7 +72,7 @@ public class CurationModule implements CurationModuleInterface {
 		Files.walkFileTree(path, entityTree);
 		CMDCollection collection = entityTree.getRoot();
 
-		return collection.generateReport();
+		return collection.generateReport(null);
 	}
 
 	@Override

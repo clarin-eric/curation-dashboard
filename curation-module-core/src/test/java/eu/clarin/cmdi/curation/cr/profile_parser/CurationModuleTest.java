@@ -53,7 +53,7 @@ public class CurationModuleTest {
         
     }
     
-    @Test
+    //@Test
     public void testIsCMDInstanceReport() { 
         
         try {

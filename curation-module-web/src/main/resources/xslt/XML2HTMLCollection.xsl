@@ -126,6 +126,7 @@
 		<p>Total number of links: <xsl:value-of select="./url-validation-section/totNumOfLinks"/></p>
 		<p>Average number of links: <xsl:value-of select="./url-validation-section/avgNumOfLinks"/></p>
 		<p>Total number of unique links: <xsl:value-of select="./url-validation-section/totNumOfUniqueLinks"/></p>
+		<p>Total number of checked links: <xsl:value-of select="./url-validation-section/totNumOfCheckedLinks"/></p>
 		<p>Average number of unique links: <xsl:value-of select="./url-validation-section/avgNumOfUniqueLinks"/></p>
 		<p>Total number of resourceProxy links: <xsl:value-of select="./url-validation-section/totNumOfResProxiesLinks"/></p>
 		<p>Average number of resourceProxy links: <xsl:value-of select="./url-validation-section/avgNumOfResProxiesLinks"/></p>
@@ -146,10 +147,11 @@
 					<th scope="col">request-duration</th>
 					<th scope="col">timestamp</th>
 					<th scope="col">method</th>
+					<th scope="col">redirect-count</th>
 				</tr>
 			</thead>
 			<tbody>
-				<xsl:for-each select="./single-url-report/url">
+				<xsl:for-each select="./single-url-report/url[position() &lt; 51]">
 					<tr>
 						<td><xsl:copy-of select="."/></td>
 						<td><xsl:value-of select="./@message" /></td>
@@ -159,8 +161,14 @@
 						<td><xsl:value-of select="./@request-duration" /></td>
 						<td><xsl:value-of select="./@timestamp" /></td>
 						<td><xsl:value-of select="./@method" /></td>
+						<td><xsl:value-of select="./@redirectCount" /></td>
 					</tr>
 				</xsl:for-each>
+				<xsl:if test="./single-url-report/url[51]">
+					<tr>
+						<td colspan="9">please download Report for complete list of url checking results</td>
+					</tr>
+				</xsl:if>
 			</tbody>
 		</table>
 
