@@ -37,11 +37,17 @@ public class URLValidator extends CMDSubprocessor {
     private static final MongoClient _mongoClient;
     
     static { //since MongoClient is already a connection pool only one instance should exist in the application
-        _logger.info("Connecting to database...");
-        if (Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
-            _mongoClient = MongoClients.create();
-        } else {
-            _mongoClient = MongoClients.create(Configuration.DATABASE_URI);
+        if(Configuration.DATABASE) {
+            _logger.info("Connecting to database...");
+            if (Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
+                _mongoClient = MongoClients.create();
+            } else {
+                _mongoClient = MongoClients.create(Configuration.DATABASE_URI);
+            }
+        }
+        else {
+            _mongoClient = null;
+            _logger.info("no database connection established since Configuration.DATABASE=false");
         }
     }
 

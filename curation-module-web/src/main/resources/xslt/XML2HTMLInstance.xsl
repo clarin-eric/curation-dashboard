@@ -22,6 +22,7 @@
 			</xsl:choose>
 		</p>
 		<p>profileID: <a href="#!ResultView/profile/id/{$profileID}"><xsl:copy-of select="$profileID"/></a></p>
+		<p>status: <xsl:value-of select="./profile-section/status"/></p>
 		<p>file size: <xsl:value-of select="./file-section/size"/> B</p>
 		<p>timestamp: <xsl:value-of select="./@timeStamp"/></p>
 		<hr/>
