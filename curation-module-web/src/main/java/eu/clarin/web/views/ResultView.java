@@ -44,7 +44,6 @@ public class ResultView extends Panel implements View {
     Label label;
     StreamResource xmlReport;
 
-
     XSLTTransformer transformer = new XSLTTransformer();
 
     public ResultView() {
@@ -96,12 +95,15 @@ public class ResultView extends Panel implements View {
 
         switch (curationType) {
             case "instance":
+                ((MainUI) getUI()).setCustomMenu(sideMenu);
                 curate(CurationEntityType.INSTANCE, sourceType, value);
                 break;
             case "profile":
+                ((MainUI) getUI()).setCustomMenu(sideMenu);
                 curate(CurationEntityType.PROFILE, sourceType, value);
                 break;
             case "collection":
+                ((MainUI) getUI()).setCustomMenu(sideMenu);
                 curate(CurationEntityType.COLLECTION, sourceType, value);
                 break;
             case "statistics":
@@ -109,7 +111,7 @@ public class ResultView extends Panel implements View {
                 break;
         }
 
-        ((MainUI) getUI()).setCustomMenu(sideMenu);
+
     }
 
 
@@ -201,7 +203,7 @@ public class ResultView extends Panel implements View {
 
                     LinkCheckerStatisticsHelper helper = new LinkCheckerStatisticsHelper();
 
-                    String resultHTML = helper.createURLTable(collectionName,status);
+                    String resultHTML = helper.createURLTable(collectionName, status);
                     label.setValue(resultHTML);
 
                     break;
