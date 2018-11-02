@@ -153,7 +153,7 @@ public class LinkCheckerStatisticsHelper {
             cursor = linksChecked.find(and(eq("status", status), eq("collection", collectionName))).limit(100).iterator();
         }
 
-        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content-Type", "Byte-Size", "Request Duration", "Timestamp", "Method", "Redirect Count");
+        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content-Type", "Byte-Size", "Request Duration(ms)", "Timestamp", "Method", "Redirect Count");
 
         sb.append("<table>");
         sb.append("<thead>");

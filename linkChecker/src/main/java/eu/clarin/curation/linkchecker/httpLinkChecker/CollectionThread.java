@@ -1,6 +1,7 @@
 package eu.clarin.curation.linkchecker.httpLinkChecker;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 
@@ -26,12 +27,14 @@ public class CollectionThread extends Thread {
 
     private MongoCollection<Document> linksChecked;
     private MongoCollection<Document> linksToBeChecked;
+    private MongoCollection<Document> linksCheckedHistory;
     private long CRAWLDELAY;
 
-    public CollectionThread(String name, MongoCollection<Document> linksToBeChecked, MongoCollection<Document> linksChecked, long CRAWLDELAY) {
+    public CollectionThread(String name, MongoCollection<Document> linksToBeChecked, MongoCollection<Document> linksChecked, MongoCollection<Document> linksCheckedHistory, long CRAWLDELAY) {
         super(name);
         this.linksToBeChecked = linksToBeChecked;
         this.linksChecked = linksChecked;
+        this.linksCheckedHistory = linksCheckedHistory;
         this.CRAWLDELAY = CRAWLDELAY;
     }
 
@@ -80,6 +83,13 @@ public class CollectionThread extends Thread {
 
             long startTime = System.currentTimeMillis();
 
+            //save it to the history
+            URLElement oldURLElement = new URLElement(linksChecked.find(eq("url", url)).first());
+            if(oldURLElement.getUrl()!=null){
+                linksCheckedHistory.insertOne(oldURLElement.getMongoDocument());
+            }
+
+
             //replace if the url is in linksChecked already
             //if not add new
             FindOneAndReplaceOptions findOneAndReplaceOptions = new FindOneAndReplaceOptions();
@@ -95,7 +105,8 @@ public class CollectionThread extends Thread {
 
             //I measure the time it takes to handle the mongodb operations.
             //If it takes longer than the crawldelay, we go to the next url.
-            //If not, then we wait CRAWLDELAY-estimatedTime, so that we don't lose
+            //If not, then we wait CRAWLDELAY-estimatedTime.
+            //This is done, so that we don't lose
             //extra time with database operations.
             if (estimatedTime < CRAWLDELAY) {
                 try {

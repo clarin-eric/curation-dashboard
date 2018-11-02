@@ -325,10 +325,10 @@ public class CollectionReport implements Report<CollectionReport> {
         facetReport.facet.forEach(facet -> facet.coverage = (double) facet.cnt / fileReport.numOfFiles);
         facetReport.coverage = facetReport.facet.stream().mapToDouble(f -> f.cnt != 0 ? 1.0 : 0).sum() / facetReport.facet.size();
 
-        avgScore = score / fileReport.numOfFiles;
+        avgScore = fileReport.numOfFiles == 0 ? 0.0 : score / fileReport.numOfFiles;
         maxScore = fileReport.numOfFiles * maxPossibleScoreInstance;
 
-        scorePercentage = score / maxScore;
+        scorePercentage = maxScore == 0.0 ? 0.0 : score / maxScore;
 
     }
 

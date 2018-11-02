@@ -56,6 +56,9 @@ public class Main {
         //get linksChecked
         MongoCollection<Document> linksChecked = database.getCollection("linksChecked");
 
+        //get linksCheckedHistory
+        MongoCollection<Document> linksCheckedHistory = database.getCollection("linksCheckedHistory");
+
         //Ensure that "url" is a unique index
         IndexOptions indexOptions = new IndexOptions().unique(true);
         linksChecked.createIndex(new Document("url", 1), indexOptions);
@@ -75,7 +78,7 @@ public class Main {
 
                     CollectionThread t = getCollectionThreadByName(collection);
                     if (t == null) {
-                        t = new CollectionThread(collection, linksToBeChecked, linksChecked, Configuration.CRAWLDELAY);
+                        t = new CollectionThread(collection, linksToBeChecked, linksChecked, linksCheckedHistory, Configuration.CRAWLDELAY);
                         t.urlQueue.add(url);
 
                         t.start();
