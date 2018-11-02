@@ -77,15 +77,17 @@ public class CollectionThread extends Thread {
                 _logger.error("There is an error with the URL: " + url + " . It is not being checked.");
 
                 urlElement = new URLElement(url, null, e.getLocalizedMessage(), 0,
-                        null, "0", 0, System.currentTimeMillis(), collection, 0);
+                        null, "0", 0, System.currentTimeMillis(), collection, 0, null);
 
             }
 
             long startTime = System.currentTimeMillis();
 
             //save it to the history
-            URLElement oldURLElement = new URLElement(linksChecked.find(eq("url", url)).first());
-            if(oldURLElement.getUrl()!=null){
+
+            Document oldElementDoc = linksChecked.find(eq("url", url)).first();
+            if (oldElementDoc != null) {
+                URLElement oldURLElement = new URLElement(oldElementDoc);
                 linksCheckedHistory.insertOne(oldURLElement.getMongoDocument());
             }
 

@@ -64,7 +64,7 @@ public class HTTPLinkChecker {
         if(!url.startsWith("http")){
             url="http://"+url;
         }
-        
+
         _logger.trace("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
         if (url == null) {
             throw new IOException("The requested url is null.");

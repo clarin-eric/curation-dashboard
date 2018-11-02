@@ -5,16 +5,18 @@ import org.bson.Document;
 public class URLElementToBeChecked {
 
     private String url;
-
+    private String record;
     private String collection;
 
-    public URLElementToBeChecked(Document document){
+    public URLElementToBeChecked(Document document) {
         this.url = document.getString("url");
+        this.record = document.getString("record");
         this.collection = document.getString("collection");
     }
 
-    public URLElementToBeChecked(String url, String collection) {
+    public URLElementToBeChecked(String url, String record, String collection) {
         this.url = url;
+        this.record = record;
         this.collection = collection;
     }
 
@@ -36,9 +38,17 @@ public class URLElementToBeChecked {
 
     public Document getMongoDocument() {
         Document document = new Document("url", url)
+                .append("record",record)
                 .append("collection", collection);
 
         return document;
     }
 
+    public String getRecord() {
+        return record;
+    }
+
+    public void setRecord(String record) {
+        this.record = record;
+    }
 }

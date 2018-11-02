@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class Configuration {
@@ -19,6 +21,7 @@ public class Configuration {
     public static int REDIRECT_FOLLOW_LIMIT;
     public static String USERAGENT;
     public static long CRAWLDELAY;
+    public static Map<String, Long> CRAWLDELAYMAP = new HashMap<>();
 
 
     public static void loadConfigVariables(String configPath) {
@@ -35,6 +38,13 @@ public class Configuration {
         DATABASE_URI = properties.getProperty("DATABASE_URI");
         USERAGENT = properties.getProperty("USERAGENT");
         CRAWLDELAY = Long.parseLong(properties.getProperty("CRAWLDELAY"));
+
+        String crawlDelayList = properties.getProperty("CRAWLDELAYLIST");
+        for(String crawlDelayEntry:crawlDelayList.split(",")){
+            String collection = crawlDelayEntry.split("=")[0];
+            long delay = Long.parseLong(crawlDelayEntry.split("=")[1]);
+            CRAWLDELAYMAP.put(collection,delay);
+        }
 
 
     }

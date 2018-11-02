@@ -44,8 +44,8 @@ public class URLValidator extends CMDSubprocessor {
             } else {
                 mongoClient = MongoClients.create(Configuration.DATABASE_URI);
             }
-        }else{
-            mongoClient =null;
+        } else {
+            mongoClient = null;
         }
     }
 
@@ -97,68 +97,71 @@ public class URLValidator extends CMDSubprocessor {
 
                         addMessageForStatusCode(urlElement.getStatus(), numOfBrokenLinks, url);
 
-                        CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(urlElement);
-                        report.addURLElement(urlElementReport);
+//                        CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(urlElement);
+//                        report.addURLElement(urlElementReport);
                         numOfCheckedLinks.incrementAndGet();
 
                     } else {
 
                         String collection = parentName;
+                        String record = report.getName();
 
                         if (collection == null) {
-                            collection = report.getName();
+                            collection = record;
                         }
-                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, collection);
+                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, record, collection);
 
                         try {
 
                             linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
                         } catch (MongoException e) {
                             //duplicate key error
-                            //the url is already in the database, do nothing
+                            //the url is already in the linksToBeChecked, do nothing
                         }
 
 
                     }
                 });
 
-            } else {
-                HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
-
-                links.stream().forEach(url -> {
-
-                    try {// check if URL is broken
-                        _logger.info("Checking url: " + url);
-
-                        URLElement urlElement = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
-
-                        addMessageForStatusCode(urlElement.getStatus(), numOfBrokenLinks, url);
-
-                        CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(urlElement);
-                        report.addURLElement(urlElementReport);
-
-
-                    } catch (IOException e) {
-                        CMDInstanceReport.URLElement urlElement = new CMDInstanceReport.URLElement();
-                        urlElement.message = e.getLocalizedMessage();
-                        urlElement.url = url;
-                        urlElement.status = 0;
-                        urlElement.contentType = null;
-                        urlElement.byteSize = "0";
-                        urlElement.timestamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
-                        urlElement.duration = "0 ms";
-                        urlElement.redirectCount = 0;
-                        report.addURLElement(urlElement);
-
-                        numOfBrokenLinks.incrementAndGet();
-                        addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + e.toString());
-                    }
-                    numOfCheckedLinks.incrementAndGet();
-                });
-
             }
+//            else {
+//                HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
+//
+//                links.stream().forEach(url -> {
+//
+//                    try {// check if URL is broken
+//                        _logger.info("Checking url: " + url);
+//
+//                        URLElement urlElement = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
+//
+//                        addMessageForStatusCode(urlElement.getStatus(), numOfBrokenLinks, url);
+//
+//                        CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(urlElement);
+//                        report.addURLElement(urlElementReport);
+//
+//
+//                    } catch (IOException e) {
+//                        CMDInstanceReport.URLElement urlElement = new CMDInstanceReport.URLElement();
+//                        urlElement.message = e.getLocalizedMessage();
+//                        urlElement.url = url;
+//                        urlElement.status = 0;
+//                        urlElement.contentType = null;
+//                        urlElement.byteSize = "0";
+//                        urlElement.timestamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
+//                        urlElement.duration = "0 ms";
+//                        urlElement.redirectCount = 0;
+//                        report.addURLElement(urlElement);
+//
+//                        numOfBrokenLinks.incrementAndGet();
+//                        addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + e.toString());
+//                    }
+//                    numOfCheckedLinks.incrementAndGet();
+//                });
+//
+//            }
             report.urlReport = createURLReport(numOfLinks, numOfBrokenLinks.get(), numOfUniqueLinks, numOfCheckedLinks.get());
-        } else {
+        }
+        else {
             report.urlReport = createURLReport(numOfLinks, 0, numOfUniqueLinks, 0);
             addMessage(Severity.INFO, "Link validation is disabled");
         }

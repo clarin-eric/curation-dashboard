@@ -1,4 +1,5 @@
 package eu.clarin.curation.linkchecker;
+
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.IndexOptions;
@@ -27,8 +28,8 @@ public class Main {
     private final static Logger _logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws ParseException {
-        
-     // create Options object
+
+        // create Options object
         Options options = new Options();
 
         // add t option
@@ -36,9 +37,9 @@ public class Main {
                 .required(true)
                 .hasArg(true)
                 .build());
-        
+
         CommandLineParser parser = new DefaultParser();
-        CommandLine cmd = parser.parse( options, args);
+        CommandLine cmd = parser.parse(options, args);
 
         if (!cmd.hasOption("config")) {
             _logger.info("Usage: Please provide the config file path as a parameter.");
@@ -75,10 +76,18 @@ public class Main {
                     String url = urlElementToBeChecked.getUrl();
 //                    _logger.info("URL to be checked: " + url + ", from collection: " + collection);
 
-
                     CollectionThread t = getCollectionThreadByName(collection);
                     if (t == null) {
-                        t = new CollectionThread(collection, linksToBeChecked, linksChecked, linksCheckedHistory, Configuration.CRAWLDELAY);
+
+                        //handle specific crawl delay if any
+                        long crawlDelay;
+                        if (Configuration.CRAWLDELAYMAP.containsKey(collection)) {
+                            crawlDelay = Configuration.CRAWLDELAYMAP.get(collection);
+                        } else {
+                            crawlDelay = Configuration.CRAWLDELAY;
+                        }
+
+                        t = new CollectionThread(collection, linksToBeChecked, linksChecked, linksCheckedHistory, crawlDelay);
                         t.urlQueue.add(url);
 
                         t.start();
@@ -148,7 +157,7 @@ public class Main {
                         String url = urlElement.getUrl();
                         _logger.info("Adding " + url + " to linksToBeChecked.");
 
-                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, urlElement.getCollection());
+                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, urlElement.getRecord(), urlElement.getCollection());
                         try {
                             linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
                         } catch (MongoException e) {
