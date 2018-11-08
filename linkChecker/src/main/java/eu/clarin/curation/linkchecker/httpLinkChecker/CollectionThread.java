@@ -71,7 +71,11 @@ public class CollectionThread extends Thread {
 
                 urlElement = httpLinkChecker.checkLink(url, 0, 0, url);
                 urlElement.setCollection(collection);
+                MongoCursor<Document> cursor = linksToBeChecked.find(Filters.eq("url",url)).iterator();
 
+                if (cursor.hasNext()) {
+                    urlElement.setRecord(cursor.next().get("record").toString());
+                }
 
             } catch (IOException | IllegalArgumentException e) {
                 _logger.error("There is an error with the URL: " + url + " . It is not being checked.");

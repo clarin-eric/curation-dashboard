@@ -11,10 +11,12 @@ import javax.xml.bind.annotation.*;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Sorts.ascending;
@@ -273,11 +275,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
         xmlPopulatedReport.avgRateOfPopulatedElements = xmlPopulatedReport.avgNumOfXMLSimpleElements == 0 ? 0 : (xmlPopulatedReport.avgNumOfXMLSimpleElements - xmlPopulatedReport.avgXMLEmptyElement) / xmlPopulatedReport.avgNumOfXMLSimpleElements;
 
-        // URL
-        urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
-        urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
-        urlReport.avgNumOfResProxiesLinks = (double) urlReport.totNumOfResProxiesLinks / fileReport.numOfFiles;
-        urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
+
 
         //statistics
 
@@ -311,6 +309,23 @@ public class CollectionReport implements Report<CollectionReport> {
                 statistics.count = doc.getInteger("count");
                 urlReport.status.add(statistics);
             }
+
+            Bson checkedLinksFilter = Filters.eq("collection", getName());
+            long numOfCheckedLinks = linksChecked.countDocuments(checkedLinksFilter);
+
+            Bson brokenLinksFilter = Filters.and(Filters.eq("collection", getName()), Filters.and(Filters.not(Filters.eq("status", 200)), Filters.not(Filters.eq("status", 302))));
+            long numOfBrokenLinks = linksChecked.countDocuments(brokenLinksFilter);
+
+            urlReport.totNumOfBrokenLinks = (int)numOfBrokenLinks;
+            urlReport.totNumOfCheckedLinks = (int)(numOfCheckedLinks);
+
+            urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
+            urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
+            urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
+
+            //todo avgnumofresproxies is not calculated anywhere, do it by calculating from mime type from database
+            urlReport.avgNumOfResProxiesLinks = (double) urlReport.totNumOfResProxiesLinks / fileReport.numOfFiles;
+
 
         }
 

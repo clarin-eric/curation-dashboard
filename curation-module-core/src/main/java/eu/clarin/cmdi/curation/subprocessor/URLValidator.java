@@ -35,6 +35,8 @@ public class URLValidator extends CMDSubprocessor {
     private static final Logger _logger = LoggerFactory.getLogger(URLValidator.class);
 
     private static final MongoClient mongoClient;
+    private static MongoCollection<Document> linksToBeChecked;
+    private static MongoCollection<Document> linksChecked;
 
     static { //since MongoClient is already a connection pool only one instance should exist in the application
         if (Configuration.DATABASE) {
@@ -47,6 +49,15 @@ public class URLValidator extends CMDSubprocessor {
         } else {
             mongoClient = null;
         }
+
+        MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
+        _logger.info("Connected to database.");
+
+        //get links from linksToBeChecked
+        linksToBeChecked = database.getCollection("linksToBeChecked");
+
+        //get linksChecked
+        linksChecked = database.getCollection("linksChecked");
     }
 
     @Override
@@ -64,25 +75,13 @@ public class URLValidator extends CMDSubprocessor {
                 .map(InstanceNode::getValue)
                 .filter(url -> url.startsWith("http"))
                 .collect(Collectors.toList());
-        int numOfLinks = links.size();
+        long numOfLinks = links.size();
         links = links.stream().distinct().collect(Collectors.toList());
-        int numOfUniqueLinks = links.size();
+        long numOfUniqueLinks = links.size();
 
         // links are unique
         if (Configuration.HTTP_VALIDATION) {
-            AtomicInteger numOfCheckedLinks = new AtomicInteger(0);
-            AtomicInteger numOfBrokenLinks = new AtomicInteger(0);
             if (Configuration.DATABASE && Configuration.COLLECTION_MODE) {
-
-                MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
-                _logger.info("Connected to database.");
-
-
-                //get links from linksToBeChecked
-                MongoCollection<Document> linksToBeChecked = database.getCollection("linksToBeChecked");
-
-                //get linksChecked
-                MongoCollection<Document> linksChecked = database.getCollection("linksChecked");
 
                 links.stream().forEach(url -> {
 
@@ -95,21 +94,21 @@ public class URLValidator extends CMDSubprocessor {
                     if (cursor.hasNext()) {
                         URLElement urlElement = new URLElement(cursor.next());
 
-                        addMessageForStatusCode(urlElement.getStatus(), numOfBrokenLinks, url);
+                        addMessageForStatusCode(urlElement.getStatus(), url);
 
 //                        CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(urlElement);
 //                        report.addURLElement(urlElementReport);
-                        numOfCheckedLinks.incrementAndGet();
 
                     } else {
 
-                        String collection = parentName;
-                        String record = report.getName();
+                        String finalCollection = parentName;
+                        String finalRecord = report.getName();
 
-                        if (collection == null) {
-                            collection = record;
+                        if (finalCollection == null) {
+                            finalCollection = finalRecord;
                         }
-                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, record, collection);
+
+                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, finalRecord, finalCollection);
 
                         try {
 
@@ -123,6 +122,8 @@ public class URLValidator extends CMDSubprocessor {
                     }
                 });
 
+                report.urlReport = createURLReport(numOfLinks, numOfUniqueLinks, report.getName());
+
             } else {
                 HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
 
@@ -133,7 +134,7 @@ public class URLValidator extends CMDSubprocessor {
 
                         URLElement urlElement = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
 
-                        addMessageForStatusCode(urlElement.getStatus(), numOfBrokenLinks, url);
+                        addMessageForStatusCode(urlElement.getStatus(), url);
 
                         CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(urlElement);
                         report.addURLElement(urlElementReport);
@@ -151,29 +152,28 @@ public class URLValidator extends CMDSubprocessor {
                         urlElement.redirectCount = 0;
                         report.addURLElement(urlElement);
 
-                        numOfBrokenLinks.incrementAndGet();
+
                         addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + e.toString());
                     }
-                    numOfCheckedLinks.incrementAndGet();
+
                 });
+                report.urlReport = createURLReport(numOfLinks, numOfUniqueLinks, report.getName());
 
             }
-            report.urlReport = createURLReport(numOfLinks, numOfBrokenLinks.get(), numOfUniqueLinks, numOfCheckedLinks.get());
         } else {
-            report.urlReport = createURLReport(numOfLinks, 0, numOfUniqueLinks, 0);
+            report.urlReport = createURLReport(numOfLinks, numOfUniqueLinks, report.getName());
             addMessage(Severity.INFO, "Link validation is disabled");
         }
 
     }
 
-    private void addMessageForStatusCode(int responseCode, AtomicInteger numOfBrokenLinks, String url) {
+    private void addMessageForStatusCode(int responseCode, String url) {
 
         if (responseCode == 200 || responseCode == 302) {
         } // OK
         else if (responseCode < 400) {// 2XX and 3XX, redirections, empty content
             addMessage(Severity.WARNING, "URL: " + url + "     STATUS:" + responseCode);
         } else {// 4XX and 5XX, client/server errors
-            numOfBrokenLinks.incrementAndGet();
             addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + responseCode);
         }
     }
@@ -187,15 +187,19 @@ public class URLValidator extends CMDSubprocessor {
     }
 
 
-    private URLReport createURLReport(int numOfLinks, int numOfBrokenLinks, int numOfUniqueLinks, int numOfCheckedLinks) {
+    private URLReport createURLReport(long numOfLinks, long numOfUniqueLinks, String name) {
         URLReport report = new URLReport();
         report.numOfLinks = numOfLinks;
-        report.numOfBrokenLinks = numOfBrokenLinks;
         report.numOfUniqueLinks = numOfUniqueLinks;
-        report.numOfCheckedLinks = numOfCheckedLinks;
+
         if (Configuration.HTTP_VALIDATION) {
-//            report.percOfValidLinks = (numOfUniqueLinks - numOfBrokenLinks) / (double) numOfUniqueLinks;
-            //replace unique links with checked links so that the math only covers the checked links and doesn't display wrong results
+
+            Bson checkedLinksFilter = Filters.eq("record", name);
+            long numOfCheckedLinks = linksChecked.countDocuments(checkedLinksFilter);
+
+            Bson brokenLinksFilter = Filters.and(Filters.eq("record", name), Filters.and(Filters.not(Filters.eq("status", 200)), Filters.not(Filters.eq("status", 302))));
+            long numOfBrokenLinks = linksChecked.countDocuments(brokenLinksFilter);
+
             report.percOfValidLinks = numOfCheckedLinks == 0 ? 0 : (numOfCheckedLinks - numOfBrokenLinks) / (double) numOfCheckedLinks;
         }
         return report;

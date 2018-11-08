@@ -301,10 +301,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class URLReport {
-        public int numOfLinks;
-        public int numOfUniqueLinks;
-        public int numOfCheckedLinks;
-        public int numOfBrokenLinks;
+        public long numOfLinks;
+        public long numOfUniqueLinks;
+        public long numOfCheckedLinks;
+        public long numOfBrokenLinks;
         public Double percOfValidLinks;
 
         public URLReport() {

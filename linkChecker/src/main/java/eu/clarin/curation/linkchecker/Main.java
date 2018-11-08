@@ -147,7 +147,7 @@ public class Main {
                 _logger.info("All threads are finished.");
                 _logger.info("Checked all links.");
 
-                if (linksToBeChecked.count() == 0) {
+                if (linksToBeChecked.countDocuments() == 0) {
                     _logger.info("Copying all links back to linksToBeChecked from linksChecked.");
                     cursor = linksChecked.find().iterator();
 
