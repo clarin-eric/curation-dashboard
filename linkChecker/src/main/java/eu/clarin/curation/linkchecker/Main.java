@@ -2,7 +2,7 @@ package eu.clarin.curation.linkchecker;
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.Indexes;
+
 
 import eu.clarin.curation.linkchecker.helpers.Configuration;
 import eu.clarin.curation.linkchecker.httpLinkChecker.CollectionThread;
@@ -13,14 +13,13 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.CountDownLatch;
+
 
 public class Main {
 
@@ -42,7 +41,7 @@ public class Main {
 
         if (!cmd.hasOption("config")) {
             logger.info("Usage: Please provide the config file path as a parameter.");
-            System.exit(1);
+            //System.exit(1);
         }
 
         Configuration.loadConfigVariables(cmd.getOptionValue("config"));

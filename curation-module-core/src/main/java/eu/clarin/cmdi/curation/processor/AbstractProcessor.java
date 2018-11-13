@@ -41,7 +41,7 @@ public abstract class AbstractProcessor<R extends Report<?>> {
                     step.process(entity, report);
                 }
 
-                logger.info("processed Record: " + entity.getPath() + ", step: " + step.getClass().getSimpleName());
+                logger.info("processed Record: " + entity.toString() + ", step: " + step.getClass().getSimpleName());
                 if (step instanceof InstanceXMLValidator) {
                     report.addSegmentScore(((InstanceXMLValidator) step).calculateValidityScore());
                 }

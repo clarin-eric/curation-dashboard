@@ -21,6 +21,7 @@ import eu.clarin.cmdi.curation.report.CMDInstanceReport.FileReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.vlo_extensions.CMDIDataImplFactory;
+import eu.clarin.cmdi.curation.vlo_extensions.FacetMappingCacheFactory;
 import eu.clarin.cmdi.vlo.LanguageCodeUtils;
 import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
 import eu.clarin.cmdi.vlo.config.FieldNameService;
@@ -56,7 +57,7 @@ public class FileSizeValidator extends CMDSubprocessor {
             
             final VLOMarshaller marshaller = new VLOMarshaller();
             
-            final FacetMappingFactory facetMappingFactory = new FacetMappingFactory(vloConfig, marshaller);
+            final FacetMappingFactory facetMappingFactory = FacetMappingCacheFactory.getInstance();
             
             return  new CMDIParserVTDXML<Map<String,List<ValueSet>>>(
                     MetadataImporter.registerPostProcessors(vloConfig, fieldNameService, languageCodeUtils),
@@ -92,16 +93,20 @@ public class FileSizeValidator extends CMDSubprocessor {
 
 		InstanceParser transformer = new InstanceParser();
 		try {
+		    _logger.debug("parsing instance...");
 			entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));
+			_logger.debug("...done");
 		} catch (TransformerException | IOException e) {
 			throw new Exception("Unable to parse CMDI instance " + entity.getPath().toString(), e);
 		}
 		
 		
 
-
+		_logger.debug("creating CMDIData object...");
 
         CMDIData<Map<String,List<ValueSet>>> cmdiData = _processor.process(entity.getPath().toFile(), new ResourceStructureGraph());
+        
+        _logger.debug("...done");
         
         entity.setCMDIData(cmdiData);
 

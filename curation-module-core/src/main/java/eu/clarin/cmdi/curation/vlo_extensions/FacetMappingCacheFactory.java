@@ -18,7 +18,7 @@ import com.ximpleware.NavException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
-import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.Pattern;
 import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
@@ -32,9 +32,8 @@ public class FacetMappingCacheFactory extends FacetMappingFactory{
     
     public static FacetMappingCacheFactory getInstance() throws IOException {
         if(_facetMappingCacheFactory == null) {
-            VloConfig vloConfig = new DefaultVloConfigFactory().newConfig();
             VLOMarshaller marshaller = new VLOMarshaller();
-            _facetMappingCacheFactory = new FacetMappingCacheFactory(vloConfig,marshaller);
+            _facetMappingCacheFactory = new FacetMappingCacheFactory(Configuration.vloConfig ,marshaller);
         }
         return _facetMappingCacheFactory;
     }

@@ -59,7 +59,8 @@
 
 		<h2>facets-section</h2>
 
-		<font color="#dbd839">&#9873;</font> - derived facet
+		<font color="#dbd839">&#9873;</font> - derived facet <br />
+		<font color="#FF4000">&#9873;</font> - value mapping
 
 		<br/>
 
@@ -103,6 +104,9 @@
 								</th>
 							</xsl:if>
 							<xsl:choose>
+				  				<xsl:when test="@usesValueMapping">
+				  					<th><font color="#FF4000"><xsl:value-of select="@name"/></font></th>
+				  				</xsl:when>
 				  				<xsl:when test="@isDerived">
 				  					<th><font color="#dbd839"><xsl:value-of select="@name"/></font></th>
 				  				</xsl:when>

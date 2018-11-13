@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.subprocessor.FileSizeValidator;
 
@@ -24,6 +25,8 @@ public class FileSizeValidatorTest {
     public void load() {
         Path path;
         try {
+            Configuration.initDefault();
+            
             path = Paths.get(getClass().getClassLoader().getResource("cmdi/cbmetadata_00024_cmdi.xml").toURI());
 
         

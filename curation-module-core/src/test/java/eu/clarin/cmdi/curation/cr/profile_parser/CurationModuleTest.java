@@ -28,9 +28,8 @@ public class CurationModuleTest {
         try {
             
             Configuration.initDefault();
-;
         
-            path = Paths.get(getClass().getClassLoader().getResource("cmdi/cbmetadata_00024_cmdi.xml").toURI());
+            path = Paths.get(getClass().getClassLoader().getResource("cmdi/oai_dp_11022000000002417Edp117.xml").toURI());
             //path = Paths.get(getClass().getClassLoader().getResource("cmdi/http_hdl_handle_net_11022_0000_0000_001B_2.xml").toURI());
 
             CurationModule curation = new CurationModule();

@@ -55,6 +55,8 @@ public class FacetReport {
 		
     	@XmlAttribute public Boolean isDerived;
     	
+    	@XmlAttribute public Boolean usesValueMapping;
+    	
     	@XmlAttribute public String normalisedValue;    
 		
     }
