@@ -42,7 +42,7 @@ public class Main {
         CommandLine cmd = parser.parse(options, args);
 
         if (!cmd.hasOption("config")) {
-            _logger.info("Usage: Please provide the config file path as a parameter.");
+            _logger.error("Usage: Please provide the config file path as a parameter.");
             System.exit(1);
         }
 
@@ -64,6 +64,33 @@ public class Main {
         IndexOptions indexOptions = new IndexOptions().unique(true);
         linksChecked.createIndex(new Document("url", 1), indexOptions);
         linksToBeChecked.createIndex(new Document("url", 1), indexOptions);
+
+        //Create a _logger thread that outputs every 10 seconds the current state of Collection threads...
+        (new Thread() {
+            public void run() {
+
+                while (true) {
+                    //log current state
+                    int i = 0;
+                    for (Thread tr : Thread.getAllStackTraces().keySet()) {
+                        if (tr.getClass().equals(CollectionThread.class)) {
+                            i++;
+                            _logger.info("Collection thread: " + tr.getName() + " is running, with " + ((CollectionThread) tr).urlQueue.size() + " links in its queue." );
+                        }
+
+                    }
+                    _logger.info("Currently, there are " + i + " collection threads running...");
+
+                    synchronized (this) {
+                        try {
+                            wait(10000);
+                        } catch (InterruptedException e) {
+                            //dont do anything, this thread is not that important.
+                        }
+                    }
+                }
+            }
+        }).start();
 
         while (true) {
 
@@ -99,36 +126,8 @@ public class Main {
 
                 }
 
+
                 _logger.info("Added all links to respective threads.");
-
-
-                //Create a _logger thread that outputs every 10 seconds the current state of Collection threads...
-                (new Thread() {
-                    public void run() {
-
-                        final Logger _logger = LoggerFactory.getLogger(Thread.class);
-
-                        while (true) {//todo check why in minerva the logs of this thread are not showing
-                            //todo probably inner class for loggerfactory, change its class to owner or something
-                            //log current state
-                            for (Thread tr : Thread.getAllStackTraces().keySet()) {
-                                if (tr.getClass().equals(CollectionThread.class)) {
-                                    _logger.info("Collection thread: " + tr.getName() + " is running.");
-                                    _logger.info("It has " + ((CollectionThread) tr).urlQueue.size() + " links in its queue.");
-                                }
-                            }
-
-                            synchronized (this) {
-                                try {
-                                    wait(10000);
-                                } catch (InterruptedException e) {
-                                    //dont do anything, this thread is not that important.
-                                }
-                            }
-                        }
-                    }
-                }).start();
-
 
                 _logger.info("Waiting for all threads to finish...");//_logger thread not included
 

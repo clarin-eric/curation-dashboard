@@ -16,6 +16,7 @@ import eu.clarin.curation.linkchecker.urlElements.URLElement;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -46,6 +47,12 @@ public class HTTPLinkChecker {
 
     //this method lets httpclient handle the redirects by itself
     public int checkLinkAndGetResponseCode(String url) throws IOException {
+        //encode url, to remove problems caused by | and similar characters
+        String[] urlArray = url.split("\\?");
+        if(urlArray.length==2){
+            url = urlArray[0]+URLEncoder.encode(urlArray[1],"UTF-8");
+        }
+
         RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
                 .setConnectTimeout(timeout)
                 .setConnectionRequestTimeout(timeout)
@@ -63,6 +70,12 @@ public class HTTPLinkChecker {
     public URLElement checkLink(String url, int redirectFollowLevel, long durationPassed, String originalURL) throws IOException {
         if(!url.startsWith("http")){
             url="http://"+url;
+        }
+
+        //encode url, to remove problems caused by | and similar characters
+        String[] urlArray = url.split("\\?");
+        if(urlArray.length==2){
+            url = urlArray[0]+URLEncoder.encode(urlArray[1],"UTF-8");
         }
 
         _logger.trace("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);

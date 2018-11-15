@@ -38,7 +38,6 @@ public class CollectionThread extends Thread {
         this.CRAWLDELAY = CRAWLDELAY;
     }
 
-
     @Override
     public void run() {
 
@@ -46,15 +45,15 @@ public class CollectionThread extends Thread {
         //i do this because if we don't wait and let the thread run for only one url, i'm afraid the thread
         // will be closed after one url check and it will be necessary to create a new thread for each url, which
         //is not the aim of this multithreading.
-        _logger.info("waiting for url queues to be filled...");
+        _logger.info("Waiting 30 seconds for url queues to be filled for collection "+ getName() +"...");
         synchronized (this) {
             try {
-                wait(5000);
+                wait(30000);
             } catch (InterruptedException e) {
                 _logger.error("Waiting for thread " + getName() + " interrupted");
             }
         }
-        _logger.info("done waiting.");
+        _logger.info("Done waiting.");
 
         //name of the thread is also name of the collection
         String collection = getName();
@@ -69,7 +68,9 @@ public class CollectionThread extends Thread {
 
             try {
 
+
                 urlElement = httpLinkChecker.checkLink(url, 0, 0, url);
+
                 urlElement.setCollection(collection);
                 MongoCursor<Document> cursor = linksToBeChecked.find(Filters.eq("url",url)).iterator();
 
@@ -77,11 +78,22 @@ public class CollectionThread extends Thread {
                     urlElement.setRecord(cursor.next().get("record").toString());
                 }
 
+                //better not to have it in log file
+//                _logger.info("Successfully checked link: "+ url);
+
             } catch (IOException | IllegalArgumentException e) {
-                _logger.error("There is an error with the URL: " + url + " . It is not being checked.");
+                //better not to have it in log file
+//                _logger.error("There is an error with the URL: " + url + " . It is not being checked.");
 
                 urlElement = new URLElement(url, null, e.getLocalizedMessage(), 0,
                         null, "0", 0, System.currentTimeMillis(), collection, 0, null);
+
+                urlElement.setCollection(collection);
+                MongoCursor<Document> cursor = linksToBeChecked.find(Filters.eq("url",url)).iterator();
+
+                if (cursor.hasNext()) {
+                    urlElement.setRecord(cursor.next().get("record").toString());
+                }
 
             }
 

@@ -33,7 +33,7 @@ public class LinkCheckerStatisticsHelper {
 
     private static final MongoClient mongoClient;
     private MongoCollection<Document> linksToBeChecked;
-    MongoCollection<Document> linksChecked;
+    private MongoCollection<Document> linksChecked;
 
     DecimalFormat numberFormatter = new DecimalFormat("###,###.##");
 
@@ -153,7 +153,7 @@ public class LinkCheckerStatisticsHelper {
             cursor = linksChecked.find(and(eq("status", status), eq("collection", collectionName))).limit(100).iterator();
         }
 
-        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content-Type", "Byte-Size", "Request Duration(ms)", "Timestamp", "Method", "Redirect Count");
+        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content-Type", "Byte-Size", "Request Duration(ms)", "Timestamp", "Method", "Redirect Count", "Record");
 
         sb.append("<table>");
         sb.append("<thead>");
@@ -198,6 +198,9 @@ public class LinkCheckerStatisticsHelper {
                 sb.append("</td>");
                 sb.append("<td>");
                 sb.append(String.valueOf(urlElement.getRedirectCount()));
+                sb.append("</td>");
+                sb.append("<td>");
+                sb.append(String.valueOf(urlElement.getRecord()));
                 sb.append("</td>");
 
                 sb.append("</tr>");

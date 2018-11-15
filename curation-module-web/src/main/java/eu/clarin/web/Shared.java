@@ -106,8 +106,13 @@ public class Shared {
 
         String html = helper.createHTML();
 
+        File folder = new File(Configuration.OUTPUT_DIRECTORY.toString()+"/statistics");
+        folder.mkdirs();
+
         try (PrintStream ps = new PrintStream(Files.newOutputStream(Paths.get(Configuration.OUTPUT_DIRECTORY.toString()+"/statistics/linkCheckerStatistics.html")))) {
             ps.println(html);
+
+            _logger.info("linkchecker statistics html file has been created.");
         } catch (IOException e) {
             _logger.error("Problem writing to the statistics.html");
         }
