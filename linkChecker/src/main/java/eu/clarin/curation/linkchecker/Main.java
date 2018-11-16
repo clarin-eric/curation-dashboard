@@ -75,7 +75,7 @@ public class Main {
                     for (Thread tr : Thread.getAllStackTraces().keySet()) {
                         if (tr.getClass().equals(CollectionThread.class)) {
                             i++;
-                            _logger.info("Collection thread: " + tr.getName() + " is running, with " + ((CollectionThread) tr).urlQueue.size() + " links in its queue." );
+                            _logger.info("Collection thread: " + tr.getName() + " is running, with " + ((CollectionThread) tr).urlQueue.size() + " links in its queue.");
                         }
 
                     }
@@ -94,7 +94,9 @@ public class Main {
 
         while (true) {
 
-            MongoCursor<Document> cursor = linksToBeChecked.find().iterator();
+            MongoCursor<Document> cursor = linksToBeChecked.find().noCursorTimeout(true).iterator();
+            _logger.info("LinksToBeChecked document count: " + linksToBeChecked.countDocuments());
+
             try {
                 while (cursor.hasNext()) {
                     URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(cursor.next());
@@ -110,7 +112,9 @@ public class Main {
                         long crawlDelay;
                         if (Configuration.CRAWLDELAYMAP.containsKey(collection)) {
                             crawlDelay = Configuration.CRAWLDELAYMAP.get(collection);
+                            _logger.info("Crawl delay set to: " + crawlDelay + "for collection " + collection);
                         } else {
+                            //should be 0
                             crawlDelay = Configuration.CRAWLDELAY;
                         }
 
@@ -118,14 +122,15 @@ public class Main {
                         t.urlQueue.add(url);
 
                         t.start();
+                        _logger.info("Started collection thread: " + collection);
                     } else {
                         if (!t.urlQueue.contains(url)) {
                             t.urlQueue.add(url);
+                            _logger.info("Added url to collection thread: " + collection);
                         }
                     }
 
                 }
-
 
                 _logger.info("Added all links to respective threads.");
 
