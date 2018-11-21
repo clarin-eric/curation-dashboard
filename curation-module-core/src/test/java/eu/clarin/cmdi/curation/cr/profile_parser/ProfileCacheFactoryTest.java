@@ -3,6 +3,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,17 +22,30 @@ import eu.clarin.cmdi.curation.report.CMDProfileReport;
 
 public class ProfileCacheFactoryTest {
     
-    @Test
-    public void testParsedPublicProfile() {
-        CRService crService = new CRService();
-        
-        ProfileHeader ph = new ProfileHeader();
-        
-        ph.id = "clarin.eu:cr1:p_1361876010587";
-        ph.cmdiVersion = "1.2";
-        
+    @Before
+    public void init(){
         try {
             Configuration.initDefault();
+        }
+        catch (IOException ex) {
+            // TODO Auto-generated catch block
+            ex.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void testParsedPublicProfile() {
+
+        
+        try {
+            
+            
+            CRService crService = new CRService();
+            
+            ProfileHeader ph = new ProfileHeader();
+            
+            ph.id = "clarin.eu:cr1:p_1361876010587";
+            ph.cmdiVersion = "1.2";
             
             ParsedProfile pp = crService.getParsedProfile(ph);
             

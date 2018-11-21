@@ -88,7 +88,7 @@ class ProfileCacheFactory{
 					// if not download it
 					Files.createFile(xsd);
 					logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
-					new Downloader().download(Configuration.vloConfig.getComponentRegistryProfileSchema(header.id), xsd.toFile());
+					new Downloader().download(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(header.id), xsd.toFile());
 				}
 			}
 			else{//non-public profiles are not cached on disk
@@ -106,7 +106,7 @@ class ProfileCacheFactory{
 					// if not download it
 					Files.createFile(xsd);
 					logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
-					new Downloader().download(Configuration.vloConfig.getComponentRegistryProfileSchema(header.id), xsd.toFile());
+					new Downloader().download(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(header.id), xsd.toFile());
 					
 				}
 			}

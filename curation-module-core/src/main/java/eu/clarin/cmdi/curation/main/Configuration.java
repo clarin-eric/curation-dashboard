@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.main;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,10 +16,11 @@ import org.slf4j.LoggerFactory;
 
 import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
 import eu.clarin.cmdi.vlo.config.VloConfig;
+import eu.clarin.cmdi.vlo.config.XmlVloConfigFactory;
 
 public class Configuration {
 
-    private static Logger logger = LoggerFactory.getLogger(Configuration.class);
+    private static Logger _logger = LoggerFactory.getLogger(Configuration.class);
 
     public static String SCORE_NUMERIC_DISPLAY_FORMAT;
     public static String TIMESTAMP_DISPLAY_FORMAT;
@@ -32,7 +34,7 @@ public class Configuration {
     public static int TIMEOUT;
     private static final int TIMEOUTDEFAULT = 5000;//in ms(if config file doesnt have it)
     
-    public static final VloConfig vloConfig = getVloConfig();
+    public static VloConfig VLO_CONFIG;
     public static boolean DATABASE;
     public static String DATABASE_NAME;
     public static String DATABASE_URI;
@@ -43,7 +45,7 @@ public class Configuration {
     public static boolean COLLECTION_MODE = false; //when true values wont be extracted for facet "text", saves a lot of time in collection assessment
 
     public static void init(String file) throws IOException {
-        logger.info("Initializing configuration from {}", file);
+        _logger.info("Initializing configuration from {}", file);
         Properties config = new Properties();
         config.load(new FileInputStream(file));
         readProperties(config);
@@ -51,7 +53,7 @@ public class Configuration {
     }
 
     public static void initDefault() throws IOException {
-        logger.info("Initializing configuration with default config file");
+        _logger.info("Initializing configuration with default config file");
         Properties config = new Properties();
         config.load(Configuration.class.getResourceAsStream("/config.properties"));
         readProperties(config);
@@ -98,6 +100,18 @@ public class Configuration {
             DATABASE_NAME = config.getProperty("DATABASE_NAME");
             DATABASE_URI = config.getProperty("DATABASE_URI");
         }
+        
+        String vloConfigLocation = config.getProperty("VLO_CONFIG_LOCATION");
+        
+        if(vloConfigLocation == null || vloConfigLocation.isEmpty()) {
+            _logger.warn("loading default VloConfig.xml from vlo-commons.jar - PROGRAM BUT WILL PROBALY DELIVER UNATTENDED RESULTS!!!");
+            _logger.warn("make sure to define a valid VLO_CONFIG_LOCATION in the file config.properties");
+            VLO_CONFIG = new DefaultVloConfigFactory().newConfig();
+        }
+        else {
+            _logger.info("loading VloConfig.xml from location {}", vloConfigLocation);
+            VLO_CONFIG = new XmlVloConfigFactory(new File(config.getProperty("VLO_CONFIG_LOCATION")).toURI().toURL()).newConfig();
+        }
 
     }
     
@@ -106,7 +120,7 @@ public class Configuration {
             return new DefaultVloConfigFactory().newConfig();
         }
         catch (IOException ex) {
-            logger.error("can't instantiate default VloConfig");
+            _logger.error("can't instantiate default VloConfig");
             return null;
         }
     }

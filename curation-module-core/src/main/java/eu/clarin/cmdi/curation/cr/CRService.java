@@ -22,7 +22,7 @@ public class CRService implements ICRService {
 	//https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles?registrySpace=published&status=production
 	//https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles?registrySpace=published&status=development
 	
-	public static final String CR_REST = Configuration.vloConfig.getComponentRegistryRESTURL().replaceFirst("http(s)?", "(http|https)").replaceFirst("/1\\..+", "/.+");
+	public static final String CR_REST = Configuration.VLO_CONFIG.getComponentRegistryRESTURL().replaceFirst("http(s)?", "(http|https)").replaceFirst("/1\\..+", "/.+");
 	public static final Pattern CR_REST_PATTERN = Pattern.compile(CR_REST);
 	
 	public static final String PROFILE_PREFIX = "clarin.eu:cr1:";

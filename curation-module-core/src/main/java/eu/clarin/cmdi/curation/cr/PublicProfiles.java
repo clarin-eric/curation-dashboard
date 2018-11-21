@@ -22,7 +22,7 @@ public class PublicProfiles {
 			XMLMarshaller<PublicProfiles> publicProfilesMarshaller = new XMLMarshaller<>(PublicProfiles.class);
 			Collection<ProfileHeader> publicProfiles = publicProfilesMarshaller
 					//.unmarshal(new URL(CRService.CR_REST_1_2_PROFILES).openStream())
-			        .unmarshal(new URL(Configuration.vloConfig.getComponentRegistryRESTURL() + "?registrySpace=published&status=*").openStream())
+			        .unmarshal(new URL(Configuration.VLO_CONFIG.getComponentRegistryRESTURL() + "?registrySpace=published&status=*").openStream())
 					.profileDescription;
 			
 			publicProfiles.forEach(p -> {
@@ -33,7 +33,7 @@ public class PublicProfiles {
 			return publicProfiles;
 			
 		}catch(Exception e){
-			throw new RuntimeException("Unable to read xml from " + Configuration.vloConfig.getComponentRegistryRESTURL() + ", CLARIN Component Registry is unavailable! Please try later", e);
+			throw new RuntimeException("Unable to read xml from " + Configuration.VLO_CONFIG.getComponentRegistryRESTURL() + ", CLARIN Component Registry is unavailable! Please try later", e);
 		}		
 	}
 }

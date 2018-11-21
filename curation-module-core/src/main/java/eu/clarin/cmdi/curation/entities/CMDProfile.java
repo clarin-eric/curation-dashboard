@@ -43,7 +43,7 @@ public class CMDProfile extends CurationEntity {
 	
 	@Override
 	public String toString() {
-		return "Profile: " + (path != null? path.toString() : Configuration.vloConfig.getComponentRegistryProfileSchema(profileId));
+		return "Profile: " + (path != null? path.toString() : Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(profileId));
 	}
 
 }

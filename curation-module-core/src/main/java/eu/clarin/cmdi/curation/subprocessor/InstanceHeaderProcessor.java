@@ -61,7 +61,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 			throw new Exception("Unable to process " + entity + ", both schema and profile are not specified");
 
 		if (missingSchema){
-			schemaLocation = Configuration.vloConfig.getComponentRegistryProfileSchema(mdprofile);
+			schemaLocation = Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(mdprofile);
 			addMessage(Severity.ERROR, "Attribute schemaLocation is missing. " + schemaLocation + " is assumed");
 		}else
 			schemaInCR = crService.isSchemaCRResident(schemaLocation);
@@ -122,7 +122,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 			if(schemaInCR)//schema comes from Component Registry
 				score++;
 			else
-			    addMessage(Severity.INFO, "Schema no from component registry. Using default schema " + Configuration.vloConfig.getComponentRegistryProfileSchema(report.header.id));
+			    addMessage(Severity.INFO, "Schema no from component registry. Using default schema " + Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(report.header.id));
 		}
 		
 		//mdprofile exists and in correct format

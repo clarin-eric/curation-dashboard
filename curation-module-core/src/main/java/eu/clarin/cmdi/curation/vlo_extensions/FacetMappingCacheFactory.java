@@ -33,7 +33,7 @@ public class FacetMappingCacheFactory extends FacetMappingFactory{
     public static FacetMappingCacheFactory getInstance() throws IOException {
         if(_facetMappingCacheFactory == null) {
             VLOMarshaller marshaller = new VLOMarshaller();
-            _facetMappingCacheFactory = new FacetMappingCacheFactory(Configuration.vloConfig ,marshaller);
+            _facetMappingCacheFactory = new FacetMappingCacheFactory(Configuration.VLO_CONFIG ,marshaller);
         }
         return _facetMappingCacheFactory;
     }
