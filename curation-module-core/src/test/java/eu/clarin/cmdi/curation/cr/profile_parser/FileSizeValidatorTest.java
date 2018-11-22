@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.subprocessor.FileSizeValidator;
 
@@ -18,16 +17,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class FileSizeValidatorTest {
+public class FileSizeValidatorTest extends TestBase{
     CMDInstance entity; 
     
     @Before
-    public void load() {
+    public void init() {
+        super.init();
         Path path;
         try {
-            Configuration.initDefault();
             
-            path = Paths.get(getClass().getClassLoader().getResource("cmdi/cbmetadata_00024_cmdi.xml").toURI());
+            path = Paths.get(getClass().getClassLoader().getResource("cmdi/cmdi-1_2.xml").toURI());
 
         
             entity = new CMDInstance(path, Files.size(path));
@@ -58,7 +57,7 @@ public class FileSizeValidatorTest {
     public void testFileSettings() {   
 
             
-            assertTrue(entity.getPath().toString().endsWith("cmdi/cbmetadata_00024_cmdi.xml"));
+            assertTrue(entity.getPath().toString().endsWith("cmdi/cmdi-1_2.xml"));
             assertEquals(9925, entity.getSize());
             
 

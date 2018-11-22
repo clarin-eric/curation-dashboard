@@ -5,11 +5,11 @@ import org.junit.Before;
 */
 import org.junit.Test;
 
-import eu.clarin.cmdi.curation.cr.CRService;
+
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.main.Configuration;
+
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
-import eu.clarin.cmdi.curation.report.Score;
+
 import eu.clarin.cmdi.curation.subprocessor.FileSizeValidator;
 import eu.clarin.cmdi.curation.subprocessor.InstanceHeaderProcessor;
 
@@ -21,17 +21,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class InstanceHeaderProcessorTest {
+public class InstanceHeaderProcessorTest extends TestBase{
     CMDInstance entity; 
     CMDInstanceReport report;
     
     @Before
     public void load() {
+        super.init();
+        
         Path path;
         try {
-            Configuration.initDefault();
             
-            path = Paths.get(getClass().getClassLoader().getResource("cmdi/cbmetadata_00024_cmdi.xml").toURI());
+            path = Paths.get(getClass().getClassLoader().getResource("cmdi/cmdi-1_2.xml").toURI());
 
         
             entity = new CMDInstance(path, Files.size(path));

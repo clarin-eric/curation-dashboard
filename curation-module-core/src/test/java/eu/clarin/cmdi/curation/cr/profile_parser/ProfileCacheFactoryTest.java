@@ -3,11 +3,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
+
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /*
 * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
@@ -17,21 +14,10 @@ import org.junit.*;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.main.Configuration;
-import eu.clarin.cmdi.curation.main.CurationModule;
-import eu.clarin.cmdi.curation.report.CMDProfileReport;
 
-public class ProfileCacheFactoryTest {
-    
-    @Before
-    public void init(){
-        try {
-            Configuration.initDefault();
-        }
-        catch (IOException ex) {
-            // TODO Auto-generated catch block
-            ex.printStackTrace();
-        }
-    }
+
+public class ProfileCacheFactoryTest extends TestBase{
+
     
     @Test
     public void testParsedPublicProfile() {

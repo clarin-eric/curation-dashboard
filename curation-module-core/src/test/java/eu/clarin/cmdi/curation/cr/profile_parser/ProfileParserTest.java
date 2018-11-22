@@ -3,22 +3,19 @@ package eu.clarin.cmdi.curation.cr.profile_parser;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import java.io.IOException;
-
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
-import eu.clarin.cmdi.curation.main.Configuration;
+
 
 /**
  * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
  *
  */
-public class ProfileParserTest {
+public class ProfileParserTest extends TestBase{
        
     
     @Test 
     public void testParseProfile_1_2() throws Exception {
-        Configuration.initDefault();
         
         ProfileHeader header = new ProfileHeader();
         
