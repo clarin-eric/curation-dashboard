@@ -47,11 +47,13 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 		
 		String mdProfile = keyValuesMap.containsKey("curation_mdProfile") && !keyValuesMap.get("curation_mdProfile").isEmpty()?keyValuesMap.get("curation_mdProfile").get(0).getValue():null;
 		
+		String mdCollectionDisplayName = keyValuesMap.containsKey("collection") && !keyValuesMap.get("collection").isEmpty()?keyValuesMap.get("collection").get(0).getValue():null;
+		
 		String mdSelfLink = keyValuesMap.containsKey("_selfLink") && !keyValuesMap.get("_selfLink").isEmpty()?keyValuesMap.get("_selfLink").get(0).getValue():null;
 		
 		missingSchema = (schemaLocation == null);
 		missingMdprofile = (mdProfile == null);		
-		missingMdCollectionDisplayName = keyValuesMap.containsKey("collection") && !keyValuesMap.get("collection").isEmpty();		
+		missingMdCollectionDisplayName = (mdCollectionDisplayName == null);		
 		missingMdSelfLink = (mdSelfLink == null);
 		
 		if (missingSchema && missingMdprofile)
@@ -101,7 +103,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 		report.header = crService.createProfileHeader(entity.getCMDIData().getId(), "1.2", false);
 		report.header.id = profileIdFromSchema;
 		report.header.cmdiVersion = "1.2";
-		report.fileReport.collection = keyValuesMap.get("collection").get(0).getValue();
+		report.fileReport.collection = mdCollectionDisplayName;
 		
 		report.profileScore = crService.getScore(report.header);
 		
