@@ -1,22 +1,26 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
+
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
-import eu.clarin.cmdi.curation.instance_parser.ParsedInstance.InstanceNode;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.URLReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
+import eu.clarin.cmdi.vlo.importer.CMDIData;
+import eu.clarin.cmdi.vlo.importer.Resource;
+import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import eu.clarin.curation.linkchecker.httpLinkChecker.HTTPLinkChecker;
 import eu.clarin.curation.linkchecker.urlElements.URLElement;
 import eu.clarin.curation.linkchecker.urlElements.URLElementToBeChecked;
@@ -57,20 +61,30 @@ public class URLValidator extends CMDSubprocessor {
     }
 
     public void process(CMDInstance entity, CMDInstanceReport report, String parentName) {
-        ParsedInstance parsedInstance = entity.getParsedInstance();
-        Collection<String> links = parsedInstance.getNodes()
-                .stream()
-                .filter(node -> !node.getXpath().equals("/cmd:CMD/@xsi:schemaLocation"))
-                .filter(node -> !node.getXpath().equals("/cmd:CMD/@xmlns:xsi"))
-                .filter(node -> !node.getXpath().equals("/cmd:CMD/@xml:xsi"))
-                .map(InstanceNode::getValue)
-                .filter(url -> url.startsWith("http"))
-                .collect(Collectors.toList());
-        int numOfLinks = links.size();
-        links = links.stream().distinct().collect(Collectors.toList());
-        int numOfUniqueLinks = links.size();
-
-        // links are unique
+        CMDIData<Map<String, List<ValueSet>>> data = entity.getCMDIData();
+        
+        Map<String,Resource> urlMap = new HashMap<String,Resource>();
+        
+        final AtomicInteger numOfLinks = new AtomicInteger(0);  //has to be final for use in lambda expression
+        
+        ArrayList<Resource> resources = new ArrayList<Resource>();
+                resources.addAll(data.getDataResources());
+                resources.addAll(data.getLandingPageResources());
+                resources.addAll(data.getMetadataResources());
+                resources.addAll(data.getSearchPageResources());
+                resources.addAll(data.getSearchResources());
+        
+        resources.stream()
+            .filter(resource -> resource.getResourceName() != null && resource.getResourceName().startsWith("http"))
+            .forEachOrdered(resource -> {
+                urlMap.computeIfAbsent(resource.getResourceName(), key -> resource);
+                numOfLinks.incrementAndGet();
+            });
+        
+        data.getDocument().values().stream()
+            .forEach(valuesList -> valuesList.stream().filter(valueSet -> valueSet.getValue().startsWith("http")).forEach(valueSet -> urlMap.computeIfAbsent(valueSet.getValue(), key -> null))
+                );
+        
         if (Configuration.HTTP_VALIDATION) {
             AtomicInteger numOfCheckedLinks = new AtomicInteger(0);
             AtomicInteger numOfBrokenLinks = new AtomicInteger(0);
@@ -86,7 +100,7 @@ public class URLValidator extends CMDSubprocessor {
                 //get linksChecked
                 MongoCollection<Document> linksChecked = database.getCollection("linksChecked");
 
-                links.stream().forEach(url -> {
+                urlMap.keySet().stream().forEach(url -> {
 
                     _logger.info("Checking database for url: " + url);
 
@@ -126,7 +140,7 @@ public class URLValidator extends CMDSubprocessor {
 
             } else {
 
-                links.stream().forEach(url -> {
+                urlMap.keySet().stream().forEach(url -> {
 
                     try {// check if URL is broken
                         _logger.info("Checking url: " + url);
@@ -158,9 +172,9 @@ public class URLValidator extends CMDSubprocessor {
                 });
 
             }
-            report.urlReport = createURLReport(numOfLinks, numOfBrokenLinks.get(), numOfUniqueLinks, numOfCheckedLinks.get());
+            report.urlReport = createURLReport(numOfLinks.get(), numOfBrokenLinks.get(), urlMap.size(), numOfCheckedLinks.get());
         } else {
-            report.urlReport = createURLReport(numOfLinks, 0, numOfUniqueLinks, 0);
+            report.urlReport = createURLReport(numOfLinks.get(), 0, urlMap.size(), 0);
             addMessage(Severity.INFO, "Link validation is disabled");
         }
 

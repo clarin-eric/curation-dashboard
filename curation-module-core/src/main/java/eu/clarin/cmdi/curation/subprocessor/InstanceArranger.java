@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -29,8 +30,8 @@ import eu.clarin.cmdi.curation.report.Severity;
 /*
 * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
 */
-public class InstanceUpdater extends CMDSubprocessor {
-    private final static Logger _logger = LoggerFactory.getLogger(InstanceUpdater.class);
+public class InstanceArranger extends CMDSubprocessor {
+    private final static Logger _logger = LoggerFactory.getLogger(InstanceArranger.class);
     private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
     
     private static Transformer _transformer = null;
@@ -58,6 +59,16 @@ public class InstanceUpdater extends CMDSubprocessor {
             
             entity.setPath(newPath);
             entity.setSize(Files.size(newPath));
+        }
+        
+        InstanceParser transformer = new InstanceParser();
+        try {
+            _logger.debug("parsing instance...");
+            entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));
+            _logger.debug("...done");
+        } 
+        catch (TransformerException | IOException e) {
+            throw new Exception("Unable to parse CMDI instance " + entity.getPath().toString(), e);
         }
 
     }

@@ -60,6 +60,7 @@ public class CRService implements ICRService {
 		if(header == null){
 			header = new ProfileHeader();
 			//header.schemaLocation = schemaLocation;
+			header.id = profileId;
 			header.cmdiVersion = cmdiVersion;
 			header.isPublic = false;
 

@@ -65,14 +65,6 @@ public class FileSizeValidatorTest extends TestBase{
 
     }
     
-    @Test
-    public void testParsedInstance() {
-        
-        assertNotNull(entity.getParsedInstance().getNodes());
-        
-        assertTrue(entity.getParsedInstance().getNodes().stream().anyMatch(node -> node.getXpath().equals("/cmd:CMD/@CMDVersion")));
-        
-    }
     
     @Test
     public void testCmdiData() {

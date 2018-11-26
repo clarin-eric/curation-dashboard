@@ -21,7 +21,7 @@ public class CMDInstanceProcessor extends AbstractProcessor<CMDInstanceReport> {
 					new CollectionInstanceFacetProcessor())
 				:
 				Arrays.asList(
-			        new InstanceUpdater(),
+			        new InstanceArranger(),
 					new FileSizeValidator(),
 					new InstanceHeaderProcessor(),
 					new CollectionInstanceResourceProxyProcessor(),

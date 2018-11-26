@@ -91,14 +91,7 @@ public class FileSizeValidator extends CMDSubprocessor {
 				throw new FileSizeException(entity.getPath().getFileName().toString(), report.fileReport.size);
 		}
 
-		InstanceParser transformer = new InstanceParser();
-		try {
-		    _logger.debug("parsing instance...");
-			entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));
-			_logger.debug("...done");
-		} catch (TransformerException | IOException e) {
-			throw new Exception("Unable to parse CMDI instance " + entity.getPath().toString(), e);
-		}
+
 		
 		
 

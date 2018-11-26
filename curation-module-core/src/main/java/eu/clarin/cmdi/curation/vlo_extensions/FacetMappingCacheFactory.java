@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -25,6 +27,7 @@ import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
 import eu.clarin.cmdi.vlo.importer.mapping.*;
 
 public class FacetMappingCacheFactory extends FacetMappingFactory{
+    private static final Logger _logger = LoggerFactory.getLogger(FacetMappingCacheFactory.class);
     private final LoadingCache<ProfileHeader, FacetMapping> facetMappingPublicCache;
     private final LoadingCache<ProfileHeader, FacetMapping> facetMappingNonPublicCache;
     
@@ -53,6 +56,16 @@ public class FacetMappingCacheFactory extends FacetMappingFactory{
                 .build(new FacetMappingCacheLoader());     
     }
     
+    public FacetMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
+        try {
+            return getFacetMapping(new CRService().createProfileHeader(profileId, "1.2", true));
+        }
+        catch (ExecutionException ex) {
+            _logger.error("error while attempting to get facetMap for profileId {}", profileId, ex);
+        }
+        return null;
+    }
+    
     public FacetMapping getFacetMapping(ProfileHeader header) throws ExecutionException {
         return header.isPublic?this.facetMappingPublicCache.get(header):this.facetMappingNonPublicCache.get(header);
     }
@@ -73,7 +86,7 @@ public class FacetMappingCacheFactory extends FacetMappingFactory{
     private class FacetMappingCacheLoader extends CacheLoader<ProfileHeader, FacetMapping>{
         @Override
         public FacetMapping load(ProfileHeader header) throws Exception{
-            return FacetMappingCacheFactory.this.createMapping(
+            return new FacetMappingExt(FacetMappingCacheFactory.this.createMapping(
                   new ConceptLinkPathMapper() {
 
                     @Override
@@ -108,7 +121,7 @@ public class FacetMappingCacheFactory extends FacetMappingFactory{
                     }
                       
                   }
-            );      
+            ));      
         }
     }
 }

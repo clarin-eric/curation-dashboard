@@ -16,10 +16,8 @@ public class TestBase {
     public void init() {
         
         try {
-            Configuration.initDefault();
+            Configuration.initDefault();   
             
-
-            Configuration.VLO_CONFIG.setFacetConceptsFile(this.getClass().getClassLoader().getResource("facetConcepts.xml").getFile());
         }
         catch (IOException ex) {
             // TODO Auto-generated catch block
