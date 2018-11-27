@@ -11,12 +11,15 @@ import java.util.stream.Collectors;
 import org.apache.solr.common.SolrInputDocument;
 
 import eu.clarin.cmdi.vlo.config.FieldNameService;
-import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.CMDIDataBaseImpl;
-import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
 /*
+ * Generally the CMDIData object contains all the data read by VTD from a certain CMDI file which will stored in the solr database. 
+ * This curation implementation of the CMDIData object stores some additional in formation in the object which we need only in curation, like
+ * the VTD-index of the origin value, the information whether the facet is derived, whether it uses value mapping, the origin- and the target
+ * facet name 
+ * 
 * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
 */
 public class CMDIDataImpl extends CMDIDataBaseImpl<Map<String,List<ValueSet>>> {
