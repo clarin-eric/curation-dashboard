@@ -46,8 +46,13 @@ public class CollectionInstanceFacetProcessor extends CMDSubprocessor {
 			report.facets.instanceCoverage = report.facets.numOfFacets == 0? 0.0:(numOfCoveredByIns / (double)report.facets.numOfFacets); //cast to double to get a double as result
 
 
-		}catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new Exception("Unable to obtain mapping for " + entity, e);
+		}
+		finally{
+		    entity.setCMDIData(null);
+		    entity.setParsedInstance(null);
 		};
 
 	}

@@ -31,10 +31,10 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
 
     private static final Logger _logger = LoggerFactory.getLogger(CollectionAggregator.class);
 
-    private final int CHUNK_SIZE = 10000;
+    private final int CHUNK_SIZE = 5000;
 
     @Override
-    public void process(CMDCollection dir, final CollectionReport report) throws InterruptedException {
+    public void process(CMDCollection dir, final CollectionReport report){
 
         report.fileReport = new FileReport();
         report.headerReport = new HeaderReport();
@@ -71,9 +71,20 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
             }
 
             long startTime = System.currentTimeMillis();
-            for (CurationEntity curationEntity : chunk) {
+            
+            chunk.parallelStream().forEach(entity -> {
+                try {
+                    entity.generateReport(report.getName());
+                }
+                catch (InterruptedException ex) {
+                    // TODO Auto-generated catch block
+                    ex.printStackTrace();
+                }
+            });
+            
+/*            for (CurationEntity curationEntity : chunk) {
                 curationEntity.generateReport(report.getName());
-            }
+            }*/
 
             long end = System.currentTimeMillis();
             _logger.info("validation for {} files lasted {}", chunk.size(), TimeUtils.humanizeToTime(end - startTime));
