@@ -59,9 +59,9 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 		if (missingSchema && missingMdprofile)
 			throw new Exception("Unable to process " + entity + ", both schema and profile are not specified");
 
-		if (missingSchema){
-			schemaLocation = Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(entity.getCMDIData().getId());
-			addMessage(Severity.ERROR, "Attribute schemaLocation is missing. " + keyValuesMap.get("curation_schemaLocation").get(0).getValue() + " is assumed");
+		if (missingSchema && mdProfile != null){
+			schemaLocation = Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(mdProfile);
+			addMessage(Severity.ERROR, "Attribute schemaLocation is missing. " + mdProfile + " is assumed");
 		}else
 			schemaInCR = crService.isSchemaCRResident(schemaLocation);
 
