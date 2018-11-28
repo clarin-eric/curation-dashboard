@@ -42,6 +42,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	private final static Logger _logger = LoggerFactory.getLogger(InstanceFacetProcessor.class);
 
 
+
 	@Override
 	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
 				
@@ -70,9 +71,11 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 			double numOfCoveredByIns = report.facets.coverage.stream().filter(facet -> facet.coveredByInstance).count();
 			report.facets.instanceCoverage = numOfCoveredByIns / report.facets.numOfFacets;
 
+
 		}
 		catch (Exception e) {
 			_logger.trace("", e);
+
 			throw new Exception("Unable to obtain mapping for " + entity, e);
 		};
 

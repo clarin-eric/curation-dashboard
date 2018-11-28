@@ -4,13 +4,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 
+
+import eu.clarin.cmdi.curation.entities.CMDInstance;
+
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.subprocessor.InstanceXMLValidator;
 import eu.clarin.cmdi.curation.subprocessor.URLValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CurationEntity;
 import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
@@ -20,7 +22,7 @@ import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 
 public abstract class AbstractProcessor<R extends Report<?>> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractProcessor.class);
+    private static final Logger _logger = LoggerFactory.getLogger(AbstractProcessor.class);
 
     public Report<?> process(CurationEntity entity, String parentName) throws InterruptedException {
 
@@ -41,13 +43,15 @@ public abstract class AbstractProcessor<R extends Report<?>> {
                     step.process(entity, report);
                 }
 
-                logger.info("processed Record: " + entity.toString() + ", step: " + step.getClass().getSimpleName());
+
+                _logger.info("processed Record: " + entity.toString() + ", step: " + step.getClass().getSimpleName());
+
                 if (step instanceof InstanceXMLValidator) {
                     report.addSegmentScore(((InstanceXMLValidator) step).calculateValidityScore());
                 }
 
 
-                if (!(step instanceof URLValidator) || (step instanceof URLValidator & Configuration.HTTP_VALIDATION)) {
+                if (!(step instanceof URLValidator) || Configuration.HTTP_VALIDATION) {
                     report.addSegmentScore(step.calculateScore(report));
                 }
 
@@ -56,16 +60,18 @@ public abstract class AbstractProcessor<R extends Report<?>> {
 
             return report;
         } catch (FileSizeException e) {
-            logger.error(e.getMessage());
+            _logger.error(e.getMessage());
             return new ErrorReport(report.getName(), e.getMessage());
         } catch (Exception e) {
-            logger.error("", e);
+            _logger.error("", e);
             String message = e.getMessage();
             message = message.replace(" java.lang.Exception","");
             if(message==null || message.isEmpty()){
                 message = "There was an unknown error. Please report it.";
             }
-            logger.error("", e);
+
+            _logger.error("", e);
+
             return new ErrorReport(report.getName(), message);
         }
 

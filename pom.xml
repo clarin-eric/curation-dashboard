@@ -6,7 +6,9 @@
 	<artifactId>curation-module</artifactId>
 	<name>Curation Module</name>
 	<packaging>pom</packaging>
+
 	<version>${curation.version}</version>
+
 
 	<organization>
 		<name>CLARIN</name>
@@ -18,6 +20,7 @@
 		<module>curation-module-web</module>
 		<module>linkChecker</module>
 	</modules>
+
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,6 +44,7 @@
 		</pluginManagement>
 
 	</build>
+
 
 
 	<dependencies>

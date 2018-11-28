@@ -33,7 +33,7 @@ class ProfileCacheFactory{
 	
 	static final long HOUR_IN_NS = 3600000000000L;
 	
-	private static final Logger logger = LoggerFactory.getLogger(ProfileCacheFactory.class);
+	private static final Logger _logger = LoggerFactory.getLogger(ProfileCacheFactory.class);
 	
 	private static final SchemaFactory schemaFactory;
 	
@@ -74,7 +74,9 @@ class ProfileCacheFactory{
 		
 		@Override
 		public ProfileCacheEntry load(ProfileHeader header) throws IOException, VTDException, SAXException{			
-			logger.info("Profile {} is not in the cache, it will be loaded", header.id);
+
+			_logger.info("Profile {} is not in the cache, it will be loaded", header.id);
+
 			
 			Path xsd;			
 			
@@ -83,16 +85,22 @@ class ProfileCacheFactory{
 				String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
 				xsd = Configuration.CACHE_DIRECTORY.resolve(fileName + ".xsd");
 				//try to load it from the disk
-				logger.debug("profile {} is public. Loading schema from {}", header.id, xsd);
+
+				_logger.debug("profile {} is public. Loading schema from {}", header.id, xsd);
+
 				if (!Files.exists(xsd)) {// keep public profiles on disk 
 					// if not download it
 					Files.createFile(xsd);
-					logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
+
+					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
 					new Downloader().download(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(header.id), xsd.toFile());
+
 				}
+
 			}
 			else{//non-public profiles are not cached on disk
-				logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.id);
+				_logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.id);
+
 				
 				//keep private schemas on disk
 								
@@ -101,12 +109,16 @@ class ProfileCacheFactory{
 				xsd = Configuration.CACHE_DIRECTORY.resolve("private_profiles");
 				xsd = xsd.resolve(fileName + ".xsd");
 				//try to load it from the disk
-				logger.debug("Loading schema for non public profile {} from {}", header.id, xsd);
+
+				_logger.debug("Loading schema for non public profile {} from {}", header.id, xsd);
+
 				if (!Files.exists(xsd)) {
 					// if not download it
 					Files.createFile(xsd);
-					logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
+
+					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
 					new Downloader().download(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(header.id), xsd.toFile());
+
 					
 				}
 			}

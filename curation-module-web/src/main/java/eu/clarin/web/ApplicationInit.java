@@ -17,7 +17,7 @@ import eu.clarin.cmdi.curation.main.Configuration;
  */
 public class ApplicationInit implements ServletContextListener {
 	
-	static final Logger logger = LoggerFactory.getLogger(ApplicationInit.class);
+	static final Logger _logger = LoggerFactory.getLogger(ApplicationInit.class);
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
@@ -28,14 +28,13 @@ public class ApplicationInit implements ServletContextListener {
 				Configuration.init(configLocation);
 			}else
 				Configuration.initDefault();
-			Configuration.HTTP_VALIDATION = true;
 			Configuration.enableProfileLoadTimer = true;
 			
 			// init shared
 			Shared.init();
 			
 		} catch (IOException e) {
-			logger.error("", e);
+			_logger.error("", e);
 			throw new RuntimeException("Unable to initialize configuration with default properties file", e);
 		}
 	}

@@ -29,6 +29,7 @@ public class Configuration {
     public static boolean SAVE_REPORT;
     public static Path OUTPUT_DIRECTORY = null;
     public static Path CACHE_DIRECTORY = null;
+    public static Path COLLECTION_HTML_DIRECTORY = null;
     public static Collection<String> FACETS = null;
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;
@@ -38,6 +39,7 @@ public class Configuration {
     public static boolean DATABASE;
     public static String DATABASE_NAME;
     public static String DATABASE_URI;
+    public static String USERAGENT;
 
     //this is a boolean that is set by core-module(false) and web-module(true)
     public static boolean enableProfileLoadTimer = false;
@@ -68,13 +70,13 @@ public class Configuration {
         HTTP_VALIDATION = Boolean.parseBoolean(config.getProperty("HTTP_VALIDATION"));
         SAVE_REPORT = Boolean.parseBoolean(config.getProperty("SAVE_REPORT"));
 
-//        String timeout = config.getProperty("TIMEOUT");
-//        if (timeout == null || timeout.isEmpty()) {
-//            logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT + "ms.");
-//            TIMEOUT = TIMEOUTDEFAULT;
-//        } else {
-//            TIMEOUT = Integer.parseInt(timeout);
-//        }
+        String timeout = config.getProperty("TIMEOUT");
+        if (timeout == null || timeout.isEmpty()) {
+            _logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT + "ms.");
+            TIMEOUT = TIMEOUTDEFAULT;
+        } else {
+            TIMEOUT = Integer.parseInt(timeout);
+        }
 
 
         String[] facets = config.getProperty("FACETS").split(",");
@@ -82,6 +84,7 @@ public class Configuration {
 
         String outDir = config.getProperty("OUTPUT_DIRECTORY");
         String cacheDir = config.getProperty("CACHE_DIRECTORY");
+        String htmlDir = config.getProperty("COLLECTION_HTML_DIRECTORY");
 
         if (outDir != null && !outDir.isEmpty()) {
             OUTPUT_DIRECTORY = Files.createDirectories(Paths.get(outDir));
@@ -90,10 +93,14 @@ public class Configuration {
             CACHE_DIRECTORY = Files.createDirectories(Paths.get(cacheDir));
         }
 
-//        String redirectFollowLimit = config.getProperty("REDIRECT_FOLLOW_LIMIT");
-//        if (redirectFollowLimit != null && !redirectFollowLimit.isEmpty()) {
-//            REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
-//        }
+        if(htmlDir !=null && !htmlDir.isEmpty()){
+            COLLECTION_HTML_DIRECTORY = Files.createDirectories(Paths.get(htmlDir));
+        }
+
+        String redirectFollowLimit = config.getProperty("REDIRECT_FOLLOW_LIMIT");
+        if (redirectFollowLimit != null && !redirectFollowLimit.isEmpty()) {
+            REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
+        }
 
         DATABASE = Boolean.parseBoolean(config.getProperty("DATABASE"));
         if (DATABASE) {
@@ -112,6 +119,8 @@ public class Configuration {
             _logger.info("loading VloConfig.xml from location {}", vloConfigLocation);
             VLO_CONFIG = new XmlVloConfigFactory(new File(config.getProperty("VLO_CONFIG_LOCATION")).toURI().toURL()).newConfig();
         }
+
+        USERAGENT = config.getProperty("USERAGENT");
 
     }
     

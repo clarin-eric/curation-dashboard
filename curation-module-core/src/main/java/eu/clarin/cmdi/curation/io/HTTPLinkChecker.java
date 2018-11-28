@@ -31,7 +31,7 @@ public class HTTPLinkChecker {
     private int REDIRECT_FOLLOW_LIMIT = Configuration.REDIRECT_FOLLOW_LIMIT;
     private List<Integer> redirectStatusCodes = new ArrayList<>(Arrays.asList(301, 302, 303, 307, 308));
 
-    private final static Logger logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
+    private final static Logger _logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
 
     public HTTPLinkChecker() {
         this(Configuration.TIMEOUT);
@@ -45,7 +45,7 @@ public class HTTPLinkChecker {
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
     public int checkLink(String url, CMDInstanceReport report, int redirectFollowLevel, long durationPassed) throws IOException {
-        logger.info("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
+        _logger.info("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
         RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
                 .setConnectTimeout(timeout)
                 .setConnectionRequestTimeout(timeout)
@@ -176,7 +176,7 @@ public class HTTPLinkChecker {
     //this is the check link method for downloader
     //this method checks link with HEAD, if it fails it calls a check link with GET method
     public int checkLink(String url, int redirectFollowLevel) throws IOException {
-        logger.info("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
+        _logger.info("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
         RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
                 .setConnectTimeout(timeout)
                 .setConnectionRequestTimeout(timeout)

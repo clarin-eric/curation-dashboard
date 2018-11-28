@@ -1,91 +1,122 @@
 package eu.clarin.web;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.mongodb.client.AggregateIterable;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
-import eu.clarin.cmdi.curation.report.CollectionReport;
-import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+import eu.clarin.web.data.CollectionStatistics;
 import eu.clarin.web.data.PublicProfile;
+import eu.clarin.web.utils.LinkCheckerStatisticsHelper;
+import eu.clarin.web.utils.StaxParser;
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.JAXBException;
+import javax.xml.stream.*;
 
 public class Shared {
 
-	public static Path REPORTS_FOLDER = null; //make it configurable, or use from config
-	
-	public static List<CollectionReport> collections;	
-	public static List<PublicProfile> publicProfiles;
-	public static Collection<String> facetNames;
+    public static Path REPORTS_FOLDER = null; //make it configurable, or use from config
 
-	static final Logger logger = LoggerFactory.getLogger(Shared.class);
-	
-	
-	public static void init(){
-		REPORTS_FOLDER = Configuration.OUTPUT_DIRECTORY.resolve("collections");
-		//init facetNames
-		//facetNames = new FacetConceptMappingService().getFacetNames();	
-		facetNames = Configuration.FACETS;
-		initPublicProfiles();
-		initCollections();
-		
-		
-	}
-	
-	public static CollectionReport getCollectionReport(final String name){
-		return collections.stream().filter(c -> c.fileReport.provider.equals(name)).findFirst().get();
-	}
-	
-	private static void initPublicProfiles(){
-		try {
-			List<ProfileHeader> profiles = (List<ProfileHeader>) new CRService().getPublicProfiles();
-			publicProfiles = profiles.stream().map(p -> {//.subList(0, 10)
-				Map<String, Boolean> facetMap = new LinkedHashMap<>();
-				facetNames.forEach(name -> facetMap.put(name, false));				
-				try {					
-					CMDProfileReport report = (CMDProfileReport) new CurationModule().processCMDProfile(p.id);
-					report.facet.coverage.stream().filter(f -> f.coveredByProfile).map(f -> f.name).forEach(f -> facetMap.put(f, true));					
-					return new PublicProfile(p.id, p.name, report.score, report.facet.profileCoverage, report.elements.percWithConcept, facetMap);
-				} catch (Exception e) {
-					return new PublicProfile(p.id, p.name, -1, -1, -1, facetMap);
-				}
-			}).collect(Collectors.toList());
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private static void initCollections(){
-		collections = new ArrayList<>();
-		XMLMarshaller<CollectionReport> marshaller = new XMLMarshaller<>(CollectionReport.class);
-		try (DirectoryStream<Path> ds = Files.newDirectoryStream(REPORTS_FOLDER)) {
-			for (Path path : ds) {
+    public static List<CollectionStatistics> collections;
+    public static List<PublicProfile> publicProfiles;
+    public static Collection<String> facetNames;
 
-				try{
-					collections.add(marshaller.unmarshal(Files.newInputStream(path)));
-				}catch (JAXBException | NumberFormatException e) {
-					logger.error("Can't read from collection report: "+path+" :"+e.getMessage());
-					//keep the for loop going to read the other collections
-				}
 
-			}
-		} catch (IOException e) {
-			logger.error("Can't read the collections directory: "+e.getMessage());
-		}
-	}
+    static final Logger _logger = LoggerFactory.getLogger(Shared.class);
+
+
+    public static void init() {
+        REPORTS_FOLDER = Configuration.OUTPUT_DIRECTORY.resolve("collections");
+        //init facetNames
+        facetNames = Configuration.FACETS;
+        initPublicProfiles();
+        initCollections();
+        initLinkCheckerStatistics();
+    }
+
+    private static void initPublicProfiles() {
+        try {
+            List<ProfileHeader> profiles = (List<ProfileHeader>) new CRService().getPublicProfiles();
+            publicProfiles = profiles.stream().map(p -> {//.subList(0, 10)
+                Map<String, Boolean> facetMap = new LinkedHashMap<>();
+                facetNames.forEach(name -> facetMap.put(name, false));
+                try {
+                    CMDProfileReport report = (CMDProfileReport) new CurationModule().processCMDProfile(p.id);
+                    report.facet.coverage.stream().filter(f -> f.coveredByProfile).map(f -> f.name).forEach(f -> facetMap.put(f, true));
+                    return new PublicProfile(p.id, p.name, report.score, report.facet.profileCoverage, report.elements.percWithConcept, facetMap);
+                } catch (Exception e) {
+                    return new PublicProfile(p.id, p.name, -1, -1, -1, facetMap);
+                }
+            }).collect(Collectors.toList());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void initCollections() {
+        collections = new ArrayList<>();
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(REPORTS_FOLDER)) {
+
+            for (Path path : ds) {
+
+                _logger.info("Parsing collection with stax: " + path.getFileName());
+
+                InputStream inputStream = Files.newInputStream(path);
+
+                String provider = path.getFileName().toString().split("\\.")[0];
+
+                try {
+                    CollectionStatistics cs = StaxParser.handleCollectionXMLs(inputStream, provider);
+                    collections.add(cs);
+
+                } catch (XMLStreamException e) {
+                    _logger.error("XML stream exception from report: " + path + " :" + e.getMessage());
+                    //keep the for loop going to read the other collections
+                }
+
+
+            }
+
+
+        } catch (IOException e) {
+            _logger.error("Can't read the collections directory: " + e.getMessage());
+        }
+    }
+
+    private static void initLinkCheckerStatistics() {
+
+        LinkCheckerStatisticsHelper helper = new LinkCheckerStatisticsHelper();
+
+        String html = helper.createHTML();
+
+        File folder = new File(Configuration.OUTPUT_DIRECTORY.toString()+"/statistics");
+        folder.mkdirs();
+
+        try (PrintStream ps = new PrintStream(Files.newOutputStream(Paths.get(Configuration.OUTPUT_DIRECTORY.toString()+"/statistics/linkCheckerStatistics.html")))) {
+            ps.println(html);
+
+            _logger.info("linkchecker statistics html file has been created.");
+        } catch (IOException e) {
+            _logger.error("Problem writing to the statistics.html");
+        }
+    }
+
 }

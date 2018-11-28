@@ -7,7 +7,10 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>curation-module-core</artifactId>
+
+    <groupId>eu.clarin.cmdi</groupId>
+    <artifactId>curation-module-core</artifactId>
+
 
 
 	<properties>
@@ -18,6 +21,8 @@
 		<humanize.version>1.2.2</humanize.version>
 		<slf4j.version>1.7.25</slf4j.version>
 	</properties>
+
+
 
 	<dependencies>
 		<dependency>
@@ -94,48 +99,29 @@
 
 	<build>
 		<plugins>
-			<!-- <plugin> -->
-			<!-- <groupId>org.apache.maven.plugins</groupId> -->
-			<!-- <artifactId>maven-compiler-plugin</artifactId> -->
-			<!-- <version>3.5</version> -->
-			<!-- </plugin> -->
-			<!-- don't create jar, leave this to maven-assembly -->
-			<!-- <plugin> -->
-			<!-- <artifactId>maven-jar-plugin</artifactId> -->
-			<!-- <version>2.3.1</version> -->
-			<!-- <configuration> -->
-			<!-- <archive> -->
-			<!-- <manifest> -->
-			<!-- <addClasspath>true</addClasspath> -->
-			<!-- <mainClass>eu.clarin.cmdi.curation.main.Main</mainClass> -->
-			<!-- </manifest> -->
-			<!-- </archive> -->
-			<!-- </configuration> -->
-			<!-- </plugin> -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>eu.clarin.cmdi.curation.main.Main</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>eu.clarin.cmdi.curation.main.Main</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-		</plugins>
-	</build>
+        </plugins>
+    </build>
 </project>

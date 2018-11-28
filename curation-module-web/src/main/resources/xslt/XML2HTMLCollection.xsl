@@ -7,8 +7,9 @@
 	</head>
 	<body>
 		<h1>Collection Report</h1>
-		
-		<h3>Collection name: <xsl:value-of select="./file-section/provider"/></h3>
+		<xsl:variable name="collectionName"><xsl:value-of select="./file-section/provider"/></xsl:variable>
+
+		<h3>Collection name: <xsl:copy-of select="$collectionName" /></h3>
 		
 		<p>Total Score: <xsl:value-of select="./@score"/> out of <xsl:value-of select="./@col-max-score"/></p>
 		<p>Score percentage: <xsl:value-of select="./@score-percentage"/></p>
@@ -134,43 +135,68 @@
 		<p>Average number of broken links: <xsl:value-of select="./url-validation-section/avgNumOfBrokenLinks"/></p>
 		<p>Ratio of valid links: <xsl:value-of select="./url-validation-section/ratioOfValidLinks"/></p>
 
-		<hr/>
-		<h2>Single URL Section</h2>
+
+		<h3>Status Codes Table</h3>
 		<table border="1" cellpadding="1" cellspacing="1">
 			<thead>
 				<tr>
-					<th scope="col">url</th>
-					<th scope="col">message</th>
-					<th scope="col">http-status</th>
-					<th scope="col">content-type</th>
-					<th scope="col">byte-size</th>
-					<th scope="col">request-duration</th>
-					<th scope="col">timestamp</th>
-					<th scope="col">method</th>
-					<th scope="col">redirect-count</th>
+					<th scope="col">Status</th>
+					<th scope="col">Count</th>
+					<th scope="col">Average Response Duration(ms)</th>
+					<th scope="col">Max Response Duration(ms)</th>
 				</tr>
 			</thead>
 			<tbody>
-				<xsl:for-each select="./single-url-report/url[position() &lt; 51]">
+				<xsl:for-each select="./url-validation-section/statistics/status">
+					<xsl:variable name="status"><xsl:value-of select="./@statusCode"/></xsl:variable>
 					<tr>
-						<td><xsl:copy-of select="."/></td>
-						<td><xsl:value-of select="./@message" /></td>
-						<td><xsl:value-of select="./@http-status" /></td>
-						<td><xsl:value-of select="./@content-type" /></td>
-						<td><xsl:value-of select="./@byte-size" /></td>
-						<td><xsl:value-of select="./@request-duration" /></td>
-						<td><xsl:value-of select="./@timestamp" /></td>
-						<td><xsl:value-of select="./@method" /></td>
-						<td><xsl:value-of select="./@redirectCount" /></td>
+						<td align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status" /></a></td>
+						<td align="right"><xsl:value-of select="./@count" /></td>
+						<td align="right"><xsl:value-of select="format-number(./@avgRespTime, '###,##0.##')" /></td>
+						<td align="right"><xsl:value-of select="format-number(./@maxRespTime, '###,##0.##')" /></td>
 					</tr>
 				</xsl:for-each>
-				<xsl:if test="./single-url-report/url[51]">
-					<tr>
-						<td colspan="9">please download Report for complete list of url checking results</td>
-					</tr>
-				</xsl:if>
 			</tbody>
 		</table>
+
+		<hr/>
+		<!--<h2>Single URL Section</h2>-->
+		<!--<table border="1" cellpadding="1" cellspacing="1">-->
+			<!--<thead>-->
+				<!--<tr>-->
+					<!--<th scope="col">url</th>-->
+					<!--<th scope="col">message</th>-->
+					<!--<th scope="col">http-status</th>-->
+					<!--<th scope="col">content-type</th>-->
+					<!--<th scope="col">byte-size</th>-->
+					<!--<th scope="col">request-duration</th>-->
+					<!--<th scope="col">timestamp</th>-->
+					<!--<th scope="col">method</th>-->
+					<!--<th scope="col">redirect-count</th>-->
+				<!--</tr>-->
+			<!--</thead>-->
+			<!--<tbody>-->
+				<!--<xsl:for-each select="./single-url-report/url">-->
+					<!--<xsl:variable name="url"><xsl:value-of select="."/></xsl:variable>-->
+					<!--<tr>-->
+						<!--<td><a href="{$url}"><xsl:copy-of select="$url" /></a></td>-->
+						<!--<td><xsl:value-of select="./@message" /></td>-->
+						<!--<td><xsl:value-of select="./@http-status" /></td>-->
+						<!--<td><xsl:value-of select="./@content-type" /></td>-->
+						<!--<td><xsl:value-of select="./@byte-size" /></td>-->
+						<!--<td><xsl:value-of select="./@request-duration" /></td>-->
+						<!--<td><xsl:value-of select="./@timestamp" /></td>-->
+						<!--<td><xsl:value-of select="./@method" /></td>-->
+						<!--<td><xsl:value-of select="./@redirectCount" /></td>-->
+					<!--</tr>-->
+				<!--</xsl:for-each>-->
+				<!--<xsl:if test="./single-url-report[@trim='true']">-->
+					<!--<tr>-->
+						<!--<td colspan="9">Please download Report for complete list of url checking results.</td>-->
+					<!--</tr>-->
+				<!--</xsl:if>-->
+			<!--</tbody>-->
+		<!--</table>-->
 
 		<xsl:if test="./invalid-files/file">
 			<hr/>	

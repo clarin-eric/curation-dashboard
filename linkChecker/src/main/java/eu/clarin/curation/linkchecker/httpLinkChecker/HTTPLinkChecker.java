@@ -7,6 +7,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,7 @@ import eu.clarin.curation.linkchecker.urlElements.URLElement;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -26,23 +28,31 @@ public class HTTPLinkChecker {
     private HttpURLConnection connection = null;
     private String redirectLink = null;
     private int REDIRECT_FOLLOW_LIMIT;
+    private String USERAGENT;
     private List<Integer> redirectStatusCodes = new ArrayList<>(Arrays.asList(301, 302, 303, 307, 308));
 
-    private final static Logger logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
+    private final static Logger _logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
 
     //this is only for link-checker module, don't use it from core-module(will throw nullpointer because it can't find properties)
     public HTTPLinkChecker() {
-        this(Configuration.TIMEOUT,Configuration.REDIRECT_FOLLOW_LIMIT);
+        this(Configuration.TIMEOUT,Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
     }
 
-    public HTTPLinkChecker(final int timeout, final int REDIRECT_FOLLOW_LIMIT) {
+    public HTTPLinkChecker(final int timeout, final int REDIRECT_FOLLOW_LIMIT, final String USERAGENT) {
         redirectLink = null;
         this.timeout = timeout;
         this.REDIRECT_FOLLOW_LIMIT=REDIRECT_FOLLOW_LIMIT;
+        this.USERAGENT=USERAGENT;
     }
 
     //this method lets httpclient handle the redirects by itself
     public int checkLinkAndGetResponseCode(String url) throws IOException {
+        //encode url, to remove problems caused by | and similar characters
+        String[] urlArray = url.split("\\?");
+        if(urlArray.length==2){
+            url = urlArray[0]+URLEncoder.encode(urlArray[1],"UTF-8");
+        }
+
         RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
                 .setConnectTimeout(timeout)
                 .setConnectionRequestTimeout(timeout)
@@ -50,6 +60,7 @@ public class HTTPLinkChecker {
                 .build();
         HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
         HttpHead head = new HttpHead(url);
+        head.setHeader("User-Agent",USERAGENT);
         HttpResponse response = client.execute(head);
         return response.getStatusLine().getStatusCode();
 
@@ -57,7 +68,17 @@ public class HTTPLinkChecker {
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
     public URLElement checkLink(String url, int redirectFollowLevel, long durationPassed, String originalURL) throws IOException {
-        logger.info("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
+        if(!url.startsWith("http")){
+            url="http://"+url;
+        }
+
+        //encode url, to remove problems caused by | and similar characters
+        String[] urlArray = url.split("\\?");
+        if(urlArray.length==2){
+            url = urlArray[0]+URLEncoder.encode(urlArray[1],"UTF-8");
+        }
+
+        _logger.trace("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
         if (url == null) {
             throw new IOException("The requested url is null.");
         }
@@ -72,6 +93,7 @@ public class HTTPLinkChecker {
         //returns 400 for head but browser opens fine
 
         HttpHead head = new HttpHead(url);
+        head.setHeader("User-Agent",USERAGENT);
 
         long start = System.currentTimeMillis();
         HttpResponse response = client.execute(head);
@@ -113,6 +135,7 @@ public class HTTPLinkChecker {
 
 
                 HttpGet get = new HttpGet(url);
+                get.setHeader("User-Agent",USERAGENT);
 
                 start = System.currentTimeMillis();
                 response = client.execute(get);

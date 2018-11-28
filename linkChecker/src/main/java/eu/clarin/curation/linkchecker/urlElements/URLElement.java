@@ -5,24 +5,16 @@ import org.bson.Document;
 public class URLElement {
 
     private String url;
-
     private String method;
-
     private String message;
-
     private int status;
-
     private String contentType;
-
     private String byteSize;
-
     private long duration;//either duration in milliseconds or 'timeout'
-
     private long timestamp;
-
     private int redirectCount;
-
     private String collection;
+    private String record;
 
     public URLElement(Document document) {
         this.url = document.getString("url");
@@ -34,12 +26,14 @@ public class URLElement {
         this.duration = document.getLong("duration");
         this.timestamp = document.getLong("timestamp");
         this.collection = document.getString("collection");
+        this.record = document.getString("record");
+        this.redirectCount = document.getInteger("redirectCount");
     }
 
     public URLElement() {
     }
 
-    public URLElement(String url, String method, String message, int status, String contentType, String byteSize, long duration, long timestamp, String collection, int redirectCount) {
+    public URLElement(String url, String method, String message, int status, String contentType, String byteSize, long duration, long timestamp, String collection, int redirectCount, String record) {
         this.url = url;
         this.method = method;
         this.message = message;
@@ -50,6 +44,7 @@ public class URLElement {
         this.timestamp = timestamp;
         this.collection = collection;
         this.redirectCount = redirectCount;
+        this.record = record;
     }
 
     public String getUrl() {
@@ -127,7 +122,9 @@ public class URLElement {
                 .append("duration", duration)
                 .append("timestamp", timestamp)
                 .append("redirectCount", redirectCount)
-                .append("collection", collection);
+                .append("collection", collection)
+                .append("record", record);
+
 
         return document;
     }
@@ -146,5 +143,13 @@ public class URLElement {
 
     public void setRedirectCount(int redirectCount) {
         this.redirectCount = redirectCount;
+    }
+
+    public String getRecord() {
+        return record;
+    }
+
+    public void setRecord(String record) {
+        this.record = record;
     }
 }

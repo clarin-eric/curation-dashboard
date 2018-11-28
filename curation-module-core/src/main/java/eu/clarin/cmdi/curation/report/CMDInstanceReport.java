@@ -146,13 +146,13 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     }
 
     @Override
-    public String getParentName(){
+    public String getParentName() {
         return parentName;
     }
 
     @Override
-    public void setParentName(String parentName){
-        this.parentName=parentName;
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
     }
 
 
@@ -234,7 +234,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         segmentScores.add(segmentScore);
         maxScore += segmentScore.maxScore;
         score += segmentScore.score;
-        scorePercentage = score / maxScore;
+        scorePercentage = maxScore == 0.0 ? 0.0 : score / maxScore;
         if (!segmentScore.segment.equals("profiles-score"))
             instanceScore += segmentScore.score;
 
@@ -312,10 +312,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class URLReport {
-        public int numOfLinks;
-        public int numOfUniqueLinks;
-        public int numOfCheckedLinks;
-        public int numOfBrokenLinks;
+        public long numOfLinks;
+        public long numOfUniqueLinks;
+        public long numOfCheckedLinks;
+        public long numOfBrokenLinks;
         public Double percOfValidLinks;
 
         public URLReport() {

@@ -17,7 +17,7 @@ import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 
 class CMDI1_2_ProfileParser extends ProfileParser{
 
-	private static final Logger logger = LoggerFactory.getLogger(CMDI1_2_ProfileParser.class);
+	private static final Logger _logger = LoggerFactory.getLogger(CMDI1_2_ProfileParser.class);
 	private static final String ENVELOPE_URL = "https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd";
 
 	private static Map<String, CMDINode> envelope = null;

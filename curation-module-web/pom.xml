@@ -1,13 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>curation-module</artifactId>
 		<groupId>eu.clarin.cmdi</groupId>
+
 		<version>${curation.version}</version>
+
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
+	<groupId>eu.clarin.cmdi</groupId>
 	<artifactId>curation-module-web</artifactId>
 	<packaging>war</packaging>
 
@@ -89,7 +91,9 @@
 		<dependency>
 			<groupId>eu.clarin.cmdi</groupId>
 			<artifactId>curation-module-core</artifactId>
+
 			<version>${curation.version}</version>
+
 		</dependency>
 
 		<dependency>
@@ -97,6 +101,14 @@
 			<artifactId>jersey-container-servlet</artifactId>
 			<version>2.26-b03</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-sync</artifactId>
+			<version>3.8.1</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
