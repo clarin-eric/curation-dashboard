@@ -2,8 +2,6 @@ package eu.clarin.cmdi.curation.entities;
 
 import java.nio.file.Path;
 
-import eu.clarin.cmdi.curation.main.Main;
-import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -80,14 +80,14 @@ public class URLValidator extends CMDSubprocessor {
                 resources.addAll(data.getSearchResources());
         
         resources.stream()
-            .filter(resource -> resource.getResourceName() != null && resource.getResourceName().startsWith("http"))
+            .filter(resource -> resource.getResourceName() != null && (resource.getResourceName().startsWith("http://") || resource.getResourceName().startsWith("https://")))
             .forEachOrdered(resource -> {
                 urlMap.computeIfAbsent(resource.getResourceName(), key -> resource);
                 numOfLinks.incrementAndGet();
             });
         
         data.getDocument().values().stream()
-            .forEach(valuesList -> valuesList.stream().filter(valueSet -> valueSet.getValue().startsWith("http")).forEach(valueSet -> urlMap.computeIfAbsent(valueSet.getValue(), key -> null))
+            .forEach(valuesList -> valuesList.stream().filter(valueSet -> (valueSet.getValue().startsWith("http://")  || valueSet.getValue().startsWith("https://"))).forEach(valueSet -> urlMap.computeIfAbsent(valueSet.getValue(), key -> null))
                 );
         
 
