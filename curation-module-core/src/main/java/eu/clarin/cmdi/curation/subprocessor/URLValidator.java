@@ -39,11 +39,13 @@ public class URLValidator extends CMDSubprocessor {
 
     private static final Logger _logger = LoggerFactory.getLogger(URLValidator.class);
 
-    private static final MongoClient mongoClient; 
+    private static final MongoDatabase _database; 
 
     static { //since MongoClient is already a connection pool only one instance should exist in the application
 
         if (Configuration.DATABASE) {
+            
+            MongoClient mongoClient;
               
             _logger.info("Connecting to database...");
             if (Configuration.DATABASE_URI == null || Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
@@ -52,10 +54,15 @@ public class URLValidator extends CMDSubprocessor {
             else {
                 mongoClient = MongoClients.create(Configuration.DATABASE_URI);
             }
+            
+            
+            _database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
+            _logger.info("Connected to database.");
+
         }
         else {
             _logger.info("Configuration.DATABASE=false - therefore no database connection established");
-            mongoClient = null;
+            _database = null;
         }
     }
 
@@ -94,15 +101,12 @@ public class URLValidator extends CMDSubprocessor {
         if (Configuration.HTTP_VALIDATION) {
             if (Configuration.DATABASE && Configuration.COLLECTION_MODE) {
                 
-                
-                MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
-                _logger.info("Connected to database.");
-
+ 
                 //get links from linksToBeChecked
-                MongoCollection<Document> linksToBeChecked = database.getCollection("linksToBeChecked");
+                MongoCollection<Document> linksToBeChecked = _database.getCollection("linksToBeChecked");
 
                 //get linksChecked
-                MongoCollection<Document> linksChecked = database.getCollection("linksChecked");
+                MongoCollection<Document> linksChecked = _database.getCollection("linksChecked");
 
                 urlMap.keySet().stream().forEach(url -> {
 
@@ -217,12 +221,10 @@ public class URLValidator extends CMDSubprocessor {
         report.numOfUniqueLinks = numOfUniqueLinks;
 
         if (Configuration.HTTP_VALIDATION) {
-            MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
-            _logger.info("Connected to database.");
 
 
             //get linksChecked
-            MongoCollection<Document> linksChecked = database.getCollection("linksChecked");
+            MongoCollection<Document> linksChecked = _database.getCollection("linksChecked");
 
             Bson checkedLinksFilter = Filters.eq("record", name);
             long numOfCheckedLinks = linksChecked.countDocuments(checkedLinksFilter);
