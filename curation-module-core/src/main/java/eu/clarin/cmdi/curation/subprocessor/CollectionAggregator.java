@@ -76,7 +76,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
 
             long end = System.currentTimeMillis();
             _logger.info("validation for {} files lasted {}", chunk.size(), TimeUtils.humanizeToTime(end - startTime));
-            chunk.stream().forEach(child -> {
+            chunk.parallelStream().forEach(child -> {
                 try {
                     child.generateReport(report.getName()).mergeWithParent(report);
                 } catch (InterruptedException e) {
