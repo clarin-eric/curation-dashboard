@@ -2,12 +2,14 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
+
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance.InstanceNode;
@@ -34,30 +36,29 @@ public class URLValidator extends CMDSubprocessor {
 
     private static final Logger _logger = LoggerFactory.getLogger(URLValidator.class);
 
-    private static final MongoClient mongoClient;
-    private static MongoCollection<Document> linksToBeChecked;
-    private static MongoCollection<Document> linksChecked;
+    private static final MongoClient _mongoClient;
 
     static { //since MongoClient is already a connection pool only one instance should exist in the application
         if (Configuration.DATABASE) {
             _logger.info("Connecting to database...");
             if (Configuration.DATABASE_URI == null || Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
-                mongoClient = MongoClients.create();
+                _mongoClient = MongoClients.create();
             } else {
-                mongoClient = MongoClients.create(Configuration.DATABASE_URI);
+                _mongoClient = MongoClients.create(Configuration.DATABASE_URI);
             }
+            
+            MongoDatabase database = _mongoClient.getDatabase(Configuration.DATABASE_NAME);
+            _logger.info("Connected to database.");
+            //Ensure that "url" is a unique index
+            IndexOptions indexOptions = new IndexOptions().unique(true);
+            database.getCollection("linksChecked").createIndex(new Document("url", 1), indexOptions);
+            
+            database.getCollection("linksChecked").createIndex(Indexes.ascending("record"));
+
         } else {
-            mongoClient = null;
+            _mongoClient = null;
         }
 
-        MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
-        _logger.info("Connected to database.");
-
-        //get links from linksToBeChecked
-        linksToBeChecked = database.getCollection("linksToBeChecked");
-
-        //get linksChecked
-        linksChecked = database.getCollection("linksChecked");
     }
 
     @Override
@@ -88,7 +89,7 @@ public class URLValidator extends CMDSubprocessor {
                     _logger.info("Checking database for url: " + url);
 
                     Bson filter = Filters.eq("url", url);
-                    MongoCursor<Document> cursor = linksChecked.find(filter).iterator();
+                    MongoCursor<Document> cursor = _mongoClient.getDatabase(Configuration.DATABASE_NAME).getCollection("linksChecked").find(filter).iterator();
 
                     //because urls are unique in the database if cursor has next, it found the only one. If not, the url wasn't found.
                     if (cursor.hasNext()) {
@@ -112,7 +113,7 @@ public class URLValidator extends CMDSubprocessor {
 
                         try {
 
-                            linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
+                            _mongoClient.getDatabase(Configuration.DATABASE_NAME).getCollection("linksToBeChecked").insertOne(urlElementToBeChecked.getMongoDocument());
                         } catch (MongoException e) {
                             //duplicate key error
                             //the url is already in the linksToBeChecked, do nothing
@@ -120,6 +121,8 @@ public class URLValidator extends CMDSubprocessor {
 
 
                     }
+                    
+                    cursor.close();
                 });
 
                 report.urlReport = createURLReport(numOfLinks, numOfUniqueLinks, report.getName());
@@ -127,7 +130,7 @@ public class URLValidator extends CMDSubprocessor {
             } else {
                 HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
 
-                links.stream().forEach(url -> {
+                links.parallelStream().forEach(url -> {
 
                     try {// check if URL is broken
                         _logger.info("Checking url: " + url);
@@ -193,6 +196,8 @@ public class URLValidator extends CMDSubprocessor {
         report.numOfUniqueLinks = numOfUniqueLinks;
 
         if (Configuration.HTTP_VALIDATION) {
+            MongoCollection<Document> linksChecked = _mongoClient.getDatabase(Configuration.DATABASE_NAME).getCollection("linksChecked");
+
 
             Bson checkedLinksFilter = Filters.eq("record", name);
             long numOfCheckedLinks = linksChecked.countDocuments(checkedLinksFilter);
