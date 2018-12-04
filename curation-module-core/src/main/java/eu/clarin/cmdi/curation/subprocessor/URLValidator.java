@@ -11,6 +11,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.main.Configuration;
@@ -38,33 +40,65 @@ import org.slf4j.LoggerFactory;
 public class URLValidator extends CMDSubprocessor {
 
     private static final Logger _logger = LoggerFactory.getLogger(URLValidator.class);
+    
+    private static final MongoClient _mongoClient;
 
-    private static final MongoDatabase _database; 
+    
+//    private final MongoCollection<Document> linksToBeChecked;
+//    private final MongoCollection<Document> linksChecked;
 
     static { //since MongoClient is already a connection pool only one instance should exist in the application
 
         if (Configuration.DATABASE) {
             
-            MongoClient mongoClient;
               
             _logger.info("Connecting to database...");
             if (Configuration.DATABASE_URI == null || Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
-                mongoClient = MongoClients.create();
+                _mongoClient = MongoClients.create();
             } 
             else {
-                mongoClient = MongoClients.create(Configuration.DATABASE_URI);
+                
+                _mongoClient = MongoClients.create(Configuration.DATABASE_URI);
+
             }
             
             
-            _database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
+            MongoDatabase database = _mongoClient.getDatabase(Configuration.DATABASE_NAME);
             _logger.info("Connected to database.");
+            
+            
+            //Ensure that "url" is a unique index
+            IndexOptions indexOptions = new IndexOptions().unique(true);
+            database.getCollection("linksChecked").createIndex(new Document("url", 1), indexOptions);
+            
+            database.getCollection("linksChecked").createIndex(Indexes.ascending("record"));
+            
+            database.getCollection("linksChecked").createIndex(Indexes.ascending("record, status"));
+            
 
         }
         else {
             _logger.info("Configuration.DATABASE=false - therefore no database connection established");
-            _database = null;
+            _mongoClient = null;
         }
     }
+    
+    
+/*    public URLValidator() {
+        if(_database != null) {
+            //get links from linksToBeChecked
+            this.linksToBeChecked = _database.getCollection("linksToBeChecked");
+
+            //get linksChecked
+            this.linksChecked = _database.getCollection("linksChecked");
+
+        }
+        else {
+            this.linksToBeChecked = null;
+            this.linksChecked = null; 
+        }
+    }*/
+    
 
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report) {
@@ -102,18 +136,13 @@ public class URLValidator extends CMDSubprocessor {
             if (Configuration.DATABASE && Configuration.COLLECTION_MODE) {
                 
  
-                //get links from linksToBeChecked
-                MongoCollection<Document> linksToBeChecked = _database.getCollection("linksToBeChecked");
 
-                //get linksChecked
-                MongoCollection<Document> linksChecked = _database.getCollection("linksChecked");
-
-                urlMap.keySet().stream().forEach(url -> {
+                urlMap.keySet().parallelStream().forEach(url -> {
 
                     _logger.info("Checking database for url: " + url);
 
                     Bson filter = Filters.eq("url", url);
-                    MongoCursor<Document> cursor = linksChecked.find(filter).iterator();
+                    MongoCursor<Document> cursor = _mongoClient.getDatabase(Configuration.DATABASE_NAME).getCollection("linksChecked").find(filter).iterator();
 
                     //because urls are unique in the database if cursor has next, it found the only one. If not, the url wasn't found.
                     if (cursor.hasNext()) {
@@ -137,7 +166,7 @@ public class URLValidator extends CMDSubprocessor {
 
                         try {
 
-                            linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
+                            _mongoClient.getDatabase(Configuration.DATABASE_NAME).getCollection("linksToBeChecked").insertOne(urlElementToBeChecked.getMongoDocument());
                         } catch (MongoException e) {
                             //duplicate key error
                             //the url is already in the linksToBeChecked, do nothing
@@ -145,6 +174,7 @@ public class URLValidator extends CMDSubprocessor {
 
 
                     }
+                    cursor.close();
                 });
 
                 report.urlReport = createURLReport(numOfLinks.get(), urlMap.size(), report.getName());
@@ -220,19 +250,19 @@ public class URLValidator extends CMDSubprocessor {
         report.numOfLinks = numOfLinks;
         report.numOfUniqueLinks = numOfUniqueLinks;
 
-        if (Configuration.HTTP_VALIDATION) {
-
-
-            //get linksChecked
-            MongoCollection<Document> linksChecked = _database.getCollection("linksChecked");
+        if (_mongoClient != null) {
+            MongoDatabase database = _mongoClient.getDatabase(Configuration.DATABASE_NAME);
 
             Bson checkedLinksFilter = Filters.eq("record", name);
-            long numOfCheckedLinks = linksChecked.countDocuments(checkedLinksFilter);
+            long numOfCheckedLinks = database.getCollection("linksChecked").countDocuments(checkedLinksFilter);
 
-            Bson brokenLinksFilter = Filters.and(Filters.eq("record", name), Filters.and(Filters.not(Filters.eq("status", 200)), Filters.not(Filters.eq("status", 302))));
-            long numOfBrokenLinks = linksChecked.countDocuments(brokenLinksFilter);
+            //Bson brokenLinksFilter = Filters.and(Filters.eq("record", name), Filters.and(Filters.not(Filters.eq("status", 200)), Filters.not(Filters.eq("status", 302))));
+            Bson brokenLinksFilter = Filters.and(Filters.eq("record", name), Filters.in("status", 200, 302));
+            long numOfBrokenLinks = database.getCollection("linkesChecked").countDocuments(brokenLinksFilter);
 
+            
             report.percOfValidLinks = numOfCheckedLinks == 0 ? 0 : (numOfCheckedLinks - numOfBrokenLinks) / (double) numOfCheckedLinks;
+
         }
         return report;
     }
