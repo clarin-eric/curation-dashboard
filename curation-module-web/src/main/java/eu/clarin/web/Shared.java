@@ -89,6 +89,12 @@ public class Shared {
                 } catch (XMLStreamException e) {
                     _logger.error("XML stream exception from report: " + path + " :" + e.getMessage());
                     //keep the for loop going to read the other collections
+                } catch (Exception e) {
+                    _logger.error("Exception caused by report: " + path + ", cause: " + e.getCause() + ", message: " + e.getMessage()+"\n"+
+                            "If the message and cause of the exception are null, it is a good idea to use e.printStackTrace() to determine the real cause.");
+//                    e.printStackTrace();
+                    _logger.error("");
+                    //keep the for loop going to read the other collections
                 }
 
 
@@ -106,10 +112,10 @@ public class Shared {
 
         String html = helper.createHTML();
 
-        File folder = new File(Configuration.OUTPUT_DIRECTORY.toString()+"/statistics");
+        File folder = new File(Configuration.OUTPUT_DIRECTORY.toString() + "/statistics");
         folder.mkdirs();
 
-        try (PrintStream ps = new PrintStream(Files.newOutputStream(Paths.get(Configuration.OUTPUT_DIRECTORY.toString()+"/statistics/linkCheckerStatistics.html")))) {
+        try (PrintStream ps = new PrintStream(Files.newOutputStream(Paths.get(Configuration.OUTPUT_DIRECTORY.toString() + "/statistics/linkCheckerStatistics.html")))) {
             ps.println(html);
 
             _logger.info("linkchecker statistics html file has been created.");
