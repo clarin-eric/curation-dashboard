@@ -25,7 +25,6 @@ public class StaxParser {
     //This is all done to deal with really large reports that can grow up to 800 mbs.
     public static CollectionStatistics handleCollectionXMLs(InputStream stream, String fileName) throws XMLStreamException, IOException {
 
-
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader eventReader =
                 inputFactory.createXMLEventReader(stream);
@@ -51,7 +50,7 @@ public class StaxParser {
         boolean ratioOfValidRecords = false;
         boolean avgXMLEmptyElement = false;
         boolean coverage = false;
-        boolean trim=true;
+        boolean trim = true;
 
         List<Double> facets = new ArrayList<>();
 
@@ -73,11 +72,11 @@ public class StaxParser {
                     singleUrl = true;
 
                     writer.add(event);
-                    if(urlCount==50 && trim){
+                    if (urlCount == 50 && trim) {
                         event = eventFactory.createAttribute
                                 ("trim", "true");
                         writer.add(event);
-                        trim=false;//only once this should be done
+                        trim = false;//only once this should be done
                     }
 
 
