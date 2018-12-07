@@ -52,8 +52,13 @@ public class URLValidator extends CMDSubprocessor {
             //Ensure that "url" is a unique index
             IndexOptions indexOptions = new IndexOptions().unique(true);
             database.getCollection("linksChecked").createIndex(new Document("url", 1), indexOptions);
-            
+
+            //ensure indexes to speed up queries later
             database.getCollection("linksChecked").createIndex(Indexes.ascending("record"));
+            database.getCollection("linksChecked").createIndex(Indexes.ascending("collection"));
+            database.getCollection("linksChecked").createIndex(Indexes.ascending("status"));
+            database.getCollection("linksChecked").createIndex(Indexes.ascending("record","status"));
+            database.getCollection("linksChecked").createIndex(Indexes.ascending("collection","status"));
 
         } else {
             _mongoClient = null;

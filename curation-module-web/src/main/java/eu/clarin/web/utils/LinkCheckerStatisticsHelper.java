@@ -3,6 +3,7 @@ package eu.clarin.web.utils;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Indexes;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.curation.linkchecker.urlElements.URLElement;
@@ -57,6 +58,13 @@ public class LinkCheckerStatisticsHelper {
 
         this.linksToBeChecked = database.getCollection("linksToBeChecked");
         this.linksChecked = database.getCollection("linksChecked");
+
+        //ensure indexes to speed up queries later
+        database.getCollection("linksChecked").createIndex(Indexes.ascending("record"));
+        database.getCollection("linksChecked").createIndex(Indexes.ascending("collection"));
+        database.getCollection("linksChecked").createIndex(Indexes.ascending("status"));
+        database.getCollection("linksChecked").createIndex(Indexes.ascending("record","status"));
+        database.getCollection("linksChecked").createIndex(Indexes.ascending("collection","status"));
     }
 
 

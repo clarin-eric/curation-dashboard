@@ -11,9 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.mongodb.client.AggregateIterable;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
@@ -24,7 +22,6 @@ import eu.clarin.web.data.CollectionStatistics;
 import eu.clarin.web.data.PublicProfile;
 import eu.clarin.web.utils.LinkCheckerStatisticsHelper;
 import eu.clarin.web.utils.StaxParser;
-import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
