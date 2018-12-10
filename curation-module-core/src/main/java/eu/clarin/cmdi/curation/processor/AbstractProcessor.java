@@ -55,7 +55,7 @@ public abstract class AbstractProcessor<R extends Report<?>> {
 
             return report;
         } catch (FileSizeException e) {
-            _logger.error(e.getMessage());
+            _logger.warn(e.getMessage());
             return new ErrorReport(report.getName(), e.getMessage());
         } catch (Exception e) {
             String message = e.getMessage();
