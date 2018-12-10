@@ -52,7 +52,7 @@ Java Standard Edition, version 8 or higher
   #Timeout for linkchecking in millisecondss
   TIMEOUT=50000
   # MonoDB database configuration (recommeded if HTTP_VALIDATION is true!!!)
-  DATABASE=truee
+  DATABASE=true
   DATABASE_NAME=dbnamee
 
   # if this is empty, it will try localhost:27017

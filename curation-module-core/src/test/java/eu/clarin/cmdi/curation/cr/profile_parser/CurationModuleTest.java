@@ -4,7 +4,7 @@ package eu.clarin.cmdi.curation.cr.profile_parser;
 */
 import org.junit.Test;
 
-
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
@@ -15,12 +15,33 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CurationModuleTest extends TestBase{
-    Report<?> report; 
-    
+
+    @Test
+    public void testCMD_1_1() { 
+        Report<?> report = null; 
+        Path path;
+        
+        try {
+            path = Paths.get(getClass().getClassLoader().getResource("cmdi/cmdi-1_1.xml").toURI());
+
+            CurationModule curation = new CurationModule();
+            
+            report = curation.processCMDInstance(path);
+            report.toXML(System.out);
+        }
+        catch (Exception ex) {
+            // TODO Auto-generated catch block
+            ex.printStackTrace();
+        }
+        assertFalse(Configuration.COLLECTION_MODE);
+        assertTrue(report instanceof CMDInstanceReport);        
+
+    }    
     
     
     @Test
-    public void testIsCMDInstanceReport() { 
+    public void testCMD_1_2() { 
+        Report<?> report = null; 
         Path path;
         
         try {
@@ -28,13 +49,35 @@ public class CurationModuleTest extends TestBase{
 
             CurationModule curation = new CurationModule();
             
-            this.report = curation.processCMDInstance(path);
-            this.report.toXML(System.out);
+            report = curation.processCMDInstance(path);
+            report.toXML(System.out);
         }
         catch (Exception ex) {
             // TODO Auto-generated catch block
             ex.printStackTrace();
         }
-        assertTrue(this.report instanceof CMDInstanceReport);
+        assertFalse(Configuration.COLLECTION_MODE);
+        assertTrue(report instanceof CMDInstanceReport);
+    }
+    
+    @Test
+    public void testCMD_1_x() { 
+        Report<?> report = null; 
+        Path path;
+        
+        try {
+            path = Paths.get(getClass().getClassLoader().getResource("cmdi/cmdi-1_x.xml").toURI());
+
+            CurationModule curation = new CurationModule();
+            
+            report = curation.processCMDInstance(path);
+            report.toXML(System.out);
+        }
+        catch (Exception ex) {
+            // TODO Auto-generated catch block
+            ex.printStackTrace();
+        }
+        assertFalse(Configuration.COLLECTION_MODE);
+        assertTrue(report instanceof CMDInstanceReport);
     }
 }
