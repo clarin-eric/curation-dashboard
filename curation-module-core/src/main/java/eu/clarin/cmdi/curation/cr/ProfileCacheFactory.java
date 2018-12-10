@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;

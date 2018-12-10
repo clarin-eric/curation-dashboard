@@ -68,7 +68,7 @@ public class FacetMappingCacheFactory extends FacetMappingFactory{
     
     public FacetMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
         try {
-            return getFacetMapping(new CRService().createProfileHeader(profileId, "1.2", true));
+            return getFacetMapping(new CRService().createProfileHeader(profileId, "1.2", false));
         }
         catch (ExecutionException ex) {
             _logger.error("error while attempting to get facetMap for profileId {}", profileId, ex);

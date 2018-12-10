@@ -88,8 +88,8 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
             chunk.stream().forEach(child -> {
                 try {
                     child.generateReport(report.getName()).mergeWithParent(report);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ex) {
+                    _logger.error("", ex);
                 }
             });
 
