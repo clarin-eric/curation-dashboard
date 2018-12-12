@@ -59,8 +59,8 @@
 
 		<h2>facets-section</h2>
 
-		<font color="#dbd839">&#9873;</font> - derived facet <br />
-		<font color="#FF4000">&#9873;</font> - value mapping
+		<font color="#F4FA58">&#9873;</font> - derived facet <br />
+		<font color="#FF8000">&#9873;</font> - value mapping
 
 		<br/>
 

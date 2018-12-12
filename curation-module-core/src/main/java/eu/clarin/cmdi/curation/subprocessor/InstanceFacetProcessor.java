@@ -155,7 +155,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	                        createFacetValueStruct(
 	                                coverage.name, 
 	                                node.value, 
-	                                entry.getValue().stream().map(valueSet -> valueSet.getValueLanguagePair().getLeft()).collect(Collectors.joining(" ;")), 
+	                                entry.getValue().stream().map(valueSet -> valueSet.getValueLanguagePair().getLeft()).collect(Collectors.joining("; ")), 
 	                                //entry.getValue().get(0).isDerived() //assumes that a facet isn't defined as origin and derived at the same time
 	                                entry.getValue().stream().anyMatch(ValueSet::isDerived), //assumes that a facet isn't defined as origin and derived at the same time
 	                                entry.getValue().stream().anyMatch(ValueSet::isResultOfValueMapping) //assumes that a facet isn't defined as origin and derived at the same time
