@@ -75,7 +75,7 @@ public class HTTPLinkChecker {
         //encode url, to remove problems caused by | and similar characters
         String[] urlArray = url.split("\\?");
         if(urlArray.length==2){
-            url = urlArray[0]+URLEncoder.encode(urlArray[1],"UTF-8");
+            url = urlArray[0]+"?"+URLEncoder.encode(urlArray[1],"UTF-8");
         }
 
         _logger.trace("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
