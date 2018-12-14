@@ -66,9 +66,11 @@ public abstract class AbstractProcessor<R extends Report<?>> {
         } catch (Exception e) {
             _logger.error("", e);
             String message = e.getMessage();
-            message = message.replace(" java.lang.Exception","");
-            if(message==null || message.isEmpty()){
+
+            if (message == null || message.isEmpty()) {
                 message = "There was an unknown error. Please report it.";
+            }else{
+                message = message.replace(" java.lang.Exception", "");
             }
 
 

@@ -199,7 +199,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
         // URL
         parentReport.urlReport.totNumOfLinks += urlReport.totNumOfLinks;
-        parentReport.urlReport.totNumOfUniqueLinks += urlReport.totNumOfUniqueLinks;
+//        parentReport.urlReport.totNumOfUniqueLinks += urlReport.totNumOfUniqueLinks;
         parentReport.urlReport.totNumOfCheckedLinks += urlReport.totNumOfCheckedLinks;
         parentReport.urlReport.totNumOfResProxiesLinks += urlReport.totNumOfResProxiesLinks;
         parentReport.urlReport.totNumOfBrokenLinks += urlReport.totNumOfBrokenLinks;
@@ -276,7 +276,6 @@ public class CollectionReport implements Report<CollectionReport> {
         xmlPopulatedReport.avgRateOfPopulatedElements = xmlPopulatedReport.avgNumOfXMLSimpleElements == 0 ? 0 : (xmlPopulatedReport.avgNumOfXMLSimpleElements - xmlPopulatedReport.avgXMLEmptyElement) / xmlPopulatedReport.avgNumOfXMLSimpleElements;
 
 
-
         //statistics
 
         if (Configuration.DATABASE) {
@@ -290,6 +289,7 @@ public class CollectionReport implements Report<CollectionReport> {
             MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
 
             MongoCollection<Document> linksChecked = database.getCollection("linksChecked");
+            MongoCollection<Document> linksToBeChecked = database.getCollection("linksToBeChecked");
 
             AggregateIterable<Document> iterable = linksChecked.aggregate(Arrays.asList(
                     Aggregates.match(eq("collection", getName())),
@@ -310,14 +310,36 @@ public class CollectionReport implements Report<CollectionReport> {
                 urlReport.status.add(statistics);
             }
 
-            Bson checkedLinksFilter = Filters.eq("collection", getName());
-            long numOfCheckedLinks = linksChecked.countDocuments(checkedLinksFilter);
+
+            long numOfCheckedLinks = linksChecked.countDocuments(eq("collection", getName()));
 
             Bson brokenLinksFilter = Filters.and(Filters.eq("collection", getName()), Filters.and(Filters.not(Filters.eq("status", 200)), Filters.not(Filters.eq("status", 302))));
             long numOfBrokenLinks = linksChecked.countDocuments(brokenLinksFilter);
 
-            urlReport.totNumOfBrokenLinks = (int)numOfBrokenLinks;
-            urlReport.totNumOfCheckedLinks = (int)(numOfCheckedLinks);
+            urlReport.totNumOfBrokenLinks = (int) numOfBrokenLinks;
+            urlReport.totNumOfCheckedLinks = (int) (numOfCheckedLinks);
+
+            //joined urls from linkstobechecked
+            //to calculate unique links, linkchecked and linkstobechecked are added together and duplicates are subtracted.
+            //if this operation is not done through the database, the value would be wrong.
+            //because url validator works on a record basis and not collection basis, so the program
+            //can only know about unique link numbers in a single record and not the whole collection.
+            //thats why there is some database magic on the whole collection needed.
+            //there might be mongo only way to do this but i dont know.
+            iterable = linksToBeChecked.aggregate(Arrays.asList(
+                    Aggregates.match(eq("collection", getName())),
+                    Aggregates.lookup("linksChecked", "url", "url", "checked")
+            ));
+            int duplicates = 0;
+            for (Document doc : iterable) {
+                if (!((List) doc.get("checked")).isEmpty()) {
+                    duplicates++;
+                }
+            }
+
+            int numOfLinksToBeChecked = (int) linksToBeChecked.countDocuments(eq("collection", getName()));
+            urlReport.totNumOfUniqueLinks = ((int) numOfCheckedLinks) + numOfLinksToBeChecked - duplicates;
+
 
             urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
             urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
