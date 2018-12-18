@@ -1,14 +1,22 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
-import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +48,23 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 public class FileSizeValidator extends CMDSubprocessor {
     private final static Logger _logger = LoggerFactory.getLogger(FileSizeValidator.class);
     
-    private static final CMDIDataProcessor<Map<String,List<ValueSet>>> _processor = getProcessor();
+    private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
+    
+    private static final CMDIDataProcessor<Map<String,List<ValueSet>>> _processor = getProcessor();    
+    
+    private static Transformer _transformer = null;
+    
+    static{
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/cmd-record-1_1-to-1_2.xsl"));       
+        try {
+            _transformer = factory.newTransformer(xslt);
+        } 
+        catch (TransformerConfigurationException e) {
+            throw new RuntimeException("Unable to open cmd-record-1_1-to-1_2.xsl", e);
+        }
+    }
+
     
 
     private static CMDIDataProcessor<Map<String,List<ValueSet>>> getProcessor() {
@@ -71,10 +95,41 @@ public class FileSizeValidator extends CMDSubprocessor {
             return null;
         }        
     }
+    
+    private boolean isLatestVersion(Path path) throws IOException {
+        String line = null;
+        Matcher matcher;
+        
+        try(BufferedReader reader = Files.newBufferedReader(path)){
+            
+            while((line = reader.readLine()) != null) 
+                if((matcher = _pattern.matcher(line)).find())
+                    return matcher.group(3) != null;
+        }
+        catch(IOException ex) {
+                
+        }
+        return false;
+    }
 
 
 	@Override
 	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception{
+	    
+	    //convert cmdi 1.1 to 1.2 if necessary
+
+        if(!isLatestVersion(entity.getPath())){
+            Path newPath = Files.createTempFile(null, null);
+            _transformer.transform(new StreamSource(entity.getPath().toFile()), new StreamResult(newPath.toFile()));
+            
+            this.addMessage(Severity.INFO, "tranformed cmdi version 1.1 into version 1.2");
+            
+            entity.setPath(newPath);
+            entity.setSize(Files.size(newPath));
+        }
+        
+
+
 		report.fileReport = new FileReport();
 		report.fileReport.size = entity.getSize();
 		if(entity.getUrl()!=null){
@@ -91,19 +146,24 @@ public class FileSizeValidator extends CMDSubprocessor {
 				throw new FileSizeException(entity.getPath().getFileName().toString(), report.fileReport.size);
 		}
 
-
-		
-		
-
-		_logger.debug("creating CMDIData object...");
-
         CMDIData<Map<String,List<ValueSet>>> cmdiData = _processor.process(entity.getPath().toFile(), new ResourceStructureGraph());
         
-        _logger.debug("...done");
         
         entity.setCMDIData(cmdiData);
-
-
+        
+      //create xpath/value pairs only in instance mode 
+        if(!Configuration.COLLECTION_MODE) { 
+            
+            InstanceParser transformer = new InstanceParser();
+            try {
+                _logger.debug("parsing instance...");
+                entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));
+                _logger.debug("...done");
+            } 
+            catch (TransformerException | IOException e) {
+                throw new Exception("Unable to parse CMDI instance " + entity.getPath().toString(), e);
+            }
+        }
 	}
 
 	@Override
