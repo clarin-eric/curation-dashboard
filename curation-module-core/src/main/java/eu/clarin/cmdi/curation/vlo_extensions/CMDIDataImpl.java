@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.solr.common.SolrInputDocument;
-
 import eu.clarin.cmdi.vlo.config.FieldNameService;
 import eu.clarin.cmdi.vlo.importer.CMDIDataBaseImpl;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;

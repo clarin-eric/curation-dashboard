@@ -122,14 +122,17 @@ public class URLValidator extends CMDSubprocessor {
         
         resources.stream()
             .filter(resource -> resource.getResourceName() != null && (resource.getResourceName().startsWith("http://") || resource.getResourceName().startsWith("https://")))
-            .forEachOrdered(resource -> {
+            .forEach(resource -> {
                 urlMap.computeIfAbsent(resource.getResourceName(), key -> resource);
                 numOfLinks.incrementAndGet();
             });
         
-        data.getDocument().values().stream()
-            .forEach(valuesList -> valuesList.stream().filter(valueSet -> (valueSet.getValue().startsWith("http://")  || valueSet.getValue().startsWith("https://"))).forEach(valueSet -> urlMap.computeIfAbsent(valueSet.getValue(), key -> null))
-                );
+        String selfLink = (data.getDocument().get("_selfLink") != null && !data.getDocument().get("_selfLink").isEmpty())?data.getDocument().get("_selfLink").get(0).getValue():"";
+        
+        //only add selfLink if url
+        if(selfLink.startsWith("http://") || selfLink.startsWith("https://")) 
+            urlMap.computeIfAbsent(selfLink, key -> null);
+
         
 
 
