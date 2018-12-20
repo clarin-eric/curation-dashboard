@@ -338,7 +338,7 @@ public class LinkCheckerStatisticsHelper {
 
     private String createStatisticsTable(String collectionName, List<String> columnNames, List<List<Number>> rows, int total, double avgResp) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<h3>" + collectionName + "</h3>");
+        sb.append("<h3>" + collectionName + ":</h3>");
         sb.append("<table>");
         sb.append("<thead>");
         sb.append("<tr>");
