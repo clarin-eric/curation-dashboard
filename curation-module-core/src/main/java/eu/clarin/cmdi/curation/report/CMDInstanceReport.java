@@ -46,10 +46,6 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     @XmlElement(name = "profile-section")
     public ProfileHeader header;
     
-    // Transformation section
-    @XmlElement(name = "transformation-section")
-    public TransformationReport transformationReport;
-
     // file
     @XmlElement(name = "file-section")
     public FileReport fileReport;
@@ -238,14 +234,6 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         if (!segmentScore.segment.equals("profiles-score"))
             instanceScore += segmentScore.score;
 
-    }
-
-    @XmlRootElement
-    @XmlAccessorType(XmlAccessType.FIELD)
-    public static class TransformationReport {
-
-        public TransformationReport() {
-        }
     }
 
     @XmlRootElement
