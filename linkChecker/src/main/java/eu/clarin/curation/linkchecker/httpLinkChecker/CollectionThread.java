@@ -75,10 +75,12 @@ public class CollectionThread extends Thread {
                 MongoCursor<Document> cursor = linksToBeChecked.find(Filters.eq("url",url)).iterator();
 
                 if (cursor.hasNext()) {
-                    urlElement.setRecord(cursor.next().get("record").toString());
+                    Document doc = cursor.next();
+                    urlElement.setRecord(doc.get("record").toString());
+                    urlElement.setExpectedMimeType(doc.get("expectedMimeType")==null?"":doc.get("expectedMimeType").toString());
                 }
 
-                //better not to have it in log file
+                //better not to have it in log file, because it makes it unreadable
 //                _logger.info("Successfully checked link: "+ url);
 
             } catch (IOException | IllegalArgumentException e) {
@@ -86,7 +88,7 @@ public class CollectionThread extends Thread {
 //                _logger.error("There is an error with the URL: " + url + " . It is not being checked.");
 
                 urlElement = new URLElement(url, null, e.getMessage() + "for URL: "+url, 0,
-                        null, "0", 0, System.currentTimeMillis(), collection, 0, null);
+                        null, "0", 0, System.currentTimeMillis(), collection, 0, null,"");
 
                 urlElement.setCollection(collection);
                 MongoCursor<Document> cursor = linksToBeChecked.find(Filters.eq("url",url)).iterator();

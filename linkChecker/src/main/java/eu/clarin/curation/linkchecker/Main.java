@@ -160,16 +160,17 @@ public class Main {
 
                         URLElement urlElement = new URLElement(cursor.next());
                         String url = urlElement.getUrl();
-                        _logger.info("Adding " + url + " to linksToBeChecked.");
 
-                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, urlElement.getRecord(), urlElement.getCollection());
+                        //too much clutter in logs, so commented out
+//                        _logger.info("Adding " + url + " to linksToBeChecked.");
+
+                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, urlElement.getRecord(), urlElement.getCollection(), urlElement.getExpectedMimeType());
                         try {
                             linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
                         } catch (MongoException e) {
                             //duplicate key error
                             //url is already in the database, do nothing
                         }
-
 
                     }
                 } else {

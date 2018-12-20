@@ -15,6 +15,7 @@ public class URLElement {
     private int redirectCount;
     private String collection;
     private String record;
+    private String expectedMimeType;
 
     public URLElement(Document document) {
         this.url = document.getString("url");
@@ -28,12 +29,13 @@ public class URLElement {
         this.collection = document.getString("collection");
         this.record = document.getString("record");
         this.redirectCount = document.getInteger("redirectCount");
+        this.expectedMimeType = document.getString("expectedMimeType");
     }
 
     public URLElement() {
     }
 
-    public URLElement(String url, String method, String message, int status, String contentType, String byteSize, long duration, long timestamp, String collection, int redirectCount, String record) {
+    public URLElement(String url, String method, String message, int status, String contentType, String byteSize, long duration, long timestamp, String collection, int redirectCount, String record, String expectedMimeType) {
         this.url = url;
         this.method = method;
         this.message = message;
@@ -45,6 +47,7 @@ public class URLElement {
         this.collection = collection;
         this.redirectCount = redirectCount;
         this.record = record;
+        this.expectedMimeType = expectedMimeType;
     }
 
     public String getUrl() {
@@ -123,7 +126,8 @@ public class URLElement {
                 .append("timestamp", timestamp)
                 .append("redirectCount", redirectCount)
                 .append("collection", collection)
-                .append("record", record);
+                .append("record", record)
+                .append("expectedMimeType",expectedMimeType);
 
 
         return document;
@@ -151,5 +155,13 @@ public class URLElement {
 
     public void setRecord(String record) {
         this.record = record;
+    }
+
+    public String getExpectedMimeType() {
+        return expectedMimeType;
+    }
+
+    public void setExpectedMimeType(String expectedMimeType) {
+        this.expectedMimeType = expectedMimeType;
     }
 }

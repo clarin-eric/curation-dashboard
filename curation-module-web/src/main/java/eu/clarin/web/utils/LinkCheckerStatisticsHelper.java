@@ -162,7 +162,7 @@ public class LinkCheckerStatisticsHelper {
             cursor = linksChecked.find(and(eq("status", status), eq("collection", collectionName))).limit(100).iterator();
         }
 
-        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content-Type", "Byte-Size", "Request Duration(ms)", "Timestamp", "Method", "Redirect Count", "Record");
+        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content-Type","Expected Content-Type", "Byte-Size", "Request Duration(ms)", "Timestamp", "Method", "Redirect Count", "Record");
 
         sb.append("<table>");
         sb.append("<thead>");
@@ -188,16 +188,19 @@ public class LinkCheckerStatisticsHelper {
                 sb.append(urlElement.getMessage());
                 sb.append("</td>");
                 sb.append("<td>");
-                sb.append(String.valueOf(urlElement.getStatus()));
+                sb.append(urlElement.getStatus());
                 sb.append("</td>");
                 sb.append("<td>");
                 sb.append(urlElement.getContentType());
                 sb.append("</td>");
                 sb.append("<td>");
+                sb.append(urlElement.getExpectedMimeType());
+                sb.append("</td>");
+                sb.append("<td>");
                 sb.append(urlElement.getByteSize());
                 sb.append("</td>");
                 sb.append("<td>");
-                sb.append(String.valueOf(urlElement.getDuration()));
+                sb.append(urlElement.getDuration());
                 sb.append("</td>");
                 sb.append("<td>");
                 sb.append(TimeUtils.humanizeToDate(urlElement.getTimestamp()));
@@ -206,10 +209,10 @@ public class LinkCheckerStatisticsHelper {
                 sb.append(urlElement.getMethod());
                 sb.append("</td>");
                 sb.append("<td>");
-                sb.append(String.valueOf(urlElement.getRedirectCount()));
+                sb.append(urlElement.getRedirectCount());
                 sb.append("</td>");
                 sb.append("<td>");
-                sb.append(String.valueOf(urlElement.getRecord()));
+                sb.append(urlElement.getRecord());
                 sb.append("</td>");
 
                 sb.append("</tr>");

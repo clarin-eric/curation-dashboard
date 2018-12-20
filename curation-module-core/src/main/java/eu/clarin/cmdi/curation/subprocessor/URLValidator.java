@@ -133,17 +133,11 @@ public class URLValidator extends CMDSubprocessor {
         if(selfLink.startsWith("http://") || selfLink.startsWith("https://")) 
             urlMap.computeIfAbsent(selfLink, key -> null);
 
-        
-
 
         if (Configuration.HTTP_VALIDATION) {
             if (Configuration.DATABASE && Configuration.COLLECTION_MODE) {
 
-                
- 
-
                 urlMap.keySet().parallelStream().forEach(url -> {
-
 
                     _logger.info("Checking database for url: " + url);
 
@@ -163,13 +157,14 @@ public class URLValidator extends CMDSubprocessor {
 
                     } else {
 
+                        String expectedMimeType = urlMap.get(url).getMimeType();
+
                         String finalRecord = report.getName();
                         String finalCollection = parentName != null ? parentName : finalRecord;
 
-                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, finalRecord, finalCollection);
+                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, finalRecord, finalCollection, expectedMimeType);
 
                         try {
-
                             _mongoClient.getDatabase(Configuration.DATABASE_NAME).getCollection("linksToBeChecked").insertOne(urlElementToBeChecked.getMongoDocument());
                         } catch (MongoException e) {
                             //duplicate key error
