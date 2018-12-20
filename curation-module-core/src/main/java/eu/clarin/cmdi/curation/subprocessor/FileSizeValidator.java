@@ -52,20 +52,6 @@ public class FileSizeValidator extends CMDSubprocessor {
     
     private static final CMDIDataProcessor<Map<String,List<ValueSet>>> _processor = getProcessor();    
     
-    private static Transformer _transformer = null;
-    
-    static{
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/cmd-record-1_1-to-1_2.xsl"));       
-        try {
-            _transformer = factory.newTransformer(xslt);
-        } 
-        catch (TransformerConfigurationException e) {
-            throw new RuntimeException("Unable to open cmd-record-1_1-to-1_2.xsl", e);
-        }
-    }
-
-    
 
     private static CMDIDataProcessor<Map<String,List<ValueSet>>> getProcessor() {
         try {
@@ -120,7 +106,12 @@ public class FileSizeValidator extends CMDSubprocessor {
 
         if(!isLatestVersion(entity.getPath())){
             Path newPath = Files.createTempFile(null, null);
-            _transformer.transform(new StreamSource(entity.getPath().toFile()), new StreamResult(newPath.toFile()));
+            
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/cmd-record-1_1-to-1_2.xsl"));   
+            
+            Transformer transformer = factory.newTransformer(xslt);
+            transformer.transform(new StreamSource(entity.getPath().toFile()), new StreamResult(newPath.toFile()));
             
             this.addMessage(Severity.INFO, "tranformed cmdi version 1.1 into version 1.2");
             
