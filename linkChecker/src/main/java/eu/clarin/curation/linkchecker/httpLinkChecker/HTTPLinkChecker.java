@@ -100,6 +100,7 @@ public class HTTPLinkChecker {
         long end = System.currentTimeMillis();
         long duration = end - start;
 
+
         duration += durationPassed;//durationPassed is for previous requests if any that led to a redirect
 
         int statusCode = response.getStatusLine().getStatusCode();
