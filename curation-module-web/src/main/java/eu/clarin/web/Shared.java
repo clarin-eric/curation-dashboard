@@ -96,8 +96,6 @@ public class Shared {
                 } catch (Exception e) {
                     _logger.error("Exception caused by report: " + path + ", cause: " + e.getCause() + ", message: " + e.getMessage()+"\n"+
                             "If the message and cause of the exception are null, it is a good idea to use e.printStackTrace() to determine the real cause.");
-//                    e.printStackTrace();
-                    _logger.error("");
                     //keep the for loop going to read the other collections
                 }
 

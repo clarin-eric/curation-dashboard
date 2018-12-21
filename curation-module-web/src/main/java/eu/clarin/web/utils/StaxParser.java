@@ -7,10 +7,7 @@ import eu.clarin.web.data.CollectionStatistics;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.*;
-import javax.xml.stream.events.Characters;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
+import javax.xml.stream.events.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -87,7 +84,12 @@ public class StaxParser {
                     if (startElement.getName().getLocalPart().equalsIgnoreCase("provider")) {
                         provider = true;
                     } else if (startElement.getName().getLocalPart().equalsIgnoreCase("collection-report")) {
-                        cs.setScorePercentage(Double.parseDouble(startElement.getAttributeByName(new QName("score-percentage")).getValue()));
+                        Attribute scorePercentage = startElement.getAttributeByName(new QName("score-percentage"));
+                        if(scorePercentage==null){
+                            cs.setScorePercentage(0.0);
+                        }else{
+                            cs.setScorePercentage(Double.parseDouble(scorePercentage.getValue()));
+                        }
                     } else if (startElement.getName().getLocalPart().equalsIgnoreCase("numOfFiles")) {
                         numOfFiles = true;
                     } else if (startElement.getName().getLocalPart().equalsIgnoreCase("profiles")) {
