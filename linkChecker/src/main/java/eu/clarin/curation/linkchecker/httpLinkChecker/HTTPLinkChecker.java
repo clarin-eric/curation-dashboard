@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -33,14 +35,14 @@ public class HTTPLinkChecker {
 
     //this is only for link-checker module, don't use it from core-module(will throw nullpointer because it can't find properties)
     public HTTPLinkChecker() {
-        this(Configuration.TIMEOUT,Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
+        this(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
     }
 
     public HTTPLinkChecker(final int timeout, final int REDIRECT_FOLLOW_LIMIT, final String USERAGENT) {
         redirectLink = null;
         this.timeout = timeout;
-        this.REDIRECT_FOLLOW_LIMIT=REDIRECT_FOLLOW_LIMIT;
-        this.USERAGENT=USERAGENT;
+        this.REDIRECT_FOLLOW_LIMIT = REDIRECT_FOLLOW_LIMIT;
+        this.USERAGENT = USERAGENT;
     }
 
     //this method lets httpclient handle the redirects by itself
@@ -53,18 +55,18 @@ public class HTTPLinkChecker {
         HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
 
         HttpHead head;
-        try{
+        try {
             head = new HttpHead(url);
-        }catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             //encode url, to remove problems caused by | and similar characters
             String[] urlArray = url.split("\\?");
-            if(urlArray.length==2){
-                url = urlArray[0]+"?"+URLEncoder.encode(urlArray[1],"UTF-8");
+            if (urlArray.length == 2) {
+                url = urlArray[0] + "?" + URLEncoder.encode(urlArray[1], "UTF-8");
             }
             head = new HttpHead(url);
         }
 
-        head.setHeader("User-Agent",USERAGENT);
+        head.setHeader("User-Agent", USERAGENT);
         HttpResponse response = client.execute(head);
         return response.getStatusLine().getStatusCode();
 
@@ -88,18 +90,18 @@ public class HTTPLinkChecker {
         //returns 400 for head but browser opens fine
 
         HttpHead head;
-        try{
+        try {
             head = new HttpHead(url);
-        }catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             //encode url, to remove problems caused by | and similar characters
             String[] urlArray = url.split("\\?");
-            if(urlArray.length==2){
-                url = urlArray[0]+"?"+URLEncoder.encode(urlArray[1],"UTF-8");
+            if (urlArray.length == 2) {
+                url = urlArray[0] + "?" + URLEncoder.encode(urlArray[1], "UTF-8");
             }
             head = new HttpHead(url);
         }
 
-        head.setHeader("User-Agent",USERAGENT);
+        head.setHeader("User-Agent", USERAGENT);
 
         long start = System.currentTimeMillis();
         HttpResponse response = client.execute(head);
@@ -127,8 +129,13 @@ public class HTTPLinkChecker {
                     if (redirectLink.equals(url)) {
                         urlElement.setMessage("Redirect link is the same");
                     } else {
-                        this.redirectLink = redirectLink;
-                        return checkLink(redirectLink, redirectFollowLevel + 1, duration, originalURL);
+                        try {
+                            redirectLink = convertRelativeToAbsolute(url, redirectLink);
+                            this.redirectLink = redirectLink;
+                            return checkLink(redirectLink, redirectFollowLevel + 1, duration, originalURL);
+                        } catch (URISyntaxException e) {
+                            urlElement.setMessage("Redirect link is malformed");
+                        }
                     }
                 } else {
                     urlElement.setMessage("There is no redirect link('Location' header)");
@@ -142,7 +149,7 @@ public class HTTPLinkChecker {
 
 
                 HttpGet get = new HttpGet(url);
-                get.setHeader("User-Agent",USERAGENT);
+                get.setHeader("User-Agent", USERAGENT);
 
                 start = System.currentTimeMillis();
                 response = client.execute(get);
@@ -213,6 +220,25 @@ public class HTTPLinkChecker {
         urlElement.setRedirectCount(redirectFollowLevel);
 
         return urlElement;
+    }
+
+    public String convertRelativeToAbsolute(String url, String locationHeader) throws URISyntaxException {
+        String result;
+        if (locationHeader.startsWith(".")) {
+            //remove query parameters
+            url = url.split("\\?")[0];
+            int lastIndex = url.lastIndexOf("/");
+            result = url.substring(0, lastIndex) + locationHeader.substring(1);
+
+        } else if (locationHeader.startsWith("/")) {
+            URI uri = new URI(url);
+            String scheme = uri.getScheme();
+            String domain = uri.getHost();
+            result = scheme + "://" + domain + locationHeader;
+        } else {
+            return locationHeader;
+        }
+        return result;
     }
 
     public String getRedirectLink() {
