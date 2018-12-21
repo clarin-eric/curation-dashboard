@@ -1,7 +1,6 @@
 package eu.clarin.cmdi.curation.cr;
 
 import java.util.Collection;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.validation.Schema;
@@ -53,7 +52,7 @@ public class CRService implements ICRService {
 		if(!isLocalFile)
 			header = publicProfiles
 			.stream()
-			.filter(h -> h.id.equals(profileId))
+			.filter(h -> (h.id != null && h.id.equals(profileId)))
 			.findFirst()
 			.orElse(null);
 		

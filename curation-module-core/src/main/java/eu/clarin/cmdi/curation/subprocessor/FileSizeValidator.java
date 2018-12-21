@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -93,7 +92,7 @@ public class FileSizeValidator extends CMDSubprocessor {
                     return matcher.group(3) != null;
         }
         catch(IOException ex) {
-                
+            _logger.error("can't identitfy cmdi version by namespace", ex);
         }
         return false;
     }

@@ -1,7 +1,5 @@
 package eu.clarin.cmdi.curation.entities;
 
-import java.nio.file.Path;
-
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CMDProfileProcessor;
@@ -37,7 +35,7 @@ public class CMDProfile extends CurationEntity {
 	}
 
 	@Override
-	protected AbstractProcessor getProcessor() {
+	protected AbstractProcessor<?> getProcessor() {
 		return new CMDProfileProcessor();
 	}
 	

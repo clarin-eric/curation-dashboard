@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.entities;
 
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;

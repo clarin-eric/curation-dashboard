@@ -37,7 +37,7 @@ public class CollectionInstanceFacetProcessor extends CMDSubprocessor {
 			    if(!coverage.coveredByProfile)
 			        continue; //we have to discuss if this should still be the case
 			    
-			    coverage.coveredByInstance = (facetValuesMap.get(coverage.name) != null && !facetValuesMap.get(coverage.name).isEmpty());
+			    coverage.coveredByInstance = (facetValuesMap.get(coverage.name) != null && !facetValuesMap.get(coverage.name).isEmpty() && !facetValuesMap.get(coverage.name).get(0).getValue().isEmpty());
 			    if(coverage.coveredByInstance)
 			        numOfCoveredByIns++;
 			}

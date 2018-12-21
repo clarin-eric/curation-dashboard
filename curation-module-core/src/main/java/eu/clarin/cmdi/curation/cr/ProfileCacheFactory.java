@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Ticker;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -29,7 +30,7 @@ import eu.clarin.cmdi.curation.xml.SchemaResourceResolver;
 
 class ProfileCacheFactory{
 	
-//	static final long HOUR_IN_NS = 3600000000000L;
+	static final long HOUR_IN_NS = 3600000000000L;
 	
 	private static final Logger _logger = LoggerFactory.getLogger(ProfileCacheFactory.class);
 	
@@ -49,7 +50,10 @@ class ProfileCacheFactory{
 		:
 		CacheBuilder.newBuilder()
 			.concurrencyLevel(4)
-			.expireAfterAccess(5, TimeUnit.MINUTES)//keep non public profiles 5 minutes in cache
+			//.expireAfterAccess(5, TimeUnit.MINUTES)//keep non public profiles 5 minutes in cache
+	         .expireAfterWrite(8, TimeUnit.HOURS)//keep non public profiles 8 hours in cache
+	            .ticker(new Ticker() { @Override public long read() { return 9 * HOUR_IN_NS; } }) //cache tick 9 hours
+
 			.build(new ProfileCacheLoader(isPublicProfilesCache));		
 	}
 	

@@ -17,35 +17,25 @@ public class ResourceProxyProcessor extends CMDSubprocessor {
 
 	@Override
 	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
-	    CMDIData<Map<String, List<ValueSet>>> cmdiData = entity.getCMDIData();
+	    CMDIData<Map<String, List<ValueSet>>> data = entity.getCMDIData();
 	    
 		report.resProxyReport = new ResProxyReport();
 		
 		report.resProxyReport.numOfResProxies = 0;
 		report.resProxyReport.numOfResourcesWithMime =  0;
 		report.resProxyReport.numOfResProxiesWithReferences = 0;
-		report.resProxyReport.resourceType = null;
+		report.resProxyReport.resourceType = new ArrayList<ResourceType>();
 		
-		int numOfTypeResource = cmdiData.getDataResources().size();
-		
-		for(Resource resource : cmdiData.getDataResources()) {
-		    if(resource.getMimeType() != null)
-		        report.resProxyReport.numOfResourcesWithMime++;
-		    if(resource.getResourceName() != null && !resource.getResourceName().isEmpty())
-		        report.resProxyReport.numOfResProxiesWithReferences++;
-		    
-		}
-		
-		
-		addResourceType(cmdiData.getLandingPageResources(), report);
-		addResourceType(cmdiData.getMetadataResources(), report);
-		addResourceType(cmdiData.getSearchPageResources(), report);
-		addResourceType(cmdiData.getSearchResources(), report);
+		addResourceType(data.getDataResources(), report);
+		addResourceType(data.getLandingPageResources(), report);
+		addResourceType(data.getMetadataResources(), report);
+		addResourceType(data.getSearchPageResources(), report);
+		addResourceType(data.getSearchResources(), report);
 			
-			report.resProxyReport.percOfResourcesWithMime = numOfTypeResource > 0? 
-					(double) report.resProxyReport.numOfResourcesWithMime / numOfTypeResource : 0;
-			report.resProxyReport.percOfResProxiesWithReferences = report.resProxyReport.numOfResProxies > 0? 
-					(double) report.resProxyReport.numOfResProxiesWithReferences / report.resProxyReport.numOfResProxies : 0;
+		report.resProxyReport.percOfResourcesWithMime = report.resProxyReport.resourceType.size() > 0? 
+				(double) report.resProxyReport.numOfResourcesWithMime / report.resProxyReport.resourceType.size() : 0;
+		report.resProxyReport.percOfResProxiesWithReferences = report.resProxyReport.numOfResProxies > 0? 
+				(double) report.resProxyReport.numOfResProxiesWithReferences / report.resProxyReport.numOfResProxies : 0;
 
 		
 	}
@@ -53,20 +43,20 @@ public class ResourceProxyProcessor extends CMDSubprocessor {
 	private void addResourceType(List<Resource> resources, CMDInstanceReport report) {
 	    if(resources.isEmpty())
 	        return;
-	    if(report.resProxyReport.resourceType == null)
-            report.resProxyReport.resourceType = new ArrayList<>();
 	    
 	    ResourceType resourceType = new ResourceType();
 	    resourceType.type = resources.get(0).getType();
 	    resourceType.count = resources.size();
 	    
 	    for(Resource resource : resources) {
-	           if(resource.getResourceName() != null && !resource.getResourceName().isEmpty())
-	                report.resProxyReport.numOfResProxiesWithReferences++;
-	    }
-	    
-	    report.resProxyReport.resourceType.add(resourceType);
-	    
+            if(resource.getResourceName() != null && !resource.getResourceName().isEmpty())
+                report.resProxyReport.numOfResProxiesWithReferences++;
+            if(resource.getMimeType() != null && !resource.getMimeType().isEmpty())
+                report.resProxyReport.numOfResourcesWithMime++;
+            
+            report.resProxyReport.numOfResProxies++;
+	    }    
+	    report.resProxyReport.resourceType.add(resourceType);  
 	}
 
 	@Override

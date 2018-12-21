@@ -1,7 +1,5 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
-import java.util.regex.Matcher;
-
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
@@ -20,8 +18,9 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 		if (entity.getProfileId() != null && !entity.getProfileId().isEmpty()){
 			profileId = entity.getProfileId();
 		}else{
-			profileId = entity.getPath().toString();
-			isLocalFile = true;
+			//profileId = entity.getPath().toString();
+			//isLocalFile = true;
+		    throw new ProfileNotFoundException("can' find profile " + entity);
 		}
 
 		CRService service = new CRService();

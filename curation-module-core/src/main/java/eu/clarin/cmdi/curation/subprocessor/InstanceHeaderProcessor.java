@@ -101,7 +101,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 
 		// at this point profile will be processed and cached		
 		report.header = crService.createProfileHeader(mdProfile, "1.2", false);
-		report.header.id = profileIdFromSchema;
+//		report.header.id = profileIdFromSchema;
 		report.header.cmdiVersion = "1.2";
 		report.fileReport.collection = mdCollectionDisplayName;
 		
