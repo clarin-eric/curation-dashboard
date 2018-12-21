@@ -111,7 +111,7 @@ public class Configuration {
         String vloConfigLocation = config.getProperty("VLO_CONFIG_LOCATION");
         
         if(vloConfigLocation == null || vloConfigLocation.isEmpty()) {
-            _logger.warn("loading default VloConfig.xml from vlo-commons.jar - PROGRAM BUT WILL PROBALY DELIVER UNATTENDED RESULTS!!!");
+            _logger.warn("loading default VloConfig.xml from vlo-commons.jar - PROGRAM WILL WORK BUT WILL PROBABABLY DELIVER UNATTENDED RESULTS!!!");
             _logger.warn("make sure to define a valid VLO_CONFIG_LOCATION in the file config.properties");
             VLO_CONFIG = new DefaultVloConfigFactory().newConfig();
         }

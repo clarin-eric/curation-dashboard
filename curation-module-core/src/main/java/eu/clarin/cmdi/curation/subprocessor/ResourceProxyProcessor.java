@@ -32,8 +32,8 @@ public class ResourceProxyProcessor extends CMDSubprocessor {
 		addResourceType(data.getSearchPageResources(), report);
 		addResourceType(data.getSearchResources(), report);
 			
-		report.resProxyReport.percOfResourcesWithMime = report.resProxyReport.resourceType.size() > 0? 
-				(double) report.resProxyReport.numOfResourcesWithMime / report.resProxyReport.resourceType.size() : 0;
+		report.resProxyReport.percOfResourcesWithMime = report.resProxyReport.numOfResProxies > 0? 
+				(double) report.resProxyReport.numOfResourcesWithMime / report.resProxyReport.numOfResProxies : 0;
 		report.resProxyReport.percOfResProxiesWithReferences = report.resProxyReport.numOfResProxies > 0? 
 				(double) report.resProxyReport.numOfResProxiesWithReferences / report.resProxyReport.numOfResProxies : 0;
 
