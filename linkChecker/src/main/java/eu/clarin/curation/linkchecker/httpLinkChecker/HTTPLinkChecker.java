@@ -1,5 +1,7 @@
 package eu.clarin.curation.linkchecker.httpLinkChecker;
 
+import eu.clarin.curation.linkchecker.helpers.Configuration;
+import eu.clarin.curation.linkchecker.urlElements.URLElement;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -7,12 +9,8 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import eu.clarin.curation.linkchecker.helpers.Configuration;
-import eu.clarin.curation.linkchecker.urlElements.URLElement;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -47,19 +45,25 @@ public class HTTPLinkChecker {
 
     //this method lets httpclient handle the redirects by itself
     public int checkLinkAndGetResponseCode(String url) throws IOException {
-        //encode url, to remove problems caused by | and similar characters
-        String[] urlArray = url.split("\\?");
-        if(urlArray.length==2){
-            url = urlArray[0]+"?"+URLEncoder.encode(urlArray[1],"UTF-8");
-        }
-
         RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
                 .setConnectTimeout(timeout)
                 .setConnectionRequestTimeout(timeout)
                 .setSocketTimeout(timeout)
                 .build();
         HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
-        HttpHead head = new HttpHead(url);
+
+        HttpHead head;
+        try{
+            head = new HttpHead(url);
+        }catch(IllegalArgumentException e){
+            //encode url, to remove problems caused by | and similar characters
+            String[] urlArray = url.split("\\?");
+            if(urlArray.length==2){
+                url = urlArray[0]+"?"+URLEncoder.encode(urlArray[1],"UTF-8");
+            }
+            head = new HttpHead(url);
+        }
+
         head.setHeader("User-Agent",USERAGENT);
         HttpResponse response = client.execute(head);
         return response.getStatusLine().getStatusCode();
@@ -68,20 +72,11 @@ public class HTTPLinkChecker {
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
     public URLElement checkLink(String url, int redirectFollowLevel, long durationPassed, String originalURL) throws IOException {
-        if(!url.startsWith("http")){
-            url="http://"+url;
-        }
-
-        //encode url, to remove problems caused by | and similar characters
-        String[] urlArray = url.split("\\?");
-        if(urlArray.length==2){
-            url = urlArray[0]+"?"+URLEncoder.encode(urlArray[1],"UTF-8");
-        }
-
         _logger.trace("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
         if (url == null) {
             throw new IOException("The requested url is null.");
         }
+
         RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
                 .setConnectTimeout(timeout)
                 .setConnectionRequestTimeout(timeout)
@@ -92,7 +87,18 @@ public class HTTPLinkChecker {
         //valid-example.xml has this url: http://clarin.oeaw.ac.at/lrp/dict-gate/index.html
         //returns 400 for head but browser opens fine
 
-        HttpHead head = new HttpHead(url);
+        HttpHead head;
+        try{
+            head = new HttpHead(url);
+        }catch(IllegalArgumentException e){
+            //encode url, to remove problems caused by | and similar characters
+            String[] urlArray = url.split("\\?");
+            if(urlArray.length==2){
+                url = urlArray[0]+"?"+URLEncoder.encode(urlArray[1],"UTF-8");
+            }
+            head = new HttpHead(url);
+        }
+
         head.setHeader("User-Agent",USERAGENT);
 
         long start = System.currentTimeMillis();
