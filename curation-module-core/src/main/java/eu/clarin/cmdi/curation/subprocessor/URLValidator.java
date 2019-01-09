@@ -158,7 +158,7 @@ public class URLValidator extends CMDSubprocessor {
                     } else {
 
                         String expectedMimeType = urlMap.get(url).getMimeType();
-                        expectedMimeType=expectedMimeType==null?"":expectedMimeType;
+                        expectedMimeType=expectedMimeType==null?"Not Specified":expectedMimeType;
 
                         String finalRecord = report.getName();
                         String finalCollection = parentName != null ? parentName : finalRecord;

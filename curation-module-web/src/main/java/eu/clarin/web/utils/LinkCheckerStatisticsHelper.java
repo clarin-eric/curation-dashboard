@@ -194,7 +194,8 @@ public class LinkCheckerStatisticsHelper {
                 sb.append(urlElement.getContentType());
                 sb.append("</td>");
                 sb.append("<td>");
-                sb.append(urlElement.getExpectedMimeType());
+                //because this field is new, older entries dont have it and it results in null, so a null check to make it more user friendly
+                sb.append(urlElement.getExpectedMimeType()==null?"Not Specified":urlElement.getExpectedMimeType());
                 sb.append("</td>");
                 sb.append("<td>");
                 sb.append(urlElement.getByteSize());

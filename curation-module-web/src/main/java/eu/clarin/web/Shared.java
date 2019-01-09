@@ -116,13 +116,21 @@ public class Shared {
 
         File folder = new File(Configuration.OUTPUT_DIRECTORY.toString() + "/statistics");
         folder.mkdirs();
+        File statistics = new File(folder.getPath()+"/linkCheckerStatistics.html");
+        try{
+            Files.deleteIfExists(statistics.toPath());
+        }catch(IOException e){
+            _logger.error("Problem deleting linkCheckerStatistics.html. Maybe delete it manually?");
+        }
 
-        try (PrintStream ps = new PrintStream(Files.newOutputStream(Paths.get(Configuration.OUTPUT_DIRECTORY.toString() + "/statistics/linkCheckerStatistics.html")))) {
+        try (PrintStream ps = new PrintStream(Files.newOutputStream(statistics.toPath()))) {
 
             ps.println(html);
 
             _logger.info("linkchecker statistics html file has been created.");
         } catch (IOException e) {
+            //todo delete this
+            e.printStackTrace();
             _logger.error("Problem writing to the statistics.html");
         }
     }

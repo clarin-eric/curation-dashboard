@@ -85,9 +85,9 @@ public class StaxParser {
                         provider = true;
                     } else if (startElement.getName().getLocalPart().equalsIgnoreCase("collection-report")) {
                         Attribute scorePercentage = startElement.getAttributeByName(new QName("score-percentage"));
-                        if(scorePercentage==null){
+                        if (scorePercentage == null) {
                             cs.setScorePercentage(0.0);
-                        }else{
+                        } else {
                             cs.setScorePercentage(Double.parseDouble(scorePercentage.getValue()));
                         }
                     } else if (startElement.getName().getLocalPart().equalsIgnoreCase("numOfFiles")) {
@@ -113,7 +113,9 @@ public class StaxParser {
                     } else if (startElement.getName().getLocalPart().equalsIgnoreCase("coverage")) {
                         coverage = true;
                     } else if (startElement.getName().getLocalPart().equalsIgnoreCase("facet")) {
-                        facets.add(Double.parseDouble(startElement.getAttributeByName(new QName("coverage")).getValue()));
+                        if (startElement.getAttributeByName(new QName("coverage")) != null) {
+                            facets.add(Double.parseDouble(startElement.getAttributeByName(new QName("coverage")).getValue()));
+                        }
                     }
 
 
