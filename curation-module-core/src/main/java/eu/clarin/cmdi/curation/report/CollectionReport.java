@@ -313,8 +313,12 @@ public class CollectionReport implements Report<CollectionReport> {
 
             long numOfCheckedLinks = linksChecked.countDocuments(eq("collection", getName()));
 
-            Bson brokenLinksFilter = Filters.and(Filters.eq("collection", getName()), Filters.and(Filters.not(Filters.eq("status", 200)), Filters.not(Filters.eq("status", 302))));
+
+            Bson brokenLinksFilter = Filters.and(Filters.eq("collection", getName()), Filters.not(Filters.in("status", 200, 302, 401, 405, 429)));
             long numOfBrokenLinks = linksChecked.countDocuments(brokenLinksFilter);
+
+            Bson undeterminedLinksFilter = Filters.and(Filters.eq("collection", getName()), Filters.in("status", 401, 405, 429));
+            urlReport.totNumOfUndeterminedLinks = (int) linksChecked.countDocuments(undeterminedLinksFilter);
 
             urlReport.totNumOfBrokenLinks = (int) numOfBrokenLinks;
             urlReport.totNumOfCheckedLinks = (int) (numOfCheckedLinks);
@@ -345,18 +349,17 @@ public class CollectionReport implements Report<CollectionReport> {
             urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
             urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
 
-            //todo avgnumofresproxies is not calculated anywhere, do it by calculating from mime type from database
+            //todo totNumOfResProxiesLinks is not calculated anywhere, do it by calculating from mime type from database
             urlReport.avgNumOfResProxiesLinks = (double) urlReport.totNumOfResProxiesLinks / fileReport.numOfFiles;
 
 
         }
 
 
-//        urlReport.ratioOfValidLinks = urlReport.totNumOfUniqueLinks == 0 ? 0 :
-//                (double) (urlReport.totNumOfUniqueLinks - urlReport.totNumOfBrokenLinks) / urlReport.totNumOfUniqueLinks;
+        int totCheckedUndeterminedRemoved = urlReport.totNumOfCheckedLinks-urlReport.totNumOfUndeterminedLinks;
 
         urlReport.ratioOfValidLinks = urlReport.totNumOfCheckedLinks == 0 ? 0 :
-                (double) (urlReport.totNumOfCheckedLinks - urlReport.totNumOfBrokenLinks) / urlReport.totNumOfCheckedLinks;
+                (double) (totCheckedUndeterminedRemoved - urlReport.totNumOfBrokenLinks) / totCheckedUndeterminedRemoved;
 
         // Facets
         facetReport.facet.forEach(facet -> facet.coverage = (double) facet.cnt / fileReport.numOfFiles);
@@ -440,6 +443,7 @@ public class CollectionReport implements Report<CollectionReport> {
         public int totNumOfBrokenLinks;
         public Double avgNumOfBrokenLinks = 0.0;
         public Double ratioOfValidLinks = 0.0;
+        public int totNumOfUndeterminedLinks;
         @XmlElementWrapper(name = "statistics")
         public Collection<Statistics> status = new ArrayList<>();
     }

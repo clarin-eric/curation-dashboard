@@ -283,13 +283,14 @@ public class URLValidator extends CMDSubprocessor {
             Bson checkedLinksFilter = Filters.eq("record", name);
             long numOfCheckedLinks = database.getCollection("linksChecked").countDocuments(checkedLinksFilter);
 
-            //Bson brokenLinksFilter = Filters.and(Filters.eq("record", name), Filters.and(Filters.not(Filters.eq("status", 200)), Filters.not(Filters.eq("status", 302))));
-            Bson brokenLinksFilter = Filters.and(Filters.eq("record", name), Filters.in("status", 200, 302));
+            Bson brokenLinksFilter = Filters.and(Filters.eq("record", name), Filters.not(Filters.in("status", 200, 302, 401, 405, 429)));
             long numOfBrokenLinks = database.getCollection("linkesChecked").countDocuments(brokenLinksFilter);
 
+            Bson undeterminedLinksFilter = Filters.and(Filters.eq("record", name), Filters.in("status", 401, 405, 429));
+            long numOfUndeterminedLinks = database.getCollection("linkesChecked").countDocuments(undeterminedLinksFilter);
             
-
-            report.percOfValidLinks = numOfCheckedLinks == 0 ? 0 : (numOfCheckedLinks - numOfBrokenLinks) / (double) numOfCheckedLinks;
+            long numOfCheckedUndeterminedRemoved = numOfCheckedLinks - numOfUndeterminedLinks;
+            report.percOfValidLinks = numOfCheckedLinks == 0 ? 0 : (numOfCheckedUndeterminedRemoved - numOfBrokenLinks) / (double) numOfCheckedUndeterminedRemoved;
 
         }
         return report;
