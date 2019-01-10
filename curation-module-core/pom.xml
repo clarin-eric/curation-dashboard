@@ -76,6 +76,10 @@
 		<!--<artifactId>humanize-slim</artifactId> -->
 		<!--<version>${humanize.version}</version> -->
 		<!--</dependency> -->
+
+
+		<!--vlo importer 4.6.0 must be cloned from github and compiled until its release on nexus-->
+		<!--github link: https://github.com/clarin-eric/VLO-->
 		<dependency>
 			<groupId>eu.clarin.cmdi</groupId>
 			<artifactId>vlo-importer</artifactId>
