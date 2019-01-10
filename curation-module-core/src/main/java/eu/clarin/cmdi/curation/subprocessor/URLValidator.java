@@ -74,22 +74,6 @@ public class URLValidator extends CMDSubprocessor {
 
     }
     
-    
-/*    public URLValidator() {
-        if(_database != null) {
-            //get links from linksToBeChecked
-            this.linksToBeChecked = _database.getCollection("linksToBeChecked");
-
-            //get linksChecked
-            this.linksChecked = _database.getCollection("linksChecked");
-
-        }
-        else {
-            this.linksToBeChecked = null;
-            this.linksChecked = null; 
-        }
-    }*/
-    
 
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report) {

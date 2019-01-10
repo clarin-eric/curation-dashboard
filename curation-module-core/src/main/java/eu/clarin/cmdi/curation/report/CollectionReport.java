@@ -324,7 +324,7 @@ public class CollectionReport implements Report<CollectionReport> {
             //if this operation is not done through the database, the value would be wrong.
             //because url validator works on a record basis and not collection basis, so the program
             //can only know about unique link numbers in a single record and not the whole collection.
-            //thats why there is some database magic on the whole collection needed.
+            //thats why some database magic on the whole collection needed.
             //there might be mongo only way to do this but i dont know.
             iterable = linksToBeChecked.aggregate(Arrays.asList(
                     Aggregates.match(eq("collection", getName())),

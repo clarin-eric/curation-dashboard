@@ -22,6 +22,7 @@ public class Configuration {
     public static String USERAGENT;
     public static long CRAWLDELAY;
     public static Map<String, Long> CRAWLDELAYMAP = new HashMap<>();
+    public static String UNDETERMINED_STATUS_CODES;
 
 
     public static void loadConfigVariables(String configPath) {
@@ -40,12 +41,13 @@ public class Configuration {
         DATABASE_URI = properties.getProperty("DATABASE_URI");
         USERAGENT = properties.getProperty("USERAGENT");
         CRAWLDELAY = Long.parseLong(properties.getProperty("CRAWLDELAY"));
+        UNDETERMINED_STATUS_CODES = properties.getProperty("UNDETERMINED_STATUS_CODES");
 
         String crawlDelayList = properties.getProperty("CRAWLDELAYLIST");
-        for(String crawlDelayEntry:crawlDelayList.split(",")){
+        for (String crawlDelayEntry : crawlDelayList.split(",")) {
             String collection = crawlDelayEntry.split("=")[0];
             long delay = Long.parseLong(crawlDelayEntry.split("=")[1]);
-            CRAWLDELAYMAP.put(collection,delay);
+            CRAWLDELAYMAP.put(collection, delay);
         }
 
 

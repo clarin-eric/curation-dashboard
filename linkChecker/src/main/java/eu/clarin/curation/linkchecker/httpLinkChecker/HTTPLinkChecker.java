@@ -18,6 +18,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author dostojic
@@ -30,6 +32,9 @@ public class HTTPLinkChecker {
     private int REDIRECT_FOLLOW_LIMIT;
     private String USERAGENT;
     private List<Integer> redirectStatusCodes = new ArrayList<>(Arrays.asList(301, 302, 303, 307, 308));
+
+    //this determines what status codes will not be considered broken links. urls with these codes will also not factor into the url-scores
+    private List<Integer> undeterminedStatusCodes = new ArrayList<>(Arrays.asList(401,405,429));
 
     private final static Logger _logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
 
@@ -185,7 +190,11 @@ public class HTTPLinkChecker {
                         }
                     }
                 } else {
-                    urlElement.setMessage("Broken Link");
+                    if(undeterminedStatusCodes.contains(statusCode)){
+                        urlElement.setMessage("Undetermined");
+                    }else{
+                        urlElement.setMessage("Broken Link");
+                    }
 
                 }
 
