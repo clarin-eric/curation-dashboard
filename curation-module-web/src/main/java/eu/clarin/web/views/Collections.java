@@ -130,8 +130,8 @@ public class Collections extends GridPanel {
                 c.getFacetReport_facet().forEach(facet -> sb.append(facet).append("\t"));
                 sb.append("\n");
             } catch (Exception e) {
-                e.printStackTrace();
-                _logger.warn("Can't read report for provider " + c.getFileReport_provider());
+
+                _logger.warn("Can't read report for provider " + c.getFileReport_provider(), e);
             }
         });
 

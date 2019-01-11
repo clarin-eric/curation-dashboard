@@ -3,16 +3,14 @@
  */
 package eu.clarin.cmdi.curation.subprocessor;
 
-import java.util.Map;
-
 import eu.clarin.cmdi.curation.entities.CMDProfile;
-import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
-import eu.clarin.cmdi.curation.facets.Profile2FacetMap.Facet;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Score;
+import eu.clarin.cmdi.curation.vlo_extensions.FacetMappingCacheFactory;
+import eu.clarin.cmdi.vlo.importer.mapping.FacetMapping;
 
 /**
- * @author dostojic
+ * @author dostojic, wowasa
  *
  */
 public class ProfileFacetHanlder extends ProcessingStep<CMDProfile, CMDProfileReport> {
@@ -20,15 +18,16 @@ public class ProfileFacetHanlder extends ProcessingStep<CMDProfile, CMDProfileRe
     @Override
     public void process(CMDProfile entity, CMDProfileReport report) throws Exception {
 
-		FacetConceptMappingService service = new FacetConceptMappingService();	
-		Map<String, Facet> facetMappings;
+	
+		FacetMapping facetMapping;
 		try {
-			facetMappings = service.getFacetMapping(report.header).getMappings();
+			facetMapping = FacetMappingCacheFactory.getInstance().getFacetMapping(report.header);
 		} catch (Exception e) {
+		    e.printStackTrace();
 			throw new Exception("Unable to create facet mapping for " + entity.toString(), e);
 		}
 		
-		report.facet = new FacetReportCreator().createFacetReport(facetMappings);
+		report.facet = new FacetReportCreator().createFacetReport(report.header, facetMapping);
 
 	}
 	

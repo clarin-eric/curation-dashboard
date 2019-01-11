@@ -5,6 +5,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.regex.Matcher;
+
+import javax.xml.transform.TransformerException;
 
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDCollection;
@@ -15,40 +18,45 @@ import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
 
-public class CurationModule implements CurationModuleInterface {		
+public class CurationModule implements CurationModuleInterface {    
 
 	@Override
-	public Report processCMDProfile(String profileId) throws InterruptedException {
-		return new CMDProfile(CRService.CR_REST_1_2_PROFILES + profileId + "/xsd", "1.2").generateReport(null);
+	public Report<?> processCMDProfile(String profileId) throws InterruptedException {
+	    return new CMDProfile(profileId, "1.x").generateReport(null);
+
 	}
 
 	@Override
-	public Report processCMDProfile(URL schemaLocation) throws InterruptedException {
-		String cmdiVersion = "1.1";
-		if(schemaLocation.toString().startsWith(CRService.CR_REST)){
-			String version = schemaLocation.toString().substring(CRService.CR_REST.length(), CRService.CR_REST.length() + 3);
-			if(version.startsWith("1."))
-				cmdiVersion = version;
-		}
-		return new CMDProfile(schemaLocation.toString(), cmdiVersion).generateReport(null);
+	public Report<?> processCMDProfile(URL schemaLocation) throws InterruptedException {
+	    Matcher matcher; 
+	    if((matcher = CRService.PROFILE_ID_PATTERN.matcher(schemaLocation.toString())).find())
+	        return new CMDProfile(matcher.group(0), "1.x").generateReport(null);
+	    
+	    return null;
+
 	}
 
 	@Override
-	public Report processCMDInstance(Path file) throws IOException, InterruptedException {
-		if (Files.notExists(file))
-			throw new IOException(file.toString() + " doesn't exist!");
-		return new CMDInstance(file, Files.size(file)).generateReport(null);
+
+	public Report<?> processCMDInstance(Path path) throws IOException, InterruptedException, TransformerException {
+		if (Files.notExists(path))
+			throw new IOException(path.toString() + " doesn't exist!");		
+		
+		return new CMDInstance(path, Files.size(path)).generateReport(null);
+
 	}
 	
 
 	@Override
-	public Report processCMDInstance(URL url) throws IOException, InterruptedException {
+	public Report<?> processCMDInstance(URL url) throws IOException, InterruptedException {
 		Path path = Files.createTempFile(null, null);
 		new Downloader().download(url.toString(), path.toFile());
 		long size = Files.size(path);
-		CMDInstance cmdInstance =new CMDInstance(path, size);
+		CMDInstance cmdInstance = new CMDInstance(path, size);
 		cmdInstance.setUrl(url.toString());
-		Report r = cmdInstance.generateReport(null);
+
+		Report<?> r = cmdInstance.generateReport(null);
+
 		Files.delete(path);
 
 		if(r instanceof CMDInstanceReport){
@@ -59,7 +67,7 @@ public class CurationModule implements CurationModuleInterface {
 	}
 
 	@Override
-	public Report processCollection(Path path) throws IOException, InterruptedException {
+	public Report<?> processCollection(Path path) throws IOException, InterruptedException {
 		CMDFileVisitor entityTree = new CMDFileVisitor();
 		Files.walkFileTree(path, entityTree);
 		CMDCollection collection = entityTree.getRoot();
@@ -68,8 +76,9 @@ public class CurationModule implements CurationModuleInterface {
 	}
 
 	@Override
-	public Report aggregateReports(Collection<Report> reports) {
+	public Report<?> aggregateReports(Collection<Report> reports) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

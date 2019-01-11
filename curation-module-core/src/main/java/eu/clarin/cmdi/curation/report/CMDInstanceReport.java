@@ -45,7 +45,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     // Header
     @XmlElement(name = "profile-section")
     public ProfileHeader header;
-
+    
     // file
     @XmlElement(name = "file-section")
     public FileReport fileReport;
@@ -235,7 +235,6 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             instanceScore += segmentScore.score;
 
     }
-
 
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)

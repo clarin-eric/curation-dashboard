@@ -3,7 +3,7 @@ package eu.clarin.curation.linkchecker;
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.Indexes;
+
 
 import eu.clarin.curation.linkchecker.helpers.Configuration;
 import eu.clarin.curation.linkchecker.httpLinkChecker.CollectionThread;
@@ -14,14 +14,13 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.CountDownLatch;
+
 
 public class Main {
 
@@ -42,8 +41,10 @@ public class Main {
         CommandLine cmd = parser.parse(options, args);
 
         if (!cmd.hasOption("config")) {
+
             _logger.error("Usage: Please provide the config file path as a parameter.");
             System.exit(1);
+
         }
 
         Configuration.loadConfigVariables(cmd.getOptionValue("config"));
@@ -159,16 +160,17 @@ public class Main {
 
                         URLElement urlElement = new URLElement(cursor.next());
                         String url = urlElement.getUrl();
-                        _logger.info("Adding " + url + " to linksToBeChecked.");
 
-                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, urlElement.getRecord(), urlElement.getCollection());
+                        //too much clutter in logs, so commented out
+//                        _logger.info("Adding " + url + " to linksToBeChecked.");
+
+                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, urlElement.getRecord(), urlElement.getCollection(), urlElement.getExpectedMimeType());
                         try {
                             linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
                         } catch (MongoException e) {
                             //duplicate key error
                             //url is already in the database, do nothing
                         }
-
 
                     }
                 } else {

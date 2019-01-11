@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
@@ -51,8 +50,10 @@ class ProfileCacheFactory{
 		:
 		CacheBuilder.newBuilder()
 			.concurrencyLevel(4)
-			.expireAfterWrite(8, TimeUnit.HOURS)//keep non public profiles 8 hours in cache
-			.ticker(new Ticker() { @Override public long read() { return 9 * HOUR_IN_NS; } }) //cache tick 9 hours
+			//.expireAfterAccess(5, TimeUnit.MINUTES)//keep non public profiles 5 minutes in cache
+	         .expireAfterWrite(8, TimeUnit.HOURS)//keep non public profiles 8 hours in cache
+	            .ticker(new Ticker() { @Override public long read() { return 9 * HOUR_IN_NS; } }) //cache tick 9 hours
+
 			.build(new ProfileCacheLoader(isPublicProfilesCache));		
 	}
 	
@@ -74,52 +75,69 @@ class ProfileCacheFactory{
 		
 		@Override
 		public ProfileCacheEntry load(ProfileHeader header) throws IOException, VTDException, SAXException{			
-			_logger.info("Profile {} is not in the cache, it will be loaded", header.schemaLocation);
+
+
+			_logger.info("Profile {} is not in the cache, it will be loaded", header.id);
+
 			
 			Path xsd;			
 			
-			if(isPublicProfilesCache){
-				Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(header.schemaLocation);
-				matcher.find();
-				String id = matcher.group(0);					
+			if(isPublicProfilesCache){			
 				
-				String fileName = id.substring(CRService.PROFILE_PREFIX.length());
+				String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
 				xsd = Configuration.CACHE_DIRECTORY.resolve(fileName + ".xsd");
 				//try to load it from the disk
-				_logger.debug("profile {} is public. Loading schema from {}", id, xsd);
+
+
+				_logger.debug("profile {} is public. Loading schema from {}", header.id, xsd);
+
 				if (!Files.exists(xsd)) {// keep public profiles on disk 
 					// if not download it
 					Files.createFile(xsd);
-					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", id);
-					new Downloader().download(header.schemaLocation, xsd.toFile());
+
+
+					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
+					new Downloader().download(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(header.id), xsd.toFile());
+
 				}
-			}else{//non-public profiles are not cached on disk
-				_logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.schemaLocation);
+
+			}
+			else{//non-public profiles are not cached on disk
+				_logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.id);
+
+
 				
 				//keep private schemas on disk
+								
 				
-				Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(header.schemaLocation);
-				matcher.find();
-				String id = matcher.group(0);					
-				
-				String fileName = id.substring(CRService.PROFILE_PREFIX.length());
+				String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
 				xsd = Configuration.CACHE_DIRECTORY.resolve("private_profiles");
 				xsd = xsd.resolve(fileName + ".xsd");
 				//try to load it from the disk
-				_logger.debug("Loading schema for non public profile {} from {}", id, xsd);
+
+
+				_logger.debug("Loading schema for non public profile {} from {}", header.id, xsd);
+
+
 				if (!Files.exists(xsd)) {
 					// if not download it
 					Files.createFile(xsd);
-					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", id);
-					new Downloader().download(header.schemaLocation, xsd.toFile());
+
+
+					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
+					new Downloader().download(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(header.id), xsd.toFile());
+
+
 					
 				}
 			}
 			
 			VTDGen vg = new VTDGen();
 			vg.setDoc(Files.readAllBytes(xsd));
-			vg.parse(false);
+			vg.parse(true);
+			
 			ProfileParser parser = ProfileParserFactory.createParser(header.cmdiVersion);
+			
 			ParsedProfile parsedProfile = parser.parse(vg.getNav(), header);
 			Schema schema = createSchema(xsd.toFile());
 			

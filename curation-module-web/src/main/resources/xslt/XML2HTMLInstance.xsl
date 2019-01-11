@@ -22,6 +22,7 @@
 			</xsl:choose>
 		</p>
 		<p>profileID: <a href="#!ResultView/profile/id/{$profileID}"><xsl:copy-of select="$profileID"/></a></p>
+		<p>status: <xsl:value-of select="./profile-section/status"/></p>
 		<p>file size: <xsl:value-of select="./file-section/size"/> B</p>
 		<p>timestamp: <xsl:value-of select="./@timeStamp"/></p>
 		<hr/>
@@ -58,7 +59,8 @@
 
 		<h2>facets-section</h2>
 
-		<font color="#dbd839">&#9873;</font> - derived facet
+		<font color="#F4FA58">&#9873;</font> - derived facet <br />
+		<font color="#FF8000">&#9873;</font> - value mapping
 
 		<br/>
 
@@ -102,6 +104,9 @@
 								</th>
 							</xsl:if>
 							<xsl:choose>
+				  				<xsl:when test="@usesValueMapping">
+				  					<th><font color="#FF4000"><xsl:value-of select="@name"/></font></th>
+				  				</xsl:when>
 				  				<xsl:when test="@isDerived">
 				  					<th><font color="#dbd839"><xsl:value-of select="@name"/></font></th>
 				  				</xsl:when>

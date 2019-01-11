@@ -3,6 +3,7 @@ package eu.clarin.web.utils;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
+
 import com.mongodb.client.model.Indexes;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
@@ -161,7 +162,7 @@ public class LinkCheckerStatisticsHelper {
             cursor = linksChecked.find(and(eq("status", status), eq("collection", collectionName))).limit(100).iterator();
         }
 
-        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content-Type", "Byte-Size", "Request Duration(ms)", "Timestamp", "Method", "Redirect Count", "Record");
+        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content-Type","Expected Content-Type", "Byte-Size", "Request Duration(ms)", "Timestamp", "Method", "Redirect Count", "Record");
 
         sb.append("<table>");
         sb.append("<thead>");
@@ -187,16 +188,20 @@ public class LinkCheckerStatisticsHelper {
                 sb.append(urlElement.getMessage());
                 sb.append("</td>");
                 sb.append("<td>");
-                sb.append(String.valueOf(urlElement.getStatus()));
+                sb.append(urlElement.getStatus());
                 sb.append("</td>");
                 sb.append("<td>");
                 sb.append(urlElement.getContentType());
                 sb.append("</td>");
                 sb.append("<td>");
+                //because this field is new, older entries dont have it and it results in null, so a null check to make it more user friendly
+                sb.append(urlElement.getExpectedMimeType()==null?"Not Specified":urlElement.getExpectedMimeType());
+                sb.append("</td>");
+                sb.append("<td>");
                 sb.append(urlElement.getByteSize());
                 sb.append("</td>");
                 sb.append("<td>");
-                sb.append(String.valueOf(urlElement.getDuration()));
+                sb.append(urlElement.getDuration());
                 sb.append("</td>");
                 sb.append("<td>");
                 sb.append(TimeUtils.humanizeToDate(urlElement.getTimestamp()));
@@ -205,10 +210,10 @@ public class LinkCheckerStatisticsHelper {
                 sb.append(urlElement.getMethod());
                 sb.append("</td>");
                 sb.append("<td>");
-                sb.append(String.valueOf(urlElement.getRedirectCount()));
+                sb.append(urlElement.getRedirectCount());
                 sb.append("</td>");
                 sb.append("<td>");
-                sb.append(String.valueOf(urlElement.getRecord()));
+                sb.append(urlElement.getRecord());
                 sb.append("</td>");
 
                 sb.append("</tr>");
@@ -334,7 +339,7 @@ public class LinkCheckerStatisticsHelper {
 
     private String createStatisticsTable(String collectionName, List<String> columnNames, List<List<Number>> rows, int total, double avgResp) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<h3>" + collectionName + "</h3>");
+        sb.append("<h3>" + collectionName + ":</h3>");
         sb.append("<table>");
         sb.append("<thead>");
         sb.append("<tr>");

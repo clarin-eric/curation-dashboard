@@ -1,21 +1,28 @@
 package eu.clarin.cmdi.curation.entities;
 
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CMDInstanceProcessor;
+import eu.clarin.cmdi.curation.report.CMDInstanceReport;
+import eu.clarin.cmdi.vlo.importer.CMDIData;
+import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
 public class CMDInstance extends CurationEntity {
+    
 
 	public static Collection<String> mdSelfLinks = Collections.synchronizedCollection(new HashSet<>());
 	public static Collection<String> duplicateMDSelfLink = Collections.synchronizedCollection(new HashSet<>());
 	
 	private ParsedInstance parsedInstance = null;
+	
+	private CMDIData<Map<String,List<ValueSet>>> cmdiData;
 
 	public CMDInstance(Path path) {
 		super(path);
@@ -26,7 +33,7 @@ public class CMDInstance extends CurationEntity {
 	}
 
 	@Override
-	protected AbstractProcessor getProcessor() {
+	protected AbstractProcessor<CMDInstanceReport> getProcessor() {
 		return new CMDInstanceProcessor();
 	}	
 	
@@ -46,6 +53,12 @@ public class CMDInstance extends CurationEntity {
 			name = path.getName(cnt - 2) + "/" + name;
 		return "CMD Instance: " + name;
 	}
-
-
+	
+	public CMDIData<Map<String,List<ValueSet>>> getCMDIData() {
+	    return this.cmdiData;
+	}
+	
+	public void setCMDIData(CMDIData<Map<String,List<ValueSet>>> cmdiData) {
+	    this.cmdiData = cmdiData;
+	}
 }

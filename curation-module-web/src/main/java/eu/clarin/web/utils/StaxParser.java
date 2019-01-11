@@ -7,10 +7,7 @@ import eu.clarin.web.data.CollectionStatistics;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.*;
-import javax.xml.stream.events.Characters;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
+import javax.xml.stream.events.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -24,6 +21,7 @@ public class StaxParser {
     //It also trims the single-url-report list into 50 urls transforms it into html(with xslt) and saves the html into a folder
     //This is all done to deal with really large reports that can grow up to 800 mbs.
     public static CollectionStatistics handleCollectionXMLs(InputStream stream, String fileName) throws XMLStreamException, IOException {
+
 
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader eventReader =
@@ -86,7 +84,12 @@ public class StaxParser {
                     if (startElement.getName().getLocalPart().equalsIgnoreCase("provider")) {
                         provider = true;
                     } else if (startElement.getName().getLocalPart().equalsIgnoreCase("collection-report")) {
-                        cs.setScorePercentage(Double.parseDouble(startElement.getAttributeByName(new QName("score-percentage")).getValue()));
+                        Attribute scorePercentage = startElement.getAttributeByName(new QName("score-percentage"));
+                        if (scorePercentage == null) {
+                            cs.setScorePercentage(0.0);
+                        } else {
+                            cs.setScorePercentage(Double.parseDouble(scorePercentage.getValue()));
+                        }
                     } else if (startElement.getName().getLocalPart().equalsIgnoreCase("numOfFiles")) {
                         numOfFiles = true;
                     } else if (startElement.getName().getLocalPart().equalsIgnoreCase("profiles")) {
@@ -110,7 +113,9 @@ public class StaxParser {
                     } else if (startElement.getName().getLocalPart().equalsIgnoreCase("coverage")) {
                         coverage = true;
                     } else if (startElement.getName().getLocalPart().equalsIgnoreCase("facet")) {
-                        facets.add(Double.parseDouble(startElement.getAttributeByName(new QName("coverage")).getValue()));
+                        if (startElement.getAttributeByName(new QName("coverage")) != null) {
+                            facets.add(Double.parseDouble(startElement.getAttributeByName(new QName("coverage")).getValue()));
+                        }
                     }
 
 

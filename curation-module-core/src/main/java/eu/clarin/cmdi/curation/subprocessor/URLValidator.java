@@ -1,32 +1,45 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
+
 import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
 import java.util.Collection;
 import java.util.stream.Collectors;
+
+
 
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
-
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
-import eu.clarin.cmdi.curation.instance_parser.ParsedInstance.InstanceNode;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.URLReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
+import eu.clarin.cmdi.vlo.importer.CMDIData;
+import eu.clarin.cmdi.vlo.importer.Resource;
+import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import eu.clarin.curation.linkchecker.httpLinkChecker.HTTPLinkChecker;
 import eu.clarin.curation.linkchecker.urlElements.URLElement;
 import eu.clarin.curation.linkchecker.urlElements.URLElementToBeChecked;
-
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
+import static com.mongodb.client.model.Filters.eq;
 
 /**
  * @author dostojic
@@ -38,7 +51,9 @@ public class URLValidator extends CMDSubprocessor {
 
     private static final MongoClient _mongoClient;
 
+
     static { //since MongoClient is already a connection pool only one instance should exist in the application
+
         if (Configuration.DATABASE) {
             _logger.info("Connecting to database...");
             if (Configuration.DATABASE_URI == null || Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
@@ -46,7 +61,7 @@ public class URLValidator extends CMDSubprocessor {
             } else {
                 _mongoClient = MongoClients.create(Configuration.DATABASE_URI);
             }
-            
+
             MongoDatabase database = _mongoClient.getDatabase(Configuration.DATABASE_NAME);
             _logger.info("Connected to database.");
             //Ensure that "url" is a unique index
@@ -57,14 +72,32 @@ public class URLValidator extends CMDSubprocessor {
             database.getCollection("linksChecked").createIndex(Indexes.ascending("record"));
             database.getCollection("linksChecked").createIndex(Indexes.ascending("collection"));
             database.getCollection("linksChecked").createIndex(Indexes.ascending("status"));
-            database.getCollection("linksChecked").createIndex(Indexes.ascending("record","status"));
-            database.getCollection("linksChecked").createIndex(Indexes.ascending("collection","status"));
+            database.getCollection("linksChecked").createIndex(Indexes.ascending("record", "status"));
+            database.getCollection("linksChecked").createIndex(Indexes.ascending("collection", "status"));
 
         } else {
+
             _mongoClient = null;
         }
 
     }
+    
+    
+/*    public URLValidator() {
+        if(_database != null) {
+            //get links from linksToBeChecked
+            this.linksToBeChecked = _database.getCollection("linksToBeChecked");
+
+            //get linksChecked
+            this.linksChecked = _database.getCollection("linksChecked");
+
+        }
+        else {
+            this.linksToBeChecked = null;
+            this.linksChecked = null; 
+        }
+    }*/
+    
 
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report) {
@@ -72,24 +105,39 @@ public class URLValidator extends CMDSubprocessor {
     }
 
     public void process(CMDInstance entity, CMDInstanceReport report, String parentName) {
-        ParsedInstance parsedInstance = entity.getParsedInstance();
-        Collection<String> links = parsedInstance.getNodes()
-                .stream()
-                .filter(node -> !node.getXpath().equals("/CMD/@xsi:schemaLocation"))
-                .filter(node -> !node.getXpath().equals("/CMD/@xmlns:xsi"))
-                .filter(node -> !node.getXpath().equals("/CMD/@xml:xsi"))
-                .map(InstanceNode::getValue)
-                .filter(url -> url.startsWith("http"))
-                .collect(Collectors.toList());
-        long numOfLinks = links.size();
-        links = links.stream().distinct().collect(Collectors.toList());
-        long numOfUniqueLinks = links.size();
 
-        // links are unique
+
+        CMDIData<Map<String, List<ValueSet>>> data = entity.getCMDIData();
+        
+        Map<String,Resource> urlMap = new HashMap<String,Resource>();
+        
+        final AtomicLong numOfLinks = new AtomicLong(0);  //has to be final for use in lambda expression
+        
+        ArrayList<Resource> resources = new ArrayList<Resource>();
+                resources.addAll(data.getDataResources());
+                resources.addAll(data.getLandingPageResources());
+                resources.addAll(data.getMetadataResources());
+                resources.addAll(data.getSearchPageResources());
+                resources.addAll(data.getSearchResources());
+        
+        resources.stream()
+            .filter(resource -> resource.getResourceName() != null && (resource.getResourceName().startsWith("http://") || resource.getResourceName().startsWith("https://")))
+            .forEach(resource -> {
+                urlMap.computeIfAbsent(resource.getResourceName(), key -> resource);
+                numOfLinks.incrementAndGet();
+            });
+        
+        String selfLink = (data.getDocument().get("_selfLink") != null && !data.getDocument().get("_selfLink").isEmpty())?data.getDocument().get("_selfLink").get(0).getValue():"";
+        
+        //only add selfLink if url
+        if(selfLink.startsWith("http://") || selfLink.startsWith("https://")) 
+            urlMap.computeIfAbsent(selfLink, key -> null);
+
+
         if (Configuration.HTTP_VALIDATION) {
             if (Configuration.DATABASE && Configuration.COLLECTION_MODE) {
 
-                links.stream().forEach(url -> {
+                urlMap.keySet().parallelStream().forEach(url -> {
 
                     _logger.info("Checking database for url: " + url);
 
@@ -98,26 +146,26 @@ public class URLValidator extends CMDSubprocessor {
 
                     //because urls are unique in the database if cursor has next, it found the only one. If not, the url wasn't found.
                     if (cursor.hasNext()) {
-                        URLElement urlElement = new URLElement(cursor.next());
-
-                        addMessageForStatusCode(urlElement.getStatus(), url);
+                        //dont do anything, url is already checked and in the database...
+//
+//                        URLElement urlElement = new URLElement(cursor.next());
+//
+//                        addMessageForStatusCode(urlElement.getStatus(), url);
 
 //                        CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(urlElement);
 //                        report.addURLElement(urlElementReport);
 
                     } else {
 
-                        String finalCollection = parentName;
+                        String expectedMimeType = urlMap.get(url).getMimeType();
+                        expectedMimeType=expectedMimeType==null?"Not Specified":expectedMimeType;
+
                         String finalRecord = report.getName();
+                        String finalCollection = parentName != null ? parentName : finalRecord;
 
-                        if (finalCollection == null) {
-                            finalCollection = finalRecord;
-                        }
-
-                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, finalRecord, finalCollection);
+                        URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, finalRecord, finalCollection, expectedMimeType);
 
                         try {
-
                             _mongoClient.getDatabase(Configuration.DATABASE_NAME).getCollection("linksToBeChecked").insertOne(urlElementToBeChecked.getMongoDocument());
                         } catch (MongoException e) {
                             //duplicate key error
@@ -126,16 +174,22 @@ public class URLValidator extends CMDSubprocessor {
 
 
                     }
-                    
+
                     cursor.close();
                 });
 
-                report.urlReport = createURLReport(numOfLinks, numOfUniqueLinks, report.getName());
+
+                removeOldURLs(urlMap.keySet(), report.getName());
+
+                report.urlReport = createURLReport(numOfLinks.longValue(), report.getName());
+
 
             } else {
                 HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
 
-                links.parallelStream().forEach(url -> {
+
+                urlMap.keySet().stream().forEach(url -> {
+
 
                     try {// check if URL is broken
                         _logger.info("Checking url: " + url);
@@ -165,12 +219,58 @@ public class URLValidator extends CMDSubprocessor {
                     }
 
                 });
-                report.urlReport = createURLReport(numOfLinks, numOfUniqueLinks, report.getName());
+
+                report.urlReport = createURLReport(numOfLinks.get(), report.getName());
 
             }
+
         } else {
-            report.urlReport = createURLReport(numOfLinks, numOfUniqueLinks, report.getName());
+
+
+            report.urlReport = createURLReport(numOfLinks.get(), report.getName());
+
+
             addMessage(Severity.INFO, "Link validation is disabled");
+        }
+
+    }
+
+    //remove all urls from database from this record that aren't in the current urlmaps
+    private void removeOldURLs(Collection<String> links, String recordName) {
+        //some old runs may have produced links that are not in the records anymore.
+        //so to clean up the database, we move all of such links to history.
+
+        Bson filter = Filters.eq("record", recordName);
+        MongoCursor<Document> cursor = _mongoClient.getDatabase(Configuration.DATABASE_NAME).getCollection("linksChecked").find(filter).iterator();
+
+        while (cursor.hasNext()) {
+
+            URLElement urlElement = new URLElement(cursor.next());
+            String url = urlElement.getUrl();
+
+            if (!links.contains(url)) {
+
+                try {
+                    _mongoClient.getDatabase(Configuration.DATABASE_NAME).getCollection("linksCheckedHistory").insertOne(urlElement.getMongoDocument());
+
+                } catch (MongoException e) {
+                    //shouldnt happen, but if it does continue the loop
+                    _logger.error("Error with the url: " + url + " while cleaning linkschecked (removing links from older runs). Exception message: " + e.getMessage());
+
+                }
+
+                try {
+                    _mongoClient.getDatabase(Configuration.DATABASE_NAME).getCollection("linksChecked").deleteOne(eq("url", url));
+
+                } catch (MongoException e) {
+                    //shouldnt happen, but if it does continue the loop
+                    _logger.error("Error with the url: " + url + " while cleaning linkschecked (removing links from older runs). Exception message: " + e.getMessage());
+
+                }
+
+
+            }
+
         }
 
     }
@@ -195,22 +295,26 @@ public class URLValidator extends CMDSubprocessor {
     }
 
 
-    private URLReport createURLReport(long numOfLinks, long numOfUniqueLinks, String name) {
+    private URLReport createURLReport(long numOfLinks, String name) {
         URLReport report = new URLReport();
         report.numOfLinks = numOfLinks;
-        report.numOfUniqueLinks = numOfUniqueLinks;
 
-        if (Configuration.HTTP_VALIDATION) {
-            MongoCollection<Document> linksChecked = _mongoClient.getDatabase(Configuration.DATABASE_NAME).getCollection("linksChecked");
+
+        if (_mongoClient != null) {
+            MongoDatabase database = _mongoClient.getDatabase(Configuration.DATABASE_NAME);
 
 
             Bson checkedLinksFilter = Filters.eq("record", name);
-            long numOfCheckedLinks = linksChecked.countDocuments(checkedLinksFilter);
+            long numOfCheckedLinks = database.getCollection("linksChecked").countDocuments(checkedLinksFilter);
 
-            Bson brokenLinksFilter = Filters.and(Filters.eq("record", name), Filters.and(Filters.not(Filters.eq("status", 200)), Filters.not(Filters.eq("status", 302))));
-            long numOfBrokenLinks = linksChecked.countDocuments(brokenLinksFilter);
+            //Bson brokenLinksFilter = Filters.and(Filters.eq("record", name), Filters.and(Filters.not(Filters.eq("status", 200)), Filters.not(Filters.eq("status", 302))));
+            Bson brokenLinksFilter = Filters.and(Filters.eq("record", name), Filters.in("status", 200, 302));
+            long numOfBrokenLinks = database.getCollection("linkesChecked").countDocuments(brokenLinksFilter);
+
+            
 
             report.percOfValidLinks = numOfCheckedLinks == 0 ? 0 : (numOfCheckedLinks - numOfBrokenLinks) / (double) numOfCheckedLinks;
+
         }
         return report;
     }

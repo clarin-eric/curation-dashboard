@@ -60,11 +60,11 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 			String xpath = "";
 			CRElement parent = node.parent;
 			while (parent != null) {
-				xpath = parent.name + "/" + xpath;
+				xpath = "cmd:" + parent.name + "/" + xpath;
 				parent = parent.parent;
 			}
 			xpath = "/" + xpath + (node.type == NodeType.ATTRIBUTE || node.type == NodeType.CMD_VERSION_ATTR
-					? "@" + node.name : node.name + "/text()");
+					? "@" + node.name : "cmd:" + node.name + "/text()");
 			
 			CMDINode cmdiNode = new CMDINode();
 			cmdiNode.isRequired = node.isRequired;

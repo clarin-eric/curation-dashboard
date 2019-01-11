@@ -5,6 +5,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
 
+import javax.xml.transform.TransformerException;
+
 import eu.clarin.cmdi.curation.report.Report;
 
 public interface CurationModuleInterface {
@@ -17,7 +19,7 @@ public interface CurationModuleInterface {
 	/*
 	 * throws Exception if file doesn't exist or is invalid
 	 */
-	public Report processCMDInstance(Path file) throws IOException, InterruptedException;
+	public Report processCMDInstance(Path file) throws IOException, InterruptedException, TransformerException;
 	
 	public Report processCMDInstance(URL url) throws IOException, InterruptedException;
 	

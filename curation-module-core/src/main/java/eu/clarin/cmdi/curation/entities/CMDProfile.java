@@ -1,7 +1,6 @@
 package eu.clarin.cmdi.curation.entities;
 
-import java.nio.file.Path;
-
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CMDProfileProcessor;
 
@@ -12,36 +11,37 @@ import eu.clarin.cmdi.curation.processor.CMDProfileProcessor;
 
 public class CMDProfile extends CurationEntity {
 
-	private String schemaLocation;
+	private String profileId;
 	private String cmdiVersion;
 
-	public CMDProfile(String schemaLocation, String cmdiVersion) {
+	public CMDProfile(String profileId, String cmdiVersion) {
 		super(null);
-		this.schemaLocation = schemaLocation;
+		this.profileId = profileId;
 		this.cmdiVersion = cmdiVersion;
 	}
 
-	public CMDProfile(Path path, String cmdiVersion) {
+/*	public CMDProfile(Path path, String cmdiVersion) {
 		super(path);
 		this.cmdiVersion = cmdiVersion;
-	}	
+	}	*/
 	
-	public String getSchemaLocation() {
-		return schemaLocation;
-	}
 
-	public String getCmdiVersion() {
+	public String getProfileId() {
+        return profileId;
+    }
+
+    public String getCmdiVersion() {
 		return cmdiVersion;
 	}
 
 	@Override
-	protected AbstractProcessor getProcessor() {
+	protected AbstractProcessor<?> getProcessor() {
 		return new CMDProfileProcessor();
 	}
 	
 	@Override
 	public String toString() {
-		return "Profile: " + (path != null? path.toString() : schemaLocation);
+		return "Profile: " + (path != null? path.toString() : Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(profileId));
 	}
 
 }

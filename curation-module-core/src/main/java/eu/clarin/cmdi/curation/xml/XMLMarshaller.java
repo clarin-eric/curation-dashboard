@@ -23,7 +23,8 @@ public class XMLMarshaller<T> {
 		this.typeParamClass = typeParamClass;
 	}
 
-	public T unmarshal(InputStream is) throws JAXBException {
+	@SuppressWarnings("unchecked")
+    public T unmarshal(InputStream is) throws JAXBException {
 		JAXBContext jc = JAXBContext.newInstance(typeParamClass);
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		return (T) unmarshaller.unmarshal(is);

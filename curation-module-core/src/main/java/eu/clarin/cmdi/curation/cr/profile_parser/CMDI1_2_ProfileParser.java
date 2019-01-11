@@ -1,14 +1,10 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.*;
-import java.nio.file.*;
+
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +29,7 @@ class CMDI1_2_ProfileParser extends ProfileParser{
 	
 	@Override
 	protected String conceptAttributeName(){
-		return "ConceptLink";
+		return "cmd:ConceptLink";
 	}	
 	
 	@Override
@@ -57,7 +53,7 @@ class CMDI1_2_ProfileParser extends ProfileParser{
 		//name attribute
 		String name = extractAttributeValue("name");
 		if(name != null){
-			String concept = extractAttributeValue("ConceptLink");
+			String concept = extractAttributeValue("cmd:ConceptLink");
 			CRElement elem = new CRElement();
 			elem.isLeaf = true;
 			elem.lvl = vn.getCurrentDepth();
@@ -81,7 +77,7 @@ class CMDI1_2_ProfileParser extends ProfileParser{
 
 			
 			//boolean test = vg.parseFile(ClassLoader.getSystemResource("cmd-envelop.xsd").getPath(), false);
-			vg.parseHttpUrl(ENVELOPE_URL, false);
+			vg.parseHttpUrl(ENVELOPE_URL, true);
 			envelope = envelopeParser.parse(vg.getNav(), new ProfileHeader()).xpaths;
 		}
 		xpaths.putAll(envelope);
@@ -92,11 +88,11 @@ class CMDI1_2_ProfileParser extends ProfileParser{
 			String xpath = "";
 			CRElement parent = node.parent;
 			while (parent != null) {
-				xpath = parent.name + "/" + xpath;
+				xpath = "cmdp:" + parent.name + "/" + xpath;
 				parent = parent.parent;
 			}
-			xpath = "/CMD/Components/" + xpath + (node.type == NodeType.ATTRIBUTE || node.type == NodeType.CMD_VERSION_ATTR
-					? "@" + node.name : node.name + "/text()");
+			xpath = "/cmd:CMD/cmd:Components/" + xpath + (node.type == NodeType.ATTRIBUTE || node.type == NodeType.CMD_VERSION_ATTR
+					? "@" + node.name : "cmdp:" + node.name + "/text()");
 			
 			CMDINode cmdiNode = new CMDINode();
 			cmdiNode.isRequired = node.isRequired;

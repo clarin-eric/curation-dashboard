@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CurationEntity;
-import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport;
 import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.report.CollectionReport.FacetReport;
@@ -31,10 +31,10 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
 
     private static final Logger _logger = LoggerFactory.getLogger(CollectionAggregator.class);
 
-    private final int CHUNK_SIZE = 10000;
+    private final int CHUNK_SIZE = 5000;
 
     @Override
-    public void process(CMDCollection dir, final CollectionReport report) throws InterruptedException {
+    public void process(CMDCollection dir, final CollectionReport report){
 
         report.fileReport = new FileReport();
         report.headerReport = new HeaderReport();
@@ -45,12 +45,13 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
         report.facetReport = new FacetReport();
 
         report.facetReport.facet = new ArrayList<>();
-        new FacetConceptMappingService().getFacetNames().forEach(f -> {
+        
+        for(String facetName : Configuration.FACETS) {
             FacetCollectionStruct facet = new FacetCollectionStruct();
-            facet.name = f;
+            facet.name = facetName;
             facet.cnt = 0;
             report.facetReport.facet.add(facet);
-        });
+        };
 
         //add info regarding file statistics
         report.fileReport.provider = dir.getPath().getFileName().toString();
@@ -77,6 +78,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
                 }
                 catch (InterruptedException ex) {
                     // TODO Auto-generated catch block
+
                     _logger.error("", ex);
                 }
             });
@@ -86,8 +88,8 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
             chunk.stream().forEach(child -> {
                 try {
                     child.generateReport(report.getName()).mergeWithParent(report);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ex) {
+                    _logger.error("", ex);
                 }
             });
 

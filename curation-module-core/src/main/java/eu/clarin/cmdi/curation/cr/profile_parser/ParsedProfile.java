@@ -35,9 +35,6 @@ public class ParsedProfile {
 		return header.description;
 	}
 	
-	public String getSchemaLocation(){
-		return header.schemaLocation;
-	}
 	
 	public String getCMDIVersion(){
 		return header.cmdiVersion;

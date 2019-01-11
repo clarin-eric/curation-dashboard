@@ -11,10 +11,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.mongodb.client.AggregateIterable;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
-import eu.clarin.cmdi.curation.facets.FacetConceptMappingService;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
@@ -22,6 +23,9 @@ import eu.clarin.web.data.CollectionStatistics;
 import eu.clarin.web.data.PublicProfile;
 import eu.clarin.web.utils.LinkCheckerStatisticsHelper;
 import eu.clarin.web.utils.StaxParser;
+
+import org.bson.Document;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +35,11 @@ public class Shared {
 
     public static Path REPORTS_FOLDER = null; //make it configurable, or use from config
 
+
     public static List<CollectionStatistics> collections;
     public static List<PublicProfile> publicProfiles;
     public static Collection<String> facetNames;
+
 
     static final Logger _logger = LoggerFactory.getLogger(Shared.class);
 
@@ -41,7 +47,8 @@ public class Shared {
     public static void init() {
         REPORTS_FOLDER = Configuration.OUTPUT_DIRECTORY.resolve("collections");
         //init facetNames
-        facetNames = new FacetConceptMappingService().getFacetNames();
+
+        facetNames = Configuration.FACETS;
         initPublicProfiles();
         initCollections();
         initLinkCheckerStatistics();
@@ -89,8 +96,6 @@ public class Shared {
                 } catch (Exception e) {
                     _logger.error("Exception caused by report: " + path + ", cause: " + e.getCause() + ", message: " + e.getMessage()+"\n"+
                             "If the message and cause of the exception are null, it is a good idea to use e.printStackTrace() to determine the real cause.");
-//                    e.printStackTrace();
-                    _logger.error("");
                     //keep the for loop going to read the other collections
                 }
 
@@ -111,12 +116,21 @@ public class Shared {
 
         File folder = new File(Configuration.OUTPUT_DIRECTORY.toString() + "/statistics");
         folder.mkdirs();
+        File statistics = new File(folder.getPath()+"/linkCheckerStatistics.html");
+        try{
+            Files.deleteIfExists(statistics.toPath());
+        }catch(IOException e){
+            _logger.error("Problem deleting linkCheckerStatistics.html. Maybe delete it manually?");
+        }
 
-        try (PrintStream ps = new PrintStream(Files.newOutputStream(Paths.get(Configuration.OUTPUT_DIRECTORY.toString() + "/statistics/linkCheckerStatistics.html")))) {
+        try (PrintStream ps = new PrintStream(Files.newOutputStream(statistics.toPath()))) {
+
             ps.println(html);
 
             _logger.info("linkchecker statistics html file has been created.");
         } catch (IOException e) {
+            //todo delete this
+            e.printStackTrace();
             _logger.error("Problem writing to the statistics.html");
         }
     }

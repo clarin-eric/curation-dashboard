@@ -1,7 +1,5 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
-import java.util.regex.Matcher;
-
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
@@ -14,37 +12,34 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 
 	@Override
 	public void process(CMDProfile entity, CMDProfileReport report) throws Exception {
-		String schemaLocation;
+		String profileId;
 		boolean isLocalFile = false;
 
-		if (entity.getSchemaLocation() != null && !entity.getSchemaLocation().isEmpty()){
-			schemaLocation = entity.getSchemaLocation();
+		if (entity.getProfileId() != null && !entity.getProfileId().isEmpty()){
+			profileId = entity.getProfileId();
 		}else{
-			schemaLocation = entity.getPath().toString();
-			isLocalFile = true;
+			//profileId = entity.getPath().toString();
+			//isLocalFile = true;
+		    throw new ProfileNotFoundException("can' find profile " + entity);
 		}
 
 		CRService service = new CRService();
 
-		if(!isLocalFile && service.isSchemaCRResident(schemaLocation))
+		if(!isLocalFile)
 			report.header = service.getPublicProfiles()
 			.stream()
-			.filter(h -> h.schemaLocation.equals(schemaLocation))
+			.filter(h -> h.id.equals(profileId))
 			.findFirst()
 			.orElse(null);
 
 		if(report.header == null){
 			report.header = new ProfileHeader();
-			report.header.schemaLocation = schemaLocation;
+			report.header.id = profileId;
 			report.header.cmdiVersion = entity.getCmdiVersion();
 
-			Matcher matcher = CRService.PROFILE_ID_PATTERN.matcher(report.header.schemaLocation);
-			if(!matcher.find())
-				throw new ProfileNotFoundException("schema " + report.header.schemaLocation + " is no valid CMD profile!" );
-			String id = matcher.group(0);
 
-			report.header.isPublic = id == null? false : 
-				service.getPublicProfiles().stream().filter(p -> p.id.equals(id)).findFirst().orElse(null) == null?
+			report.header.isPublic = profileId == null? false : 
+				service.getPublicProfiles().stream().filter(p -> p.id.equals(profileId)).findFirst().orElse(null) == null?
 						false : true;		
 		}
 

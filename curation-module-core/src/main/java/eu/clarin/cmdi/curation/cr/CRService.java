@@ -12,12 +12,18 @@ import com.google.common.cache.LoadingCache;
 
 import eu.clarin.cmdi.curation.cr.ProfileCacheFactory.ProfileCacheEntry;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
+import eu.clarin.cmdi.curation.main.Configuration;
 
 public class CRService implements ICRService {
 	static final Logger _logger = LoggerFactory.getLogger(CRService.class);
 	
-	public static final String CR_REST = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/";
-	public static final String CR_REST_1_2_PROFILES = CR_REST + "1.2/profiles/";
+	//https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles?registrySpace=published&status=*
+	//https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles?registrySpace=published&status=production
+	//https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles?registrySpace=published&status=development
+	
+	public static final String CR_REST = Configuration.VLO_CONFIG.getComponentRegistryRESTURL().replaceFirst("http(s)?", "(http|https)").replaceFirst("/1\\..+", "/.+");
+	public static final Pattern CR_REST_PATTERN = Pattern.compile(CR_REST);
+	
 	public static final String PROFILE_PREFIX = "clarin.eu:cr1:";
 	public static final String PROFILE_ID_FORMAT = "clarin\\.eu:cr1:p_[0-9]+";
 	public static final Pattern PROFILE_ID_PATTERN = Pattern.compile(PROFILE_ID_FORMAT);
@@ -41,20 +47,22 @@ public class CRService implements ICRService {
 	 */
 	
 	@Override
-	public ProfileHeader createProfileHeader(String schemaLocation, String cmdiVersion, boolean isLocalFile){		
+	public ProfileHeader createProfileHeader(String profileId, String cmdiVersion, boolean isLocalFile){		
 		ProfileHeader header = null;
-		if(!isLocalFile || isSchemaCRResident(schemaLocation))
+		if(!isLocalFile)
 			header = publicProfiles
 			.stream()
-			.filter(h -> h.schemaLocation.equals(schemaLocation))
+			.filter(h -> (h.id != null && h.id.equals(profileId)))
 			.findFirst()
 			.orElse(null);
 		
 		if(header == null){
 			header = new ProfileHeader();
-			header.schemaLocation = schemaLocation;
+			//header.schemaLocation = schemaLocation;
+			header.id = profileId;
 			header.cmdiVersion = cmdiVersion;
-			header.isPublic = false;			
+			header.isPublic = false;
+
 		}
 		header.isLocalFile = isLocalFile;		
 		return header;		
@@ -94,7 +102,7 @@ public class CRService implements ICRService {
 
 	@Override
 	public boolean isSchemaCRResident(String schemaLocation) {
-		return schemaLocation.startsWith(CR_REST);
+		return CR_REST_PATTERN.matcher(schemaLocation).matches();
 	}
 
 	@Override

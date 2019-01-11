@@ -3,10 +3,9 @@ package eu.clarin.cmdi.curation.processor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
-
 import eu.clarin.cmdi.curation.entities.CMDInstance;
+
 import eu.clarin.cmdi.curation.main.Configuration;
-import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.subprocessor.InstanceXMLValidator;
 import eu.clarin.cmdi.curation.subprocessor.URLValidator;
 import org.slf4j.Logger;
@@ -14,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import eu.clarin.cmdi.curation.entities.CurationEntity;
 import eu.clarin.cmdi.curation.io.FileSizeException;
+import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.ErrorReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
@@ -41,7 +41,10 @@ public abstract class AbstractProcessor<R extends Report<?>> {
                     step.process(entity, report);
                 }
 
-                _logger.info("processed Record: " + report.getName() + ", step: " + step.getClass().getSimpleName());
+
+                _logger.info("processed Record: " + entity.toString() + ", step: " + step.getClass().getSimpleName());
+
+
                 if (step instanceof InstanceXMLValidator) {
                     report.addSegmentScore(((InstanceXMLValidator) step).calculateValidityScore());
                 }
@@ -51,19 +54,29 @@ public abstract class AbstractProcessor<R extends Report<?>> {
                     report.addSegmentScore(step.calculateScore(report));
                 }
 
+
             }
 
             return report;
         } catch (FileSizeException e) {
+
             _logger.warn(e.getMessage());
+
             return new ErrorReport(report.getName(), e.getMessage());
         } catch (Exception e) {
+            _logger.error("", e);
             String message = e.getMessage();
-            message = message.replace(" java.lang.Exception", "");
+
             if (message == null || message.isEmpty()) {
                 message = "There was an unknown error. Please report it.";
+            }else{
+                message = message.replace(" java.lang.Exception", "");
             }
-            _logger.error(message);
+
+
+            _logger.error("", e);
+
+
             return new ErrorReport(report.getName(), message);
         }
 

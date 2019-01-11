@@ -24,7 +24,7 @@ import eu.clarin.web.views.*;
 //@SuppressWarnings("serial")
 @Theme("mytheme")
 @Widgetset("eu.clarin.web.MyAppWidgetset")
-@Title("Curation Module")
+@Title("Curation Module 2.0")
 @JavaScript("vaadin://js/toggle.js")
 public class MainUI extends UI {
 

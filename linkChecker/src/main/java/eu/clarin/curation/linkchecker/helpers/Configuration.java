@@ -28,8 +28,10 @@ public class Configuration {
         try {
             properties.load(new FileInputStream(configPath));
         } catch (IOException e) {
+
             _logger.error("Can't load properties file: " + e.getMessage());
             System.exit(1);
+
         }
 
         DATABASE_NAME = properties.getProperty("DATABASE_NAME");
