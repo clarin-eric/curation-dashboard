@@ -2,10 +2,7 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 
 import com.mongodb.MongoException;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
@@ -43,6 +40,8 @@ public class URLValidator extends CMDSubprocessor {
 
     private static final MongoClient _mongoClient;
     private static MongoDatabase database;
+    private static MongoCollection linksToBeChecked;
+    private static MongoCollection linksChecked;
 
     static { //since MongoClient is already a connection pool only one instance should exist in the application
 
@@ -55,17 +54,21 @@ public class URLValidator extends CMDSubprocessor {
             }
 
             database = _mongoClient.getDatabase(Configuration.DATABASE_NAME);
+            linksToBeChecked = database.getCollection("linksToBeChecked");
+            linksChecked = database.getCollection("linksChecked");
+
             _logger.info("Connected to database.");
             //Ensure that "url" is a unique index
             IndexOptions indexOptions = new IndexOptions().unique(true);
-            database.getCollection("linksChecked").createIndex(new Document("url", 1), indexOptions);
+            linksChecked.createIndex(new Document("url", 1), indexOptions);
+            linksToBeChecked.createIndex(new Document("url", 1), indexOptions);
 
             //ensure indexes to speed up queries later
-            database.getCollection("linksChecked").createIndex(Indexes.ascending("record"));
-            database.getCollection("linksChecked").createIndex(Indexes.ascending("collection"));
-            database.getCollection("linksChecked").createIndex(Indexes.ascending("status"));
-            database.getCollection("linksChecked").createIndex(Indexes.ascending("record", "status"));
-            database.getCollection("linksChecked").createIndex(Indexes.ascending("collection", "status"));
+            linksChecked.createIndex(Indexes.ascending("record"));
+            linksChecked.createIndex(Indexes.ascending("collection"));
+            linksChecked.createIndex(Indexes.ascending("status"));
+            linksChecked.createIndex(Indexes.ascending("record", "status"));
+            linksChecked.createIndex(Indexes.ascending("collection", "status"));
 
         } else {
 
@@ -117,7 +120,7 @@ public class URLValidator extends CMDSubprocessor {
                     _logger.info("Checking database for url: " + url);
 
                     Bson filter = Filters.eq("url", url);
-                    MongoCursor<Document> cursor = database.getCollection("linksChecked").find(filter).iterator();
+                    MongoCursor<Document> cursor = linksChecked.find(filter).iterator();
 
                     //because urls are unique in the database if cursor has next, it found the only one. If not, the url wasn't found.
                     if (cursor.hasNext()) {
@@ -141,7 +144,7 @@ public class URLValidator extends CMDSubprocessor {
                         URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(url, finalRecord, finalCollection, expectedMimeType);
 
                         try {
-                            database.getCollection("linksToBeChecked").insertOne(urlElementToBeChecked.getMongoDocument());
+                            linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
                         } catch (MongoException e) {
                             //duplicate key error
                             //the url is already in the linksToBeChecked, do nothing
@@ -215,17 +218,24 @@ public class URLValidator extends CMDSubprocessor {
         //some old runs may have produced links that are not in the records anymore.
         //so to clean up the database, we move all of such links to history.
 
-        //clean all links that have no record attached to them first, otherwise it distrupts the statistics
+        //clean all links that have no record attached to them first, otherwise it disrupts the statistics
         //these are from old runs
         Bson filter = Filters.and(Filters.eq("collection", collectionName), Filters.not(Filters.exists("record")));
-        MongoCursor<Document> cursor = database.getCollection("linksChecked").find(filter).iterator();
+        MongoCursor<Document> cursor = linksChecked.find(filter).iterator();
         while (cursor.hasNext()) {
             URLElement urlElement = new URLElement(cursor.next());
             moveToHistory(urlElement);
         }
+        cursor = linksToBeChecked.find(filter).iterator();
+        while (cursor.hasNext()) {
+            URLElementToBeChecked urlElement = new URLElementToBeChecked(cursor.next());
+            String url = urlElement.getUrl();
+            linksToBeChecked.deleteOne(eq("url", url));
+        }
 
         filter = Filters.and(Filters.eq("collection", collectionName), Filters.eq("record", recordName));
-        cursor = database.getCollection("linksChecked").find(filter).iterator();
+        cursor = linksChecked.find(filter).iterator();
+
 
         while (cursor.hasNext()) {
 
@@ -249,7 +259,7 @@ public class URLValidator extends CMDSubprocessor {
         }
 
         try {
-            database.getCollection("linksChecked").deleteOne(eq("url", url));
+            linksChecked.deleteOne(eq("url", url));
         } catch (MongoException e) {
             //shouldnt happen, but if it does continue the loop
             _logger.error("Error with the url: " + url + " while cleaning linkschecked (removing links from older runs). Exception message: " + e.getMessage());
@@ -284,7 +294,7 @@ public class URLValidator extends CMDSubprocessor {
         if (_mongoClient != null) {
 
             Bson checkedLinksFilter = Filters.eq("record", name);
-            long numOfCheckedLinks = database.getCollection("linksChecked").countDocuments(checkedLinksFilter);
+            long numOfCheckedLinks = linksChecked.countDocuments(checkedLinksFilter);
 
             Bson brokenLinksFilter = Filters.and(Filters.eq("record", name), Filters.not(Filters.in("status", 200, 302, 401, 405, 429)));
             long numOfBrokenLinks = database.getCollection("linkesChecked").countDocuments(brokenLinksFilter);
