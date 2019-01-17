@@ -183,8 +183,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         }
 
         if (Configuration.HTTP_VALIDATION) {
+
             parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;
-            parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
+            //this is not used anymore, because it is taken directly from database
+            //parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
             parentReport.urlReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
             parentReport.urlReport.totNumOfCheckedLinks += urlReport.numOfCheckedLinks;
         }

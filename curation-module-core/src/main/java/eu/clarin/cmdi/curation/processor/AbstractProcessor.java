@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.processor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
+
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 
 import eu.clarin.cmdi.curation.main.Configuration;
@@ -31,13 +32,11 @@ public abstract class AbstractProcessor<R extends Report<?>> {
             for (ProcessingStep step : createPipeline()) {
 
 
-
-                if(step instanceof URLValidator){
-                    URLValidator urlValidator = (URLValidator)step;
+                if (step instanceof URLValidator) {
+                    URLValidator urlValidator = (URLValidator) step;
 
                     urlValidator.process((CMDInstance) entity, (CMDInstanceReport) report, parentName);
-//                    ((URLValidator)step).process(entity, report, parentName);
-                }else{
+                } else {
                     step.process(entity, report);
                 }
 
@@ -69,7 +68,7 @@ public abstract class AbstractProcessor<R extends Report<?>> {
 
             if (message == null || message.isEmpty()) {
                 message = "There was an unknown error. Please report it.";
-            }else{
+            } else {
                 message = message.replace(" java.lang.Exception", "");
             }
 
