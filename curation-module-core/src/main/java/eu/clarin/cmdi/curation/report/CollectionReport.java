@@ -201,7 +201,7 @@ public class CollectionReport implements Report<CollectionReport> {
         parentReport.urlReport.totNumOfLinks += urlReport.totNumOfLinks;
 //        parentReport.urlReport.totNumOfUniqueLinks += urlReport.totNumOfUniqueLinks;
         parentReport.urlReport.totNumOfCheckedLinks += urlReport.totNumOfCheckedLinks;
-        parentReport.urlReport.totNumOfResProxiesLinks += urlReport.totNumOfResProxiesLinks;
+//        parentReport.urlReport.totNumOfResProxiesLinks += urlReport.totNumOfResProxiesLinks;
         parentReport.urlReport.totNumOfBrokenLinks += urlReport.totNumOfBrokenLinks;
 
         // Facet
@@ -349,8 +349,7 @@ public class CollectionReport implements Report<CollectionReport> {
             urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
             urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
 
-            //todo totNumOfResProxiesLinks is not calculated anywhere, do it by calculating from mime type from database
-            urlReport.avgNumOfResProxiesLinks = (double) urlReport.totNumOfResProxiesLinks / fileReport.numOfFiles;
+//            urlReport.avgNumOfResProxiesLinks = (double) urlReport.totNumOfResProxiesLinks / fileReport.numOfFiles;
 
 
         }
@@ -438,8 +437,8 @@ public class CollectionReport implements Report<CollectionReport> {
         public int totNumOfUniqueLinks;
         public int totNumOfCheckedLinks;
         public Double avgNumOfUniqueLinks = 0.0;
-        public int totNumOfResProxiesLinks;
-        public Double avgNumOfResProxiesLinks = 0.0;
+//        public int totNumOfResProxiesLinks;
+//        public Double avgNumOfResProxiesLinks = 0.0;
         public int totNumOfBrokenLinks;
         public Double avgNumOfBrokenLinks = 0.0;
         public Double ratioOfValidLinks = 0.0;
