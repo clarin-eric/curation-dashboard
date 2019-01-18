@@ -306,6 +306,13 @@ public class CollectionReport implements Report<CollectionReport> {
                 statistics.avgRespTime = doc.getDouble("avg_resp");
                 statistics.maxRespTime = doc.getLong("max_resp");
                 statistics.statusCode = doc.getInteger("_id");
+                if(statistics.statusCode==200){
+                    statistics.category = "Ok";
+                }else if(statistics.statusCode == 401 || statistics.statusCode == 405 || statistics.statusCode== 429){
+                    statistics.category = "Undetermined";
+                }else{
+                    statistics.category = "Broken";
+                }
                 statistics.count = doc.getInteger("count");
                 urlReport.status.add(statistics);
             }
@@ -461,6 +468,9 @@ public class CollectionReport implements Report<CollectionReport> {
 
         @XmlAttribute
         public int statusCode;
+
+        @XmlAttribute
+        public String category;
     }
 
     @XmlRootElement

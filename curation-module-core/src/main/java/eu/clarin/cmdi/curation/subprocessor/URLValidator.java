@@ -61,7 +61,6 @@ public class URLValidator extends CMDSubprocessor {
             //Ensure that "url" is a unique index
             IndexOptions indexOptions = new IndexOptions().unique(true);
             linksChecked.createIndex(new Document("url", 1), indexOptions);
-            linksToBeChecked.createIndex(new Document("url", 1), indexOptions);
 
             //ensure indexes to speed up queries later
             linksChecked.createIndex(Indexes.ascending("record"));

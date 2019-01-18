@@ -64,8 +64,8 @@ public class LinkCheckerStatisticsHelper {
         database.getCollection("linksChecked").createIndex(Indexes.ascending("record"));
         database.getCollection("linksChecked").createIndex(Indexes.ascending("collection"));
         database.getCollection("linksChecked").createIndex(Indexes.ascending("status"));
-        database.getCollection("linksChecked").createIndex(Indexes.ascending("record","status"));
-        database.getCollection("linksChecked").createIndex(Indexes.ascending("collection","status"));
+        database.getCollection("linksChecked").createIndex(Indexes.ascending("record", "status"));
+        database.getCollection("linksChecked").createIndex(Indexes.ascending("collection", "status"));
     }
 
 
@@ -110,7 +110,7 @@ public class LinkCheckerStatisticsHelper {
     //this method doensn't take 0 status codes into consideration. 0 means there was an error in the URL and there was no request sent.
     private AggregateIterable<Document> getStatusStatisticsAvg(String collectionName) {
         AggregateIterable<Document> iterable = linksChecked.aggregate(Arrays.asList(
-                Aggregates.match(and(eq("collection", collectionName),not(eq("status",0)))),
+                Aggregates.match(and(eq("collection", collectionName), not(eq("status", 0)))),
                 Aggregates.group("_id",
                         Accumulators.avg("avg_resp", "$duration")
                 )
@@ -162,7 +162,7 @@ public class LinkCheckerStatisticsHelper {
             cursor = linksChecked.find(and(eq("status", status), eq("collection", collectionName))).limit(100).iterator();
         }
 
-        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content-Type","Expected Content-Type", "Byte-Size", "Request Duration(ms)", "Timestamp", "Method", "Redirect Count", "Record");
+        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content-Type", "Expected Content-Type", "Byte-Size", "Request Duration(ms)", "Timestamp", "Method", "Redirect Count", "Record");
 
         sb.append("<table>");
         sb.append("<thead>");
@@ -195,7 +195,7 @@ public class LinkCheckerStatisticsHelper {
                 sb.append("</td>");
                 sb.append("<td>");
                 //because this field is new, older entries dont have it and it results in null, so a null check to make it more user friendly
-                sb.append(urlElement.getExpectedMimeType()==null?"Not Specified":urlElement.getExpectedMimeType());
+                sb.append(urlElement.getExpectedMimeType() == null ? "Not Specified" : urlElement.getExpectedMimeType());
                 sb.append("</td>");
                 sb.append("<td>");
                 sb.append(urlElement.getByteSize());
@@ -239,17 +239,25 @@ public class LinkCheckerStatisticsHelper {
         sb.append("<div>");
         sb.append("<h1>Link Checking Statistics:</h1>");
         //general table
-        List<String> columnNames = Arrays.asList("Status", "Count", "Average Response Duration(ms)", "Max Response Duration(ms)");
-        List<List<Number>> rows = new ArrayList<>();
+        List<String> columnNames = Arrays.asList("Status", "Category", "Count", "Average Response Duration(ms)", "Max Response Duration(ms)");
+        List<List<String>> rows = new ArrayList<>();
 
         AggregateIterable<Document> iterable = getStatusStatistics();
         for (Document doc : iterable) {
-            List<Number> row = new ArrayList<>();
+            List<String> row = new ArrayList<>();
 
-            row.add(doc.getInteger("_id"));
-            row.add(doc.getInteger("count"));
-            row.add(doc.getDouble("avg_resp"));
-            row.add(doc.getLong("max_resp"));
+            Integer status = doc.getInteger("_id");
+            row.add(status.toString());
+            if (status == 200) {
+                row.add("Ok");
+            } else if (status == 401 || status == 405 || status == 429) {
+                row.add("Undetermined");
+            } else {
+                row.add("Broken");
+            }
+            row.add(doc.getInteger("count").toString());
+            row.add(doc.getDouble("avg_resp").toString());
+            row.add(doc.getLong("max_resp").toString());
 
             rows.add(row);
         }
@@ -288,12 +296,21 @@ public class LinkCheckerStatisticsHelper {
                         empty = false;
                     }
 
-                    List<Number> row = new ArrayList<>();
+                    List<String> row = new ArrayList<>();
 
-                    row.add(doc.getInteger("_id"));
-                    row.add(doc.getInteger("count"));
-                    row.add(doc.getDouble("avg_resp"));
-                    row.add(doc.getLong("max_resp"));
+                    Integer status = doc.getInteger("_id");
+                    row.add(status.toString());
+                    if (status == 200) {
+                        row.add("Ok");
+                    } else if (status == 401 || status == 405 || status == 429) {
+                        row.add("Undetermined");
+                    } else {
+                        row.add("Broken");
+                    }
+                    row.add(doc.getString("category"));
+                    row.add(doc.getInteger("count").toString());
+                    row.add(doc.getDouble("avg_resp").toString());
+                    row.add(doc.getLong("max_resp").toString());
 
                     rows.add(row);
                 }
@@ -337,7 +354,7 @@ public class LinkCheckerStatisticsHelper {
         return sb.toString();
     }
 
-    private String createStatisticsTable(String collectionName, List<String> columnNames, List<List<Number>> rows, int total, double avgResp) {
+    private String createStatisticsTable(String collectionName, List<String> columnNames, List<List<String>> rows, int total, double avgResp) {
         StringBuilder sb = new StringBuilder();
         sb.append("<h3>" + collectionName + ":</h3>");
         sb.append("<table>");
@@ -351,17 +368,37 @@ public class LinkCheckerStatisticsHelper {
         sb.append("</thead>");
         sb.append("<tbody>");
 
-        for (List<Number> row : rows) {
+        for (List<String> row : rows) {
             sb.append("<tr>");
             for (int i = 0; i < row.size(); i++) {
-                sb.append("<td align='right'>");
-                Number status = row.get(i);
+                sb.append("<td align='right'");
+                String value = row.get(i);
                 if (i == 0) {//first element is the status code
-                    String element = "<a href='#!ResultView/statistics//" + collectionName + "/" + status + "'>" + numberFormatter.format(status) + "</a>";
+                    int status = Integer.parseInt(value);
+                    if (status == 200) {
+                        sb.append("style='background-color:#cbe7cc'>");
+                    } else if (status == 401 || status == 405 || status == 429) {
+                        sb.append("style='background-color:#fff7b3'>");
+                    } else {
+                        sb.append("style='background-color:#f2a6a6'>");
+                    }
+
+                    String element = "<a href='#!ResultView/statistics//" + collectionName + "/" + value + "'>" + numberFormatter.format(Integer.parseInt(value)) + "</a>";
                     sb.append(element);
+                } else if (i == 1) {//second element is category
+                    if (value.equals("Ok")) {
+                        sb.append("style='background-color:#cbe7cc'>");
+                    } else if (value.equals("Undetermined")) {
+                        sb.append("style='background-color:#fff7b3'>");
+                    } else {
+                        sb.append("style='background-color:#f2a6a6'>");
+                    }
+                    sb.append(value);
                 } else {
-                    sb.append(numberFormatter.format(row.get(i)));
+                    sb.append(">");
+                    sb.append(numberFormatter.format(Double.parseDouble(value)));
                 }
+
                 sb.append("</td>");
 
             }

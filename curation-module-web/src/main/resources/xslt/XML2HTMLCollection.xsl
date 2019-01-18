@@ -10,28 +10,28 @@
 		<xsl:variable name="collectionName"><xsl:value-of select="./file-section/provider"/></xsl:variable>
 
 		<h3>Collection name: <xsl:copy-of select="$collectionName" /></h3>
-		
+
 		<p>Total Score: <xsl:value-of select="./@score"/> out of <xsl:value-of select="./@col-max-score"/></p>
 		<p>Score percentage: <xsl:value-of select="./@score-percentage"/></p>
 		<p>Average Score: <xsl:value-of select="./@avg-score"/> out of <xsl:value-of select="./@ins-max-score"/></p>
 		<p>Maximal score in collection: <xsl:value-of select="./@max-score"/></p>
 		<p>Minimal score in collection: <xsl:value-of select="./@min-score"/></p>
-		
+
 		<hr/>
 
 		<p>Timestamp: <xsl:value-of select="./@timeStamp"/></p>
 
 		<hr/>
-		
+
 		<h2>File Section</h2>
 		<p>Number of files: <xsl:value-of select="./file-section/numOfFiles"/></p>
 		<p>Total size: <xsl:value-of select="./file-section/size"/> B</p>
 		<p>Average size: <xsl:value-of select="./file-section/avgSize"/> B</p>
 		<p>Minimal file size: <xsl:value-of select="./file-section/minFileSize"/> B</p>
 		<p>Maximal file size: <xsl:value-of select="./file-section/maxFileSize"/> B</p>
-		
+
 		<hr/>
-		
+
 		<h2>Header Section</h2>
 		<table>
 			<caption>Profiles in Collection</caption>
@@ -60,8 +60,8 @@
 			</xsl:for-each>
 			</tbody>
 		</table>
-		
-		<h2>Facet Section</h2>	
+
+		<h2>Facet Section</h2>
 		<table border="1" cellpadding="1" cellspacing="1">
 			<thead>
 				<tr>
@@ -83,9 +83,9 @@
 			</xsl:for-each>
 			</tbody>
 		</table>
-		
+
 		<hr/>
-		
+
 		<h2>ResourceProxy Section</h2>
 		<p>Total number of resource proxies: <xsl:value-of select="./resProxy-section/totNumOfResProxies"/></p>
 		<p>Average number of resource proxies: <xsl:value-of select="./resProxy-section/avgNumOfResProxies"/></p>
@@ -120,7 +120,7 @@
 		<p>Total number of empty XML elements: <xsl:value-of select="./xml-populated-section/totNumOfXMLEmptyElement"/></p>
 		<p>Average number of empty XML elements: <xsl:value-of select="./xml-populated-section/avgXMLEmptyElement"/></p>
 		<p>Average rate of populated elements: <xsl:value-of select="./xml-populated-section/avgRateOfPopulatedElements"/>%</p>
-		
+
 		<hr/>
 
 		<h2>URL Validation Section</h2>
@@ -138,10 +138,13 @@
 
 
 		<h3>Status Codes Table</h3>
+
+		<h4>Ok</h4>
 		<table border="1" cellpadding="1" cellspacing="1">
 			<thead>
 				<tr>
 					<th scope="col">Status</th>
+					<th scope="col">Category</th>
 					<th scope="col">Count</th>
 					<th scope="col">Average Response Duration(ms)</th>
 					<th scope="col">Max Response Duration(ms)</th>
@@ -149,20 +152,39 @@
 			</thead>
 			<tbody>
 				<xsl:for-each select="./url-validation-section/statistics/status">
+					<xsl:sort select="@category"/>
 					<xsl:variable name="status"><xsl:value-of select="./@statusCode"/></xsl:variable>
-					<tr>
-						<td align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status" /></a></td>
-						<td align="right"><xsl:value-of select="./@count" /></td>
-						<td align="right"><xsl:value-of select="format-number(./@avgRespTime, '###,##0.##')" /></td>
-						<td align="right"><xsl:value-of select="format-number(./@maxRespTime, '###,##0.##')" /></td>
-					</tr>
+                        <tr>
+							<xsl:if test="$status=200">
+                            	<td style="background-color:#cbe7cc" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status" /></a></td>
+								<td style="background-color:#cbe7cc" align="right"><xsl:value-of select="./@category" /></td>
+							</xsl:if>
+							<xsl:if test="$status=401 or $status=405 or $status=429">
+								<td style="background-color:#fff7b3" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status" /></a></td>
+								<td style="background-color:#fff7b3" align="right"><xsl:value-of select="./@category" /></td>
+							</xsl:if>
+							<xsl:if test="$status!=401 and $status!=405 and $status!=429 and $status!=200">
+								<td style="background-color:#f2a6a6" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status" /></a></td>
+								<td style="background-color:#f2a6a6" align="right"><xsl:value-of select="./@category" /></td>
+							</xsl:if>
+                            <td align="right"><xsl:value-of select="./@count" /></td>
+                            <td align="right"><xsl:value-of select="format-number(./@avgRespTime, '###,##0.##')" /></td>
+                            <td align="right"><xsl:value-of select="format-number(./@maxRespTime, '###,##0.##')" /></td>
+                        </tr>
+
 				</xsl:for-each>
 			</tbody>
 		</table>
 
+
+
+
+
+
+
 		<hr/>
 		<xsl:if test="./invalid-files/file">
-			<hr/>	
+			<hr/>
 			<h2>Invalid Files Section</h2>
 			 <ol>
 			  <xsl:for-each select="./invalid-files/file">
