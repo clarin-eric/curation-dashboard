@@ -226,6 +226,8 @@ public class URLValidator extends CMDSubprocessor {
             URLElement urlElement = new URLElement(cursor.next());
             moveToHistory(urlElement);
         }
+
+        filter = Filters.and(Filters.eq("collection", collectionName), Filters.or(Filters.not(Filters.exists("record")), Filters.not(Filters.exists("expectedMimeType"))));
         cursor = linksToBeChecked.find(filter).iterator();
         while (cursor.hasNext()) {
             URLElementToBeChecked urlElement = new URLElementToBeChecked(cursor.next());
