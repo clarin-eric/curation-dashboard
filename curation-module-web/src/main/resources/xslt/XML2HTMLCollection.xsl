@@ -154,16 +154,17 @@
 				<xsl:for-each select="./url-validation-section/statistics/status">
 					<xsl:sort select="@category"/>
 					<xsl:variable name="status"><xsl:value-of select="./@statusCode"/></xsl:variable>
+					<xsl:variable name="category"><xsl:value-of select="./@category"/></xsl:variable>
                         <tr>
-							<xsl:if test="$status=200">
+							<xsl:if test="$category='Ok'">
                             	<td style="background-color:#cbe7cc" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status" /></a></td>
 								<td style="background-color:#cbe7cc" align="right"><xsl:value-of select="./@category" /></td>
 							</xsl:if>
-							<xsl:if test="$status=401 or $status=405 or $status=429">
+							<xsl:if test="$category='Undetermined'">
 								<td style="background-color:#fff7b3" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status" /></a></td>
 								<td style="background-color:#fff7b3" align="right"><xsl:value-of select="./@category" /></td>
 							</xsl:if>
-							<xsl:if test="$status!=401 and $status!=405 and $status!=429 and $status!=200">
+							<xsl:if test="$category='Broken'">
 								<td style="background-color:#f2a6a6" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status" /></a></td>
 								<td style="background-color:#f2a6a6" align="right"><xsl:value-of select="./@category" /></td>
 							</xsl:if>

@@ -3,7 +3,6 @@ package eu.clarin.web.utils;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
-
 import com.mongodb.client.model.Indexes;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
@@ -19,13 +18,12 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.not;
+import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Sorts.ascending;
 import static com.mongodb.client.model.Sorts.orderBy;
 
@@ -34,10 +32,9 @@ public class LinkCheckerStatisticsHelper {
     private static final Logger _logger = LoggerFactory.getLogger(LinkCheckerStatisticsHelper.class);
 
     private static final MongoClient mongoClient;
-    private MongoCollection<Document> linksToBeChecked;
     private MongoCollection<Document> linksChecked;
 
-    DecimalFormat numberFormatter = new DecimalFormat("###,###.##");
+    private DecimalFormat numberFormatter = new DecimalFormat("###,###.##");
 
     static { //since MongoClient is already a connection pool only one instance should exist in the application
         if (Configuration.DATABASE) {
@@ -57,7 +54,6 @@ public class LinkCheckerStatisticsHelper {
         MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
         _logger.info("Connected to database.");
 
-        this.linksToBeChecked = database.getCollection("linksToBeChecked");
         this.linksChecked = database.getCollection("linksChecked");
 
         //ensure indexes to speed up queries later
@@ -70,7 +66,8 @@ public class LinkCheckerStatisticsHelper {
 
 
     private AggregateIterable<Document> getStatusStatistics() {
-        AggregateIterable<Document> iterable = linksChecked.aggregate(Arrays.asList(
+
+        return linksChecked.aggregate(Arrays.asList(
                 Aggregates.group("$status",
                         Accumulators.sum("count", 1),
                         Accumulators.avg("avg_resp", "$duration"),
@@ -79,69 +76,73 @@ public class LinkCheckerStatisticsHelper {
                 Aggregates.sort(orderBy(ascending("_id")))
         ));
 
-        return iterable;
+    }
 
+    private AggregateIterable<Document> getStatusStatistics(String collectionName) {
+        if(collectionName.equals("Overall")){
+            return getStatusStatistics();
+        }
+
+        return linksChecked.aggregate(Arrays.asList(
+                Aggregates.match(eq("collection", collectionName)),
+                Aggregates.group("$status",
+                        Accumulators.sum("count", 1),
+                        Accumulators.avg("avg_resp", "$duration"),
+                        Accumulators.max("max_resp", "$duration")
+                ),
+                Aggregates.sort(orderBy(ascending("_id")))
+        ));
     }
 
     private AggregateIterable<Document> getStatusStatisticsTotal() {
-        AggregateIterable<Document> iterable = linksChecked.aggregate(Arrays.asList(
+
+        return linksChecked.aggregate(Arrays.asList(
                 Aggregates.group("_id",
-                        Accumulators.sum("count", 1),
-                        Accumulators.avg("avg_resp", "$duration")
+                        Accumulators.sum("count", 1)
                 )
         ));
-
-        return iterable;
 
     }
 
     private AggregateIterable<Document> getStatusStatisticsTotal(String collectionName) {
-        AggregateIterable<Document> iterable = linksChecked.aggregate(Arrays.asList(
+        if(collectionName.equals("Overall")){
+            return getStatusStatisticsTotal();
+        }
+
+        return linksChecked.aggregate(Arrays.asList(
                 Aggregates.match(eq("collection", collectionName)),
                 Aggregates.group("_id",
                         Accumulators.sum("count", 1)
                 )
         ));
 
-        return iterable;
-
     }
 
-    //this method doensn't take 0 status codes into consideration. 0 means there was an error in the URL and there was no request sent.
+    //this method doesn't take 0 status codes into consideration. 0 means there was an error in the URL and there was no request sent.
+    private AggregateIterable<Document> getStatusStatisticsAvg() {
+
+        return linksChecked.aggregate(Arrays.asList(
+                Aggregates.match(not(eq("status", 0))),
+                Aggregates.group("_id",
+                        Accumulators.avg("avg_resp", "$duration")
+                )
+        ));
+    }
+
+
+    //this method doesn't take 0 status codes into consideration. 0 means there was an error in the URL and there was no request sent.
     private AggregateIterable<Document> getStatusStatisticsAvg(String collectionName) {
-        AggregateIterable<Document> iterable = linksChecked.aggregate(Arrays.asList(
+        if(collectionName.equals("Overall")){
+            return getStatusStatisticsAvg();
+        }
+
+        return linksChecked.aggregate(Arrays.asList(
                 Aggregates.match(and(eq("collection", collectionName), not(eq("status", 0)))),
                 Aggregates.group("_id",
                         Accumulators.avg("avg_resp", "$duration")
                 )
         ));
 
-        return iterable;
-
-    }
-
-    private AggregateIterable<Document> getStatusStatistics(String collectionName) {
-        AggregateIterable<Document> iterable = linksChecked.aggregate(Arrays.asList(
-                Aggregates.match(eq("collection", collectionName)),
-                Aggregates.group("$status",
-                        Accumulators.sum("count", 1),
-                        Accumulators.avg("avg_resp", "$duration"),
-                        Accumulators.max("max_resp", "$duration")
-                ),
-                Aggregates.sort(orderBy(ascending("_id")))
-        ));
-
-        return iterable;
-    }
-
-    private AggregateIterable<Document> getLinksToBeCheckedStatistics() {
-        AggregateIterable<Document> iterable = linksToBeChecked.aggregate(Arrays.asList(
-                Aggregates.group("$collection",
-                        Accumulators.sum("count", 1)
-                )
-        ));
-
-        return iterable;
     }
 
     public String createURLTable(String collectionName, int status) {
@@ -153,7 +154,7 @@ public class LinkCheckerStatisticsHelper {
 
         sb.append("<div>");
         sb.append("<h1>Link Checking Statistics:</h1>");
-        sb.append("<h3>" + collectionName + " (limited to first 100 URLs)" + ":</h3>");
+        sb.append("<h3>").append(collectionName).append(" (limited to first 100 URLs)").append(":</h3>");
 
         MongoCursor<Document> cursor;
         if (collectionName.equals("Overall")) {
@@ -230,6 +231,14 @@ public class LinkCheckerStatisticsHelper {
         return sb.toString();
     }
 
+    private class StatisticRow {
+        private int status;
+        private String category;
+        private int count;
+        private double avgResp;
+        private long maxResp;
+    }
+
     public String createHTML() {
         StringBuilder sb = new StringBuilder();
         sb.append("<html><head>\n" +
@@ -239,39 +248,7 @@ public class LinkCheckerStatisticsHelper {
         sb.append("<div>");
         sb.append("<h1>Link Checking Statistics:</h1>");
         //general table
-        List<String> columnNames = Arrays.asList("Status", "Category", "Count", "Average Response Duration(ms)", "Max Response Duration(ms)");
-        List<List<String>> rows = new ArrayList<>();
-
-        AggregateIterable<Document> iterable = getStatusStatistics();
-        for (Document doc : iterable) {
-            List<String> row = new ArrayList<>();
-
-            Integer status = doc.getInteger("_id");
-            row.add(status.toString());
-            if (status == 200) {
-                row.add("Ok");
-            } else if (status == 401 || status == 405 || status == 429) {
-                row.add("Undetermined");
-            } else {
-                row.add("Broken");
-            }
-            row.add(doc.getInteger("count").toString());
-            row.add(doc.getDouble("avg_resp").toString());
-            row.add(doc.getLong("max_resp").toString());
-
-            rows.add(row);
-        }
-
-        int total = 0;
-        double avgResp = 0.0;
-        iterable = getStatusStatisticsTotal();
-        for (Document doc : iterable) {
-            //there is only one document
-            total = doc.getInteger("count");
-            avgResp = doc.getDouble("avg_resp");
-        }
-
-        sb.append(createStatisticsTable("Overall", columnNames, rows, total, avgResp));
+        addTable("Overall",sb);
 
         sb.append("<h2>Collections:</h2>");
 
@@ -283,58 +260,9 @@ public class LinkCheckerStatisticsHelper {
 
             for (Path path : files) {
 
-                rows = new ArrayList<>();
-
                 String collectionName = path.getFileName().toString().split("\\.")[0];
 
-                iterable = getStatusStatistics(collectionName);
-
-
-                boolean empty = true;
-                for (Document doc : iterable) {
-                    if (empty) {
-                        empty = false;
-                    }
-
-                    List<String> row = new ArrayList<>();
-
-                    Integer status = doc.getInteger("_id");
-                    row.add(status.toString());
-                    if (status == 200) {
-                        row.add("Ok");
-                    } else if (status == 401 || status == 405 || status == 429) {
-                        row.add("Undetermined");
-                    } else {
-                        row.add("Broken");
-                    }
-                    row.add(doc.getString("category"));
-                    row.add(doc.getInteger("count").toString());
-                    row.add(doc.getDouble("avg_resp").toString());
-                    row.add(doc.getLong("max_resp").toString());
-
-                    rows.add(row);
-                }
-
-                if (!empty) {
-                    total = 0;
-                    avgResp = 0.0;
-
-                    iterable = getStatusStatisticsTotal(collectionName);
-                    for (Document doc : iterable) {
-                        //there is only one document
-                        total = doc.getInteger("count");
-                    }
-
-                    iterable = getStatusStatisticsAvg(collectionName);
-                    for (Document doc : iterable) {
-                        //there is only one document
-                        avgResp = doc.getDouble("avg_resp");
-                    }
-
-
-                    sb.append(createStatisticsTable(collectionName, columnNames, rows, total, avgResp));
-                }
-
+                addTable(collectionName,sb);
 
             }
 
@@ -343,20 +271,66 @@ public class LinkCheckerStatisticsHelper {
             //don't put those in the html
         }
 
-        //links to be checked
-        //this kind of doesnt make sense and it is already in the collection reports
-//        iterable = handler.getLinksToBeCheckedStatistics();
-//        for (Document doc : iterable) {
-//            _logger.info(doc.toString());
-//        }
-
         sb.append("</div></body></html>");
         return sb.toString();
     }
 
-    private String createStatisticsTable(String collectionName, List<String> columnNames, List<List<String>> rows, int total, double avgResp) {
+    private void addTable(String collectionName, StringBuilder sb) {
+        List<StatisticRow> rows = new ArrayList<>();
+
+        AggregateIterable<Document> iterable = getStatusStatistics(collectionName);
+
+        boolean empty = true;
+        for (Document doc : iterable) {
+            if (empty) {
+                empty = false;
+            }
+
+            StatisticRow row = new StatisticRow();
+
+            Integer status = doc.getInteger("_id");
+            row.status = status;
+            if (status == 200) {
+                row.category = "Ok";
+            } else if (status == 401 || status == 405 || status == 429) {
+                row.category = "Undetermined";
+            } else {
+                row.category = "Broken";
+            }
+            row.count = doc.getInteger("count");
+            row.avgResp = doc.getDouble("avg_resp");
+            row.maxResp = doc.getLong("max_resp");
+
+            rows.add(row);
+        }
+
+        rows.sort(Comparator.comparing(statisticRow -> statisticRow.category));
+
+        if (!empty) {
+            int total = 0;
+            double avgResp = 0.0;
+
+            iterable = getStatusStatisticsTotal(collectionName);
+            for (Document doc : iterable) {
+                //there is only one document
+                total = doc.getInteger("count");
+            }
+
+            iterable = getStatusStatisticsAvg(collectionName);
+            for (Document doc : iterable) {
+                //there is only one document
+                avgResp = doc.getDouble("avg_resp");
+            }
+
+            sb.append(createStatisticsTable(collectionName, rows, total, avgResp));
+        }
+    }
+
+    private String createStatisticsTable(String collectionName, List<StatisticRow> rows, int total, double avgResp) {
+        List<String> columnNames = Arrays.asList("Status", "Category", "Count", "Average Response Duration(ms)", "Max Response Duration(ms)");
+
         StringBuilder sb = new StringBuilder();
-        sb.append("<h3>" + collectionName + ":</h3>");
+        sb.append("<h3>").append(collectionName).append(":</h3>");
         sb.append("<table>");
         sb.append("<thead>");
         sb.append("<tr>");
@@ -368,47 +342,46 @@ public class LinkCheckerStatisticsHelper {
         sb.append("</thead>");
         sb.append("<tbody>");
 
-        for (List<String> row : rows) {
+        for (StatisticRow row : rows) {
+            String element = "<a href='#!ResultView/statistics//" + collectionName + "/" + row.status + "'>" + numberFormatter.format(row.status) + "</a>";
+
             sb.append("<tr>");
-            for (int i = 0; i < row.size(); i++) {
-                sb.append("<td align='right'");
-                String value = row.get(i);
-                if (i == 0) {//first element is the status code
-                    int status = Integer.parseInt(value);
-                    if (status == 200) {
-                        sb.append("style='background-color:#cbe7cc'>");
-                    } else if (status == 401 || status == 405 || status == 429) {
-                        sb.append("style='background-color:#fff7b3'>");
-                    } else {
-                        sb.append("style='background-color:#f2a6a6'>");
-                    }
+            String color;
 
-                    String element = "<a href='#!ResultView/statistics//" + collectionName + "/" + value + "'>" + numberFormatter.format(Integer.parseInt(value)) + "</a>";
-                    sb.append(element);
-                } else if (i == 1) {//second element is category
-                    if (value.equals("Ok")) {
-                        sb.append("style='background-color:#cbe7cc'>");
-                    } else if (value.equals("Undetermined")) {
-                        sb.append("style='background-color:#fff7b3'>");
-                    } else {
-                        sb.append("style='background-color:#f2a6a6'>");
-                    }
-                    sb.append(value);
-                } else {
-                    sb.append(">");
-                    sb.append(numberFormatter.format(Double.parseDouble(value)));
-                }
-
-                sb.append("</td>");
-
+            if(row.category.equals("Ok")){
+                color="#cbe7cc";
+            }else if(row.category.equals("Undetermined")){
+                color="#fff7b3";
+            }else{
+                color="#f2a6a6";
             }
+
+            sb.append("<td align='right' style='background-color:").append(color).append("'>");
+            sb.append(element);
+            sb.append("</td>");
+            sb.append("<td align='right' style='background-color:").append(color).append("'>");
+            sb.append(row.category);
+            sb.append("</td>");
+
+            sb.append("<td align='right'>");
+            sb.append(numberFormatter.format(row.count));
+            sb.append("</td>");
+
+            sb.append("<td align='right'>");
+            sb.append(numberFormatter.format(row.avgResp));
+            sb.append("</td>");
+
+            sb.append("<td align='right'>");
+            sb.append(numberFormatter.format(row.maxResp));
+            sb.append("</td>");
+
             sb.append("</tr>");
         }
         sb.append("</tbody>");
         sb.append("</table>");
 
-        sb.append("<b>Total Count: </b>" + numberFormatter.format(total) + "<br>");
-        sb.append("<b>Average Response Duration(ms): </b>" + numberFormatter.format(avgResp));
+        sb.append("<b>Total Count: </b>").append(numberFormatter.format(total)).append("<br>");
+        sb.append("<b>Average Response Duration(ms): </b>").append(numberFormatter.format(avgResp));
 
         return sb.toString();
     }
