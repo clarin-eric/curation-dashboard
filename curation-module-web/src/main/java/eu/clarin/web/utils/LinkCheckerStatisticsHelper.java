@@ -57,11 +57,11 @@ public class LinkCheckerStatisticsHelper {
         this.linksChecked = database.getCollection("linksChecked");
 
         //ensure indexes to speed up queries later
-        database.getCollection("linksChecked").createIndex(Indexes.ascending("record"));
-        database.getCollection("linksChecked").createIndex(Indexes.ascending("collection"));
-        database.getCollection("linksChecked").createIndex(Indexes.ascending("status"));
-        database.getCollection("linksChecked").createIndex(Indexes.ascending("record", "status"));
-        database.getCollection("linksChecked").createIndex(Indexes.ascending("collection", "status"));
+//        database.getCollection("linksChecked").createIndex(Indexes.ascending("record"));
+//        database.getCollection("linksChecked").createIndex(Indexes.ascending("collection"));
+//        database.getCollection("linksChecked").createIndex(Indexes.ascending("status"));
+//        database.getCollection("linksChecked").createIndex(Indexes.ascending("record", "status"));
+//        database.getCollection("linksChecked").createIndex(Indexes.ascending("collection", "status"));
     }
 
 

@@ -68,11 +68,13 @@ public class CollectionThread extends Thread {
 
             try {
 
-
                 urlElement = httpLinkChecker.checkLink(url, 0, 0, url);
 
                 urlElement.setCollection(collection);
-                MongoCursor<Document> cursor = linksToBeChecked.find(Filters.eq("url",url)).iterator();
+
+                MongoCursor<Document> cursor = linksToBeChecked.find(
+                        Filters.and(eq("collection",collection),eq("url",url))
+                ).iterator();
 
                 if (cursor.hasNext()) {
                     Document doc = cursor.next();
@@ -93,7 +95,10 @@ public class CollectionThread extends Thread {
                         null, "0", 0, System.currentTimeMillis(), collection, 0, null,"");
 
                 urlElement.setCollection(collection);
-                MongoCursor<Document> cursor = linksToBeChecked.find(Filters.eq("url",url)).iterator();
+
+                MongoCursor<Document> cursor = linksToBeChecked.find(
+                        Filters.and(eq("collection",collection),eq("url",url))
+                ).iterator();
 
                 if (cursor.hasNext()) {
                     urlElement.setRecord(cursor.next().get("record").toString());

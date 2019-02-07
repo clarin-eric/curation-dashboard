@@ -1,6 +1,9 @@
 package eu.clarin.cmdi.curation.main;
 
-import java.io.File;
+import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
+import eu.clarin.cmdi.curation.report.Report;
+import org.apache.commons.cli.*;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
@@ -8,20 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.OptionGroup;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.PosixParser;
-
-import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
-import eu.clarin.cmdi.curation.report.Report;
-
 public class Main {
-
 
     public static void main(String[] args) throws Exception {
 
@@ -100,7 +90,6 @@ public class Main {
             type = CurationEntityType.COLLECTION;
             Configuration.COLLECTION_MODE = true;
             if (cmd.hasOption("path")) {
-
                 for (String path : cmd.getOptionValues("path")) {
                     dump(curator.processCollection(Paths.get(path)), type);
                 }
@@ -109,7 +98,6 @@ public class Main {
         } else
             throw new Exception("Curation module can curate profiles (-p), instances (-i) and collections (-c)");
     }
-
 
 
     private static void dump(Report report, CurationEntityType type) throws Exception {
@@ -129,7 +117,7 @@ public class Main {
             }
 
             Files.createDirectories(path);
-            String filename = report.getName().replaceAll("/","-") + ".xml";
+            String filename = report.getName().replaceAll("/", "-") + ".xml";
             path = path.resolve(filename);
             report.toXML(Files.newOutputStream(path));
             System.out.println(filename);

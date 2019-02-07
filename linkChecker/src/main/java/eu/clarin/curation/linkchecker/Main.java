@@ -63,8 +63,8 @@ public class Main {
 
         //Ensure that "url" is a unique index
         IndexOptions indexOptions = new IndexOptions().unique(true);
-        linksChecked.createIndex(new Document("url", 1), indexOptions);
-        linksToBeChecked.createIndex(new Document("url", 1), indexOptions);
+//        linksChecked.createIndex(new Document("url", 1), indexOptions);
+//        linksToBeChecked.createIndex(new Document("url", 1), indexOptions);
 
         //Create a _logger thread that outputs every 10 seconds the current state of Collection threads...
         (new Thread() {

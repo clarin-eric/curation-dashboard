@@ -60,14 +60,14 @@ public class URLValidator extends CMDSubprocessor {
             _logger.info("Connected to database.");
             //Ensure that "url" is a unique index
             IndexOptions indexOptions = new IndexOptions().unique(true);
-            linksChecked.createIndex(new Document("url", 1), indexOptions);
+//            linksChecked.createIndex(new Document("url", 1), indexOptions);
 
             //ensure indexes to speed up queries later
-            linksChecked.createIndex(Indexes.ascending("record"));
-            linksChecked.createIndex(Indexes.ascending("collection"));
-            linksChecked.createIndex(Indexes.ascending("status"));
-            linksChecked.createIndex(Indexes.ascending("record", "status"));
-            linksChecked.createIndex(Indexes.ascending("collection", "status"));
+//            linksChecked.createIndex(Indexes.ascending("record"));
+//            linksChecked.createIndex(Indexes.ascending("collection"));
+//            linksChecked.createIndex(Indexes.ascending("status"));
+//            linksChecked.createIndex(Indexes.ascending("record", "status"));
+//            linksChecked.createIndex(Indexes.ascending("collection", "status"));
 
         } else {
 
@@ -118,7 +118,7 @@ public class URLValidator extends CMDSubprocessor {
 
                     _logger.info("Checking database for url: " + url);
 
-                    Bson filter = Filters.eq("url", url);
+                    Bson filter = Filters.and(eq("collection", parentName),eq("record",report.getName()),eq("url", url));
                     MongoCursor<Document> cursor = linksChecked.find(filter).iterator();
 
                     //because urls are unique in the database if cursor has next, it found the only one. If not, the url wasn't found.
@@ -154,7 +154,6 @@ public class URLValidator extends CMDSubprocessor {
 
                     cursor.close();
                 });
-
 
                 removeOldURLs(urlMap.keySet(), report.getName(), parentName);
 
@@ -202,41 +201,18 @@ public class URLValidator extends CMDSubprocessor {
             }
 
         } else {
-
-
             report.urlReport = createURLReport(numOfLinks.get(), report.getName());
-
-
             addMessage(Severity.INFO, "Link validation is disabled");
         }
 
     }
 
-    //remove all urls from database from this record that aren't in the current urlmaps
     private void removeOldURLs(Collection<String> links, String recordName, String collectionName) {
         //some old runs may have produced links that are not in the records anymore.
         //so to clean up the database, we move all of such links to history.
 
-        //clean all links that have no record attached to them first, otherwise it disrupts the statistics
-        //these are from old runs
-        Bson filter = Filters.and(Filters.eq("collection", collectionName), Filters.not(Filters.exists("record")));
+        Bson filter = Filters.and(Filters.eq("collection", collectionName), Filters.eq("record", recordName));
         MongoCursor<Document> cursor = linksChecked.find(filter).iterator();
-        while (cursor.hasNext()) {
-            URLElement urlElement = new URLElement(cursor.next());
-            moveToHistory(urlElement);
-        }
-
-        filter = Filters.and(Filters.eq("collection", collectionName), Filters.or(Filters.not(Filters.exists("record")), Filters.not(Filters.exists("expectedMimeType"))));
-        cursor = linksToBeChecked.find(filter).iterator();
-        while (cursor.hasNext()) {
-            URLElementToBeChecked urlElement = new URLElementToBeChecked(cursor.next());
-            String url = urlElement.getUrl();
-            linksToBeChecked.deleteOne(eq("url", url));
-        }
-
-        filter = Filters.and(Filters.eq("collection", collectionName), Filters.eq("record", recordName));
-        cursor = linksChecked.find(filter).iterator();
-
 
         while (cursor.hasNext()) {
 

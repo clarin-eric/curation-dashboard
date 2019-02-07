@@ -59,7 +59,7 @@ public class CMDFileVisitor implements FileVisitor<Path> {
 			e.printStackTrace();
 		}
 		long end = System.currentTimeMillis();
-		_logger.info("validation for {} lasted {}", dir, TimeUtils.humanizeToTime(end - startTime));
+		_logger.info("It took {} to create report: {}", dir.toString().split("/")[dir.toString().split("/").length-1], TimeUtils.humanizeToTime(end - startTime));
 		
 		
 		if(!stack.empty()){
