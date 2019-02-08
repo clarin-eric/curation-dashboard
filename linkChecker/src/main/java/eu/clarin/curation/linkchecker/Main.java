@@ -2,9 +2,11 @@ package eu.clarin.curation.linkchecker;
 
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 
 
+import com.mongodb.client.model.Sorts;
 import eu.clarin.curation.linkchecker.helpers.Configuration;
 import eu.clarin.curation.linkchecker.httpLinkChecker.CollectionThread;
 import eu.clarin.curation.linkchecker.urlElements.URLElement;
@@ -17,9 +19,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 
 public class Main {
@@ -62,9 +64,40 @@ public class Main {
         MongoCollection<Document> linksCheckedHistory = database.getCollection("linksCheckedHistory");
 
         //Ensure that "url" is a unique index
-        IndexOptions indexOptions = new IndexOptions().unique(true);
+//        IndexOptions indexOptions = new IndexOptions().unique(true);
 //        linksChecked.createIndex(new Document("url", 1), indexOptions);
 //        linksToBeChecked.createIndex(new Document("url", 1), indexOptions);
+
+        if (Configuration.ONLY_BROKEN) {
+            _logger.info("Putting broken links back into linksToBeChecked");
+            Bson brokenLinksFilter = Filters.not(Filters.in("status", 200, 302, 401, 405, 429));
+            MongoCursor<Document> cursor = linksChecked.find(brokenLinksFilter).noCursorTimeout(true).iterator();
+
+            int i=0;
+            try {
+                while (cursor.hasNext()) {
+                    URLElement urlElement = new URLElement(cursor.next());
+                    URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(urlElement.getUrl(),urlElement.getRecord(),urlElement.getCollection(),urlElement.getExpectedMimeType());
+
+                    try {
+                        linksToBeChecked.insertOne(urlElementToBeChecked.getMongoDocument());
+                    } catch (MongoException e) {
+                        //duplicate key error
+                        //url is already in the database, do nothing
+                    }
+
+                    if(i%100==0){
+                        _logger.info("Added "+i+" broken urls to linksToBeChecked from linksChecked.");
+                    }
+                    i++;
+
+                }
+            } finally {
+                cursor.close();
+            }
+
+
+        }
 
         //Create a _logger thread that outputs every 10 seconds the current state of Collection threads...
         (new Thread() {
@@ -95,7 +128,8 @@ public class Main {
 
         while (true) {
 
-            MongoCursor<Document> cursor = linksToBeChecked.find().noCursorTimeout(true).iterator();
+            //todo see if this sort ascending works
+            MongoCursor<Document> cursor = linksToBeChecked.find().sort(Sorts.ascending("collection")).noCursorTimeout(true).iterator();
             _logger.info("LinksToBeChecked document count: " + linksToBeChecked.countDocuments());
 
             try {

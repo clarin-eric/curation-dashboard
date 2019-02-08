@@ -21,6 +21,7 @@ public class Configuration {
     public static int REDIRECT_FOLLOW_LIMIT;
     public static String USERAGENT;
     public static long CRAWLDELAY;
+    public static boolean ONLY_BROKEN;
     public static Map<String, Long> CRAWLDELAYMAP = new HashMap<>();
 
 
@@ -40,6 +41,7 @@ public class Configuration {
         DATABASE_URI = properties.getProperty("DATABASE_URI");
         USERAGENT = properties.getProperty("USERAGENT");
         CRAWLDELAY = Long.parseLong(properties.getProperty("CRAWLDELAY"));
+        ONLY_BROKEN = Boolean.parseBoolean(properties.getProperty("ONLY_BROKEN"));
 
         String crawlDelayList = properties.getProperty("CRAWLDELAYLIST");
         for (String crawlDelayEntry : crawlDelayList.split(",")) {

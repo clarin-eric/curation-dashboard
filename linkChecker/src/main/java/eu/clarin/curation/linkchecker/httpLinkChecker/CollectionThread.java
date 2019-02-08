@@ -89,7 +89,7 @@ public class CollectionThread extends Thread {
                 //better not to have it in log file
 //                _logger.error("There is an error with the URL: " + url + " . It is not being checked.");
 
-                e.printStackTrace();
+//                e.printStackTrace();
 
                 urlElement = new URLElement(url, null, e.getMessage() + "for URL: "+url, 0,
                         null, "0", 0, System.currentTimeMillis(), collection, 0, null,"");
@@ -120,12 +120,12 @@ public class CollectionThread extends Thread {
             //replace if the url is in linksChecked already
             //if not add new
             FindOneAndReplaceOptions findOneAndReplaceOptions = new FindOneAndReplaceOptions();
-            Bson filter = Filters.eq("url", urlElement.getUrl());
+            Bson filter = Filters.and(eq("collection",collection),eq("record",urlElement.getRecord()),eq("url", urlElement.getUrl()));
             linksChecked.findOneAndReplace(filter, urlElement.getMongoDocument(), findOneAndReplaceOptions.upsert(true));
 
 
             //delete from linksToBeChecked(whether successful or there was an error, ist wuascht)
-            linksToBeChecked.deleteOne(eq("url", url));
+            linksToBeChecked.deleteOne(filter);
 
             long estimatedTime = System.currentTimeMillis() - startTime;
 
