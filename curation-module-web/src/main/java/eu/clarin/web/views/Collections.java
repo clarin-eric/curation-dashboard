@@ -89,7 +89,7 @@ public class Collections extends GridPanel {
 
     @Override
     protected void fillInData() {
-        Shared.collections.forEach(c -> {
+        Shared.collectionStatistics.forEach(c -> {
             try {
                 Collection<Object> rowValues = new ArrayList<>();
 

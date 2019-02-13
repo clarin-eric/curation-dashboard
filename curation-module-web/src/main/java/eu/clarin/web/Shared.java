@@ -4,31 +4,29 @@ import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.mongodb.client.AggregateIterable;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
+import eu.clarin.cmdi.curation.report.CollectionReport;
+import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.web.data.CollectionStatistics;
 import eu.clarin.web.data.PublicProfile;
 import eu.clarin.web.utils.LinkCheckerStatisticsHelper;
 import eu.clarin.web.utils.StaxParser;
 
-import org.bson.Document;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.stream.*;
 
 public class Shared {
@@ -36,7 +34,8 @@ public class Shared {
     public static Path REPORTS_FOLDER = null; //make it configurable, or use from config
 
 
-    public static List<CollectionStatistics> collections;
+    public static List<CollectionReport> collections;
+    public static List<CollectionStatistics> collectionStatistics;
     public static List<PublicProfile> publicProfiles;
     public static Collection<String> facetNames;
 
@@ -51,7 +50,12 @@ public class Shared {
         facetNames = Configuration.FACETS;
         initPublicProfiles();
         initCollections();
+        initCollectionStatistics();
         initLinkCheckerStatistics();
+    }
+
+    public static CollectionReport getCollectionReport(final String name){
+        return collections.stream().filter(c -> c.fileReport.provider.equals(name)).findFirst().get();
     }
 
     private static void initPublicProfiles() {
@@ -74,8 +78,27 @@ public class Shared {
         }
     }
 
-    private static void initCollections() {
+    private static void initCollections(){
         collections = new ArrayList<>();
+        XMLMarshaller<CollectionReport> marshaller = new XMLMarshaller<>(CollectionReport.class);
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(REPORTS_FOLDER)) {
+            for (Path path : ds) {
+
+                try{
+                    collections.add(marshaller.unmarshal(Files.newInputStream(path)));
+                }catch (JAXBException | NumberFormatException e) {
+                    _logger.error("Can't read from collection report: "+path+" :"+e.getMessage());
+                    //keep the for loop going to read the other collections
+                }
+
+            }
+        } catch (IOException e) {
+            _logger.error("Can't read the collections directory: "+e.getMessage());
+        }
+    }
+
+    private static void initCollectionStatistics() {
+        collectionStatistics = new ArrayList<>();
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(REPORTS_FOLDER)) {
 
             for (Path path : ds) {
@@ -88,7 +111,7 @@ public class Shared {
 
                 try {
                     CollectionStatistics cs = StaxParser.handleCollectionXMLs(inputStream, provider);
-                    collections.add(cs);
+                    collectionStatistics.add(cs);
 
                 } catch (XMLStreamException e) {
                     _logger.error("XML stream exception from report: " + path + " :" + e.getMessage());

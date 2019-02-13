@@ -28,6 +28,8 @@ import eu.clarin.web.Shared;
 import eu.clarin.web.components.LinkButton;
 import eu.clarin.web.utils.LinkCheckerStatisticsHelper;
 import eu.clarin.web.utils.XSLTTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.*;
@@ -36,6 +38,8 @@ import javax.xml.stream.events.XMLEvent;
 
 @DesignRoot
 public class ResultView extends Panel implements View {
+
+    private final static Logger _logger = LoggerFactory.getLogger(ResultView.class);
 
     private enum SourceType {PROFILE_ID, URL, FILE}
 
@@ -49,7 +53,7 @@ public class ResultView extends Panel implements View {
     public ResultView() {
         setSizeFull();
         label = new Label();
-        label.setContentMode(ContentMode.HTML);
+        label.setContentMode(ContentMode.XML);
 
         setContent(label);
 
@@ -170,33 +174,36 @@ public class ResultView extends Panel implements View {
                     });
 
                     break;
+
                 case COLLECTION:
-
-
                     try (DirectoryStream<Path> ds = Files.newDirectoryStream(Configuration.COLLECTION_HTML_DIRECTORY)) {
                         for (Path path : ds) {
                             if (path.getFileName().toString().equals(input + ".html")) {
 
-                                byte[] out = Files.readAllBytes(path);
+                                byte[] output = Files.readAllBytes(path);
 
-                                label.setValue(new String(out));
-
-                                byte[] finalOut = out;
-                                xmlReport.setStreamSource(new StreamSource() {
-                                    @Override
-                                    public InputStream getStream() {
-                                        return new ByteArrayInputStream(finalOut);
-                                    }
-                                });
+                                label.setContentMode(ContentMode.HTML);
+                                label.setValue(new String(output));
 
                             }
                         }
                     }
 
+                    r = Shared.getCollectionReport(input);
+
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    r.toXML(out);
+
+                    xmlReport.setStreamSource(new StreamSource() {
+                        @Override
+                        public InputStream getStream() {
+                            return new ByteArrayInputStream(out.toByteArray());
+                        }
+                    });
+
                     break;
 
                 case STATISTICS:
-
 
                     String collectionName = input.split("/")[0];
                     int status = Integer.parseInt(input.split("/")[1]);
