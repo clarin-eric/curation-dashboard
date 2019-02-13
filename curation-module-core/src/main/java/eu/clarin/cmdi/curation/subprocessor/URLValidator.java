@@ -178,7 +178,7 @@ public class URLValidator extends CMDSubprocessor {
                         report.addURLElement(urlElementReport);
 
 
-                    } catch (IOException e) {
+                    } catch (IOException | IllegalArgumentException e) {
                         CMDInstanceReport.URLElement urlElement = new CMDInstanceReport.URLElement();
                         urlElement.message = e.getLocalizedMessage();
                         urlElement.url = url;
