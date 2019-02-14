@@ -118,7 +118,7 @@ public class URLValidator extends CMDSubprocessor {
 
                     _logger.info("Checking database for url: " + url);
 
-                    Bson filter = Filters.and(eq("collection", parentName),eq("record",report.getName()),eq("url", url));
+                    Bson filter = Filters.and(eq("collection", parentName), eq("record", report.getName()), eq("url", url));
                     MongoCursor<Document> cursor = linksChecked.find(filter).iterator();
 
                     //because urls are unique in the database if cursor has next, it found the only one. If not, the url wasn't found.
@@ -163,14 +163,30 @@ public class URLValidator extends CMDSubprocessor {
             } else {
                 HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
 
+                long numOfUniqueLinks = urlMap.keySet().size();
 
-                urlMap.keySet().stream().forEach(url -> {
+                long numOfBrokenLinks = 0;
+                long numOfUndeterminedLinks = 0;
 
+                for (String url : urlMap.keySet()) {
+
+                    String expectedMimeType = urlMap.get(url).getMimeType();
+                    expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
                     try {// check if URL is broken
                         _logger.info("Checking url: " + url);
 
                         URLElement urlElement = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
+                        urlElement.setExpectedMimeType(expectedMimeType);
+
+                        if (urlElement.getStatus() != 200 && urlElement.getStatus() != 302) {
+                            if (urlElement.getStatus() == 401 || urlElement.getStatus() == 405 || urlElement.getStatus() == 429) {
+                                numOfUndeterminedLinks++;
+                            } else {
+                                numOfBrokenLinks++;
+                            }
+
+                        }
 
                         addMessageForStatusCode(urlElement.getStatus(), url);
 
@@ -179,7 +195,11 @@ public class URLValidator extends CMDSubprocessor {
 
 
                     } catch (IOException | IllegalArgumentException e) {
+
+                        numOfBrokenLinks++;
+
                         CMDInstanceReport.URLElement urlElement = new CMDInstanceReport.URLElement();
+                        urlElement.expectedContentType = expectedMimeType;
                         urlElement.message = e.getLocalizedMessage();
                         urlElement.url = url;
                         urlElement.status = 0;
@@ -194,9 +214,9 @@ public class URLValidator extends CMDSubprocessor {
                         addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + e.toString());
                     }
 
-                });
+                }
 
-                report.urlReport = createURLReport(numOfLinks.get(), report.getName());
+                report.urlReport = createURLReport(numOfLinks.get(), numOfUniqueLinks, numOfBrokenLinks, numOfUndeterminedLinks, report.getName());
 
             }
 
@@ -262,7 +282,25 @@ public class URLValidator extends CMDSubprocessor {
         return new Score(score, 1.0, "url-validation", msgs);
     }
 
+    //this method is used for instances
+    private URLReport createURLReport(long numOfLinks, long numOfUniqueLinks, long numOfBrokenLinks, long numOfUndeterminedLinks, String name) {
+        URLReport report = new URLReport();
+        report.numOfLinks = numOfLinks;
 
+        //all links are checked in instances
+        long numOfCheckedLinks = numOfLinks;
+        report.numOfCheckedLinks = numOfCheckedLinks;
+        report.numOfUndeterminedLinks = numOfUndeterminedLinks;
+        report.numOfUniqueLinks = numOfUniqueLinks;
+        report.numOfBrokenLinks = numOfBrokenLinks;
+
+        long numOfCheckedUndeterminedRemoved = numOfCheckedLinks - numOfUndeterminedLinks;
+        report.percOfValidLinks = numOfCheckedLinks == 0 ? 0 : (numOfCheckedUndeterminedRemoved - numOfBrokenLinks) / (double) numOfCheckedUndeterminedRemoved;
+
+        return report;
+    }
+
+    //this method is used for collections
     private URLReport createURLReport(long numOfLinks, String name) {
         URLReport report = new URLReport();
         report.numOfLinks = numOfLinks;

@@ -207,42 +207,45 @@
 		<p>number of links: <xsl:value-of select="./url-validation-section/numOfLinks"/></p>
 		<p>number of unique links: <xsl:value-of select="./url-validation-section/numOfUniqueLinks"/></p>
 		<p>number of checked links: <xsl:value-of select="./url-validation-section/numOfCheckedLinks"/></p>
-		<p>number of broken links <xsl:value-of select="./url-validation-section/numOfBrokenLinks"/></p>
-		<p>percentage of valid links XML elements: <xsl:value-of select="./url-validation-section/percOfValidLinks"/></p>
+		<p>number of undetermined links: <xsl:value-of select="./url-validation-section/numOfUndeterminedLinks"/></p>
+		<p>number of broken links: <xsl:value-of select="./url-validation-section/numOfBrokenLinks"/></p>
+		<p>percentage of valid links: <xsl:value-of select="./url-validation-section/percOfValidLinks"/></p>
 
 		<hr/>
-		<!--<h2>single-url-report</h2>-->
-		<!--<table border="1" cellpadding="1" cellspacing="1">-->
-			<!--<thead>-->
-				<!--<tr>-->
-					<!--<th scope="col">url</th>-->
-					<!--<th scope="col">message</th>-->
-					<!--<th scope="col">http-status</th>-->
-					<!--<th scope="col">content-type</th>-->
-					<!--<th scope="col">byte-size</th>-->
-					<!--<th scope="col">request-duration</th>-->
-					<!--<th scope="col">timestamp</th>-->
-					<!--<th scope="col">method</th>-->
-					<!--<th scope="col">redirect-count</th>-->
+		<h2>single-url-report</h2>
+		<table border="1" cellpadding="1" cellspacing="1">
+			<thead>
+				<tr>
+					<th scope="col">url</th>
+					<th scope="col">message</th>
+					<th scope="col">http-status</th>
+					<th scope="col">content-type</th>
+					<th scope="col">expected-content-type</th>
+					<th scope="col">byte-size</th>
+					<th scope="col">request-duration</th>
+					<th scope="col">timestamp</th>
+					<th scope="col">method</th>
+					<th scope="col">redirect-count</th>
 
-				<!--</tr>-->
-			<!--</thead>-->
-			<!--<tbody>-->
-				<!--<xsl:for-each select="./single-url-report/url">-->
-					<!--<tr>-->
-                        <!--<td><xsl:copy-of select="."/></td>-->
-                        <!--<td><xsl:value-of select="./@message" /></td>-->
-                        <!--<td><xsl:value-of select="./@http-status" /></td>-->
-                        <!--<td><xsl:value-of select="./@content-type" /></td>-->
-                        <!--<td><xsl:value-of select="./@byte-size" /></td>-->
-                        <!--<td><xsl:value-of select="./@request-duration" /></td>-->
-                        <!--<td><xsl:value-of select="./@timestamp" /></td>-->
-						<!--<td><xsl:value-of select="./@method" /></td>-->
-						<!--<td><xsl:value-of select="./@redirectCount" /></td>-->
-					<!--</tr>-->
-				<!--</xsl:for-each>-->
-			<!--</tbody>-->
-		<!--</table>-->
+				</tr>
+			</thead>
+			<tbody>
+				<xsl:for-each select="./single-url-report/url">
+					<tr>
+                        <td><xsl:copy-of select="."/></td>
+                        <td><xsl:value-of select="./@message" /></td>
+                        <td><xsl:value-of select="./@http-status" /></td>
+                        <td><xsl:value-of select="./@content-type" /></td>
+						<td><xsl:value-of select="./@expected-content-type" /></td>
+                        <td><xsl:value-of select="./@byte-size" /></td>
+                        <td><xsl:value-of select="./@request-duration" /></td>
+                        <td><xsl:value-of select="./@timestamp" /></td>
+						<td><xsl:value-of select="./@method" /></td>
+						<td><xsl:value-of select="./@redirectCount" /></td>
+					</tr>
+				</xsl:for-each>
+			</tbody>
+		</table>
 
 		<xsl:if test="./score-section//issue">
 

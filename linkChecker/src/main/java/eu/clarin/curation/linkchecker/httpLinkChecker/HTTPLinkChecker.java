@@ -193,7 +193,7 @@ public class HTTPLinkChecker {
                     if(undeterminedStatusCodes.contains(statusCode)){
                         urlElement.setMessage("Undetermined");
                     }else{
-                        urlElement.setMessage("Broken Link");
+                        urlElement.setMessage("Broken");
                     }
 
                 }

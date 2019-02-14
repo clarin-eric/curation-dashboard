@@ -96,6 +96,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         @XmlAttribute(name = "content-type")
         public String contentType;
 
+        @XmlAttribute(name = "expected-content-type")
+        public String expectedContentType;
+
         @XmlAttribute(name = "byte-size")
         public String byteSize;
 
@@ -114,6 +117,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             message = urlElement.getMessage();
             status = urlElement.getStatus();
             contentType = urlElement.getContentType();
+            expectedContentType = urlElement.getExpectedMimeType();
             byteSize = urlElement.getByteSize();
             duration = TimeUtils.humanizeToTime(urlElement.getDuration());
             timestamp = TimeUtils.humanizeToDate(urlElement.getTimestamp());
@@ -305,6 +309,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         public long numOfLinks;
         public long numOfUniqueLinks;
         public long numOfCheckedLinks;
+        public long numOfUndeterminedLinks;
         public long numOfBrokenLinks;
         public Double percOfValidLinks;
 
