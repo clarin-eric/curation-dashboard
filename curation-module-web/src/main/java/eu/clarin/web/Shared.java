@@ -152,8 +152,6 @@ public class Shared {
 
             _logger.info("linkchecker statistics html file has been created.");
         } catch (IOException e) {
-            //todo delete this
-            e.printStackTrace();
             _logger.error("Problem writing to the statistics.html");
         }
     }
