@@ -45,10 +45,10 @@ public class CollectionThread extends Thread {
         //i do this because if we don't wait and let the thread run for only one url, i'm afraid the thread
         // will be closed after one url check and it will be necessary to create a new thread for each url, which
         //is not the aim of this multithreading.
-        _logger.info("Waiting 30 seconds for url queues to be filled for collection "+ getName() +"...");
+        _logger.info("Waiting 1 minute for url queues to be filled for collection "+ getName() +"...");
         synchronized (this) {
             try {
-                wait(30000);
+                wait(60000);
             } catch (InterruptedException e) {
                 _logger.error("Waiting for thread " + getName() + " interrupted");
             }
