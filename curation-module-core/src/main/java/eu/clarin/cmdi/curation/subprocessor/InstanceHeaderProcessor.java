@@ -100,9 +100,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 		}
 
 		// at this point profile will be processed and cached		
-		report.header = crService.createProfileHeader(mdProfile, "1.2", false);
-//		report.header.id = profileIdFromSchema;
-		report.header.cmdiVersion = "1.2";
+		report.header = crService.createProfileHeader(schemaLocation, "1.x", false);
 		report.fileReport.collection = mdCollectionDisplayName;
 		
 		report.profileScore = crService.getScore(report.header);
@@ -122,7 +120,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 			if(schemaInCR)//schema comes from Component Registry
 				score++;
 			else
-			    addMessage(Severity.INFO, "Schema not from component registry. Using default schema " + Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(report.header.id));
+			    addMessage(Severity.INFO, "Schema not from component registry. Using default schema " + Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(report.header.getId()));
 		}
 		
 		//mdprofile exists and in correct format

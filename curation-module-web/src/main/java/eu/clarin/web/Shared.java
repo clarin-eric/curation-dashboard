@@ -65,11 +65,11 @@ public class Shared {
                 Map<String, Boolean> facetMap = new LinkedHashMap<>();
                 facetNames.forEach(name -> facetMap.put(name, false));
                 try {
-                    CMDProfileReport report = (CMDProfileReport) new CurationModule().processCMDProfile(p.id);
+                    CMDProfileReport report = (CMDProfileReport) new CurationModule().processCMDProfile(p.getId());
                     report.facet.coverage.stream().filter(f -> f.coveredByProfile).map(f -> f.name).forEach(f -> facetMap.put(f, true));
-                    return new PublicProfile(p.id, p.name, report.score, report.facet.profileCoverage, report.elements.percWithConcept, facetMap);
+                    return new PublicProfile(p.getId(), p.getName(), report.score, report.facet.profileCoverage, report.elements.percWithConcept, facetMap);
                 } catch (Exception e) {
-                    return new PublicProfile(p.id, p.name, -1, -1, -1, facetMap);
+                    return new PublicProfile(p.getId(), p.getName(), -1, -1, -1, facetMap);
                 }
             }).collect(Collectors.toList());
 

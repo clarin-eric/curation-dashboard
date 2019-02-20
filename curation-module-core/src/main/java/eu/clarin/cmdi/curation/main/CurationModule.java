@@ -5,11 +5,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.regex.Matcher;
 
 import javax.xml.transform.TransformerException;
 
-import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
@@ -18,22 +16,20 @@ import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
 
-public class CurationModule implements CurationModuleInterface {    
+public class CurationModule implements CurationModuleInterface {  
+    
+    @Override
+    public Report<?> processCMDProfile(String profileId) throws InterruptedException {
+        return new CMDProfile(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(profileId), "1.x").generateReport(null);
 
-	@Override
-	public Report<?> processCMDProfile(String profileId) throws InterruptedException {
-	    return new CMDProfile(profileId, "1.x").generateReport(null);
+    }
 
-	}
+
 
 	@Override
 	public Report<?> processCMDProfile(URL schemaLocation) throws InterruptedException {
-	    Matcher matcher; 
-	    if((matcher = CRService.PROFILE_ID_PATTERN.matcher(schemaLocation.toString())).find())
-	        return new CMDProfile(matcher.group(0), "1.x").generateReport(null);
-	    
-	    return null;
 
+	        return new CMDProfile(schemaLocation.toString(), "1.x").generateReport(null);
 	}
 
 	@Override

@@ -19,15 +19,16 @@ public class ProfileParserTest extends TestBase{
         
         ProfileHeader header = new ProfileHeader();
         
-        header.id = "clarin.eu:cr1:p_1345561703620";
-        header.cmdiVersion = "1.2";
+        header.setId("clarin.eu:cr1:p_1493735943947");
+        header.setSchemaLocation("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.1/profiles/clarin.eu:cr1:p_1493735943947/1.2/xsd");
+        header.setCmdiVersion("1.2");
 
         
         ParsedProfile profile = new CRService().getParsedProfile(header);
         
         profile.getXPaths().forEach(xpath -> System.out.println(xpath));
         
-        assertEquals(true, header.isPublic);
+        assertEquals(true, header.isPublic());
         assertNotNull(profile.getXPaths());
     }
     

@@ -434,7 +434,17 @@ public class CollectionReport implements Report<CollectionReport> {
         public int totNumOfValidRecords;
         public Double ratioOfValidRecords = 0.0;
         @XmlElementWrapper(name = "invalid-records")
-        public Collection<String> record = new ArrayList<>();
+        public Collection<Record> record = new ArrayList<Record>();
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Record {
+        @XmlAttribute
+        public String name;
+        
+        @XmlElement(name="issue")
+        public Collection<String> issues;
     }
 
     @XmlRootElement

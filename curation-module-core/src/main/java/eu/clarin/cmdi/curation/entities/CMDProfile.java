@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.entities;
 
-import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CMDProfileProcessor;
 
@@ -11,12 +10,14 @@ import eu.clarin.cmdi.curation.processor.CMDProfileProcessor;
 
 public class CMDProfile extends CurationEntity {
 
-	private String profileId;
+
+	private String schemaLocation;
 	private String cmdiVersion;
 
-	public CMDProfile(String profileId, String cmdiVersion) {
+	public CMDProfile(String schemaLocation, String cmdiVersion) {
 		super(null);
-		this.profileId = profileId;
+
+		this.schemaLocation = schemaLocation;
 		this.cmdiVersion = cmdiVersion;
 	}
 
@@ -26,13 +27,13 @@ public class CMDProfile extends CurationEntity {
 	}	*/
 	
 
-	public String getProfileId() {
-        return profileId;
-    }
-
     public String getCmdiVersion() {
 		return cmdiVersion;
 	}
+    
+    public String getSchemaLocation() {
+        return this.schemaLocation;
+    }
 
 	@Override
 	protected AbstractProcessor<?> getProcessor() {
@@ -41,7 +42,7 @@ public class CMDProfile extends CurationEntity {
 	
 	@Override
 	public String toString() {
-		return "Profile: " + (path != null? path.toString() : Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(profileId));
+		return "Profile: " + (path != null? path.toString() : schemaLocation);
 	}
 
 }

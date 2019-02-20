@@ -4,6 +4,7 @@ import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.exception.ProfileNotFoundException;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
@@ -12,11 +13,11 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 
 	@Override
 	public void process(CMDProfile entity, CMDProfileReport report) throws Exception {
-		String profileId;
+		String schemaLocation;
 		boolean isLocalFile = false;
 
-		if (entity.getProfileId() != null && !entity.getProfileId().isEmpty()){
-			profileId = entity.getProfileId();
+		if (entity.getSchemaLocation() != null && !entity.getSchemaLocation().isEmpty()){
+			schemaLocation = entity.getSchemaLocation();
 		}else{
 			//profileId = entity.getPath().toString();
 			//isLocalFile = true;
@@ -25,41 +26,40 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 
 		CRService service = new CRService();
 
-		if(!isLocalFile)
+		if(!isLocalFile && schemaLocation.startsWith(Configuration.VLO_CONFIG.getComponentRegistryRESTURL()))
 			report.header = service.getPublicProfiles()
 			.stream()
-			.filter(h -> h.id.equals(profileId))
+			.filter(h -> h.getSchemaLocation().equals(schemaLocation))
 			.findFirst()
 			.orElse(null);
+		
 
 		if(report.header == null){
 			report.header = new ProfileHeader();
-			report.header.id = profileId;
-			report.header.cmdiVersion = entity.getCmdiVersion();
+			report.header.setSchemaLocation(schemaLocation);
+			report.header.setCmdiVersion(entity.getCmdiVersion());
 
 
-			report.header.isPublic = profileId == null? false : 
-				service.getPublicProfiles().stream().filter(p -> p.id.equals(profileId)).findFirst().orElse(null) == null?
-						false : true;		
+			report.header.setPublic(false);
 		}
 
-		report.header.isLocalFile = isLocalFile;
+		report.header.setLocalFile(isLocalFile);
 
 
-		if (!report.header.isPublic)
+		if (!report.header.isPublic())
 			addMessage(Severity.ERROR, "Profile is not public");
 
-		if (!service.isNameUnique(report.header.name))
-			addMessage(Severity.WARNING, "The name: " + report.header.name + " of the profile is not unique");
+		if (!service.isNameUnique(report.header.getName()))
+			addMessage(Severity.WARNING, "The name: " + report.header.getName() + " of the profile is not unique");
 
-		if (!service.isDescriptionUnique(report.header.description))
+		if (!service.isDescriptionUnique(report.header.getDescription()))
 			addMessage(Severity.WARNING,
-					"The description: " + report.header.description + " of the profile is not unique");
+					"The description: " + report.header.getDescription() + " of the profile is not unique");
 	}
 
 	@Override
 	public Score calculateScore(CMDProfileReport report) {
-		double score = report.header.isPublic ? 1.0 : 0;
+		double score = report.header.isPublic() ? 1.0 : 0;
 		return new Score(score, 1.0, "header-section", msgs);
 	}
 

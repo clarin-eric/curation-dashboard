@@ -59,14 +59,18 @@ public class XMLValidator extends CMDSubprocessor {
             report.xmlPopulatedReport.numOfXMLEmptyElement = numOfXMLEmptyElement;
             report.xmlPopulatedReport.percOfPopulatedElements = (numOfXMLSimpleElements - numOfXMLEmptyElement) / (double) numOfXMLSimpleElements;
 
+            report.xmlValidityReport = new CMDInstanceReport.XMLValidityReport();
+            
             for (Message m : msgs) {
 
                 if (m.getLvl().equals(Severity.FATAL) || m.getLvl().equals(Severity.ERROR)) {
+                    if(report.xmlValidityReport.issues.size() < 3)
+                        report.xmlValidityReport.issues.add(m.getMessage());
                     valid = false;
                 }
             }
 
-            report.xmlValidityReport = new CMDInstanceReport.XMLValidityReport();
+            
             report.xmlValidityReport.valid = valid;
 
 

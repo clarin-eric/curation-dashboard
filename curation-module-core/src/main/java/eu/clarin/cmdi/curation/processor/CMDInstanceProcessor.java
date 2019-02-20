@@ -17,7 +17,7 @@ public class CMDInstanceProcessor extends AbstractProcessor<CMDInstanceReport> {
 					new InstanceHeaderProcessor(),
 					new ResourceProxyProcessor(),
 					new URLValidator(),
-					new InstanceXMLValidator(),
+					new XMLValidator(),
 					new CollectionInstanceFacetProcessor())
 				:
 				Arrays.asList(
@@ -25,7 +25,7 @@ public class CMDInstanceProcessor extends AbstractProcessor<CMDInstanceReport> {
 					new InstanceHeaderProcessor(),
 					new ResourceProxyProcessor(),
 					new URLValidator(),
-					new InstanceXMLValidator(),
+					new XMLValidator(),
 					new InstanceFacetProcessor()
 				);
 			

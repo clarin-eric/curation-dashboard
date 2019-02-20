@@ -11,8 +11,8 @@ import eu.clarin.cmdi.curation.report.Report;
 
 public interface CurationModuleInterface {
 	
+    public Report processCMDProfile(String profileId) throws InterruptedException;
 	
-	public Report processCMDProfile(String profileId) throws InterruptedException;
 	
 	public Report processCMDProfile(URL schemaLocation) throws InterruptedException;
 	
