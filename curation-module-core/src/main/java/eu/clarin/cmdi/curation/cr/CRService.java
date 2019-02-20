@@ -50,7 +50,7 @@ public class CRService implements ICRService {
 	@Override
 	public ProfileHeader createProfileHeader(String schemaLocation, String cmdiVersion, boolean isLocalFile){		
 		ProfileHeader header = null;
-		if(!isLocalFile && isSchemaCRResident(schemaLocation))
+		if(!isLocalFile && schemaLocation.startsWith(Configuration.VLO_CONFIG.getComponentRegistryRESTURL()))
 			header = publicProfiles
 			.stream()
 			.filter(h -> schemaLocation.contains(h.getId()))

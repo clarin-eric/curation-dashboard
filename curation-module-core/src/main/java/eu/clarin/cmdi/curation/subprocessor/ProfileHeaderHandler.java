@@ -4,6 +4,7 @@ import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.exception.ProfileNotFoundException;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
@@ -25,7 +26,7 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 
 		CRService service = new CRService();
 
-		if(!isLocalFile && service.isSchemaCRResident(schemaLocation))
+		if(!isLocalFile && schemaLocation.startsWith(Configuration.VLO_CONFIG.getComponentRegistryRESTURL()))
 			report.header = service.getPublicProfiles()
 			.stream()
 			.filter(h -> h.getSchemaLocation().equals(schemaLocation))

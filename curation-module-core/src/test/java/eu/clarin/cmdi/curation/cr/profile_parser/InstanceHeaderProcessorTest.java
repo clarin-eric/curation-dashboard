@@ -67,7 +67,7 @@ public class InstanceHeaderProcessorTest extends TestBase{
           
         assertEquals("clarin.eu:cr1:p_1493735943947", this.report.header.getId());
 
-        assertEquals("1.2", this.report.header.getCmdiVersion());
+        assertEquals("1.x", this.report.header.getCmdiVersion());
         assertEquals("CollBank", this.report.fileReport.collection); 
         
 

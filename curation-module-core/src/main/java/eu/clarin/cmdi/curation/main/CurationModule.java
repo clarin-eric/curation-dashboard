@@ -5,11 +5,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.regex.Matcher;
 
 import javax.xml.transform.TransformerException;
 
-import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
@@ -22,7 +20,7 @@ public class CurationModule implements CurationModuleInterface {
     
     @Override
     public Report<?> processCMDProfile(String profileId) throws InterruptedException {
-        return processCMDProfile(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(profileId));
+        return new CMDProfile(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(profileId), "1.x").generateReport(null);
 
     }
 
