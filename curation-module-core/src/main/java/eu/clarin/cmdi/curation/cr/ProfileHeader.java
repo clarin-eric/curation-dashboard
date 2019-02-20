@@ -14,17 +14,83 @@ import org.apache.commons.lang.builder.ToStringStyle;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProfileHeader {
 	
-	public String id;
-//	public String schemaLocation;	
-	public String name;
-	public String description;
-	public String cmdiVersion;
-	public String status;
+	private String id;
+	private String schemaLocation;	
+	private String name;
+	private String description;
+	private String cmdiVersion;
+	private String status;
 	
-	public transient boolean isLocalFile;
-	public transient boolean isPublic = true;
+	private transient boolean isLocalFile;
+	private transient boolean isPublic = true;
+	
+	
 
-	@Override
+	public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getSchemaLocation() {
+        return schemaLocation;
+    }
+
+    public void setSchemaLocation(String schemaLocation) {
+        this.schemaLocation = schemaLocation;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCmdiVersion() {
+        return cmdiVersion;
+    }
+
+    public void setCmdiVersion(String cmdiVersion) {
+        this.cmdiVersion = cmdiVersion;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isLocalFile() {
+        return isLocalFile;
+    }
+
+    public void setLocalFile(boolean isLocalFile) {
+        this.isLocalFile = isLocalFile;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+
+    @Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;
@@ -37,7 +103,7 @@ public class ProfileHeader {
 		}
 		ProfileHeader rhs = (ProfileHeader) obj;
 		return new EqualsBuilder()
-				.append(id, rhs.id)
+				.append(schemaLocation, rhs.schemaLocation)
 				.isEquals();
 	}
 	

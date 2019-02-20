@@ -46,7 +46,7 @@ class ProfileScoreCacheFactory{
 		@Override
 		public Double load(ProfileHeader header) throws Exception{
 
-			CMDProfile profile = new CMDProfile(header.id, header.cmdiVersion);			
+			CMDProfile profile = new CMDProfile(header.getSchemaLocation(), header.getCmdiVersion());			
 			_logger.info("Calculating and caching score for {}", profile);
 
 

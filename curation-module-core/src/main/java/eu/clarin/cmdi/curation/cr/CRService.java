@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.cr;
 
 import java.util.Collection;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.validation.Schema;
@@ -47,24 +48,24 @@ public class CRService implements ICRService {
 	 */
 	
 	@Override
-	public ProfileHeader createProfileHeader(String profileId, String cmdiVersion, boolean isLocalFile){		
+	public ProfileHeader createProfileHeader(String schemaLocation, String cmdiVersion, boolean isLocalFile){		
 		ProfileHeader header = null;
-		if(!isLocalFile)
+		if(!isLocalFile && isSchemaCRResident(schemaLocation))
 			header = publicProfiles
 			.stream()
-			.filter(h -> (h.id != null && h.id.equals(profileId)))
+			.filter(h -> schemaLocation.contains(h.getId()))
 			.findFirst()
 			.orElse(null);
 		
 		if(header == null){
 			header = new ProfileHeader();
-			//header.schemaLocation = schemaLocation;
-			header.id = profileId;
-			header.cmdiVersion = cmdiVersion;
-			header.isPublic = false;
+			header.setId(getIdFromSchemaLocation(schemaLocation));
+			header.setSchemaLocation(schemaLocation);
+			header.setCmdiVersion(cmdiVersion);
+			header.setPublic(false);
 
 		}
-		header.isLocalFile = isLocalFile;		
+		header.setLocalFile(isLocalFile);		
 		return header;		
 	}
 	
@@ -72,7 +73,7 @@ public class CRService implements ICRService {
 	@Override
 	public ParsedProfile getParsedProfile(ProfileHeader header) throws Exception{
 		//_logger.debug("parsed profile lookup for {} from cache", header);
-		return (header.isPublic && isTheNewestCMDIVersion(header.cmdiVersion) ? publicProfilesCache : nonpublicProfilesCache).get(header).parsedProfile;		
+		return (header.isPublic() && isTheNewestCMDIVersion(header.getCmdiVersion()) ? publicProfilesCache : nonpublicProfilesCache).get(header).parsedProfile;		
 	}
 	
 	public boolean isTheNewestCMDIVersion(String cmdVersion){
@@ -82,22 +83,22 @@ public class CRService implements ICRService {
 	@Override
 	public Schema getSchema(ProfileHeader header) throws Exception{
 		//_logger.debug("schema lookup for {} from cache", header);
-		return (header.isPublic? publicProfilesCache : nonpublicProfilesCache).get(header).schema;		
+		return (header.isPublic()? publicProfilesCache : nonpublicProfilesCache).get(header).schema;		
 	}
 	
 	public double getScore(ProfileHeader header) throws Exception{
 		//_logger.debug("score lookup for {} from cache", header);
-		return (header.isPublic? publicScoreCache : nonpublicScoreCache).get(header);
+		return (header.isPublic()? publicScoreCache : nonpublicScoreCache).get(header);
 	}
 
 	@Override
 	public boolean isNameUnique(String name){
-		return publicProfiles.stream().filter(h -> h.name.equals(name)).count() <= 1;
+		return publicProfiles.stream().filter(h -> h.getName().equals(name)).count() <= 1;
 	}
 
 	@Override
 	public boolean isDescriptionUnique(String description){
-		return publicProfiles.stream().filter(h -> h.name.equals(description)).count() <= 1;
+		return publicProfiles.stream().filter(h -> h.getName().equals(description)).count() <= 1;
 	}
 
 	@Override
@@ -108,6 +109,12 @@ public class CRService implements ICRService {
 	@Override
 	public Collection<ProfileHeader> getPublicProfiles(){
 		return publicProfiles;
+	}
+	
+	public String getIdFromSchemaLocation(String schemaLocation) {
+	    Matcher matcher = PROFILE_ID_PATTERN.matcher(schemaLocation);
+	    
+	    return matcher.find()? matcher.group():null;
 	}
 
 }

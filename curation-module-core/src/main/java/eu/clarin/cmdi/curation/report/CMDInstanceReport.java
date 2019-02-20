@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.*;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
+import eu.clarin.cmdi.curation.report.CollectionReport.Record;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
@@ -183,7 +184,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         parentReport.xmlValidationReport.totNumOfRecords += 1;
         parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidityReport.valid ? 1 : 0;
         if (!xmlValidityReport.valid) {
-            parentReport.xmlValidationReport.record.add(this.getName());
+            Record record = new Record();
+            record.name = this.getName();
+            record.issues = this.xmlValidityReport.issues;
+            parentReport.xmlValidationReport.record.add(record);
         }
 
         if (Configuration.HTTP_VALIDATION) {
@@ -206,7 +210,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
                     }
                 });
 
-        parentReport.handleProfile(header.id, profileScore);
+        parentReport.handleProfile(header.getId(), profileScore);
 
         // urls
         if (this.url != null) {
@@ -298,6 +302,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class XMLValidityReport {
         public boolean valid;
+        public Collection<String> issues = new ArrayList<String>();
 
         public XMLValidityReport() {
         }

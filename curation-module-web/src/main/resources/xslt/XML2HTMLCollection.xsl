@@ -105,7 +105,7 @@
 			<h3>Invalid Records:</h3>
 			<ol>
 				<xsl:for-each select="./xml-validation-section/invalid-records/record">
-					<li><xsl:copy-of select="." /></li>
+					<li><xsl:value-of select="./@name" /></li>
 				</xsl:for-each>
 			</ol>
 		</xsl:if>

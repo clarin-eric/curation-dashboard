@@ -24,24 +24,24 @@ public class ParsedProfile {
 	}
 
 	public String getId(){
-		return header.id;
+		return header.getId();
 	}
 	
 	public String getName(){
-		return header.name;
+		return header.getName();
 	}
 	
 	public String getDescription(){
-		return header.description;
+		return header.getDescription();
 	}
 	
 	
 	public String getCMDIVersion(){
-		return header.cmdiVersion;
+		return header.getCmdiVersion();
 	}
 	
 	public boolean isPublic(){
-		return header.isPublic;
+		return header.isPublic();
 	}
 	
 	
@@ -132,7 +132,7 @@ public class ParsedProfile {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("CMD Version: " + getCMDIVersion()).append("\n");
-		sb.append(header.id).append("\t").append(header.name).append("\t").append(header.description).append("\n");		
+		sb.append(header.getId()).append("\t").append(header.getName()).append("\t").append(header.getDescription()).append("\n");		
 		sb.append("\n").append("xpaths:").append("\n");
 		xpaths.forEach((x, n) -> sb.append("\t").append(x + ": " + n).append("\n"));
 		

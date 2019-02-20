@@ -18,22 +18,20 @@ import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
 
-public class CurationModule implements CurationModuleInterface {    
+public class CurationModule implements CurationModuleInterface {  
+    
+    @Override
+    public Report<?> processCMDProfile(String profileId) throws InterruptedException {
+        return processCMDProfile(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(profileId));
 
-	@Override
-	public Report<?> processCMDProfile(String profileId) throws InterruptedException {
-	    return new CMDProfile(profileId, "1.x").generateReport(null);
+    }
 
-	}
+
 
 	@Override
 	public Report<?> processCMDProfile(URL schemaLocation) throws InterruptedException {
-	    Matcher matcher; 
-	    if((matcher = CRService.PROFILE_ID_PATTERN.matcher(schemaLocation.toString())).find())
-	        return new CMDProfile(matcher.group(0), "1.x").generateReport(null);
-	    
-	    return null;
 
+	        return new CMDProfile(schemaLocation.toString(), "1.x").generateReport(null);
 	}
 
 	@Override

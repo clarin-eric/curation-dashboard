@@ -30,8 +30,8 @@ public class ProfileCacheFactoryTest extends TestBase{
             
             ProfileHeader ph = new ProfileHeader();
             
-            ph.id = "clarin.eu:cr1:p_1361876010587";
-            ph.cmdiVersion = "1.2";
+            ph.setId("clarin.eu:cr1:p_1361876010587");
+            ph.setCmdiVersion("1.2");
             
             ParsedProfile pp = crService.getParsedProfile(ph);
             
@@ -41,7 +41,7 @@ public class ProfileCacheFactoryTest extends TestBase{
             
             assertFalse(pp.xpaths.isEmpty());
             
-            assertTrue(ph.isPublic);
+            assertTrue(ph.isPublic());
         }
         catch (Exception ex) {
             // TODO Auto-generated catch block
@@ -55,8 +55,8 @@ public class ProfileCacheFactoryTest extends TestBase{
         
         ProfileHeader ph = new ProfileHeader();
         
-        ph.id = "clarin.eu:cr1:p_1493735943947";
-        ph.cmdiVersion = "1.2";
+        ph.setId("clarin.eu:cr1:p_1493735943947");
+        ph.setCmdiVersion("1.2");
         
         try {
             Configuration.initDefault();
@@ -69,7 +69,7 @@ public class ProfileCacheFactoryTest extends TestBase{
             
             assertFalse(pp.xpaths.isEmpty());
             
-            assertTrue(ph.isPublic);
+            assertTrue(ph.isPublic());
         }
         catch (Exception ex) {
             // TODO Auto-generated catch block

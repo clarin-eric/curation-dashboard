@@ -77,46 +77,48 @@ class ProfileCacheFactory{
 		public ProfileCacheEntry load(ProfileHeader header) throws IOException, VTDException, SAXException{			
 
 
-			_logger.info("Profile {} is not in the cache, it will be loaded", header.id);
+			_logger.info("Profile {} is not in the cache, it will be loaded", header.getId());
 
 			
 			Path xsd;			
 			
 			if(isPublicProfilesCache){			
 				
-				String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
+				//String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
+			    String fileName = header.getSchemaLocation().replaceAll("/|\\.|:", "_");
 				xsd = Configuration.CACHE_DIRECTORY.resolve(fileName + ".xsd");
 				//try to load it from the disk
 
 
-				_logger.debug("profile {} is public. Loading schema from {}", header.id, xsd);
+				_logger.debug("profile {} is public. Loading schema from {}", header.getId(), xsd);
 
 				if (!Files.exists(xsd)) {// keep public profiles on disk 
 					// if not download it
 					Files.createFile(xsd);
 
 
-					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
-					new Downloader().download(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(header.id), xsd.toFile());
+					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.getId());
+					new Downloader().download(header.getSchemaLocation(), xsd.toFile());
 
 				}
 
 			}
 			else{//non-public profiles are not cached on disk
-				_logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.id);
+				_logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.getId());
 
 
 				
 				//keep private schemas on disk
 								
 				
-				String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
+				//String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
+				String fileName = header.getSchemaLocation().replaceAll("/|\\.|:", "_");
 				xsd = Configuration.CACHE_DIRECTORY.resolve("private_profiles");
 				xsd = xsd.resolve(fileName + ".xsd");
 				//try to load it from the disk
 
 
-				_logger.debug("Loading schema for non public profile {} from {}", header.id, xsd);
+				_logger.debug("Loading schema for non public profile {} from {}", header.getId(), xsd);
 
 
 				if (!Files.exists(xsd)) {
@@ -124,8 +126,8 @@ class ProfileCacheFactory{
 					Files.createFile(xsd);
 
 
-					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.id);
-					new Downloader().download(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(header.id), xsd.toFile());
+					_logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.getId());
+					new Downloader().download(header.getSchemaLocation(), xsd.toFile());
 
 
 					
@@ -136,7 +138,7 @@ class ProfileCacheFactory{
 			vg.setDoc(Files.readAllBytes(xsd));
 			vg.parse(true);
 			
-			ProfileParser parser = ProfileParserFactory.createParser(header.cmdiVersion);
+			ProfileParser parser = ProfileParserFactory.createParser(header.getCmdiVersion());
 			
 			ParsedProfile parsedProfile = parser.parse(vg.getNav(), header);
 			Schema schema = createSchema(xsd.toFile());

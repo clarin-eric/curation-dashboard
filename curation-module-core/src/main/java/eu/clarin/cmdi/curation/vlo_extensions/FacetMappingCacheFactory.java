@@ -68,7 +68,7 @@ public class FacetMappingCacheFactory extends FacetMappingFactory{
     
     public FacetMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
         try {
-            return getFacetMapping(new CRService().createProfileHeader(profileId, "1.2", false));
+            return getFacetMapping(new CRService().createProfileHeader(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(profileId), "1.x", false));
         }
         catch (ExecutionException ex) {
             _logger.error("error while attempting to get facetMap for profileId {}", profileId, ex);
@@ -77,7 +77,7 @@ public class FacetMappingCacheFactory extends FacetMappingFactory{
     }
     
     public FacetMapping getFacetMapping(ProfileHeader header) throws ExecutionException {
-        return header.isPublic?this.facetMappingPublicCache.get(header):this.facetMappingNonPublicCache.get(header);
+        return header.isPublic()?this.facetMappingPublicCache.get(header):this.facetMappingNonPublicCache.get(header);
     }
     
     public Map<String, List<Pattern>> createConceptLinkPathMapping(ProfileHeader header) throws Exception{
@@ -122,7 +122,7 @@ public class FacetMappingCacheFactory extends FacetMappingFactory{
 
                     @Override
                     public String getXsd() {
-                        return header.id;
+                        return header.getId();
                     }
 
                     @Override

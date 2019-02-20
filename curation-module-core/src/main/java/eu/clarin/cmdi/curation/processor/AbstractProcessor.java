@@ -7,7 +7,7 @@ import java.util.Collection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 
 import eu.clarin.cmdi.curation.main.Configuration;
-import eu.clarin.cmdi.curation.subprocessor.InstanceXMLValidator;
+import eu.clarin.cmdi.curation.subprocessor.XMLValidator;
 import eu.clarin.cmdi.curation.subprocessor.URLValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +40,8 @@ public abstract class AbstractProcessor<R extends Report<?>> {
                     step.process(entity, report);
                 }
 
-                if (step instanceof InstanceXMLValidator) {
-                    report.addSegmentScore(((InstanceXMLValidator) step).calculateValidityScore());
+                if (step instanceof XMLValidator) {
+                    report.addSegmentScore(((XMLValidator) step).calculateValidityScore());
                 }
 
 

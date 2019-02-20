@@ -50,11 +50,11 @@ public abstract class ProfileParser {
         ap.declareXPathNameSpace("cmd", "http://www.clarin.eu/cmd/1");
         ap.declareXPathNameSpace("xs", "http://www.w3.org/2001/XMLSchema");
         
-        header.id = evaluateXPath("//cmd:Header/cmd:ID/text()", ap);
-        header.name = evaluateXPath("//cmd:Header/cmd:Name/text()", ap);
-        header.description = evaluateXPath("//cmd:Header/cmd:Description/text()", ap);
-        header.status = evaluateXPath("//cmd:Header/cmd:Status/text()", ap);
-        header.cmdiVersion = getCMDVersion();
+        header.setId(evaluateXPath("//cmd:Header/cmd:ID/text()", ap));
+        header.setName(evaluateXPath("//cmd:Header/cmd:Name/text()", ap));
+        header.setDescription(evaluateXPath("//cmd:Header/cmd:Description/text()", ap));
+        header.setStatus(evaluateXPath("//cmd:Header/cmd:Status/text()", ap));
+        header.setCmdiVersion(getCMDVersion());
         return header;
 
     }
