@@ -26,7 +26,7 @@ public class Downloader {
 
     public void download(String url, File destination) throws IOException {
         try {
-            HTTPLinkChecker linkChecker = new HTTPLinkChecker(5000,5, Configuration.USERAGENT); //custom timeout for slow CR
+            HTTPLinkChecker linkChecker = new HTTPLinkChecker(15000,5, Configuration.USERAGENT); //custom timeout for slow CR
             int statusCode = linkChecker.checkLinkAndGetResponseCode(url);
             if (statusCode != 200 && statusCode != 304) {
                 throw new Exception(url + " is not valid! Response from server:\n" + linkChecker.getResponse());
