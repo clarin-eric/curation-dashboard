@@ -50,7 +50,7 @@ public class HTTPLinkChecker {
         this.USERAGENT = USERAGENT;
     }
 
-    //this method lets httpclient handle the redirects by itself
+    //this method lets httpclient handle the redirects by itself unlike the method checkLink below
     public int checkLinkAndGetResponseCode(String url) throws IOException {
         RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
                 .setConnectTimeout(timeout)

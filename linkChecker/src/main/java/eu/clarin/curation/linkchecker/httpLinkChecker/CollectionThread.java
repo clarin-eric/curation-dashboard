@@ -95,8 +95,8 @@ public class CollectionThread extends Thread {
                 //better not to have it in log file
 //                _logger.error("There is an error with the URL: " + url + " . It is not being checked.");
 
-                urlElement = new URLElement(url, null, e.getMessage() + "for URL: " + url, 0,
-                        null, "0", 0, System.currentTimeMillis(), collection, 0, null, "");
+                urlElement = new URLElement(url, "Not checked", e.getMessage() + " for URL: " + url, 0,
+                        "Not specified", "0", 0, System.currentTimeMillis(), collection, 0, null, "");
 
                 urlElement.setCollection(collection);
 
