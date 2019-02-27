@@ -12,6 +12,7 @@ import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance.InstanceNode;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Concept;
 import eu.clarin.cmdi.curation.report.FacetReport.Coverage;
@@ -126,15 +127,26 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	    
 	    int numOfCoveredByIns = 0;
 	    
+	    
+	        
 
-	    for(Coverage coverage : report.facets.coverage) {
-	        List<ValueSet> values = facetValuesMap.get(coverage.name);
+	    for(String facetName : Configuration.FACETS) {
+	        List<ValueSet> values = facetValuesMap.get(facetName);
 	        
            if(values == null) //no values from instance for this facet
                 continue;
            
-           coverage.coveredByInstance = true; //one or more values for the specific facet
-           numOfCoveredByIns++;
+           Coverage coverage = report.facets.coverage.stream().filter(c -> c.name.equals(facetName)).findFirst().orElse(null);
+           
+           if(coverage != null) {
+               //lambda expression to ignore values set by cross facet mapping
+               coverage.coveredByInstance = values.stream().anyMatch(valueSet -> coverage.name.equals(valueSet.getOriginFacetConfig().getName()));
+               
+               if(coverage.coveredByInstance)
+                   numOfCoveredByIns++;
+           }           
+           
+           
            
            //in the next step the value(s) have to be mapped to the right node
 	        
@@ -153,20 +165,21 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	                
 	                node.facet.add(
 	                        createFacetValueStruct(
-	                                coverage.name, 
+	                                facetName, 
 	                                node.value, 
 	                                entry.getValue().stream().map(valueSet -> valueSet.getValueLanguagePair().getLeft()).collect(Collectors.joining("; ")), 
 	                                //entry.getValue().get(0).isDerived() //assumes that a facet isn't defined as origin and derived at the same time
 	                                entry.getValue().stream().anyMatch(ValueSet::isDerived), //assumes that a facet isn't defined as origin and derived at the same time
 	                                entry.getValue().stream().anyMatch(ValueSet::isResultOfValueMapping) //assumes that a facet isn't defined as origin and derived at the same time
                                 )
-                        );
-	                
+                        );   
 	            }
 	            
 	        }
 
 	    }
+	    
+	    
 	    
 	    report.facets.instanceCoverage = report.facets.numOfFacets == 0? 0.0:(numOfCoveredByIns / (double)report.facets.numOfFacets); //cast to double to get a double as result
 

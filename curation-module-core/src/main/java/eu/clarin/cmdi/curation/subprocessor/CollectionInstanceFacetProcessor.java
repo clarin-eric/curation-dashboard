@@ -35,9 +35,10 @@ public class CollectionInstanceFacetProcessor extends CMDSubprocessor {
 			
 			for(Coverage coverage : report.facets.coverage) {
 			    if(!coverage.coveredByProfile)
-			        continue; //we have to discuss if this should still be the case
+			        continue; 
 			    
-			    coverage.coveredByInstance = (facetValuesMap.get(coverage.name) != null && !facetValuesMap.get(coverage.name).isEmpty() && !facetValuesMap.get(coverage.name).get(0).getValue().isEmpty());
+			    //following lambda expression excludes values set by cross facet mapping
+			    coverage.coveredByInstance = (facetValuesMap.get(coverage.name) != null && !facetValuesMap.get(coverage.name).isEmpty() && !facetValuesMap.get(coverage.name).stream().anyMatch(valueSet -> coverage.name.equals(valueSet.getOriginFacetConfig().getName())));
 			    if(coverage.coveredByInstance)
 			        numOfCoveredByIns++;
 			}
