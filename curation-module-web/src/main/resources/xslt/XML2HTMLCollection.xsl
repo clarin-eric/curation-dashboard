@@ -119,7 +119,7 @@
 		<p>Average number of simple XML elements: <xsl:value-of select="./xml-populated-section/avgNumOfXMLSimpleElements"/></p>
 		<p>Total number of empty XML elements: <xsl:value-of select="./xml-populated-section/totNumOfXMLEmptyElement"/></p>
 		<p>Average number of empty XML elements: <xsl:value-of select="./xml-populated-section/avgXMLEmptyElement"/></p>
-		<p>Average rate of populated elements: <xsl:value-of select="./xml-populated-section/avgRateOfPopulatedElements"/>%</p>
+		<p>Average rate of populated elements: <xsl:value-of select="./xml-populated-section/avgRateOfPopulatedElements"/></p>
 
 		<hr/>
 

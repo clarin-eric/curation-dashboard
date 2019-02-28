@@ -11,6 +11,8 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.v7.ui.renderers.HtmlRenderer;
+import com.vaadin.v7.ui.renderers.NumberRenderer;
+
 import eu.clarin.web.Shared;
 import eu.clarin.web.components.GridPanel;
 import eu.clarin.web.components.LinkButton;
@@ -57,6 +59,10 @@ public class Profiles extends GridPanel {
 		//grid.getColumn("Score").setRenderer(new ProgressBarRenderer()).setExpandRatio(2);
 		grid.getColumn("Id").setRenderer(new HtmlRenderer());
 		grid.getColumn("SMC").setRenderer(new HtmlRenderer());
+		grid.getColumn("Score").setRenderer(new NumberRenderer("%.4f%n"));
+		grid.getColumn("FacetCoverage").setRenderer(new NumberRenderer(PERCENTAGE));
+		grid.getColumn("Perc of Elements with Concepts").setRenderer(new NumberRenderer(PERCENTAGE));
+		
 		Shared.facetNames.forEach(facetName -> grid.getColumn(facetName).setExpandRatio(1));
 	}
 

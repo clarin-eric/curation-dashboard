@@ -1,5 +1,6 @@
 package eu.clarin.web.components;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -25,6 +26,13 @@ public abstract class GridPanel extends Panel implements View {
 	
 	protected VerticalLayout sideMenu;
 	protected Grid grid;
+	
+	protected static final NumberFormat PERCENTAGE = NumberFormat.getPercentInstance();
+	
+	static {
+        PERCENTAGE.setMaximumFractionDigits(2);
+        PERCENTAGE.setMinimumFractionDigits(2);
+    }
 
 	public GridPanel() {
 		this.setSizeFull();

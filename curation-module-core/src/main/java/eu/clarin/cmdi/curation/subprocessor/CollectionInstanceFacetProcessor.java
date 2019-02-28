@@ -1,7 +1,10 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 
@@ -21,6 +24,16 @@ public class CollectionInstanceFacetProcessor extends CMDSubprocessor {
 	    
 	    Map<String, List<ValueSet>> facetValuesMap = entity.getCMDIData().getDocument();
 
+        /*
+         * We need to know if a value is mapped to the origin facet. The facetValuesMap
+         * has the name of the target facet key. When using cross facet mapping the
+         * target facet is not the same as the origin facet. Therefore we extract the
+         * origin facet from each the ValueSet and we can assume that for each origin
+         * facet a vlaue was mapped to this origin facet
+         */
+	    HashSet<String> originFacetsWithValue = new HashSet<String>();	    
+	    facetValuesMap.values().forEach(list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getOriginFacetConfig().getName())));
+
 		entity.setParsedInstance(null);
 		
 	
@@ -37,8 +50,7 @@ public class CollectionInstanceFacetProcessor extends CMDSubprocessor {
 			    if(!coverage.coveredByProfile)
 			        continue; 
 			    
-			    //following lambda expression excludes values set by cross facet mapping
-			    coverage.coveredByInstance = (facetValuesMap.get(coverage.name) != null && !facetValuesMap.get(coverage.name).isEmpty() && !facetValuesMap.get(coverage.name).stream().anyMatch(valueSet -> coverage.name.equals(valueSet.getOriginFacetConfig().getName())));
+			    coverage.coveredByInstance =  originFacetsWithValue.contains(coverage.name);
 			    if(coverage.coveredByInstance)
 			        numOfCoveredByIns++;
 			}

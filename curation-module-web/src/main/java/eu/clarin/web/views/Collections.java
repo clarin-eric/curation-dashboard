@@ -2,6 +2,7 @@ package eu.clarin.web.views;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -26,8 +27,13 @@ public class Collections extends GridPanel {
 
     private static final long serialVersionUID = -5552612346775775075L;
     private static final Logger _logger = LoggerFactory.getLogger(Collections.class);
+    
+    
+    
 
     private StringBuilder sb;
+    
+    
 
     public Collections() {
 
@@ -74,16 +80,24 @@ public class Collections extends GridPanel {
 
     @Override
     protected void customRendering() {
+
+        
         grid.getColumn("Name").setRenderer(new HtmlRenderer());
 
         Shared.facetNames.forEach(facetName -> grid.getColumn(facetName).setExpandRatio(1));
 
         grid.getColumn("Score").setRenderer(new NumberRenderer("%.4f%n"));
-        grid.getColumn("RatioOfValidLinks").setRenderer(new NumberRenderer("%.4f%n"));
-        grid.getColumn("RatioOfValidRecords").setRenderer(new NumberRenderer("%.4f%n"));
+        grid.getColumn("NumOfRecords").setRenderer(new NumberRenderer("%d%n"));
+        grid.getColumn("NumOfProfiles").setRenderer(new NumberRenderer("%d%n"));
+        grid.getColumn("NoOfUniqueLinks").setRenderer(new NumberRenderer("%d%n"));
+        grid.getColumn("NoOfCheckedLinks").setRenderer(new NumberRenderer("%d%n"));
+        grid.getColumn("RatioOfValidLinks").setRenderer(new NumberRenderer(PERCENTAGE));
+        grid.getColumn("RatioOfValidRecords").setRenderer(new NumberRenderer(PERCENTAGE));
         grid.getColumn("AvgNumOfResProxies").setRenderer(new NumberRenderer("%.4f%n"));
         grid.getColumn("AvgNumOfEmptyXMLElements").setRenderer(new NumberRenderer("%.4f%n"));
         grid.getColumn("AvgFacetCoverage").setRenderer(new NumberRenderer("%.4f%n"));
+        
+        Shared.facetNames.forEach(facetName -> grid.getColumn(facetName).setRenderer(new NumberRenderer(PERCENTAGE)));
 
     }
 

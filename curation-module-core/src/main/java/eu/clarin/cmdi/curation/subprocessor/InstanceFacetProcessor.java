@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,6 +123,17 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 	    
 	    Map<String, List<ValueSet>> facetValuesMap = entity.getCMDIData().getDocument();
 	    
+        /*
+         * We need to know if a value is mapped to the origin facet. The facetValuesMap
+         * has the name of the target facet key. When using cross facet mapping the
+         * target facet is not the same as the origin facet. Therefore we extract the
+         * origin facet from each the ValueSet and we can assume that for each origin
+         * facet a vlaue was mapped to this origin facet
+         */
+        HashSet<String> originFacetsWithValue = new HashSet<String>();      
+        facetValuesMap.values().forEach(list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getOriginFacetConfig().getName())));
+
+	    
 
 	    report.facets = new FacetReportCreator().createFacetReport(report.header, facetMapping);  
 	    
@@ -140,7 +152,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
            
            if(coverage != null) {
                //lambda expression to ignore values set by cross facet mapping
-               coverage.coveredByInstance = values.stream().anyMatch(valueSet -> coverage.name.equals(valueSet.getOriginFacetConfig().getName()));
+               coverage.coveredByInstance = originFacetsWithValue.contains(facetName);
                
                if(coverage.coveredByInstance)
                    numOfCoveredByIns++;
