@@ -31,11 +31,6 @@ import eu.clarin.web.utils.XSLTTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.*;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
-
 @DesignRoot
 public class ResultView extends Panel implements View {
 

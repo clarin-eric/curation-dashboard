@@ -15,6 +15,7 @@ import com.vaadin.v7.ui.Grid.HeaderRow;
 import com.vaadin.v7.ui.Grid.SelectionMode;
 
 import eu.clarin.web.MainUI;
+import eu.clarin.web.Shared;
 
 import com.vaadin.ui.Panel;
 import com.vaadin.v7.ui.TextField;
@@ -55,17 +56,16 @@ public abstract class GridPanel extends Panel implements View {
 		IndexedContainer container = createContainer();
 		grid = new Grid(container);
 		
-		grid.setCellStyleGenerator(new CellStyleGenerator() {
-
-            @Override
-            public String getStyle(CellReference cell) {
-                if(cell.getProperty().getType().getSuperclass().equals(Number.class))
-                    return "align-right";
-                
-                return null;
-            }
-		    
-		});
+		grid.setCellStyleGenerator(cell -> {
+		    if(cell.getProperty().getType().isAssignableFrom(Boolean.class)) {
+		        if (Shared.facetNames.contains(cell.getPropertyId())) {
+	                return (boolean) cell.getValue() ? "facetCovered" : "facetNotCovered";
+		        }
+		    }
+		    else if(cell.getProperty().getType().getSuperclass().equals(Number.class))
+                return "align-right";                
+            return null;
+        });
 		grid.setSizeFull();
 
 		grid.setSelectionMode(SelectionMode.NONE);

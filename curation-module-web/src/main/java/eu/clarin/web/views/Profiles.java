@@ -107,14 +107,6 @@ public class Profiles extends GridPanel {
 
 		grid.sort("Score", SortDirection.DESCENDING);
 
-		// render background of facet fileds -> red not covered; green covered
-		grid.setCellStyleGenerator(cellRef -> {
-			if (Shared.facetNames.contains(cellRef.getPropertyId())) {
-				return (boolean) cellRef.getValue() ? "facetCovered" : "facetNotCovered";
-			} else
-				return null;
-		});
-
 	}
 
 	@Override

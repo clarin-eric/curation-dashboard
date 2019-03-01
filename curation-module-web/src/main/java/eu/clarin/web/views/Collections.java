@@ -77,7 +77,7 @@ public class Collections extends GridPanel {
 
         Shared.facetNames.forEach(facetName -> grid.getColumn(facetName).setExpandRatio(1));
 
-        grid.getColumn("Score").setRenderer(new NumberRenderer("%.2f%n"));
+        grid.getColumn("Score").setRenderer(new NumberRenderer(PERCENTAGE));
         grid.getColumn("NumOfRecords").setRenderer(new NumberRenderer("%d%n"));
         grid.getColumn("NumOfProfiles").setRenderer(new NumberRenderer("%d%n"));
         grid.getColumn("NoOfUniqueLinks").setRenderer(new NumberRenderer("%d%n"));
@@ -87,7 +87,7 @@ public class Collections extends GridPanel {
         grid.getColumn("NumOfResProxies").setRenderer(new NumberRenderer("%d%n"));
         grid.getColumn("RatioOfValidRecords").setRenderer(new NumberRenderer(PERCENTAGE));
         grid.getColumn("AvgNumOfEmptyXMLElements").setRenderer(new NumberRenderer("%.2f%n"));
-        grid.getColumn("AvgFacetCoverage").setRenderer(new NumberRenderer("%.2f%n"));
+        grid.getColumn("AvgFacetCoverage").setRenderer(new NumberRenderer(PERCENTAGE));
         
         Shared.facetNames.forEach(facetName -> grid.getColumn(facetName).setRenderer(new NumberRenderer(PERCENTAGE)));
 
