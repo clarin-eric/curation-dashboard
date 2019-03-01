@@ -1,20 +1,7 @@
 package eu.clarin.web;
 
-import java.io.*;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
-import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
@@ -26,12 +13,21 @@ import eu.clarin.web.data.CollectionStatistics;
 import eu.clarin.web.data.PublicProfile;
 import eu.clarin.web.utils.LinkCheckerStatisticsHelper;
 import eu.clarin.web.utils.StaxParser;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.stream.*;
+import javax.xml.stream.XMLStreamException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Shared {
 
@@ -59,27 +55,40 @@ public class Shared {
         return collections.stream().filter(c -> c.fileReport.provider.equals(name)).findFirst().get();
     }
 
+    //if public profile reports are in the file system, dont create them again
     private static void initPublicProfiles() {
 
-        //todo dont init if file exists, read from file if it exists
         List<ProfileHeader> profiles = (List<ProfileHeader>) new CRService().getPublicProfiles();
 
         publicProfiles = profiles.stream().map(p -> {//.subList(0, 10)
+
+            XMLMarshaller<CMDProfileReport> marshaller = new XMLMarshaller<>(CMDProfileReport.class);
+            String path = Configuration.OUTPUT_DIRECTORY + "/profiles/" + p.getId() + ".xml";
+
             Map<String, Boolean> facetMap = new LinkedHashMap<>();
             facetNames.forEach(name -> facetMap.put(name, false));
+
+            try {
+                CMDProfileReport report = marshaller.unmarshal(Files.newInputStream(Paths.get(path)));
+                report.facet.coverage.stream().filter(f -> f.coveredByProfile).map(f -> f.name).forEach(f -> facetMap.put(f, true));
+                return new PublicProfile(p.getId(), p.getName(), report.score, report.facet.profileCoverage, report.elements.percWithConcept, facetMap);
+            } catch (JAXBException e) {
+                //error when parsing xml, ignore and create new
+            } catch (IOException e) {
+                //cant find file, so it doesnt exist, ignore exception and create new
+            }
+
+
             try {
                 Report genericReport = new CurationModule().processCMDProfile(p.getId());
                 if (genericReport instanceof ErrorReport) {
-                    _logger.error("There was an error when creating the report: " + ((ErrorReport) genericReport).getName());
+                    _logger.error("There was an error when creating the report: " + genericReport.getName());
                     return new PublicProfile(p.getId(), p.getName(), -1, -1, -1, facetMap);
                 }
 
                 CMDProfileReport report = (CMDProfileReport) genericReport;
                 report.facet.coverage.stream().filter(f -> f.coveredByProfile).map(f -> f.name).forEach(f -> facetMap.put(f, true));
 
-                XMLMarshaller<CMDProfileReport> marshaller = new XMLMarshaller<>(CMDProfileReport.class);
-
-                String path = Configuration.OUTPUT_DIRECTORY + "/profiles/" + p.getId() + ".xml";
                 marshaller.marshal(report, Files.newOutputStream(Paths.get(path)));
 
                 return new PublicProfile(p.getId(), p.getName(), report.score, report.facet.profileCoverage, report.elements.percWithConcept, facetMap);

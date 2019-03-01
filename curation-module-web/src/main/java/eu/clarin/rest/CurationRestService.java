@@ -78,9 +78,8 @@ public class CurationRestService {
             return Response.status(404).type(MediaType.TEXT_PLAIN).entity("The collection with name: " + collectionName + " doesn't exist.").build();
         }
 
-        //todo profiles
-        //todo instances in temp folder
-        //todo then add these urls to reports and xslt
-
     }
+
+    //todo instances in temp folder
+    //todo then add these urls to reports and xslt
 }
