@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -38,8 +39,8 @@ public class XMLValidator extends CMDSubprocessor {
 
 
     @Override
-    public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
-        try {
+    public void process(CMDInstance entity, CMDInstanceReport report) throws ExecutionException, IOException, ParserConfigurationException, SAXException {
+
             ValidatorHandler schemaValidator = new CRService().getSchema(report.header).newValidatorHandler();
             msgs = new ArrayList<>();
             schemaValidator.setErrorHandler(new CMDErrorHandler(report, msgs));
@@ -74,9 +75,7 @@ public class XMLValidator extends CMDSubprocessor {
             report.xmlValidityReport.valid = valid;
 
 
-        } catch (Exception e) {
-            throw new Exception("Unable to do xml validation for " + entity.toString(), e);
-        }
+
 
     }
 

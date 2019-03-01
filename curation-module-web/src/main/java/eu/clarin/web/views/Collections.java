@@ -1,22 +1,21 @@
 package eu.clarin.web.views;
 
+import com.vaadin.annotations.Title;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.StreamResource.StreamSource;
+import com.vaadin.v7.data.util.IndexedContainer;
+import com.vaadin.v7.ui.renderers.HtmlRenderer;
+import com.vaadin.v7.ui.renderers.NumberRenderer;
+import eu.clarin.web.Shared;
+import eu.clarin.web.components.GridPanel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.vaadin.v7.ui.renderers.NumberRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.vaadin.annotations.Title;
-import com.vaadin.v7.data.util.IndexedContainer;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.StreamResource.StreamSource;
-import com.vaadin.v7.ui.renderers.HtmlRenderer;
-
-import eu.clarin.web.Shared;
-import eu.clarin.web.components.GridPanel;
 
 @Title("Collections")
 public class Collections extends GridPanel {
@@ -99,8 +98,8 @@ public class Collections extends GridPanel {
             try {
                 Collection<Object> rowValues = new ArrayList<>();
 
-                rowValues.add("<a href='#!ResultView/collection//" + c.getFileReport_provider()+ "' target='_top'>"
-                        + c.getFileReport_provider()+ "</a>");
+                rowValues.add("<a href='#!ResultView/collection//" + c.getFileReport_provider() + "' target='_top'>"
+                        + c.getFileReport_provider() + "</a>");
                 rowValues.add(c.getScorePercentage());
                 rowValues.add(c.getFileReport_numOfFiles());
                 rowValues.add(c.getHeaderReport_profiles_totNumOfProfiles());

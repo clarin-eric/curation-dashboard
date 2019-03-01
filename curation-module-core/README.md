@@ -47,7 +47,7 @@ Java Standard Edition, version 8 or higher
   CACHE_DIRECTORY=
   
   # facets to analyze (a subset of the facets configured in facetConcepts.xml)s
-  FACETS=languageCode, collection, resourceClass, modality, format, keywords, genre, subject, country, organisation,  nationalProject, name, description, license, availability
+  FACETS=languageCode, collection, resourceClass, modality, format, keywords, genre, subject, country, organisation, name, description, license, availability
   REDIRECT_FOLLOW_LIMIT=5
   #Timeout for linkchecking in millisecondss
   TIMEOUT=50000

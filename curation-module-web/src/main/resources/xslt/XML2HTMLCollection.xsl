@@ -12,7 +12,7 @@
 		<h3>Collection name: <xsl:copy-of select="$collectionName" /></h3>
 
 		<p>Total Score: <xsl:value-of select="./@score"/> out of <xsl:value-of select="./@col-max-score"/></p>
-		<p>Score percentage: <xsl:value-of select="./@score-percentage"/></p>
+		<p>Score percentage: <xsl:value-of select="format-number(./@score-percentage,'##.#%')"/></p>
 		<p>Average Score: <xsl:value-of select="./@avg-score"/> out of <xsl:value-of select="./@ins-max-score"/></p>
 		<p>Maximal score in collection: <xsl:value-of select="./@max-score"/></p>
 		<p>Minimal score in collection: <xsl:value-of select="./@min-score"/></p>
@@ -71,7 +71,7 @@
 			</thead>
 			<tfoot>
 				<tr><td colspan="2"><b>
-					facet-coverage: <xsl:value-of select="./facet-section/coverage"/>
+					facet-coverage: <xsl:value-of select="format-number(./facet-section/coverage,'##.#%')"/>
 				</b></td></tr>
 			</tfoot>
 			<tbody>
@@ -99,7 +99,7 @@
 		<h2>XML Validation Section</h2>
 		<p>Number of Records: <xsl:value-of select="./xml-validation-section/totNumOfRecords"/></p>
 		<p>Number of valid Records: <xsl:value-of select="./xml-validation-section/totNumOfValidRecords"/></p>
-		<p>Ratio valid Records: <xsl:value-of select="./xml-validation-section/ratioOfValidRecords"/></p>
+		<p>Ratio valid Records: <xsl:value-of select="format-number(./xml-validation-section/ratioOfValidRecords,'##.#%)'"/></p>
 
 		<xsl:if test="./xml-validation-section/invalid-records/record">
 			<h3>Invalid Records:</h3>
@@ -119,7 +119,7 @@
 		<p>Average number of simple XML elements: <xsl:value-of select="./xml-populated-section/avgNumOfXMLSimpleElements"/></p>
 		<p>Total number of empty XML elements: <xsl:value-of select="./xml-populated-section/totNumOfXMLEmptyElement"/></p>
 		<p>Average number of empty XML elements: <xsl:value-of select="./xml-populated-section/avgXMLEmptyElement"/></p>
-		<p>Average rate of populated elements: <xsl:value-of select="./xml-populated-section/avgRateOfPopulatedElements"/></p>
+		<p>Average rate of populated elements: <xsl:value-of select="format-number(./xml-populated-section/avgRateOfPopulatedElements,'##.#%')"/></p>
 
 		<hr/>
 
@@ -134,7 +134,7 @@
 		<!--<p>Average number of resourceProxy links: <xsl:value-of select="./url-validation-section/avgNumOfResProxiesLinks"/></p>-->
 		<p>Total number of broken links: <xsl:value-of select="./url-validation-section/totNumOfBrokenLinks"/></p>
 		<p>Average number of broken links: <xsl:value-of select="./url-validation-section/avgNumOfBrokenLinks"/></p>
-		<p>Ratio of valid links: <xsl:value-of select="./url-validation-section/ratioOfValidLinks"/></p>
+		<p>Ratio of valid links: <xsl:value-of select="format-number(./url-validation-section/ratioOfValidLinks,'##.#%')"/></p>
 
 
 		<h3>Status Codes Table</h3>

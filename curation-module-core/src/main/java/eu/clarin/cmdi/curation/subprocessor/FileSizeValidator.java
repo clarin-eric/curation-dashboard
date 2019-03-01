@@ -9,10 +9,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -99,7 +96,7 @@ public class FileSizeValidator extends CMDSubprocessor {
 
 
 	@Override
-	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception{
+	public void process(CMDInstance entity, CMDInstanceReport report) throws IOException, TransformerException, FileSizeException {
 	    
 	    //convert cmdi 1.1 to 1.2 if necessary
 
@@ -136,23 +133,25 @@ public class FileSizeValidator extends CMDSubprocessor {
 				throw new FileSizeException(entity.getPath().getFileName().toString(), report.fileReport.size);
 		}
 
-        CMDIData<Map<String,List<ValueSet>>> cmdiData = _processor.process(entity.getPath().toFile(), new ResourceStructureGraph());
-        
-        
+        CMDIData<Map<String,List<ValueSet>>> cmdiData = null;
+        try {
+            cmdiData = _processor.process(entity.getPath().toFile(), new ResourceStructureGraph());
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+
+
         entity.setCMDIData(cmdiData);
         
       //create xpath/value pairs only in instance mode 
         if(!Configuration.COLLECTION_MODE) { 
             
             InstanceParser transformer = new InstanceParser();
-            try {
+
                 _logger.debug("parsing instance...");
                 entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));
                 _logger.debug("...done");
-            } 
-            catch (TransformerException | IOException e) {
-                throw new Exception("Unable to parse CMDI instance " + entity.getPath().toString(), e);
-            }
+
         }
 	}
 

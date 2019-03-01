@@ -1,9 +1,13 @@
 package eu.clarin.cmdi.curation.processor;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
+import com.ximpleware.VTDException;
 import eu.clarin.cmdi.curation.entities.CurationEntity;
+import eu.clarin.cmdi.curation.exception.ProfileNotFoundException;
 import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.report.CollectionReport;
 import eu.clarin.cmdi.curation.report.ErrorReport;
@@ -12,6 +16,10 @@ import eu.clarin.cmdi.curation.subprocessor.CollectionAggregator;
 import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 /**
  * @author dostojic
@@ -33,16 +41,9 @@ public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
 
                 report.addSegmentScore(step.calculateScore(report));
 
-            } catch (FileSizeException e) {
+            } catch (FileSizeException | ExecutionException | IOException | VTDException | TransformerException | SAXException | ParserConfigurationException | ProfileNotFoundException e) {
+                _logger.error("Exception when processing " + step.toString() + " : " + e.getMessage());
                 //if it is not a collection report, keep the loop going for the following records, dont just produce an error report
-                if (!(report instanceof CollectionReport)) {
-                    return new ErrorReport(report.getName(), e.getMessage());
-                } else {
-                    addInvalidFile(report, e);
-                }
-            } catch (Exception e) {
-                _logger.error("Exception: " + e.getMessage());
-                //if it is a collection report, keep the loop going for the following records, dont just produce an error report
                 if (!(report instanceof CollectionReport)) {
                     return new ErrorReport(report.getName(), e.getMessage());
                 } else {

@@ -136,7 +136,7 @@
 		<p>total number of elements: <xsl:value-of select="./cmd-concepts-section/@total"/></p>
 		<p>number of required elements: <xsl:value-of select="./cmd-concepts-section/@required"/></p>
 		<p>number of elements with specified concept: <xsl:value-of select="./cmd-concepts-section/@withConcept"/></p>
-		<p>percentage of elements with specified concept: <xsl:value-of select="./cmd-concepts-section/@percWithConcept"/></p>
+		<p>percentage of elements with specified concept: <xsl:value-of select="format-number(./cmd-concepts-section/@percWithConcept,'##.#%')"/></p>
 		<table border="1" cellpadding="1" cellspacing="1">
 			<thead>
 				<tr>

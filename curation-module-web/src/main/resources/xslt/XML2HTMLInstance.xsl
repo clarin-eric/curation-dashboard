@@ -41,7 +41,7 @@
 					instance: <xsl:value-of select="./@ins-score"/>
 					total: <xsl:value-of select="./@score"/>
 					max: <xsl:value-of select="./@max-score"/>
-					scorePercentage: <xsl:value-of select="./@score-percentage"/>
+					scorePercentage: <xsl:value-of select="format-number(./@score-percentage,'##.#%')"/>
 				</b></td></tr>
 			</tfoot>
 			<tbody>
@@ -168,9 +168,9 @@
 		<h2>resProxy-section</h2>
 		<p>total number ResourceProxies: <xsl:value-of select="./resProxy-section/numOfResProxies"/></p>
 		<p>number of ResourceProxies having specified MIME type: <xsl:value-of select="./resProxy-section/numOfResourcesWithMime"/></p>
-		<p>percent of ResourceProxies having specified MIME type: <xsl:value-of select="./resProxy-section/percOfResourcesWithMime"/></p>
+		<p>percent of ResourceProxies having specified MIME type: <xsl:value-of select="format-number(./resProxy-section/percOfResourcesWithMime,'##.#%')"/></p>
 		<p>number of ResourceProxies having reference: <xsl:value-of select="./resProxy-section/numOfResProxiesWithReferences"/></p>
-		<p>percent of ResourceProxies having reference: <xsl:value-of select="./resProxy-section/percOfResProxiesWithReferences"/></p>
+		<p>percent of ResourceProxies having reference: <xsl:value-of select="format-number(./resProxy-section/percOfResProxiesWithReferences,'##.#%')"/></p>
 		<table>
 			<thead>
 				<tr>
@@ -199,7 +199,7 @@
 		<p>number of XML elements: <xsl:value-of select="./xml-populated-section/numOfXMLElements"/></p>
 		<p>number of simple XML elements: <xsl:value-of select="./xml-populated-section/numOfXMLSimpleElements"/></p>
 		<p>number of empty XML elements: <xsl:value-of select="./xml-populated-section/numOfXMLEmptyElement"/></p>
-		<p>percentage of populated XML elements: <xsl:value-of select="./xml-populated-section/percOfPopulatedElements"/></p>
+		<p>percentage of populated XML elements: <xsl:value-of select="format-number(./xml-populated-section/percOfPopulatedElements,'##.#%')"/></p>
 
 		<hr/>
 
@@ -209,7 +209,7 @@
 		<p>number of checked links: <xsl:value-of select="./url-validation-section/numOfCheckedLinks"/></p>
 		<p>number of undetermined links: <xsl:value-of select="./url-validation-section/numOfUndeterminedLinks"/></p>
 		<p>number of broken links: <xsl:value-of select="./url-validation-section/numOfBrokenLinks"/></p>
-		<p>percentage of valid links: <xsl:value-of select="./url-validation-section/percOfValidLinks"/></p>
+		<p>percentage of valid links: <xsl:value-of select="format-number(./url-validation-section/percOfValidLinks,'##.#%')"/></p>
 
 		<hr/>
 		<h2>single-url-report</h2>

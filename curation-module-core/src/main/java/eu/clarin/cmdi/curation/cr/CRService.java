@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.cr;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,7 +72,7 @@ public class CRService implements ICRService {
 	
 
 	@Override
-	public ParsedProfile getParsedProfile(ProfileHeader header) throws Exception{
+	public ParsedProfile getParsedProfile(ProfileHeader header) throws ExecutionException {
 		//_logger.debug("parsed profile lookup for {} from cache", header);
 		return (header.isPublic() && isTheNewestCMDIVersion(header.getCmdiVersion()) ? publicProfilesCache : nonpublicProfilesCache).get(header).parsedProfile;		
 	}
@@ -81,12 +82,12 @@ public class CRService implements ICRService {
 	}
 	
 	@Override
-	public Schema getSchema(ProfileHeader header) throws Exception{
+	public Schema getSchema(ProfileHeader header) throws ExecutionException {
 		//_logger.debug("schema lookup for {} from cache", header);
 		return (header.isPublic()? publicProfilesCache : nonpublicProfilesCache).get(header).schema;		
 	}
 	
-	public double getScore(ProfileHeader header) throws Exception{
+	public double getScore(ProfileHeader header) throws ExecutionException {
 		//_logger.debug("score lookup for {} from cache", header);
 		return (header.isPublic()? publicScoreCache : nonpublicScoreCache).get(header);
 	}

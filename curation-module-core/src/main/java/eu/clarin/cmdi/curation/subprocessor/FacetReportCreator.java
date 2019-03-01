@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
@@ -13,7 +14,7 @@ import eu.clarin.cmdi.vlo.importer.mapping.FacetMapping;
 
 class FacetReportCreator {
 	
-	public FacetReport createFacetReport(ProfileHeader header, FacetMapping facetMapping) throws Exception{		
+	public FacetReport createFacetReport(ProfileHeader header, FacetMapping facetMapping) throws ExecutionException {
 	    Map<String, CMDINode> elements = new CRService().getParsedProfile(header).getElements();
 		FacetReport facetReport = new FacetReport();
 		facetReport.numOfFacets = Configuration.FACETS.size();

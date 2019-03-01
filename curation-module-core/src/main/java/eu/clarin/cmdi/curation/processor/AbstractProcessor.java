@@ -1,11 +1,15 @@
 package eu.clarin.cmdi.curation.processor;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
+import com.ximpleware.VTDException;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 
+import eu.clarin.cmdi.curation.exception.ProfileNotFoundException;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.subprocessor.XMLValidator;
 import eu.clarin.cmdi.curation.subprocessor.URLValidator;
@@ -18,12 +22,16 @@ import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.ErrorReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 public abstract class AbstractProcessor<R extends Report<?>> {
 
     private static final Logger _logger = LoggerFactory.getLogger(AbstractProcessor.class);
 
-    public Report<?> process(CurationEntity entity, String parentName) throws InterruptedException {
+    public Report<?> process(CurationEntity entity, String parentName) {
 
 
         Report<?> report = createReport();
@@ -54,26 +62,9 @@ public abstract class AbstractProcessor<R extends Report<?>> {
             }
 
             return report;
-        } catch (FileSizeException e) {
-
-            _logger.warn(e.getMessage());
-
+        } catch (VTDException | ExecutionException | TransformerException | IOException | FileSizeException | SAXException | ParserConfigurationException | ProfileNotFoundException e) {
+            _logger.error("There was an error processing record: " + entity.toString() + " : " + e.getMessage());
             return new ErrorReport(report.getName(), e.getMessage());
-        } catch (Exception e) {
-            _logger.error("", e);
-            String message = e.getMessage();
-
-            if (message == null || message.isEmpty()) {
-                message = "There was an unknown error. Please report it.";
-            } else {
-                message = message.replace(" java.lang.Exception", "");
-            }
-
-
-            _logger.error("", e);
-
-
-            return new ErrorReport(report.getName(), message);
         }
 
     }

@@ -16,7 +16,7 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 public class CollectionInstanceResourceProxyProcessor extends CMDSubprocessor {
 
 	@Override
-	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
+	public void process(CMDInstance entity, CMDInstanceReport report) {
 	    CMDIData<Map<String, List<ValueSet>>> cmdiData = entity.getCMDIData();
 	    
 		report.resProxyReport = new ResProxyReport();
