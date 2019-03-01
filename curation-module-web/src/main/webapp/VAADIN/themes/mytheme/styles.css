@@ -15029,6 +15029,10 @@ div.v-layout.v-horizontal.v-widget {
 	overflow: hidden;
 }
 
+.mytheme .align-right {
+	text-align: right;
+}
+
 .mytheme .header {
 	background-color: #1de9b6;
 }

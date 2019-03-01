@@ -59,11 +59,13 @@ public class Profiles extends GridPanel {
 		//grid.getColumn("Score").setRenderer(new ProgressBarRenderer()).setExpandRatio(2);
 		grid.getColumn("Id").setRenderer(new HtmlRenderer());
 		grid.getColumn("SMC").setRenderer(new HtmlRenderer());
-		grid.getColumn("Score").setRenderer(new NumberRenderer("%.4f%n"));
+		grid.getColumn("Score").setRenderer(new NumberRenderer("%.2f%n"));
 		grid.getColumn("FacetCoverage").setRenderer(new NumberRenderer(PERCENTAGE));
 		grid.getColumn("Perc of Elements with Concepts").setRenderer(new NumberRenderer(PERCENTAGE));
 		
 		Shared.facetNames.forEach(facetName -> grid.getColumn(facetName).setExpandRatio(1));
+		
+		grid.getColumn("SMC").setRenderer(new HtmlRenderer());
 	}
 
 	@Override

@@ -1,8 +1,6 @@
 package eu.clarin.web.components;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import com.vaadin.v7.data.util.IndexedContainer;
 import com.vaadin.navigator.View;
@@ -10,6 +8,8 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
 import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.Grid.CellReference;
+import com.vaadin.v7.ui.Grid.CellStyleGenerator;
 import com.vaadin.v7.ui.Grid.HeaderCell;
 import com.vaadin.v7.ui.Grid.HeaderRow;
 import com.vaadin.v7.ui.Grid.SelectionMode;
@@ -30,8 +30,8 @@ public abstract class GridPanel extends Panel implements View {
 	protected static final NumberFormat PERCENTAGE = NumberFormat.getPercentInstance();
 	
 	static {
-        PERCENTAGE.setMaximumFractionDigits(2);
-        PERCENTAGE.setMinimumFractionDigits(2);
+        PERCENTAGE.setMaximumFractionDigits(1);
+        PERCENTAGE.setMinimumFractionDigits(1);
     }
 
 	public GridPanel() {
@@ -54,6 +54,18 @@ public abstract class GridPanel extends Panel implements View {
 	private Grid generateGrid() {
 		IndexedContainer container = createContainer();
 		grid = new Grid(container);
+		
+		grid.setCellStyleGenerator(new CellStyleGenerator() {
+
+            @Override
+            public String getStyle(CellReference cell) {
+                if(cell.getProperty().getType().getSuperclass().equals(Number.class))
+                    return "align-right";
+                
+                return null;
+            }
+		    
+		});
 		grid.setSizeFull();
 
 		grid.setSelectionMode(SelectionMode.NONE);
