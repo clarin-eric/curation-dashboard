@@ -10,7 +10,7 @@ import eu.clarin.cmdi.curation.report.Score;
 public class CMDIDataCreator extends CMDSubprocessor {
 
     @Override
-    public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
+    public void process(CMDInstance entity, CMDInstanceReport report) {
         // TODO Auto-generated method stub
 
     }

@@ -1,7 +1,9 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 
 import eu.clarin.cmdi.curation.cr.CRService;
@@ -23,11 +25,8 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 	boolean missingMdSelfLink = false;
 
 	@Override
-	public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
+	public void process(CMDInstance entity, CMDInstanceReport report) throws IOException, ExecutionException {
 	    Map<String, List<ValueSet>> keyValuesMap = entity.getCMDIData().getDocument();
-	    
-
-	    
 	    
 		CRService crService = new CRService();
 
@@ -57,7 +56,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 		missingMdSelfLink = (mdSelfLink == null);
 		
 		if (missingSchema && missingMdprofile)
-			throw new Exception("Unable to process " + entity + ", both schema and profile are not specified");
+			throw new IOException("Unable to process " + entity + ", both schema and profile are not specified");
 
 		if (missingSchema && mdProfile != null){
 			schemaLocation = Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(mdProfile);

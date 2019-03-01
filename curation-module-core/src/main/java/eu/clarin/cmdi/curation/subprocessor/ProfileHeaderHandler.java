@@ -12,7 +12,7 @@ import eu.clarin.cmdi.curation.report.Severity;
 public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileReport> {
 
 	@Override
-	public void process(CMDProfile entity, CMDProfileReport report) throws Exception {
+	public void process(CMDProfile entity, CMDProfileReport report) throws ProfileNotFoundException {
 		String schemaLocation;
 		boolean isLocalFile = false;
 
