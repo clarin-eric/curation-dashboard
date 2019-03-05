@@ -38,9 +38,9 @@
 			</thead>
 			<tfoot>
 				<tr><td colspan="3"><b>
-					instance: <xsl:value-of select="./@ins-score"/>
-					total: <xsl:value-of select="./@score"/>
-					max: <xsl:value-of select="./@max-score"/>
+					instance: <xsl:value-of select="format-number(./@ins-score,'##.##')"/>
+					total: <xsl:value-of select="format-number(./@score,'##.##')"/>
+					max: <xsl:value-of select="format-number(./@max-score,'##.##')"/>
 					scorePercentage: <xsl:value-of select="format-number(./@score-percentage,'##.#%')"/>
 				</b></td></tr>
 			</tfoot>
@@ -87,8 +87,8 @@
 					<xsl:value-of select="count(./facets-section/coverage/facet[@coveredByProfile = 'true'])" /> /
 					<xsl:value-of select="./facets-section/@numOfFacets"/>;
 
-					instance coverage: <xsl:value-of select="./facets-section/@instanceCoverage"/>;
-					profile coverage: <xsl:value-of select="./facets-section/@profileCoverage"/>
+					instance coverage: <xsl:value-of select="format-number(./facets-section/@instanceCoverage,'##.#%')"/>;
+					profile coverage: <xsl:value-of select="format-number(./facets-section/@profileCoverage,'##.#%')"/>
 				</b></td></tr>
 			</tfoot>
 			<tbody>
