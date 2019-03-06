@@ -52,9 +52,10 @@ public class CurationRestService {
     @GET
     @Path("/profile/{id}")
     public Response assesProfileById(@PathParam("id") String id) {
-        File profile = new File(Configuration.OUTPUT_DIRECTORY.toString() + "/profiles/" + id + ".xml");
+
+        String profileName = id.endsWith(".xml") ? id : id + ".xml";
+        File profile = new File(Configuration.OUTPUT_DIRECTORY.toString() + "/profiles/" + profileName);
         if (Files.exists(profile.toPath())) {
-            _logger.info("Public profile with id: " + id + " found in file system.");
             return Response.ok(profile).type(MediaType.APPLICATION_XML).build();
         } else {
             _logger.info("Curating profile by id: " + id);
@@ -71,7 +72,8 @@ public class CurationRestService {
     @Path("/collection/{collectionName}")
     public Response getCollectionReport(@PathParam("collectionName") String collectionName) {
 
-        File collection = new File(Configuration.OUTPUT_DIRECTORY.toString() + "/collections/" + collectionName + ".xml");
+        collectionName = collectionName.endsWith(".xml") ? collectionName : collectionName + ".xml";
+        File collection = new File(Configuration.OUTPUT_DIRECTORY.toString() + "/collections/" + collectionName);
         if (Files.exists(collection.toPath())) {
             return Response.ok(collection).type(MediaType.APPLICATION_XML).build();
         } else {
@@ -80,6 +82,19 @@ public class CurationRestService {
 
     }
 
-    //todo instances in temp folder
+    @GET
+    @Path("/instance/{instanceName}")
+    public Response getInstanceReport(@PathParam("instanceName") String instanceName) {
+
+        instanceName = instanceName.endsWith(".xml") ? instanceName : instanceName + ".xml";
+        File instance = new File(Configuration.OUTPUT_DIRECTORY.toString() + "/instances/" + instanceName);
+        if (Files.exists(instance.toPath())) {
+            return Response.ok(instance).type(MediaType.APPLICATION_XML).build();
+        } else {
+            return Response.status(404).type(MediaType.TEXT_PLAIN).entity("The instance with name: " + instanceName + " doesn't exist.").build();
+        }
+
+    }
+
     //todo then add these urls to reports and xslt
 }

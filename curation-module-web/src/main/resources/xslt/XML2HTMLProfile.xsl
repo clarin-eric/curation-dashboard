@@ -38,6 +38,11 @@
 				    <th><xsl:value-of select="./header-section/status"/></th>
 				  </tr>
 			  </xsl:if>
+			 <tr>
+				 <xsl:variable name="url"><xsl:value-of select="./@url"/></xsl:variable>
+				 <th>URL:</th>
+				 <th><a href="{$url}"><xsl:copy-of select="$url"/></a></th>
+			 </tr>
 			</table>	
 		<hr/>
 		

@@ -1,23 +1,15 @@
 package eu.clarin.web.views;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import com.vaadin.annotations.DesignRoot;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
+import com.vaadin.ui.Panel;
 import com.vaadin.v7.shared.ui.label.ContentMode;
 import com.vaadin.v7.ui.Label;
-import com.vaadin.ui.Panel;
 import com.vaadin.v7.ui.VerticalLayout;
-
 import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
@@ -31,10 +23,12 @@ import eu.clarin.web.utils.XSLTTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.*;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
+import java.io.*;
+import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @DesignRoot
 public class ResultView extends Panel implements View {
@@ -140,8 +134,11 @@ public class ResultView extends Panel implements View {
 
                     r.toXML(result);
 
-                    label.setValue(transformer.transform(curationType, result.toString()));
+                    //save it to file
+                    String filename = r.getName().replaceAll("/", "-") + ".xml";
+                    r.toXML(Files.newOutputStream(Paths.get(Configuration.OUTPUT_DIRECTORY + "/instances/" + filename)));
 
+                    label.setValue(transformer.transform(curationType, result.toString()));
 
                     xmlReport.setStreamSource(new StreamSource() {
                         @Override

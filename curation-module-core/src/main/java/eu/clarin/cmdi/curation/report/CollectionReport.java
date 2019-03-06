@@ -54,6 +54,9 @@ public class CollectionReport implements Report<CollectionReport> {
     @XmlAttribute
     public String timeStamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
+    @XmlAttribute
+    public String url;
+
     @XmlElement(name = "file-section")
     public FileReport fileReport;
 
@@ -101,45 +104,45 @@ public class CollectionReport implements Report<CollectionReport> {
     }
 
     // URLs
-    @XmlElementWrapper(name = "single-url-report")
-    public Collection<CMDInstanceReport.URLElement> url;
+//    @XmlElementWrapper(name = "single-url-report")
+//    public Collection<CMDInstanceReport.URLElement> url;
 
-    @XmlRootElement
-    public static class URLElement {
-        @XmlValue
-        public String url;
+//    @XmlRootElement
+//    public static class URLElement {
+//        @XmlValue
+//        public String url;
+//
+//        @XmlAttribute(name = "method")
+//        public String method;
+//
+//        @XmlAttribute(name = "message")
+//        public String message;
+//
+//        @XmlAttribute(name = "http-status")
+//        public int status;
+//
+//        @XmlAttribute(name = "content-type")
+//        public String contentType;
+//
+//        @XmlAttribute(name = "byte-size")
+//        public String byteSize;
+//
+//        @XmlAttribute(name = "request-duration")
+//        public String duration;//either duration in milliseconds or 'timeout'
+//
+//        @XmlAttribute(name = "timestamp")
+//        public String timestamp;
+//
+//        @XmlAttribute(name = "redirectCount")
+//        public int redirectCount;
+//    }
 
-        @XmlAttribute(name = "method")
-        public String method;
-
-        @XmlAttribute(name = "message")
-        public String message;
-
-        @XmlAttribute(name = "http-status")
-        public int status;
-
-        @XmlAttribute(name = "content-type")
-        public String contentType;
-
-        @XmlAttribute(name = "byte-size")
-        public String byteSize;
-
-        @XmlAttribute(name = "request-duration")
-        public String duration;//either duration in milliseconds or 'timeout'
-
-        @XmlAttribute(name = "timestamp")
-        public String timestamp;
-
-        @XmlAttribute(name = "redirectCount")
-        public int redirectCount;
-    }
-
-    public void addURLElement(CMDInstanceReport.URLElement urlElement) {
-        if (this.url == null) {
-            this.url = new ArrayList<>();
-        }
-        this.url.add(urlElement);
-    }
+//    public void addURLElement(CMDInstanceReport.URLElement urlElement) {
+//        if (this.url == null) {
+//            this.url = new ArrayList<>();
+//        }
+//        this.url.add(urlElement);
+//    }
 
     public void handleProfile(String profile, double score) {
         if (headerReport == null)
@@ -233,12 +236,12 @@ public class CollectionReport implements Report<CollectionReport> {
             parentReport.file.addAll(this.file);
         }
 
-        // urls
-        if (this.url != null) {
-            if (parentReport.url == null)
-                parentReport.url = new ArrayList<>();
-            parentReport.url.addAll(this.url);
-        }
+//        // urls
+//        if (this.url != null) {
+//            if (parentReport.url == null)
+//                parentReport.url = new ArrayList<>();
+//            parentReport.url.addAll(this.url);
+//        }
 
     }
 
@@ -442,7 +445,7 @@ public class CollectionReport implements Report<CollectionReport> {
     public static class Record {
         @XmlAttribute
         public String name;
-        
+
         @XmlElement(name="issue")
         public Collection<String> issues;
     }

@@ -34,12 +34,13 @@ public class Configuration {
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;
     private static final int TIMEOUTDEFAULT = 5000;//in ms(if config file doesnt have it)
-    
+
     public static VloConfig VLO_CONFIG;
     public static boolean DATABASE;
     public static String DATABASE_NAME;
     public static String DATABASE_URI;
     public static String USERAGENT;
+    public static String BASE_URL;
 
     //this is a boolean that is set by core-module(false) and web-module(true)
     public static boolean enableProfileLoadTimer = false;
@@ -93,7 +94,7 @@ public class Configuration {
             CACHE_DIRECTORY = Files.createDirectories(Paths.get(cacheDir));
         }
 
-        if(htmlDir !=null && !htmlDir.isEmpty()){
+        if (htmlDir != null && !htmlDir.isEmpty()) {
             COLLECTION_HTML_DIRECTORY = Files.createDirectories(Paths.get(htmlDir));
         }
 
@@ -107,20 +108,21 @@ public class Configuration {
             DATABASE_NAME = config.getProperty("DATABASE_NAME");
             DATABASE_URI = config.getProperty("DATABASE_URI");
         }
-        
+
         String vloConfigLocation = config.getProperty("VLO_CONFIG_LOCATION");
-        
-        if(vloConfigLocation == null || vloConfigLocation.isEmpty()) {
+
+        if (vloConfigLocation == null || vloConfigLocation.isEmpty()) {
             _logger.warn("loading default VloConfig.xml from vlo-commons.jar - PROGRAM WILL WORK BUT WILL PROBABABLY DELIVER UNATTENDED RESULTS!!!");
             _logger.warn("make sure to define a valid VLO_CONFIG_LOCATION in the file config.properties");
             VLO_CONFIG = new DefaultVloConfigFactory().newConfig();
-        }
-        else {
+        } else {
             _logger.info("loading VloConfig.xml from location {}", vloConfigLocation);
             VLO_CONFIG = new XmlVloConfigFactory(new File(config.getProperty("VLO_CONFIG_LOCATION")).toURI().toURL()).newConfig();
         }
 
         USERAGENT = config.getProperty("USERAGENT");
+        BASE_URL = config.getProperty("BASE_URL");
+
 
     }
 }

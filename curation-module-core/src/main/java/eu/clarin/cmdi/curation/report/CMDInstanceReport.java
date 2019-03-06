@@ -41,6 +41,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     @XmlAttribute
     public String timeStamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
+    @XmlAttribute
+    public String selfUrl;
+
     // sub reports **************************************
 
     // Header
@@ -212,12 +215,12 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
         parentReport.handleProfile(header.getId(), profileScore);
 
-        // urls
-        if (this.url != null) {
-            if (parentReport.url == null)
-                parentReport.url = new ArrayList<>();
-            parentReport.url.addAll(this.url);
-        }
+//        // urls
+//        if (this.url != null) {
+//            if (parentReport.url == null)
+//                parentReport.url = new ArrayList<>();
+//            parentReport.url.addAll(this.url);
+//        }
 
     }
 

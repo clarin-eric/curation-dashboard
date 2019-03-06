@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
@@ -30,6 +31,9 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
 	@XmlAttribute
 	public Long timeStamp = System.currentTimeMillis();
+
+	@XmlAttribute
+	public String url;
 	
 	@XmlElement(name = "header-section")
 	public ProfileHeader header;

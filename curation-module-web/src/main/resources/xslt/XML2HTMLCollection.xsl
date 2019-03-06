@@ -11,6 +11,9 @@
 
 		<h3>Collection name: <xsl:copy-of select="$collectionName" /></h3>
 
+		<xsl:variable name="url"><xsl:value-of select="./@url"/></xsl:variable>
+		<p>URL: <a href="{$url}"><xsl:copy-of select="$url"/></a></p>
+
 		<p>Total Score: <xsl:value-of select="./@score"/> out of <xsl:value-of select="./@col-max-score"/></p>
 		<p>Score percentage: <xsl:value-of select="./@score-percentage"/></p>
 		<p>Average Score: <xsl:value-of select="./@avg-score"/> out of <xsl:value-of select="./@ins-max-score"/></p>
@@ -157,15 +160,15 @@
 					<xsl:variable name="category"><xsl:value-of select="./@category"/></xsl:variable>
                         <tr>
 							<xsl:if test="$category='Ok'">
-                            	<td style="background-color:#cbe7cc" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status" /></a></td>
+                            	<td style="background-color:#cbe7cc" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status"/></a></td>
 								<td style="background-color:#cbe7cc" align="right"><xsl:value-of select="./@category" /></td>
 							</xsl:if>
 							<xsl:if test="$category='Undetermined'">
-								<td style="background-color:#fff7b3" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status" /></a></td>
+								<td style="background-color:#fff7b3" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status"/></a></td>
 								<td style="background-color:#fff7b3" align="right"><xsl:value-of select="./@category" /></td>
 							</xsl:if>
 							<xsl:if test="$category='Broken'">
-								<td style="background-color:#f2a6a6" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status" /></a></td>
+								<td style="background-color:#f2a6a6" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status"/></a></td>
 								<td style="background-color:#f2a6a6" align="right"><xsl:value-of select="./@category" /></td>
 							</xsl:if>
                             <td align="right"><xsl:value-of select="./@count" /></td>

@@ -1,12 +1,11 @@
 package eu.clarin.cmdi.curation.entities;
 
-import java.nio.file.Path;
-
+import eu.clarin.cmdi.curation.processor.AbstractProcessor;
+import eu.clarin.cmdi.curation.report.Report;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.clarin.cmdi.curation.processor.AbstractProcessor;
-import eu.clarin.cmdi.curation.report.Report;
+import java.nio.file.Path;
 
 public abstract class CurationEntity {
 
@@ -39,11 +38,11 @@ public abstract class CurationEntity {
         this.size = size;
     }
 
-    public Report generateReport(String parentName) throws InterruptedException {
+    public Report generateReport(String parentName) {
 
         if (report == null) {
 
-            report = getProcessor().process(this,parentName);
+            report = getProcessor().process(this, parentName);
 
         }
 

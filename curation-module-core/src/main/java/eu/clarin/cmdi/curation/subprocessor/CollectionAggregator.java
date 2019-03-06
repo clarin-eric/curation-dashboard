@@ -1,28 +1,20 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CurationEntity;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport;
-import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
-import eu.clarin.cmdi.curation.report.CollectionReport.FacetReport;
-import eu.clarin.cmdi.curation.report.CollectionReport.FileReport;
-import eu.clarin.cmdi.curation.report.CollectionReport.HeaderReport;
-import eu.clarin.cmdi.curation.report.CollectionReport.ResProxyReport;
-import eu.clarin.cmdi.curation.report.CollectionReport.URLValidationReport;
-import eu.clarin.cmdi.curation.report.CollectionReport.XMLPopulatedReport;
-import eu.clarin.cmdi.curation.report.CollectionReport.XMLValidationReport;
+import eu.clarin.cmdi.curation.report.CollectionReport.*;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author dostojic
@@ -34,7 +26,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
     private final int CHUNK_SIZE = 5000;
 
     @Override
-    public void process(CMDCollection dir, final CollectionReport report){
+    public void process(CMDCollection dir, final CollectionReport report) {
 
         report.fileReport = new FileReport();
         report.headerReport = new HeaderReport();
@@ -45,13 +37,14 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
         report.facetReport = new FacetReport();
 
         report.facetReport.facet = new ArrayList<>();
-        
-        for(String facetName : Configuration.FACETS) {
+
+        for (String facetName : Configuration.FACETS) {
             FacetCollectionStruct facet = new FacetCollectionStruct();
             facet.name = facetName;
             facet.cnt = 0;
             report.facetReport.facet.add(facet);
-        };
+        }
+        ;
 
         //add info regarding file statistics
         report.fileReport.provider = dir.getPath().getFileName().toString();
@@ -71,32 +64,23 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
             }
 
             long startTime = System.currentTimeMillis();
-            
-            chunk.parallelStream().forEach(entity -> {
-                try {
-                    entity.generateReport(report.getName());
-                }
-                catch (InterruptedException ex) {
-                    // TODO Auto-generated catch block
 
-                    _logger.error("", ex);
-                }
+            chunk.parallelStream().forEach(entity -> {
+                entity.generateReport(report.getName());
             });
 
             long end = System.currentTimeMillis();
             _logger.info("validation for {} files lasted {}", chunk.size(), TimeUtils.humanizeToTime(end - startTime));
             chunk.stream().forEach(child -> {
-                try {
-                    child.generateReport(report.getName()).mergeWithParent(report);
-                } catch (InterruptedException ex) {
-                    _logger.error("", ex);
-                }
+                child.generateReport(report.getName()).mergeWithParent(report);
             });
 
             processed += chunk.size();
             _logger.debug("{} records are processed so far, rest {}", processed, dir.getChildren().size() - processed);
 
         }
+
+        report.url = Configuration.BASE_URL + "rest/collection/" + report.getName() + ".xml";
 
         report.calculateAverageValues();
 

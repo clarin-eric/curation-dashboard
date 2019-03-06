@@ -15,7 +15,8 @@ import org.apache.commons.lang.builder.ToStringStyle;
 public class ProfileHeader {
 	
 	private String id;
-	private String schemaLocation;	
+	private String schemaLocation;
+	private String url;
 	private String name;
 	private String description;
 	private String cmdiVersion;
@@ -120,4 +121,12 @@ public class ProfileHeader {
 				.append(cmdiVersion)
 				.toString();
 	}
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }
