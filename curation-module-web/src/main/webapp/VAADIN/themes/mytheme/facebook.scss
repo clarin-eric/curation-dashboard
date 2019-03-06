@@ -63,6 +63,9 @@ $v-selection-item-border-radius: 0;
   @include valo;
   
   // Insert your own theme rules here
+  .align-right {
+  	text-align: right;
+  }
   
   .header{
   	background-color: #1de9b6;

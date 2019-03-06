@@ -1,7 +1,6 @@
 package eu.clarin.web.components;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.text.NumberFormat;
 
 import com.vaadin.v7.data.util.IndexedContainer;
 import com.vaadin.navigator.View;
@@ -9,11 +8,14 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
 import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.Grid.CellReference;
+import com.vaadin.v7.ui.Grid.CellStyleGenerator;
 import com.vaadin.v7.ui.Grid.HeaderCell;
 import com.vaadin.v7.ui.Grid.HeaderRow;
 import com.vaadin.v7.ui.Grid.SelectionMode;
 
 import eu.clarin.web.MainUI;
+import eu.clarin.web.Shared;
 
 import com.vaadin.ui.Panel;
 import com.vaadin.v7.ui.TextField;
@@ -25,6 +27,13 @@ public abstract class GridPanel extends Panel implements View {
 	
 	protected VerticalLayout sideMenu;
 	protected Grid grid;
+	
+	protected static final NumberFormat PERCENTAGE = NumberFormat.getPercentInstance();
+	
+	static {
+        PERCENTAGE.setMaximumFractionDigits(1);
+        PERCENTAGE.setMinimumFractionDigits(1);
+    }
 
 	public GridPanel() {
 		this.setSizeFull();
@@ -46,6 +55,17 @@ public abstract class GridPanel extends Panel implements View {
 	private Grid generateGrid() {
 		IndexedContainer container = createContainer();
 		grid = new Grid(container);
+		
+		grid.setCellStyleGenerator(cell -> {
+		    if(cell.getProperty().getType().isAssignableFrom(Boolean.class)) {
+		        if (Shared.facetNames.contains(cell.getPropertyId())) {
+	                return (boolean) cell.getValue() ? "facetCovered" : "facetNotCovered";
+		        }
+		    }
+		    else if(cell.getProperty().getType().getSuperclass().equals(Number.class))
+                return "align-right";                
+            return null;
+        });
 		grid.setSizeFull();
 
 		grid.setSelectionMode(SelectionMode.NONE);
