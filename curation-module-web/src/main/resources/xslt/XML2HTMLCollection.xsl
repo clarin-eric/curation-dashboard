@@ -99,7 +99,7 @@
 		<h2>XML Validation Section</h2>
 		<p>Number of Records: <xsl:value-of select="./xml-validation-section/totNumOfRecords"/></p>
 		<p>Number of valid Records: <xsl:value-of select="./xml-validation-section/totNumOfValidRecords"/></p>
-		<p>Ratio valid Records: <xsl:value-of select="format-number(./xml-validation-section/ratioOfValidRecords,'##.#%)'"/></p>
+		<p>Ratio valid Records: <xsl:value-of select="format-number(./xml-validation-section/ratioOfValidRecords,'##.#%')"/></p>
 
 		<xsl:if test="./xml-validation-section/invalid-records/record">
 			<h3>Invalid Records:</h3>
