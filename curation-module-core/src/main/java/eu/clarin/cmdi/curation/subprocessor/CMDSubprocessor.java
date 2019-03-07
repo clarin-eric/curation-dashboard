@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 /**
- * @author dostojic
+
  *
  */
 public abstract class CMDSubprocessor extends ProcessingStep<CMDInstance, CMDInstanceReport> {

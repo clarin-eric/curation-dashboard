@@ -92,9 +92,6 @@ public class Shared {
                 marshaller.marshal(report, Files.newOutputStream(Paths.get(path)));
 
                 return new PublicProfile(p.getId(), p.getName(), report.score, report.facet.profileCoverage, report.elements.percWithConcept, facetMap);
-            } catch (InterruptedException e) {
-                _logger.error("InterruptedException: " + e.getMessage());
-                return new PublicProfile(p.getId(), p.getName(), -1, -1, -1, facetMap);
             } catch (IOException e) {
                 _logger.error("IOException when saving profile: " + e.getMessage());
                 return new PublicProfile(p.getId(), p.getName(), -1, -1, -1, facetMap);

@@ -22,7 +22,7 @@ import eu.clarin.cmdi.curation.report.Concept;
 import eu.clarin.cmdi.curation.report.Score;
 
 /**
- * @author dostojic
+
  *
  */
 public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfileReport> {

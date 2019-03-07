@@ -4,7 +4,7 @@ import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CMDProfileProcessor;
 
 /**
- * @author dostojic
+
  *
  */
 

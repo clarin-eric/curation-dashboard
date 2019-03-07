@@ -11,7 +11,7 @@ import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Severity;
 
 /**
- * @author dostojic
+
  * 
  *         A custom SAX error handler
  */

@@ -32,9 +32,6 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author dostojic/wowasa
- */
 public class InstanceFacetProcessor extends CMDSubprocessor {
 
     private final static Logger _logger = LoggerFactory.getLogger(InstanceFacetProcessor.class);

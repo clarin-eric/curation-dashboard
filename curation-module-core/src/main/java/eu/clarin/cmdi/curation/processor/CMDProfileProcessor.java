@@ -9,11 +9,11 @@ import java.util.Collection;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.subprocessor.ProcessingStep;
 import eu.clarin.cmdi.curation.subprocessor.ProfileElementsHandler;
-import eu.clarin.cmdi.curation.subprocessor.ProfileFacetHanlder;
+import eu.clarin.cmdi.curation.subprocessor.ProfileFacetHandler;
 import eu.clarin.cmdi.curation.subprocessor.ProfileHeaderHandler;
 
 /**
- * @author dostojic
+
  *
  */
 public class CMDProfileProcessor extends AbstractProcessor<CMDProfileReport> {
@@ -26,7 +26,7 @@ public class CMDProfileProcessor extends AbstractProcessor<CMDProfileReport> {
 	return Arrays.asList(
 		new ProfileHeaderHandler(),
 		new ProfileElementsHandler(),
-		new ProfileFacetHanlder()
+		new ProfileFacetHandler()
 		);
     }
 

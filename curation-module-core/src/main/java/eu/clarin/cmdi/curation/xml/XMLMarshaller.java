@@ -12,7 +12,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 /**
- * @author dostojic
+
  *
  */
 public class XMLMarshaller<T> {

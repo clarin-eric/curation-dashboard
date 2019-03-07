@@ -1,80 +1,78 @@
 package eu.clarin.cmdi.curation.main;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-
-import javax.xml.transform.TransformerException;
-
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.io.CMDFileVisitor;
-import eu.clarin.cmdi.curation.io.Downloader;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
+import eu.clarin.cmdi.curation.utils.FileNameEncoder;
+import eu.clarin.curation.linkchecker.httpLinkChecker.HTTPLinkChecker;
 
-public class CurationModule implements CurationModuleInterface {  
-    
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+
+public class CurationModule implements CurationModuleInterface {
+
     @Override
-    public Report<?> processCMDProfile(String profileId) throws InterruptedException {
+    public Report<?> processCMDProfile(String profileId) {
         return new CMDProfile(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(profileId), "1.x").generateReport(null);
 
     }
 
 
+    @Override
+    public Report<?> processCMDProfile(URL schemaLocation) {
 
-	@Override
-	public Report<?> processCMDProfile(URL schemaLocation) throws InterruptedException {
+        return new CMDProfile(schemaLocation.toString(), "1.x").generateReport(null);
+    }
 
-	        return new CMDProfile(schemaLocation.toString(), "1.x").generateReport(null);
-	}
+    @Override
 
-	@Override
+    public Report<?> processCMDInstance(Path path) throws IOException {
+        if (Files.notExists(path))
+            throw new IOException(path.toString() + " doesn't exist!");
 
-	public Report<?> processCMDInstance(Path path) throws IOException, InterruptedException, TransformerException {
-		if (Files.notExists(path))
-			throw new IOException(path.toString() + " doesn't exist!");		
-		
-		return new CMDInstance(path, Files.size(path)).generateReport(null);
+        return new CMDInstance(path, Files.size(path)).generateReport(null);
 
-	}
-	
+    }
 
-	@Override
-	public Report<?> processCMDInstance(URL url) throws IOException, InterruptedException {
-		Path path = Files.createTempFile(null, null);
-		new Downloader().download(url.toString(), path.toFile());
-		long size = Files.size(path);
-		CMDInstance cmdInstance = new CMDInstance(path, size);
-		cmdInstance.setUrl(url.toString());
 
-		Report<?> r = cmdInstance.generateReport(null);
+    @Override
+    public Report<?> processCMDInstance(URL url) throws IOException {
+        String path = FileNameEncoder.encode(url.toString()) + ".xml";
+        Path cmdiFile = Paths.get(System.getProperty("java.io.tmpdir"), path);
+        new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(url.toString(), cmdiFile.toFile());
+        long size = Files.size(cmdiFile);
+        CMDInstance cmdInstance = new CMDInstance(cmdiFile, size);
+        cmdInstance.setUrl(url.toString());
 
-		Files.delete(path);
+        Report<?> report = cmdInstance.generateReport(null);
 
-		if(r instanceof CMDInstanceReport){
-			((CMDInstanceReport)r).fileReport.location = url.toString();
-		}
+//		Files.delete(path);
 
-		return r;
-	}
+        ((CMDInstanceReport) report).fileReport.location = url.toString();
 
-	@Override
-	public Report<?> processCollection(Path path) throws IOException, InterruptedException {
-		CMDFileVisitor entityTree = new CMDFileVisitor();
-		Files.walkFileTree(path, entityTree);
-		CMDCollection collection = entityTree.getRoot();
+        return report;
+    }
 
-		return collection.generateReport(null);
-	}
+    @Override
+    public Report<?> processCollection(Path path) throws IOException {
+        CMDFileVisitor entityTree = new CMDFileVisitor();
+        Files.walkFileTree(path, entityTree);
+        CMDCollection collection = entityTree.getRoot();
 
-	@Override
-	public Report<?> aggregateReports(Collection<Report> reports) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        return collection.generateReport(null);
+    }
+
+    @Override
+    public Report<?> aggregateReports(Collection<Report> reports) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

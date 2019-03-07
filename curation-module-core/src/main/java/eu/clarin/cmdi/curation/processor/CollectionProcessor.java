@@ -22,7 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 /**
- * @author dostojic
+
  */
 public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
 

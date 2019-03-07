@@ -16,7 +16,7 @@ import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
- * @author dostojic
+
  *
  */
 @XmlRootElement(name = "profile-report")

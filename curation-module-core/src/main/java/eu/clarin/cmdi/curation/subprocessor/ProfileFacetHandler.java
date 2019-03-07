@@ -12,11 +12,7 @@ import eu.clarin.cmdi.vlo.importer.mapping.FacetMapping;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-/**
- * @author dostojic, wowasa
- *
- */
-public class ProfileFacetHanlder extends ProcessingStep<CMDProfile, CMDProfileReport> {
+public class ProfileFacetHandler extends ProcessingStep<CMDProfile, CMDProfileReport> {
 
     @Override
     public void process(CMDProfile entity, CMDProfileReport report) throws IOException, ExecutionException {

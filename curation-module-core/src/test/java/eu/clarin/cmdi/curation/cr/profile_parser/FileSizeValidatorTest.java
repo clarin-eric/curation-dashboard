@@ -1,8 +1,6 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 import org.junit.Before;
-/*
-* @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
-*/
+
 import org.junit.Test;
 
 import eu.clarin.cmdi.curation.entities.CMDInstance;

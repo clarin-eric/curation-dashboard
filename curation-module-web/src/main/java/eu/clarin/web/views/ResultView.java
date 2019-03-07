@@ -15,6 +15,7 @@ import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
+import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 import eu.clarin.web.MainUI;
 import eu.clarin.web.Shared;
 import eu.clarin.web.components.LinkButton;
@@ -120,31 +121,52 @@ public class ResultView extends Panel implements View {
             ByteArrayOutputStream result = new ByteArrayOutputStream();
             switch (curationType) {
                 case INSTANCE:
+                    String filePath;
                     switch (sourceType) {
                         case FILE:
-                            Path cmdiFile = Paths.get(System.getProperty("java.io.tmpdir"), input);
-                            r = new CurationModule().processCMDInstance(cmdiFile);
-                            if (r instanceof CMDInstanceReport)
+                            filePath = Configuration.OUTPUT_DIRECTORY + "/instances/" + input;
+                            if (Files.exists(Paths.get(filePath))) {
+                                byte[] byteArray = Files.readAllBytes(Paths.get(filePath));
+                                result = new ByteArrayOutputStream(byteArray.length);
+                                result.write(byteArray, 0, byteArray.length);
+                            } else {
+                                Path cmdiFile = Paths.get(System.getProperty("java.io.tmpdir"), input);
+                                r = new CurationModule().processCMDInstance(cmdiFile);
                                 ((CMDInstanceReport) r).fileReport.location = cmdiFile.getFileName().toString();
-                            Files.delete(cmdiFile);
+
+                                //save it to file
+                                r.toXML(Files.newOutputStream(Paths.get(filePath)));
+
+                                r.toXML(result);
+                            }
                             break;
                         case URL:
-                            r = new CurationModule().processCMDInstance(new URL(input));
+                            filePath = Configuration.OUTPUT_DIRECTORY + "/instances/" + FileNameEncoder.encode(input) + ".xml";
+                            if (Files.exists(Paths.get(filePath))) {
+                                byte[] byteArray = Files.readAllBytes(Paths.get(filePath));
+                                result = new ByteArrayOutputStream(byteArray.length);
+                                result.write(byteArray, 0, byteArray.length);
+                            } else {
+                                r = new CurationModule().processCMDInstance(new URL(input));
+
+                                //save it to file
+                                r.toXML(Files.newOutputStream(Paths.get(filePath)));
+
+                                r.toXML(result);
+                            }
                             break;
                     }
 
-                    r.toXML(result);
-
-                    //save it to file
-                    String filename = r.getName().replaceAll("/", "-") + ".xml";
-                    r.toXML(Files.newOutputStream(Paths.get(Configuration.OUTPUT_DIRECTORY + "/instances/" + filename)));
-
                     label.setValue(transformer.transform(curationType, result.toString()));
+
+                    //I set the value of result into temp because otherwise jvm complains:
+                    //Variable 'result' is accessed from within inner class, needs to be declared final
+                    final ByteArrayOutputStream temp = result;
 
                     xmlReport.setStreamSource(new StreamSource() {
                         @Override
                         public InputStream getStream() {
-                            return new ByteArrayInputStream(result.toByteArray());
+                            return new ByteArrayInputStream(temp.toByteArray());
                         }
                     });
 
@@ -163,11 +185,14 @@ public class ResultView extends Panel implements View {
 
                     label.setValue(transformer.transform(curationType, result.toString()));
 
+                    //I set the value of result into temp2 because otherwise jvm complains:
+                    //Variable 'result' is accessed from within inner class, needs to be declared final
+                    final ByteArrayOutputStream temp2 = result;
 
                     xmlReport.setStreamSource(new StreamSource() {
                         @Override
                         public InputStream getStream() {
-                            return new ByteArrayInputStream(result.toByteArray());
+                            return new ByteArrayInputStream(temp2.toByteArray());
                         }
                     });
 

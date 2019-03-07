@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 /**
- * @author dostojic
+
  */
 
 

@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author dostojic
+
  */
 public class CollectionAggregator extends ProcessingStep<CMDCollection, CollectionReport> {
 

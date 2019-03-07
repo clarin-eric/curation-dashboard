@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static com.mongodb.client.model.Filters.eq;
 
 /**
- * @author dostojic
+
  */
 
 public class URLValidator extends CMDSubprocessor {

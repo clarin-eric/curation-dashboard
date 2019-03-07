@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import eu.clarin.cmdi.curation.main.Configuration;
 
 /**
- * @author dostojic
+
  *
  */
 public class ApplicationInit implements ServletContextListener {

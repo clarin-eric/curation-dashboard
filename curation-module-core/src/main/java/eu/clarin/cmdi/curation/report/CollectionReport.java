@@ -23,7 +23,7 @@ import static com.mongodb.client.model.Sorts.ascending;
 import static com.mongodb.client.model.Sorts.orderBy;
 
 /**
- * @author dostojic
+
  */
 
 @XmlRootElement(name = "collection-report")

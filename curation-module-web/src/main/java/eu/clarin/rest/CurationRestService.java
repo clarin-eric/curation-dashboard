@@ -2,6 +2,7 @@ package eu.clarin.rest;
 
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.main.CurationModule;
+import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,14 +24,37 @@ public class CurationRestService {
     @GET
     @Path("/instance/")
     public Response assessInstance(@QueryParam("url") String url) {
-        _logger.info("curating " + url);
-        try {
-            return Response.ok(new CurationModule().processCMDInstance(new URL(url))).type(MediaType.APPLICATION_XML).build();
-        } catch (MalformedURLException e) {
-            return Response.status(400).entity("The url is malformed: " + url).type(MediaType.TEXT_PLAIN).build();
-        } catch (IOException | InterruptedException e) {
-            _logger.error("Error when processing instance from url: " + url + " . Message: " + e.getMessage());
-            return Response.serverError().build();
+
+        String fileName = FileNameEncoder.encode(url) + ".xml";
+        File instance = new File(Configuration.OUTPUT_DIRECTORY.toString() + "/instances/" + fileName);
+        if (Files.exists(instance.toPath())) {
+            return Response.ok(instance).type(MediaType.APPLICATION_XML).build();
+        } else {
+            _logger.info("curating " + url);
+            try {
+                return Response.ok(new CurationModule().processCMDInstance(new URL(url))).type(MediaType.APPLICATION_XML).build();
+            } catch (MalformedURLException e) {
+                return Response.status(400).entity("The url is malformed: " + url).type(MediaType.TEXT_PLAIN).build();
+            } catch (IOException e) {
+                _logger.error("Error when curating instance from url: " + e.getMessage());
+                return Response.serverError().build();
+            }
+        }
+    }
+
+    @GET
+    @Path("/instance/{instanceName}")
+    public Response getInstanceReport(@PathParam("instanceName") String instanceName) {
+
+        if (!instanceName.endsWith(".xml")) {
+            instanceName = FileNameEncoder.encode(instanceName) + ".xml";
+        }
+
+        File instance = new File(Configuration.OUTPUT_DIRECTORY.toString() + "/instances/" + instanceName);
+        if (Files.exists(instance.toPath())) {
+            return Response.ok(instance).type(MediaType.APPLICATION_XML).build();
+        } else {
+            return Response.status(404).type(MediaType.TEXT_PLAIN).entity("The instance with name: " + instanceName + " doesn't exist.").build();
         }
 
     }
@@ -41,9 +65,6 @@ public class CurationRestService {
         _logger.info("Curating profile by url: " + url);
         try {
             return Response.ok(new CurationModule().processCMDProfile(new URL(url))).type(MediaType.APPLICATION_XML).build();
-        } catch (InterruptedException e) {
-            _logger.error("Error when processing profile from url: " + url + " . Message: " + e.getMessage());
-            return Response.serverError().build();
         } catch (MalformedURLException e) {
             return Response.status(400).entity("This url is malformed: " + url).type(MediaType.TEXT_PLAIN).build();
         }
@@ -59,12 +80,7 @@ public class CurationRestService {
             return Response.ok(profile).type(MediaType.APPLICATION_XML).build();
         } else {
             _logger.info("Curating profile by id: " + id);
-            try {
-                return Response.ok(new CurationModule().processCMDProfile(id)).type(MediaType.APPLICATION_XML).build();
-            } catch (InterruptedException e) {
-                _logger.error("Error when processing profile from id: " + id + " . Message: " + e.getMessage());
-                return Response.serverError().build();
-            }
+            return Response.ok(new CurationModule().processCMDProfile(id)).type(MediaType.APPLICATION_XML).build();
         }
     }
 
@@ -81,20 +97,4 @@ public class CurationRestService {
         }
 
     }
-
-    @GET
-    @Path("/instance/{instanceName}")
-    public Response getInstanceReport(@PathParam("instanceName") String instanceName) {
-
-        instanceName = instanceName.endsWith(".xml") ? instanceName : instanceName + ".xml";
-        File instance = new File(Configuration.OUTPUT_DIRECTORY.toString() + "/instances/" + instanceName);
-        if (Files.exists(instance.toPath())) {
-            return Response.ok(instance).type(MediaType.APPLICATION_XML).build();
-        } else {
-            return Response.status(404).type(MediaType.TEXT_PLAIN).entity("The instance with name: " + instanceName + " doesn't exist.").build();
-        }
-
-    }
-
-    //todo then add these urls to reports and xslt
 }

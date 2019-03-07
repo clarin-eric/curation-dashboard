@@ -6,9 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-/*
-* @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
-*/
+
 import org.junit.*;
 
 import eu.clarin.cmdi.curation.cr.CRService;

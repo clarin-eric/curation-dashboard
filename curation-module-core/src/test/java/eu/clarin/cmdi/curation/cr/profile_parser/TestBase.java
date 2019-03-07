@@ -10,9 +10,7 @@ import org.junit.Before;
 
 import eu.clarin.cmdi.curation.main.Configuration;
 
-/*
-* @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
-*/
+
 public class TestBase {
 
     @Before

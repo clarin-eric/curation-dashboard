@@ -14,7 +14,7 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
- * @author dostojic
+
  */
 
 @XmlRootElement(name = "instance-report")

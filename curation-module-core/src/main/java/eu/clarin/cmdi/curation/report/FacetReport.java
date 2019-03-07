@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @author dostojic
+
  *
  */
 @XmlRootElement(name = "facets")

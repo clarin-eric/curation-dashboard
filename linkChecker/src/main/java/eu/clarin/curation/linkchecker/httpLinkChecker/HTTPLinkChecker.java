@@ -12,29 +12,29 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * @author dostojic
+ *
  */
 public class HTTPLinkChecker {
 
     private int timeout;
-    private HttpURLConnection connection = null;
     private String redirectLink = null;
     private int REDIRECT_FOLLOW_LIMIT;
     private String USERAGENT;
     private List<Integer> redirectStatusCodes = new ArrayList<>(Arrays.asList(301, 302, 303, 307, 308));
 
     //this determines what status codes will not be considered broken links. urls with these codes will also not factor into the url-scores
-    private List<Integer> undeterminedStatusCodes = new ArrayList<>(Arrays.asList(401,405,429));
+    private List<Integer> undeterminedStatusCodes = new ArrayList<>(Arrays.asList(401, 405, 429));
 
     private final static Logger _logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
 
@@ -48,33 +48,6 @@ public class HTTPLinkChecker {
         this.timeout = timeout;
         this.REDIRECT_FOLLOW_LIMIT = REDIRECT_FOLLOW_LIMIT;
         this.USERAGENT = USERAGENT;
-    }
-
-    //this method lets httpclient handle the redirects by itself unlike the method checkLink below
-    public int checkLinkAndGetResponseCode(String url) throws IOException {
-        RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
-                .setConnectTimeout(timeout)
-                .setConnectionRequestTimeout(timeout)
-                .setSocketTimeout(timeout)
-                .build();
-        HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
-
-        HttpHead head;
-        try {
-            head = new HttpHead(url);
-        } catch (IllegalArgumentException e) {
-            //encode url, to remove problems caused by | and similar characters
-            String[] urlArray = url.split("\\?");
-            if (urlArray.length == 2) {
-                url = urlArray[0] + "?" + URLEncoder.encode(urlArray[1], "UTF-8");
-            }
-            head = new HttpHead(url);
-        }
-
-        head.setHeader("User-Agent", USERAGENT);
-        HttpResponse response = client.execute(head);
-        return response.getStatusLine().getStatusCode();
-
     }
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
@@ -190,9 +163,9 @@ public class HTTPLinkChecker {
                         }
                     }
                 } else {
-                    if(undeterminedStatusCodes.contains(statusCode)){
+                    if (undeterminedStatusCodes.contains(statusCode)) {
                         urlElement.setMessage("Undetermined");
-                    }else{
+                    } else {
                         urlElement.setMessage("Broken");
                     }
 
@@ -250,43 +223,47 @@ public class HTTPLinkChecker {
         return result;
     }
 
-    public String getRedirectLink() {
-        return redirectLink;
+    public void download(String url, File destination) throws IOException {
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(timeout)
+                .setConnectionRequestTimeout(timeout)
+                .setSocketTimeout(timeout)
+                .build();
+        HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
+
+        HttpGet get = new HttpGet(url);
+        HttpResponse response = client.execute(get);
+
+        FileOutputStream fos = new FileOutputStream(destination);
+
+        response.getEntity().writeTo(fos);
     }
 
-
-    public String getResponse() throws IOException {
-        if (connection == null)
-            return "Connection is null";
-
-        StringBuilder builder = new StringBuilder();
-        builder.append(connection.getResponseCode())
-                .append(" ")
-                .append(connection.getResponseMessage())
-                .append("\n");
-
-        Map<String, List<String>> map = connection.getHeaderFields();
-        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-            if (entry.getKey() == null)
-                continue;
-            builder.append(entry.getKey())
-                    .append(": ");
-
-            List<String> headerValues = entry.getValue();
-            Iterator<String> it = headerValues.iterator();
-            if (it.hasNext()) {
-                builder.append(it.next());
-
-                while (it.hasNext()) {
-                    builder.append(", ")
-                            .append(it.next());
-                }
-            }
-
-            builder.append("\n");
-        }
-
-        return builder.toString();
-    }
+//    //this method lets httpclient handle the redirects by itself unlike the method checkLink below
+//    public int checkLinkAndGetResponseCode(String url) throws IOException {
+//        RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
+//                .setConnectTimeout(timeout)
+//                .setConnectionRequestTimeout(timeout)
+//                .setSocketTimeout(timeout)
+//                .build();
+//        HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
+//
+//        HttpHead head;
+//        try {
+//            head = new HttpHead(url);
+//        } catch (IllegalArgumentException e) {
+//            //encode url, to remove problems caused by | and similar characters
+//            String[] urlArray = url.split("\\?");
+//            if (urlArray.length == 2) {
+//                url = urlArray[0] + "?" + URLEncoder.encode(urlArray[1], "UTF-8");
+//            }
+//            head = new HttpHead(url);
+//        }
+//
+//        head.setHeader("User-Agent", USERAGENT);
+//        HttpResponse response = client.execute(head);
+//        return response.getStatusLine().getStatusCode();
+//
+//    }
 
 }

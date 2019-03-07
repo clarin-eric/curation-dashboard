@@ -8,6 +8,7 @@ import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.FileReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
+import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.vlo_extensions.CMDIDataImplFactory;
 import eu.clarin.cmdi.curation.vlo_extensions.FacetMappingCacheFactory;
 import eu.clarin.cmdi.vlo.LanguageCodeUtils;
@@ -117,7 +118,7 @@ public class FileSizeValidator extends CMDSubprocessor {
         report.fileReport = new FileReport();
         report.fileReport.size = entity.getSize();
         if (entity.getUrl() != null) {
-            report.fileReport.location = entity.getUrl().replaceAll("/", "-");
+            report.fileReport.location = FileNameEncoder.encode(entity.getUrl());
         } else {
             report.fileReport.location = entity.getPath().toString();
         }
@@ -136,7 +137,7 @@ public class FileSizeValidator extends CMDSubprocessor {
             throw new IOException(e.getMessage());
         }
 
-        report.selfUrl = Configuration.BASE_URL + "rest/instance/" + report.getName() + ".xml";
+        report.selfUrl = Configuration.BASE_URL + "rest/instance/" + FileNameEncoder.encode(report.getName()) + ".xml";
 
 
         entity.setCMDIData(cmdiData);

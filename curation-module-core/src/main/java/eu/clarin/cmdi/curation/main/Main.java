@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.main;
 
 import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
 import eu.clarin.cmdi.curation.report.Report;
+import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
@@ -117,13 +118,12 @@ public class Main {
             }
 
             Files.createDirectories(path);
-            String filename = report.getName().replaceAll("/", "-") + ".xml";
+            String filename = FileNameEncoder.encode(report.getName()) + ".xml";
             path = path.resolve(filename);
             report.toXML(Files.newOutputStream(path));
         } else {//print to console
             report.toXML(System.out);
             System.out.println("-----------------------------------------------------------------");
-            System.out.println();
 
         }
     }
