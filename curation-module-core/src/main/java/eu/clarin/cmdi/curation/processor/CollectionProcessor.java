@@ -41,7 +41,18 @@ public class CollectionProcessor extends AbstractProcessor<CollectionReport> {
 
                 report.addSegmentScore(step.calculateScore(report));
 
-            } catch (FileSizeException | ExecutionException | IOException | VTDException | TransformerException | SAXException | ParserConfigurationException | ProfileNotFoundException e) {
+            } 
+            catch(FileSizeException e) {
+                _logger.info("Exception when processing " + step.toString() + " : " + e.getMessage());
+                //if it is not a collection report, keep the loop going for the following records, dont just produce an error report
+                if (!(report instanceof CollectionReport)) {
+                    return new ErrorReport(report.getName(), e.getMessage());
+                } else {
+                    addInvalidFile(report, e);
+                }               
+            }
+            
+            catch (ExecutionException | IOException | VTDException | TransformerException | SAXException | ParserConfigurationException | ProfileNotFoundException e) {
                 _logger.error("Exception when processing " + step.toString() + " : " + e.getMessage());
                 //if it is not a collection report, keep the loop going for the following records, dont just produce an error report
                 if (!(report instanceof CollectionReport)) {
