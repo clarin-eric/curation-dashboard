@@ -4,7 +4,7 @@
     <parent>
         <artifactId>curation-module</artifactId>
         <groupId>eu.clarin.cmdi</groupId>
-        <version>2.3</version>
+        <version>2.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>curation-module-web</artifactId>
@@ -84,7 +84,7 @@
         <dependency>
             <groupId>eu.clarin.cmdi</groupId>
             <artifactId>curation-module-core</artifactId>
-            <version>2.3</version>
+            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
@@ -209,5 +209,5 @@
             </pluginRepositories>
         </profile>
     </profiles>
-    <version>2.3</version>
+    <version>2.4</version>
 </project>
