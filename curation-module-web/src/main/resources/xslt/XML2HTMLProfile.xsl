@@ -57,16 +57,16 @@
 			</thead>
 			<tfoot>
 				<tr><td colspan="3"><b>
-					total: <xsl:value-of select="./@score"/>
-					max: <xsl:value-of select="./@max-score"/>
+					total: <xsl:value-of select="format-number(./@score,'##.##')"/>
+					max: <xsl:value-of select="format-number(./@max-score,'##.##')"/>
 				</b></td></tr>
 			</tfoot>
 			<tbody>
 			<xsl:for-each select="./score-section/score">
 			<tr>
 				<td><xsl:value-of select="./@segment"/></td>
-				<td><xsl:value-of select="./@score"/></td>
-				<td><xsl:value-of select="./@maxScore"/></td>
+				<td class="v-align-right"><xsl:value-of select="format-number(./@score,'##.##')"/></td>
+				<td class="v-align-right"><xsl:value-of select="format-number(./@maxScore,'##.##')"/></td>
 		    </tr>
 			</xsl:for-each>
 			</tbody>
@@ -87,7 +87,7 @@
 					covered:
 					<xsl:value-of select="count(./facets-section/coverage/facet[@coveredByProfile = 'true'])" /> / 
 					<xsl:value-of select="./facets-section/@numOfFacets"/>
-					coverage: <xsl:value-of select="./facets-section/@profileCoverage"/>
+					coverage: <xsl:value-of select="format-number(./facets-section/@profileCoverage,'##.#%')"/>
 				</b></td></tr>
 			</tfoot>
 			<tbody>
@@ -131,7 +131,7 @@
 				<xsl:variable name="href">http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/components/<xsl:value-of select="./@id" /></xsl:variable>
 				<td><xsl:value-of select="./@name"/></td>
 				<td><a href="{$href}" target="_blank"><xsl:value-of select="./@id" /></a></td>
-				<td><xsl:value-of select="./@count"/></td>
+				<td class="v-align-right"><xsl:value-of select="./@count"/></td>
 		    </tr>
 			</xsl:for-each>
 			</tbody>
@@ -163,7 +163,7 @@
 				<xsl:variable name="href"><xsl:value-of select="./@uri" /></xsl:variable>
 				<td><a href="{$href}" title="{$href}" target="_blank"><xsl:value-of select="./@prefLabel" /></a></td>
 				<td><xsl:value-of select="./@status"/></td>
-				<td><xsl:value-of select="./@count"/></td>
+				<td class="v-align-right"><xsl:value-of select="./@count"/></td>
 		    </tr>
 			</xsl:for-each>
 			</tbody>
