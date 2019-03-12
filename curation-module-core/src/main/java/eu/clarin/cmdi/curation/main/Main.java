@@ -1,5 +1,7 @@
 package eu.clarin.cmdi.curation.main;
 
+import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.cr.PublicProfiles;
 import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
@@ -57,9 +59,9 @@ public class Main {
         else
             Configuration.initDefault();
 
-        if (cmd.hasOption('p')) {
+/*        if (cmd.hasOption('p')) {
             Configuration.OUTPUT_DIRECTORY = null;
-        }
+        }*/
 
         Configuration.enableProfileLoadTimer = false;
 
@@ -69,25 +71,37 @@ public class Main {
         if (cmd.hasOption("p")) {// profile
             type = CurationEntityType.PROFILE;
             if (cmd.hasOption("id")) {
+                Configuration.OUTPUT_DIRECTORY = null;
                 for (String id : cmd.getOptionValues("id"))
                     dump(curator.processCMDProfile(id), type);
-            } else if (cmd.hasOption("url")) {
+            } 
+            else if (cmd.hasOption("url")) {
+                Configuration.OUTPUT_DIRECTORY = null;
                 for (String url : cmd.getOptionValues("url"))
                     dump(curator.processCMDProfile(new URL(url)), type);
-            } else
-                throw new Exception("Only id and url options are allowed for profiles curation");
-        } else if (cmd.hasOption("i")) {// instance
+            } 
+            else {
+                //throw new Exception("Only id and url options are allowed for profiles curation");
+                for (ProfileHeader pHeader : PublicProfiles.createPublicProfiles())
+                        dump(curator.processCMDProfile(pHeader.getId()), type);
+
+            }
+        } 
+        else if (cmd.hasOption("i")) {// instance
             type = CurationEntityType.INSTANCE;
             if (cmd.hasOption("url")) {
                 for (String url : cmd.getOptionValues("url"))
                     dump(curator.processCMDInstance(new URL(url)), type);
-            } else if (cmd.hasOption("path")) {
+            } 
+            else if (cmd.hasOption("path")) {
                 for (String path : cmd.getOptionValues("path"))
                     dump(curator.processCMDInstance(Paths.get(path)), type);
-            } else
+            } 
+            else
                 throw new Exception("Only path and url options are allowed for instances curation");
 
-        } else if (cmd.hasOption("c")) {// collection
+        } 
+        else if (cmd.hasOption("c")) {// collection
             type = CurationEntityType.COLLECTION;
             Configuration.COLLECTION_MODE = true;
             if (cmd.hasOption("path")) {
@@ -96,7 +110,8 @@ public class Main {
                 }
             } else
                 throw new Exception("Only path is allowed for collection curation");
-        } else
+        } 
+        else
             throw new Exception("Curation module can curate profiles (-p), instances (-i) and collections (-c)");
     }
 
@@ -158,9 +173,12 @@ public class Main {
 
         Option paramUrl = OptionBuilder.withArgName("url").hasArgs(Option.UNLIMITED_VALUES)
                 .withDescription("Space separated urls to profile or instance to be curated").create("url");
+        
+        Option paramPublicProfiles = OptionBuilder.withArgName("publicProfiles").hasArg(false)
+                .withDescription("Creates reports for public profiles with status production").create("public");
 
         OptionGroup curationInputParams = new OptionGroup();
-        curationInputParams.addOption(paramId).addOption(paramPath).addOption(paramUrl);
+        curationInputParams.addOption(paramId).addOption(paramPath).addOption(paramUrl).addOption(paramPublicProfiles);
         curationInputParams.setRequired(true);
 
         Options options = new Options();
