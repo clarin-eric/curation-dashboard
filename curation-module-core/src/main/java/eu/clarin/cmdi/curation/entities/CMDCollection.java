@@ -1,15 +1,15 @@
 package eu.clarin.cmdi.curation.entities;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CollectionProcessor;
 
 public class CMDCollection extends CurationEntity {
 
-	List<CurationEntity> children;
+	Stack<CurationEntity> children;
 
 	long numOfFiles;
 	long maxFileSize = 0;
@@ -17,7 +17,7 @@ public class CMDCollection extends CurationEntity {
 
 	public CMDCollection(Path path) {
 		super(path);
-		children = new ArrayList<CurationEntity>();
+		children = new Stack<CurationEntity>();
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class CMDCollection extends CurationEntity {
 			minFileSize = child.minFileSize;
 	}
 
-	public List<CurationEntity> getChildren() {
+	public Stack<CurationEntity> getChildren() {
 		return children;
 	}
 

@@ -8,13 +8,12 @@ import eu.clarin.cmdi.curation.report.CollectionReport;
 import eu.clarin.cmdi.curation.report.CollectionReport.*;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.curation.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
 
@@ -22,8 +21,6 @@ import java.util.List;
 public class CollectionAggregator extends ProcessingStep<CMDCollection, CollectionReport> {
 
     private static final Logger _logger = LoggerFactory.getLogger(CollectionAggregator.class);
-
-    private final int CHUNK_SIZE = 5000;
 
     @Override
     public void process(CMDCollection dir, final CollectionReport report) {
@@ -52,11 +49,36 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
         report.fileReport.size = dir.getSize();
         report.fileReport.minFileSize = dir.getMinFileSize();
         report.fileReport.maxFileSize = dir.getMaxFileSize();
+        
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
+        
+        
+        while(!dir.getChildren().empty()) {
+            
+            CurationEntity entity = dir.getChildren().pop();
 
-        // process in portions to avoid memory thresholds
-        Iterator<CurationEntity> it = dir.getChildren().iterator();
-        int processed = 0;
-        while (it.hasNext()) {
+            executor.submit(() -> 
+                {
+                    entity.generateReport(report.getName()).mergeWithParent(report);
+
+                });
+        }
+        
+        executor.shutdown();
+        
+        while(!executor.isTerminated()) {
+            try {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException ex) {
+                _logger.error("on error occured while waiting for the treadpool to terminate");
+            }
+        };
+        
+
+        
+                
+/*        while (it.hasNext()) {
 
             final List<CurationEntity> chunk = new ArrayList<>(CHUNK_SIZE);
             for (int i = 0; i < CHUNK_SIZE && it.hasNext(); i++) {
@@ -78,7 +100,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
             processed += chunk.size();
             _logger.debug("{} records are processed so far, rest {}", processed, dir.getChildren().size() - processed);
 
-        }
+        }*/
 
         report.url = Configuration.BASE_URL + "rest/collection/" + report.getName() + ".xml";
 

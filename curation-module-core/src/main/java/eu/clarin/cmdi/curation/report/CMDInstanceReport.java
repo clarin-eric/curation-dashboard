@@ -163,47 +163,51 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     @Override
     public void mergeWithParent(CollectionReport parentReport) {
 
-        parentReport.score += score;
-        if (score > parentReport.insMaxScore)
-            parentReport.insMaxScore = score;
+        mergeWithParent(parentReport, this);
+    }
+    
+    private static final synchronized void mergeWithParent(CollectionReport parentReport, CMDInstanceReport instanceReport) {
+        parentReport.score += instanceReport.score;
+        if (instanceReport.score > parentReport.insMaxScore)
+            parentReport.insMaxScore = instanceReport.score;
 
-        if (score < parentReport.insMinScore)
-            parentReport.insMinScore = score;
+        if (instanceReport.score < parentReport.insMinScore)
+            parentReport.insMinScore = instanceReport.score;
 
-        parentReport.maxPossibleScoreInstance = maxScore;
+        parentReport.maxPossibleScoreInstance = instanceReport.maxScore;
 
         // ResProxies
-        parentReport.resProxyReport.totNumOfResProxies += resProxyReport.numOfResProxies;
+        parentReport.resProxyReport.totNumOfResProxies += instanceReport.resProxyReport.numOfResProxies;
 
-        parentReport.resProxyReport.totNumOfResourcesWithMime += resProxyReport.numOfResourcesWithMime;
-        parentReport.resProxyReport.totNumOfResProxiesWithReferences += resProxyReport.numOfResProxiesWithReferences;
+        parentReport.resProxyReport.totNumOfResourcesWithMime += instanceReport.resProxyReport.numOfResourcesWithMime;
+        parentReport.resProxyReport.totNumOfResProxiesWithReferences += instanceReport.resProxyReport.numOfResProxiesWithReferences;
 
         // XMLPopulatedValidator
-        parentReport.xmlPopulatedReport.totNumOfXMLElements += xmlPopulatedReport.numOfXMLElements;
-        parentReport.xmlPopulatedReport.totNumOfXMLSimpleElements += xmlPopulatedReport.numOfXMLSimpleElements;
-        parentReport.xmlPopulatedReport.totNumOfXMLEmptyElement += xmlPopulatedReport.numOfXMLEmptyElement;
+        parentReport.xmlPopulatedReport.totNumOfXMLElements += instanceReport.xmlPopulatedReport.numOfXMLElements;
+        parentReport.xmlPopulatedReport.totNumOfXMLSimpleElements += instanceReport.xmlPopulatedReport.numOfXMLSimpleElements;
+        parentReport.xmlPopulatedReport.totNumOfXMLEmptyElement += instanceReport.xmlPopulatedReport.numOfXMLEmptyElement;
 
         // XMLValidator
         parentReport.xmlValidationReport.totNumOfRecords += 1;
-        parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidityReport.valid ? 1 : 0;
-        if (!xmlValidityReport.valid) {
+        parentReport.xmlValidationReport.totNumOfValidRecords += instanceReport.xmlValidityReport.valid ? 1 : 0;
+        if (!instanceReport.xmlValidityReport.valid) {
             Record record = new Record();
-            record.name = this.getName();
-            record.issues = this.xmlValidityReport.issues;
+            record.name = instanceReport.getName();
+            record.issues = instanceReport.xmlValidityReport.issues;
             parentReport.xmlValidationReport.record.add(record);
         }
 
         if (Configuration.HTTP_VALIDATION) {
 
-            parentReport.urlReport.totNumOfLinks += urlReport.numOfLinks;
+            parentReport.urlReport.totNumOfLinks += instanceReport.urlReport.numOfLinks;
             //this is not used anymore, because it is taken directly from database
             //parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
-            parentReport.urlReport.totNumOfBrokenLinks += urlReport.numOfBrokenLinks;
-            parentReport.urlReport.totNumOfCheckedLinks += urlReport.numOfCheckedLinks;
+            parentReport.urlReport.totNumOfBrokenLinks += instanceReport.urlReport.numOfBrokenLinks;
+            parentReport.urlReport.totNumOfCheckedLinks += instanceReport.urlReport.numOfCheckedLinks;
         }
 
         // Facet
-        facets.coverage.stream()
+        instanceReport.facets.coverage.stream()
                 .filter(facet -> facet.coveredByInstance)
                 .map(facet -> facet.name)
                 .forEach(coveredFacet -> {
@@ -213,15 +217,8 @@ public class CMDInstanceReport implements Report<CollectionReport> {
                     }
                 });
 
-        parentReport.handleProfile(header.getId(), profileScore);
-
-//        // urls
-//        if (this.url != null) {
-//            if (parentReport.url == null)
-//                parentReport.url = new ArrayList<>();
-//            parentReport.url.addAll(this.url);
-//        }
-
+        parentReport.handleProfile(instanceReport.header.getId(), instanceReport.profileScore);
+        
     }
 
     @Override
