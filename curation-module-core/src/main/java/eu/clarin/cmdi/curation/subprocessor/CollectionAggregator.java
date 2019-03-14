@@ -53,7 +53,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
         
         
-        while(!dir.getChildren().empty()) {
+        while(!dir.getChildren().isEmpty()) {
             
             CurationEntity entity = dir.getChildren().pop();
 
