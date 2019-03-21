@@ -135,23 +135,24 @@ public class Main {
             if (cmd.hasOption("path")) {
                 CollectionsReport overview = new CollectionsReport();
                 
-                
+                for (String path : cmd.getOptionValues("path")) {
                     //dump(curator.processCollection(Paths.get(path)), type);
-                    for(File file : new File(cmd.getOptionValues("path")[0],"cmdi").listFiles()) {
+                    for(File file : new File(path).listFiles()) {
                         report = curator.processCollection(file.toPath());
                         dumpAsXML(report, type);
                         dumpAsHTML(report, type);
                         
                         overview.addReport(report);
-                    }    
+                    }
+                }
 
                 dumpAsXML(overview, type);
             } 
             else
-                throw new Exception("Only path is allowed for results curation");
+                throw new Exception("Only path is allowed for curation of collections root");
         } 
         else
-            throw new Exception("Curation module can curate profiles (-p), instances (-i), collections (-c) and results (-r)");
+            throw new Exception("Curation module can curate profiles (-p), instances (-i), collection (-c) or collection root (-r)");
     }
 
 
@@ -175,8 +176,8 @@ public class Main {
      * } }
      */
     
-    private static void dumpAsXML(Object object, CurationEntityType type) throws Exception{
-        JAXBContext jc = JAXBContext.newInstance(object.getClass());
+    private static void dumpAsXML(Report<?> report, CurationEntityType type) throws Exception{
+        JAXBContext jc = JAXBContext.newInstance(report.getClass());
         
         Marshaller marshaller = jc.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -197,13 +198,13 @@ public class Main {
             }
 
             Files.createDirectories(path);
-            String filename = FileNameEncoder.encode(object instanceof Report? ((Report)object).getName():object.getClass().getSimpleName()) + ".xml";
+            String filename = FileNameEncoder.encode(report.getName()) + ".xml";
             path = path.resolve(filename);
             
-            marshaller.marshal(object, Files.newOutputStream(path));
+            marshaller.marshal(report, Files.newOutputStream(path));
             
         } else {//print to console
-            marshaller.marshal(object, System.out);
+            marshaller.marshal(report, System.out);
 
             System.out.println("-----------------------------------------------------------------");
 
@@ -212,34 +213,34 @@ public class Main {
         
     }
     
-    private static void dumpAsHTML(Object object, CurationEntityType type) throws TransformerException, JAXBException, IOException {
+    private static void dumpAsHTML(Report<?> report, CurationEntityType type) throws TransformerException, JAXBException, IOException {
         Path path = Configuration.OUTPUT_DIRECTORY.resolve("html");
 
         Files.createDirectories(path);
-        String filename = FileNameEncoder.encode(object instanceof Report? ((Report)object).getName():object.getClass().getName()) + ".html";
+        String filename = FileNameEncoder.encode(report.getName()) + ".html";
         path = path.resolve(filename);
         
         TransformerFactory factory = TransformerFactory.newInstance();
-        System.out.println("/xslt/" + object.getClass().getSimpleName() + "2HTML.xsl");
-        Source xslt = new StreamSource(Main.class.getResourceAsStream("/xslt/" + object.getClass().getSimpleName() + "2HTML.xsl"));
+
+        Source xslt = new StreamSource(Main.class.getResourceAsStream("/xslt/" + report.getClass().getSimpleName() + "2HTML.xsl"));
 
         Transformer transformer = factory.newTransformer(xslt);
-        transformer.transform(new JAXBSource(JAXBContext.newInstance(object.getClass()), object), new StreamResult(path.toFile()));                
+        transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), new StreamResult(path.toFile()));                
         
     }
     
-    private static void dumpAsTSV(Object object, CurationEntityType type) throws TransformerException, JAXBException, IOException {
+    private static void dumpAsTSV(Report<?> report, CurationEntityType type) throws TransformerException, JAXBException, IOException {
         Path path = Configuration.OUTPUT_DIRECTORY.resolve("tsv");
 
         Files.createDirectories(path);
-        String filename = FileNameEncoder.encode(object instanceof Report? ((Report)object).getName():object.getClass().getName()) + ".tsv";
+        String filename = FileNameEncoder.encode(report.getName()) + ".tsv";
         path = path.resolve(filename);
         
         TransformerFactory factory = TransformerFactory.newInstance();
-        Source xslt = new StreamSource(Main.class.getResourceAsStream("/xslt/" + object.getClass().getSimpleName() + "2TSV.xsl"));
+        Source xslt = new StreamSource(Main.class.getResourceAsStream("/xslt/" + report.getClass().getSimpleName() + "2TSV.xsl"));
 
         Transformer transformer = factory.newTransformer(xslt);
-        transformer.transform(new JAXBSource(JAXBContext.newInstance(object.getClass()), object), new StreamResult(path.toFile()));        
+        transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), new StreamResult(path.toFile()));        
     }
 
     private static Options createHelpOption() {
@@ -260,7 +261,7 @@ public class Main {
 
         Option collectionCuration = OptionBuilder.withDescription("curate a collection").create("c");
         
-        Option resultsCuration = OptionBuilder.withDescription("curate a results folder of collections").create("r");
+        Option resultsCuration = OptionBuilder.withDescription("curate all collections of a collections roor").create("r");
 
         OptionGroup curationGroup = new OptionGroup();
         curationGroup.addOption(profileCuration).addOption(instanceCuration).addOption(collectionCuration).addOption(resultsCuration);
