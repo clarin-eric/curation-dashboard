@@ -3,11 +3,8 @@ package eu.clarin.cmdi.curation.main;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.PublicProfiles;
 import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
-import eu.clarin.cmdi.curation.instance_parser.InstanceParser;
-import eu.clarin.cmdi.curation.report.CollectionReport;
+import eu.clarin.cmdi.curation.report.CollectionsReport;
 import eu.clarin.cmdi.curation.report.Report;
-import eu.clarin.cmdi.curation.statistics.CollectionStatistics;
-import eu.clarin.cmdi.curation.statistics.Statistics;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 import org.apache.commons.cli.*;
 
@@ -136,7 +133,7 @@ public class Main {
             Report report;
 
             if (cmd.hasOption("path")) {
-                Statistics statistics = new Statistics();
+                CollectionsReport overview = new CollectionsReport();
                 
                 
                     //dump(curator.processCollection(Paths.get(path)), type);
@@ -145,10 +142,10 @@ public class Main {
                         dumpAsXML(report, type);
                         dumpAsHTML(report, type);
                         
-                        statistics.addLine(new CollectionStatistics((CollectionReport)report));
+                        overview.addReport(report);
                     }    
 
-                dumpAsXML(statistics, type);
+                dumpAsXML(overview, type);
             } 
             else
                 throw new Exception("Only path is allowed for results curation");
@@ -200,7 +197,7 @@ public class Main {
             }
 
             Files.createDirectories(path);
-            String filename = FileNameEncoder.encode(object instanceof Report? ((Report)object).getName():object.getClass().getName()) + ".xml";
+            String filename = FileNameEncoder.encode(object instanceof Report? ((Report)object).getName():object.getClass().getSimpleName()) + ".xml";
             path = path.resolve(filename);
             
             marshaller.marshal(object, Files.newOutputStream(path));
