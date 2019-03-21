@@ -10,8 +10,6 @@
 
 	<version>3.0</version>
 
-
-
 	<organization>
 		<name>CLARIN</name>
 		<url>http://www.clarin.eu</url>
@@ -21,6 +19,7 @@
 		<module>curation-module-core</module>
 		<module>curation-module-web</module>
 		<module>linkChecker</module>
+		<module>curation-module-web2</module>
 	</modules>
 
 

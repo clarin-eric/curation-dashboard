@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+  <!--server instance-->
+  <Parameter name="config.location" value="/usr/local/curation-module/conf/config.properties" override="false"/>
+  
+  
+  <Parameter name="vlo.config.location" value="/usr/local/curation-module/confVloConfig.xml"/>
+  
+</Context>
