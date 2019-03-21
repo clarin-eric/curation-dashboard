@@ -3,16 +3,32 @@ package eu.clarin.cmdi.curation.main;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.PublicProfiles;
 import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
+import eu.clarin.cmdi.curation.instance_parser.InstanceParser;
+import eu.clarin.cmdi.curation.report.CollectionReport;
 import eu.clarin.cmdi.curation.report.Report;
+import eu.clarin.cmdi.curation.statistics.CollectionStatistics;
+import eu.clarin.cmdi.curation.statistics.Statistics;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 import org.apache.commons.cli.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.util.JAXBSource;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 public class Main {
 
@@ -73,17 +89,17 @@ public class Main {
             if (cmd.hasOption("id")) {
                 Configuration.OUTPUT_DIRECTORY = null;
                 for (String id : cmd.getOptionValues("id"))
-                    dump(curator.processCMDProfile(id), type);
+                    dumpAsXML(curator.processCMDProfile(id), type);
             } 
             else if (cmd.hasOption("url")) {
                 Configuration.OUTPUT_DIRECTORY = null;
                 for (String url : cmd.getOptionValues("url"))
-                    dump(curator.processCMDProfile(new URL(url)), type);
+                    dumpAsXML(curator.processCMDProfile(new URL(url)), type);
             } 
             else {
                 //throw new Exception("Only id and url options are allowed for profiles curation");
                 for (ProfileHeader pHeader : PublicProfiles.createPublicProfiles())
-                        dump(curator.processCMDProfile(pHeader.getId()), type);
+                        dumpAsXML(curator.processCMDProfile(pHeader.getId()), type);
 
             }
         } 
@@ -91,11 +107,11 @@ public class Main {
             type = CurationEntityType.INSTANCE;
             if (cmd.hasOption("url")) {
                 for (String url : cmd.getOptionValues("url"))
-                    dump(curator.processCMDInstance(new URL(url)), type);
+                    dumpAsXML(curator.processCMDInstance(new URL(url)), type);
             } 
             else if (cmd.hasOption("path")) {
                 for (String path : cmd.getOptionValues("path"))
-                    dump(curator.processCMDInstance(Paths.get(path)), type);
+                    dumpAsXML(curator.processCMDInstance(Paths.get(path)), type);
             } 
             else
                 throw new Exception("Only path and url options are allowed for instances curation");
@@ -106,18 +122,69 @@ public class Main {
             Configuration.COLLECTION_MODE = true;
             if (cmd.hasOption("path")) {
                 for (String path : cmd.getOptionValues("path")) {
-                    dump(curator.processCollection(Paths.get(path)), type);
+                    //dump(curator.processCollection(Paths.get(path)), type);
+                    dumpAsXML(curator.processCollection(Paths.get(path)), type);
+                    dumpAsHTML(curator.processCollection(Paths.get(path)), type);
                 }
             } else
                 throw new Exception("Only path is allowed for collection curation");
         } 
+        else if (cmd.hasOption("r")) {// collection
+            type = CurationEntityType.COLLECTION;
+            Configuration.COLLECTION_MODE = true;
+            
+            Report report;
+
+            if (cmd.hasOption("path")) {
+                Statistics statistics = new Statistics();
+                
+                
+                    //dump(curator.processCollection(Paths.get(path)), type);
+                    for(File file : new File(cmd.getOptionValues("path")[0],"cmdi").listFiles()) {
+                        report = curator.processCollection(file.toPath());
+                        dumpAsXML(report, type);
+                        dumpAsHTML(report, type);
+                        
+                        statistics.addLine(new CollectionStatistics((CollectionReport)report));
+                    }    
+
+                dumpAsXML(statistics, type);
+            } 
+            else
+                throw new Exception("Only path is allowed for results curation");
+        } 
         else
-            throw new Exception("Curation module can curate profiles (-p), instances (-i) and collections (-c)");
+            throw new Exception("Curation module can curate profiles (-p), instances (-i), collections (-c) and results (-r)");
     }
 
 
-    private static void dump(Report report, CurationEntityType type) throws Exception {
-
+    /*
+     * private static void dump(Report report, CurationEntityType type) throws
+     * Exception {
+     * 
+     * if (Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null) {
+     * Path path = null; switch (type) { case PROFILE: path =
+     * Configuration.OUTPUT_DIRECTORY.resolve("profiles"); break; case INSTANCE:
+     * path = Configuration.OUTPUT_DIRECTORY.resolve("instances"); break; case
+     * COLLECTION: path = Configuration.OUTPUT_DIRECTORY.resolve("collections");
+     * break; }
+     * 
+     * Files.createDirectories(path); String filename =
+     * FileNameEncoder.encode(report.getName()) + ".xml"; path =
+     * path.resolve(filename); report.toXML(Files.newOutputStream(path)); } else
+     * {//print to console report.toXML(System.out); System.out.println(
+     * "-----------------------------------------------------------------");
+     * 
+     * } }
+     */
+    
+    private static void dumpAsXML(Object object, CurationEntityType type) throws Exception{
+        JAXBContext jc = JAXBContext.newInstance(object.getClass());
+        
+        Marshaller marshaller = jc.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
+        
         if (Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null) {
             Path path = null;
             switch (type) {
@@ -133,14 +200,49 @@ public class Main {
             }
 
             Files.createDirectories(path);
-            String filename = FileNameEncoder.encode(report.getName()) + ".xml";
+            String filename = FileNameEncoder.encode(object instanceof Report? ((Report)object).getName():object.getClass().getName()) + ".xml";
             path = path.resolve(filename);
-            report.toXML(Files.newOutputStream(path));
+            
+            marshaller.marshal(object, Files.newOutputStream(path));
+            
         } else {//print to console
-            report.toXML(System.out);
+            marshaller.marshal(object, System.out);
+
             System.out.println("-----------------------------------------------------------------");
 
         }
+        
+        
+    }
+    
+    private static void dumpAsHTML(Object object, CurationEntityType type) throws TransformerException, JAXBException, IOException {
+        Path path = Configuration.OUTPUT_DIRECTORY.resolve("html");
+
+        Files.createDirectories(path);
+        String filename = FileNameEncoder.encode(object instanceof Report? ((Report)object).getName():object.getClass().getName()) + ".html";
+        path = path.resolve(filename);
+        
+        TransformerFactory factory = TransformerFactory.newInstance();
+        System.out.println("/xslt/" + object.getClass().getSimpleName() + "2HTML.xsl");
+        Source xslt = new StreamSource(Main.class.getResourceAsStream("/xslt/" + object.getClass().getSimpleName() + "2HTML.xsl"));
+
+        Transformer transformer = factory.newTransformer(xslt);
+        transformer.transform(new JAXBSource(JAXBContext.newInstance(object.getClass()), object), new StreamResult(path.toFile()));                
+        
+    }
+    
+    private static void dumpAsTSV(Object object, CurationEntityType type) throws TransformerException, JAXBException, IOException {
+        Path path = Configuration.OUTPUT_DIRECTORY.resolve("tsv");
+
+        Files.createDirectories(path);
+        String filename = FileNameEncoder.encode(object instanceof Report? ((Report)object).getName():object.getClass().getName()) + ".tsv";
+        path = path.resolve(filename);
+        
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Source xslt = new StreamSource(Main.class.getResourceAsStream("/xslt/" + object.getClass().getSimpleName() + "2TSV.xsl"));
+
+        Transformer transformer = factory.newTransformer(xslt);
+        transformer.transform(new JAXBSource(JAXBContext.newInstance(object.getClass()), object), new StreamResult(path.toFile()));        
     }
 
     private static Options createHelpOption() {
@@ -160,9 +262,11 @@ public class Main {
         Option instanceCuration = OptionBuilder.withDescription("curate an instance").create("i");
 
         Option collectionCuration = OptionBuilder.withDescription("curate a collection").create("c");
+        
+        Option resultsCuration = OptionBuilder.withDescription("curate a results folder of collections").create("r");
 
         OptionGroup curationGroup = new OptionGroup();
-        curationGroup.addOption(profileCuration).addOption(instanceCuration).addOption(collectionCuration);
+        curationGroup.addOption(profileCuration).addOption(instanceCuration).addOption(collectionCuration).addOption(resultsCuration);
         curationGroup.setRequired(true);
 
         Option paramId = OptionBuilder.withArgName("profilesId").hasArgs(Option.UNLIMITED_VALUES)

@@ -59,11 +59,12 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	public void toXML(OutputStream os) throws Exception {
-		XMLMarshaller<CMDProfileReport> instanceMarshaller = new XMLMarshaller<>(CMDProfileReport.class);
-		instanceMarshaller.marshal(this, os);
-	}
+    /*
+     * @Override public void toXML(OutputStream os) throws Exception {
+     * XMLMarshaller<CMDProfileReport> instanceMarshaller = new
+     * XMLMarshaller<>(CMDProfileReport.class); instanceMarshaller.marshal(this,
+     * os); }
+     */
 
 
 	@Override

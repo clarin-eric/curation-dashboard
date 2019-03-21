@@ -135,9 +135,9 @@ public class ResultView extends Panel implements View {
                                 ((CMDInstanceReport) r).fileReport.location = cmdiFile.getFileName().toString();
 
                                 //save it to file
-                                r.toXML(Files.newOutputStream(Paths.get(filePath)));
+//                                r.toXML(Files.newOutputStream(Paths.get(filePath)));
 
-                                r.toXML(result);
+//                                r.toXML(result);
                             }
                             break;
                         case URL:
@@ -150,9 +150,9 @@ public class ResultView extends Panel implements View {
                                 r = new CurationModule().processCMDInstance(new URL(input));
 
                                 //save it to file
-                                r.toXML(Files.newOutputStream(Paths.get(filePath)));
+//                                r.toXML(Files.newOutputStream(Paths.get(filePath)));
 
-                                r.toXML(result);
+//                                r.toXML(result);
                             }
                             break;
                     }
@@ -181,7 +181,7 @@ public class ResultView extends Panel implements View {
                             break;
                     }
 
-                    r.toXML(result);
+//                    r.toXML(result);
 
                     label.setValue(transformer.transform(curationType, result.toString()));
 
@@ -215,7 +215,7 @@ public class ResultView extends Panel implements View {
                     r = Shared.getCollectionReport(input);
 
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    r.toXML(out);
+//                    r.toXML(out);
 
                     xmlReport.setStreamSource(new StreamSource() {
                         @Override

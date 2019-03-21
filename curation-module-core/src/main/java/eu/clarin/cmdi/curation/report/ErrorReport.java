@@ -44,12 +44,13 @@ public class ErrorReport implements Report<CollectionReport>{
 		return false;
 	}
 	
-	@Override
-	public void toXML(OutputStream os) throws Exception {
-		XMLMarshaller<ErrorReport> instanceMarshaller = new XMLMarshaller<>(ErrorReport.class);
-		instanceMarshaller.marshal(this, os);
-		
-	}
+    /*
+     * @Override public void toXML(OutputStream os) throws Exception {
+     * XMLMarshaller<ErrorReport> instanceMarshaller = new
+     * XMLMarshaller<>(ErrorReport.class); instanceMarshaller.marshal(this, os);
+     * 
+     * }
+     */
 
 	@Override
 	public void addSegmentScore(Score segmentScore) {

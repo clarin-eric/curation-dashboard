@@ -221,12 +221,12 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         
     }
 
-    @Override
-    public void toXML(OutputStream os) throws Exception {
-        XMLMarshaller<CMDInstanceReport> instanceMarshaller = new XMLMarshaller<>(CMDInstanceReport.class);
-        instanceMarshaller.marshal(this, os);
-    }
-
+    /*
+     * @Override public void toXML(OutputStream os) throws Exception {
+     * XMLMarshaller<CMDInstanceReport> instanceMarshaller = new
+     * XMLMarshaller<>(CMDInstanceReport.class); instanceMarshaller.marshal(this,
+     * os); }
+     */
     @Override
     public boolean isValid() {
         return segmentScores.stream().filter(Score::hasFatalMsg).findFirst().orElse(null) == null;

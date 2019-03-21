@@ -103,7 +103,7 @@ public class FileSizeValidator extends CMDSubprocessor {
             Path newPath = Files.createTempFile(null, null);
 
             TransformerFactory factory = TransformerFactory.newInstance();
-            Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/cmd-record-1_1-to-1_2.xsl"));
+            Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/xslt/cmd-record-1_1-to-1_2.xsl"));
 
             Transformer transformer = factory.newTransformer(xslt);
             transformer.transform(new StreamSource(entity.getPath().toFile()), new StreamResult(newPath.toFile()));

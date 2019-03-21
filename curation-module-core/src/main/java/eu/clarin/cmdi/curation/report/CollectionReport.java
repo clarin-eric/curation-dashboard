@@ -381,11 +381,12 @@ public class CollectionReport implements Report<CollectionReport> {
 
     }
 
-    @Override
-    public void toXML(OutputStream os) throws Exception {
-        XMLMarshaller<CollectionReport> instanceMarshaller = new XMLMarshaller<>(CollectionReport.class);
-        instanceMarshaller.marshal(this, os);
-    }
+    /*
+     * @Override public void toXML(OutputStream os) throws Exception {
+     * XMLMarshaller<CollectionReport> instanceMarshaller = new
+     * XMLMarshaller<>(CollectionReport.class); instanceMarshaller.marshal(this,
+     * os); }
+     */
 
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
