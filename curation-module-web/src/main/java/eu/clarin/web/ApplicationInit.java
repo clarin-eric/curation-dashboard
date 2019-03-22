@@ -17,7 +17,7 @@ import eu.clarin.cmdi.curation.main.Configuration;
  */
 public class ApplicationInit implements ServletContextListener {
 	
-	static final Logger _logger = LoggerFactory.getLogger(ApplicationInit.class);
+	private static final Logger _logger = LoggerFactory.getLogger(ApplicationInit.class);
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {

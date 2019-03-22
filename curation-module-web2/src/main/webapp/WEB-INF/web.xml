@@ -5,12 +5,21 @@
 <web-app>
   <display-name>Curation Module</display-name>
 
+  <listener>
+    <listener-class>eu.clarin.main.ApplicationInit</listener-class>
+  </listener>
+
+  <context-param>
+    <param-name>config.location</param-name>
+    <param-value>/usr/local/curation-module/conf/config.properties</param-value>
+  </context-param>
+
   <servlet>
     <servlet-name>Jersey Web Application</servlet-name>
     <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
     <init-param>
       <param-name>jersey.config.server.provider.packages</param-name>
-      <param-value>at.ac.oeaw.routes</param-value>
+      <param-value>eu.clarin.routes</param-value>
     </init-param>
 
     <load-on-startup>1</load-on-startup>
@@ -20,4 +29,5 @@
     <servlet-name>Jersey Web Application</servlet-name>
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
+
 </web-app>
