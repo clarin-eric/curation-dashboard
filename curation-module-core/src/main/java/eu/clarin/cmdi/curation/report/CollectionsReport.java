@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /*
 * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
 */
-@XmlRootElement(name = "collections")
+@XmlRootElement(name = "collections-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionsReport implements Report<CollectionsReport> {
 
@@ -36,8 +36,8 @@ public class CollectionsReport implements Report<CollectionsReport> {
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return "CollectionsOverview";
+
+        return "CollectionsReport";
     }
 
     @Override
@@ -107,7 +107,7 @@ public class CollectionsReport implements Report<CollectionsReport> {
         
         public Collection(CollectionReport report) {
             this.name = report.getName();
-            this.scorePercentage = report.avgScore;
+            this.scorePercentage = report.scorePercentage;
             this.numOfFiles = report.fileReport.numOfFiles;
             this.numOfProfiles = report.headerReport.profiles.totNumOfProfiles;
             this.numOfUniqueLinks = report.urlReport.totNumOfUniqueLinks;

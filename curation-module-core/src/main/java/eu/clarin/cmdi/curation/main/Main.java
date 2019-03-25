@@ -147,6 +147,7 @@ public class Main {
                 }
 
                 dumpAsXML(overview, type);
+                dumpAsHTML(overview, type);
             } 
             else
                 throw new Exception("Only path is allowed for curation of collections root");
