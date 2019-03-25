@@ -107,7 +107,7 @@ public class ProfilesReport implements Report<ProfilesReport> {
     private static class Facet{
         @XmlAttribute
         private String name;
-        @XmlElement
+        @XmlAttribute
         private boolean covered;
         
         public Facet() {
