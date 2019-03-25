@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /*
 * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
 */
-@XmlRootElement(name = "collections")
+@XmlRootElement(name = "profiles")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProfilesReport implements Report<ProfilesReport> {
 
