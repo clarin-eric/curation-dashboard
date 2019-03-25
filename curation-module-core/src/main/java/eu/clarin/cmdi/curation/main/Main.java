@@ -4,6 +4,7 @@ import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.PublicProfiles;
 import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
 import eu.clarin.cmdi.curation.report.CollectionsReport;
+import eu.clarin.cmdi.curation.report.ProfilesReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 import org.apache.commons.cli.*;
@@ -95,9 +96,16 @@ public class Main {
             } 
             else {
                 //throw new Exception("Only id and url options are allowed for profiles curation");
-                for (ProfileHeader pHeader : PublicProfiles.createPublicProfiles())
-                        dumpAsXML(curator.processCMDProfile(pHeader.getId()), type);
-
+                Report report;
+                ProfilesReport overview = new ProfilesReport();
+                
+                for (ProfileHeader pHeader : PublicProfiles.createPublicProfiles()) {
+                    report = curator.processCMDProfile(pHeader.getId());
+                    dumpAsXML(report, type);
+                    overview.addReport(report);
+                }
+                dumpAsXML(overview, type);
+                
             }
         } 
         else if (cmd.hasOption("i")) {// instance
@@ -148,6 +156,7 @@ public class Main {
 
                 dumpAsXML(overview, type);
                 dumpAsHTML(overview, type);
+                dumpAsTSV(overview, type);
             } 
             else
                 throw new Exception("Only path is allowed for curation of collections root");
@@ -185,16 +194,16 @@ public class Main {
         marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
         
         if (Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null) {
-            Path path = null;
+            Path path = Configuration.OUTPUT_DIRECTORY.resolve("xml");
             switch (type) {
                 case PROFILE:
-                    path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
+                    path = path.resolve("profiles");
                     break;
                 case INSTANCE:
-                    path = Configuration.OUTPUT_DIRECTORY.resolve("instances");
+                    path = path.resolve("instances");
                     break;
                 case COLLECTION:
-                    path = Configuration.OUTPUT_DIRECTORY.resolve("collections");
+                    path = path.resolve("collections");
                     break;
             }
 
@@ -216,6 +225,18 @@ public class Main {
     
     private static void dumpAsHTML(Report<?> report, CurationEntityType type) throws TransformerException, JAXBException, IOException {
         Path path = Configuration.OUTPUT_DIRECTORY.resolve("html");
+        
+        switch (type) {
+        case PROFILE:
+            path = path.resolve("profiles");
+            break;
+        case INSTANCE:
+            path = path.resolve("instances");
+            break;
+        case COLLECTION:
+            path = path.resolve("collections");
+            break;
+        }
 
         Files.createDirectories(path);
         String filename = FileNameEncoder.encode(report.getName()) + ".html";
@@ -232,6 +253,18 @@ public class Main {
     
     private static void dumpAsTSV(Report<?> report, CurationEntityType type) throws TransformerException, JAXBException, IOException {
         Path path = Configuration.OUTPUT_DIRECTORY.resolve("tsv");
+        
+        switch (type) {
+        case PROFILE:
+            path = path.resolve("profiles");
+            break;
+        case INSTANCE:
+            path = path.resolve("instances");
+            break;
+        case COLLECTION:
+            path = path.resolve("collections");
+            break;
+        }
 
         Files.createDirectories(path);
         String filename = FileNameEncoder.encode(report.getName()) + ".tsv";

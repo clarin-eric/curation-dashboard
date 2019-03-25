@@ -37,7 +37,7 @@ public class ProfilesReport implements Report<ProfilesReport> {
     @Override
     public String getName() {
         // TODO Auto-generated method stub
-        return "ProfilesOverview";
+        return "ProfilesReport";
     }
 
     @Override
