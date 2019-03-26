@@ -1,24 +1,43 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:functx="http://www.functx.com">
+<xsl:function name="functx:capitalize-first" as="xs:string?"
+              xmlns:functx="http://www.functx.com">
+  <xsl:param name="arg" as="xs:string?"/>
+
+  <xsl:sequence select="
+   concat(upper-case(substring($arg,1,1)),
+             substring($arg,2))
+ "/>
+
+</xsl:function>
+<xsl:output method="html" indent="yes"></xsl:output>
 	<xsl:template match="/profiles">
 	<table>
 	<thead>
 <tr>
-<td>Id</td>
-<td>Name</td>
-<td>Score</td>
-<td>Facet Coverage</td>
+<th>Id</th>
+<th>Name</th>
+<th>Score</th>
+<th>FacetCoverage</th>
 <xsl:for-each select="./profile[1]/facets/facet">
-	    <th><xsl:value-of select="@name"></xsl:value-of></th>
+	    <th><xsl:value-of select="functx:capitalize-first(@name)"></xsl:value-of></th>
 	</xsl:for-each>
-	<td>Perc Of Elements With Concepts</td>
-	<td>SMC</td>
+	<th>Perc Of Elements With Concepts</th>
+	<th>SMC</th>
 </tr>
 	</thead>
 	<tbody>
 		<xsl:for-each select="profile">
 		<tr>
-		<td><xsl:value-of select="@id"></xsl:value-of> </td>
+		<td><a>
+		<xsl:attribute name="href">
+		<xsl:text>./</xsl:text>
+		<xsl:value-of select="translate(reportName,'.:','__')"></xsl:value-of>
+		<xsl:text>.html</xsl:text>
+		 </xsl:attribute>
+		 <xsl:value-of select="@id"></xsl:value-of>
+		 </a>
+		 </td>
 		<td><xsl:value-of select="name"></xsl:value-of></td>
 		<td><xsl:value-of select="score"></xsl:value-of></td>
 		<td><xsl:value-of select="format-number(facetCoverage,'##.##%')"></xsl:value-of></td>
@@ -37,8 +56,8 @@
     <td>
     <a>
     <xsl:attribute name="href">
-      <xsl:text>https%3A%2F%2Fclarin.oeaw.ac.at%2Fexist%2Fapps%2Fsmc-browser%2Findex.html%3Fgraph%3Dsmc-graph-groups-profiles-datcats-rr.js%26depth-before%3D7%26depth-after%3D2%26link-distance%3D120%26charge%3D250%26friction%3D75%26gravity%3D10%26node-size%3D4%26link-width%3D1%26labels%3Dshow%26curve%3Dstraight-arrow%26layout%3Dhorizontal-tree%26selected%3D</xsl:text>
-      <xsl:value-of select="translate(@id,':','_')"></xsl:value-of>
+      <xsl:text>https://clarin.oeaw.ac.at/exist/apps/smc-browser/index.html?graph=smc-graph-groups-profiles-datcats-rr.js&amp;depth-before=7&amp;depth-after=2&amp;link-distance=120&amp;charge=250&amp;friction=75&amp;gravity=10&amp;node-size=4&amp;link-width=1&amp;labels=show&amp;curve=straight-arrow&amp;layout=horizontal-tree&amp;selected=</xsl:text>
+      <xsl:value-of select="translate(@id,'.:','_')"></xsl:value-of>
     </xsl:attribute>explore in SMC browser
     </a>
     </td>

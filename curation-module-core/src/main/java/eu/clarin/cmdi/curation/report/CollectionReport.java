@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.report;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,7 +13,6 @@ import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
-import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 

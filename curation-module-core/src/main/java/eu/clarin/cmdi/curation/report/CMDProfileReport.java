@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.report;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -12,8 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
-import eu.clarin.cmdi.curation.main.Configuration;
-import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+
 
 
 /**
@@ -79,7 +77,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
 	@Override
 	public String getName() {
-		return header.getId() + ": " + header.getName();
+		return header.getId() + ":" + header.getName();
 	}
 	
 

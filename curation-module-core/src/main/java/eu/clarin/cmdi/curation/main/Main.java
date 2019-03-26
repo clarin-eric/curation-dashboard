@@ -102,10 +102,12 @@ public class Main {
                 for (ProfileHeader pHeader : PublicProfiles.createPublicProfiles()) {
                     report = curator.processCMDProfile(pHeader.getId());
                     dumpAsXML(report, type);
+                    dumpAsHTML(report, type);
                     overview.addReport(report);
                 }
                 dumpAsXML(overview, type);
-                
+                dumpAsHTML(overview, type);
+                dumpAsTSV(overview, type);
             }
         } 
         else if (cmd.hasOption("i")) {// instance

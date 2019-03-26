@@ -75,6 +75,8 @@ public class CollectionsReport implements Report<CollectionsReport> {
         @XmlAttribute
         private String name;
         @XmlElement
+        private String reportName;
+        @XmlElement
         private double scorePercentage;
         @XmlElement    
         private long numOfFiles;
@@ -107,6 +109,7 @@ public class CollectionsReport implements Report<CollectionsReport> {
         
         public Collection(CollectionReport report) {
             this.name = report.getName();
+            this.reportName = report.getName();
             this.scorePercentage = report.scorePercentage;
             this.numOfFiles = report.fileReport.numOfFiles;
             this.numOfProfiles = report.headerReport.profiles.totNumOfProfiles;

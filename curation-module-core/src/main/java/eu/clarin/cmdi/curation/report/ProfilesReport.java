@@ -76,6 +76,8 @@ public class ProfilesReport implements Report<ProfilesReport> {
         @XmlElement
         private String name;
         @XmlElement
+        private String reportName;
+        @XmlElement
         private double score;
         @XmlElement
         private double facetCoverage;
@@ -93,8 +95,10 @@ public class ProfilesReport implements Report<ProfilesReport> {
         public Profile(CMDProfileReport report) {
             this.id = report.header.getId();
             this.name = report.header.getName();
+            this.reportName = report.getName();
             this.score = report.score;        
             this.facetCoverage = report.facet.profileCoverage;
+            this.percOfElementsWithConcept = report.elements.percWithConcept;
             
             report.facet.coverage.forEach(f -> facets.add(new Facet(f.name, f.coveredByProfile)));          
         }
