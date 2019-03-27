@@ -60,13 +60,13 @@
             <artifactId>jersey-hk2</artifactId>
             <version>${jersey.version}</version>
         </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.0</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -93,6 +93,29 @@
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.2.2</version>
+
+                    <executions>
+                        <execution>
+                            <id>curate</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>war</goal>
+                            </goals>
+                            <configuration>
+                                <warName>curate</warName>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>root</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>war</goal>
+                            </goals>
+                            <configuration>
+                                <warName>ROOT</warName>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <artifactId>maven-install-plugin</artifactId>

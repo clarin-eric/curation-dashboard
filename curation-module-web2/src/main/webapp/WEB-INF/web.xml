@@ -5,10 +5,6 @@
 <web-app>
   <display-name>Curation Module</display-name>
 
-  <listener>
-    <listener-class>eu.clarin.main.ApplicationInit</listener-class>
-  </listener>
-
   <context-param>
     <param-name>config.location</param-name>
     <param-value>/usr/local/curation-module/conf/config.properties</param-value>
