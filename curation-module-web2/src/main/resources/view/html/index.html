@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Curation Module</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<link rel="icon" href="/view/images/favicon.png" type="image/png"/>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-title" content="Curation Module">
+		<link rel="stylesheet" id="fundament-styles" href="/view/fundament/css/fundament.min.css" type="text/css"/>
+		<link rel="stylesheet" id="curate-styles" href="/view/css/curate.css" type="text/css"/>
+
+	</head>
+	<body class="home">
+		<div class="hfeed site" id="page">
+
+			<!-- ******************* The Navbar Area ******************* -->
+			<div class="wrapper-fluid wrapper-navbar sticky-navbar" id="wrapper-navbar" itemscope
+			     itemtype="http://schema.org/WebSite">
+
+				<nav class="navbar navbar-expand-lg navbar-light">
+					<div class="col-md-6 d-flex justify-content-center">
+						<h1>Curation Module 2.3</h1><!--TODO dynamic version with jsoup probably-->
+					</div>
+					<div class="col-md-6 d-flex justify-content-around">
+						<img src="view/images/acdh-logo.png">
+						<img src="view/images/clarin-logo-wide.png">
+					</div>
+
+				</nav>
+
+			</div>
+
+			<div class="row">
+				<div class="col-md-2 left-menu">
+					<nav class="navbar navbar-light bg-light">
+						<a class="navbar-brand" href="/curate/instances">Instances</a>
+					</nav>
+					<nav class="navbar navbar-light bg-light">
+						<a class="navbar-brand" href="/curate/profiles">Profiles</a>
+					</nav>
+					<nav class="navbar navbar-light bg-light">
+						<a class="navbar-brand" href="/curate/collections">Collections</a>
+					</nav>
+					<nav class="navbar navbar-light bg-light">
+						<a class="navbar-brand" href="/curate/statistics">Link Checking Statistics</a>
+					</nav>
+					<nav class="navbar navbar-light bg-light">
+						<a class="navbar-brand" href="/curate/help">Help</a>
+					</nav>
+
+					<!--TODO export tsl button depending on page-->
+
+				</div>
+				<div class="col-md-10">
+					<div id="content">
+						<!--Here comes dynamic content from jsoup-->
+					</div>
+				</div>
+			</div>
+			<!-- .row -->
+
+			<div class="fixed-bottom wrapper fundament-default-footer" id="wrapper-footer-full">
+				<div class="container" id="footer-full-content" tabindex="-1">
+					<div class="row">
+						<!-- .footer-widget -->
+						<div class="footer-widget col-lg-4 col-md-4 col-sm-6 col-9">
+							<div class="textwidget custom-html-widget">
+								<p>
+									© Copyright ACDH-OEAW 2019
+								</p>
+							</div>
+						</div>
+						<div class="footer-widget col-lg-3 col-md-4 col-sm-4 ml-auto">
+							<div class="textwidget custom-html-widget">
+								<p>
+									<a class="helpdesk-button"
+									   href="https://github.com/clarin-eric/clarin-curation-module">ABOUT</a>
+								</p>
+							</div>
+						</div>
+						<div class="footer-widget col-lg-3 col-md-4 col-sm-4 ml-auto">
+							<div class="textwidget custom-html-widget">
+								<p>
+									<a class="helpdesk-button"
+									   href="https://github.com/clarin-eric/clarin-curation-module/issues">FEEDBACK</a>
+								</p>
+							</div>
+						</div>
+						<!-- .footer-widget -->
+					</div>
+				</div>
+			</div>
+			<!-- #wrapper-footer-full -->
+		</div>
+		<script type="text/javascript" src="/view/fundament/vendor/jquery/jquery.min.js"></script>
+		<script type="text/javascript" src="/view/fundament/js/fundament.min.js"></script>
+	</body>
+
+</html>

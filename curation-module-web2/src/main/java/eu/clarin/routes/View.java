@@ -22,7 +22,7 @@ public class View {
 
     private static final Logger logger = Logger.getLogger(View.class);
     //fundament has these types of files
-    private final List<String> extensionsText = Arrays.asList("css", "js", "svg");
+    private final List<String> extensionsText = Arrays.asList("css", "js", "svg");//svg is image but is saved as text
     private final List<String> extensionsImage = Arrays.asList("jpg", "png");
 
 
@@ -34,10 +34,11 @@ public class View {
             String extension = filePath.split("\\.")[filePath.split("\\.").length - 1];
 
             if (extensionsText.contains(extension)) {
-                String file = FileReader.readFile(Configuration.resourcesPath + filePath);
+                String file = FileReader.readFile(Configuration.VIEW_RESOURCES_PATH + filePath);
                 return Response.status(200).entity(file).build();
             } else if (extensionsImage.contains(extension)) {
-                BufferedImage image = FileReader.readImage(Configuration.resourcesPath + filePath);
+
+                BufferedImage image = FileReader.readImage(Configuration.VIEW_RESOURCES_PATH + filePath);
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(image, extension, baos);

@@ -10,7 +10,7 @@ public class URLElement {
     private int status;
     private String contentType;
     private String byteSize;
-    private long duration;//either duration in milliseconds or 'timeout'
+    private long duration;
     private long timestamp;
     private int redirectCount;
     private String collection;

@@ -12,12 +12,12 @@ public class Configuration {
 
     private static Logger _logger = LoggerFactory.getLogger(Configuration.class);
 
-    public static String resourcesPath;
+    public static String VIEW_RESOURCES_PATH;
 
     public static void init(ServletContext servletContext) throws IOException {
 
-        resourcesPath = servletContext.getRealPath("/WEB-INF/classes/view/");
-        _logger.info("resources path" + resourcesPath);
+        VIEW_RESOURCES_PATH = servletContext.getRealPath("/WEB-INF/classes/view/");
+        _logger.info("resources path" + VIEW_RESOURCES_PATH);
 
         String path = servletContext.getInitParameter("config.location");
 

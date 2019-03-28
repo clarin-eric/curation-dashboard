@@ -20,7 +20,7 @@ public class Index {
     public Response getIndex() {
 
         try {
-            String index = FileReader.readFile(Configuration.resourcesPath + "index.html");
+            String index = FileReader.readFile(Configuration.VIEW_RESOURCES_PATH + "html/index.html");
 
             return Response.ok(index).type(MediaType.TEXT_HTML).build();
         } catch (IOException e) {
