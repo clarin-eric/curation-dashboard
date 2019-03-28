@@ -11,6 +11,8 @@ public class Curate {
 
     private static final Logger _logger = Logger.getLogger(Curate.class);
 
+    //todo load correct path variables to config
+
     @GET
     @Path("/instances")
     public Response getInstances() {
