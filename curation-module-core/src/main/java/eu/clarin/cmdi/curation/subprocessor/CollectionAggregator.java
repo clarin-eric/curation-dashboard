@@ -50,7 +50,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
         report.fileReport.minFileSize = dir.getMinFileSize();
         report.fileReport.maxFileSize = dir.getMaxFileSize();
         
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Configuration.THREAD_POOL_SIZE);
         
         
         while(!dir.getChildren().isEmpty()) {

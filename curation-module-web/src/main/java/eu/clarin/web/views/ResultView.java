@@ -106,9 +106,6 @@ public class ResultView extends Panel implements View {
                 ((MainUI) getUI()).setCustomMenu(sideMenu);
                 curate(CurationEntityType.COLLECTION, sourceType, value);
                 break;
-            case "statistics":
-                curate(CurationEntityType.STATISTICS, sourceType, value);
-                break;
         }
 
 
@@ -226,17 +223,6 @@ public class ResultView extends Panel implements View {
 
                     break;
 
-                case STATISTICS:
-
-                    String collectionName = input.split("/")[0];
-                    int status = Integer.parseInt(input.split("/")[1]);
-
-                    LinkCheckerStatisticsHelper helper = new LinkCheckerStatisticsHelper();
-
-                    String resultHTML = helper.createURLTable(collectionName, status);
-                    label.setValue(resultHTML);
-
-                    break;
 
             }
 
