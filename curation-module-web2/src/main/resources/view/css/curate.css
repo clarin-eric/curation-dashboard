@@ -5,3 +5,8 @@
 .leftMenu {
     z-index:999;
 }
+
+.tableFixHead th {
+    position: sticky; top: 0;
+    background-color: white;
+ }

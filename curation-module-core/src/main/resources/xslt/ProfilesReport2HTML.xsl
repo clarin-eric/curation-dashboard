@@ -13,20 +13,20 @@
     </xsl:function>
     <xsl:output method="html" indent="yes"></xsl:output>
     <xsl:template match="/profiles">
-        <table class="table table-responsive fullscreenTable">
+        <table data-toggle="table" class="text-nowrap tableFixHead fullscreenTable table table-responsive table table-striped table-bordered table-sm">
             <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Score</th>
-                    <th>FacetCoverage</th>
+                    <th data-sortable="true">Id</th>
+                    <th data-sortable="true">Name</th>
+                    <th data-sortable="true">Score</th>
+                    <th data-sortable="true">FacetCoverage</th>
                     <xsl:for-each select="./profile[1]/facets/facet">
-                        <th>
+                        <th data-sortable="true">
                             <xsl:value-of select="functx:capitalize-first(@name)"></xsl:value-of>
                         </th>
                     </xsl:for-each>
-                    <th>Perc Of Elements With Concepts</th>
-                    <th>SMC</th>
+                    <th data-sortable="true">Perc Of Elements With Concepts</th>
+                    <th data-sortable="true">SMC</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,7 +35,7 @@
                         <td>
                             <a>
                                 <xsl:attribute name="href">
-                                    <xsl:text>./</xsl:text>
+                                    <xsl:text>/profile/</xsl:text>
                                     <xsl:value-of select="translate(reportName,'.:','__')"></xsl:value-of>
                                     <xsl:text>.html</xsl:text>
                                 </xsl:attribute>

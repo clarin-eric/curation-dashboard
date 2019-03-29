@@ -15,25 +15,25 @@
     <xsl:template match="/collections-report">
         <html>
             <body>
-                <table class="table table-responsive fullscreenTable">
+                <table data-toggle="table" class="text-nowrap tableFixHead fullscreenTable table table-responsive table table-striped table-bordered table-sm">
 
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Score</th>
-                            <th>Num Of Records</th>
-                            <th>Num Of Profiles</th>
-                            <th>Num Of Unique Links</th>
-                            <th>No Of Checked Links</th>
-                            <th>Ratio Of Valid Links</th>
-                            <th>Num Of Res Proxies</th>
-                            <th>Avg Num Of Res Proxies</th>
-                            <th>Ratio Of Valid Records</th>
-                            <th>Avg Num Of Empty XML Elements</th>
-                            <th>Avg Facet Coverage</th>
+                            <th data-sortable="true">Name</th>
+                            <th data-sortable="true">Score</th>
+                            <th data-sortable="true">Num Of Records</th>
+                            <th data-sortable="true">Num Of Profiles</th>
+                            <th data-sortable="true">Num Of Unique Links</th>
+                            <th data-sortable="true">No Of Checked Links</th>
+                            <th data-sortable="true">Ratio Of Valid Links</th>
+                            <th data-sortable="true">Num Of Res Proxies</th>
+                            <th data-sortable="true">Avg Num Of Res Proxies</th>
+                            <th data-sortable="true">Ratio Of Valid Records</th>
+                            <th data-sortable="true">Avg Num Of Empty XML Elements</th>
+                            <th data-sortable="true">Avg Facet Coverage</th>
 
                             <xsl:for-each select="./collection[1]/facets/facet">
-                                <th>
+                                <th data-sortable="true">
                                     <xsl:value-of select="functx:capitalize-first(@name)"></xsl:value-of>
                                 </th>
                             </xsl:for-each>
@@ -46,7 +46,7 @@
                                 <td>
                                     <a>
                                         <xsl:attribute name="href">
-                                            <xsl:text>./</xsl:text>
+                                            <xsl:text>/collection/</xsl:text>
                                             <xsl:value-of select="translate(reportName,'.:','__')"></xsl:value-of>
                                             <xsl:text>.html</xsl:text>
                                         </xsl:attribute>

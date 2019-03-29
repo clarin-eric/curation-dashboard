@@ -36,6 +36,7 @@ public class View {
             if (extensionsText.contains(extension)) {
                 String file = FileReader.readFile(Configuration.VIEW_RESOURCES_PATH + filePath);
                 return Response.status(200).entity(file).build();
+                //todo make the mimetype correct
             } else if (extensionsImage.contains(extension)) {
 
                 BufferedImage image = FileReader.readImage(Configuration.VIEW_RESOURCES_PATH + filePath);
