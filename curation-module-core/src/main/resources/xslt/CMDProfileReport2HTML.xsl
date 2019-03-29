@@ -3,7 +3,6 @@
 <xsl:template match="/profile-report">
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="./VAADIN/themes/mytheme/xsltStyle.css?v=7.6.4" />
 	</head>
 	<body>
 	
