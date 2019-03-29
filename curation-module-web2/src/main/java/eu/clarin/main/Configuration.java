@@ -17,7 +17,8 @@ public class Configuration {
 
     public static String VIEW_RESOURCES_PATH;
     public static String OUTPUT_DIRECTORY;
-    public static Document GENERIC_HTML_DOC;
+    public static String GENERIC_HTML;
+    public static String BASE_URL;
 
     public static void init(ServletContext servletContext) throws IOException {
 
@@ -37,7 +38,9 @@ public class Configuration {
 
         OUTPUT_DIRECTORY = properties.getProperty("OUTPUT_DIRECTORY");
 
-        GENERIC_HTML_DOC = Jsoup.parse(FileReader.readFile(VIEW_RESOURCES_PATH + "/html/generic.html"));
+        GENERIC_HTML = FileReader.readFile(VIEW_RESOURCES_PATH + "/html/generic.html");
+
+        BASE_URL = properties.getProperty("BASE_URL");
 
     }
 }

@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response;
 import eu.clarin.helpers.FileReader;
 import eu.clarin.main.Configuration;
 import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
@@ -17,13 +18,17 @@ public class Curate {
 
     private static final Logger _logger = Logger.getLogger(Curate.class);
 
-    //todo load correct path variables to config
-
     @GET
     @Path("/instances")
     public Response getInstances() {
+        try {
+            String instance = FileReader.readFile(Configuration.VIEW_RESOURCES_PATH + "/html/instance.html");
 
-        return null;
+            return Response.ok().entity(addContentToGenericHTML(instance)).type("text/html").build();
+        } catch (IOException e) {
+            _logger.error("Error when reading instance.html: ", e);
+            return Response.serverError().build();
+        }
     }
 
     @GET
@@ -32,14 +37,9 @@ public class Curate {
         try {
             String profiles = FileReader.readFile(Configuration.OUTPUT_DIRECTORY + "/html/profiles/ProfilesReport.html");
 
-            Document doc = Configuration.GENERIC_HTML_DOC;
-
-            Element content = doc.getElementById("content");
-            content.append(profiles);
-
-            return Response.ok().entity(doc.html()).type("text/html").build();
+            return Response.ok().entity(addContentToGenericHTML(profiles)).type("text/html").build();
         } catch (IOException e) {
-            _logger.error("Error when reading ProfilesReport.html: " + e.getMessage());
+            _logger.error("Error when reading ProfilesReport.html: ", e);
             return Response.serverError().build();
         }
 
@@ -48,19 +48,50 @@ public class Curate {
     @GET
     @Path("/collections")
     public Response getCollections() {
-        return null;
+        try {
+            String collections = FileReader.readFile(Configuration.OUTPUT_DIRECTORY + "/html/collections/CollectionsReport.html");
+
+            return Response.ok().entity(addContentToGenericHTML(collections)).type("text/html").build();
+        } catch (IOException e) {
+            _logger.error("Error when reading CollectionsReport.html: ", e);
+            return Response.serverError().build();
+        }
+
     }
 
     @GET
     @Path("/statistics")
     public Response getStatistics() {
-        return null;
+        try {
+            String statistics = FileReader.readFile(Configuration.OUTPUT_DIRECTORY + "/statistics/linkCheckerStatistics.html");
+
+            return Response.ok().entity(addContentToGenericHTML(statistics)).type("text/html").build();
+        } catch (IOException e) {
+            _logger.error("Error when reading linkCheckerStatistics.html: ", e);
+            return Response.serverError().build();
+        }
+
     }
 
     @GET
     @Path("/help")
     public Response getHelp() {
-        return null;
+        try {
+            String help = FileReader.readFile(Configuration.VIEW_RESOURCES_PATH + "/html/help.html");
+
+            return Response.ok().entity(addContentToGenericHTML(help)).type("text/html").build();
+        } catch (IOException e) {
+            _logger.error("Error when reading help.html: ", e);
+            return Response.serverError().build();
+        }
+    }
+
+    private String addContentToGenericHTML(String content) {
+        Document doc = Jsoup.parse(Configuration.GENERIC_HTML);
+
+        Element contentElement = doc.getElementById("content");
+        contentElement.append(content);
+        return doc.html();
     }
 
 

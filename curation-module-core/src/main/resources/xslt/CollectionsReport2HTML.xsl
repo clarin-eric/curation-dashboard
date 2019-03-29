@@ -15,7 +15,7 @@
     <xsl:template match="/collections-report">
         <html>
             <body>
-                <table class="table table-responsive">
+                <table class="table table-responsive fullscreenTable">
 
                     <thead>
                         <tr>

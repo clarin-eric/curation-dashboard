@@ -13,7 +13,7 @@
     </xsl:function>
     <xsl:output method="html" indent="yes"></xsl:output>
     <xsl:template match="/profiles">
-        <table class="table table-responsive">
+        <table class="table table-responsive fullscreenTable">
             <thead>
                 <tr>
                     <th>Id</th>

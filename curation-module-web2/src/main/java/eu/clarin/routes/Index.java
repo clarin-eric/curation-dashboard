@@ -9,6 +9,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @Path("/")
 public class Index {
@@ -20,11 +22,9 @@ public class Index {
     public Response getIndex() {
 
         try {
-            String index = FileReader.readFile(Configuration.VIEW_RESOURCES_PATH + "html/generic.html");
-
-            return Response.ok(index).type(MediaType.TEXT_HTML).build();
-        } catch (IOException e) {
-            _logger.error("Can't find generic.html",e);
+            return Response.seeOther(new URI(Configuration.BASE_URL + "curate/instances")).build();
+        } catch (URISyntaxException e) {
+            _logger.error("There was an error with redirection: ", e);
             return Response.serverError().build();
         }
 
