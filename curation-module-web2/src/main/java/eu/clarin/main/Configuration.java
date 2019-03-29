@@ -1,5 +1,8 @@
 package eu.clarin.main;
 
+import eu.clarin.helpers.FileReader;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +16,8 @@ public class Configuration {
     private static Logger _logger = LoggerFactory.getLogger(Configuration.class);
 
     public static String VIEW_RESOURCES_PATH;
+    public static String OUTPUT_DIRECTORY;
+    public static Document GENERIC_HTML_DOC;
 
     public static void init(ServletContext servletContext) throws IOException {
 
@@ -21,7 +26,6 @@ public class Configuration {
 
         String path = servletContext.getInitParameter("config.location");
 
-
         _logger.info("Initializing configuration from " + path);
         Properties properties = new Properties();
         properties.load(new FileInputStream(path));
@@ -29,7 +33,11 @@ public class Configuration {
 
     }
 
-    private static void loadVariables(Properties properties) {
-        //todo
+    private static void loadVariables(Properties properties) throws IOException{
+
+        OUTPUT_DIRECTORY = properties.getProperty("OUTPUT_DIRECTORY");
+
+        GENERIC_HTML_DOC = Jsoup.parse(FileReader.readFile(VIEW_RESOURCES_PATH + "/html/generic.html"));
+
     }
 }

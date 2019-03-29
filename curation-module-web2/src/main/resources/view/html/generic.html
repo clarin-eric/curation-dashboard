@@ -20,7 +20,7 @@
 		<div class="hfeed site" id="page">
 
 			<!-- ******************* The Navbar Area ******************* -->
-			<div class="wrapper-fluid wrapper-navbar sticky-navbar" id="wrapper-navbar" itemscope
+			<div class="wrapper-fluid wrapper-navbar sticky-navbar fixed-top" id="wrapper-navbar" itemscope
 			     itemtype="http://schema.org/WebSite">
 
 				<nav class="navbar navbar-expand-lg navbar-light">
@@ -28,8 +28,8 @@
 						<h1>Curation Module 2.3</h1><!--TODO dynamic version with jsoup probably-->
 					</div>
 					<div class="col-md-6 d-flex justify-content-around">
-						<img src="view/images/acdh-logo.png">
-						<img src="view/images/clarin-logo-wide.png">
+						<img src="/view/images/acdh-logo.png">
+						<img src="/view/images/clarin-logo-wide.png">
 					</div>
 
 				</nav>
@@ -37,7 +37,7 @@
 			</div>
 
 			<div class="row">
-				<div class="col-md-2 left-menu">
+				<div class="col-md-2 left-menu position-fixed">
 					<nav class="navbar navbar-light bg-light">
 						<a class="navbar-brand" href="/curate/instances">Instances</a>
 					</nav>
@@ -57,6 +57,7 @@
 					<!--TODO export tsl button or other buttons depending on page-->
 
 				</div>
+				<div class="col-md-2"></div><!--placeholder so that content dont overlap-->
 				<div class="col-md-10">
 					<div id="content">
 						<!--Here comes dynamic content from jsoup-->

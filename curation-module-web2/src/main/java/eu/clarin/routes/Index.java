@@ -20,11 +20,11 @@ public class Index {
     public Response getIndex() {
 
         try {
-            String index = FileReader.readFile(Configuration.VIEW_RESOURCES_PATH + "html/index.html");
+            String index = FileReader.readFile(Configuration.VIEW_RESOURCES_PATH + "html/generic.html");
 
             return Response.ok(index).type(MediaType.TEXT_HTML).build();
         } catch (IOException e) {
-            _logger.error("Can't find index.html",e);
+            _logger.error("Can't find generic.html",e);
             return Response.serverError().build();
         }
 
