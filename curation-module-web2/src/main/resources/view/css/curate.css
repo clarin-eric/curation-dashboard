@@ -1,3 +1,7 @@
 .fullscreenTable {
     height: calc(100vh - 241.2px); //header and footer heights total to 241.2px
 }
+
+.leftMenu {
+    z-index:999;
+}
