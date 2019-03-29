@@ -55,12 +55,12 @@
                         <xsl:for-each select="facets/facet">
                             <xsl:choose>
                                 <xsl:when test="@covered = 'true'">
-                                    <td style="background-color:#fff7b3">
+                                    <td class="facetCovered">
                                         <xsl:value-of select="@covered"></xsl:value-of>
                                     </td>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <td style="background-color:#f2a6a6"">
+                                    <td class="facetNotCovered">
                                         <xsl:value-of select="@covered"></xsl:value-of>
                                     </td>
                                 </xsl:otherwise>
