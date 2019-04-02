@@ -1,5 +1,7 @@
 package eu.clarin.cmdi.curation.report;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.report.CollectionReport.Statistics;
@@ -16,11 +19,16 @@ import eu.clarin.cmdi.curation.report.CollectionReport.Statistics;
 * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
 */
 @XmlRootElement(name = "linkchecker-report")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class LinkCheckerReport implements Report<LinkCheckerReport> {
+    @XmlElement(name="overall")
+    private Overall overall = new Overall();
     
     @XmlElement(name="collection")
-    private List<Collection> collections;
+    private List<CMDCollection> collections = new ArrayList<CMDCollection>();    
+
+      
+
 
     @Override
     public void setParentName(String parentName) {
@@ -37,7 +45,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
     @Override
     public String getName() {
         // TODO Auto-generated method stub
-        return null;
+        return getClass().getSimpleName();
     }
 
     @Override
@@ -58,26 +66,76 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
         
     }
     
-    public void addCollectionReport(Report report) {
+    public void addReport(Report<?> report) {
         if(report instanceof CollectionReport) {
-            CollectionReport cReport = (CollectionReport) report;
             
+            for(Statistics statistics : ((CollectionReport) report).urlReport.status){
+                
+                Statistics aggregatedStatistics = this.overall.statisticsMap.get(statistics.statusCode);
+                
+                if(aggregatedStatistics == null) {
+                    aggregatedStatistics = new Statistics();
+                    aggregatedStatistics.statusCode = statistics.statusCode;
+                    aggregatedStatistics.category = statistics.category;
+                    aggregatedStatistics.count = statistics.count;
+                    aggregatedStatistics.avgRespTime = statistics.avgRespTime;
+                    aggregatedStatistics.maxRespTime = statistics.maxRespTime;
+                    
+                    this.overall.statisticsMap.put(aggregatedStatistics.statusCode, aggregatedStatistics);
+                    
+                    this.overall.avgRespTime = statistics.avgRespTime;
+                    this.overall.count = statistics.count;
+                }
+                else {
+                    aggregatedStatistics.avgRespTime = ((aggregatedStatistics.avgRespTime * aggregatedStatistics.count) + 
+                            (statistics.avgRespTime * statistics.count)) / (aggregatedStatistics.count + statistics.count);
+                    aggregatedStatistics.count = aggregatedStatistics.count + statistics.count;
+                    aggregatedStatistics.maxRespTime = Math.max(aggregatedStatistics.maxRespTime, statistics.maxRespTime);
+                    
+                    this.overall.avgRespTime = ((this.overall.avgRespTime * this.overall.count) + 
+                            (statistics.avgRespTime * statistics.count)) / (this.overall.count + statistics.count);
 
+                    this.overall.count += statistics.count;
+                }
+                
+            };
+                        
+            this.collections.add(new CMDCollection((CollectionReport) report));
+       
         }
     }
     
-    private static class Collection{
+    public static class CMDCollection{
         @XmlAttribute
         private String name;
         
-        @XmlElement
-        private java.util.Collection<Statistics> statistics;
         
-        public Collection() {
+        @XmlElement
+        private Collection<Statistics> statistics;
+        
+        public CMDCollection() {
             
         }
-    }
+        public CMDCollection(CollectionReport report) {
+            
+            this.name = report.getName();
+            this.statistics = report.urlReport.status;
+        }
+    } 
     
-
-
+   public static class Overall{
+       private Map<Integer, Statistics> statisticsMap = new HashMap<Integer, Statistics>();
+       @XmlAttribute
+       private int count;
+       
+       @XmlAttribute
+       private double avgRespTime;
+       
+       @XmlElement
+       public Collection<Statistics> getStatistics() {
+           
+           return this.statisticsMap.values();
+           
+       }
+   }
 }
