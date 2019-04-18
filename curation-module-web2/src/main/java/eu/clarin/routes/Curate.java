@@ -8,9 +8,7 @@ import eu.clarin.helpers.FileReader;
 import eu.clarin.helpers.HtmlHelper;
 import eu.clarin.main.Configuration;
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+
 
 import java.io.IOException;
 
@@ -66,7 +64,7 @@ public class Curate {
     @Path("/statistics")
     public Response getStatistics() {
         try {
-            String statistics = FileReader.readFile(Configuration.OUTPUT_DIRECTORY + "/statistics/linkCheckerStatistics.html");
+            String statistics = FileReader.readFile(Configuration.OUTPUT_DIRECTORY + "/html/statistics/LinkCheckerReport.html");
 
             return Response.ok().entity(HtmlHelper.addContentToGenericHTML(statistics)).type("text/html").build();
         } catch (IOException e) {

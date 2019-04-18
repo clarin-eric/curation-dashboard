@@ -2,8 +2,10 @@ package eu.clarin.cmdi.curation.main;
 
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.PublicProfiles;
+import eu.clarin.cmdi.curation.entities.CurationEntity;
 import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
 import eu.clarin.cmdi.curation.report.CollectionsReport;
+import eu.clarin.cmdi.curation.report.LinkCheckerReport;
 import eu.clarin.cmdi.curation.report.ProfilesReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
@@ -144,6 +146,7 @@ public class Main {
 
             if (cmd.hasOption("path")) {
                 CollectionsReport overview = new CollectionsReport();
+                LinkCheckerReport linkChecker = new LinkCheckerReport();
                 
                 for (String path : cmd.getOptionValues("path")) {
                     //dump(curator.processCollection(Paths.get(path)), type);
@@ -153,12 +156,16 @@ public class Main {
                         dumpAsHTML(report, type);
                         
                         overview.addReport(report);
+                        linkChecker.addReport(report);
                     }
                 }
 
                 dumpAsXML(overview, type);
                 dumpAsHTML(overview, type);
                 dumpAsTSV(overview, type);
+                
+                dumpAsXML(linkChecker, CurationEntityType.STATISTICS);
+                dumpAsHTML(linkChecker, CurationEntityType.STATISTICS);
             } 
             else
                 throw new Exception("Only path is allowed for curation of collections root");
@@ -207,6 +214,8 @@ public class Main {
                 case COLLECTION:
                     path = path.resolve("collections");
                     break;
+                case STATISTICS:
+                    path = path.resolve("statistics"); 
             }
 
             Files.createDirectories(path);
@@ -236,8 +245,10 @@ public class Main {
             path = path.resolve("instances");
             break;
         case COLLECTION:
-            path = path.resolve("collections");
+            path = path.resolve("collections");    
             break;
+        case STATISTICS:
+            path = path.resolve("statistics"); 
         }
 
         Files.createDirectories(path);
