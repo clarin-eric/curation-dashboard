@@ -1,12 +1,11 @@
 .fullscreenTable {
-    height: calc(100vh - 241.2px); //header and footer heights total to 241.2px
+    min-height: calc(100vh - 241.2px); //header and footer heights total to 241.2px
 }
 
 .leftMenu {
     z-index:999;
 }
 
-.tableFixHead th {
-    position: sticky; top: 0;
-    background-color: white;
- }
+.footerSize {
+    height:10vh !important;
+}

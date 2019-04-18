@@ -16,7 +16,7 @@ import java.io.IOException;
 
 
 
-@Path("/curate")
+@Path("/")
 public class Curate {
 
     private static final Logger _logger = Logger.getLogger(Curate.class);

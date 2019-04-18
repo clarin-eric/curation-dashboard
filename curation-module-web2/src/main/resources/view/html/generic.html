@@ -14,7 +14,8 @@
 		<meta name="apple-mobile-web-app-title" content="Curation Module">
 		<link rel="stylesheet" id="fundament-styles" href="/view/fundament/css/fundament.min.css" type="text/css"/>
 		<link rel="stylesheet" id="curate-styles" href="/view/css/curate.css" type="text/css"/>
-		<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.css">
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+		<!--<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.css">-->
 
 	</head>
 	<body class="home">
@@ -40,19 +41,19 @@
 			<div class="row">
 				<div class="col-md-2 position-fixed leftMenu">
 					<nav class="navbar navbar-light bg-light">
-						<a class="navbar-brand" href="/curate/instances">Instances</a>
+						<a class="navbar-brand" href="/instances">Instances</a>
 					</nav>
 					<nav class="navbar navbar-light bg-light">
-						<a class="navbar-brand" href="/curate/profiles">Profiles</a>
+						<a class="navbar-brand" href="/profiles">Profiles</a>
 					</nav>
 					<nav class="navbar navbar-light bg-light">
-						<a class="navbar-brand" href="/curate/collections">Collections</a>
+						<a class="navbar-brand" href="/collections">Collections</a>
 					</nav>
 					<nav class="navbar navbar-light bg-light">
-						<a class="navbar-brand" href="/curate/statistics">Link Checking Statistics</a>
+						<a class="navbar-brand" href="/statistics">Link Checking Statistics</a>
 					</nav>
 					<nav class="navbar navbar-light bg-light">
-						<a class="navbar-brand" href="/curate/help">Help</a>
+						<a class="navbar-brand" href="/help">Help</a>
 					</nav>
 
 					<!--TODO export tsl button or other buttons depending on page-->
@@ -67,7 +68,7 @@
 			</div>
 			<!-- .row -->
 
-			<div class="fixed-bottom wrapper fundament-default-footer" id="wrapper-footer-full">
+			<div class="fixed-bottom wrapper fundament-default-footer footerSize" id="wrapper-footer-full">
 				<div class="container" id="footer-full-content" tabindex="-1">
 					<div class="row">
 						<!-- .footer-widget -->
@@ -102,7 +103,9 @@
 		</div>
 		<script type="text/javascript" src="/view/fundament/vendor/jquery/jquery.min.js"></script>
 		<script type="text/javascript" src="/view/fundament/js/fundament.min.js"></script>
-		<script type="text/javascript" src="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.js"></script>
+		<script type="text/javascript" src="/view/js/curate.js"></script>
+		<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+		<!--<script type="text/javascript" src="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.js"></script>-->
 	</body>
 
 </html>

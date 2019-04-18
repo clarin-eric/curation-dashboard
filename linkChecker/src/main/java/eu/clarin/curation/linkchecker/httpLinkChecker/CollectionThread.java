@@ -5,10 +5,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
-
-import eu.clarin.curation.linkchecker.helpers.Configuration;
 import eu.clarin.curation.linkchecker.urlElements.URLElement;
-
 import eu.clarin.curation.linkchecker.urlElements.URLElementToBeChecked;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -16,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.mongodb.client.model.Filters.eq;

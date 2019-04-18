@@ -15,7 +15,7 @@
     <xsl:template match="/collections-report">
         <html>
             <body>
-                <table data-toggle="table" class="text-nowrap tableFixHead fullscreenTable table table-responsive table table-striped table-bordered table-sm">
+                <table id="collections" class="display text-nowrap" width="100%">
 
                     <thead>
                         <tr>
