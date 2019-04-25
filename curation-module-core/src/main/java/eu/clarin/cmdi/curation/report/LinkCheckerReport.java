@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.report;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.report.CollectionReport.Statistics;
+import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /*
 * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
@@ -58,6 +60,13 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
     public void addSegmentScore(Score segmentScore) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public void toXML(OutputStream os) {
+        XMLMarshaller<LinkCheckerReport> instanceMarshaller = new
+                XMLMarshaller<>(LinkCheckerReport.class);
+        instanceMarshaller.marshal(this, os);
     }
 
     @Override

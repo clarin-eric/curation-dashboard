@@ -21,7 +21,7 @@ public interface Report<R extends Report> {
 	
 	public void addSegmentScore(Score segmentScore);
 	
-//	public void toXML(OutputStream os) throws Exception;
+	public void toXML(OutputStream os);
 	
 	public void mergeWithParent(R parentReport);
 }

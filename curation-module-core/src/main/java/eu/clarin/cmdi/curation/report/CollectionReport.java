@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.report;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,6 +14,7 @@ import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
+import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -21,7 +23,7 @@ import static com.mongodb.client.model.Sorts.ascending;
 import static com.mongodb.client.model.Sorts.orderBy;
 
 /**
-
+ *
  */
 
 @XmlRootElement(name = "collection-report")
@@ -307,11 +309,11 @@ public class CollectionReport implements Report<CollectionReport> {
                 statistics.avgRespTime = doc.getDouble("avg_resp");
                 statistics.maxRespTime = doc.getLong("max_resp");
                 statistics.statusCode = doc.getInteger("_id");
-                if(statistics.statusCode==200){
+                if (statistics.statusCode == 200) {
                     statistics.category = "Ok";
-                }else if(statistics.statusCode == 401 || statistics.statusCode == 405 || statistics.statusCode== 429){
+                } else if (statistics.statusCode == 401 || statistics.statusCode == 405 || statistics.statusCode == 429) {
                     statistics.category = "Undetermined";
-                }else{
+                } else {
                     statistics.category = "Broken";
                 }
                 statistics.count = doc.getInteger("count");
@@ -363,7 +365,7 @@ public class CollectionReport implements Report<CollectionReport> {
         }
 
 
-        int totCheckedUndeterminedRemoved = urlReport.totNumOfCheckedLinks-urlReport.totNumOfUndeterminedLinks;
+        int totCheckedUndeterminedRemoved = urlReport.totNumOfCheckedLinks - urlReport.totNumOfUndeterminedLinks;
 
         urlReport.ratioOfValidLinks = urlReport.totNumOfCheckedLinks == 0 ? 0 :
                 (double) (totCheckedUndeterminedRemoved - urlReport.totNumOfBrokenLinks) / totCheckedUndeterminedRemoved;
@@ -379,12 +381,13 @@ public class CollectionReport implements Report<CollectionReport> {
 
     }
 
-    /*
-     * @Override public void toXML(OutputStream os) throws Exception {
-     * XMLMarshaller<CollectionReport> instanceMarshaller = new
-     * XMLMarshaller<>(CollectionReport.class); instanceMarshaller.marshal(this,
-     * os); }
-     */
+    @Override
+    public void toXML(OutputStream os) {
+        XMLMarshaller<CollectionReport> instanceMarshaller = new
+                XMLMarshaller<>(CollectionReport.class);
+        instanceMarshaller.marshal(this,
+                os);
+    }
 
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -445,7 +448,7 @@ public class CollectionReport implements Report<CollectionReport> {
         @XmlAttribute
         public String name;
 
-        @XmlElement(name="issue")
+        @XmlElement(name = "issue")
         public Collection<String> issues;
     }
 
@@ -456,7 +459,7 @@ public class CollectionReport implements Report<CollectionReport> {
         public int totNumOfUniqueLinks;
         public int totNumOfCheckedLinks;
         public Double avgNumOfUniqueLinks = 0.0;
-//        public int totNumOfResProxiesLinks;
+        //        public int totNumOfResProxiesLinks;
 //        public Double avgNumOfResProxiesLinks = 0.0;
         public int totNumOfBrokenLinks;
         public Double avgNumOfBrokenLinks = 0.0;

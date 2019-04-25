@@ -9,6 +9,18 @@ $(document).ready( function () {
 
     $('#collections').DataTable();
 
-
-
 } );
+
+
+Dropzone.options.cmdiDropzone = {
+  paramName: "file", // The name that will be used to transfer the file
+  maxFilesize: 5, // MB
+  success: function(file, done) {
+    window.location.href="/instance/"+file.name.split(".")[0] + ".html";
+  },
+  error: function(file, error){
+    document.open();
+    document.write(error);
+    document.close();
+  }
+};

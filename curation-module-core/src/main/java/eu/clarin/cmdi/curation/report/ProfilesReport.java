@@ -1,5 +1,8 @@
 package eu.clarin.cmdi.curation.report;
 
+import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,20 +15,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 
 /*
-* @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
-*/
+ * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
+ */
 @XmlRootElement(name = "profiles")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProfilesReport implements Report<ProfilesReport> {
 
-    
-    @XmlElement(name="profile")
+
+    @XmlElement(name = "profile")
     private List<Profile> profiles = new ArrayList<Profile>();
 
     @Override
     public void setParentName(String parentName) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -49,27 +52,34 @@ public class ProfilesReport implements Report<ProfilesReport> {
     @Override
     public void addSegmentScore(Score segmentScore) {
         // TODO Auto-generated method stub
-        
+
+    }
+
+    @Override
+    public void toXML(OutputStream os) {
+        XMLMarshaller<ProfilesReport> instanceMarshaller = new
+                XMLMarshaller<>(ProfilesReport.class);
+        instanceMarshaller.marshal(this, os);
     }
 
     @Override
     public void mergeWithParent(ProfilesReport parentReport) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     public void addReport(Report report) {
-        if(report instanceof CMDProfileReport) {
-            
+        if (report instanceof CMDProfileReport) {
+
             this.profiles.add(new Profile((CMDProfileReport) report));
-            
+
         }
     }
-    
+
 
     @XmlRootElement
-    @XmlAccessorType(XmlAccessType.FIELD)    
-    public static class Profile{
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Profile {
 
         @XmlAttribute
         private String id;
@@ -83,40 +93,41 @@ public class ProfilesReport implements Report<ProfilesReport> {
         private double facetCoverage;
         @XmlElement
         private double percOfElementsWithConcept;
-        
-        @XmlElementWrapper(name="facets")
-        @XmlElement(name="facet")
-        private List<Facet> facets = new ArrayList<Facet>();  
-        
+
+        @XmlElementWrapper(name = "facets")
+        @XmlElement(name = "facet")
+        private List<Facet> facets = new ArrayList<Facet>();
+
         public Profile() {
-            
+
         }
-        
+
         public Profile(CMDProfileReport report) {
             this.id = report.header.getId();
             this.name = report.header.getName();
             this.reportName = report.getName();
-            this.score = report.score;        
+            this.score = report.score;
             this.facetCoverage = report.facet.profileCoverage;
             this.percOfElementsWithConcept = report.elements.percWithConcept;
-            
-            report.facet.coverage.forEach(f -> facets.add(new Facet(f.name, f.coveredByProfile)));          
-        }
-        
-    }
-    
-    @XmlRootElement
-    @XmlAccessorType(XmlAccessType.FIELD)    
 
-    private static class Facet{
+            report.facet.coverage.forEach(f -> facets.add(new Facet(f.name, f.coveredByProfile)));
+        }
+
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+
+    private static class Facet {
         @XmlAttribute
         private String name;
         @XmlAttribute
         private boolean covered;
-        
+
         public Facet() {
-            
+
         }
+
         public Facet(String name, boolean covered) {
             this.name = name;
             this.covered = covered;

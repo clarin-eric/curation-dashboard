@@ -1,6 +1,6 @@
 package eu.clarin.routes;
 
-import eu.clarin.helpers.FileReader;
+import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.HtmlHelper;
 import eu.clarin.main.Configuration;
 import org.apache.log4j.Logger;
@@ -22,7 +22,7 @@ public class Collection {
     public Response getCollection(@PathParam("collectionName") String collectionName){
 
         try{
-            String collectionHTML = FileReader.readFile(Configuration.OUTPUT_DIRECTORY+"/html/collections/"+collectionName);
+            String collectionHTML = FileManager.readFile(Configuration.OUTPUT_DIRECTORY+"/html/collections/"+collectionName);
 
             return Response.ok().entity(HtmlHelper.addContentToGenericHTML(collectionHTML)).type("text/html").build();
         } catch (IOException e) {

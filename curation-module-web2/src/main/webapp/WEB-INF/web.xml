@@ -17,6 +17,11 @@
       <param-name>jersey.config.server.provider.packages</param-name>
       <param-value>eu.clarin.routes</param-value>
     </init-param>
+    <!--this param is needed for uploading files feature-->
+    <init-param>
+      <param-name>jersey.config.server.provider.classnames</param-name>
+      <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+    </init-param>
 
     <load-on-startup>1</load-on-startup>
   </servlet>

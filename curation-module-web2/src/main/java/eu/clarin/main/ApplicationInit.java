@@ -1,5 +1,6 @@
 package eu.clarin.main;
 
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +9,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import java.io.IOException;
+
+import static org.graalvm.compiler.nodes.java.RegisterFinalizerNode.register;
 
 @WebListener
 public class ApplicationInit implements ServletContextListener {
@@ -20,6 +23,7 @@ public class ApplicationInit implements ServletContextListener {
 
             ServletContext servletContext = servletContextEvent.getServletContext();
             Configuration.init(servletContext);
+
 
             //todo if there are more initializaion
 

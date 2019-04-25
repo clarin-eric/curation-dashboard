@@ -1,5 +1,8 @@
 package eu.clarin.cmdi.curation.report;
 
+import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +53,13 @@ public class CollectionsReport implements Report<CollectionsReport> {
     public void addSegmentScore(Score segmentScore) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public void toXML(OutputStream os) {
+        XMLMarshaller<CollectionsReport> instanceMarshaller = new
+                XMLMarshaller<>(CollectionsReport.class);
+        instanceMarshaller.marshal(this, os);
     }
 
     @Override

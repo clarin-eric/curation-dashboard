@@ -32,7 +32,6 @@ public class CurationModule implements CurationModuleInterface {
     }
 
     @Override
-
     public Report<?> processCMDInstance(Path path) throws IOException {
         if (Files.notExists(path))
             throw new IOException(path.toString() + " doesn't exist!");
@@ -45,10 +44,10 @@ public class CurationModule implements CurationModuleInterface {
     @Override
     public Report<?> processCMDInstance(URL url) throws IOException {
         String path = FileNameEncoder.encode(url.toString()) + ".xml";
-        Path cmdiFile = Paths.get(System.getProperty("java.io.tmpdir"), path);
-        new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(url.toString(), cmdiFile.toFile());
-        long size = Files.size(cmdiFile);
-        CMDInstance cmdInstance = new CMDInstance(cmdiFile, size);
+        Path cmdiFilePath = Paths.get(System.getProperty("java.io.tmpdir"), path);
+        new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(url.toString(), cmdiFilePath.toFile());
+        long size = Files.size(cmdiFilePath);
+        CMDInstance cmdInstance = new CMDInstance(cmdiFilePath, size);
         cmdInstance.setUrl(url.toString());
 
         Report<?> report = cmdInstance.generateReport(null);

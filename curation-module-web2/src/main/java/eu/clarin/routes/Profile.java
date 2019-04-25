@@ -1,6 +1,6 @@
 package eu.clarin.routes;
 
-import eu.clarin.helpers.FileReader;
+import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.HtmlHelper;
 import eu.clarin.main.Configuration;
 import org.apache.log4j.Logger;
@@ -21,7 +21,7 @@ public class Profile {
     public Response getProfile(@PathParam("profileName") String profileName){
 
         try{
-            String profileHTML = FileReader.readFile(Configuration.OUTPUT_DIRECTORY+"/html/profiles/"+profileName);
+            String profileHTML = FileManager.readFile(Configuration.OUTPUT_DIRECTORY+"/html/profiles/"+profileName);
 
             return Response.ok().entity(HtmlHelper.addContentToGenericHTML(profileHTML)).type("text/html").build();
         } catch (IOException e) {

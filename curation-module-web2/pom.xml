@@ -62,6 +62,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.0</version>
@@ -72,6 +78,12 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.11.3</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.clarin.cmdi</groupId>
+            <artifactId>curation-module-core</artifactId>
+            <version>3.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

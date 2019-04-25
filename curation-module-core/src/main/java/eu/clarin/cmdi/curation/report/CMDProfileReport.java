@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.report;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -11,158 +12,159 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
-
+import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 
 /**
  * A selection of values from a single CMDProfileReport which will form a line in a statistical overview
- * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
  *
+ * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
  */
 @XmlRootElement(name = "profile-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDProfileReport implements Report<CMDProfileReport> {
 
-	@XmlAttribute(name = "score")
-	public Double score = 0.0;
-	
-	@XmlAttribute(name = "max-score")
-	public double maxScore;
+    @XmlAttribute(name = "score")
+    public Double score = 0.0;
 
-	@XmlAttribute
-	public Long timeStamp = System.currentTimeMillis();
+    @XmlAttribute(name = "max-score")
+    public double maxScore;
 
-	@XmlAttribute
-	public String url;
-	
-	@XmlElement(name = "header-section")
-	public ProfileHeader header;
+    @XmlAttribute
+    public Long timeStamp = System.currentTimeMillis();
 
-	@XmlElement(name = "cmd-components-section")
-	public Components components;
+    @XmlAttribute
+    public String url;
 
-	@XmlElement(name = "cmd-concepts-section")
-	public Elements elements;
+    @XmlElement(name = "header-section")
+    public ProfileHeader header;
 
-	@XmlElement(name = "facets-section")
-	public FacetReport facet;
-	
-	@XmlElementWrapper(name="score-section")
-	@XmlElement(name="score")
-	public Collection<Score> segmentScores;
+    @XmlElement(name = "cmd-components-section")
+    public Components components;
 
-	@Override
-	public void mergeWithParent(CMDProfileReport parentReport) {
-		// profile should not have a parent
-		throw new UnsupportedOperationException();
-	}
+    @XmlElement(name = "cmd-concepts-section")
+    public Elements elements;
 
-    /*
-     * @Override public void toXML(OutputStream os) throws Exception {
-     * XMLMarshaller<CMDProfileReport> instanceMarshaller = new
-     * XMLMarshaller<>(CMDProfileReport.class); instanceMarshaller.marshal(this,
-     * os); }
-     */
+    @XmlElement(name = "facets-section")
+    public FacetReport facet;
+
+    @XmlElementWrapper(name = "score-section")
+    @XmlElement(name = "score")
+    public Collection<Score> segmentScores;
+
+    @Override
+    public void mergeWithParent(CMDProfileReport parentReport) {
+        // profile should not have a parent
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void toXML(OutputStream os) {
+        XMLMarshaller<CMDProfileReport> instanceMarshaller = new
+                XMLMarshaller<>(CMDProfileReport.class);
+        instanceMarshaller.marshal(this,
+                os);
+    }
 
 
-	@Override
-	public void setParentName(String parentName) {
-		//dont do anything, profile reports dont have parent reports
-	}
+    @Override
+    public void setParentName(String parentName) {
+        //dont do anything, profile reports dont have parent reports
+    }
 
-	@Override
-	public String getParentName() {
-		return null;
-	}
+    @Override
+    public String getParentName() {
+        return null;
+    }
 
-	@Override
-	public String getName() {
-		return header.getId() + ":" + header.getName();
-	}
-	
+    @Override
+    public String getName() {
+        return header.getId() + ":" + header.getName();
+    }
 
-	@XmlRootElement()
-	@XmlAccessorType(XmlAccessType.FIELD)
-	public static class Components {
 
-		@XmlAttribute
-		public int total;
-		
-		@XmlAttribute
-		public int unique;
+    @XmlRootElement()
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Components {
 
-		@XmlAttribute
-		public int required; // cardinality > 0
+        @XmlAttribute
+        public int total;
 
-		@XmlElement(name="component")
-		public Collection<Component> components;
+        @XmlAttribute
+        public int unique;
 
-	}
+        @XmlAttribute
+        public int required; // cardinality > 0
 
-	@XmlRootElement()
-	@XmlAccessorType(XmlAccessType.FIELD)
-	public static class Component {
+        @XmlElement(name = "component")
+        public Collection<Component> components;
 
-		@XmlAttribute
-		public String id;
-		
-		@XmlAttribute
-		public String name;
-		
-		@XmlAttribute
-		public int count;
-	}
+    }
 
-	@XmlRootElement()
-	@XmlAccessorType(XmlAccessType.FIELD)
-	public static class Elements {
+    @XmlRootElement()
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Component {
 
-		@XmlAttribute
-		public int total;
+        @XmlAttribute
+        public String id;
 
-		@XmlAttribute
-		public int required; // cardinality > 0
+        @XmlAttribute
+        public String name;
 
-		@XmlAttribute
-		public int withConcept;
+        @XmlAttribute
+        public int count;
+    }
 
-		@XmlAttribute
-		public Double percWithConcept;
+    @XmlRootElement()
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Elements {
 
-		public Concepts concepts;
+        @XmlAttribute
+        public int total;
 
-	}
+        @XmlAttribute
+        public int required; // cardinality > 0
 
-	@XmlRootElement
-	@XmlAccessorType(XmlAccessType.FIELD)
-	public static class Concepts {
+        @XmlAttribute
+        public int withConcept;
 
-		@XmlAttribute
-		public int total;
+        @XmlAttribute
+        public Double percWithConcept;
 
-		@XmlAttribute
-		public int unique;
+        public Concepts concepts;
 
-		@XmlAttribute
-		public int required;
+    }
 
-		@XmlElement(name="concept")
-		public Collection<Concept> concepts;		
-	}
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Concepts {
 
-	@Override
-	public void addSegmentScore(Score segmentScore) {
-		if(segmentScores == null)
-			segmentScores = new ArrayList<>();
+        @XmlAttribute
+        public int total;
 
-		segmentScores.add(segmentScore);
-		maxScore += segmentScore.maxScore;
-		score += segmentScore.score;
-	}
+        @XmlAttribute
+        public int unique;
 
-	@Override
-	public boolean isValid() {
-		return segmentScores.stream().filter(Score::hasFatalMsg).findFirst().orElse(null) == null;
-	}
+        @XmlAttribute
+        public int required;
+
+        @XmlElement(name = "concept")
+        public Collection<Concept> concepts;
+    }
+
+    @Override
+    public void addSegmentScore(Score segmentScore) {
+        if (segmentScores == null)
+            segmentScores = new ArrayList<>();
+
+        segmentScores.add(segmentScore);
+        maxScore += segmentScore.maxScore;
+        score += segmentScore.score;
+    }
+
+    @Override
+    public boolean isValid() {
+        return segmentScores.stream().filter(Score::hasFatalMsg).findFirst().orElse(null) == null;
+    }
 
 }

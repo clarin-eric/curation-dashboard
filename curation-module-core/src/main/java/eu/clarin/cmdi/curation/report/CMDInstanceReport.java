@@ -14,7 +14,7 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 /**
-
+ *
  */
 
 @XmlRootElement(name = "instance-report")
@@ -49,7 +49,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     // Header
     @XmlElement(name = "profile-section")
     public ProfileHeader header;
-    
+
     // file
     @XmlElement(name = "file-section")
     public FileReport fileReport;
@@ -165,7 +165,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
         mergeWithParent(parentReport, this);
     }
-    
+
     private static final synchronized void mergeWithParent(CollectionReport parentReport, CMDInstanceReport instanceReport) {
         parentReport.score += instanceReport.score;
         if (instanceReport.score > parentReport.insMaxScore)
@@ -218,15 +218,16 @@ public class CMDInstanceReport implements Report<CollectionReport> {
                 });
 
         parentReport.handleProfile(instanceReport.header.getId(), instanceReport.profileScore);
-        
+
     }
 
-    /*
-     * @Override public void toXML(OutputStream os) throws Exception {
-     * XMLMarshaller<CMDInstanceReport> instanceMarshaller = new
-     * XMLMarshaller<>(CMDInstanceReport.class); instanceMarshaller.marshal(this,
-     * os); }
-     */
+
+    @Override
+    public void toXML(OutputStream os) {
+        XMLMarshaller<CMDInstanceReport> instanceMarshaller = new XMLMarshaller<>(CMDInstanceReport.class);
+        instanceMarshaller.marshal(this, os);
+    }
+
     @Override
     public boolean isValid() {
         return segmentScores.stream().filter(Score::hasFatalMsg).findFirst().orElse(null) == null;

@@ -1,5 +1,6 @@
-.fullscreenTable {
-    min-height: calc(100vh - 241.2px); //header and footer heights total to 241.2px
+.fullscreen {
+    //min-height: calc(100vh - 241.2px); //header and footer heights total to 241.2px
+    min-height: 70vh;
 }
 
 .leftMenu {
@@ -8,4 +9,11 @@
 
 .footerSize {
     height:10vh !important;
+}
+
+.dragAndDropBox{
+    width:400px;
+    height:300px;
+    border-style: dashed;
+    border-radius: 25px;
 }
