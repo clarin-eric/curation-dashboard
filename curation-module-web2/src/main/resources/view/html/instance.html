@@ -20,15 +20,15 @@
 	</head>
 	<body>
 		<div class="fullscreen">
-			<h1>TODO LIST</h1>
-			<ul>
-				<li>Insances page (this page)</li>
-				<li>Filtering in general tables</li>
-				<li>single instance report generation</li>
-				<li>Overhaul Help page</li>
-				<li>links should look like links</li>
-				<li>Don't forget to copy scheduler for deleting temp files</li>
-			</ul>
+
+			<!--TODO url as input-->
+
+			<form action="/curate/instance">
+				<input type="text" class="form-control" placeholder="CMD Record URL" id="url-input" name="url-input">
+				<input type="submit" value="Assess">
+			</form>
+
+			<br>
 
 			<form action="/curate/instance"
 			      class="dropzone dragAndDropBox"

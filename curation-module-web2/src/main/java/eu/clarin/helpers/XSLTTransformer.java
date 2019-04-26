@@ -31,10 +31,6 @@ public class XSLTTransformer {
     }
 
     public synchronized String transform(CurationEntityType type, String content) {
-        //this line is to remove the invisible BOM characters from content
-        //todo see if necessary
-//        content = content.replace("\uFEFF", "");
-
         Transformer t = null;
         switch (type) {
             case PROFILE:

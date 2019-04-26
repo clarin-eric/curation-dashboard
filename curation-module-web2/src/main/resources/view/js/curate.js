@@ -16,11 +16,14 @@ Dropzone.options.cmdiDropzone = {
   paramName: "file", // The name that will be used to transfer the file
   maxFilesize: 5, // MB
   success: function(file, done) {
-    window.location.href="/instance/"+file.name.split(".")[0] + ".html";
-  },
-  error: function(file, error){
+//    window.location.href="/instance/"+file.name.split(".")[0] + ".html";
     document.open();
-    document.write(error);
+    document.write(done);
     document.close();
+   },
+   error: function(file, error){
+        document.open();
+        document.write(error);
+        document.close();
   }
 };

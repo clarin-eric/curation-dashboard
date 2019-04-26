@@ -1,7 +1,7 @@
 package eu.clarin.routes;
 
 import eu.clarin.helpers.FileManager;
-import eu.clarin.helpers.HtmlHelper;
+import eu.clarin.helpers.HTMLHelpers.HtmlManipulator;
 import eu.clarin.main.Configuration;
 import org.apache.log4j.Logger;
 
@@ -18,15 +18,15 @@ public class Profile {
 
     @GET
     @Path("/{profileName}")
-    public Response getProfile(@PathParam("profileName") String profileName){
+    public Response getProfile(@PathParam("profileName") String profileName) {
 
-        try{
-            String profileHTML = FileManager.readFile(Configuration.OUTPUT_DIRECTORY+"/html/profiles/"+profileName);
+        try {
+            String profileHTML = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/profiles/" + profileName);
 
-            return Response.ok().entity(HtmlHelper.addContentToGenericHTML(profileHTML)).type("text/html").build();
+            return Response.ok().entity(HtmlManipulator.addContentToGenericHTML(profileHTML, null)).type("text/html").build();
         } catch (IOException e) {
-            _logger.error("There was an error reading the profile: "+profileName,e);
-            return Response.status(404).entity("The profile "+profileName+ " doesn't exist.").build();
+            _logger.error("There was an error reading the profile: " + profileName, e);
+            return Response.status(404).entity("The profile " + profileName + " doesn't exist.").build();
         }
     }
 }

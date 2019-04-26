@@ -15,7 +15,6 @@ public class Configuration {
 
     public static String VIEW_RESOURCES_PATH;
     public static String OUTPUT_DIRECTORY;
-    public static String GENERIC_HTML;
     public static String BASE_URL;
 
     public static void init(ServletContext servletContext) throws IOException {
@@ -35,11 +34,9 @@ public class Configuration {
 
     }
 
-    private static void loadVariables(Properties properties) throws IOException {
+    private static void loadVariables(Properties properties) {
 
         OUTPUT_DIRECTORY = properties.getProperty("OUTPUT_DIRECTORY");
-
-        GENERIC_HTML = FileManager.readFile(VIEW_RESOURCES_PATH + "/html/generic.html");
 
         BASE_URL = properties.getProperty("BASE_URL");
 
