@@ -25,6 +25,9 @@ public class Configuration {
 
         String path = servletContext.getInitParameter("config.location");
 
+        //this is necessary for core module methods.
+        eu.clarin.cmdi.curation.main.Configuration.init(path);
+
         _logger.info("Initializing configuration from: " + path);
         Properties properties = new Properties();
         properties.load(new FileInputStream(path));

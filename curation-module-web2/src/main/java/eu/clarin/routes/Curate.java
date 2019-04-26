@@ -65,26 +65,23 @@ public class Curate {
     public Response postInstances(@FormDataParam("file") InputStream fileInputStream,
                                   @FormDataParam("file") FormDataContentDisposition fileMetaData) {
 
-        String fileName = fileMetaData.getFileName().split("\\.")[0] + ".html";
-        String filePath = Configuration.OUTPUT_DIRECTORY + "/html/instances/" + fileName;
-        File instance = new File(filePath);
+        String fileName = fileMetaData.getFileName();
+        String htmlFilePath = Configuration.OUTPUT_DIRECTORY + "/html/instances/" + fileName.split("\\.")[0] + ".html";
+        File instance = new File(htmlFilePath);
 
         if (Files.exists(instance.toPath())) {
 
             try {
-                String result = FileManager.readFile(filePath);
+                String result = FileManager.readFile(htmlFilePath);
                 return Response.ok(HtmlHelper.addContentToGenericHTML(result)).type(MediaType.TEXT_HTML).build();
             } catch (IOException e) {
                 return Response.serverError().build();
             }
         } else {
 
-            //read inputstream into string (from stackoverflow like all code ever)
+            //read inputstream into string (from stackoverflow, like all code ever)
             String content = new BufferedReader(new InputStreamReader(fileInputStream))
                     .lines().collect(Collectors.joining("\n"));
-            //this line is to remove the invisible BOM characters
-            //todo check if needed
-            content = content.replace("\uFEFF", "");
 
             try {
                 String tempPath = System.getProperty("java.io.tmpdir") + "/" + fileName;
@@ -92,13 +89,15 @@ public class Curate {
 
                 CMDInstanceReport r = (CMDInstanceReport) new CurationModule().processCMDInstance(Paths.get(tempPath));
 
-                String reportPath = Configuration.OUTPUT_DIRECTORY + "/xml/instances/" + fileName + ".xml";
+                String reportPath = Configuration.OUTPUT_DIRECTORY + "/xml/instances/" + fileName.split("\\.")[0] + ".xml";
                 r.toXML(Files.newOutputStream(Paths.get(reportPath)));
 
-                XSLTTransformer transformer = new XSLTTransformer();
-                String result = transformer.transform(CurationEntity.CurationEntityType.INSTANCE, reportPath);
+                String report = FileManager.readFile(reportPath);
 
-                FileManager.writeToFile(filePath, result);
+                XSLTTransformer transformer = new XSLTTransformer();
+                String result = transformer.transform(CurationEntity.CurationEntityType.INSTANCE, report);
+
+                FileManager.writeToFile(htmlFilePath, result);
 
                 return Response.ok(HtmlHelper.addContentToGenericHTML(result)).type(MediaType.TEXT_HTML).build();
             } catch (IOException e) {
