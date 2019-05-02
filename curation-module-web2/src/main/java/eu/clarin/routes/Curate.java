@@ -23,6 +23,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -219,7 +222,8 @@ public class Curate {
         try {
             String profiles = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/profiles/ProfilesReport.html");
 
-            return Response.ok().entity(HtmlManipulator.addContentToGenericHTML(profiles, new NavbarButton("/profiles/tsv", "Export as TSV"))).type("text/html").build();
+            List<NavbarButton> buttons = new ArrayList<>(Arrays.asList(new NavbarButton("/profiles/tsv", "Export as TSV")));
+            return Response.ok().entity(HtmlManipulator.addContentToGenericHTML(profiles, buttons)).type("text/html").build();
         } catch (IOException e) {
             _logger.error("Error when reading ProfilesReport.html: ", e);
             return Response.serverError().build();
@@ -249,7 +253,8 @@ public class Curate {
         try {
             String collections = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/collections/CollectionsReport.html");
 
-            return Response.ok().entity(HtmlManipulator.addContentToGenericHTML(collections, new NavbarButton("/collections/tsv", "Export as TSV"))).type("text/html").build();
+            List<NavbarButton> buttons = new ArrayList<>(Arrays.asList(new NavbarButton("/collections/tsv", "Export as TSV")));
+            return Response.ok().entity(HtmlManipulator.addContentToGenericHTML(collections, buttons)).type("text/html").build();
         } catch (IOException e) {
             _logger.error("Error when reading CollectionsReport.html: ", e);
             return Response.serverError().build();

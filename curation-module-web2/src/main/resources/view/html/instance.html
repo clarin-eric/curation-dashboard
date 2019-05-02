@@ -21,23 +21,30 @@
 	<body>
 		<div class="fullscreen">
 
-			<!--TODO url as input-->
 
 			<form action="/curate/instance">
-				<input type="text" class="form-control" placeholder="CMD Record URL" id="url-input" name="url-input">
-				<input type="submit" value="Assess">
-			</form>
-
-			<br>
-
-			<form action="/curate/instance"
-			      class="dropzone dragAndDropBox"
-			      id="cmdi-dropzone">
-				<div class="dz-message">
-					Drag a CMDI record here
+				<div class="row">
+					<input type="text" class="form-control" placeholder="CMD Record URL" id="url-input"
+					       name="url-input">
 				</div>
 
+				<div class="row">
+					<form action="/curate/instance"
+					      class="dropzone dragAndDropBox"
+					      id="cmdi-dropzone">
+						<div class="dz-message">
+							Drag a CMDI record here
+						</div>
+
+					</form>
+				</div>
+
+				<div class="row">
+					<input type="submit" value="Assess">
+				</div>
 			</form>
+
+
 		</div>
 
 		<script type="text/javascript" src="/view/fundament/vendor/jquery/jquery.min.js"></script>

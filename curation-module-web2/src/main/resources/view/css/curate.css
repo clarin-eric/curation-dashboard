@@ -3,8 +3,16 @@
     min-height: 70vh;
 }
 
+.content {
+    padding-bottom: 11vh;
+}
+
 .leftMenu {
     z-index:999;
+}
+
+.leftButton {
+    width: 100%;
 }
 
 .footerSize {
@@ -16,4 +24,12 @@
     height:300px;
     border-style: dashed;
     border-radius: 25px;
+}
+
+.debug{
+    border-style: dashed;
+}
+
+.debug1{
+    border-style: solid;
 }
