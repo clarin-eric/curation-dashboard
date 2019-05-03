@@ -88,6 +88,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         @XmlValue
         public String url;
 
+        @XmlAttribute(name = "category")
+        public String category;
+
         @XmlAttribute(name = "method")
         public String method;
 
@@ -120,6 +123,14 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             method = urlElement.getMethod();
             message = urlElement.getMessage();
             status = urlElement.getStatus();
+            //todo put this in its own class (categoryDeterminer)
+            if (status == 200) {
+                category = "Ok";
+            } else if (status == 401 || status == 405 || status == 429) {
+                category = "Undetermined";
+            } else {
+                category = "Broken";
+            }
             contentType = urlElement.getContentType();
             expectedContentType = urlElement.getExpectedMimeType();
             byteSize = urlElement.getByteSize();

@@ -32,4 +32,14 @@ Dropzone.options.cmdiDropzone = {
   }
 };
 
+function toggleFacets() {
+    var facetTable = $('#facetTable');
+
+    if(facetTable.attr("hidden")){
+        facetTable.removeAttr("hidden");
+    }else{
+        facetTable.attr("hidden",true);
+    }
+}
+
 
