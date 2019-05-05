@@ -19,7 +19,6 @@
 		<module>curation-module-core</module>
 		<module>curation-module-web</module>
 		<module>linkChecker</module>
-		<module>curation-module-web2</module>
 	</modules>
 
 
