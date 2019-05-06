@@ -9,10 +9,10 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>curation-module-web2</artifactId>
+    <artifactId>curation-module-web</artifactId>
     <packaging>war</packaging>
 
-    <name>curation-module-web2</name>
+    <name>curation-module-web</name>
     <url>https://curate.acdh.oeaw.ac.at/</url>
 
     <properties>
