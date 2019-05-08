@@ -30,6 +30,13 @@ public class CurationModule implements CurationModuleInterface {
 
         return new CMDProfile(schemaLocation.toString(), "1.x").generateReport(null);
     }
+    
+    @Override    
+    public Report<?> processCMDProfile(Path path) {
+
+        //return processCMDProfile(path.toUri().toURL());
+        return null;
+    }
 
     @Override
     public Report<?> processCMDInstance(Path path) throws IOException {

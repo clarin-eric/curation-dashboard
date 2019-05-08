@@ -12,6 +12,8 @@ import eu.clarin.cmdi.curation.report.Report;
 public interface CurationModuleInterface {
 	
     public Report processCMDProfile(String profileId);
+    
+    public Report processCMDProfile(Path path);
 	
 	
 	public Report processCMDProfile(URL schemaLocation);
