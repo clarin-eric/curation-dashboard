@@ -7,7 +7,6 @@
             <body>
                 <h1>CMD Record Report</h1>
 
-                <xsl:variable name="profileID" select="./profile-section/id"/>
                 <xsl:variable name="cmdRecord" select="./file-section/location"/>
 
                 <p>CMD Record:
@@ -34,8 +33,11 @@
 
                 <!--TODO this link is wrong-->
                 <p>profileID:
-                    <a href="/profile/{$profileID}">
-                        <xsl:copy-of select="$profileID"/>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="./profile-section/schemaLocation"></xsl:value-of>
+                        </xsl:attribute>
+                        <xsl:value-of select="./profile-section/id"></xsl:value-of>
                     </a>
                 </p>
                 <p>status:

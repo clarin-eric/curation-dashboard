@@ -100,7 +100,7 @@ public class FileSizeValidator extends CMDSubprocessor {
         //convert cmdi 1.1 to 1.2 if necessary
 
         if (!isLatestVersion(entity.getPath())) {
-            Path newPath = Files.createTempFile(null, null);
+            Path newPath = Files.createTempFile(null, ".xml");
 
             TransformerFactory factory = TransformerFactory.newInstance();
             Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/xslt/cmd-record-1_1-to-1_2.xsl"));

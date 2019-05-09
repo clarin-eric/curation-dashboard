@@ -94,7 +94,7 @@ public class Curate {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
 
-            marshaller.marshal(report, Files.newOutputStream(xmlPath.resolve(report.getName() + ".xml")));
+            marshaller.marshal(report, Files.newOutputStream(xmlPath.resolve(FileNameEncoder.encode(report.getName()) + ".xml")));
 
 
             TransformerFactory factory = TransformerFactory.newInstance();
@@ -110,7 +110,7 @@ public class Curate {
 
             transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), result);
 
-            String htmlFilePath = Configuration.OUTPUT_DIRECTORY + "/html/instances/" + report.getName() + ".html";
+            String htmlFilePath = Configuration.OUTPUT_DIRECTORY + "/html/instances/" + FileNameEncoder.encode(report.getName()) + ".html";
             FileManager.writeToFile(htmlFilePath, writeBuffer.toString());
 
             return ResponseManager.returnHTML(200, result.getWriter().toString(), null);
@@ -170,7 +170,7 @@ public class Curate {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
 
-            marshaller.marshal(report, Files.newOutputStream(xmlPath.resolve(report.getName() + ".xml")));
+            marshaller.marshal(report, Files.newOutputStream(xmlPath.resolve(FileNameEncoder.encode(report.getName()) + ".xml")));
 
 
             TransformerFactory factory = TransformerFactory.newInstance();
@@ -186,7 +186,7 @@ public class Curate {
 
             transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), result);
 
-            String htmlFilePath = Configuration.OUTPUT_DIRECTORY + "/html/instances/" + report.getName() + ".html";
+            String htmlFilePath = Configuration.OUTPUT_DIRECTORY + "/html/instances/" + FileNameEncoder.encode(report.getName()) + ".html";
             FileManager.writeToFile(htmlFilePath, writeBuffer.toString());
 
             return ResponseManager.returnHTML(200, result.getWriter().toString(), null);
