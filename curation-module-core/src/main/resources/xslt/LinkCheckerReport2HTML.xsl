@@ -21,6 +21,7 @@
                     </thead>
                     <tbody>
                         <xsl:for-each select="overall/statistics">
+                            <xsl:variable name="status" select="@statusCode"/>
                             <tr>
                                 <xsl:attribute name="style">
                                     <xsl:choose>
@@ -38,8 +39,12 @@
                                 </xsl:attribute>
 
                                 <td>
-                                    <xsl:value-of select="@statusCode"></xsl:value-of>
+                                    <a href="/statistics/Overall/{$status}">
+                                        <xsl:value-of select="@statusCode"></xsl:value-of>
+                                    </a>
                                 </td>
+
+
 
                                 <td>
                                     <xsl:value-of select="@category"></xsl:value-of>
@@ -90,7 +95,7 @@
                         <tbody>
                             <xsl:for-each select="statistics">
 
-                                <xsl:variable name="category" select="@category"/>
+                                <xsl:variable name="status" select="@status"/>
 
                                 <tr>
                                     <xsl:attribute name="style">
@@ -110,7 +115,7 @@
 
 
                                     <td>
-                                        <a href="/statistics/{$name}/{$category}">
+                                        <a href="/statistics/{$name}/{$status}">
                                             <xsl:value-of select="@statusCode"></xsl:value-of>
                                         </a>
                                     </td>

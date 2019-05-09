@@ -258,7 +258,8 @@ public class Main {
         Source xslt = new StreamSource(Main.class.getResourceAsStream("/xslt/" + report.getClass().getSimpleName() + "2HTML.xsl"));
 
         Transformer transformer = factory.newTransformer(xslt);
-        transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), new StreamResult(path.toFile()));                
+        transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), new StreamResult(path.toFile()));
+
         
     }
     
@@ -306,7 +307,7 @@ public class Main {
 
         Option collectionCuration = OptionBuilder.withDescription("curate a collection").create("c");
         
-        Option resultsCuration = OptionBuilder.withDescription("curate all collections of a collections roor").create("r");
+        Option resultsCuration = OptionBuilder.withDescription("curate all collections of a collections root").create("r");
 
         OptionGroup curationGroup = new OptionGroup();
         curationGroup.addOption(profileCuration).addOption(instanceCuration).addOption(collectionCuration).addOption(resultsCuration);

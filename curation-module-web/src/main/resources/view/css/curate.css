@@ -62,3 +62,21 @@
     background-color: #999999;
 }
 
+/*these are necessary to replace fundament values*/
+ /* unvisited link */
+a:link, a:visited {
+    color: blue;
+    text-decoration: underline;
+    cursor: auto;
+}
+a:visited {
+    color: purple;
+}
+a:active {
+    color: red;
+    cursor: pointer;
+}
+a:hover {
+    cursor: pointer;
+}
+/*end of fundament fix*/
