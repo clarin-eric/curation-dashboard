@@ -219,6 +219,9 @@ public class LinkCheckerStatisticsHelper {
         sb.append("</div></body></html>");
         return sb.toString();
     }
+/*
+
+the following is not necessary since we moved this to xsl report creation
 
     private class StatisticRow {
         private int status;
@@ -371,5 +374,5 @@ public class LinkCheckerStatisticsHelper {
 
         return sb.toString();
     }
-
+*/
 }
