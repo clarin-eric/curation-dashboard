@@ -13,17 +13,16 @@ public class HtmlManipulator {
 
     //This method adds html content passed as a string to the generic html which can be found in the resources
     //It also takes a list of buttons to add to the left menu. If the list is null or empty, nothing is added to the left menu.
-    public static String addContentToGenericHTML(String content, List<NavbarButton> buttons) throws IOException {
+    public static String addContentToGenericHTML(String content, NavbarButton button) throws IOException {
 
         String genericHTML = FileManager.readFile(Configuration.VIEW_RESOURCES_PATH + "/html/generic.html");
 
         Document doc = Jsoup.parse(genericHTML);
 
-        if (buttons != null) {
-            for (NavbarButton button : buttons) {
+        if (button != null) {
 
-                Element navbarButtons = doc.getElementById("buttons");
-                Element template = navbarButtons.child(0).clone();
+            Element navbarButtons = doc.getElementById("buttons");
+            Element template = navbarButtons.child(0).clone();
 
             /* left menu buttons looks like this.
             We need to change href of a element and the innermost text.
@@ -36,11 +35,11 @@ public class HtmlManipulator {
                 </a>
             </div>
             * */
-                template.child(0).attr("href", button.getLink());
-                template.child(0).child(0).text(button.getDisplayText());
+            template.child(0).attr("href", button.getLink());
+            template.child(0).child(0).text(button.getDisplayText());
 
-                navbarButtons.appendChild(template);
-            }
+            navbarButtons.appendChild(template);
+
         }
 
 

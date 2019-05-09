@@ -8,7 +8,6 @@ import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.HTMLHelpers.HtmlManipulator;
-import eu.clarin.helpers.HTMLHelpers.NavbarButton;
 import eu.clarin.helpers.XSLTTransformer;
 import eu.clarin.main.Configuration;
 import org.apache.log4j.Logger;
@@ -18,7 +17,6 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -29,58 +27,22 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 
-@Path("/")
+@Path("/curate")
 public class Curate {
 
     private static final Logger _logger = Logger.getLogger(Curate.class);
 
-    @GET
-    @Path("/instances")
-    public Response getInstances() {
-        try {
-            String instance = FileManager.readFile(Configuration.VIEW_RESOURCES_PATH + "/html/instance.html");
-
-            return Response.ok().entity(HtmlManipulator.addContentToGenericHTML(instance, null)).type("text/html").build();
-        } catch (IOException e) {
-            _logger.error("Error when reading instance.html: ", e);
-            return Response.serverError().build();
-        }
-    }
-
-    @GET
-    @Path("/instance/{instanceName}")
-    public Response getInstance(@PathParam("instanceName") String fileName) {
-        String filePath = Configuration.OUTPUT_DIRECTORY + "/xml/instances/" + fileName;
-        File instance = new File(filePath);
-
-        if (Files.exists(instance.toPath())) {
-            try {
-                String result = FileManager.readFile(filePath);
-                return Response.ok(result).type(MediaType.TEXT_XML).build();
-            } catch (IOException e) {
-                return Response.serverError().build();
-            }
-        } else {
-            return Response.status(404).entity("The instance report with that name doesn't exist. Try curating it again.").type(MediaType.TEXT_PLAIN).build();
-        }
-
-    }
-
     //todo refactor this and next method to remove duplicate code
     @GET
-    @Path("/curate/instance")
+    @Path("/")
     public Response getInstanceQueryParam(@QueryParam("url-input") String url) {
 
         if (url == null || url.isEmpty()) {
@@ -153,7 +115,7 @@ public class Curate {
 
     //this is for drag and drop instance form
     @POST
-    @Path("/curate/instance")
+    @Path("/")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response postInstance(@FormDataParam("file") InputStream fileInputStream,
                                  @FormDataParam("file") FormDataContentDisposition fileMetaData) {
@@ -164,8 +126,6 @@ public class Curate {
             return Response.status(400).entity("The file suffix must be .xml for cmdi records or .xsd for profiles.").type(MediaType.TEXT_PLAIN).build();
         }
 
-
-
         //read inputstream into string (from stackoverflow, like all code ever)
         String content = new BufferedReader(new InputStreamReader(fileInputStream))
                 .lines().collect(Collectors.joining("\n"));
@@ -174,10 +134,10 @@ public class Curate {
             String tempPath = System.getProperty("java.io.tmpdir") + "/" + System.currentTimeMillis() + "_" + uploadFileName;
             FileManager.writeToFile(tempPath, content);
             Report report;
-            
+
             try {
                 CurationModule cm = new CurationModule();
-                report = uploadFileName.endsWith(".xml")?cm.processCMDInstance(Paths.get(tempPath)):cm.processCMDProfile(Paths.get(tempPath).toUri().toURL());
+                report = uploadFileName.endsWith(".xml") ? cm.processCMDInstance(Paths.get(tempPath)) : cm.processCMDProfile(Paths.get(tempPath).toUri().toURL());
             } catch (MalformedURLException e) {
                 return Response.status(400).entity("Input URL is malformed.").type(MediaType.TEXT_PLAIN).build();
             } catch (Exception e) {
@@ -188,130 +148,38 @@ public class Curate {
             if (report instanceof ErrorReport) {
                 return Response.status(400).entity(((ErrorReport) report).error).type(MediaType.TEXT_PLAIN).build();
             }
-            
+
 
             java.nio.file.Path xmlPath = Paths.get(Configuration.OUTPUT_DIRECTORY).resolve("xml").resolve("instances");
             Files.createDirectories(xmlPath);
-            
+
             JAXBContext jc = JAXBContext.newInstance(report.getClass());
-            
+
             Marshaller marshaller = jc.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
-            
+
             marshaller.marshal(report, Files.newOutputStream(xmlPath.resolve(report.getName() + ".xml")));
-                        
-            
+
+
             TransformerFactory factory = TransformerFactory.newInstance();
             Source xslt = new StreamSource(Main.class.getResourceAsStream("/xslt/" + report.getClass().getSimpleName() + "2HTML.xsl"));
 
             Transformer transformer = factory.newTransformer(xslt);
             StreamResult result = new StreamResult(new StringWriter());
-            transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), result);  
+            transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), result);
 
             return Response.ok(HtmlManipulator.addContentToGenericHTML(result.getWriter().toString(), null)).type(MediaType.TEXT_HTML).build();
         } catch (IOException e) {
             _logger.error("There was a problem generating the report: ", e);
             return Response.serverError().build();
-        }
-        catch (TransformerException ex) {
+        } catch (TransformerException ex) {
+
+            return Response.serverError().build();
+        } catch (JAXBException ex) {
 
             return Response.serverError().build();
         }
-        catch (JAXBException ex) {
-
-            return Response.serverError().build();
-        }
     }
-
-    @GET
-    @Path("/profiles")
-    public Response getProfiles() {
-        try {
-            String profiles = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/profiles/ProfilesReport.html");
-
-            List<NavbarButton> buttons = new ArrayList<>(Arrays.asList(new NavbarButton("/profiles/tsv", "Export as TSV")));
-            return Response.ok().entity(HtmlManipulator.addContentToGenericHTML(profiles, buttons)).type("text/html").build();
-        } catch (IOException e) {
-            _logger.error("Error when reading ProfilesReport.html: ", e);
-            return Response.serverError().build();
-        }
-
-    }
-
-    @GET
-    @Path("/profiles/tsv")
-    public Response getProfilesTSV() {
-        String profilesTSVPath = Configuration.OUTPUT_DIRECTORY + "/tsv/profiles/ProfilesReport.tsv";
-
-        StreamingOutput fileStream = output -> {
-            java.nio.file.Path path = Paths.get(profilesTSVPath);
-            byte[] data = Files.readAllBytes(path);
-            output.write(data);
-            output.flush();
-        };
-
-        return Response.ok(fileStream, MediaType.APPLICATION_OCTET_STREAM)
-                .header("content-disposition", "attachment; filename = ProfilesReport.tsv").build();
-    }
-
-    @GET
-    @Path("/collections")
-    public Response getCollections() {
-        try {
-            String collections = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/collections/CollectionsReport.html");
-
-            List<NavbarButton> buttons = new ArrayList<>(Arrays.asList(new NavbarButton("/collections/tsv", "Export as TSV")));
-            return Response.ok().entity(HtmlManipulator.addContentToGenericHTML(collections, buttons)).type("text/html").build();
-        } catch (IOException e) {
-            _logger.error("Error when reading CollectionsReport.html: ", e);
-            return Response.serverError().build();
-        }
-
-    }
-
-    @GET
-    @Path("/collections/tsv")
-    public Response getCollectionsTSV() {
-        String collectionsTSVPath = Configuration.OUTPUT_DIRECTORY + "/tsv/collections/CollectionsReport.tsv";
-
-        StreamingOutput fileStream = output -> {
-            java.nio.file.Path path = Paths.get(collectionsTSVPath);
-            byte[] data = Files.readAllBytes(path);
-            output.write(data);
-            output.flush();
-        };
-
-        return Response.ok(fileStream, MediaType.APPLICATION_OCTET_STREAM)
-                .header("content-disposition", "attachment; filename = CollectionsReport.tsv").build();
-    }
-
-
-    @GET
-    @Path("/statistics")
-    public Response getStatistics() {
-        try {
-            String statistics = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/statistics/LinkCheckerReport.html");
-
-            return Response.ok().entity(HtmlManipulator.addContentToGenericHTML(statistics, null)).type("text/html").build();
-        } catch (IOException e) {
-            _logger.error("Error when reading linkCheckerStatistics.html: ", e);
-            return Response.serverError().build();
-        }
-    }
-
-    @GET
-    @Path("/help")
-    public Response getHelp() {
-        try {
-            String help = FileManager.readFile(Configuration.VIEW_RESOURCES_PATH + "/html/help.html");
-
-            return Response.ok().entity(HtmlManipulator.addContentToGenericHTML(help, null)).type("text/html").build();
-        } catch (IOException e) {
-            _logger.error("Error when reading help.html: ", e);
-            return Response.serverError().build();
-        }
-    }
-
 
 }
