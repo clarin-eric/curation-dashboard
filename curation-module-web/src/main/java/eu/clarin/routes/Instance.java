@@ -21,7 +21,7 @@ public class Instance {
     @Path("/{instanceName}")
     public Response getInstance(@PathParam("instanceName") String instanceName) {
 
-        String[] split = instanceName.split(".");
+        String[] split = instanceName.split("\\.");
         if (split.length != 2) {
             return ResponseManager.returnError(400, "Instance name must end with either '.xml' or '.html'.");
         }

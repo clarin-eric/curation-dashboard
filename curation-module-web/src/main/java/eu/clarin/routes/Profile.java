@@ -25,7 +25,7 @@ public class Profile {
     @Path("/{profileName}")
     public Response getProfile(@PathParam("profileName") String profileName) {
 
-        String[] split = profileName.split(".");
+        String[] split = profileName.split("\\.");
         if (split.length != 2) {
             return ResponseManager.returnError(400, "Profile name must end with either xml or html.");
         }

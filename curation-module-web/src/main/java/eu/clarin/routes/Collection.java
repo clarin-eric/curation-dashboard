@@ -25,7 +25,7 @@ public class Collection {
     @Path("/{collectionName}")
     public Response getCollection(@PathParam("collectionName") String collectionName) {
 
-        String[] split = collectionName.split(".");
+        String[] split = collectionName.split("\\.");
         if (split.length != 2) {
             return ResponseManager.returnError(400, "Collection name must end with either xml or html.");
         }
