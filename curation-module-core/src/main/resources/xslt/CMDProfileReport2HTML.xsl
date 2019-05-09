@@ -5,12 +5,12 @@
 	<head>
 	</head>
 	<body>
-	
+
 		<xsl:variable name="schemaLoc"><xsl:value-of select="./header-section/schemaLocation" /></xsl:variable>
 		
 		<h1>CMD Profile Report</h1>
 		
-		 <table>
+		 <table class="reportTable">
 			  <tr>
 			    <th>Name</th>
 			    <th><xsl:value-of select="./header-section/name"/></th>
@@ -46,7 +46,7 @@
 		<hr/>
 		
 		<h2>score-section</h2>
-		<table>
+		<table class="reportTable">
 			<thead>
 				<tr>
 					<th scope="col">segment</th>
@@ -74,7 +74,7 @@
 		<hr/>
 		
 		<h2>facets-section</h2>	
-		<table>
+		<table class="reportTable">
 			<thead>
 				<tr>
 					<th scope="col">name</th>
@@ -109,7 +109,7 @@
 		</table>
 		<hr/>
 		<h2>cmd-component-section</h2>	
-		<table>
+		<table class="reportTable">
 			<thead>
 				<tr>
 					<th scope="col">name</th>
@@ -141,7 +141,7 @@
 		<p>number of required elements: <xsl:value-of select="./cmd-concepts-section/@required"/></p>
 		<p>number of elements with specified concept: <xsl:value-of select="./cmd-concepts-section/@withConcept"/></p>
 		<p>percentage of elements with specified concept: <xsl:value-of select="format-number(./cmd-concepts-section/@percWithConcept,'##.#%')"/></p>
-		<table border="1" cellpadding="1" cellspacing="1">
+		<table class="reportTable">
 			<thead>
 				<tr>
 					<th scope="col">concept</th>
@@ -173,7 +173,7 @@
 		
 			<hr/>	
 			<h2>Issues</h2>
-			<table border="1" cellpadding="1" cellspacing="1">
+			<table class="reportTable">
 				<thead>
 					<tr>
 						<th scope="col">segment</th>

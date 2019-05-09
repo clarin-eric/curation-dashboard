@@ -9,7 +9,7 @@
             <head></head>
             <body>
                 <h3>Overall</h3>
-                <table>
+                <table class="reportTable">
                     <thead>
                         <tr>
                             <th>Status</th>
@@ -74,7 +74,7 @@
                     <h3>
                         <xsl:value-of select="@name"></xsl:value-of>
                     </h3>
-                    <table>
+                    <table class="reportTable">
                         <thead>
                             <tr>
                                 <th>Status</th>

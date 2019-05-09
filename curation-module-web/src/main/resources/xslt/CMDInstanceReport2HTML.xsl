@@ -33,8 +33,9 @@
                     </a>
                 </p>
 
+                <!--TODO this link is wrong-->
                 <p>profileID:
-                    <a href="#!ResultView/profile/id/{$profileID}">
+                    <a href="/profile/{$profileID}">
                         <xsl:copy-of select="$profileID"/>
                     </a>
                 </p>
@@ -50,7 +51,7 @@
                 <hr/>
 
                 <h2>score-section</h2>
-                <table border="1" cellpadding="1" cellspacing="1">
+                <table class="reportTable">
                     <thead>
                         <tr>
                             <th scope="col">segment</th>
@@ -100,14 +101,13 @@
                 <br/>
                 <font color="#FF8000">&#9873;</font>
                 - value mapping
-
                 <br/>
 
 
                 <button type="button" onClick="toggleFacets()">Show Facet Values</button>
 
                 <div id="facetTable" hidden="true">
-                    <table border="1" cellpadding="1" cellspacing="1">
+                    <table class="reportTable">
                         <thead>
                             <tr>
                                 <th scope="col">Value</th>
@@ -219,14 +219,14 @@
 
                             <xsl:for-each select="./facets-section/coverage/facet[@coveredByProfile = 'false']">
                                 <tr>
-                                    <th>
+                                    <td>
                                         <font color="#d33d3d">not covered by profile</font>
-                                    </th>
-                                    <th>
+                                    </td>
+                                    <td>
                                         <font color="#d33d3d">
                                             <xsl:value-of select="@name"/>
                                         </font>
-                                    </th>
+                                    </td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -236,14 +236,14 @@
                             <xsl:for-each
                                     select="./facets-section/coverage/facet[@coveredByInstance = 'false'][@coveredByProfile = 'true']">
                                 <tr>
-                                    <th>
+                                    <td>
                                         <font color="#d33d3d">not covered by instance</font>
-                                    </th>
-                                    <th>
+                                    </td>
+                                    <td>
                                         <font color="#d33d3d">
                                             <xsl:value-of select="@name"/>
                                         </font>
-                                    </th>
+                                    </td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -271,7 +271,7 @@
                 <p>percent of ResourceProxies having reference:
                     <xsl:value-of select="format-number(./resProxy-section/percOfResProxiesWithReferences,'##.#%')"/>
                 </p>
-                <table border="1" cellpadding="1" cellspacing="1">
+                <table class="reportTable">
                     <thead>
                         <tr>
                             <th scope="col">resource type</th>
@@ -339,7 +339,7 @@
 
                 <hr/>
                 <h2>single-url-report</h2>
-                <table border="1" cellpadding="1" cellspacing="1">
+                <table class="reportTable">
                     <thead>
                         <tr>
                             <th scope="col">url</th>
@@ -434,7 +434,7 @@
 
                     <hr/>
                     <h2>Issues</h2>
-                    <table border="1" cellpadding="1" cellspacing="1">
+                    <table class="reportTable">
                         <thead>
                             <tr>
                                 <th scope="col">segment</th>

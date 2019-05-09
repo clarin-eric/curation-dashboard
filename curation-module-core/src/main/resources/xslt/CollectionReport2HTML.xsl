@@ -35,7 +35,7 @@
 		<hr/>
 
 		<h2>Header Section</h2>
-		<table>
+		<table class="reportTable">
 			<caption>Profiles in Collection</caption>
 			<thead>
 				<tr>
@@ -64,7 +64,7 @@
 		</table>
 
 		<h2>Facet Section</h2>
-		<table border="1" cellpadding="1" cellspacing="1">
+		<table class="reportTable">
 			<thead>
 				<tr>
 					<th scope="col">name</th>
@@ -142,7 +142,7 @@
 		<h3>Status Codes Table</h3>
 
 		<h4>Ok</h4>
-		<table border="1" cellpadding="1" cellspacing="1">
+		<table class="reportTable">
 			<thead>
 				<tr>
 					<th scope="col">Status</th>

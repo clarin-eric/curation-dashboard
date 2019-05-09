@@ -8,8 +8,9 @@ $(document).ready( function () {
     } );
 
     $('#collections').DataTable();
+    $('#profiles').DataTable();
 
-} );//todo make it all tables
+} );
 
 
 Dropzone.options.cmdiDropzone = {
