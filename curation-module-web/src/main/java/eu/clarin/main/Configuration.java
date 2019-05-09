@@ -32,6 +32,8 @@ public class Configuration {
         properties.load(new FileInputStream(path));
         loadVariables(properties);
 
+        //todo scheduler of deleting files
+
     }
 
     private static void loadVariables(Properties properties) {

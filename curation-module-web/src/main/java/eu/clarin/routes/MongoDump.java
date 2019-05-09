@@ -1,5 +1,6 @@
 package eu.clarin.routes;
 
+import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
 import org.apache.log4j.Logger;
 
@@ -22,10 +23,12 @@ public class MongoDump {
         try {
             String dumpPath = Configuration.OUTPUT_DIRECTORY+"/dump/linkchecker.gz";
             final InputStream fileInStream = new FileInputStream(dumpPath);
-            return Response.ok(fileInStream, "application/gzip").build();
+
+            return ResponseManager.returnFile(200,fileInStream,"application/gzip","mongoDump.gz");
+
         } catch (FileNotFoundException e) {
             _logger.error("There was an error getting the mongo dump file: ",e);
-            return Response.serverError().build();
+            return ResponseManager.returnServerError();
         }
 
     }

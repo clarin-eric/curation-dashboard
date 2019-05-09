@@ -2,6 +2,7 @@ package eu.clarin.routes;
 
 
 import eu.clarin.helpers.FileManager;
+import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
 import org.apache.log4j.Logger;
 
@@ -50,7 +51,7 @@ public class View {
             if (extensionsText.contains(extension)) {
                 String file = FileManager.readFile(Configuration.VIEW_RESOURCES_PATH + filePath);
 
-                return Response.status(200).entity(file).type(extensionMimeTypes.get(extension)).build();
+                return ResponseManager.returnResponse(200,file,extensionMimeTypes.get(extension));
 
             } else if (extensionsImage.contains(extension)) {
 
@@ -60,13 +61,13 @@ public class View {
                 ImageIO.write(image, extension, baos);
                 byte[] imageData = baos.toByteArray();
 
-                return Response.status(200).type(extensionMimeTypes.get(extension)).entity(new ByteArrayInputStream(imageData)).build();
+                return ResponseManager.returnResponse(200,new ByteArrayInputStream(imageData),extensionMimeTypes.get(extension));
             } else {
-                return Response.status(404).entity("Requested file doesn't exist.").build();
+                return ResponseManager.returnError(404,"Requested file doesn't exist.");
             }
 
         } catch (IOException e) {
-            return Response.status(404).entity("Requested file doesn't exist.").build();
+            return ResponseManager.returnError(404,"Requested file doesn't exist.");
         }
 
     }

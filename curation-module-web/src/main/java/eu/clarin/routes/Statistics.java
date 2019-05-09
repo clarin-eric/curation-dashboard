@@ -1,8 +1,8 @@
 package eu.clarin.routes;
 
 import eu.clarin.helpers.FileManager;
-import eu.clarin.helpers.HTMLHelpers.HtmlManipulator;
 import eu.clarin.helpers.LinkCheckerStatisticsHelper;
+import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
 import org.apache.log4j.Logger;
 
@@ -23,10 +23,10 @@ public class Statistics {
         try {
             String statistics = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/statistics/LinkCheckerReport.html");
 
-            return Response.ok().entity(HtmlManipulator.addContentToGenericHTML(statistics, null)).type("text/html").build();
+            return ResponseManager.returnHTML(200, statistics, null);
         } catch (IOException e) {
             _logger.error("Error when reading linkCheckerStatistics.html: ", e);
-            return Response.serverError().build();
+            return ResponseManager.returnServerError();
         }
     }
 
@@ -34,15 +34,10 @@ public class Statistics {
     @Path("/{collectionName}/{status}")
     public Response getStatusStats(@PathParam("collectionName") String collectionName, @PathParam("status") int status) {
 
-        try {
-            LinkCheckerStatisticsHelper linkCheckerStatisticsHelper = new LinkCheckerStatisticsHelper();
+        LinkCheckerStatisticsHelper linkCheckerStatisticsHelper = new LinkCheckerStatisticsHelper();
+        String urlStatistics = linkCheckerStatisticsHelper.createURLTable(collectionName, status);
 
-            String urlStatistics = linkCheckerStatisticsHelper.createURLTable(collectionName, status);
+        return ResponseManager.returnHTML(200, urlStatistics, null);
 
-            return Response.ok().entity(HtmlManipulator.addContentToGenericHTML(urlStatistics, null)).type("text/html").build();
-        } catch (IOException e) {
-            _logger.error("Error when reading generic.html: ", e);
-            return Response.serverError().build();
-        }
     }
 }
