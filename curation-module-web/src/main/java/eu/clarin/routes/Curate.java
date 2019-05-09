@@ -8,6 +8,7 @@ import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.HTMLHelpers.HtmlManipulator;
+import eu.clarin.helpers.ResponseManager;
 import eu.clarin.helpers.XSLTTransformer;
 import eu.clarin.main.Configuration;
 import org.apache.log4j.Logger;
@@ -34,7 +35,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
-//TODO use ResponseManager methods...
 @Path("/curate")
 public class Curate {
 
@@ -46,43 +46,42 @@ public class Curate {
     public Response getInstanceQueryParam(@QueryParam("url-input") String urlStr) {
 
         if (urlStr == null || urlStr.isEmpty()) {
-            return Response.status(400).entity("Input URL can't be empty.").type(MediaType.TEXT_PLAIN).build();
+            return ResponseManager.returnError(400, "Input URL can't be empty.");
         }
 
         try {
 
             Report report;
-            
-            
-            
+
             URL url = new URL(urlStr);
-            
+
             byte[] buffer = new byte[200];
-            
-            int offset = 0;            
+
+            int offset = 0;
             InputStream in = url.openStream();
 
-            
-            while((offset += in.read(buffer, offset, 200-offset)) <200) 
+
+            while ((offset += in.read(buffer, offset, 200 - offset)) < 200)
                 System.out.println(offset + ":" + new String(buffer));
-            
+
             in.close();
-            
+
             String content = new String(buffer);
-            
+
 
             try {
                 CurationModule cm = new CurationModule();
                 report = !content.substring(0, 200).contains("xmlns:xs") ? cm.processCMDInstance(url) : cm.processCMDProfile(url);
             } catch (MalformedURLException e) {
-                return Response.status(400).entity("Input URL is malformed.").type(MediaType.TEXT_PLAIN).build();
+                return ResponseManager.returnError(400, "Input URL is malformed.");
+
             } catch (Exception e) {
                 _logger.error("There was an exception processing the cmd instance: " + e.getMessage());
-                return Response.status(400).entity("There was a problem when processing the input. Please make sure to upload a valid cmd file.").type(MediaType.TEXT_PLAIN).build();
+                return ResponseManager.returnError(400, "There was a problem when processing the input. Please make sure to upload a valid cmd file.");
             }
 
             if (report instanceof ErrorReport) {
-                return Response.status(400).entity(((ErrorReport) report).error).type(MediaType.TEXT_PLAIN).build();
+                return ResponseManager.returnError(400, ((ErrorReport) report).error);
             }
 
 
@@ -102,28 +101,22 @@ public class Curate {
             Source xslt = new StreamSource(Main.class.getResourceAsStream("/xslt/" + report.getClass().getSimpleName() + "2HTML.xsl"));
 
             Transformer transformer = factory.newTransformer(xslt);
-            
-            
+
+
             StringWriter writeBuffer = new StringWriter();
-            
-            
+
+
             StreamResult result = new StreamResult(writeBuffer);
-            
+
             transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), result);
-            
+
             String htmlFilePath = Configuration.OUTPUT_DIRECTORY + "/html/instances/" + report.getName() + ".html";
             FileManager.writeToFile(htmlFilePath, writeBuffer.toString());
 
-            return Response.ok(HtmlManipulator.addContentToGenericHTML(result.getWriter().toString(), null)).type(MediaType.TEXT_HTML).build();
-        } catch (IOException e) {
+            return ResponseManager.returnHTML(200, result.getWriter().toString(), null);
+        } catch (IOException | TransformerException | JAXBException e) {
             _logger.error("There was a problem generating the report: ", e);
-            return Response.serverError().build();
-        } catch (TransformerException ex) {
-
-            return Response.serverError().build();
-        } catch (JAXBException ex) {
-
-            return Response.serverError().build();
+            return ResponseManager.returnServerError();
         }
     }
 
@@ -157,14 +150,14 @@ public class Curate {
                 CurationModule cm = new CurationModule();
                 report = !content.substring(0, 200).contains("xmlns:xs") ? cm.processCMDInstance(Paths.get(tempPath)) : cm.processCMDProfile(Paths.get(tempPath).toUri().toURL());
             } catch (MalformedURLException e) {
-                return Response.status(400).entity("Input URL is malformed.").type(MediaType.TEXT_PLAIN).build();
+                return ResponseManager.returnError(400, "Input URL is malformed.");
             } catch (Exception e) {
                 _logger.error("There was an exception processing the cmd instance: " + e.getMessage());
-                return Response.status(400).entity("There was a problem when processing the input. Please make sure to upload a valid cmd file.").type(MediaType.TEXT_PLAIN).build();
+                return ResponseManager.returnError(400, "There was a problem when processing the input. Please make sure to upload a valid cmd file.");
             }
 
             if (report instanceof ErrorReport) {
-                return Response.status(400).entity(((ErrorReport) report).error).type(MediaType.TEXT_PLAIN).build();
+                return ResponseManager.returnError(400, ((ErrorReport) report).error);
             }
 
 
@@ -184,28 +177,22 @@ public class Curate {
             Source xslt = new StreamSource(Main.class.getResourceAsStream("/xslt/" + report.getClass().getSimpleName() + "2HTML.xsl"));
 
             Transformer transformer = factory.newTransformer(xslt);
-            
-            
+
+
             StringWriter writeBuffer = new StringWriter();
-            
-            
+
+
             StreamResult result = new StreamResult(writeBuffer);
-            
+
             transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), result);
-            
+
             String htmlFilePath = Configuration.OUTPUT_DIRECTORY + "/html/instances/" + report.getName() + ".html";
             FileManager.writeToFile(htmlFilePath, writeBuffer.toString());
 
-            return Response.ok(HtmlManipulator.addContentToGenericHTML(result.getWriter().toString(), null)).type(MediaType.TEXT_HTML).build();
-        } catch (IOException e) {
+            return ResponseManager.returnHTML(200, result.getWriter().toString(), null);
+        } catch (IOException | TransformerException | JAXBException e) {
             _logger.error("There was a problem generating the report: ", e);
-            return Response.serverError().build();
-        } catch (TransformerException ex) {
-
-            return Response.serverError().build();
-        } catch (JAXBException ex) {
-
-            return Response.serverError().build();
+            return ResponseManager.returnServerError();
         }
     }
 }
