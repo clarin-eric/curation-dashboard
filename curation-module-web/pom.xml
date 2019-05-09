@@ -85,11 +85,6 @@
             <version>3.0</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-        	<groupId>org.graalvm.compiler</groupId>
-        	<artifactId>compiler</artifactId>
-        	<version>1.0.0-rc16</version>
-        </dependency>
     </dependencies>
 
     <build>
