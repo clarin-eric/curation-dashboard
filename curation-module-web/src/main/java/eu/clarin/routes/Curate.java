@@ -62,7 +62,7 @@ public class Curate {
 
 
             while ((offset += in.read(buffer, offset, 200 - offset)) < 200)
-                System.out.println(offset + ":" + new String(buffer));
+                ;
 
             in.close();
 
@@ -71,7 +71,7 @@ public class Curate {
 
             try {
                 CurationModule cm = new CurationModule();
-                report = !content.substring(0, 200).contains("xmlns:xs") ? cm.processCMDInstance(url) : cm.processCMDProfile(url);
+                report = !content.substring(0, 200).contains("xmlns:xs=") ? cm.processCMDInstance(url) : cm.processCMDProfile(url);
             } catch (MalformedURLException e) {
                 return ResponseManager.returnError(400, "Input URL is malformed.");
 
@@ -148,7 +148,7 @@ public class Curate {
 
             try {
                 CurationModule cm = new CurationModule();
-                report = !content.substring(0, 200).contains("xmlns:xs") ? cm.processCMDInstance(Paths.get(tempPath)) : cm.processCMDProfile(Paths.get(tempPath).toUri().toURL());
+                report = !content.substring(0, 200).contains("xmlns:xs=") ? cm.processCMDInstance(Paths.get(tempPath)) : cm.processCMDProfile(Paths.get(tempPath).toUri().toURL());
             } catch (MalformedURLException e) {
                 return ResponseManager.returnError(400, "Input URL is malformed.");
             } catch (Exception e) {
