@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 public final class ResponseManager {
 
@@ -39,5 +40,9 @@ public final class ResponseManager {
 
     public static Response returnServerError() {
         return returnError(500, "There was a server error. Please report it on <a href='https://github.com/clarin-eric/clarin-curation-module/issues'>github</a>.");
+    }
+
+    public static Response redirect(String resultURL) {
+        return Response.seeOther(URI.create(resultURL)).build();
     }
 }

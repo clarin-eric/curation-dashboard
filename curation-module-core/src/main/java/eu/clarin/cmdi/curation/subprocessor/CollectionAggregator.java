@@ -102,7 +102,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
 
         }*/
 
-        report.url = Configuration.BASE_URL + "rest/collection/" + report.getName() + ".xml";
+//        report.url = Configuration.BASE_URL + "collection/" + report.getName() + ".xml";
 
         report.calculateAverageValues();
 

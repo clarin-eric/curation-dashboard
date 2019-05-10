@@ -46,7 +46,7 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 
 		report.header.setLocalFile(isLocalFile);
 
-		report.url = Configuration.BASE_URL + "profile/" + FileNameEncoder.encode(report.getName()) + ".xml";
+//		report.url = Configuration.BASE_URL + "profile/" + FileNameEncoder.encode(report.getName()) + ".xml";
 
 
 		if (!report.header.isPublic())

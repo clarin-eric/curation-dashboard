@@ -10,8 +10,9 @@
 
 		<h3>Collection name: <xsl:copy-of select="$collectionName" /></h3>
 
-		<xsl:variable name="url"><xsl:value-of select="./@url"/></xsl:variable>
-		<p>URL: <a href="{$url}"><xsl:copy-of select="$url"/></a></p>
+<!--		<xsl:variable name="url"><xsl:value-of select="./@url"/></xsl:variable>-->
+<!--		<p>URL: <a href="{$url}"><xsl:copy-of select="$url"/></a></p>-->
+		<p>URL: selfURLPlaceHolder</p>
 
 		<p>Total Score: <xsl:value-of select="./@score"/> out of <xsl:value-of select="./@col-max-score"/></p>
 		<p>Score percentage: <xsl:value-of select="format-number(./@score-percentage,'##.#%')"/></p>

@@ -137,7 +137,7 @@ public class FileSizeValidator extends CMDSubprocessor {
             throw new IOException(e.getMessage());
         }
 
-        report.selfUrl = Configuration.BASE_URL + "instance/" + FileNameEncoder.encode(report.getName()) + ".xml";
+//        report.selfUrl = Configuration.BASE_URL + "instance/" + FileNameEncoder.encode(report.getName()) + ".xml";
 
 
         entity.setCMDIData(cmdiData);

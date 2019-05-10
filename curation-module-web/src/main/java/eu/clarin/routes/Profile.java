@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Pattern;
 
 @Path("/profile")
 public class Profile {
@@ -41,6 +42,12 @@ public class Profile {
                 case "html":
                     location = Configuration.OUTPUT_DIRECTORY + "/html/profiles/";
                     String profileHTML = FileManager.readFile(location + profileName);
+
+                    //replace to put the url based on the server (this way xml and html files are not server url dependent)
+                    String xmlLink = Configuration.BASE_URL + "profile/" + split[0] + ".xml";
+                    xmlLink = "<a href='"+xmlLink+"'>"+xmlLink+"</a>";
+                    profileHTML = profileHTML.replaceFirst(Pattern.quote("selfURLPlaceHolder"), xmlLink);
+
                     return ResponseManager.returnHTML(200, profileHTML, null);
                 default:
                     return ResponseManager.returnError(400, "Profile name must end with either xml or html.");

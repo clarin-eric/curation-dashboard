@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Pattern;
 
 @Path("/collection")
 public class Collection {
@@ -29,10 +30,12 @@ public class Collection {
         if (split.length != 2) {
             return ResponseManager.returnError(400, "Collection name must end with either xml or html.");
         }
+
         String extension = split[1];
 
-        String location;
         try {
+
+            String location;
             switch (extension) {
                 case "xml":
                     location = Configuration.OUTPUT_DIRECTORY + "/xml/collections/";
@@ -41,6 +44,12 @@ public class Collection {
                 case "html":
                     location = Configuration.OUTPUT_DIRECTORY + "/html/collections/";
                     String collectionHTML = FileManager.readFile(location + collectionName);
+
+                    //replace to put the url based on the server (this way xml and html files are not server url dependent)
+                    String xmlLink = Configuration.BASE_URL + "collection/" + split[0] + ".xml";
+                    xmlLink = "<a href='"+xmlLink+"'>"+xmlLink+"</a>";
+                    collectionHTML = collectionHTML.replaceFirst(Pattern.quote("selfURLPlaceHolder"), xmlLink);
+
                     return ResponseManager.returnHTML(200, collectionHTML, null);
                 default:
                     return ResponseManager.returnError(400, "Collection name must end with either xml or html.");

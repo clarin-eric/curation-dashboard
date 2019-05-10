@@ -41,9 +41,6 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     @XmlAttribute
     public String timeStamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
-    @XmlAttribute
-    public String selfUrl;
-
     // sub reports **************************************
 
     // Header

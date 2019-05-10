@@ -11,6 +11,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 @Path("/instance")
 public class Instance {
@@ -38,12 +39,18 @@ public class Instance {
                 case "html":
                     location = Configuration.OUTPUT_DIRECTORY + "/html/instances/";
                     String instanceHTML = FileManager.readFile(location + instanceName);
+
+                    //replace to put the url based on the server (this way xml and html files are not server url dependent)
+                    String xmlLink = Configuration.BASE_URL + "instance/" + split[0] + ".xml";
+                    xmlLink = "<a href='"+xmlLink+"'>"+xmlLink+"</a>";
+                    instanceHTML = instanceHTML.replaceFirst(Pattern.quote("selfURLPlaceHolder"), xmlLink);
+
                     return ResponseManager.returnHTML(200, instanceHTML, null);
                 default:
                     return ResponseManager.returnError(400, "Instance name must end with either '.xml' or '.html'.");
             }
         } catch (IOException e) {
-            _logger.error("There was an error reading the instance: " + instanceName ,e);
+            _logger.error("There was an error reading the instance: " + instanceName, e);
             return ResponseManager.returnError(404, "The instance " + instanceName + " doesn't exist.");
         }
 

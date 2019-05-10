@@ -33,9 +33,6 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
     @XmlAttribute
     public Long timeStamp = System.currentTimeMillis();
 
-    @XmlAttribute
-    public String url;
-
     @XmlElement(name = "header-section")
     public ProfileHeader header;
 

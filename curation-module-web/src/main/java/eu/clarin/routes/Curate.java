@@ -44,16 +44,16 @@ public class Curate {
             return ResponseManager.returnError(400, "Input URL can't be empty.");
         }
 
-        if(!urlStr.startsWith("http://") && !urlStr.startsWith("https://")){
-            if(urlStr.startsWith("www")){
-               urlStr="http://"+urlStr;
-            }else{
+        if (!urlStr.startsWith("http://") && !urlStr.startsWith("https://")) {
+            if (urlStr.startsWith("www")) {
+                urlStr = "http://" + urlStr;
+            } else {
                 return ResponseManager.returnError(400, "Given URL is invalid");
             }
         }
 
-
-        String tempPath = System.getProperty("java.io.tmpdir") + "/" + System.currentTimeMillis() + "_" + FileNameEncoder.encode(urlStr);
+        String resultFileName = System.currentTimeMillis() + "_" + FileNameEncoder.encode(urlStr);
+        String tempPath = System.getProperty("java.io.tmpdir") + "/" + resultFileName;
 
         HTTPLinkChecker linkChecker = new HTTPLinkChecker();
         try {
@@ -63,7 +63,7 @@ public class Curate {
         }
         try {
             String content = FileManager.readFile(tempPath);
-            return curate(content, tempPath, urlStr);
+            return curate(content, resultFileName, urlStr);
 
         } catch (IOException | TransformerException | JAXBException e) {
             _logger.error("There was a problem generating the report: ", e);
@@ -86,10 +86,11 @@ public class Curate {
 
             String content = FileManager.readInputStream(fileInputStream);
 
-            String tempPath = System.getProperty("java.io.tmpdir") + "/" + System.currentTimeMillis() + "_" + uploadFileName;
+            String resultFileName = System.currentTimeMillis() + "_" + uploadFileName;
+            String tempPath = System.getProperty("java.io.tmpdir") + "/" + resultFileName;
             FileManager.writeToFile(tempPath, content);
 
-            return curate(content, tempPath, uploadFileName);
+            return curate(content, resultFileName, uploadFileName);
         } catch (IOException | TransformerException | JAXBException e) {
             _logger.error("There was a problem generating the report: ", e);
             return ResponseManager.returnServerError();
@@ -97,7 +98,9 @@ public class Curate {
     }
 
 
-    private Response curate(String content, String tempPath, String fileLocation) throws TransformerException, JAXBException, IOException {
+    private Response curate(String content, String resultFileName, String fileLocation) throws TransformerException, JAXBException, IOException {
+        String tempPath = System.getProperty("java.io.tmpdir") + "/" + resultFileName;
+
         Report report;
         try {
             CurationModule cm = new CurationModule();
@@ -116,9 +119,20 @@ public class Curate {
 
         setFileLocation(report, fileLocation);
 
-        StreamResult result = save(report);
+        resultFileName = resultFileName.split("\\.")[0];
+        save(report, resultFileName);
 
-        return ResponseManager.returnHTML(200, result.getWriter().toString(), null);
+        String resultURL = Configuration.BASE_URL;
+        if (report instanceof CMDProfileReport) {
+            resultURL = resultURL + "profile/";
+        } else if (report instanceof CMDInstanceReport) {
+            resultURL = resultURL + "instance/";
+        }
+
+
+        resultURL = resultURL + resultFileName + ".html";
+
+        return ResponseManager.redirect(resultURL);
     }
 
     //this is needed, because the schema/record location is only known when a url is given.
@@ -144,8 +158,7 @@ public class Curate {
 
 
     //saves xml report and html representation into the file system
-    //returns html in streamresult form
-    private StreamResult save(Report report) throws IOException, JAXBException, TransformerException {
+    private void save(Report report, String resultName) throws IOException, JAXBException, TransformerException {
 
         String xmlPath;
         if (report instanceof CMDProfileReport) {
@@ -156,7 +169,7 @@ public class Curate {
             throw new IOException("Result wasn't a profile or instance Report. Should not come here.");
         }
 
-        xmlPath = xmlPath + FileNameEncoder.encode(report.getName()) + ".xml";
+        xmlPath = xmlPath + FileNameEncoder.encode(resultName) + ".xml";
         String marshallResult = FileManager.marshall(report);
         FileManager.writeToFile(xmlPath, marshallResult);
 
@@ -171,8 +184,14 @@ public class Curate {
 
         transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), result);
 
-        String htmlFilePath = Configuration.OUTPUT_DIRECTORY + "/html/instances/" + FileNameEncoder.encode(report.getName()) + ".html";
-        FileManager.writeToFile(htmlFilePath, writeBuffer.toString());
-        return result;
+        String htmlPath = null;
+        if (report instanceof CMDProfileReport) {
+            htmlPath = Configuration.OUTPUT_DIRECTORY + "/html/profiles/";
+        } else if (report instanceof CMDInstanceReport) {
+            htmlPath = Configuration.OUTPUT_DIRECTORY + "/html/instances/";
+        }
+        htmlPath = htmlPath + resultName + ".html";
+        FileManager.writeToFile(htmlPath, writeBuffer.toString());
+
     }
 }

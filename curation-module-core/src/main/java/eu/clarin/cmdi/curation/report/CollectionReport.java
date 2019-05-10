@@ -54,9 +54,6 @@ public class CollectionReport implements Report<CollectionReport> {
     @XmlAttribute
     public String timeStamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
-    @XmlAttribute
-    public String url;
-
     @XmlElement(name = "file-section")
     public FileReport fileReport;
 

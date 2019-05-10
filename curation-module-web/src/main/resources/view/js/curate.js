@@ -43,6 +43,8 @@ function toggleFacets() {
     }
 }
 
+
+
 $('#validateButton').click(function() {
     //only change to spinner if input is valid
     if($('#url-input').val()){

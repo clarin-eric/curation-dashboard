@@ -22,14 +22,7 @@
                     </xsl:choose>
                 </p>
 
-                <xsl:variable name="url">
-                    <xsl:value-of select="./@selfUrl"/>
-                </xsl:variable>
-                <p>Url:
-                    <a href="{$url}">
-                        <xsl:copy-of select="$url"/>
-                    </a>
-                </p>
+                <p>Url: selfURLPlaceHolder</p>
 
                 <!--TODO this link is wrong-->
                 <p>ProfileID:

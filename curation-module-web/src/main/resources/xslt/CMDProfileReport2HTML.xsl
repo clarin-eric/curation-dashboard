@@ -36,7 +36,8 @@
 
                         <td>
                             <xsl:choose>
-                                <xsl:when test="starts-with($schemaLoc, 'http://') or starts-with($schemaLoc, 'https://')">
+                                <xsl:when
+                                        test="starts-with($schemaLoc, 'http://') or starts-with($schemaLoc, 'https://')">
                                     <a href="{$schemaLoc}" target="_blank">
                                         <xsl:copy-of select="$schemaLoc"/>
                                     </a>
@@ -63,15 +64,8 @@
                         </tr>
                     </xsl:if>
                     <tr>
-                        <xsl:variable name="url">
-                            <xsl:value-of select="./@url"/>
-                        </xsl:variable>
                         <th>URL</th>
-                        <td>
-                            <a href="{$url}">
-                                <xsl:copy-of select="$url"/>
-                            </a>
-                        </td>
+                        <td>selfURLPlaceHolder</td>
                     </tr>
                 </table>
                 <hr/>
