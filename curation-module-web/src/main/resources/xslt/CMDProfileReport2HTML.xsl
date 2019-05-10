@@ -13,51 +13,51 @@
 		 <table class="reportTable">
 			  <tr>
 			    <th>Name</th>
-			    <th><xsl:value-of select="./header-section/name"/></th>
+			    <td><xsl:value-of select="./header-section/name"/></td>
 			  </tr>
 			  <tr>
 			    <th>ID</th>
-			    <th><xsl:value-of select="./header-section/id"/></th>
+			    <td><xsl:value-of select="./header-section/id"/></td>
 			  </tr>
 			  <tr>
 			    <th>Description</th>
-			    <th><xsl:value-of select="./header-section/description"/></th>
+			    <td><xsl:value-of select="./header-section/description"/></td>
 			  </tr>
 			  <tr>
 			    <th>Schema Location</th>
-			    <th><a href="{$schemaLoc}" target="_blank"><xsl:copy-of select="$schemaLoc" /></a></th>
+			    <td><a href="{$schemaLoc}" target="_blank"><xsl:copy-of select="$schemaLoc" /></a></td>
 			  </tr>
 			  <tr>
 			    <th>CMDI Version</th>
-			    <th><xsl:value-of select="./header-section/cmdiVersion"/></th>
+			    <td><xsl:value-of select="./header-section/cmdiVersion"/></td>
 			  </tr>
 			  <xsl:if test="./header-section/status">
 				  <tr>
 				    <th>Status</th>
-				    <th><xsl:value-of select="./header-section/status"/></th>
+				    <td><xsl:value-of select="./header-section/status"/></td>
 				  </tr>
 			  </xsl:if>
 			 <tr>
 				 <xsl:variable name="url"><xsl:value-of select="./@url"/></xsl:variable>
 				 <th>URL:</th>
-				 <th><a href="{$url}"><xsl:copy-of select="$url"/></a></th>
+				 <td><a href="{$url}"><xsl:copy-of select="$url"/></a></td>
 			 </tr>
 			</table>	
 		<hr/>
 		
-		<h2>score-section</h2>
+		<h2>Score Section</h2>
 		<table class="reportTable">
 			<thead>
 				<tr>
-					<th scope="col">segment</th>
-					<th scope="col">score</th>
-					<th scope="col">max</th>
+					<th scope="col">Segment</th>
+					<th scope="col">Score</th>
+					<th scope="col">Max</th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr><td colspan="3"><b>
-					total: <xsl:value-of select="format-number(./@score,'##.##')"/>
-					max: <xsl:value-of select="format-number(./@max-score,'##.##')"/>
+					Total: <xsl:value-of select="format-number(./@score,'##.##')"/>
+					Max: <xsl:value-of select="format-number(./@max-score,'##.##')"/>
 				</b></td></tr>
 			</tfoot>
 			<tbody>
@@ -73,20 +73,20 @@
 		
 		<hr/>
 		
-		<h2>facets-section</h2>	
+		<h2>Facets Section</h2>
 		<table class="reportTable">
 			<thead>
 				<tr>
-					<th scope="col">name</th>
-					<th scope="col">covered</th>
+					<th scope="col">Name</th>
+					<th scope="col">Covered</th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr><td colspan="2"><b>
-					covered:
+					Covered:
 					<xsl:value-of select="count(./facets-section/coverage/facet[@coveredByProfile = 'true'])" /> / 
 					<xsl:value-of select="./facets-section/@numOfFacets"/>
-					coverage: <xsl:value-of select="format-number(./facets-section/@profileCoverage,'##.#%')"/>
+					Coverage: <xsl:value-of select="format-number(./facets-section/@profileCoverage,'##.#%')"/>
 				</b></td></tr>
 			</tfoot>
 			<tbody>
@@ -108,20 +108,20 @@
 			</tbody>
 		</table>
 		<hr/>
-		<h2>cmd-component-section</h2>	
+		<h2>Cmd Component Section</h2>
 		<table class="reportTable">
 			<thead>
 				<tr>
-					<th scope="col">name</th>
-					<th scope="col">id</th>
-					<th scope="col">count</th>
+					<th scope="col">Name</th>
+					<th scope="col">Id</th>
+					<th scope="col">Count</th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr><td colspan="3"><b>
-					total: <xsl:value-of select="./cmd-components-section/@total"/>
-					unique: <xsl:value-of select="./cmd-components-section/@unique"/>
-					required: <xsl:value-of select="./cmd-components-section/@required"/>
+					Total: <xsl:value-of select="./cmd-components-section/@total"/>
+					Unique: <xsl:value-of select="./cmd-components-section/@unique"/>
+					Required: <xsl:value-of select="./cmd-components-section/@required"/>
 				</b></td></tr>
 			</tfoot>
 			<tbody>
@@ -136,24 +136,24 @@
 			</tbody>
 		</table>
 		<hr/>
-		<h2>cmd-concepts-section</h2>
-		<p>total number of elements: <xsl:value-of select="./cmd-concepts-section/@total"/></p>
-		<p>number of required elements: <xsl:value-of select="./cmd-concepts-section/@required"/></p>
-		<p>number of elements with specified concept: <xsl:value-of select="./cmd-concepts-section/@withConcept"/></p>
-		<p>percentage of elements with specified concept: <xsl:value-of select="format-number(./cmd-concepts-section/@percWithConcept,'##.#%')"/></p>
+		<h2>Cmd Concepts Section</h2>
+		<p>Total number of elements: <xsl:value-of select="./cmd-concepts-section/@total"/></p>
+		<p>Number of required elements: <xsl:value-of select="./cmd-concepts-section/@required"/></p>
+		<p>Number of elements with specified concept: <xsl:value-of select="./cmd-concepts-section/@withConcept"/></p>
+		<p>Percentage of elements with specified concept: <xsl:value-of select="format-number(./cmd-concepts-section/@percWithConcept,'##.#%')"/></p>
 		<table class="reportTable">
 			<thead>
 				<tr>
-					<th scope="col">concept</th>
-					<th scope="col">status</th>
-					<th scope="col">count</th>
+					<th scope="col">Concept</th>
+					<th scope="col">Status</th>
+					<th scope="col">Count</th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr><td colspan="3"><b>
-					total: <xsl:value-of select="./cmd-concepts-section/concepts/@total"/>
-					unique: <xsl:value-of select="./cmd-concepts-section/concepts/@unique"/>
-					required: <xsl:value-of select="./cmd-concepts-section/concepts/@required"/>
+					Total: <xsl:value-of select="./cmd-concepts-section/concepts/@total"/>
+					Unique: <xsl:value-of select="./cmd-concepts-section/concepts/@unique"/>
+					Required: <xsl:value-of select="./cmd-concepts-section/concepts/@required"/>
 				</b></td></tr>
 			</tfoot>
 			<tbody>
@@ -176,9 +176,9 @@
 			<table class="reportTable">
 				<thead>
 					<tr>
-						<th scope="col">segment</th>
-						<th scope="col">severity</th>
-						<th scope="col">message</th>
+						<th scope="col">Segment</th>
+						<th scope="col">Severity</th>
+						<th scope="col">Message</th>
 					</tr>
 				</thead>
 				<tbody>

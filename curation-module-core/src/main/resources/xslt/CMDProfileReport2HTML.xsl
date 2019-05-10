@@ -13,34 +13,34 @@
 		 <table class="reportTable">
 			  <tr>
 			    <th>Name</th>
-			    <th><xsl:value-of select="./header-section/name"/></th>
+			    <td><xsl:value-of select="./header-section/name"/></td>
 			  </tr>
 			  <tr>
 			    <th>ID</th>
-			    <th><xsl:value-of select="./header-section/id"/></th>
+			    <td><xsl:value-of select="./header-section/id"/></td>
 			  </tr>
 			  <tr>
 			    <th>Description</th>
-			    <th><xsl:value-of select="./header-section/description"/></th>
+			    <td><xsl:value-of select="./header-section/description"/></td>
 			  </tr>
 			  <tr>
 			    <th>Schema Location</th>
-			    <th><a href="{$schemaLoc}" target="_blank"><xsl:copy-of select="$schemaLoc" /></a></th>
+			    <td><a href="{$schemaLoc}" target="_blank"><xsl:copy-of select="$schemaLoc" /></a></td>
 			  </tr>
 			  <tr>
 			    <th>CMDI Version</th>
-			    <th><xsl:value-of select="./header-section/cmdiVersion"/></th>
+			    <td><xsl:value-of select="./header-section/cmdiVersion"/></td>
 			  </tr>
 			  <xsl:if test="./header-section/status">
 				  <tr>
 				    <th>Status</th>
-				    <th><xsl:value-of select="./header-section/status"/></th>
+				    <td><xsl:value-of select="./header-section/status"/></td>
 				  </tr>
 			  </xsl:if>
 			 <tr>
 				 <xsl:variable name="url"><xsl:value-of select="./@url"/></xsl:variable>
 				 <th>URL:</th>
-				 <th><a href="{$url}"><xsl:copy-of select="$url"/></a></th>
+				 <td><a href="{$url}"><xsl:copy-of select="$url"/></a></td>
 			 </tr>
 			</table>	
 		<hr/>

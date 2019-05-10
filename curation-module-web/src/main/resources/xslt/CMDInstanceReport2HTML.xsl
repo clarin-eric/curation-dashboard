@@ -25,14 +25,14 @@
                 <xsl:variable name="url">
                     <xsl:value-of select="./@selfUrl"/>
                 </xsl:variable>
-                <p>url:
+                <p>Url:
                     <a href="{$url}">
                         <xsl:copy-of select="$url"/>
                     </a>
                 </p>
 
                 <!--TODO this link is wrong-->
-                <p>profileID:
+                <p>ProfileID:
                     <a>
                         <xsl:attribute name="href">
                             <xsl:value-of select="./profile-section/schemaLocation"></xsl:value-of>
@@ -40,37 +40,37 @@
                         <xsl:value-of select="./profile-section/id"></xsl:value-of>
                     </a>
                 </p>
-                <p>status:
+                <p>Status:
                     <xsl:value-of select="./profile-section/status"/>
                 </p>
-                <p>file size:
+                <p>File Size:
                     <xsl:value-of select="./file-section/size"/> B
                 </p>
-                <p>timestamp:
+                <p>Timestamp:
                     <xsl:value-of select="./@timeStamp"/>
                 </p>
                 <hr/>
 
-                <h2>score-section</h2>
+                <h2>Score Section</h2>
                 <table class="reportTable">
                     <thead>
                         <tr>
-                            <th scope="col">segment</th>
-                            <th scope="col">score</th>
-                            <th scope="col">max</th>
+                            <th scope="col">Segment</th>
+                            <th scope="col">Score</th>
+                            <th scope="col">Max</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
                             <td colspan="3">
                                 <b>
-                                    instance:
+                                    Instance:
                                     <xsl:value-of select="format-number(./@ins-score,'##.##')"/>
-                                    total:
+                                    Total:
                                     <xsl:value-of select="format-number(./@score,'##.##')"/>
-                                    max:
+                                    Max:
                                     <xsl:value-of select="format-number(./@max-score,'##.##')"/>
-                                    scorePercentage:
+                                    Score Percentage:
                                     <xsl:value-of select="format-number(./@score-percentage,'##.#%')"/>
                                 </b>
                             </td>
@@ -95,13 +95,13 @@
 
                 <hr/>
 
-                <h2>facets-section</h2>
+                <h2>Facets Section</h2>
 
                 <font color="#F4FA58">&#9873;</font>
-                - derived facet
+                - Derived Facet
                 <br/>
                 <font color="#FF8000">&#9873;</font>
-                - value mapping
+                - Value Mapping
                 <br/>
 
 
@@ -151,29 +151,29 @@
                                         <xsl:for-each select="./facet">
                                             <tr>
                                                 <xsl:if test="position() = 1">
-                                                    <th rowspan="{last()}">
+                                                    <td rowspan="{last()}">
                                                         <xsl:value-of select="../value"/>
-                                                    </th>
+                                                    </td>
                                                 </xsl:if>
                                                 <xsl:choose>
                                                     <xsl:when test="@usesValueMapping">
-                                                        <th>
+                                                        <td>
                                                             <font color="#FF4000">
                                                                 <xsl:value-of select="@name"/>
                                                             </font>
-                                                        </th>
+                                                        </td>
                                                     </xsl:when>
                                                     <xsl:when test="@isDerived">
-                                                        <th>
+                                                        <td>
                                                             <font color="#dbd839">
                                                                 <xsl:value-of select="@name"/>
                                                             </font>
-                                                        </th>
+                                                        </td>
                                                     </xsl:when>
                                                     <xsl:otherwise>
-                                                        <th>
+                                                        <td>
                                                             <xsl:value-of select="@name"/>
-                                                        </th>
+                                                        </td>
                                                     </xsl:otherwise>
                                                 </xsl:choose>
                                                 <td>
@@ -198,9 +198,9 @@
                                     </xsl:when>
                                     <xsl:otherwise>
                                         <tr class="noFacet">
-                                            <th>
+                                            <td>
                                                 <xsl:value-of select="value"/>
-                                            </th>
+                                            </td>
                                             <td></td>
                                             <td></td>
                                             <td>
@@ -256,27 +256,27 @@
 
                 <hr/>
 
-                <h2>resProxy-section</h2>
-                <p>total number ResourceProxies:
+                <h2>ResProxy Section</h2>
+                <p>Total number ResourceProxies:
                     <xsl:value-of select="./resProxy-section/numOfResProxies"/>
                 </p>
-                <p>number of ResourceProxies having specified MIME type:
+                <p>Number of ResourceProxies having specified MIME type:
                     <xsl:value-of select="./resProxy-section/numOfResourcesWithMime"/>
                 </p>
-                <p>percent of ResourceProxies having specified MIME type:
+                <p>Percent of ResourceProxies having specified MIME type:
                     <xsl:value-of select="format-number(./resProxy-section/percOfResourcesWithMime,'##.#%')"/>
                 </p>
-                <p>number of ResourceProxies having reference:
+                <p>Number of ResourceProxies having reference:
                     <xsl:value-of select="./resProxy-section/numOfResProxiesWithReferences"/>
                 </p>
-                <p>percent of ResourceProxies having reference:
+                <p>Percent of ResourceProxies having reference:
                     <xsl:value-of select="format-number(./resProxy-section/percOfResProxiesWithReferences,'##.#%')"/>
                 </p>
                 <table class="reportTable">
                     <thead>
                         <tr>
-                            <th scope="col">resource type</th>
-                            <th scope="col">count</th>
+                            <th scope="col">Resource Type</th>
+                            <th scope="col">Count</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -295,65 +295,65 @@
 
                 <hr/>
 
-                <h2>xml-validation-section</h2>
-                <p>validity according to profile:
+                <h2>Xml Validation Section</h2>
+                <p>Validity according to profile:
                     <xsl:value-of select="./xml-validation-section/valid"/>
                 </p>
 
                 <hr/>
 
-                <h2>xml-populated-section</h2>
-                <p>number of XML elements:
+                <h2>Xml Populated Ssection</h2>
+                <p>Number of XML elements:
                     <xsl:value-of select="./xml-populated-section/numOfXMLElements"/>
                 </p>
-                <p>number of simple XML elements:
+                <p>Number of simple XML elements:
                     <xsl:value-of select="./xml-populated-section/numOfXMLSimpleElements"/>
                 </p>
-                <p>number of empty XML elements:
+                <p>Number of empty XML elements:
                     <xsl:value-of select="./xml-populated-section/numOfXMLEmptyElement"/>
                 </p>
-                <p>percentage of populated XML elements:
+                <p>Percentage of populated XML elements:
                     <xsl:value-of select="format-number(./xml-populated-section/percOfPopulatedElements,'##.#%')"/>
                 </p>
 
                 <hr/>
 
-                <h2>url-validation-section</h2>
-                <p>number of links:
+                <h2>Url Validation Section</h2>
+                <p>Number of links:
                     <xsl:value-of select="./url-validation-section/numOfLinks"/>
                 </p>
-                <p>number of unique links:
+                <p>Number of unique links:
                     <xsl:value-of select="./url-validation-section/numOfUniqueLinks"/>
                 </p>
-                <p>number of checked links:
+                <p>Number of checked links:
                     <xsl:value-of select="./url-validation-section/numOfCheckedLinks"/>
                 </p>
-                <p>number of undetermined links:
+                <p>Number of undetermined links:
                     <xsl:value-of select="./url-validation-section/numOfUndeterminedLinks"/>
                 </p>
-                <p>number of broken links:
+                <p>Number of broken links:
                     <xsl:value-of select="./url-validation-section/numOfBrokenLinks"/>
                 </p>
-                <p>percentage of valid links:
+                <p>Percentage of valid links:
                     <xsl:value-of select="format-number(./url-validation-section/percOfValidLinks,'##.#%')"/>
                 </p>
 
                 <hr/>
-                <h2>single-url-report</h2>
+                <h2>Single Url Report</h2>
                 <table class="reportTable">
                     <thead>
                         <tr>
-                            <th scope="col">url</th>
-                            <th scope="col">category</th>
-                            <th scope="col">message</th>
-                            <th scope="col">http-status</th>
-                            <th scope="col">content-type</th>
-                            <th scope="col">expected-content-type</th>
-                            <th scope="col">byte-size</th>
-                            <th scope="col">request-duration</th>
-                            <th scope="col">timestamp</th>
-                            <th scope="col">method</th>
-                            <th scope="col">redirect-count</th>
+                            <th scope="col">Url</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Message</th>
+                            <th scope="col">Http-status</th>
+                            <th scope="col">Content-type</th>
+                            <th scope="col">Expected-content-type</th>
+                            <th scope="col">Byte-size</th>
+                            <th scope="col">Request-duration</th>
+                            <th scope="col">Timestamp</th>
+                            <th scope="col">Method</th>
+                            <th scope="col">Redirect-count</th>
 
                         </tr>
                     </thead>
@@ -438,9 +438,9 @@
                     <table class="reportTable">
                         <thead>
                             <tr>
-                                <th scope="col">segment</th>
-                                <th scope="col">severity</th>
-                                <th scope="col">message</th>
+                                <th scope="col">Segment</th>
+                                <th scope="col">Severity</th>
+                                <th scope="col">Message</th>
                             </tr>
                         </thead>
                         <tbody>

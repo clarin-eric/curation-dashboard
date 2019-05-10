@@ -223,6 +223,7 @@ public class HTTPLinkChecker {
         return result;
     }
 
+    //todo 5 mb size limit
     public void download(String url, File destination) throws IOException {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(timeout)
