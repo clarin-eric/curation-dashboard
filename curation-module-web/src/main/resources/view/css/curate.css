@@ -80,3 +80,9 @@ a:hover {
     cursor: pointer;
 }
 /*end of fundament fix*/
+
+.centerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

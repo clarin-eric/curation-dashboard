@@ -44,13 +44,24 @@ public class Curate {
             return ResponseManager.returnError(400, "Input URL can't be empty.");
         }
 
+        if(!urlStr.startsWith("http://") && !urlStr.startsWith("https://")){
+            if(urlStr.startsWith("www")){
+               urlStr="http://"+urlStr;
+            }else{
+                return ResponseManager.returnError(400, "Given URL is invalid");
+            }
+        }
+
+
+        String tempPath = System.getProperty("java.io.tmpdir") + "/" + System.currentTimeMillis() + "_" + FileNameEncoder.encode(urlStr);
+
+        HTTPLinkChecker linkChecker = new HTTPLinkChecker();
         try {
-
-            String tempPath = System.getProperty("java.io.tmpdir") + "/" + System.currentTimeMillis() + "_" + FileNameEncoder.encode(urlStr);
-
-            HTTPLinkChecker linkChecker = new HTTPLinkChecker();
             linkChecker.download(urlStr, new File(tempPath));
-
+        } catch (IOException e) {
+            return ResponseManager.returnError(400, "Given URL is invalid");
+        }
+        try {
             String content = FileManager.readFile(tempPath);
             return curate(content, tempPath, urlStr);
 
