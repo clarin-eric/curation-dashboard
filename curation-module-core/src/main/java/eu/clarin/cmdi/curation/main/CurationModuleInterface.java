@@ -14,10 +14,10 @@ public interface CurationModuleInterface {
 	
     public Report processCMDProfile(String profileId);
     
-    public Report processCMDProfile(Path path) throws MalformedURLException;
+    public Report processCMDProfile(Path path) throws MalformedURLException, IOException;
 	
 	
-	public Report processCMDProfile(URL schemaLocation);
+	public Report processCMDProfile(URL schemaLocation) throws IOException;
 	
 	/*
 	 * throws Exception if file doesn't exist or is invalid
