@@ -10,6 +10,7 @@ import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 import eu.clarin.curation.linkchecker.httpLinkChecker.HTTPLinkChecker;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,10 +33,9 @@ public class CurationModule implements CurationModuleInterface {
     }
     
     @Override    
-    public Report<?> processCMDProfile(Path path) {
+    public Report<?> processCMDProfile(Path path) throws MalformedURLException {
 
-        //return processCMDProfile(path.toUri().toURL());
-        return null;
+            return processCMDProfile(path.toUri().toURL());
     }
 
     @Override

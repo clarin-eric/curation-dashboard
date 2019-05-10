@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.main;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -13,7 +14,7 @@ public interface CurationModuleInterface {
 	
     public Report processCMDProfile(String profileId);
     
-    public Report processCMDProfile(Path path);
+    public Report processCMDProfile(Path path) throws MalformedURLException;
 	
 	
 	public Report processCMDProfile(URL schemaLocation);
