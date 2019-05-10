@@ -11,7 +11,7 @@
 
                 <p>CMD Record:
                     <xsl:choose>
-                        <xsl:when test="starts-with($cmdRecord, 'http')">
+                        <xsl:when test="starts-with($cmdRecord, 'http://') or starts-with($cmdRecord, 'https://')">
                             <a href="{$cmdRecord}" target="_blank">
                                 <xsl:copy-of select="$cmdRecord"/>
                             </a>

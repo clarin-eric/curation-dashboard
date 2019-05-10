@@ -38,7 +38,6 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 		if(report.header == null){
 			report.header = new ProfileHeader();
 			report.header.setSchemaLocation(schemaLocation);
-//			report.header.setUrl(schemaLocation.startsWith("file:")?"n.a.":Configuration.BASE_URL+"rest/profile/"+report.getName()+".xml");
 			report.header.setCmdiVersion(entity.getCmdiVersion());
 
 
@@ -47,7 +46,7 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 
 		report.header.setLocalFile(isLocalFile);
 
-		report.url = Configuration.BASE_URL + "rest/profile/" + FileNameEncoder.encode(report.getName()) + ".xml";
+		report.url = Configuration.BASE_URL + "profile/" + FileNameEncoder.encode(report.getName()) + ".xml";
 
 
 		if (!report.header.isPublic())

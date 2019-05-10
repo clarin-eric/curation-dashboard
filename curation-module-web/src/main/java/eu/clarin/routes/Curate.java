@@ -52,7 +52,7 @@ public class Curate {
             linkChecker.download(urlStr, new File(tempPath));
 
             String content = FileManager.readFile(tempPath);
-            return curate(content, tempPath);
+            return curate(content, tempPath, urlStr);
 
         } catch (IOException | TransformerException | JAXBException e) {
             _logger.error("There was a problem generating the report: ", e);
@@ -69,13 +69,16 @@ public class Curate {
 
         try {
             String uploadFileName = fileMetaData.getFileName();
+            if (uploadFileName == null || uploadFileName.isEmpty()) {
+                return ResponseManager.returnError(400, "Uploaded file name can't be empty.");
+            }
 
             String content = FileManager.readInputStream(fileInputStream);
 
             String tempPath = System.getProperty("java.io.tmpdir") + "/" + System.currentTimeMillis() + "_" + uploadFileName;
             FileManager.writeToFile(tempPath, content);
 
-            return curate(content, tempPath);
+            return curate(content, tempPath, uploadFileName);
         } catch (IOException | TransformerException | JAXBException e) {
             _logger.error("There was a problem generating the report: ", e);
             return ResponseManager.returnServerError();
@@ -83,7 +86,7 @@ public class Curate {
     }
 
 
-    private Response curate(String content, String tempPath) throws TransformerException, JAXBException, IOException {
+    private Response curate(String content, String tempPath, String fileLocation) throws TransformerException, JAXBException, IOException {
         Report report;
         try {
             CurationModule cm = new CurationModule();
@@ -100,9 +103,32 @@ public class Curate {
             return ResponseManager.returnError(400, ((ErrorReport) report).error);
         }
 
+        setFileLocation(report, fileLocation);
+
         StreamResult result = save(report);
 
         return ResponseManager.returnHTML(200, result.getWriter().toString(), null);
+    }
+
+    //this is needed, because the schema/record location is only known when a url is given.
+    //when a file is uploaded, it is not known.
+    //fileLocation can't be null because it is checked before
+    private void setFileLocation(Report report, String fileLocation) {
+
+        if (report instanceof CMDInstanceReport) {
+            if (fileLocation.startsWith("http://") || fileLocation.startsWith("https://")) {
+                ((CMDInstanceReport) report).fileReport.location = fileLocation;
+            } else {
+                ((CMDInstanceReport) report).fileReport.location = "Uploaded file name: " + fileLocation;
+            }
+        } else if (report instanceof CMDProfileReport) {
+            if (fileLocation.startsWith("http://") || fileLocation.startsWith("https://")) {
+                ((CMDProfileReport) report).header.setSchemaLocation(fileLocation);
+            } else {
+                ((CMDProfileReport) report).header.setSchemaLocation("N/A");
+            }
+        }
+
     }
 
 
