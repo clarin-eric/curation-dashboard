@@ -7,7 +7,16 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContext;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 public class Configuration {
 
@@ -31,8 +40,40 @@ public class Configuration {
         Properties properties = new Properties();
         properties.load(new FileInputStream(path));
         loadVariables(properties);
+        scheduleCleaningTemp();
 
-        //todo scheduler of deleting files
+    }
+
+    private static void scheduleCleaningTemp() {
+        //scheduler to delete temporary instance and profile reports every day at 1 am.
+        Runnable instanceCleaner = () -> {
+            String instancesXmlFolder = OUTPUT_DIRECTORY + "/xml/instances";
+            String instancesHtmlFolder = OUTPUT_DIRECTORY + "/html/instances";
+
+            try {
+                FileManager.cleanFolders(Arrays.asList(instancesXmlFolder, instancesHtmlFolder), null);
+                _logger.info("Cleaned temp instances.");
+            } catch (IOException e) {
+                _logger.error("Error when cleaning instances: " + e.getMessage());
+            }
+        };
+
+        Runnable profileCleaner = () -> {
+            String profilesXmlFolder = OUTPUT_DIRECTORY + "/xml/profiles";
+            String profilesHtmlFolder = OUTPUT_DIRECTORY + "/html/profiles";
+            try {
+                FileManager.cleanFolders(Arrays.asList(profilesHtmlFolder, profilesXmlFolder), "^\\d{13}_.+$");
+                _logger.info("Cleaned temp profiles.");
+            } catch (IOException e) {
+                _logger.error("Error when cleaning profiles: " + e.getMessage());
+            }
+        };
+
+
+        long oneAM = LocalDateTime.now().until(LocalDate.now().plusDays(1).atTime(1, 0), ChronoUnit.MINUTES);
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+        scheduler.scheduleAtFixedRate(instanceCleaner, oneAM, TimeUnit.DAYS.toMinutes(1), MINUTES);
+        scheduler.scheduleAtFixedRate(profileCleaner, oneAM, TimeUnit.DAYS.toMinutes(1), MINUTES);
 
     }
 

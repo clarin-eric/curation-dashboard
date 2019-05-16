@@ -203,9 +203,13 @@ public class LinkCheckerStatisticsHelper {
                 sb.append(urlElement.getRedirectCount());
                 sb.append("</td>");
                 sb.append("<td>");
-                sb.append(urlElement.getRecord());
+                //some html css table too wide work around
+                String record = urlElement.getRecord();
+                if(record!=null){
+                    record = record.replace("_","_<wbr>");
+                    sb.append(record);
+                }
                 sb.append("</td>");
-
                 sb.append("</tr>");
             }
         } finally {

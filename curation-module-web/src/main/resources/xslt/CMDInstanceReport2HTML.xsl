@@ -339,14 +339,14 @@
                             <th scope="col">Url</th>
                             <th scope="col">Category</th>
                             <th scope="col">Message</th>
-                            <th scope="col">Http-status</th>
-                            <th scope="col">Content-type</th>
-                            <th scope="col">Expected-content-type</th>
-                            <th scope="col">Byte-size</th>
-                            <th scope="col">Request-duration</th>
+                            <th scope="col">Http Status</th>
+                            <th scope="col">Content Type</th>
+                            <th scope="col">Expected Content Type</th>
+                            <th scope="col">Byte Size</th>
+                            <th scope="col">Request Duration</th>
                             <th scope="col">Timestamp</th>
                             <th scope="col">Method</th>
-                            <th scope="col">Redirect-count</th>
+                            <th scope="col">Redirect Count</th>
 
                         </tr>
                     </thead>
