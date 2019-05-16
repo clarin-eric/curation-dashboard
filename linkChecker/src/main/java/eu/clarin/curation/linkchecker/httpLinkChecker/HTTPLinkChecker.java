@@ -240,31 +240,4 @@ public class HTTPLinkChecker {
         response.getEntity().writeTo(fos);
     }
 
-//    //this method lets httpclient handle the redirects by itself unlike the method checkLink below
-//    public int checkLinkAndGetResponseCode(String url) throws IOException {
-//        RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
-//                .setConnectTimeout(timeout)
-//                .setConnectionRequestTimeout(timeout)
-//                .setSocketTimeout(timeout)
-//                .build();
-//        HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
-//
-//        HttpHead head;
-//        try {
-//            head = new HttpHead(url);
-//        } catch (IllegalArgumentException e) {
-//            //encode url, to remove problems caused by | and similar characters
-//            String[] urlArray = url.split("\\?");
-//            if (urlArray.length == 2) {
-//                url = urlArray[0] + "?" + URLEncoder.encode(urlArray[1], "UTF-8");
-//            }
-//            head = new HttpHead(url);
-//        }
-//
-//        head.setHeader("User-Agent", USERAGENT);
-//        HttpResponse response = client.execute(head);
-//        return response.getStatusLine().getStatusCode();
-//
-//    }
-
 }

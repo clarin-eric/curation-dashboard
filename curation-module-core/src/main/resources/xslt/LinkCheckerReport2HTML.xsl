@@ -79,6 +79,7 @@
 
                     <xsl:variable name="name" select="@name"/>
 
+
                     <h3>
                         <xsl:value-of select="@name"></xsl:value-of>
                     </h3>
@@ -95,7 +96,7 @@
                         <tbody>
                             <xsl:for-each select="statistics">
 
-                                <xsl:variable name="status" select="@status"/>
+                                <xsl:variable name="status" select="@statusCode"/>
 
                                 <tr>
                                     <xsl:attribute name="style">

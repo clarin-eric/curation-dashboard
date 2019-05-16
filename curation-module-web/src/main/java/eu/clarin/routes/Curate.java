@@ -2,7 +2,10 @@ package eu.clarin.routes;
 
 import eu.clarin.cmdi.curation.main.CurationModule;
 import eu.clarin.cmdi.curation.main.Main;
-import eu.clarin.cmdi.curation.report.*;
+import eu.clarin.cmdi.curation.report.CMDInstanceReport;
+import eu.clarin.cmdi.curation.report.CMDProfileReport;
+import eu.clarin.cmdi.curation.report.ErrorReport;
+import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 import eu.clarin.curation.linkchecker.httpLinkChecker.HTTPLinkChecker;
 import eu.clarin.helpers.FileManager;
