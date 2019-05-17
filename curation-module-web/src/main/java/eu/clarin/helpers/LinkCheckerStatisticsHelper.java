@@ -186,7 +186,7 @@ public class LinkCheckerStatisticsHelper {
                 sb.append("<td>");
                 sb.append(urlElement.getMessage());
                 sb.append("</td>");
-                sb.append("<td>");
+                sb.append("<td class='text-right'>");
                 sb.append(urlElement.getStatus());
                 sb.append("</td>");
                 sb.append("<td>");
@@ -199,7 +199,7 @@ public class LinkCheckerStatisticsHelper {
                 sb.append("<td>");
                 sb.append(urlElement.getByteSize());
                 sb.append("</td>");
-                sb.append("<td>");
+                sb.append("<td class='text-right'>");
                 sb.append(urlElement.getDuration());
                 sb.append("</td>");
                 sb.append("<td>");
@@ -208,7 +208,7 @@ public class LinkCheckerStatisticsHelper {
                 sb.append("<td>");
                 sb.append(urlElement.getMethod());
                 sb.append("</td>");
-                sb.append("<td>");
+                sb.append("<td class='text-right'>");
                 sb.append(urlElement.getRedirectCount());
                 sb.append("</td>");
                 sb.append("<td>");

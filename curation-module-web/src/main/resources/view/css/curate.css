@@ -86,3 +86,7 @@ a:hover {
     align-items: center;
     justify-content: center;
 }
+
+.text-rightl{
+  text-align: right;
+}

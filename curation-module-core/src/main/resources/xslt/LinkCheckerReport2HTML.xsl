@@ -38,7 +38,7 @@
 
                                 </xsl:attribute>
 
-                                <td>
+                                <td class='text-right'>
                                     <a href="/statistics/Overall/{$status}">
                                         <xsl:value-of select="@statusCode"></xsl:value-of>
                                     </a>
@@ -49,13 +49,13 @@
                                 <td>
                                     <xsl:value-of select="@category"></xsl:value-of>
                                 </td>
-                                <td>
+                                <td class='text-right'>
                                     <xsl:value-of select="@count"></xsl:value-of>
                                 </td>
-                                <td>
+                                <td class='text-right'>
                                     <xsl:value-of select="format-number(@avgRespTime, '##.#')"></xsl:value-of>
                                 </td>
-                                <td>
+                                <td class='text-right'>
                                     <xsl:value-of select="format-number(@maxRespTime, '##.#')"></xsl:value-of>
                                 </td>
 
@@ -115,7 +115,7 @@
                                     </xsl:attribute>
 
 
-                                    <td>
+                                    <td class='text-right'>
                                         <a href="/statistics/{$name}/{$status}">
                                             <xsl:value-of select="@statusCode"></xsl:value-of>
                                         </a>
@@ -123,13 +123,13 @@
                                     <td>
                                         <xsl:value-of select="@category"></xsl:value-of>
                                     </td>
-                                    <td>
+                                    <td class='text-right'>
                                         <xsl:value-of select="@count"></xsl:value-of>
                                     </td>
-                                    <td>
+                                    <td class='text-right'>
                                         <xsl:value-of select="format-number(@avgRespTime, '##.#')"></xsl:value-of>
                                     </td>
-                                    <td>
+                                    <td class='text-right'>
                                         <xsl:value-of select="format-number(@maxRespTime, '##.#')"></xsl:value-of>
                                     </td>
                                 </tr>

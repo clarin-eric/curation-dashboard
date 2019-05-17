@@ -57,8 +57,8 @@
 				<xsl:variable name="profileID"><xsl:value-of select="./@name"/></xsl:variable>
 				<tr>
 					<td><a href="#!ResultView/profile/id/{$profileID}"><xsl:copy-of select="$profileID"/></a></td>
-					<td class="v-align-right"><xsl:value-of select="format-number(./@score,'##.##')"/></td>
-					<td class="v-align-right"><xsl:value-of select="./@count"/></td>
+					<td class='text-right'><xsl:value-of select="format-number(./@score,'##.##')"/></td>
+					<td class='text-right'><xsl:value-of select="./@count"/></td>
 			    </tr>
 			</xsl:for-each>
 			</tbody>
@@ -81,7 +81,7 @@
 			<xsl:for-each select="./facet-section/facets/facet">
 			<tr>
 				<td><xsl:value-of select="./@name"/></td>
-				<td class="v-align-right"><xsl:value-of select="format-number(./@coverage,'##.#%')"/></td>
+				<td class="text-right"><xsl:value-of select="format-number(./@coverage,'##.#%')"/></td>
 		    </tr>
 			</xsl:for-each>
 			</tbody>

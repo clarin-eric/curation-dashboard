@@ -24,7 +24,6 @@
 
                 <p>Url: selfURLPlaceHolder</p>
 
-                <!--TODO this link is wrong-->
                 <p>ProfileID:
                     <a>
                         <xsl:attribute name="href">
@@ -75,10 +74,10 @@
                                 <td>
                                     <xsl:value-of select="./@segment"/>
                                 </td>
-                                <td>
+                                <td class="text-right">
                                     <xsl:value-of select="./@score"/>
                                 </td>
-                                <td>
+                                <td class="text-right">
                                     <xsl:value-of select="./@maxScore"/>
                                 </td>
                             </tr>
@@ -278,7 +277,7 @@
                                 <td>
                                     <xsl:value-of select="./@type"/>
                                 </td>
-                                <td>
+                                <td class="text-right">
                                     <xsl:value-of select="./@count"/>
                                 </td>
                             </tr>
@@ -395,7 +394,7 @@
                                 <td>
                                     <xsl:value-of select="./@message"/>
                                 </td>
-                                <td>
+                                <td class="text-right">
                                     <xsl:value-of select="./@http-status"/>
                                 </td>
                                 <td>
@@ -404,10 +403,10 @@
                                 <td>
                                     <xsl:value-of select="./@expected-content-type"/>
                                 </td>
-                                <td>
+                                <td class="text-right">
                                     <xsl:value-of select="./@byte-size"/>
                                 </td>
-                                <td>
+                                <td class="text-right">
                                     <xsl:value-of select="./@request-duration"/>
                                 </td>
                                 <td>
@@ -416,7 +415,7 @@
                                 <td>
                                     <xsl:value-of select="./@method"/>
                                 </td>
-                                <td>
+                                <td class="text-right">
                                     <xsl:value-of select="./@redirectCount"/>
                                 </td>
                             </tr>

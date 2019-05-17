@@ -97,10 +97,10 @@
                                 <td>
                                     <xsl:value-of select="./@segment"/>
                                 </td>
-                                <td class="v-align-right">
+                                <td class="text-right">
                                     <xsl:value-of select="format-number(./@score,'##.##')"/>
                                 </td>
-                                <td class="v-align-right">
+                                <td class="text-right">
                                     <xsl:value-of select="format-number(./@maxScore,'##.##')"/>
                                 </td>
                             </tr>
@@ -202,7 +202,7 @@
                                         <xsl:value-of select="./@id"/>
                                     </a>
                                 </td>
-                                <td class="v-align-right">
+                                <td class="text-right">
                                     <xsl:value-of select="./@count"/>
                                 </td>
                             </tr>
@@ -259,7 +259,7 @@
                                 <td>
                                     <xsl:value-of select="./@status"/>
                                 </td>
-                                <td class="v-align-right">
+                                <td class="text-right">
                                     <xsl:value-of select="./@count"/>
                                 </td>
                             </tr>

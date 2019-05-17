@@ -4,11 +4,25 @@ $(document).ready( function () {
         searching: false,
         scrollY: '70vh',
         sScrollX: "100%",
-        scrollCollapse: true,
+        scrollCollapse: true
     } );
 
-    $('#collections').DataTable();
-    $('#profiles').DataTable();
+    var arr = [];
+    for(var i = 1;i<26;i++){
+        arr.push(i);
+    }
+
+//right align number columns (shitty code to make it manual but i dont know how to do it dynamicly)
+    $('#collections').DataTable({
+        columnDefs: [
+            { className: 'text-right', targets: arr }
+          ]
+    });
+    $('#profiles').DataTable({
+        columnDefs: [
+            { className: 'text-right', targets: [2, 3, 18] }
+          ]
+    });
 
 } );
 
