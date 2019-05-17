@@ -86,7 +86,7 @@ public class URLElement {
 
     public String getContentType() {
         //add space to content type, so that html tables can cut it on space to provide more horizontal space
-        if(!contentType.contains("; ")){
+        if(contentType!=null && !contentType.contains("; ")){
             contentType = contentType.replaceFirst(";","; ");
         }
         return contentType;
