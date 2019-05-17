@@ -1,5 +1,6 @@
 package eu.clarin.curation.linkchecker.urlElements;
 
+import org.apache.log4j.Logger;
 import org.bson.Document;
 
 public class URLElement {
@@ -23,6 +24,7 @@ public class URLElement {
         this.message = document.getString("message");
         this.status = document.getInteger("status");
         this.contentType = document.getString("contentType");
+
         this.byteSize = document.getString("byteSize");
         this.duration = document.getLong("duration");
         this.timestamp = document.getLong("timestamp");
@@ -83,6 +85,10 @@ public class URLElement {
     }
 
     public String getContentType() {
+        //add space to content type, so that html tables can cut it on space to provide more horizontal space
+        if(!contentType.contains("; ")){
+            contentType = contentType.replaceFirst(";","; ");
+        }
         return contentType;
     }
 

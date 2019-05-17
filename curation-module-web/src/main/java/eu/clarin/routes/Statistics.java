@@ -32,7 +32,7 @@ public class Statistics {
 
     @GET
     @Path("/{collectionName}/{status}")
-    public Response getStatusStats(@PathParam("collectionName") String collectionName, @PathParam("status") int status) {
+    public Response getStatusStatsInit(@PathParam("collectionName") String collectionName, @PathParam("status") int status) {
 
         LinkCheckerStatisticsHelper linkCheckerStatisticsHelper = new LinkCheckerStatisticsHelper();
         String urlStatistics = linkCheckerStatisticsHelper.createURLTable(collectionName, status);
@@ -40,4 +40,18 @@ public class Statistics {
         return ResponseManager.returnHTML(200, urlStatistics, null);
 
     }
+
+
+    @GET
+    @Path("/{collectionName}/{status}/{batchCount}")
+    public Response getStatusStats(@PathParam("collectionName") String collectionName, @PathParam("status") int status, @PathParam("batchCount") int batchCount) {
+
+        LinkCheckerStatisticsHelper linkCheckerStatisticsHelper = new LinkCheckerStatisticsHelper();
+
+        String urlBatchStatistics = linkCheckerStatisticsHelper.getHtmlRowsInBatch(collectionName, status, batchCount);
+
+        return ResponseManager.returnResponse(200, urlBatchStatistics, null);
+
+    }
+
 }

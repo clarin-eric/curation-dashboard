@@ -12,26 +12,49 @@ $(document).ready( function () {
 
 } );
 
+Dropzone.autoDiscover = false;
 
-Dropzone.options.cmdiDropzone = {
-  paramName: "file", // The name that will be used to transfer the file
-  maxFilesize: 5, // MB
-  success: function(file, done) {
-        document.open();
-        document.write(done);
-        document.close();
-   },
-   error: function(file, error){
-        document.open();
-        document.write(error);
-        document.close();
-  },
-  totaluploadprogress: function(progress, bytesSent) {
-    if(progress == 100){
-        $('#cmdi-dropzone').append('<div>Upload complete. Curating...</div><div id="uploadWheel" class="spinner"></div>')
-    }
-  }
-};
+$("div#cmdi-dropzone").dropzone({
+    url: "/curate",
+    paramName: "file", // The name that will be used to transfer the file
+      maxFilesize: 5, // MB
+      success: function(file, done) {
+            document.open();
+            document.write(done);
+            document.close();
+       },
+       error: function(file, error){
+            document.open();
+            document.write(error);
+            document.close();
+      },
+      totaluploadprogress: function(progress, bytesSent) {
+        if(progress == 100){
+            $('div#cmdi-dropzone').append('<div>Upload complete. Curating...</div><div id="uploadWheel" class="spinner"></div>')
+        }
+      }
+});
+
+
+//Dropzone.options.cmdiDropzone = {
+//  paramName: "file", // The name that will be used to transfer the file
+//  maxFilesize: 5, // MB
+//  success: function(file, done) {
+//        document.open();
+//        document.write(done);
+//        document.close();
+//   },
+//   error: function(file, error){
+//        document.open();
+//        document.write(error);
+//        document.close();
+//  },
+//  totaluploadprogress: function(progress, bytesSent) {
+//    if(progress == 100){
+//        $('#cmdi-dropzone').append('<div>Upload complete. Curating...</div><div id="uploadWheel" class="spinner"></div>')
+//    }
+//  }
+//};
 
 function toggleFacets() {
     var facetTable = $('#facetTable');
@@ -52,5 +75,69 @@ $('#validateButton').click(function() {
         $(this).prop('disabled', true);
     }
 });
+
+
+var table = $('#statsTable');
+var collectionName = table.attr("data-collection");
+var statusCode = table.attr("data-status");
+var reportTableTbody = $('#reportTableTbody');
+
+var i = 1;
+var scrollReady = true;
+
+//if end of table is visible, add 100 more elements to it
+$(window).scroll(function() {
+    if(scrollReady){
+
+        //stackoverflow copied
+        var tableEnd = $("#tableEndSpan");
+
+        if(tableEnd.length){
+            var top_of_element = $("#tableEndSpan").offset().top;
+            var bottom_of_element = $("#tableEndSpan").offset().top + $("#tableEndSpan").outerHeight();
+            var bottom_of_screen = $(window).scrollTop() + $(window).innerHeight();
+            var top_of_screen = $(window).scrollTop();
+
+            if ((bottom_of_screen > top_of_element) && (top_of_screen < bottom_of_element)){
+
+                scrollReady=false;
+
+                tableEnd.append('<div id="uploadWheel" class="spinner"></div>')
+                setTimeout(function(){
+                    $("#uploadWheel").remove();
+
+                    // ajax call get data from server and append to the table
+                    $.ajax({
+                       dataType: "html",
+                       url: "/statistics/"+collectionName+"/"+statusCode+"/"+i,
+                       success: function (data) {
+                           reportTableTbody.append(data);
+
+                           //this assures that if ever an empty element returns, there are no more requests sent
+                           if(data){
+                               i++;
+                               scrollReady=true;
+                           }
+                       }
+                    });
+
+
+
+                }, 1000);//wait a second between scroll and call
+
+
+
+
+            } else {
+                //do nothing
+            }
+        }
+    }
+
+});
+
+
+
+
 
 

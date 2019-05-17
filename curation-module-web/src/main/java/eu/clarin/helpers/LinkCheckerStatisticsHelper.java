@@ -10,20 +10,11 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.mongodb.client.model.Filters.*;
-import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Sorts.ascending;
 import static com.mongodb.client.model.Sorts.orderBy;
 
@@ -143,18 +134,11 @@ public class LinkCheckerStatisticsHelper {
 
         sb.append("<div>");
         sb.append("<h1>Link Checking Statistics:</h1>");
-        sb.append("<h3>").append(collectionName).append(" (limited to first 100 URLs)").append(":</h3>");
+        sb.append("<h3>").append(collectionName).append(":</h3>");
 
-        MongoCursor<Document> cursor;
-        if (collectionName.equals("Overall")) {
-            cursor = linksChecked.find(eq("status", status)).limit(100).iterator();
-        } else {
-            cursor = linksChecked.find(and(eq("status", status), eq("collection", collectionName))).limit(100).iterator();
-        }
+        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content Type", "Expected Content Type", "Byte Size", "Request Duration (ms)", "Timestamp", "Method", "Redirect Count", "Record");
 
-        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content-Type", "Expected Content-Type", "Byte-Size", "Request Duration(ms)", "Timestamp", "Method", "Redirect Count", "Record");
-
-        sb.append("<table class='reportTable'>");
+        sb.append("<table class='reportTable' id='statsTable' data-collection='" + collectionName + "' data-status='" + status + "'>");
         sb.append("<thead>");
         sb.append("<tr>");
         for (String columnName : columnNames) {
@@ -163,10 +147,35 @@ public class LinkCheckerStatisticsHelper {
         sb.append("</tr>");
 
         sb.append("</thead>");
-        sb.append("<tbody>");
+        sb.append("<tbody id='reportTableTbody'>");
 
+        sb.append(getHtmlRowsInBatch(collectionName, status, 0));
+
+        sb.append("</tbody>");
+        sb.append("</table>");
+        sb.append("<div id='tableEndSpan' class='centerContainer'></div>");
+
+        sb.append("</div></body></html>");
+        return sb.toString();
+    }
+
+    public String getHtmlRowsInBatch(String collectionName, int status, int batchCount) {
+
+        int start = batchCount * 100;
+        int end = start + 100;
+
+        StringBuilder sb = new StringBuilder();
+
+        MongoCursor<Document> cursor;
+        if (collectionName.equals("Overall")) {
+            cursor = linksChecked.find(eq("status", status)).skip(start).limit(end).iterator();
+        } else {
+            cursor = linksChecked.find(and(eq("status", status), eq("collection", collectionName))).skip(batchCount * 100).limit(batchCount * 100 + 100).iterator();
+        }
         try {
             while (cursor.hasNext()) {
+
+
                 sb.append("<tr>");
                 Document doc = cursor.next();
                 URLElement urlElement = new URLElement(doc);
@@ -205,8 +214,8 @@ public class LinkCheckerStatisticsHelper {
                 sb.append("<td>");
                 //some html css table too wide work around
                 String record = urlElement.getRecord();
-                if(record!=null){
-                    record = record.replace("_","_<wbr>");
+                if (record != null) {
+                    record = record.replace("_", "_<wbr>");
                     sb.append(record);
                 }
                 sb.append("</td>");
@@ -217,166 +226,6 @@ public class LinkCheckerStatisticsHelper {
         }
 
 
-        sb.append("</tbody>");
-        sb.append("</table>");
-
-        sb.append("</div></body></html>");
         return sb.toString();
     }
-/*
-
-the following is not necessary since we moved this to xsl report creation
-
-    private class StatisticRow {
-        private int status;
-        private String category;
-        private int count;
-        private double avgResp;
-        private long maxResp;
-    }
-
-    public String createHTML() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("<div>");
-        sb.append("<h1>Link Checking Statistics:</h1>");
-        //general table
-        addTable("Overall", sb);
-
-        sb.append("<h2>Collections:</h2>");
-
-        //for each collection
-        //each collection statistics
-        try (Stream<Path> paths = Files.walk(Paths.get(Configuration.OUTPUT_DIRECTORY.toString() + "/collections/"))) {
-
-            List<Path> files = paths.filter(Files::isRegularFile).collect(Collectors.toList());
-
-            for (Path path : files) {
-
-                String collectionName = path.getFileName().toString().split("\\.")[0];
-
-                addTable(collectionName, sb);
-
-            }
-
-        } catch (IOException e) {
-            _logger.error("Can't get the filenames list of collection reports.");
-            //don't put those in the html
-        }
-
-        sb.append("</div></body></html>");
-        return sb.toString();
-    }
-
-    private void addTable(String collectionName, StringBuilder sb) {
-        List<StatisticRow> rows = new ArrayList<>();
-
-        AggregateIterable<Document> iterable = getStatusStatistics(collectionName);
-
-        boolean empty = true;
-        for (Document doc : iterable) {
-            if (empty) {
-                empty = false;
-            }
-
-            StatisticRow row = new StatisticRow();
-
-            Integer status = doc.getInteger("_id");
-            row.status = status;
-            if (status == 200) {
-                row.category = "Ok";
-            } else if (status == 401 || status == 405 || status == 429) {
-                row.category = "Undetermined";
-            } else {
-                row.category = "Broken";
-            }
-            row.count = doc.getInteger("count");
-            row.avgResp = doc.getDouble("avg_resp");
-            row.maxResp = doc.getLong("max_resp");
-
-            rows.add(row);
-        }
-
-        rows.sort(Comparator.comparing(statisticRow -> statisticRow.category));
-
-        if (!empty) {
-            int total = 0;
-            double avgResp = 0.0;
-
-            iterable = getStatusStatisticsTotal(collectionName);
-            for (Document doc : iterable) {
-                //there is only one document
-                total = doc.getInteger("count");
-            }
-
-            iterable = getStatusStatisticsAvg(collectionName);
-            for (Document doc : iterable) {
-                //there is only one document
-                avgResp = doc.getDouble("avg_resp");
-            }
-
-            sb.append(createStatisticsTable(collectionName, rows, total, avgResp));
-        }
-    }
-
-    private String createStatisticsTable(String collectionName, List<StatisticRow> rows, int total, double avgResp) {
-        List<String> columnNames = Arrays.asList("Status", "Category", "Count", "Average Response Duration(ms)", "Max Response Duration(ms)");
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("<h3>").append(collectionName).append(":</h3>");
-        sb.append("<table class='reportTable'>");
-        sb.append("<thead>");
-        sb.append("<tr>");
-        for (String columnName : columnNames) {
-            sb.append("<th>").append(columnName).append("</th>");
-        }
-        sb.append("</tr>");
-
-        sb.append("</thead>");
-        sb.append("<tbody>");
-
-        for (StatisticRow row : rows) {
-            String element = "<a href='#!ResultView/statistics//" + collectionName + "/" + row.status + "'>" + numberFormatter.format(row.status) + "</a>";
-
-            sb.append("<tr>");
-            String color;
-
-            if (row.category.equals("Ok")) {
-                color = "#cbe7cc";
-            } else if (row.category.equals("Undetermined")) {
-                color = "#fff7b3";
-            } else {
-                color = "#f2a6a6";
-            }
-
-            sb.append("<td align='right' style='background-color:").append(color).append("'>");
-            sb.append(element);
-            sb.append("</td>");
-            sb.append("<td align='right' style='background-color:").append(color).append("'>");
-            sb.append(row.category);
-            sb.append("</td>");
-
-            sb.append("<td align='right'>");
-            sb.append(numberFormatter.format(row.count));
-            sb.append("</td>");
-
-            sb.append("<td align='right'>");
-            sb.append(numberFormatter.format(row.avgResp));
-            sb.append("</td>");
-
-            sb.append("<td align='right'>");
-            sb.append(numberFormatter.format(row.maxResp));
-            sb.append("</td>");
-
-            sb.append("</tr>");
-        }
-        sb.append("</tbody>");
-        sb.append("</table>");
-
-        sb.append("<b>Total Count: </b>").append(numberFormatter.format(total)).append("<br>");
-        sb.append("<b>Average Response Duration(ms): </b>").append(numberFormatter.format(avgResp));
-
-        return sb.toString();
-    }
-*/
 }

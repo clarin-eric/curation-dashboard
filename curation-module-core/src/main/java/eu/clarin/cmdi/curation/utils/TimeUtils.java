@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -38,7 +39,7 @@ public class TimeUtils {
 
         String timestamp = zdt.toString();
         timestamp = timestamp.replaceFirst("\\[", " [");
-
+        timestamp = timestamp.replaceFirst("T", " ");
         return timestamp;
     }
 

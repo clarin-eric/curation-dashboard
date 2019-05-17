@@ -1,5 +1,4 @@
 .fullscreen {
-    //min-height: calc(100vh - 241.2px); //header and footer heights total to 241.2px
     min-height: 70vh;
 }
 
