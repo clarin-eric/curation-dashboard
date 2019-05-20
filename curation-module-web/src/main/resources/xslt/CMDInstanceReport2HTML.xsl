@@ -294,7 +294,7 @@
 
                 <hr/>
 
-                <h2>Xml Populated Ssection</h2>
+                <h2>Xml Populated Section</h2>
                 <p>Number of XML elements:
                     <xsl:value-of select="./xml-populated-section/numOfXMLElements"/>
                 </p>
