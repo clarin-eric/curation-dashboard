@@ -343,7 +343,7 @@ public class CollectionReport implements Report<CollectionReport> {
             ));
             int duplicates = 0;
             for (Document doc : iterable) {
-                if (!((List) doc.get("checked")).isEmpty()) {
+                if (!((List<?>) doc.get("checked")).isEmpty()) {
                     duplicates++;
                 }
             }

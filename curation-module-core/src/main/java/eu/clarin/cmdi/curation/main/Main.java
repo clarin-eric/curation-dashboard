@@ -3,6 +3,8 @@ package eu.clarin.cmdi.curation.main;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.PublicProfiles;
 import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
+import eu.clarin.cmdi.curation.report.CMDProfileReport;
+import eu.clarin.cmdi.curation.report.CollectionReport;
 import eu.clarin.cmdi.curation.report.CollectionsReport;
 import eu.clarin.cmdi.curation.report.LinkCheckerReport;
 import eu.clarin.cmdi.curation.report.ProfilesReport;
@@ -27,6 +29,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
 
@@ -95,19 +99,7 @@ public class Main {
                     dumpAsXML(curator.processCMDProfile(new URL(url)), type);
             } 
             else {
-                //throw new Exception("Only id and url options are allowed for profiles curation");
-                Report report;
-                ProfilesReport overview = new ProfilesReport();
-                
-                for (ProfileHeader pHeader : PublicProfiles.createPublicProfiles()) {
-                    report = curator.processCMDProfile(pHeader.getId());
-                    dumpAsXML(report, type);
-                    dumpAsHTML(report, type);
-                    overview.addReport(report);
-                }
-                dumpAsXML(overview, type);
-                dumpAsHTML(overview, type);
-                dumpAsTSV(overview, type);
+                throw new Exception("Only id and url options are allowed for profiles curation");
             }
         } 
         else if (cmd.hasOption("i")) {// instance
@@ -136,34 +128,71 @@ public class Main {
             } else
                 throw new Exception("Only path is allowed for collection curation");
         } 
-        else if (cmd.hasOption("r")) {// collection
-            type = CurationEntityType.COLLECTION;
+        else if (cmd.hasOption("r")) {// public profiles and collections
             Configuration.COLLECTION_MODE = true;
-            
-            Report report;
 
+            // generating reports for public profiles
+            // reports are stored in a map to add profile usage in the next step
+            Map<String,Report<?>> profileReports = new HashMap<String,Report<?>>();
+            
+            for (ProfileHeader pHeader : PublicProfiles.createPublicProfiles()) {
+                profileReports.put(pHeader.getId(), curator.processCMDProfile(pHeader.getId())); 
+            }
+
+
+            
+            
+            Report<?> report;
             if (cmd.hasOption("path")) {
-                CollectionsReport overview = new CollectionsReport();
-                LinkCheckerReport linkChecker = new LinkCheckerReport();
+                
+                CollectionsReport collectionsReport = new CollectionsReport();
+                LinkCheckerReport linkCheckerReport = new LinkCheckerReport();
                 
                 for (String path : cmd.getOptionValues("path")) {
                     //dump(curator.processCollection(Paths.get(path)), type);
                     for(File file : new File(path).listFiles()) {
                         report = curator.processCollection(file.toPath());
-                        dumpAsXML(report, type);
-                        dumpAsHTML(report, type);
+                        dumpAsXML(report, CurationEntityType.COLLECTION);
+                        dumpAsHTML(report, CurationEntityType.COLLECTION);
                         
-                        overview.addReport(report);
-                        linkChecker.addReport(report);
+                        collectionsReport.addReport(report);
+                        linkCheckerReport.addReport(report);
+                        
+                        if(report instanceof CollectionReport) { //no ErrorReport
+                            CollectionReport collectionReport = (CollectionReport)report;
+                            
+                            for(CollectionReport.Profile profile : collectionReport.headerReport.profiles.profiles) {
+                                profileReports.computeIfPresent(profile.name, (key, cmdProfileReport) -> {
+                                    if(cmdProfileReport instanceof CMDProfileReport)
+                                        ((CMDProfileReport) cmdProfileReport).addCollectionUsage(collectionReport.fileReport.provider, profile.count);
+                                    return cmdProfileReport;
+                                });
+                            }
+                        }
                     }
                 }
-
-                dumpAsXML(overview, type);
-                dumpAsHTML(overview, type);
-                dumpAsTSV(overview, type);
+                // dumping the collections table
+                dumpAsXML(collectionsReport, CurationEntityType.COLLECTION);
+                dumpAsHTML(collectionsReport, CurationEntityType.COLLECTION);
+                dumpAsTSV(collectionsReport, CurationEntityType.COLLECTION);
                 
-                dumpAsXML(linkChecker, CurationEntityType.STATISTICS);
-                dumpAsHTML(linkChecker, CurationEntityType.STATISTICS);
+                //now dumping the public profile reports
+                ProfilesReport profilesReport = new ProfilesReport();
+                
+                for(Report<?> cmdProfileReport : profileReports.values()) {
+                    profilesReport.addReport(cmdProfileReport);
+                    dumpAsXML(cmdProfileReport, CurationEntityType.PROFILE);
+                    dumpAsHTML(cmdProfileReport, CurationEntityType.PROFILE);
+                }
+                
+                //dumping the profiles table
+                dumpAsXML(profilesReport, CurationEntityType.PROFILE);
+                dumpAsHTML(profilesReport, CurationEntityType.PROFILE);
+                dumpAsTSV(profilesReport, CurationEntityType.PROFILE);
+                
+                //dumping the linkchecker statistics table
+                dumpAsXML(linkCheckerReport, CurationEntityType.STATISTICS);
+                dumpAsHTML(linkCheckerReport, CurationEntityType.STATISTICS);
             } 
             else
                 throw new Exception("Only path is allowed for curation of collections root");
@@ -322,11 +351,9 @@ public class Main {
         Option paramUrl = OptionBuilder.withArgName("url").hasArgs(Option.UNLIMITED_VALUES)
                 .withDescription("Space separated urls to profile or instance to be curated").create("url");
         
-        Option paramPublicProfiles = OptionBuilder.withArgName("publicProfiles").hasArg(false)
-                .withDescription("Creates reports for public profiles with status production").create("public");
 
         OptionGroup curationInputParams = new OptionGroup();
-        curationInputParams.addOption(paramId).addOption(paramPath).addOption(paramUrl).addOption(paramPublicProfiles);
+        curationInputParams.addOption(paramId).addOption(paramPath).addOption(paramUrl);
         curationInputParams.setRequired(true);
 
         Options options = new Options();

@@ -56,7 +56,16 @@
 				<xsl:sort select="./@count" data-type="number" order="descending"/>
 				<xsl:variable name="profileID"><xsl:value-of select="./@name"/></xsl:variable>
 				<tr>
-					<td><a href="#!ResultView/profile/id/{$profileID}"><xsl:copy-of select="$profileID"/></a></td>
+					<td>
+					<a>
+						<xsl:attribute name="href">
+							<xsl:text>/profile/</xsl:text>
+	                    	<xsl:value-of select="translate(@name,'.:','__')"></xsl:value-of>
+	                    	<xsl:text>.html</xsl:text>
+	                    </xsl:attribute>
+                    <xsl:value-of select="@name"></xsl:value-of>
+                    </a>
+                    </td>
 					<td class='text-right'><xsl:value-of select="format-number(./@score,'##.##')"/></td>
 					<td class='text-right'><xsl:value-of select="./@count"/></td>
 			    </tr>

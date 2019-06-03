@@ -44,6 +44,10 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
     @XmlElement(name = "facets-section")
     public FacetReport facet;
+    
+    @XmlElementWrapper( name = "usage-section")
+    @XmlElement(name = "collection")
+    public Collection<CollectionUsage> collectionUsage = new ArrayList<CollectionUsage>();
 
     @XmlElementWrapper(name = "score-section")
     @XmlElement(name = "score")
@@ -68,6 +72,10 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
     public void setParentName(String parentName) {
         //dont do anything, profile reports dont have parent reports
     }
+    
+    public void addCollectionUsage(String collectionName, long count) {
+        this.collectionUsage.add(new CollectionUsage(collectionName, count));
+    }
 
     @Override
     public String getParentName() {
@@ -76,7 +84,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
     @Override
     public String getName() {
-        return header.getId() + ":" + header.getName();
+        return header.getId() + ":" + header.getName();        
     }
 
 
@@ -94,7 +102,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
         public int required; // cardinality > 0
 
         @XmlElement(name = "component")
-        public Collection<Component> components;
+        public java.util.Collection<Component> components;
 
     }
 
@@ -146,7 +154,25 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
         public int required;
 
         @XmlElement(name = "concept")
-        public Collection<Concept> concepts;
+        public java.util.Collection<Concept> concepts;
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class CollectionUsage{
+        public CollectionUsage() {           
+        }
+        public CollectionUsage(String collectionName, long count) {
+            this.collectionName = collectionName;
+            this.count = count;
+        }
+        
+        @XmlAttribute
+        public String collectionName;
+        
+        @XmlAttribute
+        public long count;
+        
     }
 
     @Override
