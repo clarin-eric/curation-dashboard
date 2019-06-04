@@ -6,24 +6,62 @@ $(document).ready( function () {
         sScrollX: "100%",
         scrollCollapse: true
     } );
+    // Setup - add a text input to each footer cell
+    $('#collections thead tr').clone(true).appendTo( '#collections thead' );
+    $('#collections thead tr:eq(1) th').each( function (i) {
+        var title = $(this).text();
+        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+ 
+        $( 'input', this ).on( 'keyup change', function () {
+            if ( table.column(i).search() !== this.value ) {
+                table
+                    .column(i)
+                    .search( this.value )
+                    .draw();
+            }
+        } );
+    } );
+    
 
-    var arr = [];
-    for(var i = 1;i<26;i++){
-        arr.push(i);
-    }
+ 
+    var table = $('#collections').DataTable( {
 
-//right align number columns (shitty code to make it manual but i dont know how to do it dynamicly)
-    $('#collections').DataTable({
+        orderCellsTop: true,
+        fixedHeader: true,
+        
         columnDefs: [
-            { className: 'text-right', targets: arr }
-          ]
-    });
-    $('#profiles').DataTable({
-        columnDefs: [
-            { className: 'text-right', targets: [2, 3, 18] }
-          ]
-    });
+    		{targets: 0,	className: 'dt-body-left'},
+    		{targets: '_all',  className: 'dt-body-right'}
+    	]
+    } );
+    
+    $('#profiles thead tr').clone(true).appendTo( '#profiles thead' );
+    $('#profiles thead tr:eq(1) th').each( function (i) {
+        var title = $(this).text();
+        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+ 
+        $( 'input', this ).on( 'keyup change', function () {
+            if ( table.column(i).search() !== this.value ) {
+                table
+                    .column(i)
+                    .search( this.value )
+                    .draw();
+            }
+        } );
+    } );
+    
 
+ 
+    var table = $('#profiles').DataTable( {
+
+        orderCellsTop: true,
+        fixedHeader: true,
+        
+        columnDefs: [
+            {targets: [2, 3],    className: 'dt-body-right'},
+            {targets: '_all',  className: 'dt-body-left'}
+        ]
+    } );
 } );
 
 Dropzone.autoDiscover = false;

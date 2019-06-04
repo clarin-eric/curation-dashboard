@@ -46,10 +46,10 @@
                             <xsl:value-of select="name"></xsl:value-of>
                         </td>
                         <td>
-                            <xsl:value-of select="score"></xsl:value-of>
+                            <xsl:value-of select="format-number(score,'0.00')"></xsl:value-of>
                         </td>
                         <td>
-                            <xsl:value-of select="format-number(facetCoverage,'##.##%')"></xsl:value-of>
+                            <xsl:value-of select="format-number(facetCoverage,'0.00%')"></xsl:value-of>
                         </td>
 
                         <xsl:for-each select="facets/facet">
@@ -67,7 +67,7 @@
                             </xsl:choose>
                         </xsl:for-each>
                         <td>
-                            <xsl:value-of select="format-number(percOfElementsWithConcept,'##.##%')"></xsl:value-of>
+                            <xsl:value-of select="format-number(percOfElementsWithConcept,'0.00%')"></xsl:value-of>
                         </td>
                         <td>
                             <a>

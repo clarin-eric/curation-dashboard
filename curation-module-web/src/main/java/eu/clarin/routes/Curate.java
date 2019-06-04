@@ -104,10 +104,19 @@ public class Curate {
     private Response curate(String content, String resultFileName, String fileLocation) throws TransformerException, JAXBException, IOException {
         String tempPath = System.getProperty("java.io.tmpdir") + "/" + resultFileName;
 
-        Report report;
+        Report<?> report;
         try {
             CurationModule cm = new CurationModule();
-            report = !content.substring(0, 200).contains("xmlns:xs=") ? cm.processCMDInstance(Paths.get(tempPath)) : cm.processCMDProfile(Paths.get(tempPath).toUri().toURL());
+            
+            if(content.substring(0, 200).contains("xmlns:xs=")) {//it's a profile
+                if(!content.substring(0, 200).contains("http://www.clarin.eu/cmd/1")) //but not a valid cmd 1.2 profile
+                    throw new Exception("profile has no cmd 1.2 namespace declaration");
+                else
+                    report = cm.processCMDProfile(Paths.get(tempPath).toUri().toURL());
+            }
+            else { // no profile - so processed as CMD instance 
+                report = cm.processCMDInstance(Paths.get(tempPath));
+            }
         } catch (MalformedURLException e) {
             return ResponseManager.returnError(400, "Input URL is malformed.");
 
@@ -141,7 +150,7 @@ public class Curate {
     //this is needed, because the schema/record location is only known when a url is given.
     //when a file is uploaded, it is not known.
     //fileLocation can't be null because it is checked before
-    private void setFileLocation(Report report, String fileLocation) {
+    private void setFileLocation(Report<?> report, String fileLocation) {
 
         if (report instanceof CMDInstanceReport) {
             if (fileLocation.startsWith("http://") || fileLocation.startsWith("https://")) {
@@ -161,7 +170,7 @@ public class Curate {
 
 
     //saves xml report and html representation into the file system
-    private void save(Report report, String resultName) throws IOException, JAXBException, TransformerException {
+    private void save(Report<?> report, String resultName) throws IOException, JAXBException, TransformerException {
 
         String xmlPath;
         if (report instanceof CMDProfileReport) {

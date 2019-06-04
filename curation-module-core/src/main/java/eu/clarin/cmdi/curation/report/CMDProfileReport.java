@@ -84,7 +84,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
 
     @Override
     public String getName() {
-        return header.getId() + ":" + header.getName();        
+        return header.getId();        
     }
 
 

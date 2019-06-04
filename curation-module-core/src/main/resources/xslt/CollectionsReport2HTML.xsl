@@ -54,7 +54,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="format-number(scorePercentage,'##.##%')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(scorePercentage,'0.00%')"></xsl:value-of>
                                 </td>
                                 <td>
                                     <xsl:value-of select="numOfFiles"></xsl:value-of>
@@ -69,35 +69,33 @@
                                     <xsl:value-of select="numOfCheckedLinks"></xsl:value-of>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="format-number(ratioOfValidLinks,'##.##%')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(ratioOfValidLinks,'0.00%')"></xsl:value-of>
                                 </td>
                                 <td>
                                     <xsl:value-of select="numOfResProxies"></xsl:value-of>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="format-number(avgNumOfResProxies,'##.#')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(avgNumOfResProxies,'0.0')"></xsl:value-of>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="format-number(ratioOfValidRecords,'##.##%')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(ratioOfValidRecords,'0.00%')"></xsl:value-of>
                                 </td>
                                 <td>
                                     <xsl:value-of
-                                            select="format-number(avgNumOfEmptyXMLElements,'##.#')"></xsl:value-of>
+                                            select="format-number(avgNumOfEmptyXMLElements,'0.0')"></xsl:value-of>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="format-number(avgFacetCoverage,'##.##%')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(avgFacetCoverage,'0.0%')"></xsl:value-of>
                                 </td>
 
                                 <xsl:for-each select="facets/facet">
                                     <td>
-                                        <xsl:value-of select="format-number(.,'##.##%')"></xsl:value-of>
+                                        <xsl:value-of select="format-number(.,'0.00%')"></xsl:value-of>
                                     </td>
                                 </xsl:for-each>
                             </tr>
                         </xsl:for-each>
                     </tbody>
-
-
                 </table>
             </body>
         </html>
