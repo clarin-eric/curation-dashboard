@@ -1,7 +1,7 @@
 $(document).ready( function () {
     $.extend( $.fn.dataTable.defaults, {
         paging: false,
-        searching: false,
+        searching: true,
         scrollY: '70vh',
         sScrollX: "100%",
         scrollCollapse: true
@@ -33,8 +33,7 @@ $(document).ready( function () {
     		{targets: 0,	className: 'dt-body-left'},
     		{targets: '_all',  className: 'dt-body-right'}
     	]
-    } );
-    
+    } );    
     $('#profiles thead tr').clone(true).appendTo( '#profiles thead' );
     $('#profiles thead tr:eq(1) th').each( function (i) {
         var title = $(this).text();
@@ -52,15 +51,25 @@ $(document).ready( function () {
     
 
  
-    var table = $('#profiles').DataTable( {
+    var table2 = $('#profiles').DataTable( {
 
         orderCellsTop: true,
         fixedHeader: true,
         
         columnDefs: [
-            {targets: [2, 3],    className: 'dt-body-right'},
+            {targets: [2, 3, 18],    className: 'dt-body-right'},
             {targets: '_all',  className: 'dt-body-left'}
-        ]
+        ],
+        'rowCallback': function(row, data, index){
+            for(var i=4; i<=17;i++){
+                if(data[i] == 'true'){
+                    $(row).find('td:eq(' + i + ')').css('background-color', 'lightgreen');
+                }
+                else{
+                    $(row).find('td:eq(' + i + ')').css('background-color', 'lightcoral');
+                }
+            }
+          }
     } );
 } );
 
