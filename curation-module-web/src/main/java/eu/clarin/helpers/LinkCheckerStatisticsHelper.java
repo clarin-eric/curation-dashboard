@@ -181,11 +181,16 @@ public class LinkCheckerStatisticsHelper {
                 URLElement urlElement = new URLElement(doc);
 
                 //todo move category into the database instead of checking it everywhere
+
+
+                String url = urlElement.getUrl();
+                String urlWithBreak = url.replace("_", "_<wbr>");
+
                 String category;
                 if (status == 200) {
                     category = "Ok";
                     sb.append("<td style='background-color:#cbe7cc'>");
-                    sb.append("<a href='").append(urlElement.getUrl()).append("'>").append(urlElement.getUrl()).append("</a>");
+                    sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
                     sb.append("</td>");
                     sb.append("<td style='background-color:#cbe7cc'>");
                     sb.append(category);
@@ -193,7 +198,7 @@ public class LinkCheckerStatisticsHelper {
                 } else if (status == 401 || status == 405 || status == 429) {
                     category = "Undetermined";
                     sb.append("<td style='background-color:#fff7b3'>");
-                    sb.append("<a href='").append(urlElement.getUrl()).append("'>").append(urlElement.getUrl()).append("</a>");
+                    sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
                     sb.append("</td>");
                     sb.append("<td style='background-color:#fff7b3'>");
                     sb.append(category);
@@ -201,7 +206,7 @@ public class LinkCheckerStatisticsHelper {
                 } else {
                     category = "Broken";
                     sb.append("<td style='background-color:#f2a6a6'>");
-                    sb.append("<a href='").append(urlElement.getUrl()).append("'>").append(urlElement.getUrl()).append("</a>");
+                    sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
                     sb.append("</td>");
                     sb.append("<td style='background-color:#f2a6a6'>");
                     sb.append(category);
@@ -225,8 +230,8 @@ public class LinkCheckerStatisticsHelper {
 
                 //info
                 sb.append("<tr hidden><td colspan='4'>");
-
-                sb.append("<b>Message: </b> ").append(urlElement.getMessage()).append("<br>");
+                String message = urlElement.getMessage().replace("_", "_<wbr>");
+                sb.append("<b>Message: </b> ").append(message).append("<br>");
                 //because this field is new, older entries dont have it and it results in null, so a null check to make it more user friendly
                 String expectedContent = urlElement.getExpectedMimeType() == null ? "Not Specified" : urlElement.getExpectedMimeType();
                 String content = urlElement.getContentType();
