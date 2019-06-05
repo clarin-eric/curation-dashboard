@@ -11,11 +11,30 @@
 }
 
 .leftButton {
-    width: 100%;
+    min-width: 100%;
+    /* linearly increase the font-size from 16->32px
+     between a viewport width of 600px-> 1200px  */
+    /*@include fluid-type(font-size, 600px, 1200px, 8px, 16px);*/
+}
+
+@media screen and (max-width: 1600px) {
+  .leftButton {
+     font-size: 15px;
+  }
+}
+@media screen and (min-width: 1600px) {
+  .leftButton {
+     font-size: 20px;
+  }
+}
+
+.headerSize {
+    height:10vh !important;
 }
 
 .footerSize {
-    height:10vh !important;
+    height:5vh !important;
+    padding:0px;
 }
 
 .dragAndDropBox{

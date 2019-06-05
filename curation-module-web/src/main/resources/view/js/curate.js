@@ -2,7 +2,7 @@ $(document).ready( function () {
     $.extend( $.fn.dataTable.defaults, {
         paging: false,
         searching: true,
-        scrollY: '70vh',
+        scrollY: '60vh',
         sScrollX: "100%",
         scrollCollapse: true
     } );
@@ -21,8 +21,6 @@ $(document).ready( function () {
             }
         } );
     } );
-    
-
  
     var table = $('#collections').DataTable( {
 
