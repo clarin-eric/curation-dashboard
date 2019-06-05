@@ -73,16 +73,17 @@
                     </tfoot>
 
                 </table>
-                <h2>Collections:</h2>
+                <br />
+                <h3>Collections:</h3>
 
                 <xsl:for-each select="collection">
 
                     <xsl:variable name="name" select="@name"/>
 
 
-                    <h3>
+                    <h4>
                         <xsl:value-of select="@name"></xsl:value-of>
-                    </h3>
+                    </h4>
                     <table class="reportTable">
                         <thead>
                             <tr>
@@ -139,7 +140,7 @@
                         </tbody>
 
                     </table>
-
+					<br />
                 </xsl:for-each>
             </body>
         </html>
