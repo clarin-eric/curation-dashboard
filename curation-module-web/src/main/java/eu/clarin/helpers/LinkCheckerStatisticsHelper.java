@@ -136,7 +136,7 @@ public class LinkCheckerStatisticsHelper {
         sb.append("<h1>Link Checking Statistics:</h1>");
         sb.append("<h3>").append(collectionName).append(":</h3>");
 
-        List<String> columnNames = Arrays.asList("Url", "Message", "Info", "Record");
+        List<String> columnNames = Arrays.asList("Url", "Category", "Info", "Record");
 
         sb.append("<table class='reportTable' id='statsTable' data-collection='" + collectionName + "' data-status='" + status + "'>");
         sb.append("<thead>");
@@ -180,12 +180,33 @@ public class LinkCheckerStatisticsHelper {
                 Document doc = cursor.next();
                 URLElement urlElement = new URLElement(doc);
 
-                sb.append("<td>");
-                sb.append("<a href='").append(urlElement.getUrl()).append("'>").append(urlElement.getUrl()).append("</a>");
-                sb.append("</td>");
-                sb.append("<td>");
-                sb.append(urlElement.getMessage());
-                sb.append("</td>");
+                //todo move category into the database instead of checking it everywhere
+                String category;
+                if (status == 200) {
+                    category = "Ok";
+                    sb.append("<td style='background-color:#cbe7cc'>");
+                    sb.append("<a href='").append(urlElement.getUrl()).append("'>").append(urlElement.getUrl()).append("</a>");
+                    sb.append("</td>");
+                    sb.append("<td style='background-color:#cbe7cc'>");
+                    sb.append(category);
+                    sb.append("</td>");
+                } else if (status == 401 || status == 405 || status == 429) {
+                    category = "Undetermined";
+                    sb.append("<td style='background-color:#fff7b3'>");
+                    sb.append("<a href='").append(urlElement.getUrl()).append("'>").append(urlElement.getUrl()).append("</a>");
+                    sb.append("</td>");
+                    sb.append("<td style='background-color:#fff7b3'>");
+                    sb.append(category);
+                    sb.append("</td>");
+                } else {
+                    category = "Broken";
+                    sb.append("<td style='background-color:#f2a6a6'>");
+                    sb.append("<a href='").append(urlElement.getUrl()).append("'>").append(urlElement.getUrl()).append("</a>");
+                    sb.append("</td>");
+                    sb.append("<td style='background-color:#f2a6a6'>");
+                    sb.append(category);
+                    sb.append("</td>");
+                }
 
                 //button
                 sb.append("<td>");
@@ -205,6 +226,7 @@ public class LinkCheckerStatisticsHelper {
                 //info
                 sb.append("<tr hidden><td colspan='4'>");
 
+                sb.append("<b>Message: </b> ").append(urlElement.getMessage()).append("<br>");
                 //because this field is new, older entries dont have it and it results in null, so a null check to make it more user friendly
                 String expectedContent = urlElement.getExpectedMimeType() == null ? "Not Specified" : urlElement.getExpectedMimeType();
                 String content = urlElement.getContentType();
@@ -214,7 +236,7 @@ public class LinkCheckerStatisticsHelper {
                 sb.append("<b>Byte Size: </b>").append(urlElement.getByteSize()).append("<br>");
                 sb.append("<b>Request Duration(ms): </b>").append(urlElement.getDuration()).append("<br>");
 
-                String method = urlElement.getMethod()==null?"N/A":urlElement.getMethod();
+                String method = urlElement.getMethod() == null ? "N/A" : urlElement.getMethod();
                 sb.append("<b>Method: </b>").append(method).append("<br>");
                 sb.append("<b>Timestamp: </b>").append(TimeUtils.humanizeToDate(urlElement.getTimestamp()));
                 sb.append("</td>");

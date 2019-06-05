@@ -337,16 +337,8 @@
                         <tr>
                             <th scope="col">Url</th>
                             <th scope="col">Category</th>
-                            <th scope="col">Message</th>
-                            <th scope="col">Http Status</th>
-                            <th scope="col">Content Type</th>
-                            <th scope="col">Expected Content Type</th>
-                            <th scope="col">Byte Size</th>
-                            <th scope="col">Request Duration</th>
-                            <th scope="col">Timestamp</th>
-                            <th scope="col">Method</th>
-                            <th scope="col">Redirect Count</th>
-
+                            <th scope="col">Status</th>
+                            <th scope="col">Info</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -361,62 +353,68 @@
 
                             <tr>
                                 <xsl:if test="$category='Ok'">
-                                    <td style="background-color:#cbe7cc" align="right">
+                                    <td style="background-color:#cbe7cc">
                                         <a href="{$link}">
                                             <xsl:value-of select="."/>
                                         </a>
                                     </td>
-                                    <td style="background-color:#cbe7cc" align="right">
+                                    <td style="background-color:#cbe7cc">
                                         <xsl:value-of select="./@category"/>
                                     </td>
                                 </xsl:if>
                                 <xsl:if test="$category='Undetermined'">
-                                    <td style="background-color:#fff7b3" align="right">
+                                    <td style="background-color:#fff7b3">
                                         <a href="{$link}">
                                             <xsl:value-of select="."/>
                                         </a>
                                     </td>
-                                    <td style="background-color:#fff7b3" align="right">
+                                    <td style="background-color:#fff7b3">
                                         <xsl:value-of select="./@category"/>
                                     </td>
                                 </xsl:if>
                                 <xsl:if test="$category='Broken'">
-                                    <td style="background-color:#f2a6a6" align="right">
+                                    <td style="background-color:#f2a6a6">
                                         <a href="{$link}">
                                             <xsl:value-of select="."/>
                                         </a>
                                     </td>
-                                    <td style="background-color:#f2a6a6" align="right">
+                                    <td style="background-color:#f2a6a6">
                                         <xsl:value-of select="./@category"/>
                                     </td>
                                 </xsl:if>
 
-                                <td>
-                                    <xsl:value-of select="./@message"/>
-                                </td>
                                 <td class="text-right">
                                     <xsl:value-of select="./@http-status"/>
                                 </td>
+
                                 <td>
-                                    <xsl:value-of select="./@content-type"/>
+                                    <button class='showUrlInfo btn btn-info'>Show</button>
                                 </td>
-                                <td>
+
+                            </tr>
+                            <tr hidden="true">
+                                <td colspan='4'>
+                                    <b>Message:</b>
+                                    <xsl:value-of select="./@message"/>
+                                    <br></br>
+                                    <b>Expected Content Type:</b>
                                     <xsl:value-of select="./@expected-content-type"/>
-                                </td>
-                                <td class="text-right">
+                                    <br></br>
+                                    <b>Content Type:</b>
+                                    <xsl:value-of select="./@content-type"/>
+                                    <br></br>
+                                    <b>Byte Size:</b>
                                     <xsl:value-of select="./@byte-size"/>
-                                </td>
-                                <td class="text-right">
+                                    <br></br>
+                                    <b>Request Duration:</b>
                                     <xsl:value-of select="./@request-duration"/>
-                                </td>
-                                <td>
+                                    <br></br>
+                                    <b>Timestamp:</b>
                                     <xsl:value-of select="./@timestamp"/>
-                                </td>
-                                <td>
+                                    <br></br>
+                                    <b>Method:</b>
                                     <xsl:value-of select="./@method"/>
-                                </td>
-                                <td class="text-right">
-                                    <xsl:value-of select="./@redirectCount"/>
+                                    <br></br>
                                 </td>
                             </tr>
                         </xsl:for-each>
