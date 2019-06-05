@@ -53,10 +53,10 @@
                                     <xsl:value-of select="@count"></xsl:value-of>
                                 </td>
                                 <td class='text-right'>
-                                    <xsl:value-of select="format-number(@avgRespTime, '##.#')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(@avgRespTime, '0.0')"></xsl:value-of>
                                 </td>
                                 <td class='text-right'>
-                                    <xsl:value-of select="format-number(@maxRespTime, '##.#')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(@maxRespTime, '0.0')"></xsl:value-of>
                                 </td>
 
                             </tr>
@@ -67,7 +67,7 @@
                         <tr>
                             <td colspan="5">Total Count: <xsl:value-of select="overall/@count"></xsl:value-of> &#0183;
                                 Average Response Duration(ms):
-                                <xsl:value-of select="format-number(overall/@avgRespTime,'##.#')"></xsl:value-of>
+                                <xsl:value-of select="format-number(overall/@avgRespTime,'0.0')"></xsl:value-of>
                             </td>
                         </tr>
                     </tfoot>
@@ -128,10 +128,10 @@
                                         <xsl:value-of select="@count"></xsl:value-of>
                                     </td>
                                     <td class='text-right'>
-                                        <xsl:value-of select="format-number(@avgRespTime, '##.#')"></xsl:value-of>
+                                        <xsl:value-of select="format-number(@avgRespTime, '0.0')"></xsl:value-of>
                                     </td>
                                     <td class='text-right'>
-                                        <xsl:value-of select="format-number(@maxRespTime, '##.#')"></xsl:value-of>
+                                        <xsl:value-of select="format-number(@maxRespTime, '0.0')"></xsl:value-of>
                                     </td>
                                 </tr>
 

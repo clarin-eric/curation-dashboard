@@ -84,9 +84,9 @@
                             <td colspan="3">
                                 <b>
                                     Total:
-                                    <xsl:value-of select="format-number(./@score,'##.##')"/>
+                                    <xsl:value-of select="format-number(./@score,'0.00')"/>
                                     Max:
-                                    <xsl:value-of select="format-number(./@max-score,'##.##')"/>
+                                    <xsl:value-of select="format-number(./@max-score,'0.00')"/>
                                 </b>
                             </td>
                         </tr>
@@ -98,10 +98,10 @@
                                     <xsl:value-of select="./@segment"/>
                                 </td>
                                 <td class="text-right">
-                                    <xsl:value-of select="format-number(./@score,'##.##')"/>
+                                    <xsl:value-of select="format-number(./@score,'0.00')"/>
                                 </td>
                                 <td class="text-right">
-                                    <xsl:value-of select="format-number(./@maxScore,'##.##')"/>
+                                    <xsl:value-of select="format-number(./@maxScore,'0.00')"/>
                                 </td>
                             </tr>
                         </xsl:for-each>
@@ -128,7 +128,7 @@
                                     /
                                     <xsl:value-of select="./facets-section/@numOfFacets"/>
                                     Coverage:
-                                    <xsl:value-of select="format-number(./facets-section/@profileCoverage,'##.#%')"/>
+                                    <xsl:value-of select="format-number(./facets-section/@profileCoverage,'0.0%')"/>
                                 </b>
                             </td>
                         </tr>
@@ -247,7 +247,7 @@
                     <xsl:value-of select="./cmd-concepts-section/@withConcept"/>
                 </p>
                 <p>Percentage of elements with specified concept:
-                    <xsl:value-of select="format-number(./cmd-concepts-section/@percWithConcept,'##.#%')"/>
+                    <xsl:value-of select="format-number(./cmd-concepts-section/@percWithConcept,'0.0%')"/>
                 </p>
                 <table class="reportTable">
                     <thead>
