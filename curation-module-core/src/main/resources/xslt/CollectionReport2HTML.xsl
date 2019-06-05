@@ -169,15 +169,15 @@
 					<xsl:variable name="category"><xsl:value-of select="./@category"/></xsl:variable>
                         <tr>
 							<xsl:if test="$category='Ok'">
-                            	<td style="background-color:#cbe7cc" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status"/></a></td>
+                            	<td style="background-color:#cbe7cc" align="right"><a href="/statistics/{$collectionName}/{$status}"><xsl:copy-of select="$status"/></a></td>
 								<td style="background-color:#cbe7cc" align="right"><xsl:value-of select="./@category" /></td>
 							</xsl:if>
 							<xsl:if test="$category='Undetermined'">
-								<td style="background-color:#fff7b3" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status"/></a></td>
+								<td style="background-color:#fff7b3" align="right"><a href="/statistics/{$collectionName}/{$status}"><xsl:copy-of select="$status"/></a></td>
 								<td style="background-color:#fff7b3" align="right"><xsl:value-of select="./@category" /></td>
 							</xsl:if>
 							<xsl:if test="$category='Broken'">
-								<td style="background-color:#f2a6a6" align="right"><a href="'#!ResultView/statistics//{$collectionName}/{$status}"><xsl:copy-of select="$status"/></a></td>
+								<td style="background-color:#f2a6a6" align="right"><a href="/statistics/{$collectionName}/{$status}"><xsl:copy-of select="$status"/></a></td>
 								<td style="background-color:#f2a6a6" align="right"><xsl:value-of select="./@category" /></td>
 							</xsl:if>
                             <td align="right"><xsl:value-of select="./@count" /></td>

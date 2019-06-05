@@ -2,7 +2,7 @@ $(document).ready( function () {
     $.extend( $.fn.dataTable.defaults, {
         paging: false,
         searching: true,
-        scrollY: '60vh',
+        scrollY: '70vh',
         sScrollX: "100%",
         scrollCollapse: true
     } );
@@ -69,6 +69,9 @@ $(document).ready( function () {
             }
           }
     } );
+
+
+    $("#collections_filter").hide();//hide top filter which is not necessary
 } );
 
 Dropzone.autoDiscover = false;
