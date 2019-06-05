@@ -72,6 +72,7 @@ $(document).ready( function () {
 
 
     $("#collections_filter").hide();//hide top filter which is not necessary
+    $("#profiles_filter").hide();//hide top filter which is not necessary
 } );
 
 Dropzone.autoDiscover = false;
@@ -180,15 +181,16 @@ $(window).scroll(function() {
                                i++;
                                scrollReady=true;
                            }
+
+                           //add toggle logic to all new buttons on the table and remove the class from them so that the logic doesn't get applied twice on ajax call
+                           $(".showUrlInfo").click(function() {
+                               toggleInfo($(this));
+                           });
+                           $(".showUrlInfo").removeClass("showUrlInfo");
                        }
                     });
 
-
-
                 }, 1000);//wait a second between scroll and call
-
-
-
 
             } else {
                 //do nothing
@@ -197,6 +199,28 @@ $(window).scroll(function() {
     }
 
 });
+
+//add toggle logic to all buttons on the table and remove the class from them so that the logic doesn't get applied twice on ajax call
+$(".showUrlInfo").click(function() {
+    toggleInfo($(this));
+});
+$(".showUrlInfo").removeClass("showUrlInfo");
+
+function toggleInfo(button){
+
+    var element = button.parent().parent().next();
+
+    if(element.attr("hidden")){
+        element.removeAttr("hidden");
+        button.text("Hide");
+    }else{
+        element.attr("hidden",true);
+        button.text("Show");
+    }
+
+}
+
+
 
 
 

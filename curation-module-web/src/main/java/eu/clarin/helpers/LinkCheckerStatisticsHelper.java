@@ -136,7 +136,7 @@ public class LinkCheckerStatisticsHelper {
         sb.append("<h1>Link Checking Statistics:</h1>");
         sb.append("<h3>").append(collectionName).append(":</h3>");
 
-        List<String> columnNames = Arrays.asList("Url", "Message", "Http Status", "Content Type", "Expected Content Type", "Byte Size", "Request Duration (ms)", "Timestamp", "Method", "Redirect Count", "Record");
+        List<String> columnNames = Arrays.asList("Url", "Message", "Info", "Record");
 
         sb.append("<table class='reportTable' id='statsTable' data-collection='" + collectionName + "' data-status='" + status + "'>");
         sb.append("<thead>");
@@ -186,31 +186,12 @@ public class LinkCheckerStatisticsHelper {
                 sb.append("<td>");
                 sb.append(urlElement.getMessage());
                 sb.append("</td>");
-                sb.append("<td class='text-right'>");
-                sb.append(urlElement.getStatus());
-                sb.append("</td>");
+
+                //button
                 sb.append("<td>");
-                sb.append(urlElement.getContentType());
+                sb.append("<button class='showUrlInfo btn btn-info'>Show</button>");
                 sb.append("</td>");
-                sb.append("<td>");
-                //because this field is new, older entries dont have it and it results in null, so a null check to make it more user friendly
-                sb.append(urlElement.getExpectedMimeType() == null ? "Not Specified" : urlElement.getExpectedMimeType());
-                sb.append("</td>");
-                sb.append("<td>");
-                sb.append(urlElement.getByteSize());
-                sb.append("</td>");
-                sb.append("<td class='text-right'>");
-                sb.append(urlElement.getDuration());
-                sb.append("</td>");
-                sb.append("<td>");
-                sb.append(TimeUtils.humanizeToDate(urlElement.getTimestamp()));
-                sb.append("</td>");
-                sb.append("<td>");
-                sb.append(urlElement.getMethod());
-                sb.append("</td>");
-                sb.append("<td class='text-right'>");
-                sb.append(urlElement.getRedirectCount());
-                sb.append("</td>");
+
                 sb.append("<td>");
                 //some html css table too wide work around
                 String record = urlElement.getRecord();
@@ -218,8 +199,28 @@ public class LinkCheckerStatisticsHelper {
                     record = record.replace("_", "_<wbr>");
                     sb.append(record);
                 }
-                sb.append("</td>");
+
                 sb.append("</tr>");
+
+                //info
+                sb.append("<tr hidden><td colspan='4'>");
+
+                //because this field is new, older entries dont have it and it results in null, so a null check to make it more user friendly
+                String expectedContent = urlElement.getExpectedMimeType() == null ? "Not Specified" : urlElement.getExpectedMimeType();
+                String content = urlElement.getContentType();
+
+                sb.append("<b>Expected Content Type: </b>").append(expectedContent).append("<br>");
+                sb.append("<b>Content Type: </b>").append(content).append("<br>");
+                sb.append("<b>Byte Size: </b>").append(urlElement.getByteSize()).append("<br>");
+                sb.append("<b>Request Duration(ms): </b>").append(urlElement.getDuration()).append("<br>");
+
+                String method = urlElement.getMethod()==null?"N/A":urlElement.getMethod();
+                sb.append("<b>Method: </b>").append(method).append("<br>");
+                sb.append("<b>Timestamp: </b>").append(TimeUtils.humanizeToDate(urlElement.getTimestamp()));
+                sb.append("</td>");
+                //info end
+
+                sb.append("</td></tr>");
             }
         } finally {
             cursor.close();
