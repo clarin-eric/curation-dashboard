@@ -218,9 +218,7 @@
                     <tbody>
                         <xsl:for-each select="./cmd-components-section/component">
                             <tr>
-                                <xsl:variable name="href">
-                                    http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/components/<xsl:value-of
-                                        select="./@id"/>
+                                <xsl:variable name="href">http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/components/<xsl:value-of select="./@id"/>
                                 </xsl:variable>
                                 <td>
                                     <xsl:value-of select="./@name"/>
