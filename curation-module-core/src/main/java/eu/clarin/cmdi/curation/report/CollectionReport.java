@@ -363,8 +363,11 @@ public class CollectionReport implements Report<CollectionReport> {
                                     Accumulators.max("max_resp", "$duration")
                             )));
             Document result = aggregate.first();
-            urlReport.avgRespTime = result.getDouble("avg_resp");
-            urlReport.maxRespTime = result.getLong("max_resp");
+
+            if(result!=null){
+                urlReport.avgRespTime = result.getDouble("avg_resp");
+                urlReport.maxRespTime = result.getLong("max_resp");
+            }
 
         }
 
@@ -463,8 +466,6 @@ public class CollectionReport implements Report<CollectionReport> {
         public int totNumOfUniqueLinks;
         public int totNumOfCheckedLinks;
         public Double avgNumOfUniqueLinks = 0.0;
-        //        public int totNumOfResProxiesLinks;
-//        public Double avgNumOfResProxiesLinks = 0.0;
         public int totNumOfBrokenLinks;
         public Double avgNumOfBrokenLinks = 0.0;
         public Double ratioOfValidLinks = 0.0;
