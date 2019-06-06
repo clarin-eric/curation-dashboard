@@ -51,7 +51,7 @@ public class CollectionReport implements Report<CollectionReport> {
     @XmlAttribute(name = "ins-max-score")
     public Double maxPossibleScoreInstance = 0.0;
 
-    @XmlAttribute
+    @XmlAttribute(name = "timestamp")
     public String timeStamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
     @XmlElement(name = "file-section")
