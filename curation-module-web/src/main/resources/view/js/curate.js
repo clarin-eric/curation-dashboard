@@ -73,6 +73,8 @@ $(document).ready( function () {
 
     $("#collections_filter").hide();//hide top filter which is not necessary
     $("#profiles_filter").hide();//hide top filter which is not necessary
+
+    redirectDeprecatedURLs();
 } );
 
 Dropzone.autoDiscover = false;
@@ -217,6 +219,29 @@ function toggleInfo(button){
         element.attr("hidden",true);
         button.text("Show");
     }
+
+}
+
+//harvester uses old links that won't work anymore
+//so for backwards compatibility's sake, we have a redirect for deprecated paths
+//when menzo returns and updates the harvester, this method can be deleted
+function redirectDeprecatedURLs(){
+
+    if(window.location.hash.startsWith("#!ResultView/collection//")){
+
+        var hashArray = window.location.hash.split("/");
+
+        if(hashArray !== undefined && hashArray.length != 0){
+            var collectionName = hashArray[hashArray.length-1];
+
+            var newUrl = window.location.origin + "/collection/"+ collectionName+".html";
+
+            window.location.replace(newUrl);
+        }
+    }
+
+
+
 
 }
 

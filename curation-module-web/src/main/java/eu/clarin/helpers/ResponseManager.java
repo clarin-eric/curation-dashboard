@@ -42,7 +42,11 @@ public final class ResponseManager {
         return returnError(500, "There was a server error. Please report it on <a href='https://github.com/clarin-eric/clarin-curation-module/issues'>github</a>.");
     }
 
-    public static Response redirect(String resultURL) {
-        return Response.seeOther(URI.create(resultURL)).build();
+    public static Response redirect(String URL) {
+        return Response.seeOther(URI.create(URL)).build();
+    }
+
+    public static Response permanentRedirect(String URL) {
+        return Response.status(301).header("Location",URL).build();
     }
 }

@@ -8,7 +8,7 @@
 		<h1>Collection Report</h1>
 		<xsl:variable name="collectionName"><xsl:value-of select="./file-section/provider"/></xsl:variable>
 
-		<h3>Collection name: <xsl:copy-of select="$collectionName" /></h3>
+		<h3>Collection name: <xsl:value-of select="replace($collectionName,'_',' ')"/></h3>
 
 <!--		<xsl:variable name="url"><xsl:value-of select="./@url"/></xsl:variable>-->
 <!--		<p>URL: <a href="{$url}"><xsl:copy-of select="$url"/></a></p>-->
