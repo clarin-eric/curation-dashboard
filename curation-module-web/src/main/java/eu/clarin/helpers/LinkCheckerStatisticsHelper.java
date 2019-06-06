@@ -114,7 +114,7 @@ public class LinkCheckerStatisticsHelper {
 
         sb.append("<div>");
         sb.append("<h1>Link Checking Statistics:</h1>");
-        sb.append("<h3>").append(collectionName).append(":</h3>");
+        sb.append("<h3>").append(collectionName.replace("_"," ")).append(":</h3>");
 
         List<String> columnNames = Arrays.asList("Url", "Category", "Info", "Record");
 
