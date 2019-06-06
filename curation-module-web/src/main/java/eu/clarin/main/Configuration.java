@@ -1,5 +1,8 @@
 package eu.clarin.main;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import eu.clarin.helpers.FileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +28,10 @@ public class Configuration {
     public static String VIEW_RESOURCES_PATH;
     public static String OUTPUT_DIRECTORY;
     public static String BASE_URL;
+    private static String DATABASE_URI;
+    private static String DATABASE_NAME;
+
+    public static MongoDatabase DATABASE;
 
     public static void init(ServletContext servletContext) throws IOException {
 
@@ -82,6 +89,26 @@ public class Configuration {
         OUTPUT_DIRECTORY = properties.getProperty("OUTPUT_DIRECTORY");
 
         BASE_URL = properties.getProperty("BASE_URL");
+
+        DATABASE_URI = properties.getProperty("DATABASE_URI");
+        DATABASE_NAME = properties.getProperty("DATABASE_NAME");
+
+        loadMongo();
+
+    }
+
+    private static void loadMongo() {
+        _logger.info("Connecting to database...");
+        MongoClient mongoClient;
+
+        if (DATABASE_URI == null || DATABASE_URI.isEmpty()) {//if it is empty, try localhost
+            mongoClient = MongoClients.create();
+        } else {
+            mongoClient = MongoClients.create(DATABASE_URI);
+        }
+
+        DATABASE = mongoClient.getDatabase(DATABASE_NAME);
+        _logger.info("Connected to database.");
 
     }
 }

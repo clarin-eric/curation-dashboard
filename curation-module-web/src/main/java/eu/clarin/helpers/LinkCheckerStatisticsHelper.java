@@ -1,16 +1,17 @@
 package eu.clarin.helpers;
 
-import com.mongodb.client.*;
+import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
-import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.curation.linkchecker.urlElements.URLElement;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,32 +23,11 @@ import static com.mongodb.client.model.Sorts.orderBy;
 public class LinkCheckerStatisticsHelper {
     private static final Logger _logger = LoggerFactory.getLogger(LinkCheckerStatisticsHelper.class);
 
-    private static final MongoClient mongoClient;
     private MongoCollection<Document> linksChecked;
 
-    private DecimalFormat numberFormatter = new DecimalFormat("###,###.##");
-
-    static { //since MongoClient is already a connection pool only one instance should exist in the application
-        if (Configuration.DATABASE) {
-            _logger.info("Connecting to database...");
-            if (Configuration.DATABASE_URI == null || Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
-                mongoClient = MongoClients.create();
-            } else {
-                mongoClient = MongoClients.create(Configuration.DATABASE_URI);
-            }
-        } else {
-            mongoClient = null;
-        }
-    }
-
-    public LinkCheckerStatisticsHelper() {
-
-        MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
-        _logger.info("Connected to database.");
-
+    public LinkCheckerStatisticsHelper(MongoDatabase database) {
         this.linksChecked = database.getCollection("linksChecked");
     }
-
 
     private AggregateIterable<Document> getStatusStatistics() {
 
