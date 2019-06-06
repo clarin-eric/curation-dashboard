@@ -57,13 +57,13 @@
                             <td colspan="3">
                                 <b>
                                     Instance:
-                                    <xsl:value-of select="format-number(./@ins-score,'##.##')"/>
+                                    <xsl:value-of select="format-number(./@ins-score,'0.00')"/>
                                     Total:
-                                    <xsl:value-of select="format-number(./@score,'##.##')"/>
+                                    <xsl:value-of select="format-number(./@score,'0.00')"/>
                                     Max:
-                                    <xsl:value-of select="format-number(./@max-score,'##.##')"/>
+                                    <xsl:value-of select="format-number(./@max-score,'0.00')"/>
                                     Score Percentage:
-                                    <xsl:value-of select="format-number(./@score-percentage,'##.#%')"/>
+                                    <xsl:value-of select="format-number(./@score-percentage,'0.0%')"/>
                                 </b>
                             </td>
                         </tr>
@@ -89,10 +89,10 @@
 
                 <h2>Facets Section</h2>
 
-                <font color="#F4FA58">&#9873;</font>
+                <font color="#ffd100">&#9873;</font>
                 - Derived Facet
                 <br/>
-                <font color="#FF8000">&#9873;</font>
+                <font color="#00aa00">&#9873;</font>
                 - Value Mapping
                 <br/>
 
@@ -127,10 +127,10 @@
                                         <xsl:value-of select="./facets-section/@numOfFacets"/>;
 
                                         instance coverage: <xsl:value-of
-                                            select="format-number(./facets-section/@instanceCoverage,'##.#%')"/>;
+                                            select="format-number(./facets-section/@instanceCoverage,'0.0%')"/>;
                                         profile coverage:
                                         <xsl:value-of
-                                                select="format-number(./facets-section/@profileCoverage,'##.#%')"/>
+                                                select="format-number(./facets-section/@profileCoverage,'0.0%')"/>
                                     </b>
                                 </td>
                             </tr>
@@ -150,14 +150,14 @@
                                                 <xsl:choose>
                                                     <xsl:when test="@usesValueMapping">
                                                         <td>
-                                                            <font color="#FF4000">
+                                                            <font color="#00aa00">
                                                                 <xsl:value-of select="@name"/>
                                                             </font>
                                                         </td>
                                                     </xsl:when>
                                                     <xsl:when test="@isDerived">
                                                         <td>
-                                                            <font color="#dbd839">
+                                                            <font color="#ffd100">
                                                                 <xsl:value-of select="@name"/>
                                                             </font>
                                                         </td>
@@ -256,13 +256,13 @@
                     <xsl:value-of select="./resProxy-section/numOfResourcesWithMime"/>
                 </p>
                 <p>Percent of ResourceProxies having specified MIME type:
-                    <xsl:value-of select="format-number(./resProxy-section/percOfResourcesWithMime,'##.#%')"/>
+                    <xsl:value-of select="format-number(./resProxy-section/percOfResourcesWithMime,'0.0%')"/>
                 </p>
                 <p>Number of ResourceProxies having reference:
                     <xsl:value-of select="./resProxy-section/numOfResProxiesWithReferences"/>
                 </p>
                 <p>Percent of ResourceProxies having reference:
-                    <xsl:value-of select="format-number(./resProxy-section/percOfResProxiesWithReferences,'##.#%')"/>
+                    <xsl:value-of select="format-number(./resProxy-section/percOfResProxiesWithReferences,'0.0%')"/>
                 </p>
                 <table class="reportTable">
                     <thead>
@@ -305,7 +305,7 @@
                     <xsl:value-of select="./xml-populated-section/numOfXMLEmptyElement"/>
                 </p>
                 <p>Percentage of populated XML elements:
-                    <xsl:value-of select="format-number(./xml-populated-section/percOfPopulatedElements,'##.#%')"/>
+                    <xsl:value-of select="format-number(./xml-populated-section/percOfPopulatedElements,'0.0%')"/>
                 </p>
 
                 <hr/>
@@ -327,7 +327,7 @@
                     <xsl:value-of select="./url-validation-section/numOfBrokenLinks"/>
                 </p>
                 <p>Percentage of valid links:
-                    <xsl:value-of select="format-number(./url-validation-section/percOfValidLinks,'##.#%')"/>
+                    <xsl:value-of select="format-number(./url-validation-section/percOfValidLinks,'0.0%')"/>
                 </p>
 
                 <hr/>
