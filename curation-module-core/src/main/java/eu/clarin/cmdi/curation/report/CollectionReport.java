@@ -336,7 +336,6 @@ public class CollectionReport implements Report<CollectionReport> {
             //because url validator works on a record basis and not collection basis, so the program
             //can only know about unique link numbers in a single record and not the whole collection.
             //thats why some database magic on the whole collection needed.
-            //there might be mongo only way to do this but i dont know.
             iterable = linksToBeChecked.aggregate(Arrays.asList(
                     Aggregates.match(eq("collection", getName())),
                     Aggregates.lookup("linksChecked", "url", "url", "checked")
@@ -356,8 +355,16 @@ public class CollectionReport implements Report<CollectionReport> {
             urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
             urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
 
-//            urlReport.avgNumOfResProxiesLinks = (double) urlReport.totNumOfResProxiesLinks / fileReport.numOfFiles;
-
+            AggregateIterable<Document> aggregate = linksChecked.aggregate(
+                    Arrays.asList(
+                            Aggregates.match(eq("collection", getName())),
+                            Aggregates.group(null,
+                                    Accumulators.avg("avg_resp", "$duration"),
+                                    Accumulators.max("max_resp", "$duration")
+                            )));
+            Document result = aggregate.first();
+            urlReport.avgRespTime = result.getDouble("avg_resp");
+            urlReport.maxRespTime = result.getLong("max_resp");
 
         }
 
@@ -462,6 +469,8 @@ public class CollectionReport implements Report<CollectionReport> {
         public Double avgNumOfBrokenLinks = 0.0;
         public Double ratioOfValidLinks = 0.0;
         public int totNumOfUndeterminedLinks;
+        public Double avgRespTime = 0.0;
+        public Long maxRespTime = 0L;
         @XmlElementWrapper(name = "statistics")
         public Collection<Statistics> status = new ArrayList<>();
     }

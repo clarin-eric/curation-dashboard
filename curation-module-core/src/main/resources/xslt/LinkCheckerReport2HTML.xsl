@@ -67,7 +67,9 @@
                         <tr>
                             <td colspan="5">Total Count: <xsl:value-of select="overall/@count"></xsl:value-of> &#0183;
                                 Average Response Duration(ms):
-                                <xsl:value-of select="format-number(overall/@avgRespTime,'##.#')"></xsl:value-of>
+                                <xsl:value-of select="format-number(overall/@avgRespTime,'##.#')"></xsl:value-of> &#0183;
+                                Max Response Duration(ms):
+                                <xsl:value-of select="format-number(overall/@maxRespTime,'##.#')"></xsl:value-of>
                             </td>
                         </tr>
                     </tfoot>
@@ -80,9 +82,8 @@
 
                     <xsl:variable name="name" select="@name"/>
 
-
                     <h4>
-                        <xsl:value-of select="@name"></xsl:value-of>
+                        <xsl:value-of select="replace($name,'_',' ')"/>
                     </h4>
                     <table class="reportTable">
                         <thead>
@@ -138,6 +139,16 @@
                             </xsl:for-each>
 
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5">Total Count: <xsl:value-of select="@count"></xsl:value-of> &#0183;
+                                    Average Response Duration(ms):
+                                    <xsl:value-of select="format-number(@avgRespTime,'##.#')"></xsl:value-of> &#0183;
+                                    Max Response Duration(ms):
+                                    <xsl:value-of select="format-number(@maxRespTime,'##.#')"></xsl:value-of>
+                                </td>
+                            </tr>
+                        </tfoot>
 
                     </table>
 					<br />
