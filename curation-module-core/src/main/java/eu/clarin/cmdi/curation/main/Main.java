@@ -120,10 +120,13 @@ public class Main {
             type = CurationEntityType.COLLECTION;
             Configuration.COLLECTION_MODE = true;
             if (cmd.hasOption("path")) {
+                Report<?> report;
+                
                 for (String path : cmd.getOptionValues("path")) {
-                    //dump(curator.processCollection(Paths.get(path)), type);
-                    dumpAsXML(curator.processCollection(Paths.get(path)), type);
-                    dumpAsHTML(curator.processCollection(Paths.get(path)), type);
+                    report = curator.processCollection(Paths.get(path));
+
+                    dumpAsXML(report, type);
+                    dumpAsHTML(report, type);
                 }
             } else
                 throw new Exception("Only path is allowed for collection curation");
