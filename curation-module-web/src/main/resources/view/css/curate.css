@@ -1,0 +1,111 @@
+.fullscreen {
+    min-height: 70vh;
+}
+
+.content {
+    padding-bottom: 6vh;
+}
+
+.leftMenu {
+    z-index:999;
+}
+
+.leftButton {
+    min-width: 100%;
+    /* linearly increase the font-size from 16->32px
+     between a viewport width of 600px-> 1200px  */
+    /*@include fluid-type(font-size, 600px, 1200px, 8px, 16px);*/
+}
+
+@media screen and (max-width: 1600px) {
+  .leftButton {
+     font-size: 15px;
+  }
+}
+@media screen and (min-width: 1600px) {
+  .leftButton {
+     font-size: 20px;
+  }
+}
+
+.headerSize {
+    height:10vh !important;
+}
+
+.footerSize {
+    height:5vh !important;
+    padding:0px;
+}
+
+.dragAndDropBox{
+    width:400px;
+    height:300px;
+    border-radius: 25px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.instanceElement{
+    padding: 15px;
+}
+
+.spinner {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.reportTable{
+    border-collapse: collapse;
+    padding: 6px;
+}
+
+.reportTable td {
+    border: 1px solid #000;
+
+}
+
+.reportTable th, .reportTable tfoot tr{
+    border: 1px solid #000;
+    background-color: #999999;
+}
+
+/*these are necessary to replace fundament values*/
+ /* unvisited link */
+a:link, a:visited {
+    color: blue;
+    text-decoration: underline;
+    cursor: auto;
+}
+a:visited {
+    color: purple;
+}
+a:active {
+    color: red;
+    cursor: pointer;
+}
+a:hover {
+    cursor: pointer;
+}
+/*end of fundament fix*/
+
+.centerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-rightl{
+  text-align: right;
+}

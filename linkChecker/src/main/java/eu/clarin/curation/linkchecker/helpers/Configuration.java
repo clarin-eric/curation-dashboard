@@ -1,10 +1,15 @@
 package eu.clarin.curation.linkchecker.helpers;
 
+import com.mongodb.MongoException;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.rmi.ServerException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -14,7 +19,6 @@ public class Configuration {
     private static Properties properties = new Properties();
     private final static Logger _logger = LoggerFactory.getLogger(Configuration.class);
 
-
     public static String DATABASE_NAME;
     public static String DATABASE_URI;
     public static int TIMEOUT;
@@ -23,7 +27,6 @@ public class Configuration {
     public static long CRAWLDELAY;
     public static boolean ONLY_BROKEN;
     public static Map<String, Long> CRAWLDELAYMAP = new HashMap<>();
-
 
     public static void loadConfigVariables(String configPath) {
         try {
@@ -49,7 +52,6 @@ public class Configuration {
             long delay = Long.parseLong(crawlDelayEntry.split("=")[1]);
             CRAWLDELAYMAP.put(collection, delay);
         }
-
 
     }
 

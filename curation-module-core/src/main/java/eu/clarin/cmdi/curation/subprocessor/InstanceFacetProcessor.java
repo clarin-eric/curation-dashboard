@@ -74,7 +74,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
                 val.xpath = instanceNode.getXpath();
                 val.value = instanceNode.getValue();
 
-                CMDINode node = elements.get(instanceNode.getXpath());
+                CMDINode node = elements.get(instanceNode.getXpath().replaceAll("\\[\\d\\]", ""));
                 if (node != null && node.concept != null)
                     val.concept = new Concept(node.concept.uri, node.concept.prefLabel, node.concept.status);
 

@@ -134,7 +134,7 @@ public class Main {
                     URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(cursor.next());
 
                     String collection = urlElementToBeChecked.getCollection();
-                    String url = urlElementToBeChecked.getUrl();
+
 //                    _logger.info("URL to be checked: " + url + ", from collection: " + collection);
 
                     CollectionThread t = getCollectionThreadByName(collection);
@@ -151,13 +151,13 @@ public class Main {
                         }
 
                         t = new CollectionThread(collection, linksToBeChecked, linksChecked, linksCheckedHistory, crawlDelay);
-                        t.urlQueue.add(url);
+                        t.urlQueue.add(urlElementToBeChecked);
 
                         t.start();
                         _logger.info("Started collection thread: " + collection);
                     } else {
-                        if (!t.urlQueue.contains(url)) {
-                            t.urlQueue.add(url);
+                        if (!t.urlQueue.contains(urlElementToBeChecked)) {
+                            t.urlQueue.add(urlElementToBeChecked);
                             _logger.info("Added url to collection thread: " + collection);
                         }
                     }

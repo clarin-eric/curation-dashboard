@@ -25,7 +25,6 @@ public class CurationModuleTest extends TestBase{
             CurationModule curation = new CurationModule();
             
             report = curation.processCMDInstance(path);
-            report.toXML(System.out);
         }
         catch (Exception ex) {
             // TODO Auto-generated catch block
@@ -48,7 +47,6 @@ public class CurationModuleTest extends TestBase{
             CurationModule curation = new CurationModule();
             
             report = curation.processCMDInstance(path);
-            report.toXML(System.out);
         }
         catch (Exception ex) {
             // TODO Auto-generated catch block
@@ -69,7 +67,6 @@ public class CurationModuleTest extends TestBase{
             CurationModule curation = new CurationModule();
             
             report = curation.processCMDInstance(path);
-            report.toXML(System.out);
         }
         catch (Exception ex) {
             // TODO Auto-generated catch block

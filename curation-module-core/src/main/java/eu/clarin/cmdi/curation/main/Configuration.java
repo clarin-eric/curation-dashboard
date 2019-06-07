@@ -30,10 +30,11 @@ public class Configuration {
     public static Path OUTPUT_DIRECTORY = null;
     public static Path CACHE_DIRECTORY = null;
     public static Path COLLECTION_HTML_DIRECTORY = null;
+    public static int THREAD_POOL_SIZE=100;
     public static Collection<String> FACETS = null;
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;
-    private static final int TIMEOUTDEFAULT = 5000;//in ms(if config file doesnt have it)
+    private static int TIMEOUTDEFAULT = 5000;//in ms(if config file doesnt have it)
 
     public static VloConfig VLO_CONFIG;
     public static boolean DATABASE;
@@ -78,7 +79,7 @@ public class Configuration {
         } else {
             TIMEOUT = Integer.parseInt(timeout);
         }
-
+        THREAD_POOL_SIZE = Integer.valueOf(config.getProperty("THREAD_POOL_SIZE","100"));
 
         String[] facets = config.getProperty("FACETS").split(",");
         FACETS = Arrays.asList(facets).stream().map(f -> f.trim()).collect(Collectors.toList());

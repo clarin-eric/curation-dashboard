@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+
+		<p>
+			Curation Module is a project founded by <a href="https://www.clarin.eu/">CLARIN</a> EU project.
+			Its goal is to help CMD metadata authors and curators improve meta-data quality. More information about CMD
+			framework can be found <a href="https://www.clarin.eu/content/component-metadata">here</a>.
+			<br>
+			Code can be found on <a href="https://github.com/clarin-eric/clarin-curation-module">Github</a>.
+		</p>
+
+		<p>
+			Curation Module consists of three modules:
+		<ul>
+			<li>Core Module</li>
+			<li>Web Module</li>
+			<li>Link Checker Module</li>
+		</ul>
+
+
+		<h2>Core Module</h2>
+
+		<p>
+			It analyses individual CMD profiles, records and whole collections according to a number of
+			quality criteria and generates reports and statistics which help discover potential problems that cause a
+			lower
+			metadata quality.
+		</p>
+		<h2>Web Module</h2>
+		<p>
+			It allows users to examine reports individual profiles, collections and records online.<br>
+		</p>
+		<p>
+			Through Validator users can generate reports from records and profile either by their URLs or uploading them
+			as
+			files.
+		</p>
+		<p>
+			On Profiles and Collections, users can view the quality of public CMD profiles and collections respectively.<br>
+		</p>
+		<p>
+			Link Checking Statistics displays the link checking results that Link Checker Module generates.
+		</p>
+
+		<h2>Link Checker Module</h2>
+		<p>
+			It checks constantly and repeatedly (with default delays) all the urls that collections contain. Checking in
+			this context consists of sending HEAD and/or GET requests to URLs and saving the results in the database.
+			Core module later uses these results to generate statistics and takes them into consideration when assessing
+			the quality of the metadata.
+		</p>
+
+	</body>
+</html>

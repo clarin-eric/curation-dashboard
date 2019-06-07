@@ -203,6 +203,7 @@ public class URLValidator extends CMDSubprocessor {
                         urlElement.message = e.getLocalizedMessage();
                         urlElement.url = url;
                         urlElement.status = 0;
+                        urlElement.category = "Broken";
                         urlElement.contentType = null;
                         urlElement.byteSize = "0";
                         urlElement.timestamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
