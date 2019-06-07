@@ -1,15 +1,16 @@
 package eu.clarin.cmdi.curation.entities;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CollectionProcessor;
 
 public class CMDCollection extends CurationEntity {
 
-	List<CurationEntity> children;
+	Deque<CurationEntity> children;
 
 	long numOfFiles;
 	long maxFileSize = 0;
@@ -17,7 +18,7 @@ public class CMDCollection extends CurationEntity {
 
 	public CMDCollection(Path path) {
 		super(path);
-		children = new ArrayList<CurationEntity>();
+		children = new ArrayDeque<CurationEntity>();
 	}
 
 	@Override
@@ -53,7 +54,7 @@ public class CMDCollection extends CurationEntity {
 			minFileSize = child.minFileSize;
 	}
 
-	public List<CurationEntity> getChildren() {
+	public Deque<CurationEntity> getChildren() {
 		return children;
 	}
 

@@ -31,7 +31,7 @@ public class InstanceParser {
 	
 	static{
 		TransformerFactory factory = TransformerFactory.newInstance();
-		Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/instanceTransformer.xsl"));		
+		Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/xslt/instanceTransformer.xsl"));		
 		try {
 			tranformer = factory.newTransformer(xslt);
 		} catch (TransformerConfigurationException e) {

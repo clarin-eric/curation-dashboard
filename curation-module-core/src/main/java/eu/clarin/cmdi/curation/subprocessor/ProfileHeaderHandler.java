@@ -8,6 +8,7 @@ import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
+import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 
 public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileReport> {
 
@@ -37,7 +38,6 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 		if(report.header == null){
 			report.header = new ProfileHeader();
 			report.header.setSchemaLocation(schemaLocation);
-			report.header.setUrl(Configuration.BASE_URL+"rest/profile/"+report.getName()+".xml");
 			report.header.setCmdiVersion(entity.getCmdiVersion());
 
 
@@ -46,7 +46,7 @@ public class ProfileHeaderHandler extends ProcessingStep<CMDProfile, CMDProfileR
 
 		report.header.setLocalFile(isLocalFile);
 
-		report.url = Configuration.BASE_URL + "rest/profile/" + report.header.getId() + ".xml";
+//		report.url = Configuration.BASE_URL + "profile/" + FileNameEncoder.encode(report.getName()) + ".xml";
 
 
 		if (!report.header.isPublic())

@@ -1,5 +1,10 @@
 package eu.clarin.cmdi.curation.cr;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.CharBuffer;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
@@ -60,11 +65,35 @@ public class CRService implements ICRService {
 		
 		if(header == null){
 			header = new ProfileHeader();
-			header.setId(getIdFromSchemaLocation(schemaLocation));
 			header.setSchemaLocation(schemaLocation);
-			header.setCmdiVersion(cmdiVersion);
-			header.setPublic(false);
-
+			header.setId(getIdFromSchemaLocation(schemaLocation));
+	        header.setCmdiVersion(cmdiVersion);
+	        header.setPublic(false);
+	        
+			if(header.getId() == null) { // when the id can't be extracted from the schema location we have to get it from the file content
+		        CharBuffer buffer = CharBuffer.allocate(1000);
+		        
+		        InputStreamReader reader;
+                try {
+                    reader = new InputStreamReader(new URL(schemaLocation).openStream());
+                    reader.read(buffer);
+                    String content = buffer.rewind().toString();
+                    
+                    Matcher matcher = PROFILE_ID_PATTERN.matcher(content);
+                    
+                    if(matcher.find())
+                        header.setId(matcher.group());
+                    
+                    if(!content.contains("http://www.clarin.eu/cmd/1"))
+                        header.setCmdiVersion("1.1");
+                }
+                catch (MalformedURLException ex) {
+                    _logger.error("schema location "  + schemaLocation + " is no valid URL", ex);
+                }
+                catch (IOException ex) {
+                    _logger.error("couldn't read from schema location " + schemaLocation, ex);
+                }  
+			}
 		}
 		header.setLocalFile(isLocalFile);		
 		return header;		
@@ -117,5 +146,4 @@ public class CRService implements ICRService {
 	    
 	    return matcher.find()? matcher.group():null;
 	}
-
 }

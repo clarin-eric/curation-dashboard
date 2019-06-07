@@ -23,7 +23,7 @@ import static com.mongodb.client.model.Sorts.ascending;
 import static com.mongodb.client.model.Sorts.orderBy;
 
 /**
-
+ *
  */
 
 @XmlRootElement(name = "collection-report")
@@ -51,11 +51,8 @@ public class CollectionReport implements Report<CollectionReport> {
     @XmlAttribute(name = "ins-max-score")
     public Double maxPossibleScoreInstance = 0.0;
 
-    @XmlAttribute
+    @XmlAttribute(name = "timestamp")
     public String timeStamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
-
-    @XmlAttribute
-    public String url;
 
     @XmlElement(name = "file-section")
     public FileReport fileReport;
@@ -309,11 +306,11 @@ public class CollectionReport implements Report<CollectionReport> {
                 statistics.avgRespTime = doc.getDouble("avg_resp");
                 statistics.maxRespTime = doc.getLong("max_resp");
                 statistics.statusCode = doc.getInteger("_id");
-                if(statistics.statusCode==200){
+                if (statistics.statusCode == 200) {
                     statistics.category = "Ok";
-                }else if(statistics.statusCode == 401 || statistics.statusCode == 405 || statistics.statusCode== 429){
+                } else if (statistics.statusCode == 401 || statistics.statusCode == 405 || statistics.statusCode == 429) {
                     statistics.category = "Undetermined";
-                }else{
+                } else {
                     statistics.category = "Broken";
                 }
                 statistics.count = doc.getInteger("count");
@@ -339,14 +336,13 @@ public class CollectionReport implements Report<CollectionReport> {
             //because url validator works on a record basis and not collection basis, so the program
             //can only know about unique link numbers in a single record and not the whole collection.
             //thats why some database magic on the whole collection needed.
-            //there might be mongo only way to do this but i dont know.
             iterable = linksToBeChecked.aggregate(Arrays.asList(
                     Aggregates.match(eq("collection", getName())),
                     Aggregates.lookup("linksChecked", "url", "url", "checked")
             ));
             int duplicates = 0;
             for (Document doc : iterable) {
-                if (!((List) doc.get("checked")).isEmpty()) {
+                if (!((List<?>) doc.get("checked")).isEmpty()) {
                     duplicates++;
                 }
             }
@@ -359,13 +355,24 @@ public class CollectionReport implements Report<CollectionReport> {
             urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
             urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
 
-//            urlReport.avgNumOfResProxiesLinks = (double) urlReport.totNumOfResProxiesLinks / fileReport.numOfFiles;
+            AggregateIterable<Document> aggregate = linksChecked.aggregate(
+                    Arrays.asList(
+                            Aggregates.match(eq("collection", getName())),
+                            Aggregates.group(null,
+                                    Accumulators.avg("avg_resp", "$duration"),
+                                    Accumulators.max("max_resp", "$duration")
+                            )));
+            Document result = aggregate.first();
 
+            if(result!=null){
+                urlReport.avgRespTime = result.getDouble("avg_resp");
+                urlReport.maxRespTime = result.getLong("max_resp");
+            }
 
         }
 
 
-        int totCheckedUndeterminedRemoved = urlReport.totNumOfCheckedLinks-urlReport.totNumOfUndeterminedLinks;
+        int totCheckedUndeterminedRemoved = urlReport.totNumOfCheckedLinks - urlReport.totNumOfUndeterminedLinks;
 
         urlReport.ratioOfValidLinks = urlReport.totNumOfCheckedLinks == 0 ? 0 :
                 (double) (totCheckedUndeterminedRemoved - urlReport.totNumOfBrokenLinks) / totCheckedUndeterminedRemoved;
@@ -382,9 +389,11 @@ public class CollectionReport implements Report<CollectionReport> {
     }
 
     @Override
-    public void toXML(OutputStream os) throws Exception {
-        XMLMarshaller<CollectionReport> instanceMarshaller = new XMLMarshaller<>(CollectionReport.class);
-        instanceMarshaller.marshal(this, os);
+    public void toXML(OutputStream os) {
+        XMLMarshaller<CollectionReport> instanceMarshaller = new
+                XMLMarshaller<>(CollectionReport.class);
+        instanceMarshaller.marshal(this,
+                os);
     }
 
     @XmlRootElement
@@ -446,7 +455,7 @@ public class CollectionReport implements Report<CollectionReport> {
         @XmlAttribute
         public String name;
 
-        @XmlElement(name="issue")
+        @XmlElement(name = "issue")
         public Collection<String> issues;
     }
 
@@ -457,12 +466,12 @@ public class CollectionReport implements Report<CollectionReport> {
         public int totNumOfUniqueLinks;
         public int totNumOfCheckedLinks;
         public Double avgNumOfUniqueLinks = 0.0;
-//        public int totNumOfResProxiesLinks;
-//        public Double avgNumOfResProxiesLinks = 0.0;
         public int totNumOfBrokenLinks;
         public Double avgNumOfBrokenLinks = 0.0;
         public Double ratioOfValidLinks = 0.0;
         public int totNumOfUndeterminedLinks;
+        public Double avgRespTime = 0.0;
+        public Long maxRespTime = 0L;
         @XmlElementWrapper(name = "statistics")
         public Collection<Statistics> status = new ArrayList<>();
     }

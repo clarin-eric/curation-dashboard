@@ -1,5 +1,7 @@
 package eu.clarin.cmdi.curation.entities;
 
+import java.nio.file.Path;
+
 import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CMDProfileProcessor;
 
@@ -13,6 +15,10 @@ public class CMDProfile extends CurationEntity {
 
 	private String schemaLocation;
 	private String cmdiVersion;
+	
+	public CMDProfile(Path path) {
+	    super(path);
+	}
 
 	public CMDProfile(String schemaLocation, String cmdiVersion) {
 		super(null);

@@ -21,8 +21,12 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.concurrent.TimeUnit;
 
 class ProfileCacheFactory {
@@ -74,7 +78,7 @@ class ProfileCacheFactory {
 
 
         @Override
-        public ProfileCacheEntry load(ProfileHeader header) throws IOException, VTDException, SAXException {
+        public ProfileCacheEntry load(ProfileHeader header) throws IOException, VTDException, SAXException, URISyntaxException {
 
 
             _logger.info("Profile {} is not in the cache, it will be loaded", header.getId());
@@ -103,6 +107,7 @@ class ProfileCacheFactory {
                 }
 
             } else {//non-public profiles are not cached on disk
+                
                 _logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.getId());
 
 
@@ -125,8 +130,13 @@ class ProfileCacheFactory {
 
 
                     _logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.getId());
-                    new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(header.getSchemaLocation(), xsd.toFile());
-
+                    
+                    if(header.getSchemaLocation().startsWith("file:")) {
+                        Files.move(Paths.get(new URI(header.getSchemaLocation())), xsd, StandardCopyOption.REPLACE_EXISTING);
+                    }
+                    else {
+                        new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(header.getSchemaLocation(), xsd.toFile());
+                    }
                 }
             }
 

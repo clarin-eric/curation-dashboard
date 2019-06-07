@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Curation Module</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<link rel="icon" href="/view/images/favicon.png" type="image/png"/>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-title" content="Curation Module">
+
+		<link rel="stylesheet" id="fundament-styles" href="/view/fundament/css/fundament.min.css" type="text/css"/>
+		<link rel="stylesheet" id="curate-styles" href="/view/css/curate.css" type="text/css"/>
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+		<link rel="stylesheet" id="dropzone-styles" href="/view/css/dropzone.min.css" type="text/css"/>
+	</head>
+	<body>
+		<div class="fullscreen">
+ 
+			<form action="/curate" id="urlForm">
+				<div class="row instanceElement">
+					<input type="text" class="form-control col-md-3" placeholder="CMD record / CMD profile URL" id="url-input"
+					       name="url-input" required>
+				</div>
+
+			</form>
+			<div class="row instanceElement">
+				<button class="btn btn-info centerContainer" id="validateButton" type="submit" form="urlForm">Validate</button>
+			</div>
+			
+			<div class="row instanceElement">
+<!--				<form action="/curate"-->
+<!--				      class="dropzone dragAndDropBox"-->
+<!--				      id="cmdi-dropzone">-->
+<!--					<div class="dz-message">-->
+<!--						Drag a CMDI record / CMDI profile here or click to open file browser-->
+<!--					</div>-->
+
+<!--				</form>-->
+				<div class="dropzone dragAndDropBox" id="cmdi-dropzone">
+					<div class="dz-message">
+						Drag a CMD record / CMD profile here or click to open file browser
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+
+		<script type="text/javascript" src="/view/fundament/vendor/jquery/jquery.min.js"></script>
+		<script type="text/javascript" src="/view/fundament/js/fundament.min.js"></script>
+		<script type="text/javascript" src="/view/js/dropzone.min.js"></script>
+		<script type="text/javascript" src="/view/js/curate.js"></script>
+		<script type="text/javascript" charset="utf8"
+		        src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+	</body>
+</html>

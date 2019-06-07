@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Curation Module</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<link rel="icon" href="/view/images/favicon.png" type="image/png"/>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-title" content="Curation Module">
+		<link rel="stylesheet" id="fundament-styles" href="/view/fundament/css/fundament.min.css" type="text/css"/>
+		<link rel="stylesheet" id="curate-styles" href="/view/css/curate.css" type="text/css"/>
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+
+	</head>
+	<body class="home">
+		<div class="hfeed site" id="page">
+
+			<!-- ******************* The Navbar Area ******************* -->
+			<div class="wrapper-fluid wrapper-navbar sticky-navbar fixed-top" id="wrapper-navbar" itemscope
+			     itemtype="http://schema.org/WebSite">
+
+				<nav class="navbar navbar-expand-lg navbar-light headerSize">
+					<div class="col-md-6 d-flex justify-content-center">
+						<h1>Curation Module 3.0</h1><!--TODO dynamic version with jsoup probably-->
+					</div>
+					<div class="col-md-6 d-flex justify-content-around">
+						<a href="https://www.oeaw.ac.at/acdh/"><img src="/view/images/acdh-logo.png"></a>
+						<a href="https://www.clarin.eu/"><img src="/view/images/clarin-logo-wide.png"></a>
+					</div>
+
+				</nav>
+
+			</div>
+
+			<div class="row">
+				<div class="col-md-2 position-fixed leftMenu">
+					<div class="row" id="buttons">
+						<div class="col leftButton">
+							<a href="/">
+								<button type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
+									Validator
+								</button>
+							</a>
+						</div>
+						<div class="col leftButton">
+							<a href="/profile/table">
+								<button type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
+									Profiles
+								</button>
+							</a>
+						</div>
+						<div class="col leftButton">
+							<a href="/collection/table">
+								<button type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
+									Collections
+								</button>
+							</a>
+						</div>
+						<div class="col leftButton">
+							<a href="/statistics">
+								<button type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
+									Link Checking Statistics
+								</button>
+							</a>
+						</div>
+						<div class="col content leftButton">
+							<!--last element gets bottom padding to create separation for page specific buttons -->
+							<a href="/help">
+								<button type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
+									Help
+								</button>
+							</a>
+						</div>
+
+					</div>
+
+				</div>
+				<div class="col-md-2"></div><!--placeholder so that content dont overlap-->
+				<div class="col-md-10">
+					<div id="content" class="fullscreen content">
+						<!--Here comes dynamic content from jsoup-->
+					</div>
+				</div>
+			</div>
+			<!-- .row -->
+
+			<div class="fixed-bottom wrapper fundament-default-footer footerSize" id="wrapper-footer-full">
+				<div class="container" id="footer-full-content" tabindex="-1">
+					<div class="row">
+						<!-- .footer-widget -->
+						<div class="footer-widget col-lg-4 col-md-4 col-sm-6 col-9">
+							<div class="textwidget custom-html-widget">
+								<p>
+									© Copyright ACDH-OEAW 2019
+								</p>
+							</div>
+						</div>
+						<div class="footer-widget col-lg-3 col-md-4 col-sm-4 ml-auto">
+							<div class="textwidget custom-html-widget">
+								<p>
+									<a class="helpdesk-button"
+									   href="https://github.com/clarin-eric/clarin-curation-module">ABOUT</a>
+								</p>
+							</div>
+						</div>
+						<div class="footer-widget col-lg-3 col-md-4 col-sm-4 ml-auto">
+							<div class="textwidget custom-html-widget">
+								<p>
+									<a class="helpdesk-button"
+									   href="https://github.com/clarin-eric/clarin-curation-module/issues">FEEDBACK</a>
+								</p>
+							</div>
+						</div>
+						<!-- .footer-widget -->
+					</div>
+				</div>
+			</div>
+			<!-- #wrapper-footer-full -->
+		</div>
+		<script type="text/javascript" src="/view/fundament/vendor/jquery/jquery.min.js"></script>
+		<script type="text/javascript" src="/view/fundament/js/fundament.min.js"></script>
+		<script type="text/javascript" src="/view/js/dropzone.min.js"></script>
+		<script type="text/javascript" src="/view/js/curate.js"></script>
+		<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+		<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
+	</body>
+
+</html>

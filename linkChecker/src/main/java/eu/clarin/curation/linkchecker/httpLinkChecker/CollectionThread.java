@@ -5,17 +5,14 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
-
-import eu.clarin.curation.linkchecker.helpers.Configuration;
 import eu.clarin.curation.linkchecker.urlElements.URLElement;
-
+import eu.clarin.curation.linkchecker.urlElements.URLElementToBeChecked;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -24,7 +21,7 @@ public class CollectionThread extends Thread {
 
     private final static Logger _logger = LoggerFactory.getLogger(CollectionThread.class);
 
-    public ConcurrentLinkedQueue<String> urlQueue = new ConcurrentLinkedQueue<>();
+    public ConcurrentLinkedQueue<URLElementToBeChecked> urlQueue = new ConcurrentLinkedQueue<>();
 
     private MongoCollection<Document> linksChecked;
     private MongoCollection<Document> linksToBeChecked;
@@ -62,29 +59,25 @@ public class CollectionThread extends Thread {
         //name of the thread is also name of the collection
         String collection = getName();
 
-        String url;
+        URLElementToBeChecked urlElementToBeChecked;
 
         HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker();
-        while ((url = urlQueue.poll()) != null) {
+        while ((urlElementToBeChecked = urlQueue.poll()) != null) {
 
             URLElement urlElement;
 
+            String url = urlElementToBeChecked.getUrl();
+
             try {
+
 
                 urlElement = httpLinkChecker.checkLink(url, 0, 0, url);
 
                 startTime = System.currentTimeMillis();
                 urlElement.setCollection(collection);
+                urlElement.setRecord(urlElementToBeChecked.getRecord());
+                urlElement.setExpectedMimeType(urlElementToBeChecked.getExpectedMimeType() == null ? "" : urlElementToBeChecked.getExpectedMimeType());
 
-                MongoCursor<Document> cursor = linksToBeChecked.find(
-                        Filters.and(eq("collection", collection), eq("url", url))
-                ).iterator();
-
-                if (cursor.hasNext()) {
-                    Document doc = cursor.next();
-                    urlElement.setRecord(doc.get("record").toString());
-                    urlElement.setExpectedMimeType(doc.get("expectedMimeType") == null ? "" : doc.get("expectedMimeType").toString());
-                }
 
                 //better not to have it in log file, because it makes it unreadable
 //                _logger.info("Successfully checked link: "+ url);
