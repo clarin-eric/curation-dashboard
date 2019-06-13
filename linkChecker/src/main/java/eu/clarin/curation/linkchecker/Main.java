@@ -3,27 +3,16 @@ package eu.clarin.curation.linkchecker;
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.IndexOptions;
-
-
 import com.mongodb.client.model.Sorts;
 import eu.clarin.curation.linkchecker.helpers.Configuration;
 import eu.clarin.curation.linkchecker.httpLinkChecker.CollectionThread;
 import eu.clarin.curation.linkchecker.urlElements.URLElement;
 import eu.clarin.curation.linkchecker.urlElements.URLElementToBeChecked;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.mongodb.client.model.Filters.eq;
 
 
 public class Main {
@@ -97,7 +86,7 @@ public class Main {
         }
 
         //Create a _logger thread that outputs every 10 seconds the current state of Collection threads...
-        (new Thread() {
+        new Thread() {
             public void run() {
 
                 while (true) {
@@ -121,7 +110,7 @@ public class Main {
                     }
                 }
             }
-        }).start();
+        }.start();
 
         while (true) {
 
@@ -209,6 +198,8 @@ public class Main {
                 }
 
 
+            } catch (MongoException e) {
+                _logger.error("Mongo error: ", e);
             } finally {
                 cursor.close();
             }
