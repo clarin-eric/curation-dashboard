@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static com.mongodb.client.model.Filters.eq;
 
 /**
-
+ *
  */
 
 public class URLValidator extends CMDSubprocessor {
@@ -118,7 +118,7 @@ public class URLValidator extends CMDSubprocessor {
 
                     _logger.info("Checking database for url: " + url);
 
-                    Bson filter = Filters.and(eq("collection", parentName), eq("record", report.getName()), eq("url", url));
+                    Bson filter = Filters.and(eq("collection", parentName), eq("url", url));
                     MongoCursor<Document> cursor = linksChecked.find(filter).iterator();
 
                     //because urls are unique in the database if cursor has next, it found the only one. If not, the url wasn't found.
@@ -232,17 +232,15 @@ public class URLValidator extends CMDSubprocessor {
         //some old runs may have produced links that are not in the records anymore.
         //so to clean up the database, we move all of such links to history.
 
-        Bson filter = Filters.and(Filters.eq("collection", collectionName), Filters.eq("record", recordName));
+        Bson filter = Filters.and(Filters.eq("collection", collectionName), Filters.eq("record", recordName), Filters.not(Filters.in("url", links)));
         MongoCursor<Document> cursor = linksChecked.find(filter).iterator();
 
         while (cursor.hasNext()) {
 
             URLElement urlElement = new URLElement(cursor.next());
-            String url = urlElement.getUrl();
 
-            if (!links.contains(url)) {
-                moveToHistory(urlElement);
-            }
+            moveToHistory(urlElement);
+
         }
 
     }
