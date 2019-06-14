@@ -243,6 +243,10 @@ public class URLValidator extends CMDSubprocessor {
 
         }
 
+        //also remove them from linkstobechecked so that they are not checked unnecessarily
+        linksToBeChecked.deleteMany(filter);
+
+
     }
 
     private void moveToHistory(URLElement urlElement) {
