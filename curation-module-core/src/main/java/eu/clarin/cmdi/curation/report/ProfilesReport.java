@@ -97,6 +97,10 @@ public class ProfilesReport implements Report<ProfilesReport> {
         @XmlElementWrapper(name = "facets")
         @XmlElement(name = "facet")
         private List<Facet> facets = new ArrayList<Facet>();
+        @XmlElement
+        private double collectionUsage;
+        @XmlElement
+        private double instanceUsage;
 
         public Profile() {
 
@@ -108,11 +112,12 @@ public class ProfilesReport implements Report<ProfilesReport> {
             this.reportName = report.getName();
             this.score = report.score;
             this.facetCoverage = report.facet.profileCoverage;
-            this.percOfElementsWithConcept = report.elements.percWithConcept;
-
+            this.percOfElementsWithConcept = report.elements.percWithConcept;            
+            this.collectionUsage = report.collectionUsage.size();           
+            
+            report.collectionUsage.forEach(usage -> this.instanceUsage+=usage.count);
             report.facet.coverage.forEach(f -> facets.add(new Facet(f.name, f.coveredByProfile)));
         }
-
     }
 
     @XmlRootElement

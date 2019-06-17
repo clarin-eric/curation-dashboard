@@ -19,6 +19,10 @@
 <xsl:text>&#9;</xsl:text>
 <xsl:text>Score</xsl:text>
 <xsl:text>&#9;</xsl:text>
+<xsl:text>Collection Usage</xsl:text>
+<xsl:text>&#9;</xsl:text>
+<xsl:text>Instance Usage</xsl:text>
+<xsl:text>&#9;</xsl:text>
 <xsl:text>Facet Coverage</xsl:text>
 <xsl:for-each select="./profile[1]/facets/facet">
 	<xsl:text>&#9;</xsl:text>
@@ -33,6 +37,10 @@
 <xsl:value-of select="name"></xsl:value-of>
 <xsl:text>&#9;</xsl:text>
 <xsl:value-of select="score"></xsl:value-of>
+<xsl:text>&#9;</xsl:text>
+<xsl:value-of select="collectionUsage"></xsl:value-of>
+<xsl:text>&#9;</xsl:text>
+<xsl:value-of select="InstanceUsage"></xsl:value-of>
 <xsl:text>&#9;</xsl:text>
 <xsl:value-of select="facetCoverage"></xsl:value-of>
 <xsl:for-each select="facets/facet">
