@@ -31,7 +31,8 @@ $(document).ready( function () {
     		{targets: 0,	className: 'dt-body-left'},
     		{targets: '_all',  className: 'dt-body-right'}
     	]
-    } );    
+    } ); 
+    
     $('#profiles thead tr').clone(true).appendTo( '#profiles thead' );
     $('#profiles thead tr:eq(1) th').each( function (i) {
         var title = $(this).text();
@@ -49,7 +50,7 @@ $(document).ready( function () {
     
 
  
-    var table2 = $('#profiles').DataTable( {
+    var table = $('#profiles').DataTable( {
 
         orderCellsTop: true,
         fixedHeader: true,
