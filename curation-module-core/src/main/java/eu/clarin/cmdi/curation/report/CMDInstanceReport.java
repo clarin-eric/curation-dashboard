@@ -200,7 +200,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         parentReport.xmlValidationReport.totNumOfValidRecords += instanceReport.xmlValidityReport.valid ? 1 : 0;
         if (!instanceReport.xmlValidityReport.valid) {
             Record record = new Record();
-            record.name = instanceReport.getName();
+            record.name = instanceReport.fileReport.location;
             record.issues = instanceReport.xmlValidityReport.issues;
             parentReport.xmlValidationReport.record.add(record);
         }
