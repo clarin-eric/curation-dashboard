@@ -280,9 +280,9 @@
 										</tr>
 									</xsl:if>
 							</xsl:for-each>
-							<xsl:if test="count(./xml-validation-section/invalid-records/record) > 50">
+							<xsl:if test="count(./xml-validation-section/invalid-records/record) > 20">
 								<tr>
-									<td colspan="4">more files in downloadable report</td>
+									<td colspan="4">[...] complete list in downloadable report</td>
 								</tr>
 							</xsl:if>
 						</tbody>
