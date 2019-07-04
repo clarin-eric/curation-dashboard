@@ -1,10 +1,11 @@
-package eu.clarin.curation.linkchecker.httpLinkChecker;
+package eu.clarin.curation.linkchecker.threads;
 
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
+import eu.clarin.curation.linkchecker.httpLinkChecker.HTTPLinkChecker;
 import eu.clarin.curation.linkchecker.urlElements.URLElement;
 import eu.clarin.curation.linkchecker.urlElements.URLElementToBeChecked;
 import org.bson.Document;
@@ -40,7 +41,7 @@ public class CollectionThread extends Thread {
     public void run() {
 
 
-        //before starting the url check, wait 5 seconds for the queue of this thread to get populated by the httplinkchecker
+        //before starting the url check, wait 60 seconds for the queue of this thread to get populated by the httplinkchecker
         //i do this because if we don't wait and let the thread run for only one url, i'm afraid the thread
         // will be closed after one url check and it will be necessary to create a new thread for each url, which
         //is not the aim of this multithreading.
