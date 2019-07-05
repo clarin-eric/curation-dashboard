@@ -13,8 +13,16 @@ import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import static com.mongodb.client.model.Filters.eq;
 import static eu.clarin.curation.linkchecker.helpers.Configuration.DATABASE;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 //manage all the threads
 //also calculate average values:
@@ -39,11 +47,15 @@ public class CollectionThreadManager {
         new StatusThread().start();
 
         //starts all collection threads based on linksToBeChecked
-        startCollectionThreads();
+        new Thread(this::startCollectionThreads).start();
 
-        //every 24 hours
-        //todo scheduler every 24 hours
-        refillCollectionThreads();
+        Runnable threadRefiller = this::refillCollectionThreads;
+
+        //every day at 1 am
+        long oneAM = LocalDateTime.now().until(LocalDate.now().atTime(1, 0), ChronoUnit.MINUTES);
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(threadRefiller, oneAM, TimeUnit.DAYS.toMinutes(1), MINUTES);
+
 
     }
 
@@ -52,17 +64,20 @@ public class CollectionThreadManager {
     //So every 24 hours we restart finished collection threads.
     private void refillCollectionThreads() {
 
+        _logger.info("Refilling collections...");
+
         for (String collection : linksChecked.distinct("collection", String.class)) {
 
             CollectionThread collectionThread = getCollectionThreadByName(collection);
 
             //if collection thread isn't running, copy all links back to linksToBeChecked
             if (collectionThread == null) {
+                _logger.info("Collection: " + collection + " is not running. Copying links to linksToBeChecked and starting a thread...");
                 refillLinksToBeChecked(collection);
                 CollectionThread t = startCollectionThread(collection);
 
 
-                try (MongoCursor<Document> cursor = linksToBeChecked.find(eq("collection",collection)).noCursorTimeout(true).iterator()) {
+                try (MongoCursor<Document> cursor = linksToBeChecked.find(eq("collection", collection)).noCursorTimeout(true).iterator()) {
 
                     while (cursor.hasNext()) {
                         URLElementToBeChecked urlElementToBeChecked = new URLElementToBeChecked(cursor.next());
@@ -74,7 +89,7 @@ public class CollectionThreadManager {
 
                     }
 
-                    _logger.info("Successfully restarted collection thread: "+collection);
+                    _logger.info("Successfully restarted collection thread: " + collection);
 
 
                 } catch (MongoException e) {
@@ -113,7 +128,7 @@ public class CollectionThreadManager {
         long crawlDelay;
         if (Configuration.CRAWLDELAYMAP.containsKey(collection)) {
             crawlDelay = Configuration.CRAWLDELAYMAP.get(collection);
-            _logger.info("Crawl delay set to: " + crawlDelay + "for collection " + collection);
+            _logger.info("Crawl delay set to: " + crawlDelay + " for collection " + collection);
         } else {
             //should be 0
             crawlDelay = Configuration.CRAWLDELAY;
@@ -177,7 +192,7 @@ public class CollectionThreadManager {
 
                 if (!t.urlQueue.contains(urlElementToBeChecked)) {
                     t.urlQueue.add(urlElementToBeChecked);
-                    _logger.info("Added url to collection thread: " + collection);
+                    //_logger.info("Added url to collection thread: " + collection);
                 }
 
             }

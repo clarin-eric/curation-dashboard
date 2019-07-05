@@ -99,7 +99,10 @@ public class CollectionThread extends Thread {
                 ).iterator();
 
                 if (cursor.hasNext()) {
-                    urlElement.setRecord(cursor.next().get("record").toString());
+                    Object record = cursor.next().get("record");
+                    if (record != null) {
+                        urlElement.setRecord(record.toString());
+                    }
                 }
 
             }
