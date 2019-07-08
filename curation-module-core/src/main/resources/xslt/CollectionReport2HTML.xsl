@@ -236,7 +236,6 @@
 						<tr>
 							<th>File</th>
 							<th>Info</th>
-							<th>Download</th>
 							<th>Validate</th>
 						</tr>						
 						</thead>
@@ -244,20 +243,18 @@
 							<xsl:for-each
 								select="./xml-validation-section/invalid-records/record">
 
-									<xsl:if test="not(position() > 20)">
+									<xsl:if test="not(position() > 100)">
 										<tr>
 											<td>
+											<a>
+												<xsl:attribute name="href"><xsl:value-of select="./@name" /></xsl:attribute>
+												<xsl:attribute name="download" />
 												<xsl:value-of select="./@name" />
+											</a>
+												
 											</td>
 											<td>
-												<button type="button" class="showUrlInfo btn btn-info" onClick="toggleInfo(this)">Show errors</button>
-											</td>
-											<td>
-												<button type="button" class="btn btn-info">
-													<xsl:attribute name="onClick">window.open('<xsl:value-of
-														select="./@name"></xsl:value-of>')</xsl:attribute>
-													Download file
-												</button>
+												<button type="button" class="showUrlInfo btn btn-info" onClick="toggleInfo(this)">Show</button>
 											</td>
 											<td>
 												<button type="button" class="btn btn-info">
@@ -268,7 +265,7 @@
 											</td>
 										</tr>
 										<tr hidden="true">
-											<td colspan="4">
+											<td colspan="3">
 												<ul>
 													<xsl:for-each select="issue">
 														<li>
@@ -280,9 +277,9 @@
 										</tr>
 									</xsl:if>
 							</xsl:for-each>
-							<xsl:if test="count(./xml-validation-section/invalid-records/record) > 20">
+							<xsl:if test="count(./xml-validation-section/invalid-records/record) > 100">
 								<tr>
-									<td colspan="4">[...] complete list in downloadable report</td>
+									<td colspan="3">[...] complete list in downloadable report</td>
 								</tr>
 							</xsl:if>
 						</tbody>
