@@ -18,7 +18,6 @@
 	<modules>
 		<module>curation-module-core</module>
 		<module>curation-module-web</module>
-		<module>linkChecker</module>
 	</modules>
 
 
@@ -44,8 +43,6 @@
 		</pluginManagement>
 
 	</build>
-
-
 
 
 	<dependencies>

@@ -7,7 +7,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
-import eu.clarin.curation.linkchecker.urlElements.URLElement;
+import eu.clarin.cmdi.linkchecker.urlElements.URLElement;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

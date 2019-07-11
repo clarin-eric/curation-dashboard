@@ -92,7 +92,7 @@
 		</dependency>
 		<dependency>
 			<groupId>eu.clarin.cmdi</groupId>
-			<artifactId>linkChecker</artifactId>
+			<artifactId>linkchecker</artifactId>
 			<version>3.0.1</version>
 		</dependency>
 		<!--<dependency> -->

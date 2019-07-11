@@ -115,7 +115,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         @XmlAttribute(name = "redirectCount")
         public int redirectCount;
 
-        public URLElement convertFromLinkCheckerURLElement(eu.clarin.curation.linkchecker.urlElements.URLElement urlElement) {
+        public URLElement convertFromLinkCheckerURLElement(eu.clarin.cmdi.linkchecker.urlElements.URLElement urlElement) {
             url = urlElement.getUrl();
             method = urlElement.getMethod();
             message = urlElement.getMessage();

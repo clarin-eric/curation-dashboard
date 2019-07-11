@@ -7,7 +7,7 @@ import eu.clarin.cmdi.curation.io.CMDFileVisitor;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
-import eu.clarin.curation.linkchecker.httpLinkChecker.HTTPLinkChecker;
+import eu.clarin.cmdi.linkchecker.httpLinkChecker.HTTPLinkChecker;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
