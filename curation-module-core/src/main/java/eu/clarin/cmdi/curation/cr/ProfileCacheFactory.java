@@ -11,7 +11,7 @@ import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParser;
 import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParserFactory;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.xml.SchemaResourceResolver;
-import eu.clarin.curation.linkchecker.httpLinkChecker.HTTPLinkChecker;
+import eu.clarin.cmdi.linkchecker.httpLinkChecker.HTTPLinkChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;

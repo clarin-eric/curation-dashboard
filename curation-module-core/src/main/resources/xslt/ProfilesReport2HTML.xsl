@@ -19,6 +19,8 @@
                     <th>Id</th>
                     <th>Name</th>
                     <th>Score</th>
+                    <th>Collection Usage</th>
+                    <th>Instance Usage</th>
                     <th>FacetCoverage</th>
                     <xsl:for-each select="./profile[1]/facets/facet">
                         <th>
@@ -47,6 +49,12 @@
                         </td>
                         <td>
                             <xsl:value-of select="format-number(score,'0.00')"></xsl:value-of>
+                        </td>
+                        <td>
+                        	<xsl:value-of select="format-number(collectionUsage, '0')"></xsl:value-of>
+                        </td>
+                        <td>
+                        	<xsl:value-of select="format-number(instanceUsage, '0')"></xsl:value-of>
                         </td>
                         <td>
                             <xsl:value-of select="format-number(facetCoverage,'0.00%')"></xsl:value-of>

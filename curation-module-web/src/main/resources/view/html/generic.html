@@ -26,7 +26,7 @@
 
 				<nav class="navbar navbar-expand-lg navbar-light headerSize">
 					<div class="col-md-6 d-flex justify-content-center">
-						<h1>Curation Module 3.0</h1><!--TODO dynamic version with jsoup probably-->
+						<h1>Curation Module ${version}</h1><!--TODO dynamic version with jsoup probably-->
 					</div>
 					<div class="col-md-6 d-flex justify-content-around">
 						<a href="https://www.oeaw.ac.at/acdh/"><img src="/view/images/acdh-logo.png"></a>
@@ -130,6 +130,18 @@
 		<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
 		<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 		<script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
+	    <script type="text/javascript">
+        var _paq = _paq || [];
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function() {
+            var u="//clarin.oeaw.ac.at/piwik/";
+            _paq.push(['setTrackerUrl', u+'piwik.php']);
+            _paq.push(['setSiteId', 32]);
+            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+            g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+        })();
+    </script>
 	</body>
 
 </html>

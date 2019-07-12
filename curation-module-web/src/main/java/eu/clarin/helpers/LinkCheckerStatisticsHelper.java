@@ -7,7 +7,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
-import eu.clarin.curation.linkchecker.urlElements.URLElement;
+import eu.clarin.cmdi.linkchecker.urlElements.URLElement;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +113,7 @@ public class LinkCheckerStatisticsHelper {
         StringBuilder sb = new StringBuilder();
 
         sb.append("<div>");
-        sb.append("<h1>Link Checking Statistics:</h1>");
+        sb.append("<h1>Link Checking Statistics (Status:"+status+"):</h1>");
         sb.append("<h3>").append(collectionName.replace("_"," ")).append(":</h3>");
 
         List<String> columnNames = Arrays.asList("Url", "Category", "Info", "Record");

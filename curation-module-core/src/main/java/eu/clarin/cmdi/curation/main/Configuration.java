@@ -42,6 +42,7 @@ public class Configuration {
     public static String DATABASE_URI;
     public static String USERAGENT;
     public static String BASE_URL;
+    public static String CMD_STORAGE_URL;
 
     //this is a boolean that is set by core-module(false) and web-module(true)
     public static boolean enableProfileLoadTimer = false;
@@ -123,7 +124,6 @@ public class Configuration {
 
         USERAGENT = config.getProperty("USERAGENT");
         BASE_URL = config.getProperty("BASE_URL");
-
-
+        CMD_STORAGE_URL = config.getProperty("CMD_STORAGE_URL");
     }
 }

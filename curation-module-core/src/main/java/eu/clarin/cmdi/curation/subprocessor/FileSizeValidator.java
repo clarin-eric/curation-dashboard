@@ -120,7 +120,15 @@ public class FileSizeValidator extends CMDSubprocessor {
         if (entity.getUrl() != null) {
             report.fileReport.location = FileNameEncoder.encode(entity.getUrl());
         } else {
-            report.fileReport.location = entity.getPath().toString();
+            int index = -1; 
+            String path = entity.getPath().toString();
+            
+            if((index = path.indexOf("/clarin")) != -1)
+                report.fileReport.location = Configuration.CMD_STORAGE_URL + path.substring(index +1);
+            else if((index = path.indexOf("/europeana")) != -1)
+                report.fileReport.location = Configuration.CMD_STORAGE_URL + path.substring(index +1);
+            else
+                report.fileReport.location =  path;
         }
 
         if (report.fileReport.size > Configuration.MAX_FILE_SIZE) {

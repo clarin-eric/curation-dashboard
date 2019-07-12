@@ -5,7 +5,6 @@ import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.Indexes;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
@@ -13,12 +12,12 @@ import eu.clarin.cmdi.curation.report.CMDInstanceReport.URLReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
+import eu.clarin.cmdi.linkchecker.httpLinkChecker.HTTPLinkChecker;
+import eu.clarin.cmdi.linkchecker.urlElements.URLElement;
+import eu.clarin.cmdi.linkchecker.urlElements.URLElementToBeChecked;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
-import eu.clarin.curation.linkchecker.httpLinkChecker.HTTPLinkChecker;
-import eu.clarin.curation.linkchecker.urlElements.URLElement;
-import eu.clarin.curation.linkchecker.urlElements.URLElementToBeChecked;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -31,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static com.mongodb.client.model.Filters.eq;
 
 /**
-
+ *
  */
 
 public class URLValidator extends CMDSubprocessor {
@@ -118,7 +117,7 @@ public class URLValidator extends CMDSubprocessor {
 
                     _logger.info("Checking database for url: " + url);
 
-                    Bson filter = Filters.and(eq("collection", parentName), eq("record", report.getName()), eq("url", url));
+                    Bson filter = Filters.and(eq("collection", parentName), eq("url", url));
                     MongoCursor<Document> cursor = linksChecked.find(filter).iterator();
 
                     //because urls are unique in the database if cursor has next, it found the only one. If not, the url wasn't found.
@@ -232,18 +231,20 @@ public class URLValidator extends CMDSubprocessor {
         //some old runs may have produced links that are not in the records anymore.
         //so to clean up the database, we move all of such links to history.
 
-        Bson filter = Filters.and(Filters.eq("collection", collectionName), Filters.eq("record", recordName));
+        Bson filter = Filters.and(Filters.eq("collection", collectionName), Filters.eq("record", recordName), Filters.not(Filters.in("url", links)));
         MongoCursor<Document> cursor = linksChecked.find(filter).iterator();
 
         while (cursor.hasNext()) {
 
             URLElement urlElement = new URLElement(cursor.next());
-            String url = urlElement.getUrl();
 
-            if (!links.contains(url)) {
-                moveToHistory(urlElement);
-            }
+            moveToHistory(urlElement);
+
         }
+
+        //also remove them from linkstobechecked so that they are not checked unnecessarily
+        linksToBeChecked.deleteMany(filter);
+
 
     }
 
