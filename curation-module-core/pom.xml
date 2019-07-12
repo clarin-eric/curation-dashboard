@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>curation-module</artifactId>
 		<groupId>eu.clarin.cmdi</groupId>
-		<version>3.1</version>
+		<version>3.1.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
     <artifactId>curation-module-core</artifactId>
@@ -143,5 +143,5 @@
             </plugin>
         </plugins>
     </build>
-	<version>3.1</version>
+	<version>3.1.1</version>
 </project>
