@@ -11,6 +11,11 @@ import java.util.Collection;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import eu.clarin.cmdi.rasa.helpers.RasaFactory;
+import eu.clarin.cmdi.rasa.helpers.impl.ACDHRasaFactory;
+import eu.clarin.cmdi.rasa.linkResources.CheckedLinkResource;
+import eu.clarin.cmdi.rasa.linkResources.LinkToBeCheckedResource;
+import eu.clarin.cmdi.rasa.linkResources.StatisticsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +35,7 @@ public class Configuration {
     public static Path OUTPUT_DIRECTORY = null;
     public static Path CACHE_DIRECTORY = null;
     public static Path COLLECTION_HTML_DIRECTORY = null;
-    public static int THREAD_POOL_SIZE=100;
+    public static int THREAD_POOL_SIZE = 100;
     public static Collection<String> FACETS = null;
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;
@@ -43,6 +48,10 @@ public class Configuration {
     public static String USERAGENT;
     public static String BASE_URL;
     public static String CMD_STORAGE_URL;
+
+    public static CheckedLinkResource checkedLinkResource;
+    public static LinkToBeCheckedResource linkToBeCheckedResource;
+    public static StatisticsResource statisticsResource;
 
     //this is a boolean that is set by core-module(false) and web-module(true)
     public static boolean enableProfileLoadTimer = false;
@@ -63,6 +72,7 @@ public class Configuration {
         config.load(Configuration.class.getResourceAsStream("/config.properties"));
         readProperties(config);
         //readProperties(new PropertiesConfiguration("config.properties"));
+
     }
 
     private static void readProperties(Properties config) throws IOException {
@@ -80,7 +90,7 @@ public class Configuration {
         } else {
             TIMEOUT = Integer.parseInt(timeout);
         }
-        THREAD_POOL_SIZE = Integer.valueOf(config.getProperty("THREAD_POOL_SIZE","100"));
+        THREAD_POOL_SIZE = Integer.valueOf(config.getProperty("THREAD_POOL_SIZE", "100"));
 
         String[] facets = config.getProperty("FACETS").split(",");
         FACETS = Arrays.asList(facets).stream().map(f -> f.trim()).collect(Collectors.toList());
@@ -105,10 +115,18 @@ public class Configuration {
             REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
         }
 
+
+
         DATABASE = Boolean.parseBoolean(config.getProperty("DATABASE"));
+
         if (DATABASE) {
             DATABASE_NAME = config.getProperty("DATABASE_NAME");
             DATABASE_URI = config.getProperty("DATABASE_URI");
+
+            RasaFactory factory = new ACDHRasaFactory(DATABASE_NAME, DATABASE_URI);
+            checkedLinkResource = factory.getCheckedLinkResource();
+            linkToBeCheckedResource = factory.getLinkToBeCheckedResource();
+            statisticsResource = factory.getStatisticsResource();
         }
 
         String vloConfigLocation = config.getProperty("VLO_CONFIG_LOCATION");
