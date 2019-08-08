@@ -130,6 +130,7 @@ public class CollectionsReport implements Report<CollectionsReport> {
             this.numOfResProxies = report.resProxyReport.totNumOfResProxies;
             this.ratioOfValidRecords = report.xmlValidationReport.ratioOfValidRecords;
             this.avgNumOfEmptyXMLElements = report.xmlPopulatedReport.avgXMLEmptyElement;
+            this.avgFacetCoverage = report.facetReport.coverage;
             
             report.facetReport.facet.forEach(f -> this.facets.add(new Facet(f.name, f.coverage)));           
         }
