@@ -39,8 +39,8 @@ $(document).ready( function () {
         $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
  
         $( 'input', this ).on( 'keyup change', function () {
-            if ( table.column(i).search() !== this.value ) {
-                table
+            if ( table2.column(i).search() !== this.value ) {
+                table2
                     .column(i)
                     .search( this.value )
                     .draw();
@@ -48,9 +48,7 @@ $(document).ready( function () {
         } );
     } );
     
-
- 
-    var table = $('#profiles').DataTable( {
+    var table2 = $('#profiles').DataTable( {
 
         orderCellsTop: true,
         fixedHeader: true,

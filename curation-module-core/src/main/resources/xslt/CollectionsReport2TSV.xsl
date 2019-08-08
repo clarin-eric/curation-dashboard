@@ -35,7 +35,7 @@
 <xsl:text>&#9;</xsl:text>
 <xsl:text>Avg Num Of Empty XML Elements</xsl:text>
 <xsl:text>&#9;</xsl:text>
-<xsl:text>Avg Facet Coverage</xsl:text>
+<xsl:text>Ratio Facets Non Zero</xsl:text>
 <xsl:for-each select="./collection[1]/facets/facet">
 <xsl:text>&#9;</xsl:text>
 <xsl:value-of select="functx:capitalize-first(@name)"></xsl:value-of>

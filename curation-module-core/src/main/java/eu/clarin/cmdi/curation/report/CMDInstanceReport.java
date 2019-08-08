@@ -12,6 +12,7 @@ import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.report.CollectionReport.Record;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+import eu.clarin.cmdi.rasa.links.CheckedLink;
 
 /**
  *
@@ -115,11 +116,11 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         @XmlAttribute(name = "redirectCount")
         public int redirectCount;
 
-        public URLElement convertFromLinkCheckerURLElement(eu.clarin.cmdi.linkchecker.urlElements.URLElement urlElement) {
-            url = urlElement.getUrl();
-            method = urlElement.getMethod();
-            message = urlElement.getMessage();
-            status = urlElement.getStatus();
+        public URLElement convertFromLinkCheckerURLElement(CheckedLink checkedLink) {
+            url = checkedLink.getUrl();
+            method = checkedLink.getMethod();
+            message = checkedLink.getMessage();
+            status = checkedLink.getStatus();
             //todo put this in its own class (categoryDeterminer)
             if (status == 200) {
                 category = "Ok";
@@ -128,12 +129,12 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             } else {
                 category = "Broken";
             }
-            contentType = urlElement.getContentType();
-            expectedContentType = urlElement.getExpectedMimeType();
-            byteSize = urlElement.getByteSize();
-            duration = TimeUtils.humanizeToTime(urlElement.getDuration());
-            timestamp = TimeUtils.humanizeToDate(urlElement.getTimestamp());
-            redirectCount = urlElement.getRedirectCount();
+            contentType = checkedLink.getContentType();
+            expectedContentType = checkedLink.getExpectedMimeType();
+            byteSize = checkedLink.getByteSize();
+            duration = TimeUtils.humanizeToTime(checkedLink.getDuration());
+            timestamp = TimeUtils.humanizeToDate(checkedLink.getTimestamp());
+            redirectCount = checkedLink.getRedirectCount();
 
             return this;
         }

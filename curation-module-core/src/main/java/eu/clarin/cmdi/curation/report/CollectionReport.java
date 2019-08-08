@@ -1,26 +1,16 @@
 package eu.clarin.cmdi.curation.report;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import javax.xml.bind.annotation.*;
-
-import com.mongodb.client.*;
-import com.mongodb.client.model.Accumulators;
-import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Filters;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
-import org.bson.Document;
-import org.bson.conversions.Bson;
+import eu.clarin.cmdi.rasa.filters.impl.ACDHStatisticsFilter;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Sorts.ascending;
-import static com.mongodb.client.model.Sorts.orderBy;
+import javax.xml.bind.annotation.*;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -279,53 +269,27 @@ public class CollectionReport implements Report<CollectionReport> {
         //statistics
 
         if (Configuration.DATABASE) {
-            MongoClient mongoClient;
-            if (Configuration.DATABASE_URI == null || Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
-                mongoClient = MongoClients.create();
-            } else {
-                mongoClient = MongoClients.create(Configuration.DATABASE_URI);
-            }
 
-            MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
-
-            MongoCollection<Document> linksChecked = database.getCollection("linksChecked");
-            MongoCollection<Document> linksToBeChecked = database.getCollection("linksToBeChecked");
-
-            AggregateIterable<Document> iterable = linksChecked.aggregate(Arrays.asList(
-                    Aggregates.match(eq("collection", getName())),
-                    Aggregates.group("$status",
-                            Accumulators.sum("count", 1),
-                            Accumulators.avg("avg_resp", "$duration"),
-                            Accumulators.max("max_resp", "$duration")
-                    ),
-                    Aggregates.sort(orderBy(ascending("_id")))
-            ));
-
-            for (Document doc : iterable) {
-                Statistics statistics = new Statistics();
-                statistics.avgRespTime = doc.getDouble("avg_resp");
-                statistics.maxRespTime = doc.getLong("max_resp");
-                statistics.statusCode = doc.getInteger("_id");
-                if (statistics.statusCode == 200) {
-                    statistics.category = "Ok";
-                } else if (statistics.statusCode == 401 || statistics.statusCode == 405 || statistics.statusCode == 429) {
-                    statistics.category = "Undetermined";
-                } else {
-                    statistics.category = "Broken";
-                }
-                statistics.count = doc.getInteger("count");
-                urlReport.status.add(statistics);
+            List<eu.clarin.cmdi.rasa.links.Statistics> stats = Configuration.statisticsResource.getStatusStatistics(getName());
+            for (eu.clarin.cmdi.rasa.links.Statistics statistics : stats) {
+                Statistics xmlStatistics = new Statistics();
+                xmlStatistics.avgRespTime = statistics.getAvgRespTime();
+                xmlStatistics.maxRespTime = statistics.getMaxRespTime();
+                xmlStatistics.statusCode = statistics.getStatus();
+                xmlStatistics.category = statistics.getCategory();
+                xmlStatistics.count = statistics.getCount();
+                urlReport.status.add(xmlStatistics);
             }
 
 
-            long numOfCheckedLinks = linksChecked.countDocuments(eq("collection", getName()));
+            ACDHStatisticsFilter filter = new ACDHStatisticsFilter(getName(), null, false, false);
+            long numOfCheckedLinks = Configuration.statisticsResource.countLinksChecked(Optional.of(filter));
 
+            filter = new ACDHStatisticsFilter(getName(), null, true, false);
+            long numOfBrokenLinks = Configuration.statisticsResource.countLinksChecked(Optional.of(filter));
 
-            Bson brokenLinksFilter = Filters.and(Filters.eq("collection", getName()), Filters.not(Filters.in("status", 200, 302, 401, 405, 429)));
-            long numOfBrokenLinks = linksChecked.countDocuments(brokenLinksFilter);
-
-            Bson undeterminedLinksFilter = Filters.and(Filters.eq("collection", getName()), Filters.in("status", 401, 405, 429));
-            urlReport.totNumOfUndeterminedLinks = (int) linksChecked.countDocuments(undeterminedLinksFilter);
+            filter = new ACDHStatisticsFilter(getName(), null, false, true);
+            urlReport.totNumOfUndeterminedLinks = (int) Configuration.statisticsResource.countLinksChecked(Optional.of(filter));
 
             urlReport.totNumOfBrokenLinks = (int) numOfBrokenLinks;
             urlReport.totNumOfCheckedLinks = (int) (numOfCheckedLinks);
@@ -336,18 +300,10 @@ public class CollectionReport implements Report<CollectionReport> {
             //because url validator works on a record basis and not collection basis, so the program
             //can only know about unique link numbers in a single record and not the whole collection.
             //thats why some database magic on the whole collection needed.
-            iterable = linksToBeChecked.aggregate(Arrays.asList(
-                    Aggregates.match(eq("collection", getName())),
-                    Aggregates.lookup("linksChecked", "url", "url", "checked")
-            ));
-            int duplicates = 0;
-            for (Document doc : iterable) {
-                if (!((List<?>) doc.get("checked")).isEmpty()) {
-                    duplicates++;
-                }
-            }
+            int duplicates = Configuration.statisticsResource.getDuplicateCount(getName());
 
-            int numOfLinksToBeChecked = (int) linksToBeChecked.countDocuments(eq("collection", getName()));
+            filter = new ACDHStatisticsFilter(getName(), null, false, false);
+            int numOfLinksToBeChecked = (int) Configuration.statisticsResource.countLinksToBeChecked(Optional.of(filter));
             urlReport.totNumOfUniqueLinks = ((int) numOfCheckedLinks) + numOfLinksToBeChecked - duplicates;
 
 
@@ -355,19 +311,9 @@ public class CollectionReport implements Report<CollectionReport> {
             urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
             urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
 
-            AggregateIterable<Document> aggregate = linksChecked.aggregate(
-                    Arrays.asList(
-                            Aggregates.match(eq("collection", getName())),
-                            Aggregates.group(null,
-                                    Accumulators.avg("avg_resp", "$duration"),
-                                    Accumulators.max("max_resp", "$duration")
-                            )));
-            Document result = aggregate.first();
-
-            if(result!=null){
-                urlReport.avgRespTime = result.getDouble("avg_resp");
-                urlReport.maxRespTime = result.getLong("max_resp");
-            }
+            eu.clarin.cmdi.rasa.links.Statistics statistics = Configuration.statisticsResource.getOverallStatistics(getName());
+            urlReport.avgRespTime = statistics.getAvgRespTime();
+            urlReport.maxRespTime = statistics.getMaxRespTime();
 
         }
 

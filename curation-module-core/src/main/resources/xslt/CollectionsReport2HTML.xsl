@@ -30,7 +30,7 @@
                             <th data-sortable="true">Avg Num Of Res Proxies</th>
                             <th data-sortable="true">Ratio Of Valid Records</th>
                             <th data-sortable="true">Avg Num Of Empty XML Elements</th>
-                            <th data-sortable="true">Avg Facet Coverage</th>
+                            <th data-sortable="true">Ratio Facets Non Zero</th>
 
                             <xsl:for-each select="./collection[1]/facets/facet">
                                 <th data-sortable="true">

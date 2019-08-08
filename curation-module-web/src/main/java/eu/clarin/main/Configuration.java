@@ -1,8 +1,8 @@
 package eu.clarin.main;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
+import eu.clarin.cmdi.rasa.linkResources.CheckedLinkResource;
+import eu.clarin.cmdi.rasa.linkResources.LinkToBeCheckedResource;
+import eu.clarin.cmdi.rasa.linkResources.StatisticsResource;
 import eu.clarin.helpers.FileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +28,12 @@ public class Configuration {
     public static String VIEW_RESOURCES_PATH;
     public static String OUTPUT_DIRECTORY;
     public static String BASE_URL;
-    private static String DATABASE_URI;
-    private static String DATABASE_NAME;
+//    private static String DATABASE_URI;
+//    private static String DATABASE_NAME;
 
-    public static MongoDatabase DATABASE;
+    public static CheckedLinkResource checkedLinkResource;
+    public static LinkToBeCheckedResource linkToBeCheckedResource;
+    public static StatisticsResource statisticsResource;
 
     public static void init(ServletContext servletContext) throws IOException {
 
@@ -42,6 +44,10 @@ public class Configuration {
 
         //this is necessary for core module methods.
         eu.clarin.cmdi.curation.main.Configuration.init(path);
+
+        checkedLinkResource = eu.clarin.cmdi.curation.main.Configuration.checkedLinkResource;
+        linkToBeCheckedResource = eu.clarin.cmdi.curation.main.Configuration.linkToBeCheckedResource;
+        statisticsResource = eu.clarin.cmdi.curation.main.Configuration.statisticsResource;
 
         _logger.info("Initializing configuration from: " + path);
         Properties properties = new Properties();
@@ -90,25 +96,8 @@ public class Configuration {
 
         BASE_URL = properties.getProperty("BASE_URL");
 
-        DATABASE_URI = properties.getProperty("DATABASE_URI");
-        DATABASE_NAME = properties.getProperty("DATABASE_NAME");
-
-        loadMongo();
-
-    }
-
-    private static void loadMongo() {
-        _logger.info("Connecting to database...");
-        MongoClient mongoClient;
-
-        if (DATABASE_URI == null || DATABASE_URI.isEmpty()) {//if it is empty, try localhost
-            mongoClient = MongoClients.create();
-        } else {
-            mongoClient = MongoClients.create(DATABASE_URI);
-        }
-
-        DATABASE = mongoClient.getDatabase(DATABASE_NAME);
-        _logger.info("Connected to database.");
+//        DATABASE_URI = properties.getProperty("DATABASE_URI");
+//        DATABASE_NAME = properties.getProperty("DATABASE_NAME");
 
     }
 }

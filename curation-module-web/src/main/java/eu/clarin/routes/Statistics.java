@@ -36,8 +36,8 @@ public class Statistics {
     @Path("/{collectionName}/{status}")
     public Response getStatusStatsInit(@PathParam("collectionName") String collectionName, @PathParam("status") int status) {
 
-        LinkCheckerStatisticsHelper linkCheckerStatisticsHelper = new LinkCheckerStatisticsHelper(Configuration.DATABASE);
-        String urlStatistics = linkCheckerStatisticsHelper.createURLTable(collectionName, status);
+//        LinkCheckerStatisticsHelper linkCheckerStatisticsHelper = new LinkCheckerStatisticsHelper(Configuration.DATABASE);
+        String urlStatistics = LinkCheckerStatisticsHelper.createURLTable(collectionName, status);
 
         return ResponseManager.returnHTML(200, urlStatistics, null);
 
@@ -48,9 +48,9 @@ public class Statistics {
     @Path("/{collectionName}/{status}/{batchCount}")
     public Response getStatusStats(@PathParam("collectionName") String collectionName, @PathParam("status") int status, @PathParam("batchCount") int batchCount) {
 
-        LinkCheckerStatisticsHelper linkCheckerStatisticsHelper = new LinkCheckerStatisticsHelper(Configuration.DATABASE);
+//        LinkCheckerStatisticsHelper linkCheckerStatisticsHelper = new LinkCheckerStatisticsHelper(Configuration.DATABASE);
 
-        String urlBatchStatistics = linkCheckerStatisticsHelper.getHtmlRowsInBatch(collectionName, status, batchCount);
+        String urlBatchStatistics = LinkCheckerStatisticsHelper.getHtmlRowsInBatch(collectionName, status, batchCount);
         return ResponseManager.returnResponse(200, urlBatchStatistics, null);
 
     }

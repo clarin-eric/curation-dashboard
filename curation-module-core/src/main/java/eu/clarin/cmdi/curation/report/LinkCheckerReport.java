@@ -1,26 +1,14 @@
 package eu.clarin.cmdi.curation.report;
 
-import java.io.OutputStream;
-import java.util.*;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.mongodb.client.*;
-import com.mongodb.client.model.Accumulators;
-import com.mongodb.client.model.Aggregates;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport.Statistics;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
-import org.bson.Document;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Sorts.ascending;
-import static com.mongodb.client.model.Sorts.orderBy;
+import javax.xml.bind.annotation.*;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /*
  * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
@@ -168,54 +156,24 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
         }
 
         public Overall() {
-            MongoClient mongoClient;
-            if (Configuration.DATABASE_URI == null || Configuration.DATABASE_URI.isEmpty()) {//if it is empty, try localhost
-                mongoClient = MongoClients.create();
-            } else {
-                mongoClient = MongoClients.create(Configuration.DATABASE_URI);
+
+
+            List<eu.clarin.cmdi.rasa.links.Statistics> stats = Configuration.statisticsResource.getStatusStatistics("Overall");
+
+            for (eu.clarin.cmdi.rasa.links.Statistics statistics : stats) {
+                Statistics xmlStatistics = new Statistics();
+                xmlStatistics.avgRespTime = statistics.getAvgRespTime();
+                xmlStatistics.maxRespTime = statistics.getMaxRespTime();
+                xmlStatistics.statusCode = statistics.getStatus();
+                xmlStatistics.category = statistics.getCategory();
+                xmlStatistics.count = statistics.getCount();
+                this.statistics.add(xmlStatistics);
             }
 
-            MongoDatabase database = mongoClient.getDatabase(Configuration.DATABASE_NAME);
-
-            MongoCollection<Document> linksChecked = database.getCollection("linksChecked");
-
-            AggregateIterable<Document> iterable = linksChecked.aggregate(Arrays.asList(
-                    Aggregates.group("$status",
-                            Accumulators.sum("count", 1),
-                            Accumulators.avg("avg_resp", "$duration"),
-                            Accumulators.max("max_resp", "$duration")
-                    ),
-                    Aggregates.sort(orderBy(ascending("_id")))
-            ));
-
-            for (Document doc : iterable) {
-                Statistics statistics = new Statistics();
-                statistics.avgRespTime = doc.getDouble("avg_resp");
-                statistics.maxRespTime = doc.getLong("max_resp");
-                statistics.statusCode = doc.getInteger("_id");
-                if (statistics.statusCode == 200) {
-                    statistics.category = "Ok";
-                } else if (statistics.statusCode == 401 || statistics.statusCode == 405 || statistics.statusCode == 429) {
-                    statistics.category = "Undetermined";
-                } else {
-                    statistics.category = "Broken";
-                }
-                statistics.count = doc.getInteger("count");
-
-                this.statistics.add(statistics);
-            }
-
-            AggregateIterable<Document> aggregate = linksChecked.aggregate(
-                    Arrays.asList(
-                            Aggregates.group(null,
-                                    Accumulators.avg("avg_resp", "$duration"),
-                                    Accumulators.max("max_resp", "$duration"),
-                                    Accumulators.sum("count", 1)
-                            )));
-            Document result = aggregate.first();
-            this.avgRespTime = result.getDouble("avg_resp");
-            this.maxRespTime = result.getLong("max_resp");
-            this.count = result.getInteger("count");
+            eu.clarin.cmdi.rasa.links.Statistics statistics = Configuration.statisticsResource.getOverallStatistics("Overall");
+            this.avgRespTime = statistics.getAvgRespTime();
+            this.count = statistics.getCount();
+            this.maxRespTime = statistics.getMaxRespTime();
         }
     }
 }

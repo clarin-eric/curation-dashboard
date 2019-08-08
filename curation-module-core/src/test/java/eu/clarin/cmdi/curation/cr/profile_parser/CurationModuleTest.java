@@ -1,5 +1,7 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import eu.clarin.cmdi.curation.main.Configuration;
@@ -13,6 +15,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CurationModuleTest extends TestBase{
+
+    @Before
+    public void init() {
+        super.init();
+    }
 
     @Test
     public void testCMD_1_1() { 
