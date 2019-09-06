@@ -10,14 +10,20 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContext;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 
@@ -28,8 +34,8 @@ public class Configuration {
     public static String VIEW_RESOURCES_PATH;
     public static String OUTPUT_DIRECTORY;
     public static String BASE_URL;
-//    private static String DATABASE_URI;
-//    private static String DATABASE_NAME;
+    public static ArrayList<String> clarinCollections;
+    public static ArrayList<String> europeanaCollections;
 
     public static CheckedLinkResource checkedLinkResource;
     public static LinkToBeCheckedResource linkToBeCheckedResource;
@@ -96,8 +102,23 @@ public class Configuration {
 
         BASE_URL = properties.getProperty("BASE_URL");
 
-//        DATABASE_URI = properties.getProperty("DATABASE_URI");
-//        DATABASE_NAME = properties.getProperty("DATABASE_NAME");
+        String dataDirectory = properties.getProperty("DATA_DIRECTORY");
+
+        try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/clarin/results/cmdi"))) {
+            clarinCollections = (ArrayList<String>) walk.filter(Files::isDirectory).map(file -> file.getFileName().toString()).collect(Collectors.toList());
+        } catch (IOException e) {
+            _logger.error("Error when reading folders from :" + dataDirectory + "/europeana/results/cmdi, Message:" + e.getMessage());
+        }
+
+        try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/europeana/results/cmdi"))) {
+            europeanaCollections = (ArrayList<String>) walk.filter(Files::isDirectory).map(file -> file.getFileName().toString()).collect(Collectors.toList());
+        } catch (IOException e) {
+            _logger.error("Error when reading folders from :" + dataDirectory + "/europeana/results/cmdi, Message:" + e.getMessage());
+        }
+
+        _logger.info("Clarin collections: "+clarinCollections);
+        _logger.info("Europeana collections: "+europeanaCollections);
+
 
     }
 }

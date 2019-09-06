@@ -23,6 +23,7 @@ public class Statistics {
     @Path("/")
     public Response getStatistics() {
         try {
+            _logger.info("Statistics report requested.");
             String statistics = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/statistics/LinkCheckerReport.html");
 
             return ResponseManager.returnHTML(200, statistics, null);
@@ -35,24 +36,18 @@ public class Statistics {
     @GET
     @Path("/{collectionName}/{status}")
     public Response getStatusStatsInit(@PathParam("collectionName") String collectionName, @PathParam("status") int status) {
-
-//        LinkCheckerStatisticsHelper linkCheckerStatisticsHelper = new LinkCheckerStatisticsHelper(Configuration.DATABASE);
+        _logger.info("URL Table requested for collection " + collectionName);
         String urlStatistics = LinkCheckerStatisticsHelper.createURLTable(collectionName, status);
-
         return ResponseManager.returnHTML(200, urlStatistics, null);
-
     }
 
 
     @GET
     @Path("/{collectionName}/{status}/{batchCount}")
     public Response getStatusStats(@PathParam("collectionName") String collectionName, @PathParam("status") int status, @PathParam("batchCount") int batchCount) {
-
-//        LinkCheckerStatisticsHelper linkCheckerStatisticsHelper = new LinkCheckerStatisticsHelper(Configuration.DATABASE);
-
+        _logger.info("URL batch requested with count " + batchCount + " for collection " + collectionName);
         String urlBatchStatistics = LinkCheckerStatisticsHelper.getHtmlRowsInBatch(collectionName, status, batchCount);
         return ResponseManager.returnResponse(200, urlBatchStatistics, null);
-
     }
 
 }

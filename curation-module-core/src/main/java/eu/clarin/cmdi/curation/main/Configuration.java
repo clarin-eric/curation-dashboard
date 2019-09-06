@@ -39,12 +39,11 @@ public class Configuration {
     public static Collection<String> FACETS = null;
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;
-    private static int TIMEOUTDEFAULT = 5000;//in ms(if config file doesnt have it)
 
     public static VloConfig VLO_CONFIG;
     public static boolean DATABASE;
-    public static String DATABASE_NAME;
-    public static String DATABASE_URI;
+    private static String DATABASE_NAME;
+    private static String DATABASE_URI;
     public static String USERAGENT;
     public static String BASE_URL;
     public static String CMD_STORAGE_URL;
@@ -85,15 +84,17 @@ public class Configuration {
 
         String timeout = config.getProperty("TIMEOUT");
         if (timeout == null || timeout.isEmpty()) {
+            //in ms(if config file doesnt have it)
+            int TIMEOUTDEFAULT = 5000;
             _logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT + "ms.");
             TIMEOUT = TIMEOUTDEFAULT;
         } else {
             TIMEOUT = Integer.parseInt(timeout);
         }
-        THREAD_POOL_SIZE = Integer.valueOf(config.getProperty("THREAD_POOL_SIZE", "100"));
+        THREAD_POOL_SIZE = Integer.parseInt(config.getProperty("THREAD_POOL_SIZE", "100"));
 
         String[] facets = config.getProperty("FACETS").split(",");
-        FACETS = Arrays.asList(facets).stream().map(f -> f.trim()).collect(Collectors.toList());
+        FACETS = Arrays.stream(facets).map(String::trim).collect(Collectors.toList());
 
         String outDir = config.getProperty("OUTPUT_DIRECTORY");
         String cacheDir = config.getProperty("CACHE_DIRECTORY");

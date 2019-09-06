@@ -134,8 +134,8 @@ public class LinkCheckerStatisticsHelper {
 
         StringBuilder sb = new StringBuilder();
 
-        ACDHCheckedLinkFilter filter = new ACDHCheckedLinkFilter(collectionName,status);
-        Stream<CheckedLink> links = Configuration.checkedLinkResource.get(Optional.of(filter),start,end);
+        ACDHCheckedLinkFilter filter = new ACDHCheckedLinkFilter(collectionName, status);
+        Stream<CheckedLink> links = Configuration.checkedLinkResource.get(Optional.of(filter), start, end);
 
         links.forEach(checkedLink -> {
             sb.append("<tr>");
@@ -179,8 +179,17 @@ public class LinkCheckerStatisticsHelper {
             //some html css table too wide work around
             String record = checkedLink.getRecord();
             if (record != null) {
-                record = record.replace("_", "_<wbr>");
-                sb.append(record);
+                String recordWithBreaks = record.replace("_", "_<wbr>");
+
+                if (Configuration.clarinCollections.contains(collectionName)) {
+                    String clarinURLPrefix = "https://vlo.clarin.eu/data/clarin/results/cmdi/";
+                    sb.append("<a href='").append(clarinURLPrefix+collectionName+"/"+record+".xml").append("'>").append(recordWithBreaks).append("</a>");
+                }else if(Configuration.europeanaCollections.contains(collectionName)){
+                    String europeanaURLPrefix = "https://vlo.clarin.eu/data/europeana/results/cmdi/";
+                    sb.append("<a href='").append(europeanaURLPrefix+collectionName+"/"+record+".xml").append("'>").append(recordWithBreaks).append("</a>");
+                }else{
+                    sb.append(recordWithBreaks);
+                }
             }
 
             sb.append("</tr>");
