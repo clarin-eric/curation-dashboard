@@ -124,8 +124,12 @@ public class Configuration {
             Files.createDirectories(path);
             path = Paths.get(OUTPUT_DIRECTORY + "/html/instances");
             Files.createDirectories(path);
+            path = Paths.get(OUTPUT_DIRECTORY + "/xml/profiles");
+            Files.createDirectories(path);
+            path = Paths.get(OUTPUT_DIRECTORY + "/html/profiles");
+            Files.createDirectories(path);
         } catch (IOException e) {
-            _logger.error("There was an error creating the instances folder: " + e.getMessage());
+            _logger.error("There was an error creating the profiles/instances xml/html folder: " + e.getMessage());
         }
 
 
