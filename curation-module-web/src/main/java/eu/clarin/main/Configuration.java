@@ -102,8 +102,8 @@ public class Configuration {
 
         BASE_URL = properties.getProperty("BASE_URL");
 
+        //collection categorizing into europeana and clarin based on the data folder
         String dataDirectory = properties.getProperty("DATA_DIRECTORY");
-
         try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/clarin/results/cmdi"))) {
             clarinCollections = (ArrayList<String>) walk.filter(Files::isDirectory).map(file -> file.getFileName().toString()).collect(Collectors.toList());
         } catch (IOException e) {
@@ -115,9 +115,18 @@ public class Configuration {
         } catch (IOException e) {
             _logger.error("Error when reading folders from :" + dataDirectory + "/europeana/results/cmdi, Message:" + e.getMessage());
         }
+        _logger.info("Clarin collections: " + clarinCollections);
+        _logger.info("Europeana collections: " + europeanaCollections);
 
-        _logger.info("Clarin collections: "+clarinCollections);
-        _logger.info("Europeana collections: "+europeanaCollections);
+        //create Instances directory if it doesn't exist
+        try {
+            Path path = Paths.get(OUTPUT_DIRECTORY + "/xml/instances");
+            Files.createDirectories(path);
+            path = Paths.get(OUTPUT_DIRECTORY + "/html/instances");
+            Files.createDirectories(path);
+        } catch (IOException e) {
+            _logger.error("There was an error creating the instances folder: " + e.getMessage());
+        }
 
 
     }
