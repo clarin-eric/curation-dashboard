@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.sql.SQLException;
 
 @Path("/statistics")
 public class Statistics {
@@ -37,7 +38,13 @@ public class Statistics {
     @Path("/{collectionName}/{status}")
     public Response getStatusStatsInit(@PathParam("collectionName") String collectionName, @PathParam("status") int status) {
         _logger.info("URL Table requested for collection " + collectionName);
-        String urlStatistics = LinkCheckerStatisticsHelper.createURLTable(collectionName, status);
+        String urlStatistics = null;
+        try {
+            urlStatistics = LinkCheckerStatisticsHelper.createURLTable(collectionName, status);
+        } catch (SQLException e) {
+            _logger.error("Error in statistics: "+e.getMessage());
+            return ResponseManager.returnServerError();
+        }
         return ResponseManager.returnHTML(200, urlStatistics, null);
     }
 
@@ -46,7 +53,13 @@ public class Statistics {
     @Path("/{collectionName}/{status}/{batchCount}")
     public Response getStatusStats(@PathParam("collectionName") String collectionName, @PathParam("status") int status, @PathParam("batchCount") int batchCount) {
         _logger.info("URL batch requested with count " + batchCount + " for collection " + collectionName);
-        String urlBatchStatistics = LinkCheckerStatisticsHelper.getHtmlRowsInBatch(collectionName, status, batchCount);
+        String urlBatchStatistics = null;
+        try {
+            urlBatchStatistics = LinkCheckerStatisticsHelper.getHtmlRowsInBatch(collectionName, status, batchCount);
+        } catch (SQLException e) {
+            _logger.error("Error in statistics: "+e.getMessage());
+            return ResponseManager.returnServerError();
+        }
         return ResponseManager.returnResponse(200, urlBatchStatistics, null);
     }
 

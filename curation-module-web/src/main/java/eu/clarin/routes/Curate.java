@@ -7,7 +7,7 @@ import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.ErrorReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
-import eu.clarin.cmdi.linkchecker.httpLinkChecker.HTTPLinkChecker;
+import eu.clarin.cmdi.curation.utils.HTTPLinkChecker;
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;

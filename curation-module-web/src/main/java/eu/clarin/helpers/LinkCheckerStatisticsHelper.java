@@ -1,13 +1,12 @@
 package eu.clarin.helpers;
 
-import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.filters.impl.ACDHCheckedLinkFilter;
-import eu.clarin.cmdi.rasa.links.CheckedLink;
 import eu.clarin.main.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -98,7 +97,7 @@ public class LinkCheckerStatisticsHelper {
 //
 //    }
 
-    public static String createURLTable(String collectionName, int status) {
+    public static String createURLTable(String collectionName, int status) throws SQLException {
         StringBuilder sb = new StringBuilder();
 
         sb.append("<div>");
@@ -128,7 +127,7 @@ public class LinkCheckerStatisticsHelper {
         return sb.toString();
     }
 
-    public static String getHtmlRowsInBatch(String collectionName, int status, int batchCount) {
+    public static String getHtmlRowsInBatch(String collectionName, int status, int batchCount) throws SQLException {
 
         int start = batchCount * 100;
         int end = start + 100;
@@ -143,6 +142,7 @@ public class LinkCheckerStatisticsHelper {
             //todo move category into the database instead of checking it everywhere
             String url = checkedLink.getUrl();
             String urlWithBreak = url.replace("_", "_<wbr>");
+//TODO use statuscodemapper.
 
             String category;
             if (status == 200) {
@@ -184,11 +184,11 @@ public class LinkCheckerStatisticsHelper {
 
                 if (Configuration.clarinCollections.contains(collectionName)) {
                     String clarinURLPrefix = "https://vlo.clarin.eu/data/clarin/results/cmdi/";
-                    sb.append("<a href='").append(clarinURLPrefix+collectionName+"/"+record+".xml").append("'>").append(recordWithBreaks).append("</a>");
-                }else if(Configuration.europeanaCollections.contains(collectionName)){
+                    sb.append("<a href='").append(clarinURLPrefix + collectionName + "/" + record + ".xml").append("'>").append(recordWithBreaks).append("</a>");
+                } else if (Configuration.europeanaCollections.contains(collectionName)) {
                     String europeanaURLPrefix = "https://vlo.clarin.eu/data/europeana/results/cmdi/";
-                    sb.append("<a href='").append(europeanaURLPrefix+collectionName+"/"+record+".xml").append("'>").append(recordWithBreaks).append("</a>");
-                }else{
+                    sb.append("<a href='").append(europeanaURLPrefix + collectionName + "/" + record + ".xml").append("'>").append(recordWithBreaks).append("</a>");
+                } else {
                     sb.append(recordWithBreaks);
                 }
             }
@@ -197,8 +197,10 @@ public class LinkCheckerStatisticsHelper {
 
             //info
             sb.append("<tr hidden><td colspan='4'>");
-            String message = checkedLink.getMessage().replace("_", "_<wbr>");
-            sb.append("<b>Message: </b> ").append(message).append("<br>");
+            //todo see a solution to message
+//            String message = checkedLink.getMessage().replace("_", "_<wbr>");
+//            sb.append("<b>Message: </b> ").append(message).append("<br>");
+            sb.append("<b>Message: </b> ").append("<br>");
             //because this field is new, older entries dont have it and it results in null, so a null check to make it more user friendly
             String expectedContent = checkedLink.getExpectedMimeType() == null ? "Not Specified" : checkedLink.getExpectedMimeType();
             String content = checkedLink.getContentType();
