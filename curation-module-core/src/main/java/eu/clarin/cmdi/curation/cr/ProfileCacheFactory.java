@@ -10,8 +10,8 @@ import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParser;
 import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParserFactory;
 import eu.clarin.cmdi.curation.main.Configuration;
+import eu.clarin.cmdi.curation.utils.HTTPLinkChecker;
 import eu.clarin.cmdi.curation.xml.SchemaResourceResolver;
-import eu.clarin.cmdi.linkchecker.httpLinkChecker.HTTPLinkChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -107,7 +107,7 @@ class ProfileCacheFactory {
                 }
 
             } else {//non-public profiles are not cached on disk
-                
+
                 _logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.getId());
 
 
@@ -130,11 +130,10 @@ class ProfileCacheFactory {
 
 
                     _logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.getId());
-                    
-                    if(header.getSchemaLocation().startsWith("file:")) {
+
+                    if (header.getSchemaLocation().startsWith("file:")) {
                         Files.move(Paths.get(new URI(header.getSchemaLocation())), xsd, StandardCopyOption.REPLACE_EXISTING);
-                    }
-                    else {
+                    } else {
                         new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(header.getSchemaLocation(), xsd.toFile());
                     }
                 }

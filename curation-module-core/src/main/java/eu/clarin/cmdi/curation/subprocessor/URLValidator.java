@@ -7,11 +7,11 @@ import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.URLReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
+import eu.clarin.cmdi.curation.utils.HTTPLinkChecker;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
-import eu.clarin.cmdi.linkchecker.httpLinkChecker.HTTPLinkChecker;
-import eu.clarin.cmdi.rasa.filters.impl.ACDHStatisticsFilter;
-import eu.clarin.cmdi.rasa.links.CheckedLink;
-import eu.clarin.cmdi.rasa.links.LinkToBeChecked;
+import eu.clarin.cmdi.rasa.DAO.CheckedLink;
+import eu.clarin.cmdi.rasa.DAO.LinkToBeChecked;
+import eu.clarin.cmdi.rasa.filters.impl.ACDHStatisticsCountFilter;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
@@ -19,12 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-
-/**
- *
- */
 
 public class URLValidator extends CMDSubprocessor {
 
@@ -72,26 +69,37 @@ public class URLValidator extends CMDSubprocessor {
 
                     _logger.info("Checking database for url: " + url);
 
-                    CheckedLink checkedLink = Configuration.checkedLinkResource.get(url, parentName);
+                    CheckedLink checkedLink = null;
+                    try {
+                        checkedLink = Configuration.checkedLinkResource.get(url, parentName);
 
-                    if (checkedLink == null) {
-                        String expectedMimeType = urlMap.get(url).getMimeType();
-                        expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
-                        String finalRecord = report.getName();
-                        String finalCollection = parentName != null ? parentName : finalRecord;
+                        if (checkedLink == null) {
+                            String expectedMimeType = urlMap.get(url).getMimeType();
+                            expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
-                        LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType);
+                            String finalRecord = report.getName();
+                            String finalCollection = parentName != null ? parentName : finalRecord;
 
-                        Configuration.linkToBeCheckedResource.save(linkToBeChecked);
+                            LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType);
 
-                    }//else dont do anything, it is already in linksChecked
+                            Configuration.linkToBeCheckedResource.save(linkToBeChecked);
 
+
+                        }//else dont do anything, it is already in linksChecked
+
+                    } catch (SQLException e) {
+                        _logger.error("Error when getting " + url + " from statusView or saving it to urls: " + e.getMessage());
+                    }
                 });
 
 //                removeOldURLs(urlMap.keySet(), report.getName(), parentName);
 
-                report.urlReport = createCollectionURLReport(numOfLinks.longValue(), report.getName());
+                try {
+                    report.urlReport = createCollectionURLReport(numOfLinks.longValue(), report.getName());
+                } catch (SQLException e) {
+                    _logger.error("Error when creating collection url report for collection: " + report.getName() + ": " + e.getMessage());
+                }
 
 
             } else {
@@ -186,30 +194,29 @@ public class URLValidator extends CMDSubprocessor {
         report.numOfLinks = numOfLinks;
 
         //all links are checked in instances
-        long numOfCheckedLinks = numOfLinks;
-        report.numOfCheckedLinks = numOfCheckedLinks;
+        report.numOfCheckedLinks = numOfLinks;
         report.numOfUndeterminedLinks = numOfUndeterminedLinks;
         report.numOfUniqueLinks = numOfUniqueLinks;
         report.numOfBrokenLinks = numOfBrokenLinks;
 
-        long numOfCheckedUndeterminedRemoved = numOfCheckedLinks - numOfUndeterminedLinks;
-        report.percOfValidLinks = numOfCheckedLinks == 0 ? 0 : (numOfCheckedUndeterminedRemoved - numOfBrokenLinks) / (double) numOfCheckedUndeterminedRemoved;
+        long numOfCheckedUndeterminedRemoved = numOfLinks - numOfUndeterminedLinks;
+        report.percOfValidLinks = numOfLinks == 0 ? 0 : (numOfCheckedUndeterminedRemoved - numOfBrokenLinks) / (double) numOfCheckedUndeterminedRemoved;
 
         return report;
     }
 
-    private URLReport createCollectionURLReport(long numOfLinks, String name) {
+    private URLReport createCollectionURLReport(long numOfLinks, String name) throws SQLException {
         URLReport report = new URLReport();
         report.numOfLinks = numOfLinks;
 
-        ACDHStatisticsFilter filter = new ACDHStatisticsFilter(null, name, false, false);
-        long numOfCheckedLinks = Configuration.statisticsResource.countLinksChecked(Optional.of(filter));
+        ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(name, null);
+        long numOfCheckedLinks = Configuration.statisticsResource.countStatusView(Optional.of(filter));
 
-        filter = new ACDHStatisticsFilter(null, name, true, false);
-        long numOfBrokenLinks = Configuration.statisticsResource.countLinksChecked(Optional.of(filter));
+        filter = new ACDHStatisticsCountFilter(name, null, true, false);
+        long numOfBrokenLinks = Configuration.statisticsResource.countStatusView(Optional.of(filter));
 
-        filter = new ACDHStatisticsFilter(null, name, false, true);
-        long numOfUndeterminedLinks = Configuration.statisticsResource.countLinksChecked(Optional.of(filter));
+        filter = new ACDHStatisticsCountFilter(name, null, false, true);
+        long numOfUndeterminedLinks = Configuration.statisticsResource.countStatusView(Optional.of(filter));
 
         long numOfCheckedUndeterminedRemoved = numOfCheckedLinks - numOfUndeterminedLinks;
         report.percOfValidLinks = numOfCheckedLinks == 0 ? 0 : (numOfCheckedUndeterminedRemoved - numOfBrokenLinks) / (double) numOfCheckedUndeterminedRemoved;

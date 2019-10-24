@@ -3,10 +3,14 @@ package eu.clarin.cmdi.curation.report;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
-import eu.clarin.cmdi.rasa.filters.impl.ACDHStatisticsFilter;
+import eu.clarin.cmdi.rasa.filters.impl.ACDHStatisticsCountFilter;
+import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.StatusCodeMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +23,8 @@ import java.util.Optional;
 @XmlRootElement(name = "collection-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionReport implements Report<CollectionReport> {
+
+    private static final Logger _logger = LoggerFactory.getLogger(CollectionReport.class);
 
     @XmlAttribute(name = "score")
     public Double score = 0.0;
@@ -89,47 +95,6 @@ public class CollectionReport implements Report<CollectionReport> {
         }
         this.file.add(invalidFile);
     }
-
-    // URLs
-//    @XmlElementWrapper(name = "single-url-report")
-//    public Collection<CMDInstanceReport.URLElement> url;
-
-//    @XmlRootElement
-//    public static class URLElement {
-//        @XmlValue
-//        public String url;
-//
-//        @XmlAttribute(name = "method")
-//        public String method;
-//
-//        @XmlAttribute(name = "message")
-//        public String message;
-//
-//        @XmlAttribute(name = "http-status")
-//        public int status;
-//
-//        @XmlAttribute(name = "content-type")
-//        public String contentType;
-//
-//        @XmlAttribute(name = "byte-size")
-//        public String byteSize;
-//
-//        @XmlAttribute(name = "request-duration")
-//        public String duration;//either duration in milliseconds or 'timeout'
-//
-//        @XmlAttribute(name = "timestamp")
-//        public String timestamp;
-//
-//        @XmlAttribute(name = "redirectCount")
-//        public int redirectCount;
-//    }
-
-//    public void addURLElement(CMDInstanceReport.URLElement urlElement) {
-//        if (this.url == null) {
-//            this.url = new ArrayList<>();
-//        }
-//        this.url.add(urlElement);
-//    }
 
     public void handleProfile(String profile, double score) {
         if (headerReport == null)
@@ -269,52 +234,45 @@ public class CollectionReport implements Report<CollectionReport> {
         //statistics
 
         if (Configuration.DATABASE) {
+            try {
+                List<eu.clarin.cmdi.rasa.DAO.Statistics.StatusStatistics> stats = Configuration.statisticsResource.getStatusStatistics(getName());
+                for (eu.clarin.cmdi.rasa.DAO.Statistics.StatusStatistics statistics : stats) {
+                    Statistics xmlStatistics = new Statistics();
+                    xmlStatistics.avgRespTime = statistics.getAvgRespTime();
+                    xmlStatistics.maxRespTime = statistics.getMaxRespTime();
+                    xmlStatistics.statusCode = statistics.getStatus();
+                    xmlStatistics.category = StatusCodeMapper.get(statistics.getStatus()).toString();
+                    xmlStatistics.count = statistics.getCount();
+                    urlReport.status.add(xmlStatistics);
+                }
 
-            List<eu.clarin.cmdi.rasa.links.Statistics> stats = Configuration.statisticsResource.getStatusStatistics(getName());
-            for (eu.clarin.cmdi.rasa.links.Statistics statistics : stats) {
-                Statistics xmlStatistics = new Statistics();
-                xmlStatistics.avgRespTime = statistics.getAvgRespTime();
-                xmlStatistics.maxRespTime = statistics.getMaxRespTime();
-                xmlStatistics.statusCode = statistics.getStatus();
-                xmlStatistics.category = statistics.getCategory();
-                xmlStatistics.count = statistics.getCount();
-                urlReport.status.add(xmlStatistics);
+
+                ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(getName(), null);
+                long numOfCheckedLinks = Configuration.statisticsResource.countStatusView(Optional.of(filter));
+
+                filter = new ACDHStatisticsCountFilter(getName(), null, true, false);
+                long numOfBrokenLinks = Configuration.statisticsResource.countStatusView(Optional.of(filter));
+
+                filter = new ACDHStatisticsCountFilter(getName(), null, false, true);
+                urlReport.totNumOfUndeterminedLinks = (int) Configuration.statisticsResource.countStatusView(Optional.of(filter));
+
+                urlReport.totNumOfBrokenLinks = (int) numOfBrokenLinks;
+                urlReport.totNumOfCheckedLinks = (int) (numOfCheckedLinks);
+
+                filter = new ACDHStatisticsCountFilter(getName(), null);
+                urlReport.totNumOfUniqueLinks = (int) Configuration.statisticsResource.countUrlsTable(Optional.of(filter));
+
+
+                urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
+                urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
+                urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
+
+                eu.clarin.cmdi.rasa.DAO.Statistics.Statistics statistics = Configuration.statisticsResource.getOverallStatistics(getName());
+                urlReport.avgRespTime = statistics.getAvgRespTime();
+                urlReport.maxRespTime = statistics.getMaxRespTime();
+            } catch (SQLException e) {
+                _logger.error("There was a problem calculating average values: " + e.getMessage());
             }
-
-
-            ACDHStatisticsFilter filter = new ACDHStatisticsFilter(getName(), null, false, false);
-            long numOfCheckedLinks = Configuration.statisticsResource.countLinksChecked(Optional.of(filter));
-
-            filter = new ACDHStatisticsFilter(getName(), null, true, false);
-            long numOfBrokenLinks = Configuration.statisticsResource.countLinksChecked(Optional.of(filter));
-
-            filter = new ACDHStatisticsFilter(getName(), null, false, true);
-            urlReport.totNumOfUndeterminedLinks = (int) Configuration.statisticsResource.countLinksChecked(Optional.of(filter));
-
-            urlReport.totNumOfBrokenLinks = (int) numOfBrokenLinks;
-            urlReport.totNumOfCheckedLinks = (int) (numOfCheckedLinks);
-
-            //joined urls from linkstobechecked
-            //to calculate unique links, linkchecked and linkstobechecked are added together and duplicates are subtracted.
-            //if this operation is not done through the database, the value would be wrong.
-            //because url validator works on a record basis and not collection basis, so the program
-            //can only know about unique link numbers in a single record and not the whole collection.
-            //thats why some database magic on the whole collection needed.
-            int duplicates = Configuration.statisticsResource.getDuplicateCount(getName());
-
-            filter = new ACDHStatisticsFilter(getName(), null, false, false);
-            int numOfLinksToBeChecked = (int) Configuration.statisticsResource.countLinksToBeChecked(Optional.of(filter));
-            urlReport.totNumOfUniqueLinks = ((int) numOfCheckedLinks) + numOfLinksToBeChecked - duplicates;
-
-
-            urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
-            urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
-            urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
-
-            eu.clarin.cmdi.rasa.links.Statistics statistics = Configuration.statisticsResource.getOverallStatistics(getName());
-            urlReport.avgRespTime = statistics.getAvgRespTime();
-            urlReport.maxRespTime = statistics.getMaxRespTime();
-
         }
 
 
@@ -426,7 +384,7 @@ public class CollectionReport implements Report<CollectionReport> {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Statistics {
         @XmlAttribute
-        public int count;
+        public long count;
 
         @XmlAttribute
         public double avgRespTime;

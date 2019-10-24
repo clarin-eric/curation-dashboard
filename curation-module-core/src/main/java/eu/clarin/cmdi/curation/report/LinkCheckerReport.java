@@ -3,19 +3,21 @@ package eu.clarin.cmdi.curation.report;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport.Statistics;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.StatusCodeMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/*
- * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
- */
 @XmlRootElement(name = "linkchecker-report")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class LinkCheckerReport implements Report<LinkCheckerReport> {
+
     @XmlElement(name = "overall")
     private Overall overall = new Overall();
 
@@ -25,7 +27,6 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
     @Override
     public void setParentName(String parentName) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -68,40 +69,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
     public void addReport(Report<?> report) {
 
         if (report instanceof CollectionReport) {
-
-
-//            for (Statistics statistics : ((CollectionReport) report).urlReport.status) {
-//
-//                Statistics aggregatedStatistics = this.overall.statisticsMap.get(statistics.statusCode);
-//
-//                if (aggregatedStatistics == null) {
-//                    aggregatedStatistics = new Statistics();
-//                    aggregatedStatistics.statusCode = statistics.statusCode;
-//                    aggregatedStatistics.category = statistics.category;
-//                    aggregatedStatistics.count = statistics.count;
-//                    aggregatedStatistics.avgRespTime = statistics.avgRespTime;
-//                    aggregatedStatistics.maxRespTime = statistics.maxRespTime;
-//
-//                    this.overall.statisticsMap.put(aggregatedStatistics.statusCode, aggregatedStatistics);
-//
-//                    this.overall.avgRespTime = statistics.avgRespTime;
-//                    this.overall.count = statistics.count;
-//                } else {
-//                    aggregatedStatistics.avgRespTime = ((aggregatedStatistics.avgRespTime * aggregatedStatistics.count) +
-//                            (statistics.avgRespTime * statistics.count)) / (aggregatedStatistics.count + statistics.count);
-//                    aggregatedStatistics.count = aggregatedStatistics.count + statistics.count;
-//                    aggregatedStatistics.maxRespTime = Math.max(aggregatedStatistics.maxRespTime, statistics.maxRespTime);
-//
-//                    this.overall.avgRespTime = ((this.overall.avgRespTime * this.overall.count) +
-//                            (statistics.avgRespTime * statistics.count)) / (this.overall.count + statistics.count);
-//
-//                    this.overall.count += statistics.count;
-//                }
-//
-//            }
-
             this.collections.add(new CMDCollection((CollectionReport) report));
-
         }
     }
 
@@ -138,6 +106,8 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
     }
 
     public static class Overall {
+
+        private static final Logger _logger = LoggerFactory.getLogger(Overall.class);
         private List<Statistics> statistics = new ArrayList<>();
         @XmlAttribute
         private int count;
@@ -150,30 +120,35 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
         @XmlElement
         public Collection<Statistics> getStatistics() {
-
             return this.statistics;
-
         }
 
         public Overall() {
 
+            try {
+                List<eu.clarin.cmdi.rasa.DAO.Statistics.StatusStatistics> stats = Configuration.statisticsResource.getStatusStatistics("Overall");
 
-            List<eu.clarin.cmdi.rasa.links.Statistics> stats = Configuration.statisticsResource.getStatusStatistics("Overall");
+                for (eu.clarin.cmdi.rasa.DAO.Statistics.StatusStatistics statistics : stats) {
+                    Statistics xmlStatistics = new Statistics();
+                    xmlStatistics.avgRespTime = statistics.getAvgRespTime();
+                    xmlStatistics.maxRespTime = statistics.getMaxRespTime();
+                    xmlStatistics.statusCode = statistics.getStatus();
+                    xmlStatistics.category = StatusCodeMapper.get(statistics.getStatus()).toString();
+                    xmlStatistics.count = statistics.getCount();
+                    this.statistics.add(xmlStatistics);
+                }
 
-            for (eu.clarin.cmdi.rasa.links.Statistics statistics : stats) {
-                Statistics xmlStatistics = new Statistics();
-                xmlStatistics.avgRespTime = statistics.getAvgRespTime();
-                xmlStatistics.maxRespTime = statistics.getMaxRespTime();
-                xmlStatistics.statusCode = statistics.getStatus();
-                xmlStatistics.category = statistics.getCategory();
-                xmlStatistics.count = statistics.getCount();
-                this.statistics.add(xmlStatistics);
+                eu.clarin.cmdi.rasa.DAO.Statistics.Statistics statistics = Configuration.statisticsResource.getOverallStatistics("Overall");
+                this.avgRespTime = statistics.getAvgRespTime();
+                this.count = (int) statistics.getCount();
+                this.maxRespTime = statistics.getMaxRespTime();
+
+            } catch (SQLException e) {
+                _logger.error("There was a problem getting the overall statistics: " + e.getMessage());
+                this.avgRespTime = 0;
+                this.count = 0;
+                this.maxRespTime = 0;
             }
-
-            eu.clarin.cmdi.rasa.links.Statistics statistics = Configuration.statisticsResource.getOverallStatistics("Overall");
-            this.avgRespTime = statistics.getAvgRespTime();
-            this.count = statistics.getCount();
-            this.maxRespTime = statistics.getMaxRespTime();
         }
     }
 }

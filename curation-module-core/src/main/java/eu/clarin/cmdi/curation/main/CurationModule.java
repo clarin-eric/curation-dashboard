@@ -7,7 +7,7 @@ import eu.clarin.cmdi.curation.io.CMDFileVisitor;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
-import eu.clarin.cmdi.linkchecker.httpLinkChecker.HTTPLinkChecker;
+import eu.clarin.cmdi.curation.utils.HTTPLinkChecker;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -31,11 +31,11 @@ public class CurationModule implements CurationModuleInterface {
 
         return new CMDProfile(schemaLocation.toString(), "1.x").generateReport(null);
     }
-    
-    @Override    
+
+    @Override
     public Report<?> processCMDProfile(Path path) throws MalformedURLException {
 
-            return processCMDProfile(path.toUri().toURL());
+        return processCMDProfile(path.toUri().toURL());
     }
 
     @Override

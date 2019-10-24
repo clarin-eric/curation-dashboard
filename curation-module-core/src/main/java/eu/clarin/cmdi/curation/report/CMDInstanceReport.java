@@ -12,7 +12,8 @@ import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.report.CollectionReport.Record;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
-import eu.clarin.cmdi.rasa.links.CheckedLink;
+import eu.clarin.cmdi.rasa.DAO.CheckedLink;
+import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.StatusCodeMapper;
 
 /**
  *
@@ -92,6 +93,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         @XmlAttribute(name = "method")
         public String method;
 
+        //todo delete this
         @XmlAttribute(name = "message")
         public String message;
 
@@ -119,21 +121,13 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         public URLElement convertFromLinkCheckerURLElement(CheckedLink checkedLink) {
             url = checkedLink.getUrl();
             method = checkedLink.getMethod();
-            message = checkedLink.getMessage();
             status = checkedLink.getStatus();
-            //todo put this in its own class (categoryDeterminer)
-            if (status == 200) {
-                category = "Ok";
-            } else if (status == 401 || status == 405 || status == 429) {
-                category = "Undetermined";
-            } else {
-                category = "Broken";
-            }
+            category = StatusCodeMapper.get(status).toString();
             contentType = checkedLink.getContentType();
             expectedContentType = checkedLink.getExpectedMimeType();
-            byteSize = checkedLink.getByteSize();
+            byteSize = String.valueOf(checkedLink.getByteSize());
             duration = TimeUtils.humanizeToTime(checkedLink.getDuration());
-            timestamp = TimeUtils.humanizeToDate(checkedLink.getTimestamp());
+            timestamp = checkedLink.getTimestamp().toString();
             redirectCount = checkedLink.getRedirectCount();
 
             return this;

@@ -42,8 +42,9 @@ public class Configuration {
 
     public static VloConfig VLO_CONFIG;
     public static boolean DATABASE;
-    private static String DATABASE_NAME;
+    private static String DATABASE_USERNAME;
     private static String DATABASE_URI;
+    private static String DATABASE_PASSWORD;
     public static String USERAGENT;
     public static String BASE_URL;
     public static String CMD_STORAGE_URL;
@@ -121,10 +122,12 @@ public class Configuration {
         DATABASE = Boolean.parseBoolean(config.getProperty("DATABASE"));
 
         if (DATABASE) {
-            DATABASE_NAME = config.getProperty("DATABASE_NAME");
+            DATABASE_USERNAME = config.getProperty("DATABASE_USERNAME");
             DATABASE_URI = config.getProperty("DATABASE_URI");
+            DATABASE_PASSWORD = config.getProperty("DATABASE_PASSWORD");
+            DATABASE_PASSWORD = DATABASE_PASSWORD==null?"":DATABASE_PASSWORD;
 
-            RasaFactory factory = new ACDHRasaFactory(DATABASE_NAME, DATABASE_URI);
+            RasaFactory factory = new ACDHRasaFactory(DATABASE_URI, DATABASE_USERNAME,  DATABASE_PASSWORD);
             checkedLinkResource = factory.getCheckedLinkResource();
             linkToBeCheckedResource = factory.getLinkToBeCheckedResource();
             statisticsResource = factory.getStatisticsResource();

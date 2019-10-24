@@ -74,35 +74,6 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
                 _logger.error("on error occured while waiting for the treadpool to terminate");
             }
         };
-        
-
-        
-                
-/*        while (it.hasNext()) {
-
-            final List<CurationEntity> chunk = new ArrayList<>(CHUNK_SIZE);
-            for (int i = 0; i < CHUNK_SIZE && it.hasNext(); i++) {
-                chunk.add(it.next());
-            }
-
-            long startTime = System.currentTimeMillis();
-
-            chunk.parallelStream().forEach(entity -> {
-                entity.generateReport(report.getName());
-            });
-
-            long end = System.currentTimeMillis();
-            _logger.info("validation for {} files lasted {}", chunk.size(), TimeUtils.humanizeToTime(end - startTime));
-            chunk.stream().forEach(child -> {
-                child.generateReport(report.getName()).mergeWithParent(report);
-            });
-
-            processed += chunk.size();
-            _logger.debug("{} records are processed so far, rest {}", processed, dir.getChildren().size() - processed);
-
-        }*/
-
-//        report.url = Configuration.BASE_URL + "collection/" + report.getName() + ".xml";
 
         report.calculateAverageValues();
 
