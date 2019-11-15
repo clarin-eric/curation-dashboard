@@ -99,7 +99,7 @@
 		<dependency>
 			<groupId>eu.clarin.cmdi</groupId>
 			<artifactId>resource-availability-status-api</artifactId>
-			<version>2.1-MYSQL-SNAPSHOT</version>
+			<version>2.2.2-MYSQL-SNAPSHOT</version>
 		</dependency>
 		<!--<dependency> -->
 		<!--<groupId>com.github.mfornos</groupId> -->

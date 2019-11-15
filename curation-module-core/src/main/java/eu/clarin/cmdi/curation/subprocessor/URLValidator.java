@@ -89,7 +89,7 @@ public class URLValidator extends CMDSubprocessor {
                         }//else dont do anything, it is already in linksChecked
 
                     } catch (SQLException e) {
-                        _logger.error("Error when getting " + url + " from statusView or saving it to urls: " + e.getMessage());
+                        _logger.error("Error when getting " + url + " from status table or saving it to urls table: " + e.getMessage());
                     }
                 });
 
@@ -210,13 +210,13 @@ public class URLValidator extends CMDSubprocessor {
         report.numOfLinks = numOfLinks;
 
         ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(name, null);
-        long numOfCheckedLinks = Configuration.statisticsResource.countStatusView(Optional.of(filter));
+        long numOfCheckedLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
 
         filter = new ACDHStatisticsCountFilter(name, null, true, false);
-        long numOfBrokenLinks = Configuration.statisticsResource.countStatusView(Optional.of(filter));
+        long numOfBrokenLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
 
         filter = new ACDHStatisticsCountFilter(name, null, false, true);
-        long numOfUndeterminedLinks = Configuration.statisticsResource.countStatusView(Optional.of(filter));
+        long numOfUndeterminedLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
 
         long numOfCheckedUndeterminedRemoved = numOfCheckedLinks - numOfUndeterminedLinks;
         report.percOfValidLinks = numOfCheckedLinks == 0 ? 0 : (numOfCheckedUndeterminedRemoved - numOfBrokenLinks) / (double) numOfCheckedUndeterminedRemoved;

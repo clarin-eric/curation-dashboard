@@ -139,7 +139,8 @@ public class LinkCheckerStatisticsHelper {
 
         links.forEach(checkedLink -> {
             sb.append("<tr>");
-            //todo move category into the database instead of checking it everywhere
+            //todo move category into the database instead of checking it everywhere??
+            //i cant really check the undetermined without a list
             String url = checkedLink.getUrl();
             String urlWithBreak = url.replace("_", "_<wbr>");
 //TODO use statuscodemapper.
@@ -197,10 +198,8 @@ public class LinkCheckerStatisticsHelper {
 
             //info
             sb.append("<tr hidden><td colspan='4'>");
-            //todo see a solution to message
-//            String message = checkedLink.getMessage().replace("_", "_<wbr>");
-//            sb.append("<b>Message: </b> ").append(message).append("<br>");
-            sb.append("<b>Message: </b> ").append("<br>");
+            String message = checkedLink.getMessage().replace("_", "_<wbr>");
+            sb.append("<b>Message: </b> ").append(message).append("<br>");
             //because this field is new, older entries dont have it and it results in null, so a null check to make it more user friendly
             String expectedContent = checkedLink.getExpectedMimeType() == null ? "Not Specified" : checkedLink.getExpectedMimeType();
             String content = checkedLink.getContentType();
