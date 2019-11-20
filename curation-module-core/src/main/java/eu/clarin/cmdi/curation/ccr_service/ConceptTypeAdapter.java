@@ -3,7 +3,6 @@ package eu.clarin.cmdi.curation.ccr_service;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import org.apache.commons.lang.NotImplementedException;
 
 import java.io.IOException;
 
@@ -45,6 +44,6 @@ class ConceptTypeAdapter extends TypeAdapter<CCRConcept> {
 
 	@Override
 	public void write(JsonWriter arg0, CCRConcept arg1) throws IOException {
-		throw new NotImplementedException();
+		throw new IOException("I don't know what this is? But it was throwing not implemented exception before.");
 	}
 }
