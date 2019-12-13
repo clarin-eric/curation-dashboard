@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 class ProfileCacheFactory {
@@ -100,19 +101,15 @@ class ProfileCacheFactory {
                     // if not download it
                     Files.createFile(xsd);
 
-
                     _logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.getId());
                     new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(header.getSchemaLocation(), xsd.toFile());
-
                 }
 
             } else {//non-public profiles are not cached on disk
 
                 _logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.getId());
 
-
                 //keep private schemas on disk
-
 
                 //String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
                 String fileName = header.getSchemaLocation().replaceAll("[/.:]", "_");
@@ -123,11 +120,9 @@ class ProfileCacheFactory {
 
                 _logger.debug("Loading schema for non public profile {} from {}", header.getId(), xsd);
 
-
                 if (!Files.exists(xsd)) {
                     // if not download it
                     Files.createFile(xsd);
-
 
                     _logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.getId());
 
@@ -140,6 +135,10 @@ class ProfileCacheFactory {
             }
 
             VTDGen vg = new VTDGen();
+
+            if(Files.readAllBytes(xsd).length==0){
+                throw new VTDException("xsd path is empty");
+            }
             vg.setDoc(Files.readAllBytes(xsd));
             vg.parse(true);
 

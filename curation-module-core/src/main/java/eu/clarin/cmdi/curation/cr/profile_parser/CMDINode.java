@@ -1,5 +1,7 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
+import java.util.Objects;
+
 public class CMDINode{
 	
 	public boolean isRequired;
@@ -10,7 +12,22 @@ public class CMDINode{
     public String toString() {
     	return (component != null? component.toString() : concept != null? concept.toString() : "");
     }
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		CMDINode cmdiNode = (CMDINode) o;
+		return isRequired == cmdiNode.isRequired &&
+				Objects.equals(concept, cmdiNode.concept) &&
+				Objects.equals(component, cmdiNode.component);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(isRequired, concept, component);
+	}
+
 	public static class Concept{		
 		
 		public String uri;

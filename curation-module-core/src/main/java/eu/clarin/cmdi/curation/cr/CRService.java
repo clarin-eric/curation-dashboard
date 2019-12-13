@@ -103,7 +103,19 @@ public class CRService implements ICRService {
 	@Override
 	public ParsedProfile getParsedProfile(ProfileHeader header) throws ExecutionException {
 		//_logger.debug("parsed profile lookup for {} from cache", header);
-		return (header.isPublic() && isTheNewestCMDIVersion(header.getCmdiVersion()) ? publicProfilesCache : nonpublicProfilesCache).get(header).parsedProfile;		
+		boolean isPublic = header.isPublic();
+		boolean isNewest = isTheNewestCMDIVersion(header.getCmdiVersion());
+
+		LoadingCache<ProfileHeader, ProfileCacheEntry> cache;
+		if(isPublic && isNewest){
+			cache = publicProfilesCache;
+		}else{
+			cache = nonpublicProfilesCache;
+		}
+
+		ProfileCacheEntry profileCacheEntry = cache.get(header);
+
+		return profileCacheEntry.parsedProfile;
 	}
 	
 	public boolean isTheNewestCMDIVersion(String cmdVersion){

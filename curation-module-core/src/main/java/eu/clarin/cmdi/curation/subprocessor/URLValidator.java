@@ -65,14 +65,16 @@ public class URLValidator extends CMDSubprocessor {
         if (Configuration.HTTP_VALIDATION) {
             if (Configuration.DATABASE && Configuration.COLLECTION_MODE) {
 
-                urlMap.keySet().parallelStream().forEach(url -> {
+                for(String url: urlMap.keySet()){
+
+//                }
+//                urlMap.keySet().parallelStream().forEach(url -> {
 
                     _logger.info("Checking database for url: " + url);
 
                     CheckedLink checkedLink = null;
                     try {
                         checkedLink = Configuration.checkedLinkResource.get(url, parentName);
-
 
                         if (checkedLink == null) {
                             String expectedMimeType = urlMap.get(url).getMimeType();
@@ -91,7 +93,7 @@ public class URLValidator extends CMDSubprocessor {
                     } catch (SQLException e) {
                         _logger.error("Error when getting " + url + " from status table or saving it to urls table: " + e.getMessage());
                     }
-                });
+                }//);
 
 //                removeOldURLs(urlMap.keySet(), report.getName(), parentName);
 
