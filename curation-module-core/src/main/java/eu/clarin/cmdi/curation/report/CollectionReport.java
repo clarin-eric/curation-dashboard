@@ -267,8 +267,14 @@ public class CollectionReport implements Report<CollectionReport> {
                 urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
 
                 eu.clarin.cmdi.rasa.DAO.Statistics.Statistics statistics = Configuration.statisticsResource.getOverallStatistics(getName());
-                urlReport.avgRespTime = statistics.getAvgRespTime();
-                urlReport.maxRespTime = statistics.getMaxRespTime();
+                if(statistics==null){//collection was not found in the database
+                    urlReport.avgRespTime = 0.0;
+                    urlReport.maxRespTime = 0L;
+                }else{
+                    urlReport.avgRespTime = statistics.getAvgRespTime();
+                    urlReport.maxRespTime = statistics.getMaxRespTime();
+                }
+
             } catch (SQLException e) {
                 _logger.error("There was a problem calculating average values: " + e.getMessage());
             }

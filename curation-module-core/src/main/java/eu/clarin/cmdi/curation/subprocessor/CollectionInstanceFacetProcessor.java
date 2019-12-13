@@ -32,7 +32,7 @@ public class CollectionInstanceFacetProcessor extends CMDSubprocessor {
          * has the name of the target facet key. When using cross facet mapping the
          * target facet is not the same as the origin facet. Therefore we extract the
          * origin facet from each the ValueSet and we can assume that for each origin
-         * facet a vlaue was mapped to this origin facet
+         * facet a value was mapped to this origin facet
          */
         HashSet<String> originFacetsWithValue = new HashSet<String>();      
         facetValuesMap.values().forEach(list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getOriginFacetConfig().getName())));
@@ -63,7 +63,7 @@ public class CollectionInstanceFacetProcessor extends CMDSubprocessor {
             entity.setCMDIData(null);
             entity.setParsedInstance(null);
         }
-        ;
+
 
     }
 
