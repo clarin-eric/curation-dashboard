@@ -1,5 +1,5 @@
 #!/bin/bash
-SECONDS=0
+START_TIME=$SECONDS
 
 WORK_DIR=/usr/local/curation-module
 BIN_DIR=$WORK_DIR/bin
@@ -13,7 +13,7 @@ RESULTSETS="clarin.tar.bz2 others.tar.bz2 europeana.tar.bz2"
 CMDI_PATH=results/cmdi
 
 LOG4J=-Dlog4j.configuration=file:$CONF_DIR/log4j.properties
-VM_ARGS="-Xms4G -Xmx8G -XX:+UseG1GC -XX:-UseParallelGC -XX:+UseStringDeduplication"
+VM_ARGS="-Xms4G -Xmx8G -XX:+UseG1GC -XX:-UseParallelGC -XX:+UseStringDeduplication -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -XX:GCTimeRatio=20"
 
 XSD_CACHE=$WORK_DIR/xsd_cache
 REPORTS_DIR=$WORK_DIR/reports/collections
@@ -22,33 +22,33 @@ REPORTS_DIR=$WORK_DIR/reports/collections
 set -e
 
 #delete old data in case not done before
-echo "delete old data in case not done before..."
-if [ -e $DATA_DIR ]; then
-	chmod -R a+w $DATA_DIR
-	rm -rf $DATA_DIR
-fi
+#echo "delete old data in case not done before..."
+#if [ -e $DATA_DIR ]; then
+#	chmod -R a+w $DATA_DIR
+#	rm -rf $DATA_DIR
+#fi
 
 # create new data directory
-mkdir -p $DATA_DIR/clarin
-mkdir $DATA_DIR/europeana
+#mkdir -p $DATA_DIR/clarin
+#mkdir $DATA_DIR/europeana
 
 #get harvested collections
-for RESULTSET in $RESULTSETS; do
-	if [ "$RESULTSET" = "europeana.tar.bz2" ]; then
-		cd $DATA_DIR/europeana
-	else
-		cd $DATA_DIR/clarin
-	fi
-	#download tar
-	wget $HARVESTER_URL/$RESULTSET
-
-	echo "unpacking $RESULTSET..."
-	#unpack CMDI 1.2 files
-	tar -xjf $RESULTSET $CMDI_PATH
-
-	#delete tar
-	rm $RESULTSET
-done
+#for RESULTSET in $RESULTSETS; do
+#	if [ "$RESULTSET" = "europeana.tar.bz2" ]; then
+#		cd $DATA_DIR/europeana
+#	else
+#		cd $DATA_DIR/clarin
+#	fi
+#	#download tar
+#	wget $HARVESTER_URL/$RESULTSET
+#
+#	echo "unpacking $RESULTSET..."
+#	#unpack CMDI 1.2 files
+#	tar -xjf $RESULTSET $CMDI_PATH
+#
+#	#delete tar
+#	rm $RESULTSET
+#done
 
 #remove old profiles and reports
 #echo "remove old profiles and reports..."
@@ -57,6 +57,7 @@ done
 
 echo "generating new reports, downloading necessary profiles..."
 java $VM_ARGS -Dprojectname=curate $LOG4J -jar $BIN_DIR/curation-module-core-3.1.2-jar-with-dependencies.jar -config $CONF_DIR/config.properties -r -path $DATA_DIR/clarin/$CMDI_PATH $DATA_DIR/europeana/$CMDI_PATH
+echo "report generation finished. creating value maps..."
 
 # create value maps
 for name in resourceClass_tf-extended profileName2resourceClass_tf-extended_noResourceClassProfiles collection modality organisation; do
@@ -74,7 +75,8 @@ if [ -e $DATA_DIR ]; then
         rm -rf $DATA_DIR
 fi
 echo "Finished!"
-duration=$SECONDS
+ELAPSED_TIME=$(($SECONDS - $START_TIME))
+echo "Elapsed time: $(($ELAPSED_TIME/60)) min"
 echo "please restart curate webapp with 'docker-manage -e clarin-curate -v'"
 #restart curate webapp
 #docker-manage -e clarin-curate -v

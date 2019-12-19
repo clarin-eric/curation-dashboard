@@ -30,7 +30,7 @@ public class URLValidator extends CMDSubprocessor {
 
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report) {
-        //do nothing this is not used
+        //do nothing this is not used, not really good coding is it???
     }
 
     public void process(CMDInstance entity, CMDInstanceReport report, String parentName) {
@@ -65,7 +65,7 @@ public class URLValidator extends CMDSubprocessor {
         if (Configuration.HTTP_VALIDATION) {
             if (Configuration.DATABASE && Configuration.COLLECTION_MODE) {
 
-                for(String url: urlMap.keySet()){
+                for (String url : urlMap.keySet()) {
 
 //                }
 //                urlMap.keySet().parallelStream().forEach(url -> {
@@ -98,7 +98,7 @@ public class URLValidator extends CMDSubprocessor {
 //                removeOldURLs(urlMap.keySet(), report.getName(), parentName);
 
                 try {
-                    report.urlReport = createCollectionURLReport(numOfLinks.longValue(), report.getName());
+                    report.urlReport = createInstanceURLReportFromDatabase(numOfLinks.longValue(), report.getName(), parentName);
                 } catch (SQLException e) {
                     _logger.error("Error when creating collection url report for collection: " + report.getName() + ": " + e.getMessage());
                 }
@@ -207,17 +207,17 @@ public class URLValidator extends CMDSubprocessor {
         return report;
     }
 
-    private URLReport createCollectionURLReport(long numOfLinks, String name) throws SQLException {
+    private URLReport createInstanceURLReportFromDatabase(long numOfLinks, String instanceName, String collectionName) throws SQLException {
         URLReport report = new URLReport();
         report.numOfLinks = numOfLinks;
 
-        ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(name, null);
+        ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(collectionName, instanceName);
         long numOfCheckedLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
 
-        filter = new ACDHStatisticsCountFilter(name, null, true, false);
+        filter = new ACDHStatisticsCountFilter(collectionName, instanceName, true, false);
         long numOfBrokenLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
 
-        filter = new ACDHStatisticsCountFilter(name, null, false, true);
+        filter = new ACDHStatisticsCountFilter(collectionName, instanceName, false, true);
         long numOfUndeterminedLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
 
         long numOfCheckedUndeterminedRemoved = numOfCheckedLinks - numOfUndeterminedLinks;
