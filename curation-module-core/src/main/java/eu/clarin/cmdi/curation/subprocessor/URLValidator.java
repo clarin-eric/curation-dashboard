@@ -70,7 +70,8 @@ public class URLValidator extends CMDSubprocessor {
 //                }
 //                urlMap.keySet().parallelStream().forEach(url -> {
 
-                    _logger.info("Checking database for url: " + url);
+                    //this causes performance problems
+//                    _logger.info("Checking database for url: " + url);
 
                     CheckedLink checkedLink = null;
                     try {

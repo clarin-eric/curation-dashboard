@@ -57,7 +57,8 @@ public abstract class AbstractProcessor<R extends Report<?>> {
                     report.addSegmentScore(step.calculateScore(report));
                 }
 
-                _logger.info("Processed Record: " + entity.toString() + ", step: " + step.getClass().getSimpleName());
+                //logging decreases performance
+//                _logger.info("Processed Record: " + entity.toString() + ", step: " + step.getClass().getSimpleName());
 
             }
 

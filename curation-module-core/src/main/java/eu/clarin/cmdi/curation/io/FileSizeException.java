@@ -23,7 +23,7 @@ public class FileSizeException extends Exception{
 
 	@Override
 	public String getMessage() {
-		return "Record " + fileName + " has size: " + size + "B but the allowed limit when processing collections is " + Configuration.MAX_FILE_SIZE + "B";
+		return "Record " + fileName + " has size: " + size + " bytes but the allowed limit when processing collections is " + Configuration.MAX_FILE_SIZE + " bytes.";
 	}
 
 }

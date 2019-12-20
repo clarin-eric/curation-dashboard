@@ -71,7 +71,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
                 Thread.sleep(1000);
             }
             catch (InterruptedException ex) {
-                _logger.error("on error occured while waiting for the treadpool to terminate");
+                _logger.error("on error occured while waiting for the threadpool to terminate");
             }
         };
 
