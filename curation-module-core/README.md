@@ -33,10 +33,6 @@ Java Standard Edition, version 8 or higher
   # files with file-size > MAX_FILE_SIZE won't be analyzed for performance reason
   MAX_FILE_SIZE=10000000
   
-  # validation of all http-links of the analyzed CMDI file
-  # if HTTP_VALIDATION=true you should use a database and the linkChecker to externalize link-ckecking
-  HTTP_VALIDATION=false
-  
   # If SAVE_REPORT=true you must specify an output directory
   SAVE_REPORT=true
   
@@ -51,12 +47,13 @@ Java Standard Edition, version 8 or higher
   REDIRECT_FOLLOW_LIMIT=5
   #Timeout for linkchecking in millisecondss
   TIMEOUT=50000
-  # MonoDB database configuration (recommeded if HTTP_VALIDATION is true!!!)
-  DATABASE=true
-  DATABASE_NAME=dbnamee
 
-  # if this is empty, it will try localhost:27017
-  DATABASE_URI=mongodb://<username:password>@<MongoDB server>:<port>
+  #database that contains the link checking information
+  #database
+  DATABASE_USERNAME=
+  DATABASE_PASSWORD=
+  DATABASE_URI=
+
  ```
 
   **Examples:**

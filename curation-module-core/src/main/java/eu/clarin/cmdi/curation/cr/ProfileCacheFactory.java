@@ -77,16 +77,13 @@ class ProfileCacheFactory {
             this.isPublicProfilesCache = isPublicProfilesCache;
         }
 
-
         @Override
         public ProfileCacheEntry load(ProfileHeader header) throws IOException, VTDException, SAXException, URISyntaxException {
 
-
-            _logger.info("Profile {} is not in the cache, it will be loaded", header.getId());
-
+            String profile = header.getId()!=null?header.getId():header.getSchemaLocation();
+            _logger.info("Profile {} is not in the cache, it will be loaded", profile);
 
             Path xsd;
-
             if (isPublicProfilesCache) {
 
                 //String fileName = header.id.substring(CRService.PROFILE_PREFIX.length());
@@ -136,7 +133,7 @@ class ProfileCacheFactory {
 
             VTDGen vg = new VTDGen();
 
-            if(Files.readAllBytes(xsd).length==0){
+            if (Files.readAllBytes(xsd).length == 0) {
                 throw new VTDException("xsd path is empty");
             }
             vg.setDoc(Files.readAllBytes(xsd));

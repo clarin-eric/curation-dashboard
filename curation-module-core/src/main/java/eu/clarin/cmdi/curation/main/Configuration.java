@@ -30,7 +30,6 @@ public class Configuration {
     public static String SCORE_NUMERIC_DISPLAY_FORMAT;
     public static String TIMESTAMP_DISPLAY_FORMAT;
     public static long MAX_FILE_SIZE;
-    public static boolean HTTP_VALIDATION;
     public static boolean SAVE_REPORT;
     public static Path OUTPUT_DIRECTORY = null;
     public static Path CACHE_DIRECTORY = null;
@@ -41,7 +40,6 @@ public class Configuration {
     public static int TIMEOUT;
 
     public static VloConfig VLO_CONFIG;
-    public static boolean DATABASE;
     private static String DATABASE_USERNAME;
     private static String DATABASE_URI;
     private static String DATABASE_PASSWORD;
@@ -80,7 +78,6 @@ public class Configuration {
         SCORE_NUMERIC_DISPLAY_FORMAT = config.getProperty("SCORE_NUMERIC_DISPLAY_FORMAT");
         TIMESTAMP_DISPLAY_FORMAT = config.getProperty("TIMESTAMP_DISPLAY_FORMAT");
         MAX_FILE_SIZE = Long.parseLong(config.getProperty("MAX_FILE_SIZE"));
-        HTTP_VALIDATION = Boolean.parseBoolean(config.getProperty("HTTP_VALIDATION"));
         SAVE_REPORT = Boolean.parseBoolean(config.getProperty("SAVE_REPORT"));
 
         String timeout = config.getProperty("TIMEOUT");
@@ -117,21 +114,16 @@ public class Configuration {
             REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
         }
 
+        DATABASE_USERNAME = config.getProperty("DATABASE_USERNAME");
+        DATABASE_URI = config.getProperty("DATABASE_URI");
+        DATABASE_PASSWORD = config.getProperty("DATABASE_PASSWORD");
+        DATABASE_PASSWORD = DATABASE_PASSWORD == null ? "" : DATABASE_PASSWORD;
 
+        RasaFactory factory = new ACDHRasaFactory(DATABASE_URI, DATABASE_USERNAME, DATABASE_PASSWORD);
+        checkedLinkResource = factory.getCheckedLinkResource();
+        linkToBeCheckedResource = factory.getLinkToBeCheckedResource();
+        statisticsResource = factory.getStatisticsResource();
 
-        DATABASE = Boolean.parseBoolean(config.getProperty("DATABASE"));
-
-        if (DATABASE) {
-            DATABASE_USERNAME = config.getProperty("DATABASE_USERNAME");
-            DATABASE_URI = config.getProperty("DATABASE_URI");
-            DATABASE_PASSWORD = config.getProperty("DATABASE_PASSWORD");
-            DATABASE_PASSWORD = DATABASE_PASSWORD==null?"":DATABASE_PASSWORD;
-
-            RasaFactory factory = new ACDHRasaFactory(DATABASE_URI, DATABASE_USERNAME,  DATABASE_PASSWORD);
-            checkedLinkResource = factory.getCheckedLinkResource();
-            linkToBeCheckedResource = factory.getLinkToBeCheckedResource();
-            statisticsResource = factory.getStatisticsResource();
-        }
 
         String vloConfigLocation = config.getProperty("VLO_CONFIG_LOCATION");
 

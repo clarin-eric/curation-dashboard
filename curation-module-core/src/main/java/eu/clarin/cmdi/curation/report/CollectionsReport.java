@@ -15,20 +15,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 
 /*
-* @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
-*/
+ * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
+ */
 @XmlRootElement(name = "collections-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionsReport implements Report<CollectionsReport> {
 
-    
-    @XmlElement(name="collection")
+
+    @XmlElement(name = "collection")
     private List<Collection> collections = new ArrayList<Collection>();
 
     @Override
     public void setParentName(String parentName) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -52,7 +52,7 @@ public class CollectionsReport implements Report<CollectionsReport> {
     @Override
     public void addSegmentScore(Score segmentScore) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -65,30 +65,28 @@ public class CollectionsReport implements Report<CollectionsReport> {
     @Override
     public void mergeWithParent(CollectionsReport parentReport) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     public void addReport(Report report) {
-        if(report instanceof CollectionReport) {
-            
+        if (report instanceof CollectionReport) {
             this.collections.add(new Collection((CollectionReport) report));
-            
         }
     }
-    
+
 
     @XmlRootElement
-    @XmlAccessorType(XmlAccessType.FIELD)    
-    public static class Collection{
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Collection {
 
-        
+
         @XmlAttribute
         private String name;
         @XmlElement
         private String reportName;
         @XmlElement
         private double scorePercentage;
-        @XmlElement    
+        @XmlElement
         private long numOfFiles;
         @XmlElement
         private int numOfProfiles;
@@ -99,7 +97,7 @@ public class CollectionsReport implements Report<CollectionsReport> {
         @XmlElement
         private double ratioOfValidLinks;
         @XmlElement
-        private double avgNumOfResProxies;    
+        private double avgNumOfResProxies;
         @XmlElement
         private int numOfResProxies;
         @XmlElement
@@ -107,16 +105,16 @@ public class CollectionsReport implements Report<CollectionsReport> {
         @XmlElement
         private double avgNumOfEmptyXMLElements;
         @XmlElement
-        private double avgFacetCoverage;  
-        
-        @XmlElementWrapper(name="facets")
-        @XmlElement(name="facet")
-        private List<Facet> facets = new ArrayList<Facet>();  
-        
+        private double avgFacetCoverage;
+
+        @XmlElementWrapper(name = "facets")
+        @XmlElement(name = "facet")
+        private List<Facet> facets = new ArrayList<Facet>();
+
         public Collection() {
-            
+
         }
-        
+
         public Collection(CollectionReport report) {
             this.name = report.getName();
             this.reportName = report.getName();
@@ -131,27 +129,27 @@ public class CollectionsReport implements Report<CollectionsReport> {
             this.ratioOfValidRecords = report.xmlValidationReport.ratioOfValidRecords;
             this.avgNumOfEmptyXMLElements = report.xmlPopulatedReport.avgXMLEmptyElement;
             this.avgFacetCoverage = report.facetReport.coverage;
-            
-            report.facetReport.facet.forEach(f -> this.facets.add(new Facet(f.name, f.coverage)));           
+
+            report.facetReport.facet.forEach(f -> this.facets.add(new Facet(f.name, f.coverage)));
         }
-        
+
     }
-    
+
     @XmlRootElement
-    @XmlAccessorType(XmlAccessType.FIELD)    
-    public static class Facet{
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Facet {
         @XmlAttribute
         private String name;
         @XmlElement
         private double avgCoverage;
-        
+
         public Facet() {
-            
+
         }
-        
+
         public Facet(String name, double avgCoverage) {
             this.name = name;
             this.avgCoverage = avgCoverage;
         }
-    }  
+    }
 }

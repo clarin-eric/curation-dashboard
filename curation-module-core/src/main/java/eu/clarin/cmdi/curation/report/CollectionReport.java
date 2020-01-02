@@ -232,52 +232,49 @@ public class CollectionReport implements Report<CollectionReport> {
 
 
         //statistics
-
-        if (Configuration.DATABASE) {
-            try {
-                List<eu.clarin.cmdi.rasa.DAO.Statistics.StatusStatistics> stats = Configuration.statisticsResource.getStatusStatistics(getName());
-                for (eu.clarin.cmdi.rasa.DAO.Statistics.StatusStatistics statistics : stats) {
-                    Statistics xmlStatistics = new Statistics();
-                    xmlStatistics.avgRespTime = statistics.getAvgRespTime();
-                    xmlStatistics.maxRespTime = statistics.getMaxRespTime();
-                    xmlStatistics.statusCode = statistics.getStatus();
-                    xmlStatistics.category = StatusCodeMapper.get(statistics.getStatus()).toString();
-                    xmlStatistics.count = statistics.getCount();
-                    urlReport.status.add(xmlStatistics);
-                }
-
-
-                ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(getName(), null);
-                long numOfCheckedLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
-
-                filter = new ACDHStatisticsCountFilter(getName(), null, true, false);
-                long numOfBrokenLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
-
-                filter = new ACDHStatisticsCountFilter(getName(), null, false, true);
-                urlReport.totNumOfUndeterminedLinks = (int) Configuration.statisticsResource.countStatusTable(Optional.of(filter));
-
-                urlReport.totNumOfBrokenLinks = (int) numOfBrokenLinks;
-                urlReport.totNumOfCheckedLinks = (int) (numOfCheckedLinks);
-
-                filter = new ACDHStatisticsCountFilter(getName(), null);
-                urlReport.totNumOfUniqueLinks = (int) Configuration.statisticsResource.countUrlsTable(Optional.of(filter));
-
-                urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
-                urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
-                urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
-
-                eu.clarin.cmdi.rasa.DAO.Statistics.Statistics statistics = Configuration.statisticsResource.getOverallStatistics(getName());
-                if(statistics==null){//collection was not found in the database
-                    urlReport.avgRespTime = 0.0;
-                    urlReport.maxRespTime = 0L;
-                }else{
-                    urlReport.avgRespTime = statistics.getAvgRespTime();
-                    urlReport.maxRespTime = statistics.getMaxRespTime();
-                }
-
-            } catch (SQLException e) {
-                _logger.error("There was a problem calculating average values: " + e.getMessage());
+        try {
+            List<eu.clarin.cmdi.rasa.DAO.Statistics.StatusStatistics> stats = Configuration.statisticsResource.getStatusStatistics(getName());
+            for (eu.clarin.cmdi.rasa.DAO.Statistics.StatusStatistics statistics : stats) {
+                Statistics xmlStatistics = new Statistics();
+                xmlStatistics.avgRespTime = statistics.getAvgRespTime();
+                xmlStatistics.maxRespTime = statistics.getMaxRespTime();
+                xmlStatistics.statusCode = statistics.getStatus();
+                xmlStatistics.category = StatusCodeMapper.get(statistics.getStatus()).toString();
+                xmlStatistics.count = statistics.getCount();
+                urlReport.status.add(xmlStatistics);
             }
+
+
+            ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(getName(), null);
+            long numOfCheckedLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
+
+            filter = new ACDHStatisticsCountFilter(getName(), null, true, false);
+            long numOfBrokenLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
+
+            filter = new ACDHStatisticsCountFilter(getName(), null, false, true);
+            urlReport.totNumOfUndeterminedLinks = (int) Configuration.statisticsResource.countStatusTable(Optional.of(filter));
+
+            urlReport.totNumOfBrokenLinks = (int) numOfBrokenLinks;
+            urlReport.totNumOfCheckedLinks = (int) numOfCheckedLinks;
+
+            filter = new ACDHStatisticsCountFilter(getName(), null);
+            urlReport.totNumOfUniqueLinks = (int) Configuration.statisticsResource.countUrlsTable(Optional.of(filter));
+
+            urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
+            urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
+            urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
+
+            eu.clarin.cmdi.rasa.DAO.Statistics.Statistics statistics = Configuration.statisticsResource.getOverallStatistics(getName());
+            if (statistics == null) {//collection was not found in the database
+                urlReport.avgRespTime = 0.0;
+                urlReport.maxRespTime = 0L;
+            } else {
+                urlReport.avgRespTime = statistics.getAvgRespTime();
+                urlReport.maxRespTime = statistics.getMaxRespTime();
+            }
+
+        } catch (SQLException e) {
+            _logger.error("There was a problem calculating average values: " + e.getMessage());
         }
 
 

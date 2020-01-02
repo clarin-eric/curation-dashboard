@@ -19,16 +19,18 @@ import eu.clarin.cmdi.curation.report.CMDProfileReport.Components;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Concepts;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Elements;
 import eu.clarin.cmdi.curation.report.Concept;
+import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Score;
 
 /**
 
  *
  */
-public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfileReport> {
+public class ProfileElementsHandler{
 
-    @Override
-    public void process(CMDProfile entity, CMDProfileReport report) throws ExecutionException {
+    protected Collection<Message> msgs = null;
+
+    public void process(CMDProfileReport report) throws ExecutionException {
         ParsedProfile parsedProfile;
 
         parsedProfile = new CRService().getParsedProfile(report.header);
@@ -38,7 +40,6 @@ public class ProfileElementsHandler extends ProcessingStep<CMDProfile, CMDProfil
 
     }
 
-    @Override
     public Score calculateScore(CMDProfileReport report) {
         double score = report.elements.percWithConcept;
         return new Score(score, 1.0, "cmd-concepts-section", msgs);

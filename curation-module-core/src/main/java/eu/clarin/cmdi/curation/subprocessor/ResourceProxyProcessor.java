@@ -59,7 +59,6 @@ public class ResourceProxyProcessor extends CMDSubprocessor {
 	    report.resProxyReport.resourceType.add(resourceType);  
 	}
 
-	@Override
 	public Score calculateScore(CMDInstanceReport report) {
 		double score = report.resProxyReport.percOfResourcesWithMime + report.resProxyReport.percOfResProxiesWithReferences;
 		return new Score(score, 2.0, "cmd-res-proxy", msgs);		

@@ -36,7 +36,7 @@ public class CRService implements ICRService {
 	public static final Pattern PROFILE_ID_PATTERN = Pattern.compile(PROFILE_ID_FORMAT);
 
 	private static Collection<ProfileHeader> publicProfiles = PublicProfiles.createPublicProfiles();
-	public static Double PROFILE_MAX_SCORE = new Double(Double.NaN);
+	public static Double PROFILE_MAX_SCORE = Double.NaN;
 	
 	
 	//cache for parsedProfile and schema obj
@@ -124,12 +124,10 @@ public class CRService implements ICRService {
 	
 	@Override
 	public Schema getSchema(ProfileHeader header) throws ExecutionException {
-		//_logger.debug("schema lookup for {} from cache", header);
-		return (header.isPublic()? publicProfilesCache : nonpublicProfilesCache).get(header).schema;		
+		return (header.isPublic()? publicProfilesCache : nonpublicProfilesCache).get(header).schema;
 	}
 	
 	public double getScore(ProfileHeader header) throws ExecutionException {
-		//_logger.debug("score lookup for {} from cache", header);
 		return (header.isPublic()? publicScoreCache : nonpublicScoreCache).get(header);
 	}
 

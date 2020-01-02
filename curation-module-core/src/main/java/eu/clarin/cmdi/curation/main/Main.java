@@ -2,8 +2,7 @@ package eu.clarin.cmdi.curation.main;
 
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.PublicProfiles;
-import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
-import eu.clarin.cmdi.curation.processor.CollectionProcessor;
+import eu.clarin.cmdi.curation.entities.CurationEntityType;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.CollectionReport;
 import eu.clarin.cmdi.curation.report.CollectionsReport;

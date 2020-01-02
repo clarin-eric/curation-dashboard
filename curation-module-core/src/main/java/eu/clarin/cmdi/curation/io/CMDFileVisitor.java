@@ -17,26 +17,27 @@ public class CMDFileVisitor implements FileVisitor<Path> {
 
     private static final Logger _logger = LoggerFactory.getLogger(CMDFileVisitor.class);
 
-    private CMDCollection curDir = null;
+    private CMDCollection collection = null;
     private CMDCollection root = null;
 
-    private Stack<CMDCollection> stack = new Stack<CMDCollection>();
+    private Stack<CMDCollection> stack = new Stack<>();
 
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         _logger.trace("visiting {}", dir);
-        if (curDir != null)
-            stack.push(curDir);
+        if (collection != null) {
+            stack.push(collection);
+        }
 
-        curDir = new CMDCollection(dir);
+        collection = new CMDCollection(dir);
 
         return FileVisitResult.CONTINUE;
     }
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        curDir.addChild(new CMDInstance(file, attrs.size()));
+        collection.addChild(new CMDInstance(file, attrs.size()));
         return FileVisitResult.CONTINUE;
     }
 
@@ -48,26 +49,9 @@ public class CMDFileVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 
-        _logger.trace("finished visiting {}, number of files: {}", dir, curDir.getNumOfFiles());
+        _logger.trace("finished visiting {}, number of files: {}", dir, collection.getNumOfFiles());
 
-        long startTime = System.currentTimeMillis();
-        // fire processors for children
-
-        curDir.generateReport(null);
-
-        long end = System.currentTimeMillis();
-        _logger.info("It took {} to create report: {}", dir.toString().split("/")[dir.toString().split("/").length - 1], TimeUtils.humanizeToTime(end - startTime));
-
-
-        if (!stack.empty()) {
-            root = stack.pop();
-            root.addChild(curDir);
-            curDir = root;
-        } else {
-            root = curDir;
-        }
-
-        //else: last elem
+        root = collection;
 
         return FileVisitResult.CONTINUE;
     }

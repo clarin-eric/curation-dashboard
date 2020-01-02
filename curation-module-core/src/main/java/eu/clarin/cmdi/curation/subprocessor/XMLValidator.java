@@ -79,7 +79,6 @@ public class XMLValidator extends CMDSubprocessor {
 
     }
 
-    @Override
     public Score calculateScore(CMDInstanceReport report) {
 
         return new Score(report.xmlPopulatedReport.percOfPopulatedElements, 1.0, "xml-populated-validation", new ArrayList<>());

@@ -1,29 +1,36 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
+import com.ximpleware.VTDException;
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.entities.CurationEntity;
+import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.main.Configuration;
-import eu.clarin.cmdi.curation.report.CollectionReport;
+import eu.clarin.cmdi.curation.report.*;
 import eu.clarin.cmdi.curation.report.CollectionReport.*;
-import eu.clarin.cmdi.curation.report.Score;
-import eu.clarin.cmdi.curation.report.Severity;
+import eu.clarin.cmdi.curation.report.CollectionReport.FacetReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
 
  */
-public class CollectionAggregator extends ProcessingStep<CMDCollection, CollectionReport> {
+public class CollectionAggregator {
 
     private static final Logger _logger = LoggerFactory.getLogger(CollectionAggregator.class);
 
-    @Override
-    public void process(CMDCollection dir, final CollectionReport report) {
+    protected Collection<Message> msgs = null;
+
+    public void process(CMDCollection collection, CollectionReport report) {
 
         report.fileReport = new FileReport();
         report.headerReport = new HeaderReport();
@@ -44,23 +51,27 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
         ;
 
         //add info regarding file statistics
-        report.fileReport.provider = dir.getPath().getFileName().toString();
-        report.fileReport.numOfFiles = dir.getNumOfFiles();
-        report.fileReport.size = dir.getSize();
-        report.fileReport.minFileSize = dir.getMinFileSize();
-        report.fileReport.maxFileSize = dir.getMaxFileSize();
+        report.fileReport.provider = collection.getPath().getFileName().toString();
+        report.fileReport.numOfFiles = collection.getNumOfFiles();
+        report.fileReport.size = collection.getSize();
+        report.fileReport.minFileSize = collection.getMinFileSize();
+        report.fileReport.maxFileSize = collection.getMaxFileSize();
         
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Configuration.THREAD_POOL_SIZE);
-        
-        
-        while(!dir.getChildren().isEmpty()) {
+
+        if(!collection.getChildren().isEmpty()) {
+//        while(!collection.getChildren().isEmpty()) {
             
-            CurationEntity entity = dir.getChildren().pop();
+            CMDInstance instance = collection.getChildren().pop();
 
             executor.submit(() -> 
                 {
-                    entity.generateReport(report.getName()).mergeWithParent(report);
-
+                    try {
+                        instance.generateReport(report.getName()).mergeWithParent(report);
+                    } catch (TransformerException | FileSizeException | IOException | ExecutionException | ParserConfigurationException | SAXException | VTDException e) {
+                        _logger.error("Error while generating report for instance: "+report.getName());
+                        new ErrorReport(instance.getPath().toString(),e.getMessage()).mergeWithParent(report);
+                    }
                 });
         }
         
@@ -71,7 +82,7 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
                 Thread.sleep(1000);
             }
             catch (InterruptedException ex) {
-                _logger.error("on error occured while waiting for the threadpool to terminate");
+                _logger.error("Error occured while waiting for the threadpool to terminate.");
             }
         };
 
@@ -85,7 +96,6 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
 
     }
 
-    @Override
     public Score calculateScore(CollectionReport report) {
         double score = report.fileReport.numOfFiles;
         if (report.file != null) {
@@ -94,6 +104,13 @@ public class CollectionAggregator extends ProcessingStep<CMDCollection, Collecti
         }
 
         return new Score(score, (double) report.fileReport.numOfFiles, "invalid-files", msgs);
+    }
+
+    protected void addMessage(Severity lvl, String message) {
+        if (msgs == null) {
+            msgs = new ArrayList<>();
+        }
+        msgs.add(new Message(lvl, message));
     }
 
 }

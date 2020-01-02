@@ -4,22 +4,15 @@ import eu.clarin.cmdi.curation.main.Configuration;
 
 public class FileSizeException extends Exception{
 	
-	/**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
     private String fileName;
 	private long size;
-	
-
 	
 	public FileSizeException(String fileName, long size) {
 		super();
 		this.fileName = fileName;
 		this.size = size;
 	}
-
-
 
 	@Override
 	public String getMessage() {

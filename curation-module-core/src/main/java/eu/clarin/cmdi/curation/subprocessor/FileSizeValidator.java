@@ -52,8 +52,6 @@ public class FileSizeValidator extends CMDSubprocessor {
 
     private static CMDIDataProcessor<Map<String, List<ValueSet>>> getProcessor() {
         try {
-
-
             final VloConfig vloConfig = new DefaultVloConfigFactory().newConfig();
 
             final LanguageCodeUtils languageCodeUtils = new LanguageCodeUtils(vloConfig);
@@ -66,7 +64,7 @@ public class FileSizeValidator extends CMDSubprocessor {
 
             final FacetMappingFactory facetMappingFactory = FacetMappingCacheFactory.getInstance();
 
-            return new CMDIParserVTDXML<Map<String, List<ValueSet>>>(
+            return new CMDIParserVTDXML<>(
                     MetadataImporter.registerPostProcessors(vloConfig, fieldNameService, languageCodeUtils),
                     MetadataImporter.registerPostMappingFilters(fieldNameService),
                     vloConfig, facetMappingFactory, marshaller, cmdiDataFactory, fieldNameService, false);
@@ -114,28 +112,28 @@ public class FileSizeValidator extends CMDSubprocessor {
             entity.setSize(Files.size(newPath));
         }
 
-
         report.fileReport = new FileReport();
         report.fileReport.size = entity.getSize();
         if (entity.getUrl() != null) {
             report.fileReport.location = FileNameEncoder.encode(entity.getUrl());
         } else {
-            int index = -1; 
+            int index;
             String path = entity.getPath().toString();
-            
-            if((index = path.indexOf("/clarin")) != -1)
-                report.fileReport.location = Configuration.CMD_STORAGE_URL + path.substring(index +1);
-            else if((index = path.indexOf("/europeana")) != -1)
-                report.fileReport.location = Configuration.CMD_STORAGE_URL + path.substring(index +1);
+
+            if ((index = path.indexOf("/clarin")) != -1)
+                report.fileReport.location = Configuration.CMD_STORAGE_URL + path.substring(index + 1);
+            else if ((index = path.indexOf("/europeana")) != -1)
+                report.fileReport.location = Configuration.CMD_STORAGE_URL + path.substring(index + 1);
             else
-                report.fileReport.location =  path;
+                report.fileReport.location = path;
         }
 
         if (report.fileReport.size > Configuration.MAX_FILE_SIZE) {
             addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + Configuration.MAX_FILE_SIZE + "B)");
             //don't assess when assessing collections
-            if (Configuration.COLLECTION_MODE)
+            if (Configuration.COLLECTION_MODE){
                 throw new FileSizeException(entity.getPath().getFileName().toString(), report.fileReport.size);
+            }
         }
 
         CMDIData<Map<String, List<ValueSet>>> cmdiData = null;
@@ -144,9 +142,6 @@ public class FileSizeValidator extends CMDSubprocessor {
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         }
-
-//        report.selfUrl = Configuration.BASE_URL + "instance/" + FileNameEncoder.encode(report.getName()) + ".xml";
-
 
         entity.setCMDIData(cmdiData);
 
@@ -162,8 +157,7 @@ public class FileSizeValidator extends CMDSubprocessor {
         }
     }
 
-    @Override
-    public Score calculateScore(CMDInstanceReport report) {
+    public Score calculateScore() {
         //in case that size exceeds the limit msgs will be created and it will contain a single msg
         return new Score(msgs == null ? 1.0 : 0, 1.0, "file-size", msgs);
     }

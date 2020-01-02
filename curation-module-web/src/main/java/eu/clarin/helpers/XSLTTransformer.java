@@ -1,6 +1,5 @@
 package eu.clarin.helpers;
 
-import eu.clarin.cmdi.curation.entities.CurationEntity.CurationEntityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

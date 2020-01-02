@@ -47,20 +47,15 @@ class ProfileScoreCacheFactory{
 		public Double load(ProfileHeader header) throws Exception{
 
 			CMDProfile profile = new CMDProfile(header.getSchemaLocation(), header.getCmdiVersion());			
-			_logger.info("Calculating and caching score for {}", profile);
+			_logger.trace("Calculating and caching score for {}", profile);
 
-
+			CMDProfileReport report = profile.generateReport();
 			
-			Report<?> report = profile.generateReport(null);
-			
-			if(report instanceof ErrorReport)
-				throw new Exception(((ErrorReport)report).error);
-
 			if(CRService.PROFILE_MAX_SCORE.equals(Double.NaN)){
-				CRService.PROFILE_MAX_SCORE = ((CMDProfileReport)report).segmentScores.stream().mapToDouble(Score::getMaxScore).sum();
+				CRService.PROFILE_MAX_SCORE = report.segmentScores.stream().mapToDouble(Score::getMaxScore).sum();
 			}
 			
-			return ((CMDProfileReport)report).segmentScores.stream().mapToDouble(Score::getScore).sum();
+			return report.segmentScores.stream().mapToDouble(Score::getScore).sum();
 			
 		}
 		

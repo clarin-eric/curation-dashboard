@@ -93,7 +93,6 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         @XmlAttribute(name = "method")
         public String method;
 
-        //todo delete this
         @XmlAttribute(name = "message")
         public String message;
 
@@ -200,14 +199,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             parentReport.xmlValidationReport.record.add(record);
         }
 
-        if (Configuration.HTTP_VALIDATION) {
-
-            parentReport.urlReport.totNumOfLinks += instanceReport.urlReport.numOfLinks;
-            //this is not used anymore, because it is taken directly from database
-            //parentReport.urlReport.totNumOfUniqueLinks += urlReport.numOfUniqueLinks;
-            parentReport.urlReport.totNumOfBrokenLinks += instanceReport.urlReport.numOfBrokenLinks;
-            parentReport.urlReport.totNumOfCheckedLinks += instanceReport.urlReport.numOfCheckedLinks;
-        }
+        parentReport.urlReport.totNumOfLinks += instanceReport.urlReport.numOfLinks;
+        parentReport.urlReport.totNumOfBrokenLinks += instanceReport.urlReport.numOfBrokenLinks;
+        parentReport.urlReport.totNumOfCheckedLinks += instanceReport.urlReport.numOfCheckedLinks;
 
         // Facet
         instanceReport.facets.coverage.stream()

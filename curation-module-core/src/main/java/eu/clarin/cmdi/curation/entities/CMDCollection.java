@@ -5,85 +5,87 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 
-import eu.clarin.cmdi.curation.processor.AbstractProcessor;
 import eu.clarin.cmdi.curation.processor.CollectionProcessor;
+import eu.clarin.cmdi.curation.report.CollectionReport;
+import eu.clarin.cmdi.curation.report.Report;
 
-public class CMDCollection extends CurationEntity {
+public class CMDCollection {
 
-	Deque<CurationEntity> children;
+    Deque<CMDInstance> children;
 
-	long numOfFiles;
-	long maxFileSize = 0;
-	long minFileSize = Long.MAX_VALUE;
+    long numOfFiles;
+    long maxFileSize = 0;
+    long minFileSize = Long.MAX_VALUE;
+    protected Path path = null;
+    protected long size = 0;
 
-	public CMDCollection(Path path) {
-		super(path);
-		children = new ArrayDeque<CurationEntity>();
-	}
+    public CMDCollection(Path path) {
+        this.path = path;
+        children = new ArrayDeque<>();
+    }
 
-	@Override
-	protected AbstractProcessor getProcessor() {
-		return new CollectionProcessor();
-	}
+    public CollectionReport generateReport() {
+        return new CollectionProcessor().process(this);
+    }
 
-	public CurationEntity addChild(CurationEntity child) {
-		children.add(child);
+    public void addChild(CMDInstance child) {
+        children.add(child);
 
-		if (child instanceof CMDInstance || child instanceof CMDProfile) {
+        numOfFiles++;
+        size += child.getSize();
+        if (child.getSize() > maxFileSize)
+            maxFileSize = child.getSize();
+        if (child.getSize() < minFileSize)
+            minFileSize = child.getSize();
 
-			numOfFiles++;
-			size += child.getSize();
-			if (child.getSize() > maxFileSize)
-				maxFileSize = child.getSize();
-			if (child.getSize() < minFileSize)
-				minFileSize = child.getSize();
+    }
 
-		} else if (child instanceof CMDCollection) {
-			aggregateWithDir((CMDCollection) child);
-		} // else implementation for different kinds of entities if necessary
+    public Deque<CMDInstance> getChildren() {
+        return children;
+    }
 
-		return child;
-	}
+    public long getNumOfFiles() {
+        return numOfFiles;
+    }
 
-	private void aggregateWithDir(CMDCollection child) {
-		numOfFiles += child.numOfFiles;
-		size += child.size;
-		if (child.maxFileSize > maxFileSize)
-			maxFileSize = child.maxFileSize;
-		if (child.minFileSize < minFileSize)
-			minFileSize = child.minFileSize;
-	}
+    public void setNumOfFiles(long numOfFiles) {
+        this.numOfFiles = numOfFiles;
+    }
 
-	public Deque<CurationEntity> getChildren() {
-		return children;
-	}
+    public long getMaxFileSize() {
+        return maxFileSize;
+    }
 
-	public long getNumOfFiles() {
-		return numOfFiles;
-	}
+    public void setMaxFileSize(long maxFileSize) {
+        this.maxFileSize = maxFileSize;
+    }
 
-	public void setNumOfFiles(long numOfFiles) {
-		this.numOfFiles = numOfFiles;
-	}
+    public long getMinFileSize() {
+        return minFileSize;
+    }
 
-	public long getMaxFileSize() {
-		return maxFileSize;
-	}
+    public void setMinFileSize(long minFileSize) {
+        this.minFileSize = minFileSize;
+    }
 
-	public void setMaxFileSize(long maxFileSize) {
-		this.maxFileSize = maxFileSize;
-	}
+    public Path getPath() {
+        return path;
+    }
 
-	public long getMinFileSize() {
-		return minFileSize;
-	}
+    public void setPath(Path path) {
+        this.path = path;
+    }
 
-	public void setMinFileSize(long minFileSize) {
-		this.minFileSize = minFileSize;
-	}
-	
-	@Override
-	public String toString() {
-		return "Collection: " + path.toString();
-	}
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    @Override
+    public String toString() {
+        return "Collection: " + path.toString();
+    }
 }

@@ -67,7 +67,6 @@ public class CollectionInstanceFacetProcessor extends CMDSubprocessor {
 
     }
 
-    @Override
     public Score calculateScore(CMDInstanceReport report) {
         return new Score(report.facets.instanceCoverage, 1.0, "facet-mapping", msgs);
     }

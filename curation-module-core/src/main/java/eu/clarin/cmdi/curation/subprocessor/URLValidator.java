@@ -61,115 +61,109 @@ public class URLValidator extends CMDSubprocessor {
         if (selfLink.startsWith("http://") || selfLink.startsWith("https://"))
             urlMap.computeIfAbsent(selfLink, key -> null);
 
+        if (Configuration.COLLECTION_MODE) {
 
-        if (Configuration.HTTP_VALIDATION) {
-            if (Configuration.DATABASE && Configuration.COLLECTION_MODE) {
-
-                for (String url : urlMap.keySet()) {
+            for (String url : urlMap.keySet()) {
 
 //                }
 //                urlMap.keySet().parallelStream().forEach(url -> {
 
-                    //this causes performance problems
+                //this causes performance problems
 //                    _logger.info("Checking database for url: " + url);
 
-                    CheckedLink checkedLink = null;
-                    try {
-                        checkedLink = Configuration.checkedLinkResource.get(url, parentName);
+                CheckedLink checkedLink = null;
+                try {
+                    checkedLink = Configuration.checkedLinkResource.get(url, parentName);
 
-                        if (checkedLink == null) {
-                            String expectedMimeType = urlMap.get(url).getMimeType();
-                            expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
+                    if (checkedLink == null) {
+                        String expectedMimeType = urlMap.get(url).getMimeType();
+                        expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
-                            String finalRecord = report.getName();
-                            String finalCollection = parentName != null ? parentName : finalRecord;
+                        String finalRecord = report.getName();
+                        String finalCollection = parentName != null ? parentName : finalRecord;
 
-                            LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType);
+                        LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType);
 
-                            Configuration.linkToBeCheckedResource.save(linkToBeChecked);
+                        Configuration.linkToBeCheckedResource.save(linkToBeChecked);
 
 
-                        }//else dont do anything, it is already in linksChecked
+                    }//else dont do anything, it is already in linksChecked
 
-                    } catch (SQLException e) {
-                        _logger.error("Error when getting " + url + " from status table or saving it to urls table: " + e.getMessage());
-                    }
-                }//);
+                } catch (SQLException e) {
+                    _logger.error("Error when getting " + url + " from status table or saving it to urls table: " + e.getMessage());
+                }
+            }//);
 
 //                removeOldURLs(urlMap.keySet(), report.getName(), parentName);
 
-                try {
-                    report.urlReport = createInstanceURLReportFromDatabase(numOfLinks.longValue(), report.getName(), parentName);
-                } catch (SQLException e) {
-                    _logger.error("Error when creating collection url report for collection: " + report.getName() + ": " + e.getMessage());
-                }
+            try {
+                report.urlReport = createInstanceURLReportFromDatabase(numOfLinks.longValue(), report.getName(), parentName);
+            } catch (SQLException e) {
+                _logger.error("Error when creating collection url report for collection: " + report.getParentName() + ": " + e.getMessage());
+            }
 
 
-            } else {
-                HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
+        } else {
+            HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
 
-                long numOfUniqueLinks = urlMap.keySet().size();
+            long numOfUniqueLinks = urlMap.keySet().size();
 
-                long numOfBrokenLinks = 0;
-                long numOfUndeterminedLinks = 0;
+            long numOfBrokenLinks = 0;
+            long numOfUndeterminedLinks = 0;
 
-                for (String url : urlMap.keySet()) {
+            for (String url : urlMap.keySet()) {
 
-                    String expectedMimeType = urlMap.get(url).getMimeType();
-                    expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
+                String expectedMimeType = urlMap.get(url).getMimeType();
+                expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
-                    try {// check if URL is broken
-                        _logger.info("Checking url: " + url);
+                try {// check if URL is broken
+                    _logger.info("Checking url: " + url);
 
-                        CheckedLink checkedLink = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
-                        checkedLink.setExpectedMimeType(expectedMimeType);
+                    CheckedLink checkedLink = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
+                    checkedLink.setExpectedMimeType(expectedMimeType);
 
-                        if (checkedLink.getStatus() != 200 && checkedLink.getStatus() != 302) {
-                            if (checkedLink.getStatus() == 401 || checkedLink.getStatus() == 405 || checkedLink.getStatus() == 429) {
-                                numOfUndeterminedLinks++;
-                            } else {
-                                numOfBrokenLinks++;
-                            }
-
+                    if (checkedLink.getStatus() != 200 && checkedLink.getStatus() != 302) {
+                        if (checkedLink.getStatus() == 401 || checkedLink.getStatus() == 405 || checkedLink.getStatus() == 429) {
+                            numOfUndeterminedLinks++;
+                        } else {
+                            numOfBrokenLinks++;
                         }
 
-                        addMessageForStatusCode(checkedLink.getStatus(), url);
-
-                        CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(checkedLink);
-                        report.addURLElement(urlElementReport);
-
-
-                    } catch (IOException | IllegalArgumentException e) {
-
-                        numOfBrokenLinks++;
-
-                        CMDInstanceReport.URLElement urlElement = new CMDInstanceReport.URLElement();
-                        urlElement.expectedContentType = expectedMimeType;
-                        urlElement.message = e.getLocalizedMessage();
-                        urlElement.url = url;
-                        urlElement.status = 0;
-                        urlElement.category = "Broken";
-                        urlElement.contentType = null;
-                        urlElement.byteSize = "0";
-                        urlElement.timestamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
-                        urlElement.duration = "0 ms";
-                        urlElement.redirectCount = 0;
-                        report.addURLElement(urlElement);
-
-
-                        addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + e.toString());
                     }
 
-                }
+                    addMessageForStatusCode(checkedLink.getStatus(), url);
 
-                report.urlReport = createInstanceURLReport(numOfLinks.get(), numOfUniqueLinks, numOfBrokenLinks, numOfUndeterminedLinks);
+                    CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(checkedLink);
+                    report.addURLElement(urlElementReport);
+
+
+                } catch (IOException | IllegalArgumentException e) {
+
+                    numOfBrokenLinks++;
+
+                    CMDInstanceReport.URLElement urlElement = new CMDInstanceReport.URLElement();
+                    urlElement.expectedContentType = expectedMimeType;
+                    urlElement.message = e.getLocalizedMessage();
+                    urlElement.url = url;
+                    urlElement.status = 0;
+                    urlElement.category = "Broken";
+                    urlElement.contentType = null;
+                    urlElement.byteSize = "0";
+                    urlElement.timestamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
+                    urlElement.duration = "0 ms";
+                    urlElement.redirectCount = 0;
+                    report.addURLElement(urlElement);
+
+
+                    addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + e.toString());
+                }
 
             }
 
-        } else {
-            report.urlReport = createDisabledURLReport(numOfLinks.get());
-            addMessage(Severity.INFO, "Link validation is disabled");
+            report.urlReport = createInstanceURLReport(numOfLinks.get(), numOfUniqueLinks, numOfBrokenLinks, numOfUndeterminedLinks);
+
         }
+
 
     }
 
@@ -184,7 +178,6 @@ public class URLValidator extends CMDSubprocessor {
         }
     }
 
-    @Override
     public Score calculateScore(CMDInstanceReport report) {
         // it can influence the score, if one collection was done with enabled and the other without
 

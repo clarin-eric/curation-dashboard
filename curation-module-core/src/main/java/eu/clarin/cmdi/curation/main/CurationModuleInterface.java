@@ -5,26 +5,32 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import com.ximpleware.VTDException;
+import eu.clarin.cmdi.curation.exception.ProfileNotFoundException;
+import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.report.Report;
+import org.xml.sax.SAXException;
 
 public interface CurationModuleInterface {
 	
-    public Report processCMDProfile(String profileId);
+    public Report processCMDProfile(String profileId) throws ExecutionException, ProfileNotFoundException, IOException;
     
-    public Report processCMDProfile(Path path) throws MalformedURLException, IOException;
+    public Report processCMDProfile(Path path) throws IOException, IOException, ExecutionException, ProfileNotFoundException;
 	
 	
-	public Report processCMDProfile(URL schemaLocation) throws IOException;
+	public Report processCMDProfile(URL schemaLocation) throws IOException, ExecutionException, ProfileNotFoundException;
 	
 	/*
 	 * throws Exception if file doesn't exist or is invalid
 	 */
-	public Report processCMDInstance(Path file) throws IOException, TransformerException;
+	public Report processCMDInstance(Path file) throws IOException, TransformerException, FileSizeException, ExecutionException, SAXException, VTDException, ParserConfigurationException;
 	
-	public Report processCMDInstance(URL url) throws IOException;
+	public Report processCMDInstance(URL url) throws IOException, FileSizeException, ExecutionException, TransformerException, SAXException, VTDException, ParserConfigurationException;
 	
 	public Report processCollection(Path path) throws IOException;
 	
