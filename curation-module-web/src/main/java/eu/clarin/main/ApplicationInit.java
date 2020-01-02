@@ -9,7 +9,6 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import java.io.IOException;
 
-
 @WebListener
 public class ApplicationInit implements ServletContextListener {
 
@@ -18,12 +17,8 @@ public class ApplicationInit implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
-
             ServletContext servletContext = servletContextEvent.getServletContext();
             Configuration.init(servletContext);
-
-
-            //todo if there are more initializaion
 
         } catch (IOException e) {
             _logger.error("There was a problem loading the properties file.");
@@ -32,7 +27,7 @@ public class ApplicationInit implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        //todo if there is any database connection or so
+        Configuration.tearDown();
     }
 
 

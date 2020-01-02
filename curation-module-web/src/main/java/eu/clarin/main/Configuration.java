@@ -63,6 +63,10 @@ public class Configuration {
 
     }
 
+    public static void tearDown(){
+        eu.clarin.cmdi.curation.main.Configuration.tearDown();
+    }
+
     private static void scheduleCleaningTemp() {
         //scheduler to delete temporary instance and profile reports every day at 1 am.
         Runnable instanceCleaner = () -> {

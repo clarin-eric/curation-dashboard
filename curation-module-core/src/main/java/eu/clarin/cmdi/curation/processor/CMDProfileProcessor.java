@@ -32,12 +32,15 @@ public class CMDProfileProcessor {
 
         ProfileHeaderHandler profileHeaderHandler = new ProfileHeaderHandler();
         profileHeaderHandler.process(profile, report);
+        report.addSegmentScore(profileHeaderHandler.calculateScore(report));
 
         ProfileElementsHandler profileElementsHandler = new ProfileElementsHandler();
         profileElementsHandler.process(report);
+        report.addSegmentScore(profileElementsHandler.calculateScore(report));
 
         ProfileFacetHandler profileFacetHandler = new ProfileFacetHandler();
         profileFacetHandler.process(report);
+        report.addSegmentScore(profileFacetHandler.calculateScore(report));
 
         long end = System.currentTimeMillis();
         _logger.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for profile: " + profile.getSchemaLocation());

@@ -20,51 +20,49 @@ import javax.xml.transform.TransformerException;
 public class CMDInstanceProcessor {
     private static final Logger _logger = LoggerFactory.getLogger(CMDInstanceProcessor.class);
 
-    public CMDInstanceReport process(CMDInstance record, String parentName) {
+    public CMDInstanceReport process(CMDInstance record, String parentName) throws FileSizeException, TransformerException, IOException, ExecutionException, ParserConfigurationException, SAXException, VTDException {
+        long start = System.currentTimeMillis();
 
-        try {
+        CMDInstanceReport report = new CMDInstanceReport();
 
-            long start = System.currentTimeMillis();
+        _logger.info("Started report generation for record: " + record.getPath());
 
-            CMDInstanceReport report = new CMDInstanceReport();
+        FileSizeValidator fileSizeValidator = new FileSizeValidator();
+        fileSizeValidator.process(record, report);
+        report.addSegmentScore(fileSizeValidator.calculateScore());
 
-            _logger.info("Started report generation for record: " + record.getPath());
+        InstanceHeaderProcessor instanceHeaderProcessor = new InstanceHeaderProcessor();
+        instanceHeaderProcessor.process(record, report);
+        report.addSegmentScore(instanceHeaderProcessor.calculateScore(report));
 
-            FileSizeValidator fileSizeValidator = new FileSizeValidator();
-            fileSizeValidator.process(record, report);
+        ResourceProxyProcessor resourceProxyProcessor = new ResourceProxyProcessor();
+        resourceProxyProcessor.process(record, report);
+        report.addSegmentScore(resourceProxyProcessor.calculateScore(report));
 
-            InstanceHeaderProcessor instanceHeaderProcessor = new InstanceHeaderProcessor();
-            instanceHeaderProcessor.process(record, report);
+        URLValidator urlValidator = new URLValidator();
+        urlValidator.process(record, report, parentName);
+        report.addSegmentScore(urlValidator.calculateScore(report));
 
-            ResourceProxyProcessor resourceProxyProcessor = new ResourceProxyProcessor();
-            resourceProxyProcessor.process(record, report);
+        XMLValidator xmlValidator = new XMLValidator();
+        xmlValidator.process(record, report);
+        report.addSegmentScore(xmlValidator.calculateValidityScore());
+        report.addSegmentScore(xmlValidator.calculateScore(report));
 
-            URLValidator urlValidator = new URLValidator();
-            urlValidator.process(record, report, parentName);
-            report.addSegmentScore(urlValidator.calculateScore(report));
-
-            XMLValidator xmlValidator = new XMLValidator();
-            xmlValidator.process(record, report);
-            report.addSegmentScore(xmlValidator.calculateValidityScore());
-
-            if (Configuration.COLLECTION_MODE) {
-                CollectionInstanceFacetProcessor collectionInstanceFacetProcessor = new CollectionInstanceFacetProcessor();
-                collectionInstanceFacetProcessor.process(record, report);
-            } else {
-                InstanceFacetProcessor instanceFacetProcessor = new InstanceFacetProcessor();
-                instanceFacetProcessor.process(record, report);
-            }
-
-            long end = System.currentTimeMillis();
-            _logger.info("It took " + TimeUtils.humanizeToTime(end - start) + "to generate the report for collection: " + report.getName());
-
-            return report;
-        }catch (Exception e){
-            //todo delete this
-            _logger.error("wtf:");
-            e.printStackTrace();
-            return null;
+        if (Configuration.COLLECTION_MODE) {
+            CollectionInstanceFacetProcessor collectionInstanceFacetProcessor = new CollectionInstanceFacetProcessor();
+            collectionInstanceFacetProcessor.process(record, report);
+            report.addSegmentScore(collectionInstanceFacetProcessor.calculateScore(report));
+        } else {
+            InstanceFacetProcessor instanceFacetProcessor = new InstanceFacetProcessor();
+            instanceFacetProcessor.process(record, report);
+            report.addSegmentScore(instanceFacetProcessor.calculateScore(report));
         }
+
+        long end = System.currentTimeMillis();
+        _logger.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for record: " + report.getName());
+
+        return report;
+
     }
 
 }

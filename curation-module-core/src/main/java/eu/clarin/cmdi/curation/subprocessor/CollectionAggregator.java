@@ -59,8 +59,7 @@ public class CollectionAggregator {
         
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Configuration.THREAD_POOL_SIZE);
 
-        if(!collection.getChildren().isEmpty()) {
-//        while(!collection.getChildren().isEmpty()) {
+        while(!collection.getChildren().isEmpty()) {
             
             CMDInstance instance = collection.getChildren().pop();
 

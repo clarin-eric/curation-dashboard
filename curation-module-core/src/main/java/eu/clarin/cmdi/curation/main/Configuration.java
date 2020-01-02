@@ -56,6 +56,8 @@ public class Configuration {
 
     public static boolean COLLECTION_MODE = false; //when true values wont be extracted for facet "text", saves a lot of time in collection assessment
 
+    private static RasaFactory factory;
+
     public static void init(String file) throws IOException {
         _logger.info("Initializing configuration from {}", file);
         Properties config = new Properties();
@@ -71,6 +73,10 @@ public class Configuration {
         readProperties(config);
         //readProperties(new PropertiesConfiguration("config.properties"));
 
+    }
+
+    public static void tearDown(){
+        factory.tearDown();
     }
 
     private static void readProperties(Properties config) throws IOException {
@@ -119,7 +125,7 @@ public class Configuration {
         DATABASE_PASSWORD = config.getProperty("DATABASE_PASSWORD");
         DATABASE_PASSWORD = DATABASE_PASSWORD == null ? "" : DATABASE_PASSWORD;
 
-        RasaFactory factory = new ACDHRasaFactory(DATABASE_URI, DATABASE_USERNAME, DATABASE_PASSWORD);
+        factory = new ACDHRasaFactory(DATABASE_URI, DATABASE_USERNAME, DATABASE_PASSWORD);
         checkedLinkResource = factory.getCheckedLinkResource();
         linkToBeCheckedResource = factory.getLinkToBeCheckedResource();
         statisticsResource = factory.getStatisticsResource();
