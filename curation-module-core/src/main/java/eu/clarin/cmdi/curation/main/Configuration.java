@@ -34,7 +34,7 @@ public class Configuration {
     public static Path OUTPUT_DIRECTORY = null;
     public static Path CACHE_DIRECTORY = null;
     public static Path COLLECTION_HTML_DIRECTORY = null;
-    public static int THREAD_POOL_SIZE = 100;
+    public static int THREAD_POOL_SIZE = 500;
     public static Collection<String> FACETS = null;
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;

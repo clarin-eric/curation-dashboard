@@ -103,7 +103,7 @@ public class URLValidator extends CMDSubprocessor {
             }
 
 
-        } else {
+        } else {//instance mode
             HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
 
             long numOfUniqueLinks = urlMap.keySet().size();
@@ -116,11 +116,21 @@ public class URLValidator extends CMDSubprocessor {
                 String expectedMimeType = urlMap.get(url).getMimeType();
                 expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
+                CheckedLink checkedLink = null;
                 try {// check if URL is broken
-                    _logger.info("Checking url: " + url);
+                    try {
+                        checkedLink = Configuration.checkedLinkResource.get(url, parentName);
+                    } catch (SQLException e) {
+                        _logger.warn("There is something wrong with the database connection.");
+                        //can't connect to database, check it yourself
+                    }
 
-                    CheckedLink checkedLink = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
-                    checkedLink.setExpectedMimeType(expectedMimeType);
+                    if (checkedLink == null) {//if it is not in the database or database connection can't be established, check it yourself :)
+                        _logger.info("Checking url: " + url);
+
+                        checkedLink = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
+                        checkedLink.setExpectedMimeType(expectedMimeType);
+                    }
 
                     if (checkedLink.getStatus() != 200 && checkedLink.getStatus() != 302) {
                         if (checkedLink.getStatus() == 401 || checkedLink.getStatus() == 405 || checkedLink.getStatus() == 429) {

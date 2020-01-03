@@ -188,10 +188,11 @@ public class HTTPLinkChecker {
         }
 
         Header contentLengthHeader = response.getFirstHeader("Content-Length");
-        int contentLength = Integer.parseInt(contentLengthHeader.getValue());
-
-        checkedLink.setContentType(contentType);
-        checkedLink.setByteSize(contentLength);
+        if(contentLengthHeader!=null){
+            int contentLength = Integer.parseInt(contentLengthHeader.getValue());
+            checkedLink.setContentType(contentType);
+            checkedLink.setByteSize(contentLength);
+        }
         checkedLink.setDuration((int)duration);//dont forget to humanize to time
         checkedLink.setTimestamp(new Timestamp(start));//dont forget to humanize to date
         checkedLink.setRedirectCount(redirectFollowLevel);
