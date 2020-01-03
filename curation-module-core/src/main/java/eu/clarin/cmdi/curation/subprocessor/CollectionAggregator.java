@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
-
+ *
  */
 public class CollectionAggregator {
 
@@ -56,34 +56,34 @@ public class CollectionAggregator {
         report.fileReport.size = collection.getSize();
         report.fileReport.minFileSize = collection.getMinFileSize();
         report.fileReport.maxFileSize = collection.getMaxFileSize();
-        
+
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Configuration.THREAD_POOL_SIZE);
 
-        while(!collection.getChildren().isEmpty()) {
-            
+        while (!collection.getChildren().isEmpty()) {
+
             CMDInstance instance = collection.getChildren().pop();
 
-            executor.submit(() -> 
-                {
-                    try {
-                        instance.generateReport(report.getName()).mergeWithParent(report);
-                    } catch (TransformerException | FileSizeException | IOException | ExecutionException | ParserConfigurationException | SAXException | VTDException e) {
-                        _logger.error("Error while generating report for instance: "+report.getName());
-                        new ErrorReport(instance.getPath().toString(),e.getMessage()).mergeWithParent(report);
-                    }
-                });
+            executor.submit(() ->
+            {
+                try {
+                    instance.generateReport(report.getName()).mergeWithParent(report);
+                } catch (TransformerException | FileSizeException | IOException | ExecutionException | ParserConfigurationException | SAXException | VTDException e) {
+                    _logger.error("Error while generating report for instance: " + report.getName());
+                    new ErrorReport(instance.getPath().toString(), e.getMessage()).mergeWithParent(report);
+                }
+            });
         }
-        
+
         executor.shutdown();
-        
-        while(!executor.isTerminated()) {
+
+        while (!executor.isTerminated()) {
             try {
                 Thread.sleep(1000);
-            }
-            catch (InterruptedException ex) {
+            } catch (InterruptedException ex) {
                 _logger.error("Error occured while waiting for the threadpool to terminate.");
             }
-        };
+        }
+        ;
 
         report.calculateAverageValues();
 

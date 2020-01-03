@@ -21,11 +21,11 @@ public class CMDInstanceProcessor {
     private static final Logger _logger = LoggerFactory.getLogger(CMDInstanceProcessor.class);
 
     public CMDInstanceReport process(CMDInstance record, String parentName) throws FileSizeException, TransformerException, IOException, ExecutionException, ParserConfigurationException, SAXException, VTDException {
-        long start = System.currentTimeMillis();
+//        long start = System.currentTimeMillis();
 
         CMDInstanceReport report = new CMDInstanceReport();
 
-        _logger.info("Started report generation for record: " + record.getPath());
+//        _logger.info("Started report generation for record: " + record.getPath());
 
         FileSizeValidator fileSizeValidator = new FileSizeValidator();
         fileSizeValidator.process(record, report);
@@ -58,8 +58,8 @@ public class CMDInstanceProcessor {
             report.addSegmentScore(instanceFacetProcessor.calculateScore(report));
         }
 
-        long end = System.currentTimeMillis();
-        _logger.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for record: " + report.getName());
+//        long end = System.currentTimeMillis();
+//        _logger.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for record: " + report.getName());
 
         return report;
 
