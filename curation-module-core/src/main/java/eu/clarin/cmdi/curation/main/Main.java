@@ -40,7 +40,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        CommandLineParser parser = new PosixParser();
+        CommandLineParser parser = new DefaultParser();
 
         Options helpOptions = createHelpOption();
 
@@ -72,18 +72,14 @@ public class Main {
             //do nothing
         }
 
-
         cmd = parser.parse(options, args);
 
         // init configuration file
-        if (cmd.hasOption("config"))
+        if (cmd.hasOption("config")) {
             Configuration.init(cmd.getOptionValue("config"));
-        else
+        } else {
             Configuration.initDefault();
-
-/*        if (cmd.hasOption('p')) {
-            Configuration.OUTPUT_DIRECTORY = null;
-        }*/
+        }
 
         Configuration.enableProfileLoadTimer = false;
 
@@ -173,6 +169,13 @@ public class Main {
                         }
 
                         _logger.info("Generated report for collection: " + report.getName());
+
+                        // wait 5 minutes after each collection creation to give the database time to recover
+                        // currently report generation slows down after a while
+                        // and my theory is that the mysql database gets overloaded
+                        // so i give it 5 minutes after each collection...
+                        _logger.info("Waiting 5 minutes before next collection...");
+                        Thread.sleep(60000 * 5);
                     }
                 }
                 // dumping the collections table
@@ -329,30 +332,31 @@ public class Main {
 
     private static Options createOptions() {
 
-        Option configurationFile = OptionBuilder.withArgName("file").hasArg().isRequired(false)
-                .withDescription("a path to the configuration file").create("config");
+        Option configurationFile = Option.builder("config").argName("file").
+                hasArg().required(false).desc("a path to the configuration file").build();
 
-        Option profileCuration = OptionBuilder.withDescription("curate a profile").create("p");
 
-        Option instanceCuration = OptionBuilder.withDescription("curate an instance").create("i");
 
-        Option collectionCuration = OptionBuilder.withDescription("curate a collection").create("c");
+        Option profileCuration = Option.builder("p").desc("curate a profile").build() ;
 
-        Option resultsCuration = OptionBuilder.withDescription("curate all collections of a collections root").create("r");
+        Option instanceCuration = Option.builder("i").desc("curate an instance").build();
+
+        Option collectionCuration = Option.builder("c").desc("curate a collection").build();
+
+        Option resultsCuration = Option.builder("r").desc("curate all collections from a folder").build();
 
         OptionGroup curationGroup = new OptionGroup();
         curationGroup.addOption(profileCuration).addOption(instanceCuration).addOption(collectionCuration).addOption(resultsCuration);
         curationGroup.setRequired(true);
 
-        Option paramId = OptionBuilder.withArgName("profilesId").hasArgs(Option.UNLIMITED_VALUES)
-                .withDescription("Space separated CLARIN profile IDs in format: clarin.eu:cr1:p_xxx").create("id");
+        Option paramId = Option.builder("id").argName("profilesId").hasArgs().
+                numberOfArgs(Option.UNLIMITED_VALUES).desc("Space separated CLARIN profile IDs in format: clarin.eu:cr1:p_xxx").build();
 
-        Option paramPath = OptionBuilder.withArgName("path").hasArgs(Option.UNLIMITED_VALUES)
-                .withDescription("Space separated paths to file or folder to be curated").create("path");
+        Option paramPath = Option.builder("path").argName("path").hasArgs().
+                numberOfArgs(Option.UNLIMITED_VALUES).desc("Space separated paths to file or folder to be curated").build();
 
-        Option paramUrl = OptionBuilder.withArgName("url").hasArgs(Option.UNLIMITED_VALUES)
-                .withDescription("Space separated urls to profile or instance to be curated").create("url");
-
+        Option paramUrl = Option.builder("url").argName("url").hasArgs().
+                numberOfArgs(Option.UNLIMITED_VALUES).desc("Space separated urls to profile or instance to be curated").build();
 
         OptionGroup curationInputParams = new OptionGroup();
         curationInputParams.addOption(paramId).addOption(paramPath).addOption(paramUrl);

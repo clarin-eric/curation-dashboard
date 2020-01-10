@@ -6,11 +6,6 @@ import static org.junit.Assert.*;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 
-
-/**
- * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
- *
- */
 public class ProfileParserTest extends TestBase{
        
     

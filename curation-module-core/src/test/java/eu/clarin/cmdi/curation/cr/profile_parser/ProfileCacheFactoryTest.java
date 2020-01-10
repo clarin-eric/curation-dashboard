@@ -22,8 +22,6 @@ public class ProfileCacheFactoryTest extends TestBase{
 
         
         try {
-            
-            
             CRService crService = new CRService();
             
             ProfileHeader ph = new ProfileHeader();

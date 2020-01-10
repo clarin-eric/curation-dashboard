@@ -20,13 +20,11 @@ public class FileSizeValidatorTest extends TestBase{
     
     @Before
     public void init() {
-        super.init();
         Path path;
         try {
             
             path = Paths.get(getClass().getClassLoader().getResource("cmdi/cmdi-1_2.xml").toURI());
 
-        
             entity = new CMDInstance(path, Files.size(path));
             
             CMDInstanceReport report = new CMDInstanceReport();

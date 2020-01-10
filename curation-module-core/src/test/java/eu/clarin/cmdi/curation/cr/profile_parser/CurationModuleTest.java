@@ -16,11 +16,6 @@ import java.nio.file.Paths;
 
 public class CurationModuleTest extends TestBase{
 
-    @Before
-    public void init() {
-        super.init();
-    }
-
     @Test
     public void testCMD_1_1() { 
         Report<?> report = null; 
