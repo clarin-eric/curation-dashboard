@@ -5,6 +5,7 @@ import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import eu.clarin.cmdi.curation.main.Configuration;
 import org.apache.ibatis.jdbc.ScriptRunner;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
@@ -18,6 +19,8 @@ import java.sql.SQLException;
 
 
 public class TestBase {
+
+    private static DB database;
 
     @BeforeClass
     public static void initClass() {
@@ -42,7 +45,7 @@ public class TestBase {
 
     //TODO use this database for tests...
     private static void setupTestDatabase() throws SQLException, IOException, ManagedProcessException {
-        DB database = DB.newEmbeddedDB(3308);
+        database = DB.newEmbeddedDB(3308);
 
         database.start();
         database.createDB("stormychecker");
@@ -55,6 +58,11 @@ public class TestBase {
         runner.runScript(reader);
         reader.close();
         con.close();
+    }
+
+    @AfterClass
+    public static void tearDown() throws ManagedProcessException {
+        database.stop();
     }
 
 }

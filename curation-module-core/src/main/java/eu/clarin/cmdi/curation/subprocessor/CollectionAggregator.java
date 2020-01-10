@@ -68,7 +68,7 @@ public class CollectionAggregator {
                 try {
                     instance.generateReport(report.getName()).mergeWithParent(report);
                 } catch (TransformerException | FileSizeException | IOException | ExecutionException | ParserConfigurationException | SAXException | VTDException e) {
-                    _logger.error("Error while generating report for instance: " + report.getName());
+                    _logger.error("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()+ " Skipping to next instance...");
                     new ErrorReport(instance.getPath().toString(), e.getMessage()).mergeWithParent(report);
                 }
             });

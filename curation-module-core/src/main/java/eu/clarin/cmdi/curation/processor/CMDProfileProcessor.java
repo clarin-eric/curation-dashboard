@@ -28,7 +28,7 @@ public class CMDProfileProcessor {
         long start = System.currentTimeMillis();
 
         CMDProfileReport report = new CMDProfileReport();
-        _logger.info("Started report generation for profile: " + profile.getSchemaLocation());
+//        _logger.info("Started report generation for profile: " + profile.getSchemaLocation());
 
         ProfileHeaderHandler profileHeaderHandler = new ProfileHeaderHandler();
         profileHeaderHandler.process(profile, report);
@@ -43,7 +43,7 @@ public class CMDProfileProcessor {
         report.addSegmentScore(profileFacetHandler.calculateScore(report));
 
         long end = System.currentTimeMillis();
-        _logger.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for profile: " + profile.getSchemaLocation());
+//        _logger.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for profile: " + profile.getSchemaLocation());
 
         return report;
 

@@ -9,6 +9,9 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import eu.clarin.cmdi.rasa.helpers.RasaFactory;
@@ -75,7 +78,7 @@ public class Configuration {
 
     }
 
-    public static void tearDown(){
+    public static void tearDown() {
         factory.tearDown();
     }
 

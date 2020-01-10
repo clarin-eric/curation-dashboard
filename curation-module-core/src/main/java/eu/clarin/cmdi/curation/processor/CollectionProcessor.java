@@ -1,12 +1,15 @@
 package eu.clarin.cmdi.curation.processor;
 
 import eu.clarin.cmdi.curation.entities.CMDCollection;
+import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.subprocessor.CollectionAggregator;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 public class CollectionProcessor {
 

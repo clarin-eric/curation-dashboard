@@ -147,7 +147,7 @@ public class Main {
                 for (String path : cmd.getOptionValues("path")) {
                     //dump(curator.processCollection(Paths.get(path)), type);
                     for (File file : new File(path).listFiles()) {
-                        _logger.info("Starting report generation for collection: " + file.toPath());
+//                        _logger.info("Starting report generation for collection: " + file.toPath());
                         report = curator.processCollection(file.toPath());
 
                         dumpAsXML(report, CurationEntityType.COLLECTION);
@@ -168,14 +168,14 @@ public class Main {
                             }
                         }
 
-                        _logger.info("Generated report for collection: " + report.getName());
+//                        _logger.info("Generated report for collection: " + report.getName());
 
-                        // wait 5 minutes after each collection creation to give the database time to recover
+                        // wait 15 seconds after each collection creation to give the database time to recover
                         // currently report generation slows down after a while
                         // and my theory is that the mysql database gets overloaded
-                        // so i give it 5 minutes after each collection...
-                        _logger.info("Waiting 5 minutes before next collection...");
-                        Thread.sleep(60000 * 5);
+                        // so i give it 15 seconds after each collection...
+                        _logger.info("Waiting 15 seconds before next collection...");
+                        Thread.sleep(15000);
                     }
                 }
                 // dumping the collections table
