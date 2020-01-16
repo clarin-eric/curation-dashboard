@@ -170,12 +170,6 @@ public class Main {
 
 //                        _logger.info("Generated report for collection: " + report.getName());
 
-                        // wait 15 seconds after each collection creation to give the database time to recover
-                        // currently report generation slows down after a while
-                        // and my theory is that the mysql database gets overloaded
-                        // so i give it 15 seconds after each collection...
-                        _logger.info("Waiting 15 seconds before next collection...");
-                        Thread.sleep(15000);
                     }
                 }
                 // dumping the collections table
