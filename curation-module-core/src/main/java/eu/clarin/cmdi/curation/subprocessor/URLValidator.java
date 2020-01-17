@@ -65,12 +65,6 @@ public class URLValidator extends CMDSubprocessor {
 
             for (String url : urlMap.keySet()) {
 
-//                }
-//                urlMap.keySet().parallelStream().forEach(url -> {
-
-                //this causes performance problems
-//                    _logger.info("Checking database for url: " + url);
-
                 CheckedLink checkedLink = null;
                 try {
                     checkedLink = Configuration.checkedLinkResource.get(url, parentName);
@@ -84,17 +78,18 @@ public class URLValidator extends CMDSubprocessor {
 
                         LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType);
 
-                        Configuration.linkToBeCheckedResource.save(linkToBeChecked);
-
+                        try {
+                            Configuration.linkToBeCheckedResource.save(linkToBeChecked);
+                        } catch (SQLException e) {
+                            _logger.error("Error when saving " + url + " to urls table: " + e.getMessage());
+                        }
 
                     }//else dont do anything, it is already in linksChecked
 
                 } catch (SQLException e) {
-                    _logger.error("Error when getting " + url + " from status table or saving it to urls table: " + e.getMessage());
+                    _logger.error("Error when getting " + url + " from status table: " + e.getMessage());
                 }
-            }//);
-
-//                removeOldURLs(urlMap.keySet(), report.getName(), parentName);
+            }
 
             try {
                 report.urlReport = createInstanceURLReportFromDatabase(numOfLinks.longValue(), report.getName(), parentName);

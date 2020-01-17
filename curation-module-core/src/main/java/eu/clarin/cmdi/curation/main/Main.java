@@ -194,6 +194,8 @@ public class Main {
                 //dumping the linkchecker statistics table
                 dumpAsXML(linkCheckerReport, CurationEntityType.STATISTICS);
                 dumpAsHTML(linkCheckerReport, CurationEntityType.STATISTICS);
+
+                Configuration.tearDown();
             } else
                 throw new Exception("Only path is allowed for curation of collections root");
         } else

@@ -81,7 +81,7 @@ class ProfileCacheFactory {
         public ProfileCacheEntry load(ProfileHeader header) throws IOException, VTDException, SAXException, URISyntaxException {
 
             String profile = header.getId()!=null?header.getId():header.getSchemaLocation();
-            _logger.info("Profile {} is not in the cache, it will be loaded", profile);
+//            _logger.info("Profile {} is not in the cache, it will be loaded", profile);
 
             Path xsd;
             if (isPublicProfilesCache) {
