@@ -4,15 +4,23 @@
 		<meta charset="UTF-8">
 	</head>
 	<body>
-
+<h1>Information about Curation Module</h1>
 		<p>
-			Curation Module is a project founded by <a href="https://www.clarin.eu/">CLARIN</a> EU project.
-			Its goal is to help CMD metadata authors and curators improve meta-data quality. More information about CMD
-			framework can be found <a href="https://www.clarin.eu/content/component-metadata">here</a>.
-			<br>
-			Code can be found on <a href="https://github.com/clarin-eric/clarin-curation-module">Github</a>.
+			Curation Module is a service developed and offered by the technical team of the <a href="https://www.oeaw.ac.at/acdh/projects/clarin/">ACDH-CH</a> on behalf of <a href="https://www.clarin.eu/">CLARIN-ERIC</a>. Its goal is to support CMD metadata authors and curators to improve quality of metadata for language resources.
+
+			More information:
+
+			<ul>
+				<li><a href="https://www.clarin.eu/content/component-metadata">CMD -Component Metadata</a> - the CLARIN metadata
+			framework.
+		</li>
+			<li><a href="https://github.com/clarin-eric/clarin-curation-module">Code on Github</a></li>
+			<li><a href="https://office.clarin.eu/v/CE-2016-0742-CLARINPLUS-D2_1.pdf">CLARIN-PLUS deliverable D2.1</a> - specification document for the curation module from 2016, formulated in the context of <a href="https://www.clarin.eu/content/factsheet-clarin-plus" >CLARIN-PLUS</a> project
+			</li>
+			</ul>
 		</p>
 
+<h2>Structure and functionality</h2>
 		<p>
 			Curation Module consists of three modules:
 		<ul>
@@ -22,36 +30,33 @@
 		</ul>
 
 
-		<h2>Core Module</h2>
+		<h3>Core Module</h3>
 
 		<p>
-			It analyses individual CMD profiles, records and whole collections according to a number of
-			quality criteria and generates reports and statistics which help discover potential problems that cause a
-			lower
-			metadata quality.
+			This module does the actual analysis of individual CMD profiles, records and whole collections according to a number of
+			quality criteria and generates reports and statistics which help discover potential problems that cause a	lower metadata quality.
 		</p>
-		<h2>Web Module</h2>
-		<p>
-			It allows users to examine reports individual profiles, collections and records online.<br>
+		<p>The reports are re-generated regularly (weekly) on the most recent dump of CMDI records as collected by the <a href="https://vlo.clarin.eu/oai-harvest-viewer/">CLARIN-VLO harvester</a>.
 		</p>
+		<h3>Web Module</h3>
 		<p>
-			Through Validator users can generate reports from records and profile either by their URLs or uploading them
-			as
-			files.
-		</p>
-		<p>
-			On Profiles and Collections, users can view the quality of public CMD profiles and collections respectively.<br>
-		</p>
-		<p>
-			Link Checking Statistics displays the link checking results that Link Checker Module generates.
+			This is the user facing web application. It offers four main functions:
+			<ul>
+				<li>presenting pre-computed statistics for <a href="https://curate.acdh.oeaw.ac.at/profile/table">CMD profiles</a></li>
+				<li>presenting pre-computed statistics for <a href="https://curate.acdh.oeaw.ac.at/collection/table">collections</a></li>
+				<li>on the fly <a href="https://curate.acdh.oeaw.ac.at/">validation of individual profiles or metadata records</a>
+					(either by their URLs or uploading them as files)
+				</li>
+				<li>continuously generated statistics of the <a href="https://curate.acdh.oeaw.ac.at/statistics">link checking</a></li>
+			</ul>
 		</p>
 
-		<h2>Link Checker Module</h2>
+		<h3>Link Checker Module</h3>
 		<p>
-			It checks constantly and repeatedly (with default delays) all the urls that collections contain. Checking in
-			this context consists of sending HEAD and/or GET requests to URLs and saving the results in the database.
-			Core module later uses these results to generate statistics and takes them into consideration when assessing
-			the quality of the metadata.
+			It checks constantly and repeatedly (with default delays) all the URLs contained in metadata records of the collections. Checking means sending HEAD and/or GET requests to URLs and saving the results (just the request meta-information, the headers, not the payload itself) in a database.
+			Core module later uses these results to generate statistics and takes them into consideration when assessing the quality of the metadata. Additionally, the results are also used by the <a href="https://vlo.clarin.eu/">CLARIN metadata catalogue, the VLO</a>, to indicate the availability of a resource.</p>
+			<p>
+			This module is maintained in a <a href="https://github.com/clarin-eric/linkchecker">separate code-base</a>.
 		</p>
 
 	</body>
