@@ -1,6 +1,9 @@
 package eu.clarin.cmdi.curation.report;
 
+import eu.clarin.cmdi.curation.subprocessor.URLValidator;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -13,14 +16,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
-/*
- * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
- */
 @XmlRootElement(name = "collections-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionsReport implements Report<CollectionsReport> {
 
+    private static final Logger _logger = LoggerFactory.getLogger(CollectionsReport.class);
 
     @XmlElement(name = "collection")
     private List<Collection> collections = new ArrayList<Collection>();
@@ -28,7 +28,6 @@ public class CollectionsReport implements Report<CollectionsReport> {
     @Override
     public void setParentName(String parentName) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -78,8 +77,6 @@ public class CollectionsReport implements Report<CollectionsReport> {
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Collection {
-
-
         @XmlAttribute
         private String name;
         @XmlElement

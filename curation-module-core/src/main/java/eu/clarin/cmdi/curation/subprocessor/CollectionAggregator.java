@@ -48,7 +48,6 @@ public class CollectionAggregator {
             facet.cnt = 0;
             report.facetReport.facet.add(facet);
         }
-        ;
 
         //add info regarding file statistics
         report.fileReport.provider = collection.getPath().getFileName().toString();
@@ -62,11 +61,11 @@ public class CollectionAggregator {
         while (!collection.getChildren().isEmpty()) {
 
             CMDInstance instance = collection.getChildren().pop();
-
             executor.submit(() ->
             {
                 try {
-                    instance.generateReport(report.getName()).mergeWithParent(report);
+                    CMDInstanceReport cmdInstanceReport = instance.generateReport(report.getName());
+                    cmdInstanceReport.mergeWithParent(report);
                 } catch (TransformerException | FileSizeException | IOException | ExecutionException | ParserConfigurationException | SAXException | VTDException e) {
                     _logger.error("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()+ " Skipping to next instance...");
                     new ErrorReport(instance.getPath().toString(), e.getMessage()).mergeWithParent(report);

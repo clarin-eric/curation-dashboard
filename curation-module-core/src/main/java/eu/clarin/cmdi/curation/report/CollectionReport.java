@@ -97,18 +97,20 @@ public class CollectionReport implements Report<CollectionReport> {
     }
 
     public void handleProfile(String profile, double score) {
-        if (headerReport == null)
+        if (headerReport == null) {
             headerReport = new HeaderReport();
-        if (headerReport.profiles == null)
+        }
+        if (headerReport.profiles == null) {
             headerReport.profiles = new Profiles();
+        }
         headerReport.profiles.handleProfile(profile, score);
     }
 
-    public void handleProfile(Profile profile) {
-        if (headerReport.profiles == null)
-            headerReport.profiles = new Profiles();
-        headerReport.profiles.handleProfile(profile);
-    }
+//    public void handleProfile(Profile profile) {
+//        if (headerReport.profiles == null)
+//            headerReport.profiles = new Profiles();
+//        headerReport.profiles.handleProfile(profile);
+//    }
 
     @Override
     public String getName() {
@@ -128,65 +130,65 @@ public class CollectionReport implements Report<CollectionReport> {
 
     @Override
     public void mergeWithParent(CollectionReport parentReport) {
-
-        parentReport.score += score;
-        if (insMinScore < parentReport.insMinScore)
-            parentReport.insMinScore = insMinScore;
-
-        if (insMaxScore > parentReport.insMaxScore)
-            parentReport.insMaxScore = insMaxScore;
-
-        // ResProxies
-
-        parentReport.resProxyReport.totNumOfResProxies += resProxyReport.totNumOfResProxies;
-        parentReport.resProxyReport.totNumOfResourcesWithMime += resProxyReport.totNumOfResourcesWithMime;
-        parentReport.resProxyReport.totNumOfResProxiesWithReferences += resProxyReport.totNumOfResProxiesWithReferences;
-
-        // XMLValidator
-        parentReport.xmlValidationReport.totNumOfRecords += xmlValidationReport.totNumOfRecords;
-        parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidationReport.totNumOfValidRecords;
-        parentReport.xmlValidationReport.record.addAll(this.xmlValidationReport.record);
-
-        // XMLPopulatedValidator
-        parentReport.xmlPopulatedReport.totNumOfXMLElements += xmlPopulatedReport.totNumOfXMLElements;
-        parentReport.xmlPopulatedReport.totNumOfXMLSimpleElements += xmlPopulatedReport.totNumOfXMLSimpleElements;
-        parentReport.xmlPopulatedReport.totNumOfXMLEmptyElement += xmlPopulatedReport.totNumOfXMLEmptyElement;
-
-        // URL
-        parentReport.urlReport.totNumOfLinks += urlReport.totNumOfLinks;
-//        parentReport.urlReport.totNumOfUniqueLinks += urlReport.totNumOfUniqueLinks;
-        parentReport.urlReport.totNumOfCheckedLinks += urlReport.totNumOfCheckedLinks;
-//        parentReport.urlReport.totNumOfResProxiesLinks += urlReport.totNumOfResProxiesLinks;
-        parentReport.urlReport.totNumOfBrokenLinks += urlReport.totNumOfBrokenLinks;
-
-        // Facet
-        facetReport.facet.forEach(facet -> {
-            FacetCollectionStruct parFacet = parentReport.facetReport.facet.stream().filter(f -> f.name.equals(facet.name)).findFirst().orElse(null);
-            parFacet.cnt += facet.cnt;
-        });
-
-        // Profiles
-        for (Profile p : headerReport.profiles.profiles)
-            parentReport.handleProfile(p);
-
-        // MDSelfLinks
-        if (headerReport.duplicatedMDSelfLink != null && !headerReport.duplicatedMDSelfLink.isEmpty()) {
-
-            if (parentReport.headerReport.duplicatedMDSelfLink == null) {
-                parentReport.headerReport.duplicatedMDSelfLink = new ArrayList<>();
-            }
-
-            for (String mdSelfLink : headerReport.duplicatedMDSelfLink)
-                if (!parentReport.headerReport.duplicatedMDSelfLink.contains(mdSelfLink))
-                    parentReport.headerReport.duplicatedMDSelfLink.add(mdSelfLink);
-        }
-
-        // invalid files
-        if (this.file != null) {
-            if (parentReport.file == null)
-                parentReport.file = new ArrayList<>();
-            parentReport.file.addAll(this.file);
-        }
+        _logger.error("this should never happen??? a collection report cant have a parent to get merged into");
+//        parentReport.score += score;
+//        if (insMinScore < parentReport.insMinScore)
+//            parentReport.insMinScore = insMinScore;
+//
+//        if (insMaxScore > parentReport.insMaxScore)
+//            parentReport.insMaxScore = insMaxScore;
+//
+//        // ResProxies
+//
+//        parentReport.resProxyReport.totNumOfResProxies += resProxyReport.totNumOfResProxies;
+//        parentReport.resProxyReport.totNumOfResourcesWithMime += resProxyReport.totNumOfResourcesWithMime;
+//        parentReport.resProxyReport.totNumOfResProxiesWithReferences += resProxyReport.totNumOfResProxiesWithReferences;
+//
+//        // XMLValidator
+//        parentReport.xmlValidationReport.totNumOfRecords += xmlValidationReport.totNumOfRecords;
+//        parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidationReport.totNumOfValidRecords;
+//        parentReport.xmlValidationReport.record.addAll(this.xmlValidationReport.record);
+//
+//        // XMLPopulatedValidator
+//        parentReport.xmlPopulatedReport.totNumOfXMLElements += xmlPopulatedReport.totNumOfXMLElements;
+//        parentReport.xmlPopulatedReport.totNumOfXMLSimpleElements += xmlPopulatedReport.totNumOfXMLSimpleElements;
+//        parentReport.xmlPopulatedReport.totNumOfXMLEmptyElement += xmlPopulatedReport.totNumOfXMLEmptyElement;
+//
+//        // URL
+//        parentReport.urlReport.totNumOfLinks += urlReport.totNumOfLinks;
+////        parentReport.urlReport.totNumOfUniqueLinks += urlReport.totNumOfUniqueLinks;
+//        parentReport.urlReport.totNumOfCheckedLinks += urlReport.totNumOfCheckedLinks;
+////        parentReport.urlReport.totNumOfResProxiesLinks += urlReport.totNumOfResProxiesLinks;
+//        parentReport.urlReport.totNumOfBrokenLinks += urlReport.totNumOfBrokenLinks;
+//
+//        // Facet
+//        facetReport.facet.forEach(facet -> {
+//            FacetCollectionStruct parFacet = parentReport.facetReport.facet.stream().filter(f -> f.name.equals(facet.name)).findFirst().orElse(null);
+//            parFacet.cnt += facet.cnt;
+//        });
+//
+//        // Profiles
+//        for (Profile p : headerReport.profiles.profiles)
+//            parentReport.handleProfile(p);
+//
+//        // MDSelfLinks
+//        if (headerReport.duplicatedMDSelfLink != null && !headerReport.duplicatedMDSelfLink.isEmpty()) {
+//
+//            if (parentReport.headerReport.duplicatedMDSelfLink == null) {
+//                parentReport.headerReport.duplicatedMDSelfLink = new ArrayList<>();
+//            }
+//
+//            for (String mdSelfLink : headerReport.duplicatedMDSelfLink)
+//                if (!parentReport.headerReport.duplicatedMDSelfLink.contains(mdSelfLink))
+//                    parentReport.headerReport.duplicatedMDSelfLink.add(mdSelfLink);
+//        }
+//
+//        // invalid files
+//        if (this.file != null) {
+//            if (parentReport.file == null)
+//                parentReport.file = new ArrayList<>();
+//            parentReport.file.addAll(this.file);
+//        }
 
 //        // urls
 //        if (this.url != null) {
@@ -433,14 +435,16 @@ public class CollectionReport implements Report<CollectionReport> {
         public List<Profile> profiles;
 
         public void handleProfile(String profile, double score) {
-            if (profiles == null)
+            if (profiles == null) {
                 profiles = new ArrayList<>();
+            }
 
-            for (Profile p : profiles)
+            for (Profile p : profiles) {
                 if (p.name.equals(profile)) {
                     p.count++;
                     return;
                 }
+            }
 
             Profile p = new Profile();
             p.count = 1;

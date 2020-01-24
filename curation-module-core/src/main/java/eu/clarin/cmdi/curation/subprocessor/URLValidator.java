@@ -12,6 +12,8 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.DAO.LinkToBeChecked;
 import eu.clarin.cmdi.rasa.filters.impl.ACDHStatisticsCountFilter;
+import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
+import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.StatusCodeMapper;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
@@ -61,6 +63,12 @@ public class URLValidator extends CMDSubprocessor {
         if (selfLink.startsWith("http://") || selfLink.startsWith("https://"))
             urlMap.computeIfAbsent(selfLink, key -> null);
 
+        //these values are used to create instance url report and used for the score
+        //collection statistics are done through the database
+        long numOfUniqueLinks = urlMap.keySet().size();
+        long numOfBrokenLinks = 0;
+        long numOfUndeterminedLinks = 0;
+
         if (Configuration.COLLECTION_MODE) {
 
             List<LinkToBeChecked> linksToBeChecked = new ArrayList<>();
@@ -82,7 +90,15 @@ public class URLValidator extends CMDSubprocessor {
 
                         linksToBeChecked.add(linkToBeChecked);
 
-                    }//else dont do anything, it is already in linksChecked
+                    }else{
+                        //link is checked and found see if it is broken or undetermined
+                        Category category = StatusCodeMapper.get(checkedLink.getStatus());
+                        if(category.equals(Category.BROKEN)){
+                            numOfBrokenLinks++;
+                        }else if(category.equals(Category.UNDETERMINED)){
+                            numOfUndeterminedLinks++;
+                        }
+                    }
 
                 } catch (SQLException e) {
                     _logger.error("Error when getting " + url + " from status table: " + e.getMessage());
@@ -95,16 +111,15 @@ public class URLValidator extends CMDSubprocessor {
                 _logger.error("Error when saving " + linksToBeChecked + " to urls table: " + e.getMessage());
             }
 
-            //for collection report url report of the instance is not needed
-            //because all relevant values are already queried from the database in the calculateAverageValues method in the collection report
+
+//              try {
+//                report.urlReport = createInstanceURLReportFromDatabase(numOfLinks.get(), report.getName(), report.parentName);
+//            } catch (SQLException e) {
+//                _logger.error("Error when creating url report for record: " + report.getName() + ". " + e.getMessage());
+//            }
 
         } else {//instance mode
             HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
-
-            long numOfUniqueLinks = urlMap.keySet().size();
-
-            long numOfBrokenLinks = 0;
-            long numOfUndeterminedLinks = 0;
 
             for (String url : urlMap.keySet()) {
 
@@ -165,10 +180,9 @@ public class URLValidator extends CMDSubprocessor {
 
             }
 
-            report.urlReport = createInstanceURLReport(numOfLinks.get(), numOfUniqueLinks, numOfBrokenLinks, numOfUndeterminedLinks);
-
         }
 
+        report.urlReport = createInstanceURLReport(numOfLinks.get(), numOfUniqueLinks, numOfBrokenLinks, numOfUndeterminedLinks);
 
     }
 
@@ -206,25 +220,24 @@ public class URLValidator extends CMDSubprocessor {
         return report;
     }
 
-    private URLReport createInstanceURLReportFromDatabase(long numOfLinks, String instanceName, String collectionName) throws SQLException {
-        URLReport report = new URLReport();
-        report.numOfLinks = numOfLinks;
-
-        ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(collectionName, instanceName);
-        long numOfCheckedLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
-
-        filter = new ACDHStatisticsCountFilter(collectionName, instanceName, true, false);
-        long numOfBrokenLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
-
-        filter = new ACDHStatisticsCountFilter(collectionName, instanceName, false, true);
-        long numOfUndeterminedLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
-
-        long numOfCheckedUndeterminedRemoved = numOfCheckedLinks - numOfUndeterminedLinks;
-        report.percOfValidLinks = numOfCheckedLinks == 0 ? 0 : (numOfCheckedUndeterminedRemoved - numOfBrokenLinks) / (double) numOfCheckedUndeterminedRemoved;
-
-        return report;
-    }
-
+//    private URLReport createInstanceURLReportFromDatabase(long numOfLinks, String instanceName, String collectionName) throws SQLException {
+//        URLReport report = new URLReport();
+//        report.numOfLinks = numOfLinks;
+//
+//        ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(collectionName, instanceName);
+//        long numOfCheckedLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
+//
+//        filter = new ACDHStatisticsCountFilter(collectionName, instanceName, true, false);
+//        long numOfBrokenLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
+//
+//        filter = new ACDHStatisticsCountFilter(collectionName, instanceName, false, true);
+//        long numOfUndeterminedLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
+//
+//        long numOfCheckedUndeterminedRemoved = numOfCheckedLinks - numOfUndeterminedLinks;
+//        report.percOfValidLinks = numOfCheckedLinks == 0 ? 0 : (numOfCheckedUndeterminedRemoved - numOfBrokenLinks) / (double) numOfCheckedUndeterminedRemoved;
+//
+//        return report;
+//    }
 
     private URLReport createDisabledURLReport(long numOfLinks) {
         URLReport report = new URLReport();

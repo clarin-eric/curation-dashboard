@@ -80,7 +80,7 @@ class ProfileCacheFactory {
         @Override
         public ProfileCacheEntry load(ProfileHeader header) throws IOException, VTDException, SAXException, URISyntaxException {
 
-            String profile = header.getId()!=null?header.getId():header.getSchemaLocation();
+            String profile = header.getId() != null ? header.getId() : header.getSchemaLocation();
 //            _logger.info("Profile {} is not in the cache, it will be loaded", profile);
 
             Path xsd;
@@ -98,13 +98,13 @@ class ProfileCacheFactory {
                     // if not download it
                     Files.createFile(xsd);
 
-                    _logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.getId());
+                    _logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.getSchemaLocation());
                     new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(header.getSchemaLocation(), xsd.toFile());
                 }
 
             } else {//non-public profiles are not cached on disk
 
-                _logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.getId());
+                _logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.getSchemaLocation());
 
                 //keep private schemas on disk
 
@@ -115,26 +115,26 @@ class ProfileCacheFactory {
                 //try to load it from the disk
 
 
-                _logger.debug("Loading schema for non public profile {} from {}", header.getId(), xsd);
+                _logger.debug("Loading schema for non public profile {} from {}", header.getSchemaLocation(), xsd);
 
                 if (!Files.exists(xsd)) {
                     // if not download it
                     Files.createFile(xsd);
 
-                    _logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.getId());
+                    _logger.debug("XSD for the {} is not in the local cache, it will be downloaded", header.getId());
 
-                    if (header.getSchemaLocation().startsWith("file:")) {
-                        Files.move(Paths.get(new URI(header.getSchemaLocation())), xsd, StandardCopyOption.REPLACE_EXISTING);
-                    } else {
-                        new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(header.getSchemaLocation(), xsd.toFile());
-                    }
+                    getXSD(header,xsd);
                 }
             }
 
             VTDGen vg = new VTDGen();
 
             if (Files.readAllBytes(xsd).length == 0) {
-                throw new VTDException("xsd path is empty");
+                Files.deleteIfExists(xsd);
+                getXSD(header,xsd);
+                if (Files.readAllBytes(xsd).length == 0) {
+                    throw new VTDException("xsd path is empty");
+                }
             }
             vg.setDoc(Files.readAllBytes(xsd));
             vg.parse(true);
@@ -149,6 +149,14 @@ class ProfileCacheFactory {
             return new ProfileCacheEntry(parsedProfile, schema);
         }
 
+    }
+
+    private static void getXSD(ProfileHeader header, Path xsd) throws URISyntaxException, IOException {
+        if (header.getSchemaLocation().startsWith("file:")) {
+            Files.move(Paths.get(new URI(header.getSchemaLocation())), xsd, StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(header.getSchemaLocation(), xsd.toFile());
+        }
     }
 
     static class ProfileCacheEntry {

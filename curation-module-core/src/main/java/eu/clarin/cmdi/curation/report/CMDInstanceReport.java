@@ -14,6 +14,8 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.StatusCodeMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -22,6 +24,8 @@ import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.StatusCodeMapper;
 @XmlRootElement(name = "instance-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDInstanceReport implements Report<CollectionReport> {
+
+    private static final Logger _logger = LoggerFactory.getLogger(CMDInstanceReport.class);
 
     public String parentName;
 

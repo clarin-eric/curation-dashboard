@@ -44,7 +44,7 @@ public class CollectionProcessor {
     private void addInvalidFile(CollectionReport report, Exception e) {
         CollectionReport.InvalidFile invalidFile = new CollectionReport.InvalidFile();
         invalidFile.recordName = e.getMessage();
-        invalidFile.reason = e.getCause().getMessage();
+        invalidFile.reason = e.getCause()==null?null:e.getCause().getMessage();
         report.addInvalidFile(invalidFile);
     }
 
