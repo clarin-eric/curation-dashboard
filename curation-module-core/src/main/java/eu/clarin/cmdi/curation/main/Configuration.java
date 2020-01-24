@@ -48,7 +48,6 @@ public class Configuration {
     private static String DATABASE_PASSWORD;
     public static String USERAGENT;
     public static String BASE_URL;
-    public static String CMD_STORAGE_URL;
 
     public static CheckedLinkResource checkedLinkResource;
     public static LinkToBeCheckedResource linkToBeCheckedResource;
@@ -147,6 +146,5 @@ public class Configuration {
 
         USERAGENT = config.getProperty("USERAGENT");
         BASE_URL = config.getProperty("BASE_URL");
-        CMD_STORAGE_URL = config.getProperty("CMD_STORAGE_URL");
     }
 }

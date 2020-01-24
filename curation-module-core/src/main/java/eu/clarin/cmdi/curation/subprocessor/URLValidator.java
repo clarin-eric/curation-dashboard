@@ -63,6 +63,8 @@ public class URLValidator extends CMDSubprocessor {
 
         if (Configuration.COLLECTION_MODE) {
 
+            List<LinkToBeChecked> linksToBeChecked = new ArrayList<>();
+
             for (String url : urlMap.keySet()) {
 
                 CheckedLink checkedLink = null;
@@ -78,11 +80,7 @@ public class URLValidator extends CMDSubprocessor {
 
                         LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType);
 
-                        try {
-                            Configuration.linkToBeCheckedResource.save(linkToBeChecked);
-                        } catch (SQLException e) {
-                            _logger.error("Error when saving " + url + " to urls table: " + e.getMessage());
-                        }
+                        linksToBeChecked.add(linkToBeChecked);
 
                     }//else dont do anything, it is already in linksChecked
 
@@ -91,12 +89,14 @@ public class URLValidator extends CMDSubprocessor {
                 }
             }
 
-            try {
-                report.urlReport = createInstanceURLReportFromDatabase(numOfLinks.longValue(), report.getName(), parentName);
+            try {//save all links not in status in a batch to urls
+                Configuration.linkToBeCheckedResource.save(linksToBeChecked);
             } catch (SQLException e) {
-                _logger.error("Error when creating collection url report for collection: " + report.getParentName() + ": " + e.getMessage());
+                _logger.error("Error when saving " + linksToBeChecked + " to urls table: " + e.getMessage());
             }
 
+            //for collection report url report of the instance is not needed
+            //because all relevant values are already queried from the database in the calculateAverageValues method in the collection report
 
         } else {//instance mode
             HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);

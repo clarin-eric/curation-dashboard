@@ -83,7 +83,7 @@ public class CollectionAggregator {
                 _logger.error("Error occured while waiting for the threadpool to terminate.");
             }
         }
-        ;
+
 
         report.calculateAverageValues();
 

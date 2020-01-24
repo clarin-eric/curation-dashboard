@@ -168,7 +168,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         mergeWithParent(parentReport, this);
     }
 
-    private static final synchronized void mergeWithParent(CollectionReport parentReport, CMDInstanceReport instanceReport) {
+    private static synchronized void mergeWithParent(CollectionReport parentReport, CMDInstanceReport instanceReport) {
         parentReport.score += instanceReport.score;
         if (instanceReport.score > parentReport.insMaxScore)
             parentReport.insMaxScore = instanceReport.score;
@@ -199,9 +199,10 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             parentReport.xmlValidationReport.record.add(record);
         }
 
-        parentReport.urlReport.totNumOfLinks += instanceReport.urlReport.numOfLinks;
-        parentReport.urlReport.totNumOfBrokenLinks += instanceReport.urlReport.numOfBrokenLinks;
-        parentReport.urlReport.totNumOfCheckedLinks += instanceReport.urlReport.numOfCheckedLinks;
+        //will be done through database
+//        parentReport.urlReport.totNumOfLinks += instanceReport.urlReport.numOfLinks;
+//        parentReport.urlReport.totNumOfBrokenLinks += instanceReport.urlReport.numOfBrokenLinks;
+//        parentReport.urlReport.totNumOfCheckedLinks += instanceReport.urlReport.numOfCheckedLinks;
 
         // Facet
         instanceReport.facets.coverage.stream()

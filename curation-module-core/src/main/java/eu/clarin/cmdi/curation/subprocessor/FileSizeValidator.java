@@ -120,18 +120,18 @@ public class FileSizeValidator extends CMDSubprocessor {
             int index;
             String path = entity.getPath().toString();
 
-            if ((index = path.indexOf("/clarin")) != -1)
-                report.fileReport.location = Configuration.CMD_STORAGE_URL + path.substring(index + 1);
-            else if ((index = path.indexOf("/europeana")) != -1)
-                report.fileReport.location = Configuration.CMD_STORAGE_URL + path.substring(index + 1);
-            else
+            if ((index = path.indexOf("/clarin")) != -1 || (index = path.indexOf("/europeana")) != -1) {
+                report.fileReport.location = path.substring(index + 1);
+            } else {
                 report.fileReport.location = path;
+            }
+
         }
 
         if (report.fileReport.size > Configuration.MAX_FILE_SIZE) {
             addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + Configuration.MAX_FILE_SIZE + "B)");
             //don't assess when assessing collections
-            if (Configuration.COLLECTION_MODE){
+            if (Configuration.COLLECTION_MODE) {
                 throw new FileSizeException(entity.getPath().getFileName().toString(), report.fileReport.size);
             }
         }
