@@ -135,91 +135,92 @@ public class LinkCheckerStatisticsHelper {
         StringBuilder sb = new StringBuilder();
 
         ACDHCheckedLinkFilter filter = new ACDHCheckedLinkFilter(collectionName, status);
-        Stream<CheckedLink> links = Configuration.checkedLinkResource.get(Optional.of(filter), start, end);
+        try(Stream<CheckedLink> links = Configuration.checkedLinkResource.get(Optional.of(filter), start, end)) {
 
-        links.forEach(checkedLink -> {
-            sb.append("<tr>");
-            //todo move category into the database instead of checking it everywhere??
-            //i cant really check the undetermined without a list
-            String url = checkedLink.getUrl();
-            String urlWithBreak = url.replace("_", "_<wbr>");
-//TODO use statuscodemapper.
+            links.forEach(checkedLink -> {
+                sb.append("<tr>");
+                //todo move category into the database instead of checking it everywhere??
+                //i cant really check the undetermined without a list
+                String url = checkedLink.getUrl();
+                String urlWithBreak = url.replace("_", "_<wbr>");
+                //TODO use statuscodemapper.
 
-            String category;
-            if (status == 200) {
-                category = "Ok";
-                sb.append("<td style='background-color:#cbe7cc'>");
-                sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
-                sb.append("</td>");
-                sb.append("<td style='background-color:#cbe7cc'>");
-                sb.append(category);
-                sb.append("</td>");
-            } else if (status == 401 || status == 405 || status == 429) {
-                category = "Undetermined";
-                sb.append("<td style='background-color:#fff7b3'>");
-                sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
-                sb.append("</td>");
-                sb.append("<td style='background-color:#fff7b3'>");
-                sb.append(category);
-                sb.append("</td>");
-            } else {
-                category = "Broken";
-                sb.append("<td style='background-color:#f2a6a6'>");
-                sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
-                sb.append("</td>");
-                sb.append("<td style='background-color:#f2a6a6'>");
-                sb.append(category);
-                sb.append("</td>");
-            }
-
-            //button
-            sb.append("<td>");
-            sb.append("<button class='showUrlInfo btn btn-info'>Show</button>");
-            sb.append("</td>");
-
-            sb.append("<td>");
-            //some html css table too wide work around
-            String record = checkedLink.getRecord();
-            if (record != null) {
-                String recordWithBreaks = record.replace("_", "_<wbr>");
-
-                if (Configuration.clarinCollections.contains(collectionName)) {
-                    String clarinURLPrefix = "https://vlo.clarin.eu/data/clarin/results/cmdi/";
-                    sb.append("<a href='").append(clarinURLPrefix + collectionName + "/" + record + ".xml").append("'>").append(recordWithBreaks).append("</a>");
-                } else if (Configuration.europeanaCollections.contains(collectionName)) {
-                    String europeanaURLPrefix = "https://vlo.clarin.eu/data/europeana/results/cmdi/";
-                    sb.append("<a href='").append(europeanaURLPrefix + collectionName + "/" + record + ".xml").append("'>").append(recordWithBreaks).append("</a>");
+                String category;
+                if (status == 200) {
+                    category = "Ok";
+                    sb.append("<td style='background-color:#cbe7cc'>");
+                    sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
+                    sb.append("</td>");
+                    sb.append("<td style='background-color:#cbe7cc'>");
+                    sb.append(category);
+                    sb.append("</td>");
+                } else if (status == 401 || status == 405 || status == 429) {
+                    category = "Undetermined";
+                    sb.append("<td style='background-color:#fff7b3'>");
+                    sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
+                    sb.append("</td>");
+                    sb.append("<td style='background-color:#fff7b3'>");
+                    sb.append(category);
+                    sb.append("</td>");
                 } else {
-                    sb.append(recordWithBreaks);
+                    category = "Broken";
+                    sb.append("<td style='background-color:#f2a6a6'>");
+                    sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
+                    sb.append("</td>");
+                    sb.append("<td style='background-color:#f2a6a6'>");
+                    sb.append(category);
+                    sb.append("</td>");
                 }
-            }
 
-            sb.append("</tr>");
+                //button
+                sb.append("<td>");
+                sb.append("<button class='showUrlInfo btn btn-info'>Show</button>");
+                sb.append("</td>");
 
-            //info
-            sb.append("<tr hidden><td colspan='4'>");
-            String message = checkedLink.getMessage().replace("_", "_<wbr>");
-            sb.append("<b>Message: </b> ").append(message).append("<br>");
-            //because this field is new, older entries dont have it and it results in null, so a null check to make it more user friendly
-            String expectedContent = checkedLink.getExpectedMimeType() == null ? "Not Specified" : checkedLink.getExpectedMimeType();
-            String content = checkedLink.getContentType();
+                sb.append("<td>");
+                //some html css table too wide work around
+                String record = checkedLink.getRecord();
+                if (record != null) {
+                    String recordWithBreaks = record.replace("_", "_<wbr>");
 
-            sb.append("<b>Expected Content Type: </b>").append(expectedContent).append("<br>");
-            sb.append("<b>Content Type: </b>").append(content).append("<br>");
-            sb.append("<b>Byte Size: </b>").append(checkedLink.getByteSize()).append("<br>");
-            sb.append("<b>Request Duration(ms): </b>").append(checkedLink.getDuration()).append("<br>");
+                    if (Configuration.clarinCollections.contains(collectionName)) {
+                        String clarinURLPrefix = "https://vlo.clarin.eu/data/clarin/results/cmdi/";
+                        sb.append("<a href='").append(clarinURLPrefix + collectionName + "/" + record + ".xml").append("'>").append(recordWithBreaks).append("</a>");
+                    } else if (Configuration.europeanaCollections.contains(collectionName)) {
+                        String europeanaURLPrefix = "https://vlo.clarin.eu/data/europeana/results/cmdi/";
+                        sb.append("<a href='").append(europeanaURLPrefix + collectionName + "/" + record + ".xml").append("'>").append(recordWithBreaks).append("</a>");
+                    } else {
+                        sb.append(recordWithBreaks);
+                    }
+                }
 
-            String method = checkedLink.getMethod() == null ? "N/A" : checkedLink.getMethod();
-            sb.append("<b>Method: </b>").append(method).append("<br>");
-            sb.append("<b>Timestamp: </b>").append(checkedLink.getTimestamp());
-            sb.append("</td>");
-            //info end
+                sb.append("</tr>");
 
-            sb.append("</td></tr>");
+                //info
+                sb.append("<tr hidden><td colspan='4'>");
+                String message = checkedLink.getMessage().replace("_", "_<wbr>");
+                sb.append("<b>Message: </b> ").append(message).append("<br>");
+                //because this field is new, older entries dont have it and it results in null, so a null check to make it more user friendly
+                String expectedContent = checkedLink.getExpectedMimeType() == null ? "Not Specified" : checkedLink.getExpectedMimeType();
+                String content = checkedLink.getContentType();
+
+                sb.append("<b>Expected Content Type: </b>").append(expectedContent).append("<br>");
+                sb.append("<b>Content Type: </b>").append(content).append("<br>");
+                sb.append("<b>Byte Size: </b>").append(checkedLink.getByteSize()).append("<br>");
+                sb.append("<b>Request Duration(ms): </b>").append(checkedLink.getDuration()).append("<br>");
+
+                String method = checkedLink.getMethod() == null ? "N/A" : checkedLink.getMethod();
+                sb.append("<b>Method: </b>").append(method).append("<br>");
+                sb.append("<b>Timestamp: </b>").append(checkedLink.getTimestamp());
+                sb.append("</td>");
+                //info end
+
+                sb.append("</td></tr>");
 
 
-        });
+            });
 
-        return sb.toString();
+            return sb.toString();
+        }
     }
 }

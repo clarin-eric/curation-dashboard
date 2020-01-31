@@ -91,7 +91,7 @@
         <dependency>
             <groupId>eu.clarin.cmdi</groupId>
             <artifactId>resource-availability-status-api</artifactId>
-            <version>2.3.7-MYSQL-SNAPSHOT</version>
+            <version>2.3.8-MYSQL-SNAPSHOT</version>
         </dependency>
 
         <dependency>
