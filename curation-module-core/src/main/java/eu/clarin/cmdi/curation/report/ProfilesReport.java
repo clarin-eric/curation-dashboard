@@ -27,31 +27,31 @@ public class ProfilesReport implements Report<ProfilesReport> {
 
     @Override
     public void setParentName(String parentName) {
-        // TODO Auto-generated method stub
+
 
     }
 
     @Override
     public String getParentName() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
+
         return "ProfilesReport";
     }
 
     @Override
     public boolean isValid() {
-        // TODO Auto-generated method stub
+
         return false;
     }
 
     @Override
     public void addSegmentScore(Score segmentScore) {
-        // TODO Auto-generated method stub
+
 
     }
 
@@ -64,7 +64,7 @@ public class ProfilesReport implements Report<ProfilesReport> {
 
     @Override
     public void mergeWithParent(ProfilesReport parentReport) {
-        // TODO Auto-generated method stub
+
 
     }
 

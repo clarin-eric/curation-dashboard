@@ -27,12 +27,12 @@ public class CollectionsReport implements Report<CollectionsReport> {
 
     @Override
     public void setParentName(String parentName) {
-        // TODO Auto-generated method stub
+
     }
 
     @Override
     public String getParentName() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
@@ -44,13 +44,13 @@ public class CollectionsReport implements Report<CollectionsReport> {
 
     @Override
     public boolean isValid() {
-        // TODO Auto-generated method stub
+
         return false;
     }
 
     @Override
     public void addSegmentScore(Score segmentScore) {
-        // TODO Auto-generated method stub
+
 
     }
 
@@ -63,7 +63,7 @@ public class CollectionsReport implements Report<CollectionsReport> {
 
     @Override
     public void mergeWithParent(CollectionsReport parentReport) {
-        // TODO Auto-generated method stub
+
 
     }
 

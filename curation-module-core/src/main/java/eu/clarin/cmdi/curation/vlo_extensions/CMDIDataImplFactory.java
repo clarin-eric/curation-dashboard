@@ -17,7 +17,7 @@ public class CMDIDataImplFactory implements CMDIDataFactory<Map<String, List<Val
 
     @Override
     public CMDIData<Map<String, List<ValueSet>>> newCMDIDataInstance() {
-        // TODO Auto-generated method stub
+
         return new CMDIDataImpl(this.fieldNameService);
     }
 

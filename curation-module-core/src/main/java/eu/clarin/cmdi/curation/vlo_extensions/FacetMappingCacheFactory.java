@@ -50,7 +50,7 @@ public class FacetMappingCacheFactory extends FacetMappingFactory {
 
     private FacetMappingCacheFactory(VloConfig vloConfig, VLOMarshaller marshaller) {
         super(vloConfig, marshaller);
-        // TODO Auto-generated constructor stub
+
 
         this.facetMappingPublicCache = CacheBuilder.newBuilder()
                 .concurrencyLevel(4)

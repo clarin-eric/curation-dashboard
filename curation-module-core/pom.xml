@@ -101,6 +101,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.ibatis</groupId>
+            <artifactId>ibatis-core</artifactId>
+            <version>3.0</version>
+        </dependency>
 
         <!--github link: https://github.com/clarin-eric/VLO-->
         <dependency>

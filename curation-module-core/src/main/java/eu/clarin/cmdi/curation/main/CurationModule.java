@@ -80,7 +80,7 @@ public class CurationModule implements CurationModuleInterface {
 
     @Override
     public Report<?> aggregateReports(Collection<Report> reports) {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

@@ -32,32 +32,16 @@ public class FileSizeValidatorTest extends TestBase{
             FileSizeValidator fsv = new FileSizeValidator();
             
             fsv.process(entity, report);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
-        catch (URISyntaxException ex) {
-            // TODO Auto-generated catch block
-            ex.printStackTrace();
-        }
-        catch (IOException ex) {
-            // TODO Auto-generated catch block
-            ex.printStackTrace();
-        }
-        catch (Exception ex) {
-            // TODO Auto-generated catch block
-            ex.printStackTrace();
-        }
-        
     }
     
     @Test
-    public void testFileSettings() {   
-
-            
+    public void testFileSettings() {
             assertTrue(entity.getPath().toString().endsWith("cmdi/cmdi-1_2.xml"));
             assertEquals(9925, entity.getSize());
-            
-
-            
 
     }
     
@@ -65,9 +49,7 @@ public class FileSizeValidatorTest extends TestBase{
     @Test
     public void testCmdiData() {
         assertNotNull(entity.getCMDIData());
-        
- 
-        
+
         assertEquals(1, entity.getCMDIData().getDataResources().size());
         
         assertEquals(1, entity.getCMDIData().getLandingPageResources().size());
@@ -80,7 +62,6 @@ public class FileSizeValidatorTest extends TestBase{
         
         assertEquals("hdl_58_21.11114_47_COLL-0000-000B-CAB3-7", entity.getCMDIData().getDocument().get("id").get(0).getValue()); 
 
-        
     }
 
 }

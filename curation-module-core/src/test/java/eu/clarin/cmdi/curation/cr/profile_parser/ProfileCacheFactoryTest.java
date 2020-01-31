@@ -41,7 +41,6 @@ public class ProfileCacheFactoryTest extends TestBase{
             assertTrue(ph.isPublic());
         }
         catch (Exception ex) {
-            // TODO Auto-generated catch block
             ex.printStackTrace();
         }
     }
@@ -70,7 +69,6 @@ public class ProfileCacheFactoryTest extends TestBase{
             assertFalse(ph.isPublic());
         }
         catch (Exception ex) {
-            // TODO Auto-generated catch block
             ex.printStackTrace();
         }
     }

@@ -29,7 +29,7 @@ public class CurationModuleTest extends TestBase{
             report = curation.processCMDInstance(path);
         }
         catch (Exception ex) {
-            // TODO Auto-generated catch block
+
             ex.printStackTrace();
         }
         assertFalse(Configuration.COLLECTION_MODE);
@@ -51,7 +51,7 @@ public class CurationModuleTest extends TestBase{
             report = curation.processCMDInstance(path);
         }
         catch (Exception ex) {
-            // TODO Auto-generated catch block
+
             ex.printStackTrace();
         }
         assertFalse(Configuration.COLLECTION_MODE);
@@ -71,7 +71,7 @@ public class CurationModuleTest extends TestBase{
             report = curation.processCMDInstance(path);
         }
         catch (Exception ex) {
-            // TODO Auto-generated catch block
+
             ex.printStackTrace();
         }
         assertFalse(Configuration.COLLECTION_MODE);

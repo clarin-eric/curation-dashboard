@@ -26,30 +26,30 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
     @Override
     public void setParentName(String parentName) {
-        // TODO Auto-generated method stub
+
     }
 
     @Override
     public String getParentName() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
+
         return getClass().getSimpleName();
     }
 
     @Override
     public boolean isValid() {
-        // TODO Auto-generated method stub
+
         return false;
     }
 
     @Override
     public void addSegmentScore(Score segmentScore) {
-        // TODO Auto-generated method stub
+
 
     }
 
@@ -62,7 +62,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
     @Override
     public void mergeWithParent(LinkCheckerReport parentReport) {
-        // TODO Auto-generated method stub
+
 
     }
 

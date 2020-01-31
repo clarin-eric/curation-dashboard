@@ -65,13 +65,11 @@ public class FacetMappingExt extends FacetMapping {
     @SuppressWarnings("unchecked")
     @Override
     public Collection<String> getFacetConfigurationNames() {
-        // TODO Auto-generated method stub
         return CollectionUtils.union(this.facetMapping.getFacetConfigurationNames(), _facetsMapExt.keySet());
     }
 
     @Override
     public FacetConfiguration getFacetConfiguration(String facetName) {
-        // TODO Auto-generated method stub
         return _facetsMapExt.containsKey(facetName)? _facetsMapExt.get(facetName):this.facetMapping.getFacetConfiguration(facetName);
     }
 
