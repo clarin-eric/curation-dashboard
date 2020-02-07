@@ -4,6 +4,7 @@ import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.filters.impl.ACDHStatisticsCountFilter;
+import eu.clarin.cmdi.rasa.helpers.Table;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.StatusCodeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -247,20 +248,20 @@ public class CollectionReport implements Report<CollectionReport> {
             }
 
 
-            ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(getName(), null);
+            ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(getName(), null, Table.URLS);
+            urlReport.totNumOfLinks = (int) Configuration.statisticsResource.countTable(filter);
 
-            urlReport.totNumOfLinks = (int) Configuration.statisticsResource.countUrlsTable(Optional.of(filter));
+            filter = new ACDHStatisticsCountFilter(getName(), null, Table.STATUS);
+            urlReport.totNumOfCheckedLinks = (int) Configuration.statisticsResource.countTable(filter);
 
-            urlReport.totNumOfCheckedLinks = (int) Configuration.statisticsResource.countStatusTable(Optional.of(filter));
+            filter = new ACDHStatisticsCountFilter(getName(), null, true, false, Table.STATUS);
+            urlReport.totNumOfBrokenLinks = (int) Configuration.statisticsResource.countTable(filter);
 
-            filter = new ACDHStatisticsCountFilter(getName(), null, true, false);
-            urlReport.totNumOfBrokenLinks = (int) Configuration.statisticsResource.countStatusTable(Optional.of(filter));
+            filter = new ACDHStatisticsCountFilter(getName(), null, false, true, Table.STATUS);
+            urlReport.totNumOfUndeterminedLinks = (int) Configuration.statisticsResource.countTable(filter);
 
-            filter = new ACDHStatisticsCountFilter(getName(), null, false, true);
-            urlReport.totNumOfUndeterminedLinks = (int) Configuration.statisticsResource.countStatusTable(Optional.of(filter));
-
-            filter = new ACDHStatisticsCountFilter(getName(), null);
-            urlReport.totNumOfUniqueLinks = (int) Configuration.statisticsResource.countUrlsTable(Optional.of(filter));
+            filter = new ACDHStatisticsCountFilter(getName(), null, Table.URLS);
+            urlReport.totNumOfUniqueLinks = (int) Configuration.statisticsResource.countTable(filter);
 
             urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
             urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
