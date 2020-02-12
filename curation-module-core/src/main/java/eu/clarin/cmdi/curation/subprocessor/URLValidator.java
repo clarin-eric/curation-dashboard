@@ -75,11 +75,10 @@ public class URLValidator extends CMDSubprocessor {
 
             for (String url : urlMap.keySet()) {
 
-                CheckedLink checkedLink = null;
                 try {
-                    checkedLink = Configuration.checkedLinkResource.get(url, parentName);
+                    Optional<CheckedLink> checkedLinkOptional = Configuration.checkedLinkResource.get(url, parentName);
 
-                    if (checkedLink == null) {
+                    if (checkedLinkOptional.isEmpty()) {
                         String expectedMimeType = urlMap.get(url).getMimeType();
                         expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
@@ -90,12 +89,12 @@ public class URLValidator extends CMDSubprocessor {
 
                         linksToBeChecked.add(linkToBeChecked);
 
-                    }else{
+                    } else {
                         //link is checked and found see if it is broken or undetermined
-                        Category category = StatusCodeMapper.get(checkedLink.getStatus());
-                        if(category.equals(Category.BROKEN)){
+                        Category category = StatusCodeMapper.get(checkedLinkOptional.get().getStatus());
+                        if (category.equals(Category.BROKEN)) {
                             numOfBrokenLinks++;
-                        }else if(category.equals(Category.UNDETERMINED)){
+                        } else if (category.equals(Category.UNDETERMINED)) {
                             numOfUndeterminedLinks++;
                         }
                     }
@@ -126,35 +125,38 @@ public class URLValidator extends CMDSubprocessor {
                 String expectedMimeType = urlMap.get(url).getMimeType();
                 expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
-                CheckedLink checkedLink = null;
                 try {// check if URL is broken
+
                     try {
-                        checkedLink = Configuration.checkedLinkResource.get(url, parentName);
+                        Optional<CheckedLink> checkedLinkOptional = Configuration.checkedLinkResource.get(url, parentName);
+                        CheckedLink checkedLink = null;
+                        if (checkedLinkOptional.isEmpty()) {//if it is not in the database or database connection can't be established, check it yourself :)
+                            _logger.info("Checking url: " + url);
+
+                            checkedLink = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
+                            checkedLink.setExpectedMimeType(expectedMimeType);
+                        }else{
+                            checkedLink=checkedLinkOptional.get();
+                        }
+
+                        if (checkedLink.getStatus() != 200 && checkedLink.getStatus() != 302) {
+                            if (checkedLink.getStatus() == 401 || checkedLink.getStatus() == 405 || checkedLink.getStatus() == 429) {
+                                numOfUndeterminedLinks++;
+                            } else {
+                                numOfBrokenLinks++;
+                            }
+
+                        }
+
+                        addMessageForStatusCode(checkedLink.getStatus(), url);
+
+                        CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(checkedLink);
+                        report.addURLElement(urlElementReport);
+
                     } catch (SQLException e) {
                         _logger.warn("There is something wrong with the database connection.");
                         //can't connect to database, check it yourself
                     }
-
-                    if (checkedLink == null) {//if it is not in the database or database connection can't be established, check it yourself :)
-                        _logger.info("Checking url: " + url);
-
-                        checkedLink = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
-                        checkedLink.setExpectedMimeType(expectedMimeType);
-                    }
-
-                    if (checkedLink.getStatus() != 200 && checkedLink.getStatus() != 302) {
-                        if (checkedLink.getStatus() == 401 || checkedLink.getStatus() == 405 || checkedLink.getStatus() == 429) {
-                            numOfUndeterminedLinks++;
-                        } else {
-                            numOfBrokenLinks++;
-                        }
-
-                    }
-
-                    addMessageForStatusCode(checkedLink.getStatus(), url);
-
-                    CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(checkedLink);
-                    report.addURLElement(urlElementReport);
 
 
                 } catch (IOException | IllegalArgumentException e) {
