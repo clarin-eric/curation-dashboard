@@ -135,7 +135,6 @@ public class Main {
                 profileReports.put(pHeader.getId(), curator.processCMDProfile(pHeader.getId()));
             }
 
-
             Report<?> report;
             if (cmd.hasOption("path")) {
 
