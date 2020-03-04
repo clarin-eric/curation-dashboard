@@ -92,9 +92,9 @@ public class URLValidator extends CMDSubprocessor {
                     } else {
                         //link is checked and found see if it is broken or undetermined
                         Category category = StatusCodeMapper.get(checkedLinkOptional.get().getStatus());
-                        if (category.equals(Category.BROKEN)) {
+                        if (category.equals(Category.Broken)) {
                             numOfBrokenLinks++;
-                        } else if (category.equals(Category.UNDETERMINED)) {
+                        } else if (category.equals(Category.Undetermined)) {
                             numOfUndeterminedLinks++;
                         }
                     }

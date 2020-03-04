@@ -47,6 +47,9 @@ public class Curate {
             return ResponseManager.returnError(400, "Input URL can't be empty.");
         }
 
+        //just to make it more user friendly ignore leading and trailing spaces
+        urlStr=urlStr.trim();
+
         if (!urlStr.startsWith("http://") && !urlStr.startsWith("https://")) {
             if (urlStr.startsWith("www")) {
                 urlStr = "http://" + urlStr;
