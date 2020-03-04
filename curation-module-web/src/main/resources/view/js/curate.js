@@ -74,6 +74,7 @@ $(document).ready( function () {
     $("#profiles_filter").hide();//hide top filter which is not necessary
 
     redirectDeprecatedURLs();
+
 } );
 
 Dropzone.autoDiscover = false;
@@ -130,16 +131,21 @@ function toggleFacets() {
     }
 }
 
-
-
 $('#validateButton').click(function() {
     //only change to spinner if input is valid
     if($('#url-input').val()){
-        $(this).html('<div>Curating...</div><div id="uploadWheel" class="spinner"></div>')
+        $(this).html('<div>Curating...</div><div id="uploadWheel" class="spinner"></div>');
         $(this).prop('disabled', true);
     }
 });
 
+//when back button is clicked, validate button doesnt refresh and stays in the loading spinner phase
+//this is to insure that it does
+window.onpageshow = function (event) {
+    var button = $('#validateButton');
+    button.html('Validate');
+    button.prop('disabled', false);
+};
 
 var table = $('#statsTable');
 var collectionName = table.attr("data-collection");

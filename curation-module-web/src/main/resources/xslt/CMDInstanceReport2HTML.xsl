@@ -32,9 +32,9 @@
                         <xsl:value-of select="./profile-section/id"></xsl:value-of>
                     </a>
                 </p>
-                <p>Status:
-                    <xsl:value-of select="./profile-section/status"/>
-                </p>
+<!--                <p>Status:-->
+<!--                    <xsl:value-of select="./profile-section/status"/>-->
+<!--                </p>-->
                 <p>File Size:
                     <xsl:value-of select="./file-section/size"/> B
                 </p>

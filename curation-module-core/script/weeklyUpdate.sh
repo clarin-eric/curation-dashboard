@@ -56,7 +56,7 @@ set -e
 #find $REPORTS_DIR -name '*.xml' -exec rm {} \;
 
 echo "generating new reports, downloading necessary profiles..."
-java $VM_ARGS -Dprojectname=curate $LOG4J -jar $BIN_DIR/curation-module-core-3.1.2-jar-with-dependencies.jar -config $CONF_DIR/config.properties -r -path $DATA_DIR/clarin/$CMDI_PATH $DATA_DIR/europeana/$CMDI_PATH
+java $VM_ARGS -Dprojectname=curate $LOG4J -jar $BIN_DIR/curation-module-core-4.0-jar-with-dependencies.jar -config $CONF_DIR/config.properties -r -path $DATA_DIR/clarin/$CMDI_PATH $DATA_DIR/europeana/$CMDI_PATH
 echo "report generation finished. creating value maps..."
 
 # create value maps
