@@ -55,10 +55,10 @@
 
 				<p>
 					Timestamp:
-					<xsl:value-of select="./@timeStamp" />
+					<xsl:value-of select="./@timestamp" />
 				</p>
 
-				<hr />
+				<hr/>
 
 				<h2>File Section</h2>
 				<p>
