@@ -65,7 +65,7 @@ public class Curate {
         try {
             linkChecker.download(urlStr, new File(tempPath));
         } catch (IOException e) {
-            return ResponseManager.returnError(400, "Given URL is invalid");
+            return ResponseManager.returnError(400, "Either the given URL is invalid or unreachable from our servers right now. Try downloading the instance and uploading it directly via drag and drop.");
         }
         try {
             String content = FileManager.readFile(tempPath);
