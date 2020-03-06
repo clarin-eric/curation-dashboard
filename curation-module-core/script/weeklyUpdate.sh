@@ -16,7 +16,6 @@ LOG4J=-Dlog4j.configuration=file:$CONF_DIR/log4j.properties
 VM_ARGS="-Xms4G -Xmx8G -XX:+UseG1GC -XX:-UseParallelGC -XX:+UseStringDeduplication -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -XX:GCTimeRatio=20"
 
 XSD_CACHE=$WORK_DIR/xsd_cache
-REPORTS_DIR=$WORK_DIR/reports/collections
 
 # terminate script if anything goes wrong
 set -e
@@ -50,11 +49,6 @@ set -e
 #	rm $RESULTSET
 #done
 
-#remove old profiles and reports
-#echo "remove old profiles and reports..."
-#find $XSD_CACHE -name '*.xsd' -exec rm {} \;
-#find $REPORTS_DIR -name '*.xml' -exec rm {} \;
-
 echo "generating new reports, downloading necessary profiles..."
 java $VM_ARGS -Dprojectname=curate $LOG4J -jar $BIN_DIR/curation-module-core-4.0-jar-with-dependencies.jar -config $CONF_DIR/config.properties -r -path $DATA_DIR/clarin/$CMDI_PATH $DATA_DIR/europeana/$CMDI_PATH
 echo "report generation finished. creating value maps..."
@@ -69,11 +63,6 @@ done
 #echo "recharging curate vlo..."
 #java -cp $BIN_DIR/vlo-importer-4.4.3-importer.jar $VM_ARGS -Dprojectname=vlo-importer $LOG4J -DconfigFile=$CONF_DIR/VloConfig-acdh.xml eu.clarin.cmdi.vlo.importer.MetadataImporterRunner
 
-cd $WORK_DIR
-
-if [ -e $DATA_DIR ]; then
-        rm -rf $DATA_DIR
-fi
 echo "Finished!"
 ELAPSED_TIME=$(($SECONDS - $START_TIME))
 echo "Elapsed time: $(($ELAPSED_TIME/60)) min"

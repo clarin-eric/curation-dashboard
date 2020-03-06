@@ -111,7 +111,7 @@ public class Configuration {
         try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/clarin/results/cmdi"))) {
             clarinCollections = (ArrayList<String>) walk.filter(Files::isDirectory).map(file -> file.getFileName().toString()).collect(Collectors.toList());
         } catch (IOException e) {
-            _logger.error("Error when reading folders from :" + dataDirectory + "/europeana/results/cmdi, Message:" + e.getMessage());
+            _logger.error("Error when reading folders from :" + dataDirectory + "/clarin/results/cmdi, Message:" + e.getMessage());
         }
 
         try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/europeana/results/cmdi"))) {
