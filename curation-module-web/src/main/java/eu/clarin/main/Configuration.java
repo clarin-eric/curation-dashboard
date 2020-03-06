@@ -108,14 +108,14 @@ public class Configuration {
 
         //collection categorizing into europeana and clarin based on the data folder
         String dataDirectory = properties.getProperty("DATA_DIRECTORY");
-        try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/clarin/results/cmdi"))) {
-            clarinCollections = (ArrayList<String>) walk.filter(Files::isDirectory).map(file -> file.getFileName().toString()).collect(Collectors.toList());
+        try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/clarin/results/cmdi/"))) {
+            clarinCollections = (ArrayList<String>) walk.filter(Files::isDirectory).filter(path -> !path.getFileName().toString().equals("cmdi")).map(file -> file.getFileName().toString()).collect(Collectors.toList());
         } catch (IOException e) {
             _logger.error("Error when reading folders from :" + dataDirectory + "/clarin/results/cmdi, Message:" + e.getMessage());
         }
 
-        try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/europeana/results/cmdi"))) {
-            europeanaCollections = (ArrayList<String>) walk.filter(Files::isDirectory).map(file -> file.getFileName().toString()).collect(Collectors.toList());
+        try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/europeana/results/cmdi/"))) {
+            europeanaCollections = (ArrayList<String>) walk.filter(Files::isDirectory).filter(path -> !path.getFileName().toString().equals("cmdi")).map(file -> file.getFileName().toString()).collect(Collectors.toList());
         } catch (IOException e) {
             _logger.error("Error when reading folders from :" + dataDirectory + "/europeana/results/cmdi, Message:" + e.getMessage());
         }
