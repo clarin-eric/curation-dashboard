@@ -32,6 +32,7 @@ public class Configuration {
     private static Logger _logger = LoggerFactory.getLogger(Configuration.class);
 
     public static String VIEW_RESOURCES_PATH;
+    public static String RECORDS_PATH;
     public static String OUTPUT_DIRECTORY;
     public static String BASE_URL;
     public static ArrayList<String> clarinCollections;
@@ -44,7 +45,6 @@ public class Configuration {
     public static void init(ServletContext servletContext) throws IOException {
 
         VIEW_RESOURCES_PATH = servletContext.getRealPath("/WEB-INF/classes/view/");
-        _logger.info("resources path: " + VIEW_RESOURCES_PATH);
 
         String path = servletContext.getInitParameter("config.location");
 
@@ -103,6 +103,7 @@ public class Configuration {
     private static void loadVariables(Properties properties) {
 
         OUTPUT_DIRECTORY = properties.getProperty("OUTPUT_DIRECTORY");
+        RECORDS_PATH = properties.getProperty("RECORDS_PATH");
 
         BASE_URL = properties.getProperty("BASE_URL");
 

@@ -111,7 +111,7 @@
         <dependency>
             <groupId>eu.clarin.cmdi</groupId>
             <artifactId>vlo-importer</artifactId>
-            <version>4.7.2</version>
+            <version>4.8.2</version>
         </dependency>
     </dependencies>
 

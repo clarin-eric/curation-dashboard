@@ -247,8 +247,7 @@
 										<tr>
 											<td>
 											<a>
-												<xsl:attribute name="href"><xsl:value-of select="./@name" /></xsl:attribute>
-												<xsl:attribute name="download" />
+												<xsl:attribute name="href">/record/<xsl:value-of select="./@name" /></xsl:attribute>
 												<xsl:value-of select="./@name" />
 											</a>
 												
