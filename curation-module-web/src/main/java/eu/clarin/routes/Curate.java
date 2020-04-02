@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 @Path("/curate")
@@ -48,28 +49,46 @@ public class Curate {
         }
 
         //just to make it more user friendly ignore leading and trailing spaces
-        urlStr=urlStr.trim();
+        urlStr = urlStr.trim();
+
+        boolean url = true;
 
         if (!urlStr.startsWith("http://") && !urlStr.startsWith("https://")) {
             if (urlStr.startsWith("www")) {
                 urlStr = "http://" + urlStr;
             } else {
-                return ResponseManager.returnError(400, "Given URL is invalid");
+                url = false;
             }
         }
 
-        String resultFileName = System.currentTimeMillis() + "_" + FileNameEncoder.encode(urlStr);
-        String tempPath = System.getProperty("java.io.tmpdir") + "/" + resultFileName;
+        //on collection reports, there are invalid records table, which have a "validate file" button.
+        //This sends the relative location of the records instead of the full url so i make up for it here.
+        //See if the given parameter url-input resloves to a file location in the system
+        //this is a workaround hack but i dont have time for it and want the frontend to work without problems
+        //so this is the current state. if you, who are reading this have free time, by all means fix it.
+        String path;
+        String resultFileName;
+        if (!url) {
+            path = Configuration.RECORDS_PATH + "/" + urlStr;//here it is regarded as a path instead of url.
+            resultFileName = urlStr.split("/")[urlStr.split("/").length-1];
+            if(!FileManager.exists(path)){
+                return ResponseManager.returnError(400, "Given URL is invalid");
+            }//else go down and curate the file
+        } else {
+            resultFileName = System.currentTimeMillis() + "_" + FileNameEncoder.encode(urlStr);
+            path = System.getProperty("java.io.tmpdir") + "/" + resultFileName;
 
-        HTTPLinkChecker linkChecker = new HTTPLinkChecker();
-        try {
-            linkChecker.download(urlStr, new File(tempPath));
-        } catch (IOException e) {
-            return ResponseManager.returnError(400, "Either the given URL is invalid or unreachable from our servers right now. Try downloading the instance and uploading it directly via drag and drop.");
+            HTTPLinkChecker linkChecker = new HTTPLinkChecker();
+            try {
+                linkChecker.download(urlStr, new File(path));
+            } catch (IOException e) {
+                return ResponseManager.returnError(400, "Either the given URL is invalid or unreachable from our servers right now. Try downloading the instance and uploading it directly via drag and drop.");
+            }
         }
+
         try {
-            String content = FileManager.readFile(tempPath);
-            return curate(content, resultFileName, urlStr);
+            String content = FileManager.readFile(path);
+            return curate(content, resultFileName, path);
 
         } catch (IOException | TransformerException | JAXBException e) {
             _logger.error("There was a problem generating the report: ", e);
@@ -96,7 +115,7 @@ public class Curate {
             String tempPath = System.getProperty("java.io.tmpdir") + "/" + resultFileName;
             FileManager.writeToFile(tempPath, content);
 
-            return curate(content, resultFileName, uploadFileName);
+            return curate(content, resultFileName, tempPath);
         } catch (IOException | TransformerException | JAXBException e) {
             _logger.error("There was a problem generating the report: ", e);
             return ResponseManager.returnServerError();
@@ -105,20 +124,19 @@ public class Curate {
 
 
     private Response curate(String content, String resultFileName, String fileLocation) throws TransformerException, JAXBException, IOException {
-        String tempPath = System.getProperty("java.io.tmpdir") + "/" + resultFileName;
+//        String tempPath = System.getProperty("java.io.tmpdir") + "/" + resultFileName;
 
         Report<?> report;
         try {
             CurationModule cm = new CurationModule();
-            
-            if(content.substring(0, 200).contains("xmlns:xs=")) {//it's a profile
-                if(!content.substring(0, 200).contains("http://www.clarin.eu/cmd/1")) //but not a valid cmd 1.2 profile
+
+            if (content.substring(0, 200).contains("xmlns:xs=")) {//it's a profile
+                if (!content.substring(0, 200).contains("http://www.clarin.eu/cmd/1")) //but not a valid cmd 1.2 profile
                     throw new Exception("profile has no cmd 1.2 namespace declaration");
                 else
-                    report = cm.processCMDProfile(Paths.get(tempPath).toUri().toURL());
-            }
-            else { // no profile - so processed as CMD instance 
-                report = cm.processCMDInstance(Paths.get(tempPath));
+                    report = cm.processCMDProfile(Paths.get(fileLocation).toUri().toURL());
+            } else { // no profile - so processed as CMD instance
+                report = cm.processCMDInstance(Paths.get(fileLocation));
             }
         } catch (MalformedURLException e) {
             return ResponseManager.returnError(400, "Input URL is malformed.");

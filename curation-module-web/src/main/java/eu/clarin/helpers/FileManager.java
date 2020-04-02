@@ -32,6 +32,10 @@ public class FileManager {
         return ImageIO.read(new File(filePath));
     }
 
+    public static boolean exists(String filePath) {
+        return Files.exists(Paths.get(filePath));
+    }
+
     public static void writeToFile(String path, String content) throws IOException {
         File file = new File(path);
         file.createNewFile();
@@ -75,14 +79,14 @@ public class FileManager {
 
 
             for (String filePath : walkResult) {
-                if(regexFilter!=null){
+                if (regexFilter != null) {
                     String fileName = filePath.split("/")[filePath.split("/").length - 1];
                     Pattern p = Pattern.compile(regexFilter);
                     Matcher m = p.matcher(fileName);
                     if (m.find()) {
                         deleteFile(filePath);
                     }
-                }else{
+                } else {
                     deleteFile(filePath);
                 }
 
