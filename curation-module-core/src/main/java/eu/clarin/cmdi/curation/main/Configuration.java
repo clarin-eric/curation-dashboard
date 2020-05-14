@@ -28,7 +28,7 @@ import eu.clarin.cmdi.vlo.config.XmlVloConfigFactory;
 
 public class Configuration {
 
-    private static Logger _logger = LoggerFactory.getLogger(Configuration.class);
+    private static Logger logger = LoggerFactory.getLogger(Configuration.class);
 
     public static String SCORE_NUMERIC_DISPLAY_FORMAT;
     public static String TIMESTAMP_DISPLAY_FORMAT;
@@ -60,7 +60,7 @@ public class Configuration {
     private static RasaFactory factory;
 
     public static void init(String file) throws IOException {
-        _logger.info("Initializing configuration from {}", file);
+        logger.info("Initializing configuration from {}", file);
         Properties config = new Properties();
         config.load(new FileInputStream(file));
         readProperties(config);
@@ -68,7 +68,7 @@ public class Configuration {
     }
 
     public static void initDefault() throws IOException {
-        _logger.info("Initializing configuration with default config file");
+        logger.info("Initializing configuration with default config file");
         Properties config = new Properties();
         config.load(Configuration.class.getResourceAsStream("/config.properties"));
         readProperties(config);
@@ -91,7 +91,7 @@ public class Configuration {
         if (timeout == null || timeout.isEmpty()) {
             //in ms(if config file doesnt have it)
             int TIMEOUTDEFAULT = 5000;
-            _logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT + "ms.");
+            logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT + "ms.");
             TIMEOUT = TIMEOUTDEFAULT;
         } else {
             TIMEOUT = Integer.parseInt(timeout);
@@ -130,11 +130,11 @@ public class Configuration {
         String vloConfigLocation = config.getProperty("VLO_CONFIG_LOCATION");
 
         if (vloConfigLocation == null || vloConfigLocation.isEmpty()) {
-            _logger.warn("loading default VloConfig.xml from vlo-commons.jar - PROGRAM WILL WORK BUT WILL PROBABABLY DELIVER UNATTENDED RESULTS!!!");
-            _logger.warn("make sure to define a valid VLO_CONFIG_LOCATION in the file config.properties");
+            logger.warn("loading default VloConfig.xml from vlo-commons.jar - PROGRAM WILL WORK BUT WILL PROBABABLY DELIVER UNATTENDED RESULTS!!!");
+            logger.warn("make sure to define a valid VLO_CONFIG_LOCATION in the file config.properties");
             VLO_CONFIG = new DefaultVloConfigFactory().newConfig();
         } else {
-            _logger.info("loading VloConfig.xml from location {}", vloConfigLocation);
+            logger.info("loading VloConfig.xml from location {}", vloConfigLocation);
             VLO_CONFIG = new XmlVloConfigFactory(new File(config.getProperty("VLO_CONFIG_LOCATION")).toURI().toURL()).newConfig();
         }
 

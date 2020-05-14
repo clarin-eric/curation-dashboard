@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 @Path("/instance")
 public class Instance {
 
-    private static final Logger _logger = Logger.getLogger(Instance.class);
+    private static final Logger logger = Logger.getLogger(Instance.class);
 
     @GET
     @Path("/{instanceName}")
@@ -50,7 +50,7 @@ public class Instance {
                     return ResponseManager.returnError(400, "Instance name must end with either '.xml' or '.html'.");
             }
         } catch (IOException e) {
-            _logger.error("There was an error reading the instance: " + instanceName, e);
+            logger.error("There was an error reading the instance: " + instanceName, e);
             return ResponseManager.returnError(404, "The instance " + instanceName + " doesn't exist.");
         }
 

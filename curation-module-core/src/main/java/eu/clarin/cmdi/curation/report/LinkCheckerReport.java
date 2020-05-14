@@ -107,7 +107,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
     public static class Overall {
 
-        private static final Logger _logger = LoggerFactory.getLogger(Overall.class);
+        private static final Logger logger = LoggerFactory.getLogger(Overall.class);
         private List<Statistics> statistics = new ArrayList<>();
         @XmlAttribute
         private int count;
@@ -144,7 +144,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
                 this.maxRespTime = statistics.getMaxRespTime();
 
             } catch (SQLException e) {
-                _logger.error("There was a problem getting the overall statistics: " + e.getMessage());
+                logger.error("There was a problem getting the overall statistics: " + e.getMessage());
                 this.avgRespTime = 0;
                 this.count = 0;
                 this.maxRespTime = 0;

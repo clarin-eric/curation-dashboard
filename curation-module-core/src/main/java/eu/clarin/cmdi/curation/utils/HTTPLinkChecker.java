@@ -34,7 +34,7 @@ public class HTTPLinkChecker {
     //this determines what status codes will not be considered broken links. urls with these codes will also not factor into the url-scores
     private List<Integer> undeterminedStatusCodes = new ArrayList<>(Arrays.asList(401, 405, 429));
 
-    private final static Logger _logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
+    private final static Logger logger = LoggerFactory.getLogger(HTTPLinkChecker.class);
 
     //this is only for link-checker module, don't use it from core-module(will throw nullpointer because it can't find properties)
     public HTTPLinkChecker() {
@@ -50,7 +50,7 @@ public class HTTPLinkChecker {
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
     public CheckedLink checkLink(String url, int redirectFollowLevel, long durationPassed, String originalURL) throws IOException, IllegalArgumentException {
-        _logger.trace("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
+        logger.trace("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
         if (url == null) {
             throw new IOException("The requested url is null.");
         }

@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class CollectionAggregator {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CollectionAggregator.class);
+    private static final Logger logger = LoggerFactory.getLogger(CollectionAggregator.class);
 
     protected Collection<Message> msgs = null;
 
@@ -67,7 +67,7 @@ public class CollectionAggregator {
                     CMDInstanceReport cmdInstanceReport = instance.generateReport(report.getName());
                     cmdInstanceReport.mergeWithParent(report);
                 } catch (TransformerException | FileSizeException | IOException | ExecutionException | ParserConfigurationException | SAXException | VTDException e) {
-                    _logger.error("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()+ " Skipping to next instance...");
+                    logger.error("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()+ " Skipping to next instance...");
                     new ErrorReport(instance.getPath().toString(), e.getMessage()).mergeWithParent(report);
                 }
             });
@@ -79,7 +79,7 @@ public class CollectionAggregator {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
-                _logger.error("Error occured while waiting for the threadpool to terminate.");
+                logger.error("Error occured while waiting for the threadpool to terminate.");
             }
         }
 

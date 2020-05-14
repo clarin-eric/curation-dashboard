@@ -29,7 +29,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 
 public class Configuration {
 
-    private static Logger _logger = LoggerFactory.getLogger(Configuration.class);
+    private static Logger logger = LoggerFactory.getLogger(Configuration.class);
 
     public static String VIEW_RESOURCES_PATH;
     public static String RECORDS_PATH;
@@ -55,7 +55,7 @@ public class Configuration {
         linkToBeCheckedResource = eu.clarin.cmdi.curation.main.Configuration.linkToBeCheckedResource;
         statisticsResource = eu.clarin.cmdi.curation.main.Configuration.statisticsResource;
 
-        _logger.info("Initializing configuration from: " + path);
+        logger.info("Initializing configuration from: " + path);
         Properties properties = new Properties();
         properties.load(new FileInputStream(path));
         loadVariables(properties);
@@ -75,9 +75,9 @@ public class Configuration {
 
             try {
                 FileManager.cleanFolders(Arrays.asList(instancesXmlFolder, instancesHtmlFolder), null);
-                _logger.info("Cleaned temp instances.");
+                logger.info("Cleaned temp instances.");
             } catch (IOException e) {
-                _logger.error("Error when cleaning instances: " + e.getMessage());
+                logger.error("Error when cleaning instances: " + e.getMessage());
             }
         };
 
@@ -86,9 +86,9 @@ public class Configuration {
             String profilesHtmlFolder = OUTPUT_DIRECTORY + "/html/profiles";
             try {
                 FileManager.cleanFolders(Arrays.asList(profilesHtmlFolder, profilesXmlFolder), "^\\d{13}_.+$");
-                _logger.info("Cleaned temp profiles.");
+                logger.info("Cleaned temp profiles.");
             } catch (IOException e) {
-                _logger.error("Error when cleaning profiles: " + e.getMessage());
+                logger.error("Error when cleaning profiles: " + e.getMessage());
             }
         };
 
@@ -112,16 +112,16 @@ public class Configuration {
         try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/clarin/results/cmdi/"))) {
             clarinCollections = (ArrayList<String>) walk.filter(Files::isDirectory).filter(path -> !path.getFileName().toString().equals("cmdi")).map(file -> file.getFileName().toString()).collect(Collectors.toList());
         } catch (IOException e) {
-            _logger.error("Error when reading folders from :" + dataDirectory + "/clarin/results/cmdi, Message:" + e.getMessage());
+            logger.error("Error when reading folders from :" + dataDirectory + "/clarin/results/cmdi, Message:" + e.getMessage());
         }
 
         try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/europeana/results/cmdi/"))) {
             europeanaCollections = (ArrayList<String>) walk.filter(Files::isDirectory).filter(path -> !path.getFileName().toString().equals("cmdi")).map(file -> file.getFileName().toString()).collect(Collectors.toList());
         } catch (IOException e) {
-            _logger.error("Error when reading folders from :" + dataDirectory + "/europeana/results/cmdi, Message:" + e.getMessage());
+            logger.error("Error when reading folders from :" + dataDirectory + "/europeana/results/cmdi, Message:" + e.getMessage());
         }
-        _logger.info("Clarin collections: " + clarinCollections);
-        _logger.info("Europeana collections: " + europeanaCollections);
+        logger.info("Clarin collections: " + clarinCollections);
+        logger.info("Europeana collections: " + europeanaCollections);
 
         //create Instances directory if it doesn't exist
         try {
@@ -134,7 +134,7 @@ public class Configuration {
             path = Paths.get(OUTPUT_DIRECTORY + "/html/profiles");
             Files.createDirectories(path);
         } catch (IOException e) {
-            _logger.error("There was an error creating the profiles/instances xml/html folder: " + e.getMessage());
+            logger.error("There was an error creating the profiles/instances xml/html folder: " + e.getMessage());
         }
 
 

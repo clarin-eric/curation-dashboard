@@ -16,7 +16,7 @@ import java.io.InputStream;
 @Path("/faq")
 public class Faq {
 
-    private static final Logger _logger = Logger.getLogger(Faq.class);
+    private static final Logger logger = Logger.getLogger(Faq.class);
 
     @GET
     @Path("/")
@@ -26,7 +26,7 @@ public class Faq {
 
             return ResponseManager.returnHTML(200, faq, null);
         } catch (IOException e) {
-            _logger.error("Error when reading faq.html: ", e);
+            logger.error("Error when reading faq.html: ", e);
             return ResponseManager.returnServerError();
         }
     }
@@ -35,7 +35,7 @@ public class Faq {
     @Path("/faq.md")
     public Response getFaqMD() {
 
-        _logger.error("allahallah");
+        logger.error("allahallah");
         String faqJsonPath = Configuration.VIEW_RESOURCES_PATH + "/markdown/faq.md";
         final InputStream fileInStream;
         try {
@@ -43,7 +43,7 @@ public class Faq {
             return ResponseManager.returnFile(200, fileInStream, "text/markdown", "faq.md");
 
         } catch (FileNotFoundException e) {
-            _logger.error("There was an error getting the faq.md file: ", e);
+            logger.error("There was an error getting the faq.md file: ", e);
             return ResponseManager.returnServerError();
         }
     }

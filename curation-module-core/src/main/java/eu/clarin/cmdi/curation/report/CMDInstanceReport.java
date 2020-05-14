@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDInstanceReport implements Report<CollectionReport> {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CMDInstanceReport.class);
+    private static final Logger logger = LoggerFactory.getLogger(CMDInstanceReport.class);
 
     public String parentName;
 

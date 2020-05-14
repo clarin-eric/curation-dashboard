@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 //this class creates a html report
 public class LinkCheckerStatisticsHelper {
-    private static final Logger _logger = LoggerFactory.getLogger(LinkCheckerStatisticsHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(LinkCheckerStatisticsHelper.class);
 
 
 //    private AggregateIterable<Document> getStatusStatistics() {

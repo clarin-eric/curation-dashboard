@@ -20,7 +20,7 @@ import java.util.Map;
 
 class CCRService implements ICCRService {
 
-    private static Logger _logger = LoggerFactory.getLogger(CCRService.class);
+    private static Logger logger = LoggerFactory.getLogger(CCRService.class);
 
     static final String CCR_SINGLE_CONCEPT = CCRServiceFactory.CCR_REST_API_URL
             + "concept?fl=status,%20prefLabel@en&format=json&id=";
@@ -34,7 +34,7 @@ class CCRService implements ICCRService {
         try {
             init();
         } catch (Exception e) {
-            _logger.error("Unable to initialize CCRService. Probably CCR is not available at the moment", e);
+            logger.error("Unable to initialize CCRService. Probably CCR is not available at the moment", e);
 
             // wowasa (2017-05-09): whole application crashes in case the error
             // is thrown here
@@ -56,7 +56,7 @@ class CCRService implements ICCRService {
     }
 
     private void init() throws IOException, NoSuchAlgorithmException, KeyManagementException {
-        _logger.debug("Fetching from {}", CCR_ALL_CONCEPTS);
+        logger.debug("Fetching from {}", CCR_ALL_CONCEPTS);
 
         /* wowasa (2017-05-26): validation check might be switched off to bypass expired certificates.
          * System-property can be set with the following entry in web.xml
@@ -68,7 +68,7 @@ class CCRService implements ICCRService {
          */
 
         if (System.getProperty("crrservice.ssl.validate", "on").equalsIgnoreCase("off")) {
-            _logger.warn("SSL-certificate check in CRRService deaktivated");
+            logger.warn("SSL-certificate check in CRRService deaktivated");
 
             TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
                 public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -97,7 +97,7 @@ class CCRService implements ICCRService {
         JsonElement numberOfRecords = obj.get("numFound");
         int numFound = numberOfRecords.getAsInt();
 
-        _logger.debug("Number of found concepts in CCR is {}", numFound);
+        logger.debug("Number of found concepts in CCR is {}", numFound);
 
         JsonArray conceptsArray = obj.getAsJsonArray("docs");
         final GsonBuilder gsonBuilder = new GsonBuilder();

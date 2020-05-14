@@ -18,7 +18,7 @@ import java.io.InputStream;
 @Path("/help")
 public class Help {
 
-    private static final Logger _logger = Logger.getLogger(Help.class);
+    private static final Logger logger = Logger.getLogger(Help.class);
 
     @GET
     @Path("/")
@@ -28,7 +28,7 @@ public class Help {
 
             return ResponseManager.returnHTML(200, help, null);
         } catch (IOException e) {
-            _logger.error("Error when reading help.html: ", e);
+            logger.error("Error when reading help.html: ", e);
             return ResponseManager.returnServerError();
         }
     }

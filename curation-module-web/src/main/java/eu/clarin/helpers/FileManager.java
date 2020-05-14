@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 public class FileManager {
 
-    private static final Logger _logger = Logger.getLogger(FileManager.class);
+    private static final Logger logger = Logger.getLogger(FileManager.class);
 
     public static String readFile(String path) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));

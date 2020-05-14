@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class URLValidator extends CMDSubprocessor {
 
-    private static final Logger _logger = LoggerFactory.getLogger(URLValidator.class);
+    private static final Logger logger = LoggerFactory.getLogger(URLValidator.class);
 
 
     @Override
@@ -100,21 +100,21 @@ public class URLValidator extends CMDSubprocessor {
                     }
 
                 } catch (SQLException e) {
-                    _logger.error("Error when getting " + url + " from status table: " + e.getMessage());
+                    logger.error("Error when getting " + url + " from status table: " + e.getMessage());
                 }
             }
 
             try {//save all links not in status in a batch to urls
                 Configuration.linkToBeCheckedResource.save(linksToBeChecked);
             } catch (SQLException e) {
-                _logger.error("Error when saving " + linksToBeChecked + " to urls table: " + e.getMessage());
+                logger.error("Error when saving " + linksToBeChecked + " to urls table: " + e.getMessage());
             }
 
 
 //              try {
 //                report.urlReport = createInstanceURLReportFromDatabase(numOfLinks.get(), report.getName(), report.parentName);
 //            } catch (SQLException e) {
-//                _logger.error("Error when creating url report for record: " + report.getName() + ". " + e.getMessage());
+//                logger.error("Error when creating url report for record: " + report.getName() + ". " + e.getMessage());
 //            }
 
         } else {//instance mode
@@ -131,7 +131,7 @@ public class URLValidator extends CMDSubprocessor {
                         Optional<CheckedLink> checkedLinkOptional = Configuration.checkedLinkResource.get(url, parentName);
                         CheckedLink checkedLink = null;
                         if (checkedLinkOptional.isEmpty()) {//if it is not in the database or database connection can't be established, check it yourself :)
-                            _logger.info("Checking url: " + url);
+                            logger.info("Checking url: " + url);
 
                             checkedLink = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
                             checkedLink.setExpectedMimeType(expectedMimeType);
@@ -154,7 +154,7 @@ public class URLValidator extends CMDSubprocessor {
                         report.addURLElement(urlElementReport);
 
                     } catch (SQLException e) {
-                        _logger.warn("There is something wrong with the database connection.");
+                        logger.warn("There is something wrong with the database connection.");
                         //can't connect to database, check it yourself
                     }
 

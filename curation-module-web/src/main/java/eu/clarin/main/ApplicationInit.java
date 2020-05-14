@@ -12,7 +12,7 @@ import java.io.IOException;
 @WebListener
 public class ApplicationInit implements ServletContextListener {
 
-    private static final Logger _logger = LoggerFactory.getLogger(ApplicationInit.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationInit.class);
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -21,7 +21,7 @@ public class ApplicationInit implements ServletContextListener {
             Configuration.init(servletContext);
 
         } catch (IOException e) {
-            _logger.error("There was a problem loading the properties file.");
+            logger.error("There was a problem loading the properties file.");
         }
     }
 

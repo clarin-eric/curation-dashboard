@@ -25,7 +25,7 @@ import java.util.Optional;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionReport implements Report<CollectionReport> {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CollectionReport.class);
+    private static final Logger logger = LoggerFactory.getLogger(CollectionReport.class);
 
     @XmlAttribute(name = "score")
     public Double score = 0.0;
@@ -131,7 +131,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
     @Override
     public void mergeWithParent(CollectionReport parentReport) {
-        _logger.error("this should never happen??? a collection report cant have a parent to get merged into");
+        logger.error("this should never happen??? a collection report cant have a parent to get merged into");
 //        parentReport.score += score;
 //        if (insMinScore < parentReport.insMinScore)
 //            parentReport.insMinScore = insMinScore;
@@ -277,7 +277,7 @@ public class CollectionReport implements Report<CollectionReport> {
             }
 
         } catch (SQLException e) {
-            _logger.error("There was a problem calculating average values: " + e.getMessage());
+            logger.error("There was a problem calculating average values: " + e.getMessage());
         }
 
 

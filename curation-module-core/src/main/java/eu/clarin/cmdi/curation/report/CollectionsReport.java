@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionsReport implements Report<CollectionsReport> {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CollectionsReport.class);
+    private static final Logger logger = LoggerFactory.getLogger(CollectionsReport.class);
 
     @XmlElement(name = "collection")
     private List<Collection> collections = new ArrayList<Collection>();

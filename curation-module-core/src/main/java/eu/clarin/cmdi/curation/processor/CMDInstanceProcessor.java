@@ -20,13 +20,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 public class CMDInstanceProcessor {
-    private static final Logger _logger = LoggerFactory.getLogger(CMDInstanceProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(CMDInstanceProcessor.class);
 
     public CMDInstanceReport process(CMDInstance record, String parentName) throws FileSizeException, TransformerException, IOException, ExecutionException, ParserConfigurationException, SAXException, VTDException {
 
         CMDInstanceReport report = new CMDInstanceReport();
 
-//        _logger.info("Started report generation for record: " + record.getPath());
+//        logger.info("Started report generation for record: " + record.getPath());
         FileSizeValidator fileSizeValidator = new FileSizeValidator();
         fileSizeValidator.process(record, report);
         report.addSegmentScore(fileSizeValidator.calculateScore());

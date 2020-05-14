@@ -12,7 +12,7 @@ import java.net.URI;
 
 public final class ResponseManager {
 
-    private static final Logger _logger = Logger.getLogger(ResponseManager.class);
+    private static final Logger logger = Logger.getLogger(ResponseManager.class);
 
     public static Response returnFile(int status, InputStream fileStream, String type, String fileName) {
         return Response.status(status).entity(fileStream).type(type).header("content-disposition", "attachment; filename = " + fileName).build();
@@ -28,7 +28,7 @@ public final class ResponseManager {
         try {
             return Response.status(status).entity(HtmlManipulator.addContentToGenericHTML(message, button)).type(MediaType.TEXT_HTML).build();
         } catch (IOException e) {
-            _logger.error("Error reading generic.html");
+            logger.error("Error reading generic.html");
             return returnServerError();
         }
     }

@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class Main {
 
-    private static final Logger _logger = LoggerFactory.getLogger(Main.class);
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     //java.sql.date
     private Date harvestDate = new Date(System.currentTimeMillis());
@@ -145,12 +145,12 @@ public class Main {
                 CollectionsReport collectionsReport = new CollectionsReport();
                 LinkCheckerReport linkCheckerReport = new LinkCheckerReport();
 
-                _logger.info("Processing collections: Generating reports...");
+                logger.info("Processing collections: Generating reports...");
 
                 for (String path : cmd.getOptionValues("path")) {
                     //dump(curator.processCollection(Paths.get(path)), type);
                     for (File file : new File(path).listFiles()) {
-//                        _logger.info("Starting report generation for collection: " + file.toPath());
+//                        logger.info("Starting report generation for collection: " + file.toPath());
                         report = curator.processCollection(file.toPath());
 
                         dumpAsXML(report, CurationEntityType.COLLECTION);
@@ -171,7 +171,7 @@ public class Main {
                             }
                         }
 
-//                        _logger.info("Generated report for collection: " + report.getName());
+//                        logger.info("Generated report for collection: " + report.getName());
 
                     }
                 }

@@ -16,7 +16,7 @@ import java.io.IOException;
 @Path("/")
 public class Validator {
 
-    private static final Logger _logger = Logger.getLogger(Validator.class);
+    private static final Logger logger = Logger.getLogger(Validator.class);
 
     @Context
     HttpServletRequest request;
@@ -29,7 +29,7 @@ public class Validator {
 
             return ResponseManager.returnHTML(200, instance, null);
         } catch (IOException e) {
-            _logger.error("Error when reading validator.html: ", e);
+            logger.error("Error when reading validator.html: ", e);
             return ResponseManager.returnServerError();
         }
     }

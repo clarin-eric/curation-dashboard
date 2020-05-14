@@ -21,14 +21,14 @@ import org.slf4j.LoggerFactory;
  */
 public class CMDProfileProcessor {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CMDProfileProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(CMDProfileProcessor.class);
 
     public CMDProfileReport process(CMDProfile profile) throws ProfileNotFoundException, ExecutionException, IOException {
 
         long start = System.currentTimeMillis();
 
         CMDProfileReport report = new CMDProfileReport();
-//        _logger.info("Started report generation for profile: " + profile.getSchemaLocation());
+//        logger.info("Started report generation for profile: " + profile.getSchemaLocation());
 
         ProfileHeaderHandler profileHeaderHandler = new ProfileHeaderHandler();
         profileHeaderHandler.process(profile, report);
@@ -43,7 +43,7 @@ public class CMDProfileProcessor {
         report.addSegmentScore(profileFacetHandler.calculateScore(report));
 
         long end = System.currentTimeMillis();
-//        _logger.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for profile: " + profile.getSchemaLocation());
+//        logger.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for profile: " + profile.getSchemaLocation());
 
         return report;
 

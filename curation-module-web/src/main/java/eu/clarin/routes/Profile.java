@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @Path("/profile")
 public class Profile {
 
-    private static final Logger _logger = Logger.getLogger(Profile.class);
+    private static final Logger logger = Logger.getLogger(Profile.class);
 
     @GET
     @Path("/{profileName}")
@@ -53,7 +53,7 @@ public class Profile {
                     return ResponseManager.returnError(400, "Profile name must end with either xml or html.");
             }
         } catch (IOException e) {
-            _logger.error("There was an error reading the profile: " + profileName);
+            logger.error("There was an error reading the profile: " + profileName);
             return ResponseManager.returnError(404, "The profile " + profileName + " doesn't exist.");
         }
     }
@@ -66,7 +66,7 @@ public class Profile {
 
             return ResponseManager.returnHTML(200, profiles, new NavbarButton("/profile/tsv", "Export as TSV"));
         } catch (IOException e) {
-            _logger.error("Error when reading ProfilesReport.html: ", e);
+            logger.error("Error when reading ProfilesReport.html: ", e);
             return ResponseManager.returnServerError();
         }
 
@@ -82,7 +82,7 @@ public class Profile {
             fileInStream = new FileInputStream(profilesTSVPath);
             return ResponseManager.returnFile(200, fileInStream, "text/tab-separated-values", "ProfilesReport.tsv");
         } catch (FileNotFoundException e) {
-            _logger.error("There was an error getting the profilesReport.tsv file: ", e);
+            logger.error("There was an error getting the profilesReport.tsv file: ", e);
             return ResponseManager.returnServerError();
         }
     }

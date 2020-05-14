@@ -33,7 +33,7 @@ import eu.clarin.cmdi.vlo.importer.mapping.*;
  * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
  */
 public class FacetMappingCacheFactory extends FacetMappingFactory {
-    private static final Logger _logger = LoggerFactory.getLogger(FacetMappingCacheFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(FacetMappingCacheFactory.class);
     private final LoadingCache<ProfileHeader, FacetMapping> facetMappingPublicCache;
     private final LoadingCache<ProfileHeader, FacetMapping> facetMappingNonPublicCache;
 
@@ -66,7 +66,7 @@ public class FacetMappingCacheFactory extends FacetMappingFactory {
         try {
             return getFacetMapping(new CRService().createProfileHeader(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(profileId), "1.x", false));
         } catch (ExecutionException ex) {
-            _logger.error("error while attempting to get facetMap for profileId {}", profileId, ex);
+            logger.error("error while attempting to get facetMap for profileId {}", profileId, ex);
         }
         return null;
     }

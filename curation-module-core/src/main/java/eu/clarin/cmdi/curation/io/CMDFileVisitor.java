@@ -15,7 +15,7 @@ import java.util.Stack;
 
 public class CMDFileVisitor implements FileVisitor<Path> {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CMDFileVisitor.class);
+    private static final Logger logger = LoggerFactory.getLogger(CMDFileVisitor.class);
 
     private CMDCollection collection = null;
     private CMDCollection root = null;
@@ -25,7 +25,7 @@ public class CMDFileVisitor implements FileVisitor<Path> {
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        _logger.trace("visiting {}", dir);
+        logger.trace("visiting {}", dir);
         if (collection != null) {
             stack.push(collection);
         }
@@ -49,7 +49,7 @@ public class CMDFileVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 
-        _logger.trace("finished visiting {}, number of files: {}", dir, collection.getNumOfFiles());
+        logger.trace("finished visiting {}, number of files: {}", dir, collection.getNumOfFiles());
 
         root = collection;
 

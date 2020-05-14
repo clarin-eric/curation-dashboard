@@ -38,7 +38,7 @@ import java.nio.file.Paths;
 @Path("/curate")
 public class Curate {
 
-    private static final Logger _logger = Logger.getLogger(Curate.class);
+    private static final Logger logger = Logger.getLogger(Curate.class);
 
     @GET
     @Path("/")
@@ -91,7 +91,7 @@ public class Curate {
             return curate(content, resultFileName, path);
 
         } catch (IOException | TransformerException | JAXBException e) {
-            _logger.error("There was a problem generating the report: ", e);
+            logger.error("There was a problem generating the report: ", e);
             return ResponseManager.returnServerError();
         }
     }
@@ -117,7 +117,7 @@ public class Curate {
 
             return curate(content, resultFileName, tempPath);
         } catch (IOException | TransformerException | JAXBException e) {
-            _logger.error("There was a problem generating the report: ", e);
+            logger.error("There was a problem generating the report: ", e);
             return ResponseManager.returnServerError();
         }
     }
@@ -142,7 +142,7 @@ public class Curate {
             return ResponseManager.returnError(400, "Input URL is malformed.");
 
         } catch (Exception e) {
-            _logger.error("There was an exception processing the cmd instance: " + e.getMessage());
+            logger.error("There was an exception processing the cmd instance: " + e.getMessage());
             return ResponseManager.returnError(400, "There was a problem when processing the input. Please make sure to upload a valid cmd file.");
         }
 

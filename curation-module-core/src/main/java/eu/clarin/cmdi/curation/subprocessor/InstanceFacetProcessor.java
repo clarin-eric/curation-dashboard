@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 public class InstanceFacetProcessor extends CMDSubprocessor {
 
-    private final static Logger _logger = LoggerFactory.getLogger(InstanceFacetProcessor.class);
+    private final static Logger logger = LoggerFactory.getLogger(InstanceFacetProcessor.class);
 
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report)
@@ -47,7 +47,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
 
         Map<Integer, ValueNode> nodesMap = getValueNodesMap(entity, report, nav);
 
-        _logger.trace("nodes map: \n{}", nodesMap);
+        logger.trace("nodes map: \n{}", nodesMap);
 
         facetsToNodes(entity, report, nodesMap, nav);
 

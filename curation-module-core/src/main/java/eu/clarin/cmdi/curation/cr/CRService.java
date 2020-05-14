@@ -22,7 +22,7 @@ import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import eu.clarin.cmdi.curation.main.Configuration;
 
 public class CRService implements ICRService {
-	static final Logger _logger = LoggerFactory.getLogger(CRService.class);
+	static final Logger logger = LoggerFactory.getLogger(CRService.class);
 	
 	//https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles?registrySpace=published&status=*
 	//https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles?registrySpace=published&status=production
@@ -88,10 +88,10 @@ public class CRService implements ICRService {
                         header.setCmdiVersion("1.1");
                 }
                 catch (MalformedURLException ex) {
-                    _logger.error("schema location "  + schemaLocation + " is no valid URL", ex);
+                    logger.error("schema location "  + schemaLocation + " is no valid URL", ex);
                 }
                 catch (IOException ex) {
-                    _logger.error("couldn't read from schema location " + schemaLocation, ex);
+                    logger.error("couldn't read from schema location " + schemaLocation, ex);
                 }  
 			}
 		}
@@ -102,7 +102,7 @@ public class CRService implements ICRService {
 
 	@Override
 	public ParsedProfile getParsedProfile(ProfileHeader header) throws ExecutionException {
-		//_logger.debug("parsed profile lookup for {} from cache", header);
+		//logger.debug("parsed profile lookup for {} from cache", header);
 		boolean isPublic = header.isPublic();
 		boolean isNewest = isTheNewestCMDIVersion(header.getCmdiVersion());
 

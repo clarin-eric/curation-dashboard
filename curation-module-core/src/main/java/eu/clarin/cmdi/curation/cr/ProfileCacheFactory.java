@@ -34,7 +34,7 @@ class ProfileCacheFactory {
 
     static final long HOUR_IN_NS = 3600000000000L;
 
-    private static final Logger _logger = LoggerFactory.getLogger(ProfileCacheFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProfileCacheFactory.class);
 
     private static final SchemaFactory schemaFactory;
 
@@ -81,7 +81,7 @@ class ProfileCacheFactory {
         public ProfileCacheEntry load(ProfileHeader header) throws IOException, VTDException, SAXException, URISyntaxException {
 
             String profile = header.getId() != null ? header.getId() : header.getSchemaLocation();
-//            _logger.info("Profile {} is not in the cache, it will be loaded", profile);
+//            logger.info("Profile {} is not in the cache, it will be loaded", profile);
 
             Path xsd;
             if (isPublicProfilesCache) {
@@ -92,19 +92,19 @@ class ProfileCacheFactory {
                 //try to load it from the disk
 
 
-                _logger.debug("profile {} is public. Loading schema from {}", header.getId(), xsd);
+                logger.debug("profile {} is public. Loading schema from {}", header.getId(), xsd);
 
                 if (!Files.exists(xsd)) {// keep public profiles on disk
                     // if not download it
                     Files.createFile(xsd);
 
-                    _logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.getSchemaLocation());
+                    logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.getSchemaLocation());
                     new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(header.getSchemaLocation(), xsd.toFile());
                 }
 
             } else {//non-public profiles are not cached on disk
 
-                _logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.getSchemaLocation());
+                logger.debug("schema {} is not public. Schema will be downloaded in temp folder", header.getSchemaLocation());
 
                 //keep private schemas on disk
 
@@ -115,13 +115,13 @@ class ProfileCacheFactory {
                 //try to load it from the disk
 
 
-                _logger.debug("Loading schema for non public profile {} from {}", header.getSchemaLocation(), xsd);
+                logger.debug("Loading schema for non public profile {} from {}", header.getSchemaLocation(), xsd);
 
                 if (!Files.exists(xsd)) {
                     // if not download it
                     Files.createFile(xsd);
 
-                    _logger.debug("XSD for the {} is not in the local cache, it will be downloaded", header.getId());
+                    logger.debug("XSD for the {} is not in the local cache, it will be downloaded", header.getId());
 
                     getXSD(header,xsd);
                 }

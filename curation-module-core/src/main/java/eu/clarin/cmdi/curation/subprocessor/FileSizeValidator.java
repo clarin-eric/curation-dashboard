@@ -43,7 +43,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileSizeValidator extends CMDSubprocessor {
-    private final static Logger _logger = LoggerFactory.getLogger(FileSizeValidator.class);
+    private final static Logger logger = LoggerFactory.getLogger(FileSizeValidator.class);
 
     private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
 
@@ -71,7 +71,7 @@ public class FileSizeValidator extends CMDSubprocessor {
 
 
         } catch (IOException ex) {
-            _logger.error("couldn't instatiate CMDIDataProcessor - so instance parsing won't work!");
+            logger.error("couldn't instatiate CMDIDataProcessor - so instance parsing won't work!");
             return null;
         }
     }
@@ -86,7 +86,7 @@ public class FileSizeValidator extends CMDSubprocessor {
                 if ((matcher = _pattern.matcher(line)).find())
                     return matcher.group(3) != null;
         } catch (IOException ex) {
-            _logger.error("can't identitfy cmdi version by namespace", ex);
+            logger.error("can't identitfy cmdi version by namespace", ex);
         }
         return false;
     }
@@ -150,9 +150,9 @@ public class FileSizeValidator extends CMDSubprocessor {
 
             InstanceParser transformer = new InstanceParser();
 
-            _logger.debug("parsing instance...");
+            logger.debug("parsing instance...");
             entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));
-            _logger.debug("...done");
+            logger.debug("...done");
 
         }
     }

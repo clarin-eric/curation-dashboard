@@ -20,7 +20,7 @@ class ProfileScoreCacheFactory{
 	
 	static final long HOUR_IN_NS = 3600000000000L;
 	
-	private static final Logger _logger = LoggerFactory.getLogger(ProfileScoreCacheFactory.class);
+	private static final Logger logger = LoggerFactory.getLogger(ProfileScoreCacheFactory.class);
 	
 	public static LoadingCache<ProfileHeader, Double> createScoreCache(boolean isPublicProfilesCache){
 		return isPublicProfilesCache?
@@ -47,7 +47,7 @@ class ProfileScoreCacheFactory{
 		public Double load(ProfileHeader header) throws Exception{
 
 			CMDProfile profile = new CMDProfile(header.getSchemaLocation(), header.getCmdiVersion());			
-			_logger.trace("Calculating and caching score for {}", profile);
+			logger.trace("Calculating and caching score for {}", profile);
 
 			CMDProfileReport report = profile.generateReport();
 			

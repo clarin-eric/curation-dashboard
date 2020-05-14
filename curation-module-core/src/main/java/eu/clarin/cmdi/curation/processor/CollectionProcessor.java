@@ -13,14 +13,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class CollectionProcessor {
 
-    private static final Logger _logger = LoggerFactory.getLogger(CollectionProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(CollectionProcessor.class);
 
     public CollectionReport process(CMDCollection collection) {
 
         long start = System.currentTimeMillis();
 
         CollectionReport report = new CollectionReport();
-        _logger.info("Started report generation for collection: " + collection.getPath());
+        logger.info("Started report generation for collection: " + collection.getPath());
 
         CollectionAggregator collectionAggregator = null;
         try {
@@ -31,12 +31,12 @@ public class CollectionProcessor {
 
 
         } catch (Exception e) {
-            _logger.error("Exception when processing " + collectionAggregator.toString() + " : " + e.getMessage());
+            logger.error("Exception when processing " + collectionAggregator.toString() + " : " + e.getMessage());
             addInvalidFile(report, e);
         }
 
         long end = System.currentTimeMillis();
-        _logger.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for collection: " + report.getName());
+        logger.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for collection: " + report.getName());
 
         return report;
     }
