@@ -22,6 +22,7 @@ public final class ResponseManager {
         return Response.status(status).entity(entity).type(mediaType).build();
     }
 
+    //navbar button is specific to the page (ex: profile report ~ download profile as tsv). Therefore it is in this method, if no button is needed, leave null
     public static Response returnHTML(int status, String message, NavbarButton button) {
 
         try {
