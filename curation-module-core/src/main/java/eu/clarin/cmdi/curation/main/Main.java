@@ -31,12 +31,16 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
 
     private static final Logger _logger = LoggerFactory.getLogger(Main.class);
+
+    //java.sql.date
+    private Date harvestDate = new Date(System.currentTimeMillis());
 
     public static void main(String[] args) throws Exception {
 
@@ -194,6 +198,9 @@ public class Main {
                 dumpAsXML(linkCheckerReport, CurationEntityType.STATISTICS);
                 dumpAsHTML(linkCheckerReport, CurationEntityType.STATISTICS);
 
+                deleteOldLinks();
+
+
                 Configuration.tearDown();
             } else
                 throw new Exception("Only path is allowed for curation of collections root");
@@ -201,26 +208,10 @@ public class Main {
             throw new Exception("Curation module can curate profiles (-p), instances (-i), collection (-c) or collection root (-r)");
     }
 
+    private static void deleteOldLinks() {
 
-    /*
-     * private static void dump(Report report, CurationEntityType type) throws
-     * Exception {
-     *
-     * if (Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null) {
-     * Path path = null; switch (type) { case PROFILE: path =
-     * Configuration.OUTPUT_DIRECTORY.resolve("profiles"); break; case INSTANCE:
-     * path = Configuration.OUTPUT_DIRECTORY.resolve("instances"); break; case
-     * COLLECTION: path = Configuration.OUTPUT_DIRECTORY.resolve("collections");
-     * break; }
-     *
-     * Files.createDirectories(path); String filename =
-     * FileNameEncoder.encode(report.getName()) + ".xml"; path =
-     * path.resolve(filename); report.toXML(Files.newOutputStream(path)); } else
-     * {//print to console report.toXML(System.out); System.out.println(
-     * "-----------------------------------------------------------------");
-     *
-     * } }
-     */
+    }
+
 
     private static void dumpAsXML(Report<?> report, CurationEntityType type) throws Exception {
         JAXBContext jc = JAXBContext.newInstance(report.getClass());
