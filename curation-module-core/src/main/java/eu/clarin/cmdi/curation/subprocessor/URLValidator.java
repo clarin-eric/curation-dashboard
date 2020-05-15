@@ -39,11 +39,11 @@ public class URLValidator extends CMDSubprocessor {
 
         CMDIData<Map<String, List<ValueSet>>> data = entity.getCMDIData();
 
-        Map<String, Resource> urlMap = new HashMap<String, Resource>();
+        Map<String, Resource> urlMap = new HashMap<>();
 
         final AtomicLong numOfLinks = new AtomicLong(0);  //has to be final for use in lambda expression
 
-        ArrayList<Resource> resources = new ArrayList<Resource>();
+        ArrayList<Resource> resources = new ArrayList<>();
         resources.addAll(data.getDataResources());
         resources.addAll(data.getLandingPageResources());
         resources.addAll(data.getMetadataResources());
@@ -110,12 +110,6 @@ public class URLValidator extends CMDSubprocessor {
                 logger.error("Error when saving " + linksToBeChecked + " to urls table: " + e.getMessage());
             }
 
-
-//              try {
-//                report.urlReport = createInstanceURLReportFromDatabase(numOfLinks.get(), report.getName(), report.parentName);
-//            } catch (SQLException e) {
-//                logger.error("Error when creating url report for record: " + report.getName() + ". " + e.getMessage());
-//            }
 
         } else {//instance mode
             HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
