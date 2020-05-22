@@ -109,3 +109,7 @@ a:hover {
 .text-rightl{
   text-align: right;
 }
+
+.maxTextWidth {
+    max-width: 800px;
+}
