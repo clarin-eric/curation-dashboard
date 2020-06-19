@@ -11,7 +11,6 @@ import eu.clarin.cmdi.curation.utils.HTTPLinkChecker;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.DAO.LinkToBeChecked;
-import eu.clarin.cmdi.rasa.filters.impl.ACDHStatisticsCountFilter;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.StatusCodeMapper;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
@@ -21,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -72,24 +72,28 @@ public class URLValidator extends CMDSubprocessor {
         if (Configuration.COLLECTION_MODE) {
 
             List<LinkToBeChecked> linksToBeChecked = new ArrayList<>();
+            List<String> linksToBeUpdated = new ArrayList<>();
 
             for (String url : urlMap.keySet()) {
 
                 try {
                     Optional<CheckedLink> checkedLinkOptional = Configuration.checkedLinkResource.get(url, parentName);
 
-                    if (checkedLinkOptional.isEmpty()) {
+                    if (checkedLinkOptional.isEmpty()) {//not in the database
                         String expectedMimeType = urlMap.get(url).getMimeType();
                         expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
                         String finalRecord = report.getName();
                         String finalCollection = parentName != null ? parentName : finalRecord;
 
-                        LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType);
+                        LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType, Configuration.reportGenerationDate);
 
                         linksToBeChecked.add(linkToBeChecked);
 
-                    } else {
+                    } else {//link already in the database
+
+                        linksToBeUpdated.add(url);//update the harvestDate of the link
+
                         //link is checked and found see if it is broken or undetermined
                         Category category = StatusCodeMapper.get(checkedLinkOptional.get().getStatus());
                         if (category.equals(Category.Broken)) {
@@ -104,7 +108,13 @@ public class URLValidator extends CMDSubprocessor {
                 }
             }
 
-            try {//save all links not in status in a batch to urls
+            try {//update all dates for worked links
+                Configuration.linkToBeCheckedResource.updateDate(linksToBeUpdated, Configuration.reportGenerationDate);
+            } catch (SQLException e) {
+                logger.error("Error when updating " + linksToBeUpdated + " to urls table: " + e.getMessage());
+            }
+
+            try {//save all links not in status table in a batch to urls
                 Configuration.linkToBeCheckedResource.save(linksToBeChecked);
             } catch (SQLException e) {
                 logger.error("Error when saving " + linksToBeChecked + " to urls table: " + e.getMessage());
@@ -129,8 +139,8 @@ public class URLValidator extends CMDSubprocessor {
 
                             checkedLink = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
                             checkedLink.setExpectedMimeType(expectedMimeType);
-                        }else{
-                            checkedLink=checkedLinkOptional.get();
+                        } else {
+                            checkedLink = checkedLinkOptional.get();
                         }
 
                         if (checkedLink.getStatus() != 200 && checkedLink.getStatus() != 302) {

@@ -1,34 +1,34 @@
 package eu.clarin.cmdi.curation.main;
 
+import eu.clarin.cmdi.rasa.helpers.RasaFactory;
+import eu.clarin.cmdi.rasa.helpers.impl.ACDHRasaFactory;
+import eu.clarin.cmdi.rasa.linkResources.CheckedLinkResource;
+import eu.clarin.cmdi.rasa.linkResources.LinkToBeCheckedResource;
+import eu.clarin.cmdi.rasa.linkResources.StatisticsResource;
+import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
+import eu.clarin.cmdi.vlo.config.VloConfig;
+import eu.clarin.cmdi.vlo.config.XmlVloConfigFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
-
-import eu.clarin.cmdi.rasa.helpers.RasaFactory;
-import eu.clarin.cmdi.rasa.helpers.impl.ACDHRasaFactory;
-import eu.clarin.cmdi.rasa.linkResources.CheckedLinkResource;
-import eu.clarin.cmdi.rasa.linkResources.LinkToBeCheckedResource;
-import eu.clarin.cmdi.rasa.linkResources.StatisticsResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
-import eu.clarin.cmdi.vlo.config.VloConfig;
-import eu.clarin.cmdi.vlo.config.XmlVloConfigFactory;
 
 public class Configuration {
 
     private static Logger logger = LoggerFactory.getLogger(Configuration.class);
+
+
+    public static Long reportGenerationDate = System.currentTimeMillis();
 
     public static String SCORE_NUMERIC_DISPLAY_FORMAT;
     public static String TIMESTAMP_DISPLAY_FORMAT;

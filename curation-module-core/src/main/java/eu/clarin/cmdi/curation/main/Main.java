@@ -32,15 +32,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
-    //java.sql.date
-    private Date harvestDate = new Date(System.currentTimeMillis());
 
     public static void main(String[] args) throws Exception {
 
@@ -200,7 +198,6 @@ public class Main {
 
                 deleteOldLinks();
 
-
                 Configuration.tearDown();
             } else
                 throw new Exception("Only path is allowed for curation of collections root");
@@ -209,7 +206,14 @@ public class Main {
     }
 
     private static void deleteOldLinks() {
-//todo
+        try {
+            //delete any urls that have the harvestDate column older than this current one.
+            //they are already updated during the run.
+            int rows = Configuration.linkToBeCheckedResource.deleteOldLinks(Configuration.reportGenerationDate);
+            logger.info("Deleted " + rows + " rows from the table, because they were old (not harvested/found in the records during current report generation).");
+        } catch (SQLException e) {
+            logger.error("Error when deleting old links: " + e.getMessage());
+        }
     }
 
 
@@ -322,8 +326,7 @@ public class Main {
                 hasArg().required(false).desc("a path to the configuration file").build();
 
 
-
-        Option profileCuration = Option.builder("p").desc("curate a profile").build() ;
+        Option profileCuration = Option.builder("p").desc("curate a profile").build();
 
         Option instanceCuration = Option.builder("i").desc("curate an instance").build();
 
