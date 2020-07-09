@@ -97,7 +97,7 @@
                 <br/>
 
 
-                <button type="button" onClick="toggleFacets()">Show Facet Values</button>
+                <button class="btn btn-info" id="facetValuesButton" type="button" onClick="toggleFacets()">Show Facet Values</button>
 
                 <div id="facetTable" hidden="true">
                     <table class="reportTable">

@@ -21,7 +21,7 @@ public class ApplicationInit implements ServletContextListener {
             Configuration.init(servletContext);
 
         } catch (IOException e) {
-            logger.error("There was a problem loading the properties file.");
+            logger.error("There was a problem loading the properties file:"+e.getMessage());
         }
     }
 
