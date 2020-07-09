@@ -35,7 +35,7 @@ public class CRService implements ICRService {
 	public static final String PROFILE_ID_FORMAT = "clarin\\.eu:cr1:p_[0-9]+";
 	public static final Pattern PROFILE_ID_PATTERN = Pattern.compile(PROFILE_ID_FORMAT);
 
-	private static Collection<ProfileHeader> publicProfiles = PublicProfiles.createPublicProfiles();
+	private static final Collection<ProfileHeader> publicProfiles = PublicProfiles.createPublicProfiles();
 	public static Double PROFILE_MAX_SCORE = Double.NaN;
 	
 	
