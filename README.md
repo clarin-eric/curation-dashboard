@@ -11,4 +11,4 @@ Usable as stand-alone application to generate instance/collection reports and as
 Deployable web application
 
 ### link checker
-Stand-alone application for permanent checking of http links
+Stand-alone application for permanent checking of http links. See [this separate github repository](https://github.com/acdh-oeaw/stormychecker) for details
