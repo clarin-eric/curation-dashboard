@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 public class LinkCheckerStatisticsHelper {
     private static final Logger logger = LoggerFactory.getLogger(LinkCheckerStatisticsHelper.class);
 
-
+//this is the mongo implementation, left here for inspiration...
 //    private AggregateIterable<Document> getStatusStatistics() {
 //
 //        return linksChecked.aggregate(Arrays.asList(
