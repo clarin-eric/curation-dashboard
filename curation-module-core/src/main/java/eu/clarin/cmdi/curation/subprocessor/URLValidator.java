@@ -12,7 +12,6 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.DAO.LinkToBeChecked;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
-import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.StatusCodeMapper;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
@@ -20,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -68,6 +66,8 @@ public class URLValidator extends CMDSubprocessor {
         long numOfUniqueLinks = urlMap.keySet().size();
         long numOfBrokenLinks = 0;
         long numOfUndeterminedLinks = 0;
+        long numOfRestrictedAccessLinks = 0;
+        long numOfBlockedByRobotsTxtLinks = 0;
 
         if (Configuration.COLLECTION_MODE) {
 
@@ -94,12 +94,26 @@ public class URLValidator extends CMDSubprocessor {
 
                         linksToBeUpdated.add(url);//update the harvestDate of the link
 
-                        //link is checked and found see if it is broken or undetermined
-                        Category category = StatusCodeMapper.get(checkedLinkOptional.get().getStatus());
-                        if (category.equals(Category.Broken)) {
-                            numOfBrokenLinks++;
-                        } else if (category.equals(Category.Undetermined)) {
-                            numOfUndeterminedLinks++;
+                        Category category = checkedLinkOptional.get().category;
+                        switch (category) {
+                            case Ok:
+                                //do nothing
+                                break;
+                            case Broken:
+                                numOfBrokenLinks++;
+                                break;
+                            case Undetermined:
+                                numOfUndeterminedLinks++;
+                                break;
+                            case Restricted_Access:
+                                numOfRestrictedAccessLinks++;
+                                break;
+                            case Blocked_By_Robots_txt:
+                                numOfBlockedByRobotsTxtLinks++;
+                                break;
+                            default:
+                                //cant come here...
+                                break;
                         }
                     }
 
@@ -121,7 +135,7 @@ public class URLValidator extends CMDSubprocessor {
             }
 
 
-        } else {//instance mode
+        } else {//instance modeTODO make this the same as stormychecker
             HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
 
             for (String url : urlMap.keySet()) {
@@ -143,6 +157,7 @@ public class URLValidator extends CMDSubprocessor {
                             checkedLink = checkedLinkOptional.get();
                         }
 
+                        //todo-...
                         if (checkedLink.getStatus() != 200 && checkedLink.getStatus() != 302) {
                             if (checkedLink.getStatus() == 401 || checkedLink.getStatus() == 405 || checkedLink.getStatus() == 429) {
                                 numOfUndeterminedLinks++;
@@ -187,8 +202,8 @@ public class URLValidator extends CMDSubprocessor {
             }
 
         }
-
-        report.urlReport = createInstanceURLReport(numOfLinks.get(), numOfUniqueLinks, numOfBrokenLinks, numOfUndeterminedLinks);
+//TODO restructed acess and blocked by robots are default 0 here. implement it correctly!!!! copy from stormychecker...
+        report.urlReport = createInstanceURLReport(numOfLinks.get(), numOfUniqueLinks, numOfBrokenLinks, numOfUndeterminedLinks,0,0);
 
     }
 
@@ -210,13 +225,15 @@ public class URLValidator extends CMDSubprocessor {
         return new Score(score, 1.0, "url-validation", msgs);
     }
 
-    private URLReport createInstanceURLReport(long numOfLinks, long numOfUniqueLinks, long numOfBrokenLinks, long numOfUndeterminedLinks) {
+    private URLReport createInstanceURLReport(long numOfLinks, long numOfUniqueLinks, long numOfBrokenLinks, long numOfUndeterminedLinks, long numOfRestrictedAccessLinks, long numOfBlockedByRobotsTxtLinks) {
         URLReport report = new URLReport();
         report.numOfLinks = numOfLinks;
 
         //all links are checked in instances
         report.numOfCheckedLinks = numOfLinks;
         report.numOfUndeterminedLinks = numOfUndeterminedLinks;
+        report.numOfRestrictedAccessLinks = numOfRestrictedAccessLinks;
+        report.numOfBlockedByRobotsTxtLinks = numOfBlockedByRobotsTxtLinks;
         report.numOfUniqueLinks = numOfUniqueLinks;
         report.numOfBrokenLinks = numOfBrokenLinks;
 
@@ -225,25 +242,6 @@ public class URLValidator extends CMDSubprocessor {
 
         return report;
     }
-
-//    private URLReport createInstanceURLReportFromDatabase(long numOfLinks, String instanceName, String collectionName) throws SQLException {
-//        URLReport report = new URLReport();
-//        report.numOfLinks = numOfLinks;
-//
-//        ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(collectionName, instanceName);
-//        long numOfCheckedLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
-//
-//        filter = new ACDHStatisticsCountFilter(collectionName, instanceName, true, false);
-//        long numOfBrokenLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
-//
-//        filter = new ACDHStatisticsCountFilter(collectionName, instanceName, false, true);
-//        long numOfUndeterminedLinks = Configuration.statisticsResource.countStatusTable(Optional.of(filter));
-//
-//        long numOfCheckedUndeterminedRemoved = numOfCheckedLinks - numOfUndeterminedLinks;
-//        report.percOfValidLinks = numOfCheckedLinks == 0 ? 0 : (numOfCheckedUndeterminedRemoved - numOfBrokenLinks) / (double) numOfCheckedUndeterminedRemoved;
-//
-//        return report;
-//    }
 
     private URLReport createDisabledURLReport(long numOfLinks) {
         URLReport report = new URLReport();

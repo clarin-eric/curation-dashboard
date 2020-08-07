@@ -1,5 +1,6 @@
 package eu.clarin.main;
 
+import eu.clarin.cmdi.rasa.linkResources.CategoryStatisticsResource;
 import eu.clarin.cmdi.rasa.linkResources.CheckedLinkResource;
 import eu.clarin.cmdi.rasa.linkResources.LinkToBeCheckedResource;
 import eu.clarin.cmdi.rasa.linkResources.StatisticsResource;
@@ -40,7 +41,7 @@ public class Configuration {
 
     public static CheckedLinkResource checkedLinkResource;
     public static LinkToBeCheckedResource linkToBeCheckedResource;
-    public static StatisticsResource statisticsResource;
+    public static CategoryStatisticsResource statisticsResource;
 
     public static void init(ServletContext servletContext) throws IOException {
 

@@ -1,7 +1,9 @@
 package eu.clarin.helpers;
 
+import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.filters.impl.ACDHCheckedLinkFilter;
+import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import eu.clarin.main.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,16 +99,16 @@ public class LinkCheckerStatisticsHelper {
 //
 //    }
 
-    public static String createURLTable(String collectionName, int status) throws SQLException {
+    public static String createURLTable(String collectionName, Category category) throws SQLException {
         StringBuilder sb = new StringBuilder();
 
         sb.append("<div>");
-        sb.append("<h1>Link Checking Statistics (Status:" + status + "):</h1>");
+        sb.append("<h1>Link Checking Statistics (Category:" + category + "):</h1>");
         sb.append("<h3>").append(collectionName.replace("_", " ")).append(":</h3>");
 
-        List<String> columnNames = Arrays.asList("Url", "Category", "Info", "Record");
+        List<String> columnNames = Arrays.asList("Url" + "Status", "Info", "Record");
 
-        sb.append("<table class='reportTable' id='statsTable' data-collection='" + collectionName + "' data-status='" + status + "'>");
+        sb.append("<table class='reportTable' id='statsTable' data-collection='" + collectionName + "' data-category='" + category + "'>");
         sb.append("<thead>");
         sb.append("<tr>");
         for (String columnName : columnNames) {
@@ -117,7 +119,7 @@ public class LinkCheckerStatisticsHelper {
         sb.append("</thead>");
         sb.append("<tbody id='reportTableTbody'>");
 
-        sb.append(getHtmlRowsInBatch(collectionName, status, 0));
+        sb.append(getHtmlRowsInBatch(collectionName, category, 0));
 
         sb.append("</tbody>");
         sb.append("</table>");
@@ -127,56 +129,37 @@ public class LinkCheckerStatisticsHelper {
         return sb.toString();
     }
 
-    public static String getHtmlRowsInBatch(String collectionName, int status, int batchCount) throws SQLException {
+    public static String getHtmlRowsInBatch(String collectionName, Category category, int batchCount) throws SQLException {
 
         int start = batchCount * 100;
         int end = start + 100;
 
         StringBuilder sb = new StringBuilder();
 
-        ACDHCheckedLinkFilter filter = new ACDHCheckedLinkFilter(collectionName, status);
-        try(Stream<CheckedLink> links = Configuration.checkedLinkResource.get(Optional.of(filter), start, end)) {
+        ACDHCheckedLinkFilter filter = new ACDHCheckedLinkFilter(collectionName, category);
+        try (Stream<CheckedLink> links = Configuration.checkedLinkResource.get(Optional.of(filter), start, end)) {
 
             links.forEach(checkedLink -> {
                 sb.append("<tr>");
-                //todo move category into the database instead of checking it everywhere??
-                //i cant really check the undetermined without a list
                 String url = checkedLink.getUrl();
                 String urlWithBreak = url.replace("_", "_<wbr>");
-                //TODO use statuscodemapper.
 
-                String category;
-                if (status == 200) {
-                    category = "Ok";
-                    sb.append("<td style='background-color:#cbe7cc'>");
-                    sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
-                    sb.append("</td>");
-                    sb.append("<td style='background-color:#cbe7cc'>");
-                    sb.append(category);
-                    sb.append("</td>");
-                } else if (status == 401 || status == 405 || status == 429) {
-                    category = "Undetermined";
-                    sb.append("<td style='background-color:#fff7b3'>");
-                    sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
-                    sb.append("</td>");
-                    sb.append("<td style='background-color:#fff7b3'>");
-                    sb.append(category);
-                    sb.append("</td>");
-                } else {
-                    category = "Broken";
-                    sb.append("<td style='background-color:#f2a6a6'>");
-                    sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
-                    sb.append("</td>");
-                    sb.append("<td style='background-color:#f2a6a6'>");
-                    sb.append(category);
-                    sb.append("</td>");
-                }
+                //url
+                sb.append("<td style='background-color:" + CategoryColor.getColor(category) + "'>");
+                sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
+                sb.append("</td>");
 
-                //button
+                //status
+                sb.append("<td>");
+                sb.append(checkedLink.getStatus());
+                sb.append("</td>");
+
+                //info button
                 sb.append("<td>");
                 sb.append("<button class='showUrlInfo btn btn-info'>Show</button>");
                 sb.append("</td>");
 
+                //record
                 sb.append("<td>");
                 //some html css table too wide work around
                 String record = checkedLink.getRecord();

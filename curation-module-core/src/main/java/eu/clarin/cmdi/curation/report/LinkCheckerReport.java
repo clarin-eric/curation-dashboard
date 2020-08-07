@@ -3,7 +3,7 @@ package eu.clarin.cmdi.curation.report;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport.Statistics;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
-import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.StatusCodeMapper;
+import eu.clarin.cmdi.rasa.DAO.Statistics.CategoryStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,31 +26,25 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
     @Override
     public void setParentName(String parentName) {
-
     }
 
     @Override
     public String getParentName() {
-
         return null;
     }
 
     @Override
     public String getName() {
-
         return getClass().getSimpleName();
     }
 
     @Override
     public boolean isValid() {
-
         return false;
     }
 
     @Override
     public void addSegmentScore(Score segmentScore) {
-
-
     }
 
     @Override
@@ -62,12 +56,9 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
     @Override
     public void mergeWithParent(LinkCheckerReport parentReport) {
-
-
     }
 
     public void addReport(Report<?> report) {
-
         if (report instanceof CollectionReport) {
             this.collections.add(new CMDCollection((CollectionReport) report));
         }
@@ -94,9 +85,8 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
         }
 
         public CMDCollection(CollectionReport report) {
-
             this.name = report.getName();
-            this.statistics = report.urlReport.status;
+            this.statistics = report.urlReport.category;
             this.count = report.urlReport.totNumOfCheckedLinks;
             this.avgRespTime = report.urlReport.avgRespTime;
             this.maxRespTime = report.urlReport.maxRespTime;
@@ -106,7 +96,6 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
     }
 
     public static class Overall {
-
         private static final Logger logger = LoggerFactory.getLogger(Overall.class);
         private List<Statistics> statistics = new ArrayList<>();
         @XmlAttribute
@@ -126,14 +115,13 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
         public Overall() {
 
             try {
-                List<eu.clarin.cmdi.rasa.DAO.Statistics.StatusStatistics> stats = Configuration.statisticsResource.getStatusStatistics("Overall");
+                List<CategoryStatistics> stats = Configuration.statisticsResource.getCategoryStatistics("Overall");
 
-                for (eu.clarin.cmdi.rasa.DAO.Statistics.StatusStatistics statistics : stats) {
+                for (CategoryStatistics statistics : stats) {
                     Statistics xmlStatistics = new Statistics();
                     xmlStatistics.avgRespTime = statistics.getAvgRespTime();
                     xmlStatistics.maxRespTime = statistics.getMaxRespTime();
-                    xmlStatistics.statusCode = statistics.getStatus();
-                    xmlStatistics.category = StatusCodeMapper.get(statistics.getStatus()).toString();
+                    xmlStatistics.category = statistics.getCategory().name();
                     xmlStatistics.count = statistics.getCount();
                     this.statistics.add(xmlStatistics);
                 }

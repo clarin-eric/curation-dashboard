@@ -1,21 +1,19 @@
 package eu.clarin.cmdi.curation.report;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import javax.xml.bind.annotation.*;
-
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
-import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.report.CollectionReport.Record;
+import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
-import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.StatusCodeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.annotation.*;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *
@@ -121,17 +119,21 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         @XmlAttribute(name = "redirectCount")
         public int redirectCount;
 
+        @XmlAttribute(name = "color-code")
+        public String colorCode;
+
         public URLElement convertFromLinkCheckerURLElement(CheckedLink checkedLink) {
             url = checkedLink.getUrl();
             method = checkedLink.getMethod();
             status = checkedLink.getStatus();
-            category = StatusCodeMapper.get(status).toString();
+            category = checkedLink.getCategory().name();
             contentType = checkedLink.getContentType();
             expectedContentType = checkedLink.getExpectedMimeType();
             byteSize = String.valueOf(checkedLink.getByteSize());
             duration = TimeUtils.humanizeToTime(checkedLink.getDuration());
             timestamp = checkedLink.getTimestamp().toString();
             redirectCount = checkedLink.getRedirectCount();
+            colorCode = CategoryColor.getColor(checkedLink.getCategory());
 
             return this;
         }
@@ -318,6 +320,8 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         public long numOfUniqueLinks;
         public long numOfCheckedLinks;
         public long numOfUndeterminedLinks;
+        public long numOfRestrictedAccessLinks;
+        public long numOfBlockedByRobotsTxtLinks;
         public long numOfBrokenLinks;
         public Double percOfValidLinks;
 

@@ -152,7 +152,7 @@ window.onpageshow = function (event) {
 
 var table = $('#statsTable');
 var collectionName = table.attr("data-collection");
-var statusCode = table.attr("data-status");
+var category = table.attr("data-category");
 var reportTableTbody = $('#reportTableTbody');
 
 var i = 1;
@@ -182,7 +182,7 @@ $(window).scroll(function() {
                     // ajax call get data from server and append to the table
                     $.ajax({
                        dataType: "html",
-                       url: "/statistics/"+collectionName+"/"+statusCode+"/"+i,
+                       url: "/statistics/"+collectionName+"/"+category+"/"+i,
                        success: function (data) {
                            reportTableTbody.append(data);
 
