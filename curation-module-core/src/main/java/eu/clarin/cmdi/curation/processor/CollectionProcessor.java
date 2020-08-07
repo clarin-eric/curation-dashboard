@@ -31,7 +31,8 @@ public class CollectionProcessor {
 
 
         } catch (Exception e) {
-            logger.error("Exception when processing " + collectionAggregator.toString() + " : " + e.getMessage());
+            logger.error("Exception when processing " + collectionAggregator.getClass().toString() + " : " + e.getMessage());
+//            logger.error("here is stack trace: ",e);
             addInvalidFile(report, e);
         }
 
