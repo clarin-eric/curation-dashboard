@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
 
+import at.ac.oeaw.acdh.stormychecker.exception.CategoryException;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
@@ -29,10 +31,9 @@ public class URLValidator extends CMDSubprocessor {
 
     private static final Logger logger = LoggerFactory.getLogger(URLValidator.class);
 
-
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report) {
-        //do nothing this is not used, not really good coding is it???
+        //do nothing this is not used, not really good coding, is it???
     }
 
     public void process(CMDInstance entity, CMDInstanceReport report, String parentName) {
@@ -98,25 +99,25 @@ public class URLValidator extends CMDSubprocessor {
             }
 
             //get the numbers of links directly from database instead of getting each link and adding it manually here
-            try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Broken)))){
+            try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Broken)))) {
                 numOfBrokenLinks = stream.count();
             } catch (SQLException e) {
                 logger.error("Error when getting number of broken links from the database: " + e.getMessage());
             }
 
-            try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Undetermined)))){
+            try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Undetermined)))) {
                 numOfUndeterminedLinks = stream.count();
             } catch (SQLException e) {
                 logger.error("Error when getting number of undetermined links from the database: " + e.getMessage());
             }
 
-            try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Restricted_Access)))){
+            try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Restricted_Access)))) {
                 numOfRestrictedAccessLinks = stream.count();
             } catch (SQLException e) {
                 logger.error("Error when getting number of restricted access links from the database: " + e.getMessage());
             }
 
-            try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Blocked_By_Robots_txt)))){
+            try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Blocked_By_Robots_txt)))) {
                 numOfBlockedByRobotsTxtLinks = stream.count();
             } catch (SQLException e) {
                 logger.error("Error when getting number of blocked by robots.txt links from the database: " + e.getMessage());
@@ -189,86 +190,69 @@ public class URLValidator extends CMDSubprocessor {
                 logger.error("Error when saving " + linksToBeChecked + " to urls table: " + e.getMessage());
             }
 
-        } else {//instance mode TODO make this the same as stormychecker
+        } else {//instance mode
+
             HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
 
             for (String url : urlMap.keySet()) {
-
-                String expectedMimeType = urlMap.get(url).getMimeType();
-                expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
-
-                try {// check if URL is broken
-
+                //first check if database has this url
+                Optional<CheckedLink> checkedLinkOptional = null;
+                CheckedLink checkedLink = new CheckedLink();
+                try {
+                    checkedLinkOptional = Configuration.checkedLinkResource.get(url);
+                } catch (SQLException e) {
+                    //error doesn't matter, treat it as if it is not in the database
+                }
+                if (checkedLinkOptional != null && !checkedLinkOptional.isEmpty()) {
+                    checkedLink = checkedLinkOptional.get();
+                } else {
                     try {
-                        Optional<CheckedLink> checkedLinkOptional = Configuration.checkedLinkResource.get(url, parentName);
-                        CheckedLink checkedLink = null;
-                        if (checkedLinkOptional.isEmpty()) {//if it is not in the database or database connection can't be established, check it yourself :)
-                            logger.info("Checking url: " + url);
-
-                            checkedLink = httpLinkChecker.checkLink(url, 0, 0, url);//redirect follow level is current level, because this is the first request it is set to 0
-                            checkedLink.setExpectedMimeType(expectedMimeType);
-                        } else {
-                            checkedLink = checkedLinkOptional.get();
-                        }
-
-                        //todo-all categories need to be checked. stormychecker code is necessary here.
-                        if (checkedLink.getStatus() != 200 && checkedLink.getStatus() != 302) {
-                            if (checkedLink.getStatus() == 401 || checkedLink.getStatus() == 405 || checkedLink.getStatus() == 429) {
-                                numOfUndeterminedLinks++;
-                            } else {
-                                numOfBrokenLinks++;
-                            }
-
-                        }
-
-                        addMessageForStatusCode(checkedLink.getStatus(), url);
-
-                        CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(checkedLink);
-                        report.addURLElement(urlElementReport);
-
-                    } catch (SQLException e) {
-                        logger.warn("There is something wrong with the database connection.");
-                        //can't connect to database, check it yourself
+                        checkedLink = httpLinkChecker.checkLink(url);//redirect follow level is current level, because this is the first request it is set to 0
+                    } catch (Exception e) {
+                        checkedLink.setUrl(url);
+                        //ugly hack: category enum in both projects is the same. cant use one in both because java versions dont match. need to update stormychecker to java 11
+                        checkedLink.setCategory(Category.valueOf(CategoryException.getCategoryFromException(e, url).name()));
+                        checkedLink.setMessage(e.getMessage());
+                        checkedLink.setStatus(null);
+                        checkedLink.setByteSize(0);
+                        checkedLink.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                        checkedLink.setDuration(0);
+                        checkedLink.setContentType(null);
+                        checkedLink.setMethod("HEAD");//first HEAD request will produce the exception
                     }
 
+                    String expectedMimeType = urlMap.get(url).getMimeType();
+                    expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
+                    checkedLink.setExpectedMimeType(expectedMimeType);
 
-                } catch (IOException | IllegalArgumentException e) {
-
-                    numOfBrokenLinks++;
-
-                    CMDInstanceReport.URLElement urlElement = new CMDInstanceReport.URLElement();
-                    urlElement.expectedContentType = expectedMimeType;
-                    urlElement.message = e.getLocalizedMessage();
-                    urlElement.url = url;
-                    urlElement.status = 0;
-                    urlElement.category = "Broken";
-                    urlElement.contentType = null;
-                    urlElement.byteSize = "0";
-                    urlElement.timestamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
-                    urlElement.duration = "0 ms";
-                    urlElement.redirectCount = 0;
-                    report.addURLElement(urlElement);
-
-
-                    addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + e.toString());
+                    checkedLink.setRecord(report.getName());
                 }
+                Category category = checkedLink.getCategory();
+                if (category.equals(Category.Ok)) {
+                    //do nothing
+                } else if (category.equals(Category.Broken)) {
+                    addMessage(Severity.ERROR, "Url: " + checkedLink.getUrl() + " Category:" + category);
+                    numOfBrokenLinks++;
+                } else if (category.equals(Category.Undetermined)) {
+                    addMessage(Severity.WARNING, "Url: " + checkedLink.getUrl() + " Category:" + category);
+                    numOfUndeterminedLinks++;
+                } else if (category.equals(Category.Restricted_Access)) {
+                    addMessage(Severity.WARNING, "Url: " + checkedLink.getUrl() + " Category:" + category);
+                    numOfRestrictedAccessLinks++;
+                } else {//blocked by robots.txt
+                    addMessage(Severity.WARNING, "Url: " + checkedLink.getUrl() + " Category:" + category);
+                    numOfBlockedByRobotsTxtLinks++;
+                }
+
+                CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(checkedLink);
+                report.addURLElement(urlElementReport);
+
 
             }
 
         }
         report.urlReport = createInstanceURLReport(numOfLinks.get(), numOfUniqueLinks, numOfBrokenLinks, numOfUndeterminedLinks, numOfRestrictedAccessLinks, numOfBlockedByRobotsTxtLinks);
 
-    }
-
-    private void addMessageForStatusCode(int responseCode, String url) {
-
-        if (responseCode == 200 || responseCode == 302) {
-        } // OK
-        else if (responseCode < 400) {// 2XX and 3XX, redirections, empty content
-            addMessage(Severity.WARNING, "URL: " + url + "     STATUS:" + responseCode);
-        } else {// 4XX and 5XX, client/server errors
-            addMessage(Severity.ERROR, "URL: " + url + "    STATUS:" + responseCode);
-        }
     }
 
     public Score calculateScore(CMDInstanceReport report) {

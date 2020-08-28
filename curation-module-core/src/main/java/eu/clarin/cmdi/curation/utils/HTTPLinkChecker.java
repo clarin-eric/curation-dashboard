@@ -1,7 +1,9 @@
 package eu.clarin.cmdi.curation.utils;
 
+import at.ac.oeaw.acdh.stormychecker.config.Constants;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
+import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -49,18 +51,13 @@ public class HTTPLinkChecker {
     }
 
     //this method checks link with HEAD, if it fails it calls a check link with GET method
-    public CheckedLink checkLink(String url, int redirectFollowLevel, long durationPassed, String originalURL) throws IOException, IllegalArgumentException {
-        logger.trace("Check link requested with url: " + url + " , redirectFollowLevel: " + redirectFollowLevel);
-        if (url == null) {
-            throw new IOException("The requested url is null.");
-        }
-
+    public CheckedLink checkLink(String url) throws IOException, IllegalArgumentException {
         RequestConfig requestConfig = RequestConfig.custom()//put all timeouts to 5 seconds, should be max 15 seconds per link
                 .setConnectTimeout(timeout)
                 .setConnectionRequestTimeout(timeout)
                 .setSocketTimeout(timeout)
                 .build();
-        HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).disableRedirectHandling().build();
+        HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
 
         //valid-example.xml has this url: http://clarin.oeaw.ac.at/lrp/dict-gate/index.html
         //returns 400 for head but browser opens fine
@@ -84,100 +81,39 @@ public class HTTPLinkChecker {
         long end = System.currentTimeMillis();
         long duration = end - start;
 
-
-        duration += durationPassed;//durationPassed is for previous requests if any that led to a redirect
+        CheckedLink checkedLink = new CheckedLink();
+        checkedLink.setMethod("HEAD");
+        checkedLink.setUrl(url);
 
         int statusCode = response.getStatusLine().getStatusCode();
 
-        CheckedLink checkedLink = new CheckedLink();
-        checkedLink.setMethod("HEAD");
-        checkedLink.setUrl(originalURL);
+        if(!Constants.okStatusCodes.contains(statusCode)){//HEAD unsuccessful try GET
+            HttpGet get = new HttpGet(url);
+            get.setHeader("User-Agent", USERAGENT);
+
+            start = System.currentTimeMillis();
+            response = client.execute(get);
+            end = System.currentTimeMillis();
+            duration += end - start;
+
+            statusCode = response.getStatusLine().getStatusCode();
+
+            checkedLink.setMethod("GET");
+        }
+
         checkedLink.setStatus(statusCode);
 
-        //deal with redirect
-        if (redirectStatusCodes.contains(statusCode)) {
-            if (redirectFollowLevel >= REDIRECT_FOLLOW_LIMIT) {
-//                checkedLink.setMessage("Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")");
-                checkedLink.setStatus(0);
-            } else {
-                String redirectLink = response.getHeaders("Location")[0].getValue();
-                if (redirectLink != null) {
-                    if (redirectLink.equals(url)) {
-//                        checkedLink.setMessage("Redirect link is the same");
-                        checkedLink.setStatus(0);
-                    } else {
-                        try {
-                            redirectLink = convertRelativeToAbsolute(url, redirectLink);
-                            this.redirectLink = redirectLink;
-                            return checkLink(redirectLink, redirectFollowLevel + 1, duration, originalURL);
-                        } catch (URISyntaxException e) {
-//                            checkedLink.setMessage("Redirect link is malformed");
-                            checkedLink.setStatus(0);
-                        }
-                    }
-                } else {
-//                    checkedLink.setMessage("There is no redirect link('Location' header)");
-                    checkedLink.setStatus(0);
-                }
-            }
+
+        if (Constants.okStatusCodes.contains(statusCode)) {
+            checkedLink.setMessage(Category.Ok.name());
+            checkedLink.setCategory(Category.Ok);
+        } else if (Constants.undeterminedStatusCodes.contains(statusCode)) {
+            checkedLink.setMessage("Undetermined, Status code: " + statusCode);
+            checkedLink.setCategory(Category.Undetermined);
+        } else {
+            checkedLink.setMessage("Broken, Status code: " + statusCode);
+            checkedLink.setCategory(Category.Broken);
         }
-
-        //IF HEAD doesnt work and we are not over the redirect limit, try the same thing with get
-        if (statusCode != 200 && statusCode != 304) {
-            if (redirectFollowLevel < REDIRECT_FOLLOW_LIMIT) {
-
-
-                HttpGet get = new HttpGet(url);
-                get.setHeader("User-Agent", USERAGENT);
-
-                start = System.currentTimeMillis();
-                response = client.execute(get);
-                end = System.currentTimeMillis();
-                duration += end - start;
-
-                statusCode = response.getStatusLine().getStatusCode();
-
-                checkedLink.setStatus(statusCode);
-                checkedLink.setMethod("GET");
-
-                //deal with redirect
-                if (statusCode == 200 || statusCode == 304) {
-//                    checkedLink.setMessage("Ok");
-                    checkedLink.setUrl(originalURL);
-                } else if (redirectStatusCodes.contains(statusCode)) {
-                    if (redirectFollowLevel >= REDIRECT_FOLLOW_LIMIT) {
-//                        checkedLink.setMessage("Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")");
-                        checkedLink.setStatus(0);
-                    } else {
-                        String redirectLink = response.getHeaders("Location")[0].getValue();
-                        if (redirectLink != null) {
-                            if (redirectLink.equals(url)) {
-//                                checkedLink.setMessage("Redirect link is the same");
-                                checkedLink.setStatus(0);
-                            } else {
-                                this.redirectLink = redirectLink;
-                                return checkLink(redirectLink, redirectFollowLevel + 1, duration, originalURL);
-                            }
-                        } else {
-//                            checkedLink.setMessage("There is no redirect link('Location' header)");
-                            checkedLink.setStatus(0);
-                        }
-                    }
-                } else {
-//                    if (undeterminedStatusCodes.contains(statusCode)) {
-//                        checkedLink.setMessage("Undetermined");
-//                    } else {
-//                        checkedLink.setMessage("Broken");
-//                    }
-
-                }
-
-            } else {
-//                checkedLink.setMessage("Too Many Redirects(Limit:" + REDIRECT_FOLLOW_LIMIT + ")");
-                checkedLink.setStatus(0);
-            }
-        }
-
 
         String contentType;
         Header[] contentTypeArray = response.getHeaders("Content-Type");
@@ -188,14 +124,13 @@ public class HTTPLinkChecker {
         }
 
         Header contentLengthHeader = response.getFirstHeader("Content-Length");
-        if(contentLengthHeader!=null){
+        if (contentLengthHeader != null) {
             int contentLength = Integer.parseInt(contentLengthHeader.getValue());
             checkedLink.setContentType(contentType);
             checkedLink.setByteSize(contentLength);
         }
-        checkedLink.setDuration((int)duration);//dont forget to humanize to time
+        checkedLink.setDuration((int) duration);//dont forget to humanize to time
         checkedLink.setTimestamp(new Timestamp(start));//dont forget to humanize to date
-        checkedLink.setRedirectCount(redirectFollowLevel);
 
         return checkedLink;
     }

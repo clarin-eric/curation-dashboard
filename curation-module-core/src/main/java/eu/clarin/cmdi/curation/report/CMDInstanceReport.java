@@ -116,9 +116,6 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         @XmlAttribute(name = "timestamp")
         public String timestamp;
 
-        @XmlAttribute(name = "redirectCount")
-        public int redirectCount;
-
         @XmlAttribute(name = "color-code")
         public String colorCode;
 
@@ -132,7 +129,6 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             byteSize = String.valueOf(checkedLink.getByteSize());
             duration = TimeUtils.humanizeToTime(checkedLink.getDuration());
             timestamp = checkedLink.getTimestamp().toString();
-            redirectCount = checkedLink.getRedirectCount();
             colorCode = CategoryColor.getColor(checkedLink.getCategory());
 
             return this;

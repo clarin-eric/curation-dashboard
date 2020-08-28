@@ -174,10 +174,16 @@ public class Main {
 
                     }
                 }
+                logger.info("Creating collections table...");
+
                 // dumping the collections table
                 dumpAsXML(collectionsReport, CurationEntityType.COLLECTION);
                 dumpAsHTML(collectionsReport, CurationEntityType.COLLECTION);
                 dumpAsTSV(collectionsReport, CurationEntityType.COLLECTION);
+
+                logger.info("Creating collections table finished.");
+
+                logger.info("Creating profiles table...");
 
                 //now dumping the public profile reports
                 ProfilesReport profilesReport = new ProfilesReport();
@@ -192,11 +198,15 @@ public class Main {
                 dumpAsXML(profilesReport, CurationEntityType.PROFILE);
                 dumpAsHTML(profilesReport, CurationEntityType.PROFILE);
                 dumpAsTSV(profilesReport, CurationEntityType.PROFILE);
+                logger.info("Creating profiles table finished..");
 
+                logger.info("Creating statistics table...");
                 //dumping the linkchecker statistics table
                 dumpAsXML(linkCheckerReport, CurationEntityType.STATISTICS);
                 dumpAsHTML(linkCheckerReport, CurationEntityType.STATISTICS);
+                logger.info("Creating statistics table finished.");
 
+                logger.info("Deleting old links if there are any...");
                 deleteOldLinks();
 
                 Configuration.tearDown();

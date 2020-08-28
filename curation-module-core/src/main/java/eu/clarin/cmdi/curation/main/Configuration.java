@@ -78,7 +78,7 @@ public class Configuration {
     }
 
     public static void tearDown() {
-        logger.info("Finished report generation. Stopping Curation Module.");
+        logger.info("Finished report generation. Stopping Curation Module...");
         factory.tearDown();
     }
 
