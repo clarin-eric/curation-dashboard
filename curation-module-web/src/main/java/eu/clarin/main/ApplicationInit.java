@@ -1,5 +1,6 @@
 package eu.clarin.main;
 
+import eu.clarin.cmdi.curation.exception.UncaughtExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,11 +18,12 @@ public class ApplicationInit implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
+            Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());//to log uncaught exceptions
             ServletContext servletContext = servletContextEvent.getServletContext();
             Configuration.init(servletContext);
 
         } catch (IOException e) {
-            logger.error("There was a problem loading the properties file:"+e.getMessage());
+            logger.error("There was a problem loading the properties file:" + e.getMessage());
         }
     }
 

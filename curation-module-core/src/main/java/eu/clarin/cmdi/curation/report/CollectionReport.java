@@ -109,12 +109,6 @@ public class CollectionReport implements Report<CollectionReport> {
         headerReport.profiles.handleProfile(profile, score);
     }
 
-//    public void handleProfile(Profile profile) {
-//        if (headerReport.profiles == null)
-//            headerReport.profiles = new Profiles();
-//        headerReport.profiles.handleProfile(profile);
-//    }
-
     @Override
     public String getName() {
         return fileReport.provider;
@@ -329,7 +323,7 @@ public class CollectionReport implements Report<CollectionReport> {
     public static class HeaderReport {
         @XmlElementWrapper(name = "duplicatedMDSelfLinks")
         public Collection<String> duplicatedMDSelfLink = null;
-        public Profiles profiles = null;
+        public Profiles profiles = new Profiles();
     }
 
     @XmlRootElement
@@ -443,7 +437,7 @@ public class CollectionReport implements Report<CollectionReport> {
         @XmlAttribute(name = "count")
         public int totNumOfProfiles = 0;
 
-        public List<Profile> profiles;
+        public List<Profile> profiles = new ArrayList<>();
 
         public void handleProfile(String profile, double score) {
             if (profiles == null) {
@@ -465,21 +459,6 @@ public class CollectionReport implements Report<CollectionReport> {
             profiles.add(p);
             totNumOfProfiles++;
         }
-
-        //never used?
-//        public void handleProfile(Profile profile) {
-//            if (profiles == null)
-//                profiles = new ArrayList<>();
-//
-//            for (Profile p : profiles)
-//                if (p.name.equals(profile.name)) {
-//                    p.count += profile.count;
-//                    return;
-//                }
-//
-//            profiles.add(profile);
-//            totNumOfProfiles++;
-//        }
 
     }
 

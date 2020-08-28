@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.main;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.PublicProfiles;
 import eu.clarin.cmdi.curation.entities.CurationEntityType;
+import eu.clarin.cmdi.curation.exception.UncaughtExceptionHandler;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.CollectionReport;
 import eu.clarin.cmdi.curation.report.CollectionsReport;
@@ -41,6 +42,8 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
+
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());//to log uncaught exceptions
 
         CommandLineParser parser = new DefaultParser();
 
@@ -168,8 +171,6 @@ public class Main {
                                 });
                             }
                         }
-
-//                        logger.info("Generated report for collection: " + report.getName());
 
                     }
                 }
