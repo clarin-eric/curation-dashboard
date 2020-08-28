@@ -44,6 +44,7 @@ public class TestBase {
     }
 
     //TODO use this database for tests...
+    //todo update initDB.sql from rasa
     private static void setupTestDatabase() throws SQLException, IOException, ManagedProcessException {
         database = DB.newEmbeddedDB(3308);
 
