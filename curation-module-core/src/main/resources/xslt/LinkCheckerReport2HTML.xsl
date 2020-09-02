@@ -29,7 +29,7 @@
                             <tr style="background-color:{$color}">
 
                                 <td>
-                                    <a href="/statistics/Overall/{$category}">--
+                                    <a href="/statistics/Overall/{$category}">
                                         <xsl:value-of select="@category"></xsl:value-of>
                                     </a>
                                 </td>
