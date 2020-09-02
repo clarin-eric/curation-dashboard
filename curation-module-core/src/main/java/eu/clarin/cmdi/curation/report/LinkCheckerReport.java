@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.report;
 
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport.Statistics;
+import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.DAO.Statistics.CategoryStatistics;
 import org.slf4j.Logger;
@@ -123,6 +124,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
                     xmlStatistics.maxRespTime = statistics.getMaxRespTime();
                     xmlStatistics.category = statistics.getCategory().name();
                     xmlStatistics.count = statistics.getCount();
+                    xmlStatistics.colorCode = CategoryColor.getColor(statistics.getCategory());
                     this.statistics.add(xmlStatistics);
                 }
 

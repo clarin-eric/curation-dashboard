@@ -106,7 +106,7 @@ public class LinkCheckerStatisticsHelper {
         sb.append("<h1>Link Checking Statistics (Category:" + category + "):</h1>");
         sb.append("<h3>").append(collectionName.replace("_", " ")).append(":</h3>");
 
-        List<String> columnNames = Arrays.asList("Url" + "Status", "Info", "Record");
+        List<String> columnNames = Arrays.asList("Url", "Status", "Info", "Record");
 
         sb.append("<table class='reportTable' id='statsTable' data-collection='" + collectionName + "' data-category='" + category + "'>");
         sb.append("<thead>");

@@ -375,9 +375,8 @@
 				</p>
 
 
-				<h3>Status Codes Table</h3>
+				<h3>URL Categories Table</h3>
 
-				<h4>Ok</h4>
 				<table class="reportTable">
 					<thead>
 						<tr>
@@ -398,8 +397,8 @@
 							<xsl:variable name="color">
 								<xsl:value-of select="./@colorCode" />
 							</xsl:variable>
-							<tr>
-								<td style="background-color:{$color}" align="right">
+							<tr style="background-color:{$color}">
+								<td align="right">
 									<a href="/statistics/{$collectionName}/{$category}">
 										<xsl:copy-of select="$category" />
 									</a>

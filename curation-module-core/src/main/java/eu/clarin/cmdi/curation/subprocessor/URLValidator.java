@@ -97,7 +97,7 @@ public class URLValidator extends CMDSubprocessor {
                     logger.error("Error when getting " + url + " from the database: " + e.getMessage());
                 }
             }
-
+//todo make these count queries directly to mysql
             //get the numbers of links directly from database instead of getting each link and adding it manually here
             try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Broken)))) {
                 numOfBrokenLinks = stream.count();
@@ -122,61 +122,6 @@ public class URLValidator extends CMDSubprocessor {
             } catch (SQLException e) {
                 logger.error("Error when getting number of blocked by robots.txt links from the database: " + e.getMessage());
             }
-
-            //todo delete this if the above solution works
-//            for (String url : urlMap.keySet()) {
-//
-//                try {
-//                    Optional<CheckedLink> checkedLinkOptional = Configuration.checkedLinkResource.get(url, parentName);
-//
-//                    if (checkedLinkOptional.isEmpty()) {//not in the status table
-//
-//                        Optional<LinkToBeChecked> linkToBeCheckedOptional = Configuration.linkToBeCheckedResource.get(url);
-//                        if (linkToBeCheckedOptional.isEmpty()) {//not in the status table or urls table so not in database
-//                            String expectedMimeType = urlMap.get(url).getMimeType();
-//                            expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
-//
-//                            String finalRecord = report.getName();
-//                            String finalCollection = parentName != null ? parentName : finalRecord;
-//
-//                            LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType, Configuration.reportGenerationDate);
-//
-//                            linksToBeChecked.add(linkToBeChecked);
-//                        } else {//link already in the database but not checked
-//                            linksToBeUpdated.add(url);//update the harvestDate of the link
-//                        }
-//
-//                    } else {//link already in the database
-//
-//                        linksToBeUpdated.add(url);//update the harvestDate of the link
-//
-//                        Category category = checkedLinkOptional.get().category;
-//                        switch (category) {
-//                            case Ok:
-//                                //do nothing
-//                                break;
-//                            case Broken:
-//                                numOfBrokenLinks++;
-//                                break;
-//                            case Undetermined:
-//                                numOfUndeterminedLinks++;
-//                                break;
-//                            case Restricted_Access:
-//                                numOfRestrictedAccessLinks++;
-//                                break;
-//                            case Blocked_By_Robots_txt:
-//                                numOfBlockedByRobotsTxtLinks++;
-//                                break;
-//                            default:
-//                                //cant come here...
-//                                break;
-//                        }
-//                    }
-//
-//                } catch (SQLException e) {
-//                    logger.error("Error when getting " + url + " from the database: " + e.getMessage());
-//                }
-//            }
 
             try {//update the harvest date for existing links
                 Configuration.linkToBeCheckedResource.updateDate(linksToBeUpdated, Configuration.reportGenerationDate);
