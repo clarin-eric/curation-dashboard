@@ -76,32 +76,32 @@ public class URLValidator extends CMDSubprocessor {
 
             for (String url : urlMap.keySet()) {
 
+                String expectedMimeType = urlMap.get(url).getMimeType();
+                expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
+
+                String finalRecord = report.getName();
+                String finalCollection = parentName != null ? parentName : finalRecord;
+
                 try {
-                    Optional<CheckedLink> checkedLinkOptional = Configuration.checkedLinkResource.get(url, parentName);
-
-                    if (checkedLinkOptional.isEmpty()) {//not in the database
-                        String expectedMimeType = urlMap.get(url).getMimeType();
-                        expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
-
-                        String finalRecord = report.getName();
-                        String finalCollection = parentName != null ? parentName : finalRecord;
-
+                    Optional<LinkToBeChecked> linkToBeCheckedOptional = Configuration.linkToBeCheckedResource.get(url);
+                    if (linkToBeCheckedOptional.isEmpty()) {//not in the database
                         LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType, Configuration.reportGenerationDate);
-
                         linksToBeChecked.add(linkToBeChecked);
-
-                    } else {//link already in the database
-
+                    } else { //in the database
                         linksToBeUpdated.add(url);//update the harvestDate of the link
+                        Optional<CheckedLink> checkedLinkOptional = Configuration.checkedLinkResource.get(url, parentName);
+                        if (checkedLinkOptional.isPresent()) {
+                            //link is checked and found see if it is broken or undetermined
+                            Category category = StatusCodeMapper.get(checkedLinkOptional.get().getStatus());
+                            if (category.equals(Category.Broken)) {
+                                numOfBrokenLinks++;
+                            } else if (category.equals(Category.Undetermined)) {
+                                numOfUndeterminedLinks++;
+                            }
+                        }//else not in the status table so not checked yet, dont do anything
 
-                        //link is checked and found see if it is broken or undetermined
-                        Category category = StatusCodeMapper.get(checkedLinkOptional.get().getStatus());
-                        if (category.equals(Category.Broken)) {
-                            numOfBrokenLinks++;
-                        } else if (category.equals(Category.Undetermined)) {
-                            numOfUndeterminedLinks++;
-                        }
                     }
+
 
                 } catch (SQLException e) {
                     logger.error("Error when getting " + url + " from status table: " + e.getMessage());
