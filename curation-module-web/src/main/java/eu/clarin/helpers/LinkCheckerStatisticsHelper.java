@@ -151,7 +151,7 @@ public class LinkCheckerStatisticsHelper {
 
                 //status
                 sb.append("<td>");
-                sb.append(checkedLink.getStatus());
+                sb.append(checkedLink.getStatus() == null ? "N/A" : checkedLink.getStatus());
                 sb.append("</td>");
 
                 //info button
@@ -166,6 +166,7 @@ public class LinkCheckerStatisticsHelper {
                 if (record != null) {
                     String recordWithBreaks = record.replace("_", "_<wbr>");
 
+                    //todo maybe put these in properties file?
                     if (Configuration.clarinCollections.contains(collectionName)) {
                         String clarinURLPrefix = "https://vlo.clarin.eu/data/clarin/results/cmdi/";
                         sb.append("<a href='").append(clarinURLPrefix + collectionName + "/" + record + ".xml").append("'>").append(recordWithBreaks).append("</a>");
@@ -183,13 +184,13 @@ public class LinkCheckerStatisticsHelper {
                 sb.append("<tr hidden><td colspan='4'>");
                 String message = checkedLink.getMessage().replace("_", "_<wbr>");
                 sb.append("<b>Message: </b> ").append(message).append("<br>");
-                //because this field is new, older entries dont have it and it results in null, so a null check to make it more user friendly
-                String expectedContent = checkedLink.getExpectedMimeType() == null ? "Not Specified" : checkedLink.getExpectedMimeType();
-                String content = checkedLink.getContentType();
 
+                String expectedContent = checkedLink.getExpectedMimeType() == null ? "Not Specified" : checkedLink.getExpectedMimeType();
+                String content = checkedLink.getContentType() == null ? "N/A" : checkedLink.getContentType();
                 sb.append("<b>Expected Content Type: </b>").append(expectedContent).append("<br>");
                 sb.append("<b>Content Type: </b>").append(content).append("<br>");
-                sb.append("<b>Byte Size: </b>").append(checkedLink.getByteSize()).append("<br>");
+
+                sb.append("<b>Byte Size: </b>").append(checkedLink.getByteSize() == null ? "N/A" : checkedLink.getByteSize()).append("<br>");
                 sb.append("<b>Request Duration(ms): </b>").append(checkedLink.getDuration()).append("<br>");
 
                 String method = checkedLink.getMethod() == null ? "N/A" : checkedLink.getMethod();
