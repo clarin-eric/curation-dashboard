@@ -375,7 +375,7 @@
 				</p>
 
 
-				<h3>URL Categories Table</h3>
+				<h3>Link Checking Results</h3>
 
 				<table class="reportTable">
 					<thead>
