@@ -66,7 +66,7 @@ public final class ResponseManager {
         return Response.status(301).header("Location",URL).build();
     }
 
-    public static Response returnImageResponse(int status, BufferedImage image, String extension) {
+    public static Response returnImageResponse(int status, BufferedImage image, String extension, String mimeType) {
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -74,7 +74,7 @@ public final class ResponseManager {
             byte[] imageData = baos.toByteArray();
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imageData);
 
-            return Response.status(status).entity(byteArrayInputStream).type(extension).build();
+            return Response.status(status).entity(byteArrayInputStream).type(mimeType).build();
         } catch (IOException e) {
             logger.error("Error while sending image response.");
             return returnServerError();

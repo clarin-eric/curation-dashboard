@@ -104,27 +104,6 @@ $("div#cmdi-dropzone").dropzone({
       }
 });
 
-
-//Dropzone.options.cmdiDropzone = {
-//  paramName: "file", // The name that will be used to transfer the file
-//  maxFilesize: 5, // MB
-//  success: function(file, done) {
-//        document.open();
-//        document.write(done);
-//        document.close();
-//   },
-//   error: function(file, error){
-//        document.open();
-//        document.write(error);
-//        document.close();
-//  },
-//  totaluploadprogress: function(progress, bytesSent) {
-//    if(progress == 100){
-//        $('#cmdi-dropzone').append('<div>Upload complete. Validating...</div><div id="uploadWheel" class="spinner"></div>')
-//    }
-//  }
-//};
-
 function toggleFacets() {
     var facetTable = $('#facetTable');
 
@@ -146,12 +125,28 @@ $('#validateButton').click(function() {
     }
 });
 
-//when back button is clicked, validate button doesnt refresh and stays in the loading spinner phase
-//this is to insure that it does
 window.onpageshow = function (event) {
+    //when back button is clicked, validate button doesnt refresh and stays in the loading spinner phase
+    //this is to insure that it does
     var button = $('#validateButton');
     button.html('Validate');
     button.prop('disabled', false);
+
+    //highlight button of current page(a little bit too hardcoded, should think of a better solution...)
+        var path = window.location.pathname;
+        if(path==="/"){
+            $('#validatorButton').addClass("highlight-button");
+        }else if(path==="/profile/table"){
+            $('#profilesButton').addClass("highlight-button");
+        }else if(path==="/collection/table"){
+            $('#collectionsButton').addClass("highlight-button");
+        }else if(path==="/statistics"){
+            $('#statisticsButton').addClass("highlight-button");
+        }else if(path==="/help"){
+            $('#helpButton').addClass("highlight-button");
+        }else if(path==="/faq"){
+            $('#faqButton').addClass("highlight-button");
+        }
 };
 
 var table = $('#statsTable');
@@ -251,9 +246,6 @@ function redirectDeprecatedURLs(){
             window.location.replace(newUrl);
         }
     }
-
-
-
 
 }
 

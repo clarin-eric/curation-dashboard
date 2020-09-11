@@ -35,7 +35,6 @@ public class Faq {
     @Path("/faq.md")
     public Response getFaqMD() {
 
-        logger.error("allahallah");
         String faqJsonPath = Configuration.VIEW_RESOURCES_PATH + "/markdown/faq.md";
         final InputStream fileInStream;
         try {

@@ -57,8 +57,7 @@ public class View {
 
                 BufferedImage image = FileManager.readImage(Configuration.VIEW_RESOURCES_PATH + filePath);
 
-
-                return ResponseManager.returnImageResponse(200,image,extensionMimeTypes.get(extension));
+                return ResponseManager.returnImageResponse(200,image,extension,extensionMimeTypes.get(extension));
             } else {
                 return ResponseManager.returnError(404,"Requested file doesn't exist.");
             }

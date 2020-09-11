@@ -113,3 +113,7 @@ a:hover {
 .maxTextWidth {
     max-width: 800px;
 }
+
+.highlight-button{
+    background-color: #d8d8d8 !important;
+}
