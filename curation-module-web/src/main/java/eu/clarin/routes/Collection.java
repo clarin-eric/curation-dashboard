@@ -50,7 +50,7 @@ public class Collection {
                     xmlLink = "<a href='"+xmlLink+"'>"+xmlLink+"</a>";
                     collectionHTML = collectionHTML.replaceFirst(Pattern.quote("selfURLPlaceHolder"), xmlLink);
 
-                    return ResponseManager.returnHTML(200, collectionHTML, null);
+                    return ResponseManager.returnHTML(200, collectionHTML);
                 default:
                     return ResponseManager.returnError(400, "Collection name must end with either xml or html.");
             }

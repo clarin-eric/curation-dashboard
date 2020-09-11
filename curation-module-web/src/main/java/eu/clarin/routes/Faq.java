@@ -24,7 +24,7 @@ public class Faq {
         try {
             String faq = FileManager.readFile(Configuration.VIEW_RESOURCES_PATH + "/html/faq.html");
 
-            return ResponseManager.returnHTML(200, faq, null);
+            return ResponseManager.returnHTML(200, faq);
         } catch (IOException e) {
             logger.error("Error when reading faq.html: ", e);
             return ResponseManager.returnServerError();

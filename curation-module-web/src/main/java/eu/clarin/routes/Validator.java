@@ -27,7 +27,7 @@ public class Validator {
         try {
             String instance = FileManager.readFile(Configuration.VIEW_RESOURCES_PATH + "/html/validator.html");
 
-            return ResponseManager.returnHTML(200, instance, null);
+            return ResponseManager.returnHTML(200, instance);
         } catch (IOException e) {
             logger.error("Error when reading validator.html: ", e);
             return ResponseManager.returnServerError();

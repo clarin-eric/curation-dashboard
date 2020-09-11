@@ -88,10 +88,10 @@ public class CRService implements ICRService {
                         header.setCmdiVersion("1.1");
                 }
                 catch (MalformedURLException ex) {
-                    logger.error("schema location "  + schemaLocation + " is no valid URL", ex);
+                    logger.error("Schema location "  + schemaLocation + " is no valid URL.");
                 }
                 catch (IOException ex) {
-                    logger.error("couldn't read from schema location " + schemaLocation, ex);
+                    logger.error("Couldn't read from schema location: " + schemaLocation);
                 }  
 			}
 		}

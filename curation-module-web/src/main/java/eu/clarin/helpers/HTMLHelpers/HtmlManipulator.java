@@ -11,6 +11,11 @@ import java.util.List;
 
 public class HtmlManipulator {
 
+    public static String addContentToGenericHTML(String content) throws IOException {
+        return addContentToGenericHTML(content, null);
+    }
+
+
     //This method adds html content passed as a string to the generic html which can be found in the resources
     //It also takes a list of buttons to add to the left menu. If the list is null or empty, nothing is added to the left menu.
     public static String addContentToGenericHTML(String content, NavbarButton button) throws IOException {

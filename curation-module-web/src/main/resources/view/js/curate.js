@@ -94,8 +94,12 @@ $("div#cmdi-dropzone").dropzone({
             document.close();
       },
       totaluploadprogress: function(progress, bytesSent) {
+        //disable validate button first.
+        $('#validateButton').prop('disabled', true);
+
         if(progress == 100){
-            $('div#cmdi-dropzone').append('<div>Upload complete. Curating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="uploadWheel" class="spinner"></div>')
+            $('div#cmdi-dropzone').append('<div>Upload complete. Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="uploadWheel" class="spinner"></div>')
+
         }
       }
 });
@@ -116,7 +120,7 @@ $("div#cmdi-dropzone").dropzone({
 //  },
 //  totaluploadprogress: function(progress, bytesSent) {
 //    if(progress == 100){
-//        $('#cmdi-dropzone').append('<div>Upload complete. Curating...</div><div id="uploadWheel" class="spinner"></div>')
+//        $('#cmdi-dropzone').append('<div>Upload complete. Validating...</div><div id="uploadWheel" class="spinner"></div>')
 //    }
 //  }
 //};
@@ -136,8 +140,8 @@ function toggleFacets() {
 $('#validateButton').click(function() {
     //only change to spinner if input is valid
     if($('#url-input').val()){
-        $(this).html('<div>Curating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="uploadWheel" class="spinner"></div>');
-        $(this).html('<div>Curating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="uploadWheel" class="spinner"></div>');
+        $(this).html('<div>Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="uploadWheel" class="spinner"></div>');
+//        $(this).html('<div>Curating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="uploadWheel" class="spinner"></div>');
         $(this).prop('disabled', true);
     }
 });

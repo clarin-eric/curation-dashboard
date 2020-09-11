@@ -26,7 +26,7 @@ public class Help {
         try {
             String help = FileManager.readFile(Configuration.VIEW_RESOURCES_PATH + "/html/help.html");
 
-            return ResponseManager.returnHTML(200, help, null);
+            return ResponseManager.returnHTML(200, help);
         } catch (IOException e) {
             logger.error("Error when reading help.html: ", e);
             return ResponseManager.returnServerError();

@@ -29,7 +29,7 @@ public class Statistics {
             logger.info("Statistics report requested.");
             String statistics = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/statistics/LinkCheckerReport.html");
 
-            return ResponseManager.returnHTML(200, statistics, null);
+            return ResponseManager.returnHTML(200, statistics);
         } catch (IOException e) {
             logger.error("Error when reading linkCheckerStatistics.html: ", e);
             return ResponseManager.returnServerError();
@@ -55,7 +55,7 @@ public class Statistics {
             logger.error("Error in statistics: "+e.getMessage());
             return ResponseManager.returnServerError();
         }
-        return ResponseManager.returnHTML(200, urlStatistics, null);
+        return ResponseManager.returnHTML(200, urlStatistics);
     }
 
 
@@ -78,7 +78,7 @@ public class Statistics {
             logger.error("Error in statistics: "+e.getMessage());
             return ResponseManager.returnServerError();
         }
-        return ResponseManager.returnResponse(200, urlBatchStatistics, null);
+        return ResponseManager.returnTextResponse(200, urlBatchStatistics, "text/html");
     }
 
 }
