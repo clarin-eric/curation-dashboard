@@ -1,15 +1,13 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
-
-import at.ac.oeaw.acdh.stormychecker.exception.CategoryException;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.exception.CategoryException;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.URLReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.utils.HTTPLinkChecker;
-import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.DAO.LinkToBeChecked;
 import eu.clarin.cmdi.rasa.filters.impl.ACDHCheckedLinkFilter;
@@ -20,7 +18,6 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;

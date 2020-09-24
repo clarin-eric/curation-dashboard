@@ -1,7 +1,7 @@
 package eu.clarin.cmdi.curation.utils;
 
-import at.ac.oeaw.acdh.stormychecker.config.Constants;
 import eu.clarin.cmdi.curation.main.Configuration;
+import eu.clarin.cmdi.curation.main.Configuration.StormycheckerConstants;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import org.apache.http.Header;
@@ -87,7 +87,7 @@ public class HTTPLinkChecker {
 
         int statusCode = response.getStatusLine().getStatusCode();
 
-        if(!Constants.okStatusCodes.contains(statusCode)){//HEAD unsuccessful try GET
+        if(!StormycheckerConstants.okStatusCodes.contains(statusCode)){//HEAD unsuccessful try GET
             HttpGet get = new HttpGet(url);
             get.setHeader("User-Agent", USERAGENT);
 
@@ -104,10 +104,10 @@ public class HTTPLinkChecker {
         checkedLink.setStatus(statusCode);
 
 
-        if (Constants.okStatusCodes.contains(statusCode)) {
+        if (StormycheckerConstants.okStatusCodes.contains(statusCode)) {
             checkedLink.setMessage(Category.Ok.name());
             checkedLink.setCategory(Category.Ok);
-        } else if (Constants.undeterminedStatusCodes.contains(statusCode)) {
+        } else if (StormycheckerConstants.undeterminedStatusCodes.contains(statusCode)) {
             checkedLink.setMessage("Undetermined, Status code: " + statusCode);
             checkedLink.setCategory(Category.Undetermined);
         } else {

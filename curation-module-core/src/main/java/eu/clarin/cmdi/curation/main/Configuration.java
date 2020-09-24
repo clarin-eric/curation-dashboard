@@ -17,9 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Configuration {
@@ -141,5 +139,15 @@ public class Configuration {
 
         USERAGENT = config.getProperty("USERAGENT");
         BASE_URL = config.getProperty("BASE_URL");
+    }
+
+    public static class StormycheckerConstants{
+
+        public static final List<Integer> okStatusCodes = new ArrayList<>(Arrays.asList(200, 304));
+
+        public static final List<Integer> redirectStatusCodes = new ArrayList<>(Arrays.asList(301, 302, 303, 307, 308));
+
+        //this determines what status codes will not be considered broken links. urls with these codes will also not factor into the url-scores
+        public static final List<Integer> undeterminedStatusCodes = new ArrayList<>(Arrays.asList(401, 405, 429));
     }
 }
