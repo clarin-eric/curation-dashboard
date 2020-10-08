@@ -11,7 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-@Path("/mysqlDump.gz")
+@Path("/mysqlDump.sql.gz")
 public class MysqlDump {
 
     private static final Logger logger = Logger.getLogger(MysqlDump.class);
@@ -24,7 +24,7 @@ public class MysqlDump {
             String dumpPath = Configuration.OUTPUT_DIRECTORY+"/dump/status.sql.gz";
             final InputStream fileInStream = new FileInputStream(dumpPath);
 
-            return ResponseManager.returnFile(200,fileInStream,"application/gzip","mysqlDump.gz");
+            return ResponseManager.returnFile(200,fileInStream,"application/gzip","mysqlDump.sql.gz");
 
         } catch (FileNotFoundException e) {
             logger.error("There was an error getting the mysql dump file: ",e);
