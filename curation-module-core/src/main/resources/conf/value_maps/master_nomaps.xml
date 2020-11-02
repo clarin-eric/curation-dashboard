@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Value mapping master definition. Use this to include value maps that are to be
+	processed by the VLO.
+-->
+<value-mappings xmlns:xi="http://www.w3.org/2001/XInclude" />
