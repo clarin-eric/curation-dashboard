@@ -98,7 +98,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.2.3</version>
+                <version>3.3.1</version>
 
                 <executions>
                     <execution>
@@ -126,7 +126,7 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
-                <version>1.7.10</version>
+                <version>1.8.2</version>
                 <configuration>
                     <container>
                         <containerId>tomcat9x</containerId>
