@@ -1,11 +1,13 @@
 package eu.clarin.cmdi.curation.report;
 
 import eu.clarin.cmdi.curation.main.Configuration;
+import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+import eu.clarin.cmdi.rasa.DAO.Statistics.CategoryStatistics;
 import eu.clarin.cmdi.rasa.filters.impl.ACDHStatisticsCountFilter;
 import eu.clarin.cmdi.rasa.helpers.Table;
-import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.StatusCodeMapper;
+import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +16,8 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  *
@@ -106,12 +108,6 @@ public class CollectionReport implements Report<CollectionReport> {
         }
         headerReport.profiles.handleProfile(profile, score);
     }
-
-//    public void handleProfile(Profile profile) {
-//        if (headerReport.profiles == null)
-//            headerReport.profiles = new Profiles();
-//        headerReport.profiles.handleProfile(profile);
-//    }
 
     @Override
     public String getName() {
@@ -234,31 +230,37 @@ public class CollectionReport implements Report<CollectionReport> {
         xmlPopulatedReport.avgRateOfPopulatedElements = xmlPopulatedReport.avgNumOfXMLSimpleElements == 0 ? 0 : (xmlPopulatedReport.avgNumOfXMLSimpleElements - xmlPopulatedReport.avgXMLEmptyElement) / xmlPopulatedReport.avgNumOfXMLSimpleElements;
 
 
-        //statistics
+        //url statistics
         try {
-            List<eu.clarin.cmdi.rasa.DAO.Statistics.StatusStatistics> stats = Configuration.statisticsResource.getStatusStatistics(getName());
-            for (eu.clarin.cmdi.rasa.DAO.Statistics.StatusStatistics statistics : stats) {
+            List<CategoryStatistics> stats = Configuration.statisticsResource.getCategoryStatistics(getName());
+            for (CategoryStatistics statistics : stats) {
                 Statistics xmlStatistics = new Statistics();
                 xmlStatistics.avgRespTime = statistics.getAvgRespTime();
                 xmlStatistics.maxRespTime = statistics.getMaxRespTime();
-                xmlStatistics.statusCode = statistics.getStatus();
-                xmlStatistics.category = StatusCodeMapper.get(statistics.getStatus()).toString();
+                xmlStatistics.category = statistics.getCategory().name();
                 xmlStatistics.count = statistics.getCount();
-                urlReport.status.add(xmlStatistics);
+                xmlStatistics.colorCode = CategoryColor.getColor(statistics.getCategory());
+                urlReport.category.add(xmlStatistics);
             }
 
 
             ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(getName(), null, Table.URLS);
-            urlReport.totNumOfLinks = (int) Configuration.statisticsResource.countTable(filter);
+            urlReport.totNumOfLinks = (int) Configuration.statisticsResource.countTable(filter);//TODO this is wrong
 
             filter = new ACDHStatisticsCountFilter(getName(), null, Table.STATUS);
             urlReport.totNumOfCheckedLinks = (int) Configuration.statisticsResource.countTable(filter);
 
-            filter = new ACDHStatisticsCountFilter(getName(), null, true, false, Table.STATUS);
+            filter = new ACDHStatisticsCountFilter(getName(), null, Collections.singletonList(Category.Broken), Table.STATUS);
             urlReport.totNumOfBrokenLinks = (int) Configuration.statisticsResource.countTable(filter);
 
-            filter = new ACDHStatisticsCountFilter(getName(), null, false, true, Table.STATUS);
+            filter = new ACDHStatisticsCountFilter(getName(), null, Collections.singletonList(Category.Undetermined), Table.STATUS);
             urlReport.totNumOfUndeterminedLinks = (int) Configuration.statisticsResource.countTable(filter);
+
+            filter = new ACDHStatisticsCountFilter(getName(), null, Collections.singletonList(Category.Restricted_Access), Table.STATUS);
+            urlReport.totNumOfRestrictedAccessLinks = (int) Configuration.statisticsResource.countTable(filter);
+
+            filter = new ACDHStatisticsCountFilter(getName(), null, Collections.singletonList(Category.Blocked_By_Robots_txt), Table.STATUS);
+            urlReport.totNumOfBlockedByRobotsTxtLinks = (int) Configuration.statisticsResource.countTable(filter);
 
             filter = new ACDHStatisticsCountFilter(getName(), null, Table.URLS);
             urlReport.totNumOfUniqueLinks = (int) Configuration.statisticsResource.countTable(filter);
@@ -281,10 +283,10 @@ public class CollectionReport implements Report<CollectionReport> {
         }
 
 
-        int totCheckedUndeterminedRemoved = urlReport.totNumOfCheckedLinks - urlReport.totNumOfUndeterminedLinks;
+        int totCheckedUndeterminedAndRestrictedAndBlockedRemoved = urlReport.totNumOfCheckedLinks - (urlReport.totNumOfUndeterminedLinks + urlReport.totNumOfRestrictedAccessLinks + urlReport.totNumOfBlockedByRobotsTxtLinks);
 
         urlReport.ratioOfValidLinks = urlReport.totNumOfCheckedLinks == 0 ? 0 :
-                (double) (totCheckedUndeterminedRemoved - urlReport.totNumOfBrokenLinks) / totCheckedUndeterminedRemoved;
+                (double) (totCheckedUndeterminedAndRestrictedAndBlockedRemoved - urlReport.totNumOfBrokenLinks) / totCheckedUndeterminedAndRestrictedAndBlockedRemoved;
 
         // Facets
         facetReport.facet.forEach(facet -> facet.coverage = (double) facet.cnt / fileReport.numOfFiles);
@@ -321,7 +323,7 @@ public class CollectionReport implements Report<CollectionReport> {
     public static class HeaderReport {
         @XmlElementWrapper(name = "duplicatedMDSelfLinks")
         public Collection<String> duplicatedMDSelfLink = null;
-        public Profiles profiles = null;
+        public Profiles profiles = new Profiles();
     }
 
     @XmlRootElement
@@ -355,7 +357,7 @@ public class CollectionReport implements Report<CollectionReport> {
         public int totNumOfValidRecords;
         public Double ratioOfValidRecords = 0.0;
         @XmlElementWrapper(name = "invalid-records")
-        public Collection<Record> record = new ArrayList<Record>();
+        public Collection<Record> record = new ArrayList<>();
     }
 
     @XmlRootElement
@@ -379,10 +381,12 @@ public class CollectionReport implements Report<CollectionReport> {
         public Double avgNumOfBrokenLinks = 0.0;
         public Double ratioOfValidLinks = 0.0;
         public int totNumOfUndeterminedLinks;
+        public int totNumOfRestrictedAccessLinks;
+        public int totNumOfBlockedByRobotsTxtLinks;
         public Double avgRespTime = 0.0;
         public Long maxRespTime = 0L;
         @XmlElementWrapper(name = "statistics")
-        public Collection<Statistics> status = new ArrayList<>();
+        public Collection<Statistics> category = new ArrayList<>();
     }
 
     @XmlRootElement
@@ -398,10 +402,10 @@ public class CollectionReport implements Report<CollectionReport> {
         public double maxRespTime;
 
         @XmlAttribute
-        public int statusCode;
+        public String category;
 
         @XmlAttribute
-        public String category;
+        public String colorCode;
     }
 
     @XmlRootElement
@@ -433,7 +437,7 @@ public class CollectionReport implements Report<CollectionReport> {
         @XmlAttribute(name = "count")
         public int totNumOfProfiles = 0;
 
-        public List<Profile> profiles;
+        public List<Profile> profiles = new ArrayList<>();
 
         public void handleProfile(String profile, double score) {
             if (profiles == null) {
@@ -453,20 +457,6 @@ public class CollectionReport implements Report<CollectionReport> {
             p.score = score;
 
             profiles.add(p);
-            totNumOfProfiles++;
-        }
-
-        public void handleProfile(Profile profile) {
-            if (profiles == null)
-                profiles = new ArrayList<>();
-
-            for (Profile p : profiles)
-                if (p.name.equals(profile.name)) {
-                    p.count += profile.count;
-                    return;
-                }
-
-            profiles.add(profile);
             totNumOfProfiles++;
         }
 

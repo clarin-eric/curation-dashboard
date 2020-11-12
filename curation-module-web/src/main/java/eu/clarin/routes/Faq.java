@@ -24,7 +24,7 @@ public class Faq {
         try {
             String faq = FileManager.readFile(Configuration.VIEW_RESOURCES_PATH + "/html/faq.html");
 
-            return ResponseManager.returnHTML(200, faq, null);
+            return ResponseManager.returnHTML(200, faq);
         } catch (IOException e) {
             logger.error("Error when reading faq.html: ", e);
             return ResponseManager.returnServerError();
@@ -35,7 +35,6 @@ public class Faq {
     @Path("/faq.md")
     public Response getFaqMD() {
 
-        logger.error("allahallah");
         String faqJsonPath = Configuration.VIEW_RESOURCES_PATH + "/markdown/faq.md";
         final InputStream fileInStream;
         try {

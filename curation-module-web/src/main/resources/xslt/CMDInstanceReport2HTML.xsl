@@ -97,7 +97,7 @@
                 <br/>
 
 
-                <button type="button" onClick="toggleFacets()">Show Facet Values</button>
+                <button class="btn btn-info" id="facetValuesButton" type="button" onClick="toggleFacets()">Show Facet Values</button>
 
                 <div id="facetTable" hidden="true">
                     <table class="reportTable">
@@ -320,12 +320,19 @@
                 <p>Number of checked links:
                     <xsl:value-of select="./url-validation-section/numOfCheckedLinks"/>
                 </p>
-                <p>Number of undetermined links:
-                    <xsl:value-of select="./url-validation-section/numOfUndeterminedLinks"/>
-                </p>
                 <p>Number of broken links:
                     <xsl:value-of select="./url-validation-section/numOfBrokenLinks"/>
                 </p>
+                <p>Number of undetermined links:
+                    <xsl:value-of select="./url-validation-section/numOfUndeterminedLinks"/>
+                </p>
+                <p>Number of restricted access links:
+                    <xsl:value-of select="./url-validation-section/numOfRestrictedAccessLinks"/>
+                </p>
+                <p>Number of blocked by robots.txt links:
+                    <xsl:value-of select="./url-validation-section/numOfBlockedByRobotsTxtLinks"/>
+                </p>
+
                 <p>Percentage of valid links:
                     <xsl:value-of select="format-number(./url-validation-section/percOfValidLinks,'0.0%')"/>
                 </p>
@@ -345,43 +352,24 @@
                         <xsl:for-each select="./single-url-report/url">
                             <xsl:sort select="@category"/>
                             <xsl:variable name="category">
-                                <xsl:value-of select="./@category"/>
+                                <xsl:value-of select="./@category" />
                             </xsl:variable>
                             <xsl:variable name="link">
                                 <xsl:value-of select="."/>
                             </xsl:variable>
+                            <xsl:variable name="color">
+                                <xsl:value-of select="./@color-code"/>
+                            </xsl:variable>
 
                             <tr>
-                                <xsl:if test="$category='Ok'">
-                                    <td style="background-color:#cbe7cc">
-                                        <a href="{$link}">
-                                            <xsl:value-of select="."/>
-                                        </a>
-                                    </td>
-                                    <td style="background-color:#cbe7cc">
-                                        <xsl:value-of select="./@category"/>
-                                    </td>
-                                </xsl:if>
-                                <xsl:if test="$category='Undetermined'">
-                                    <td style="background-color:#fff7b3">
-                                        <a href="{$link}">
-                                            <xsl:value-of select="."/>
-                                        </a>
-                                    </td>
-                                    <td style="background-color:#fff7b3">
-                                        <xsl:value-of select="./@category"/>
-                                    </td>
-                                </xsl:if>
-                                <xsl:if test="$category='Broken'">
-                                    <td style="background-color:#f2a6a6">
-                                        <a href="{$link}">
-                                            <xsl:value-of select="."/>
-                                        </a>
-                                    </td>
-                                    <td style="background-color:#f2a6a6">
-                                        <xsl:value-of select="./@category"/>
-                                    </td>
-                                </xsl:if>
+                                <td style="background-color:{$color}">
+                                    <a href="{$link}">
+                                        <xsl:value-of select="."/>
+                                    </a>
+                                </td>
+                                <td style="background-color:{$color}">
+                                    <xsl:copy-of select="$category"/>
+                                </td>
 
                                 <td class="text-right">
                                     <xsl:value-of select="./@http-status"/>

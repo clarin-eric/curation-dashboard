@@ -4,8 +4,12 @@ import eu.clarin.helpers.HTMLHelpers.HtmlManipulator;
 import eu.clarin.helpers.HTMLHelpers.NavbarButton;
 import org.apache.log4j.Logger;
 
+import javax.imageio.ImageIO;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -22,21 +26,32 @@ public final class ResponseManager {
         return Response.status(status).entity(entity).type(mediaType).build();
     }
 
-    //navbar button is specific to the page (ex: profile report ~ download profile as tsv). Therefore it is in this method, if no button is needed, leave null
-    public static Response returnHTML(int status, String message, NavbarButton button) {
+    public static Response returnHTML(int status, String content) {
 
         try {
-            return Response.status(status).entity(HtmlManipulator.addContentToGenericHTML(message, button)).type(MediaType.TEXT_HTML).build();
+            return Response.status(status).entity(HtmlManipulator.addContentToGenericHTML(content)).type(MediaType.TEXT_HTML).build();
         } catch (IOException e) {
             logger.error("Error reading generic.html");
             return returnServerError();
         }
     }
 
+    public static Response returnHTML(int status, String content, NavbarButton button) {
+
+        try {
+            return Response.status(status).entity(HtmlManipulator.addContentToGenericHTML(content, button)).type(MediaType.TEXT_HTML).build();
+        } catch (IOException e) {
+            logger.error("Error reading generic.html");
+            return returnServerError();
+        }
+    }
+
+
+
     public static Response returnError(int status, String message) {
 
         String error = "<h2>There was an error:</h2>";
-        return returnHTML(status, error + message, null);
+        return returnHTML(status, error + message);
     }
 
     public static Response returnServerError() {
@@ -49,5 +64,25 @@ public final class ResponseManager {
 
     public static Response permanentRedirect(String URL) {
         return Response.status(301).header("Location",URL).build();
+    }
+
+    public static Response returnImageResponse(int status, BufferedImage image, String extension, String mimeType) {
+
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, extension, baos);
+            byte[] imageData = baos.toByteArray();
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imageData);
+
+            return Response.status(status).entity(byteArrayInputStream).type(mimeType).build();
+        } catch (IOException e) {
+            logger.error("Error while sending image response.");
+            return returnServerError();
+        }
+
+    }
+
+    public static Response returnTextResponse(int status, String text, String extension) {
+        return Response.status(status).entity(text).type(extension).build();
     }
 }

@@ -140,8 +140,9 @@ public class FileSizeValidator extends CMDSubprocessor {
         try {
             cmdiData = _processor.process(entity.getPath().toFile(), new ResourceStructureGraph());
         } catch (Exception e) {
-            throw new IOException(e.getMessage());
+            throw new IOException(e);
         }
+
 
         entity.setCMDIData(cmdiData);
 

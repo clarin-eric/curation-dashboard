@@ -375,13 +375,11 @@
 				</p>
 
 
-				<h3>Status Codes Table</h3>
+				<h3>Link Checking Results</h3>
 
-				<h4>Ok</h4>
 				<table class="reportTable">
 					<thead>
 						<tr>
-							<th scope="col">Status</th>
 							<th scope="col">Category</th>
 							<th scope="col">Count</th>
 							<th scope="col">Average Response Duration(ms)</th>
@@ -390,45 +388,22 @@
 					</thead>
 					<tbody>
 						<xsl:for-each
-							select="./url-validation-section/statistics/status">
-							<xsl:sort select="@category" />
-							<xsl:variable name="status">
-								<xsl:value-of select="./@statusCode" />
-							</xsl:variable>
+							select="./url-validation-section/statistics/category">
+							<xsl:sort select="@category"/>
+
 							<xsl:variable name="category">
 								<xsl:value-of select="./@category" />
 							</xsl:variable>
-							<tr>
-								<xsl:if test="$category='Ok'">
-									<td style="background-color:#cbe7cc" align="right">
-										<a href="/statistics/{$collectionName}/{$status}">
-											<xsl:copy-of select="$status" />
-										</a>
-									</td>
-									<td style="background-color:#cbe7cc" align="right">
-										<xsl:value-of select="./@category" />
-									</td>
-								</xsl:if>
-								<xsl:if test="$category='Undetermined'">
-									<td style="background-color:#fff7b3" align="right">
-										<a href="/statistics/{$collectionName}/{$status}">
-											<xsl:copy-of select="$status" />
-										</a>
-									</td>
-									<td style="background-color:#fff7b3" align="right">
-										<xsl:value-of select="./@category" />
-									</td>
-								</xsl:if>
-								<xsl:if test="$category='Broken'">
-									<td style="background-color:#f2a6a6" align="right">
-										<a href="/statistics/{$collectionName}/{$status}">
-											<xsl:copy-of select="$status" />
-										</a>
-									</td>
-									<td style="background-color:#f2a6a6" align="right">
-										<xsl:value-of select="./@category" />
-									</td>
-								</xsl:if>
+							<xsl:variable name="color">
+								<xsl:value-of select="./@colorCode" />
+							</xsl:variable>
+							<tr style="background-color:{$color}">
+								<td align="right">
+									<a href="/statistics/{$collectionName}/{$category}">
+										<xsl:copy-of select="$category" />
+									</a>
+								</td>
+
 								<td align="right">
 									<xsl:value-of select="./@count" />
 								</td>
@@ -445,11 +420,6 @@
 						</xsl:for-each>
 					</tbody>
 				</table>
-
-
-
-
-
 
 
 				<hr />

@@ -12,7 +12,6 @@
                 <table class="reportTable">
                     <thead>
                         <tr>
-                            <th>Status</th>
                             <th>Category</th>
                             <th>Count</th>
                             <th>Average Response Duration(ms)</th>
@@ -21,33 +20,18 @@
                     </thead>
                     <tbody>
                         <xsl:for-each select="overall/statistics">
-                            <xsl:variable name="status" select="@statusCode"/>
-                            <tr>
-                                <xsl:attribute name="style">
-                                    <xsl:choose>
-                                        <xsl:when test="@category='Broken'">
-                                            <xsl:text>background-color:#f2a6a6</xsl:text>
-                                        </xsl:when>
-                                        <xsl:when test="@category='Undetermined'">
-                                            <xsl:text>background-color:#fff7b3</xsl:text>
-                                        </xsl:when>
-                                        <xsl:otherwise>
-                                            <xsl:text>background-color:#cbe7cc</xsl:text>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-
-                                </xsl:attribute>
-
-                                <td class='text-right'>
-                                    <a href="/statistics/Overall/{$status}">
-                                        <xsl:value-of select="@statusCode"></xsl:value-of>
-                                    </a>
-                                </td>
-
-
+                            <xsl:variable name="category">
+                                <xsl:value-of select="./@category"/>
+                            </xsl:variable>
+                            <xsl:variable name="color">
+                                <xsl:value-of select="./@colorCode"/>
+                            </xsl:variable>
+                            <tr style="background-color:{$color}">
 
                                 <td>
-                                    <xsl:value-of select="@category"></xsl:value-of>
+                                    <a href="/statistics/Overall/{$category}">
+                                        <xsl:value-of select="@category"></xsl:value-of>
+                                    </a>
                                 </td>
                                 <td class='text-right'>
                                     <xsl:value-of select="@count"></xsl:value-of>
@@ -76,7 +60,7 @@
                     </tfoot>
 
                 </table>
-                <br />
+                <br/>
                 <h3>Collections:</h3>
 
                 <xsl:for-each select="collection">
@@ -89,7 +73,7 @@
                     <table class="reportTable">
                         <thead>
                             <tr>
-                                <th>Status</th>
+
                                 <th>Category</th>
                                 <th>Count</th>
                                 <th>Average Response Duration(ms)</th>
@@ -98,33 +82,17 @@
                         </thead>
                         <tbody>
                             <xsl:for-each select="statistics">
-
-                                <xsl:variable name="status" select="@statusCode"/>
-
-                                <tr>
-                                    <xsl:attribute name="style">
-                                        <xsl:choose>
-                                            <xsl:when test="@category='Broken'">
-                                                <xsl:text>background-color:#f2a6a6</xsl:text>
-                                            </xsl:when>
-                                            <xsl:when test="@category='Undetermined'">
-                                                <xsl:text>background-color:#fff7b3</xsl:text>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:text>background-color:#cbe7cc</xsl:text>
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-
-                                    </xsl:attribute>
-
-
-                                    <td class='text-right'>
-                                        <a href="/statistics/{$name}/{$status}">
-                                            <xsl:value-of select="@statusCode"></xsl:value-of>
-                                        </a>
-                                    </td>
+                                <xsl:variable name="category">
+                                    <xsl:value-of select="./@category"/>
+                                </xsl:variable>
+                                <xsl:variable name="color">
+                                    <xsl:value-of select="./@colorCode"/>
+                                </xsl:variable>
+                                <tr style="background-color:{$color}">
                                     <td>
-                                        <xsl:value-of select="@category"></xsl:value-of>
+                                        <a href="/statistics/{$name}/{$category}">
+                                            <xsl:value-of select="@category"></xsl:value-of>
+                                        </a>
                                     </td>
                                     <td class='text-right'>
                                         <xsl:value-of select="@count"></xsl:value-of>
@@ -152,7 +120,7 @@
                         </tfoot>
 
                     </table>
-					<br />
+                    <br/>
                 </xsl:for-each>
             </body>
         </html>

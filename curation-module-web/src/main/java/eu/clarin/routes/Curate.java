@@ -142,7 +142,7 @@ public class Curate {
             return ResponseManager.returnError(400, "Input URL is malformed.");
 
         } catch (Exception e) {
-            logger.error("There was an exception processing the cmd instance: " + e.getMessage());
+            logger.error("There was an exception processing the cmd instance: " ,e);
             return ResponseManager.returnError(400, "There was a problem when processing the input. Please make sure to upload a valid cmd file.");
         }
 

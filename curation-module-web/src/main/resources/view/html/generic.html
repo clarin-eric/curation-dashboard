@@ -12,9 +12,11 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Curation Module">
+
     <link rel="stylesheet" id="fundament-styles" href="/view/fundament/css/fundament.min.css" type="text/css"/>
     <link rel="stylesheet" id="curate-styles" href="/view/css/curate.css" type="text/css"/>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+    <link rel="stylesheet" id="dropzone-styles" href="/view/css/dropzone.min.css" type="text/css"/>
 
 </head>
 <body class="home">
@@ -42,35 +44,35 @@
             <div class="row" id="buttons">
                 <div class="col leftButton">
                     <a href="/">
-                        <button type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
+                        <button id="validatorButton" type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
                             Validator
                         </button>
                     </a>
                 </div>
                 <div class="col leftButton">
                     <a href="/profile/table">
-                        <button type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
+                        <button id="profilesButton" type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
                             Profiles
                         </button>
                     </a>
                 </div>
                 <div class="col leftButton">
                     <a href="/collection/table">
-                        <button type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
+                        <button id="collectionsButton" type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
                             Collections
                         </button>
                     </a>
                 </div>
                 <div class="col leftButton">
                     <a href="/statistics">
-                        <button type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
+                        <button id="statisticsButton" type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
                             Link Checking Statistics
                         </button>
                     </a>
                 </div>
                 <div class="col leftButton">
                     <a href="/help">
-                        <button type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
+                        <button id="helpButton" type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
                             Help
                         </button>
                     </a>
@@ -78,7 +80,7 @@
                 <div class="col content leftButton">
                     <!--last element gets bottom padding to create separation for page specific buttons -->
                     <a href="/faq">
-                        <button type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
+                        <button id="faqButton" type="button" class="btn leftButton navbar navbar-brand navbar-light bg-light">
                             FAQ
                         </button>
                     </a>
@@ -103,7 +105,7 @@
                 <div class="footer-widget col-lg-4 col-md-4 col-sm-6 col-9">
                     <div class="textwidget custom-html-widget">
                         <p>
-                            © Copyright ACDH-OEAW 2019
+                            © Copyright ACDH-OEAW 2020
                         </p>
                     </div>
                 </div>
@@ -134,21 +136,9 @@
 <script type="text/javascript" src="/view/js/dropzone.min.js"></script>
 <script type="text/javascript" src="/view/js/curate.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript"
-        src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
-<script type="text/javascript">
-        var _paq = _paq || [];
-        _paq.push(['trackPageView']);
-        _paq.push(['enableLinkTracking']);
-        (function() {
-            var u="//clarin.oeaw.ac.at/piwik/";
-            _paq.push(['setTrackerUrl', u+'piwik.php']);
-            _paq.push(['setSiteId', 32]);
-            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-            g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-        })();
-
-</script>
+<script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/showdown@1.9.1/dist/showdown.min.js"></script>
+<script type="text/javascript" src="/view/js/faq.js"></script>
 </body>
 
 </html>

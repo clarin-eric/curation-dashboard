@@ -26,10 +26,10 @@ public class View {
 
     private static final Logger logger = Logger.getLogger(View.class);
     //fundament has these types of files
-    private final List<String> extensionsText = Arrays.asList("css", "js", "svg");//svg is image but is saved as text
-    private final List<String> extensionsImage = Arrays.asList("jpg", "jpeg", "png");
+    private final List<String> textExtensions = Arrays.asList("css", "js", "svg");//svg is image but is saved as text
+    private final List<String> imageExtensions = Arrays.asList("jpg", "jpeg", "png");
 
-    private static Map<String, String> extensionMimeTypes = new HashMap<String, String>() {
+    private static Map<String, String> extensionMimeTypes = new HashMap<>() {
         {
             put("css", "text/css");//css is not in mediatypes
             put("js", "text/javascript");//also js
@@ -48,20 +48,16 @@ public class View {
 
             String extension = filePath.split("\\.")[filePath.split("\\.").length - 1];
 
-            if (extensionsText.contains(extension)) {
+            if (textExtensions.contains(extension)) {
                 String file = FileManager.readFile(Configuration.VIEW_RESOURCES_PATH + filePath);
 
-                return ResponseManager.returnResponse(200,file,extensionMimeTypes.get(extension));
+                return ResponseManager.returnTextResponse(200,file,extensionMimeTypes.get(extension));
 
-            } else if (extensionsImage.contains(extension)) {
+            } else if (imageExtensions.contains(extension)) {
 
                 BufferedImage image = FileManager.readImage(Configuration.VIEW_RESOURCES_PATH + filePath);
 
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(image, extension, baos);
-                byte[] imageData = baos.toByteArray();
-
-                return ResponseManager.returnResponse(200,new ByteArrayInputStream(imageData),extensionMimeTypes.get(extension));
+                return ResponseManager.returnImageResponse(200,image,extension,extensionMimeTypes.get(extension));
             } else {
                 return ResponseManager.returnError(404,"Requested file doesn't exist.");
             }

@@ -50,12 +50,13 @@ class ProfileScoreCacheFactory{
 			logger.trace("Calculating and caching score for {}", profile);
 
 			CMDProfileReport report = profile.generateReport();
+
 			
 			if(CRService.PROFILE_MAX_SCORE.equals(Double.NaN)){
-				CRService.PROFILE_MAX_SCORE = report.segmentScores.stream().mapToDouble(Score::getMaxScore).sum();
+				CRService.PROFILE_MAX_SCORE = report.maxScore;
 			}
 			
-			return report.segmentScores.stream().mapToDouble(Score::getScore).sum();
+			return report.score;
 			
 		}
 		

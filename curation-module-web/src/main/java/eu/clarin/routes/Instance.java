@@ -45,7 +45,7 @@ public class Instance {
                     xmlLink = "<a href='"+xmlLink+"'>"+xmlLink+"</a>";
                     instanceHTML = instanceHTML.replaceFirst(Pattern.quote("selfURLPlaceHolder"), xmlLink);
 
-                    return ResponseManager.returnHTML(200, instanceHTML, null);
+                    return ResponseManager.returnHTML(200, instanceHTML);
                 default:
                     return ResponseManager.returnError(400, "Instance name must end with either '.xml' or '.html'.");
             }

@@ -94,39 +94,24 @@ $("div#cmdi-dropzone").dropzone({
             document.close();
       },
       totaluploadprogress: function(progress, bytesSent) {
+        //disable validate button first.
+        $('#validateButton').prop('disabled', true);
+
         if(progress == 100){
-            $('div#cmdi-dropzone').append('<div>Upload complete. Curating...</div><div id="uploadWheel" class="spinner"></div>')
+            $('div#cmdi-dropzone').append('<div>Upload complete. Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="uploadWheel" class="spinner"></div>')
+
         }
       }
 });
-
-
-//Dropzone.options.cmdiDropzone = {
-//  paramName: "file", // The name that will be used to transfer the file
-//  maxFilesize: 5, // MB
-//  success: function(file, done) {
-//        document.open();
-//        document.write(done);
-//        document.close();
-//   },
-//   error: function(file, error){
-//        document.open();
-//        document.write(error);
-//        document.close();
-//  },
-//  totaluploadprogress: function(progress, bytesSent) {
-//    if(progress == 100){
-//        $('#cmdi-dropzone').append('<div>Upload complete. Curating...</div><div id="uploadWheel" class="spinner"></div>')
-//    }
-//  }
-//};
 
 function toggleFacets() {
     var facetTable = $('#facetTable');
 
     if(facetTable.attr("hidden")){
+        $('#facetValuesButton').html("Hide Facet Values");
         facetTable.removeAttr("hidden");
     }else{
+        $('#facetValuesButton').html("Show Facet Values");
         facetTable.attr("hidden",true);
     }
 }
@@ -134,22 +119,39 @@ function toggleFacets() {
 $('#validateButton').click(function() {
     //only change to spinner if input is valid
     if($('#url-input').val()){
-        $(this).html('<div>Curating...</div><div id="uploadWheel" class="spinner"></div>');
+        $(this).html('<div>Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="uploadWheel" class="spinner"></div>');
+//        $(this).html('<div>Curating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="uploadWheel" class="spinner"></div>');
         $(this).prop('disabled', true);
     }
 });
 
-//when back button is clicked, validate button doesnt refresh and stays in the loading spinner phase
-//this is to insure that it does
 window.onpageshow = function (event) {
+    //when back button is clicked, validate button doesnt refresh and stays in the loading spinner phase
+    //this is to insure that it does
     var button = $('#validateButton');
     button.html('Validate');
     button.prop('disabled', false);
+
+    //highlight button of current page(a little bit too hardcoded, should think of a better solution...)
+        var path = window.location.pathname;
+        if(path==="/"){
+            $('#validatorButton').addClass("highlight-button");
+        }else if(path==="/profile/table"){
+            $('#profilesButton').addClass("highlight-button");
+        }else if(path==="/collection/table"){
+            $('#collectionsButton').addClass("highlight-button");
+        }else if(path==="/statistics"){
+            $('#statisticsButton').addClass("highlight-button");
+        }else if(path==="/help"){
+            $('#helpButton').addClass("highlight-button");
+        }else if(path==="/faq"){
+            $('#faqButton').addClass("highlight-button");
+        }
 };
 
 var table = $('#statsTable');
 var collectionName = table.attr("data-collection");
-var statusCode = table.attr("data-status");
+var category = table.attr("data-category");
 var reportTableTbody = $('#reportTableTbody');
 
 var i = 1;
@@ -179,7 +181,7 @@ $(window).scroll(function() {
                     // ajax call get data from server and append to the table
                     $.ajax({
                        dataType: "html",
-                       url: "/statistics/"+collectionName+"/"+statusCode+"/"+i,
+                       url: "/statistics/"+collectionName+"/"+category+"/"+i,
                        success: function (data) {
                            reportTableTbody.append(data);
 
@@ -244,9 +246,6 @@ function redirectDeprecatedURLs(){
             window.location.replace(newUrl);
         }
     }
-
-
-
 
 }
 

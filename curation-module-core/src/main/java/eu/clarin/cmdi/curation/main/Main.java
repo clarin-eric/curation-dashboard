@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.main;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.PublicProfiles;
 import eu.clarin.cmdi.curation.entities.CurationEntityType;
+import eu.clarin.cmdi.curation.exception.UncaughtExceptionHandler;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.CollectionReport;
 import eu.clarin.cmdi.curation.report.CollectionsReport;
@@ -41,6 +42,8 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
+
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());//to log uncaught exceptions
 
         CommandLineParser parser = new DefaultParser();
 
@@ -169,14 +172,18 @@ public class Main {
                             }
                         }
 
-//                        logger.info("Generated report for collection: " + report.getName());
-
                     }
                 }
+                logger.info("Creating collections table...");
+
                 // dumping the collections table
                 dumpAsXML(collectionsReport, CurationEntityType.COLLECTION);
                 dumpAsHTML(collectionsReport, CurationEntityType.COLLECTION);
                 dumpAsTSV(collectionsReport, CurationEntityType.COLLECTION);
+
+                logger.info("Creating collections table finished.");
+
+                logger.info("Creating profiles table...");
 
                 //now dumping the public profile reports
                 ProfilesReport profilesReport = new ProfilesReport();
@@ -191,11 +198,15 @@ public class Main {
                 dumpAsXML(profilesReport, CurationEntityType.PROFILE);
                 dumpAsHTML(profilesReport, CurationEntityType.PROFILE);
                 dumpAsTSV(profilesReport, CurationEntityType.PROFILE);
+                logger.info("Creating profiles table finished..");
 
+                logger.info("Creating statistics table...");
                 //dumping the linkchecker statistics table
                 dumpAsXML(linkCheckerReport, CurationEntityType.STATISTICS);
                 dumpAsHTML(linkCheckerReport, CurationEntityType.STATISTICS);
+                logger.info("Creating statistics table finished.");
 
+                logger.info("Deleting old links if there are any...");
                 deleteOldLinks();
 
                 Configuration.tearDown();

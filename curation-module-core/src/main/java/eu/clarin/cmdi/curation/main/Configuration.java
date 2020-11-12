@@ -2,9 +2,9 @@ package eu.clarin.cmdi.curation.main;
 
 import eu.clarin.cmdi.rasa.helpers.RasaFactory;
 import eu.clarin.cmdi.rasa.helpers.impl.ACDHRasaFactory;
+import eu.clarin.cmdi.rasa.linkResources.CategoryStatisticsResource;
 import eu.clarin.cmdi.rasa.linkResources.CheckedLinkResource;
 import eu.clarin.cmdi.rasa.linkResources.LinkToBeCheckedResource;
-import eu.clarin.cmdi.rasa.linkResources.StatisticsResource;
 import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.config.XmlVloConfigFactory;
@@ -17,10 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Configuration {
@@ -50,7 +47,7 @@ public class Configuration {
 
     public static CheckedLinkResource checkedLinkResource;
     public static LinkToBeCheckedResource linkToBeCheckedResource;
-    public static StatisticsResource statisticsResource;
+    public static CategoryStatisticsResource statisticsResource;
 
     //this is a boolean that is set by core-module(false) and web-module(true)
     public static boolean enableProfileLoadTimer = false;
@@ -77,7 +74,9 @@ public class Configuration {
     }
 
     public static void tearDown() {
+        logger.info("Finished report generation. Stopping Curation Module...");
         factory.tearDown();
+        logger.info("Curation Module stopped.");
     }
 
     private static void readProperties(Properties config) throws IOException {
@@ -140,5 +139,15 @@ public class Configuration {
 
         USERAGENT = config.getProperty("USERAGENT");
         BASE_URL = config.getProperty("BASE_URL");
+    }
+
+    public static class StormycheckerConstants{
+
+        public static final List<Integer> okStatusCodes = new ArrayList<>(Arrays.asList(200, 304));
+
+        public static final List<Integer> redirectStatusCodes = new ArrayList<>(Arrays.asList(301, 302, 303, 307, 308));
+
+        //this determines what status codes will not be considered broken links. urls with these codes will also not factor into the url-scores
+        public static final List<Integer> undeterminedStatusCodes = new ArrayList<>(Arrays.asList(401, 405, 429));
     }
 }

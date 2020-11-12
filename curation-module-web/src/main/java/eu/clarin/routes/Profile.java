@@ -48,7 +48,7 @@ public class Profile {
                     xmlLink = "<a href='"+xmlLink+"'>"+xmlLink+"</a>";
                     profileHTML = profileHTML.replaceFirst(Pattern.quote("selfURLPlaceHolder"), xmlLink);
 
-                    return ResponseManager.returnHTML(200, profileHTML, null);
+                    return ResponseManager.returnHTML(200, profileHTML);
                 default:
                     return ResponseManager.returnError(400, "Profile name must end with either xml or html.");
             }
