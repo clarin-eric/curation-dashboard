@@ -23,6 +23,10 @@ import java.util.List;
  *
  */
 
+/**
+ * report for one single collection
+ *
+ */
 @XmlRootElement(name = "collection-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionReport implements Report<CollectionReport> {
@@ -232,6 +236,10 @@ public class CollectionReport implements Report<CollectionReport> {
 
         //url statistics
         try {
+        	//delete non-confirmed links BEFORE writing statistics
+        	int rows = Configuration.linkToBeCheckedResource.deleteOldLinks(Configuration.reportGenerationDate, this.getName());
+        	logger.info("Deleted {0} rows of collection '{1}' from the table, because they were old (not harvested/found in the records during current report generation).", rows, getName());
+        	
             List<CategoryStatistics> stats = Configuration.statisticsResource.getCategoryStatistics(getName());
             for (CategoryStatistics statistics : stats) {
                 Statistics xmlStatistics = new Statistics();
@@ -244,10 +252,7 @@ public class CollectionReport implements Report<CollectionReport> {
             }
 
 
-            ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(getName(), null, Table.URLS);
-            urlReport.totNumOfLinks = (int) Configuration.statisticsResource.countTable(filter);//TODO this is wrong
-
-            filter = new ACDHStatisticsCountFilter(getName(), null, Table.STATUS);
+            ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(getName(), null, Table.STATUS);
             urlReport.totNumOfCheckedLinks = (int) Configuration.statisticsResource.countTable(filter);
 
             filter = new ACDHStatisticsCountFilter(getName(), null, Collections.singletonList(Category.Broken), Table.STATUS);

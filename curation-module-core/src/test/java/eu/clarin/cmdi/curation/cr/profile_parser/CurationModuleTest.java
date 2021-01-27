@@ -1,7 +1,5 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import eu.clarin.cmdi.curation.main.Configuration;

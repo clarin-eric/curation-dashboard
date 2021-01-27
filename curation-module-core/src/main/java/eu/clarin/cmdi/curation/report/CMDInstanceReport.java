@@ -201,8 +201,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             parentReport.xmlValidationReport.record.add(record);
         }
 
+
+        parentReport.urlReport.totNumOfLinks += instanceReport.urlReport.numOfLinks;
         //will be done through database
-//        parentReport.urlReport.totNumOfLinks += instanceReport.urlReport.numOfLinks;
 //        parentReport.urlReport.totNumOfBrokenLinks += instanceReport.urlReport.numOfBrokenLinks;
 //        parentReport.urlReport.totNumOfCheckedLinks += instanceReport.urlReport.numOfCheckedLinks;
 

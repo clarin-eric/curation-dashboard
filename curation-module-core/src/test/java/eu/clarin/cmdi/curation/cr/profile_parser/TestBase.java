@@ -6,7 +6,6 @@ import ch.vorburger.mariadb4j.DB;
 import eu.clarin.cmdi.curation.main.Configuration;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 
 import java.io.File;

@@ -28,7 +28,7 @@ public class Configuration {
     public static Long reportGenerationDate = System.currentTimeMillis();
 
     public static String SCORE_NUMERIC_DISPLAY_FORMAT;
-    public static String TIMESTAMP_DISPLAY_FORMAT;
+//    public static String TIMESTAMP_DISPLAY_FORMAT;
     public static long MAX_FILE_SIZE;
     public static boolean SAVE_REPORT;
     public static Path OUTPUT_DIRECTORY = null;
@@ -39,11 +39,9 @@ public class Configuration {
     public static int TIMEOUT;
 
     public static VloConfig VLO_CONFIG;
-    private static String DATABASE_USERNAME;
-    private static String DATABASE_URI;
-    private static String DATABASE_PASSWORD;
+
     public static String USERAGENT;
-    public static String BASE_URL;
+//    public static String BASE_URL;
 
     public static CheckedLinkResource checkedLinkResource;
     public static LinkToBeCheckedResource linkToBeCheckedResource;
@@ -82,7 +80,7 @@ public class Configuration {
     private static void readProperties(Properties config) throws IOException {
 
         SCORE_NUMERIC_DISPLAY_FORMAT = config.getProperty("SCORE_NUMERIC_DISPLAY_FORMAT");
-        TIMESTAMP_DISPLAY_FORMAT = config.getProperty("TIMESTAMP_DISPLAY_FORMAT");
+//        TIMESTAMP_DISPLAY_FORMAT = config.getProperty("TIMESTAMP_DISPLAY_FORMAT");
         MAX_FILE_SIZE = Long.parseLong(config.getProperty("MAX_FILE_SIZE"));
         SAVE_REPORT = Boolean.parseBoolean(config.getProperty("SAVE_REPORT"));
 
@@ -114,13 +112,14 @@ public class Configuration {
         if (redirectFollowLimit != null && !redirectFollowLimit.isEmpty()) {
             REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
         }
+        
+        final Properties hikari = new Properties();
+        
+        config.entrySet()
+        	.stream().filter(es -> es.getKey().toString().startsWith("HIKARI."))
+        	.forEach(es -> hikari.setProperty(es.getKey().toString().substring(7), es.getValue().toString()));
 
-        DATABASE_USERNAME = config.getProperty("DATABASE_USERNAME");
-        DATABASE_URI = config.getProperty("DATABASE_URI");
-        DATABASE_PASSWORD = config.getProperty("DATABASE_PASSWORD");
-        DATABASE_PASSWORD = DATABASE_PASSWORD == null ? "" : DATABASE_PASSWORD;
-
-        factory = new ACDHRasaFactory(DATABASE_URI, DATABASE_USERNAME, DATABASE_PASSWORD);
+        factory = new ACDHRasaFactory(hikari);
         checkedLinkResource = factory.getCheckedLinkResource();
         linkToBeCheckedResource = factory.getLinkToBeCheckedResource();
         statisticsResource = factory.getStatisticsResource();
@@ -138,7 +137,7 @@ public class Configuration {
         }
 
         USERAGENT = config.getProperty("USERAGENT");
-        BASE_URL = config.getProperty("BASE_URL");
+//        BASE_URL = config.getProperty("BASE_URL");
     }
 
     public static class StormycheckerConstants{

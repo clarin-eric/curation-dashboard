@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
-import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Component;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Components;

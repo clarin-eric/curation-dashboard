@@ -32,8 +32,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Date;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -207,24 +205,12 @@ public class Main {
                 logger.info("Creating statistics table finished.");
 
                 logger.info("Deleting old links if there are any...");
-                deleteOldLinks();
 
                 Configuration.tearDown();
             } else
                 throw new Exception("Only path is allowed for curation of collections root");
         } else
             throw new Exception("Curation module can curate profiles (-p), instances (-i), collection (-c) or collection root (-r)");
-    }
-
-    private static void deleteOldLinks() {
-        try {
-            //delete any urls that have the harvestDate column older than this current one.
-            //they are already updated during the run.
-            int rows = Configuration.linkToBeCheckedResource.deleteOldLinks(Configuration.reportGenerationDate);
-            logger.info("Deleted " + rows + " rows from the table, because they were old (not harvested/found in the records during current report generation).");
-        } catch (SQLException e) {
-            logger.error("Error when deleting old links: " + e.getMessage());
-        }
     }
 
 
@@ -311,6 +297,8 @@ public class Main {
             case COLLECTION:
                 path = path.resolve("collections");
                 break;
+		default:
+			break;
         }
 
         Files.createDirectories(path);

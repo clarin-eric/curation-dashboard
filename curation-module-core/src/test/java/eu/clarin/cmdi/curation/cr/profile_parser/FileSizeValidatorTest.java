@@ -9,8 +9,6 @@ import eu.clarin.cmdi.curation.subprocessor.FileSizeValidator;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
