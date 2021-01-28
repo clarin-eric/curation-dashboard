@@ -129,6 +129,10 @@ public class ProfilesReport implements Report<ProfilesReport> {
         @XmlAttribute
         private boolean covered;
 
+        @SuppressWarnings("unused")
+		public Facet() {
+        	
+        }
 
         public Facet(String name, boolean covered) {
             this.name = name;

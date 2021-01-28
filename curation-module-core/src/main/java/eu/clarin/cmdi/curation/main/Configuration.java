@@ -28,7 +28,7 @@ public class Configuration {
     public static Long reportGenerationDate = System.currentTimeMillis();
 
     public static String SCORE_NUMERIC_DISPLAY_FORMAT;
-//    public static String TIMESTAMP_DISPLAY_FORMAT;
+    public static String TIMESTAMP_DISPLAY_FORMAT;
     public static long MAX_FILE_SIZE;
     public static boolean SAVE_REPORT;
     public static Path OUTPUT_DIRECTORY = null;
@@ -41,7 +41,7 @@ public class Configuration {
     public static VloConfig VLO_CONFIG;
 
     public static String USERAGENT;
-//    public static String BASE_URL;
+    public static String BASE_URL;
 
     public static CheckedLinkResource checkedLinkResource;
     public static LinkToBeCheckedResource linkToBeCheckedResource;
@@ -80,7 +80,7 @@ public class Configuration {
     private static void readProperties(Properties config) throws IOException {
 
         SCORE_NUMERIC_DISPLAY_FORMAT = config.getProperty("SCORE_NUMERIC_DISPLAY_FORMAT");
-//        TIMESTAMP_DISPLAY_FORMAT = config.getProperty("TIMESTAMP_DISPLAY_FORMAT");
+        TIMESTAMP_DISPLAY_FORMAT = config.getProperty("TIMESTAMP_DISPLAY_FORMAT");
         MAX_FILE_SIZE = Long.parseLong(config.getProperty("MAX_FILE_SIZE"));
         SAVE_REPORT = Boolean.parseBoolean(config.getProperty("SAVE_REPORT"));
 
@@ -137,7 +137,7 @@ public class Configuration {
         }
 
         USERAGENT = config.getProperty("USERAGENT");
-//        BASE_URL = config.getProperty("BASE_URL");
+        BASE_URL = config.getProperty("BASE_URL");
     }
 
     public static class StormycheckerConstants{

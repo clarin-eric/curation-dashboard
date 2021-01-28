@@ -238,7 +238,7 @@ public class CollectionReport implements Report<CollectionReport> {
         try {
         	//delete non-confirmed links BEFORE writing statistics
         	int rows = Configuration.linkToBeCheckedResource.deleteOldLinks(Configuration.reportGenerationDate, this.getName());
-        	logger.info("Deleted {0} rows of collection '{1}' from the table, because they were old (not harvested/found in the records during current report generation).", rows, getName());
+        	logger.info("Deleted " + rows + " rows of collection '" + getName() + "' from the table, because they were old (not harvested/found in the records during current report generation).");
         	
             List<CategoryStatistics> stats = Configuration.statisticsResource.getCategoryStatistics(getName());
             for (CategoryStatistics statistics : stats) {
