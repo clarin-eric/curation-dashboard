@@ -9,7 +9,6 @@ import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;

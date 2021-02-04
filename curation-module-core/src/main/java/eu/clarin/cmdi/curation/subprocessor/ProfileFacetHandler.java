@@ -3,7 +3,6 @@
  */
 package eu.clarin.cmdi.curation.subprocessor;
 
-import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Score;

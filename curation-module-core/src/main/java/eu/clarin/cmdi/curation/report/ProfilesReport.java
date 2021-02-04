@@ -68,7 +68,7 @@ public class ProfilesReport implements Report<ProfilesReport> {
 
     }
 
-    public void addReport(Report report) {
+    public void addReport(Report<?> report) {
         if (report instanceof CMDProfileReport) {
 
             this.profiles.add(new Profile((CMDProfileReport) report));
@@ -129,8 +129,9 @@ public class ProfilesReport implements Report<ProfilesReport> {
         @XmlAttribute
         private boolean covered;
 
-        public Facet() {
-
+        @SuppressWarnings("unused")
+		public Facet() {
+        	
         }
 
         public Facet(String name, boolean covered) {

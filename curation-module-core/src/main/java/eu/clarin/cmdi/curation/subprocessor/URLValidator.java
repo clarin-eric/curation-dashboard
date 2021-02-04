@@ -75,11 +75,6 @@ public class URLValidator extends CMDSubprocessor {
             List<String> linksToBeUpdated = new ArrayList<>();
 
             for (String url : urlMap.keySet()) {
-                try {
-                    Optional<LinkToBeChecked> linkToBeCheckedOptional = Configuration.linkToBeCheckedResource.get(url);
-                    if (linkToBeCheckedOptional.isEmpty()) {//not in the database
-                        String expectedMimeType = urlMap.get(url).getMimeType();
-                        expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
                 String finalRecord = report.getName();
                 String finalCollection = parentName != null ? parentName : finalRecord;
@@ -87,9 +82,14 @@ public class URLValidator extends CMDSubprocessor {
                 try {
                     Optional<LinkToBeChecked> linkToBeCheckedOptional = Configuration.linkToBeCheckedResource.get(url);
                     if (linkToBeCheckedOptional.isEmpty()) {//not in the database
+                    	
+                    	String expectedMimeType = urlMap.get(url).getMimeType();
+                        expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
+                        
                         LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType, Configuration.reportGenerationDate);
                         linksToBeChecked.add(linkToBeChecked);
-                    } else {
+                    } 
+                    else {
                         linksToBeUpdated.add(url);//update the harvestDate of the link
                     }
                 } catch (SQLException e) {
@@ -100,19 +100,22 @@ public class URLValidator extends CMDSubprocessor {
             //get the numbers of links directly from database instead of getting each link and adding it manually here
             try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Broken)))) {
                 numOfBrokenLinks = stream.count();
-            } catch (SQLException e) {
+            } 
+            catch (SQLException e) {
                 logger.error("Error when getting number of broken links from the database: " + e.getMessage());
             }
 
             try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Undetermined)))) {
                 numOfUndeterminedLinks = stream.count();
-            } catch (SQLException e) {
+            } 
+            catch (SQLException e) {
                 logger.error("Error when getting number of undetermined links from the database: " + e.getMessage());
             }
 
             try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Restricted_Access)))) {
                 numOfRestrictedAccessLinks = stream.count();
-            } catch (SQLException e) {
+            } 
+            catch (SQLException e) {
                 logger.error("Error when getting number of restricted access links from the database: " + e.getMessage());
             }
 

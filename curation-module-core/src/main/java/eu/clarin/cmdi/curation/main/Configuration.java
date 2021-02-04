@@ -39,9 +39,7 @@ public class Configuration {
     public static int TIMEOUT;
 
     public static VloConfig VLO_CONFIG;
-    private static String DATABASE_USERNAME;
-    private static String DATABASE_URI;
-    private static String DATABASE_PASSWORD;
+
     public static String USERAGENT;
     public static String BASE_URL;
 
@@ -114,13 +112,14 @@ public class Configuration {
         if (redirectFollowLimit != null && !redirectFollowLimit.isEmpty()) {
             REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
         }
+        
+        final Properties hikari = new Properties();
+        
+        config.entrySet()
+        	.stream().filter(es -> es.getKey().toString().startsWith("HIKARI."))
+        	.forEach(es -> hikari.setProperty(es.getKey().toString().substring(7), es.getValue().toString()));
 
-        DATABASE_USERNAME = config.getProperty("DATABASE_USERNAME");
-        DATABASE_URI = config.getProperty("DATABASE_URI");
-        DATABASE_PASSWORD = config.getProperty("DATABASE_PASSWORD");
-        DATABASE_PASSWORD = DATABASE_PASSWORD == null ? "" : DATABASE_PASSWORD;
-
-        factory = new ACDHRasaFactory(DATABASE_URI, DATABASE_USERNAME, DATABASE_PASSWORD);
+        factory = new ACDHRasaFactory(hikari);
         checkedLinkResource = factory.getCheckedLinkResource();
         linkToBeCheckedResource = factory.getLinkToBeCheckedResource();
         statisticsResource = factory.getStatisticsResource();
