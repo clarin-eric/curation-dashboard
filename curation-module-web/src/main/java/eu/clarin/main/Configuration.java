@@ -1,9 +1,5 @@
 package eu.clarin.main;
 
-import eu.clarin.cmdi.rasa.linkResources.CategoryStatisticsResource;
-import eu.clarin.cmdi.rasa.linkResources.CheckedLinkResource;
-import eu.clarin.cmdi.rasa.linkResources.LinkToBeCheckedResource;
-import eu.clarin.cmdi.rasa.linkResources.StatisticsResource;
 import eu.clarin.helpers.FileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,20 +24,14 @@ import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 
-public class Configuration {
+public class Configuration extends eu.clarin.cmdi.curation.main.Configuration{
 
     private static Logger logger = LoggerFactory.getLogger(Configuration.class);
 
     public static String VIEW_RESOURCES_PATH;
     public static String RECORDS_PATH;
-    public static String OUTPUT_DIRECTORY;
-    public static String BASE_URL;
     public static ArrayList<String> clarinCollections;
     public static ArrayList<String> europeanaCollections;
-
-    public static CheckedLinkResource checkedLinkResource;
-    public static LinkToBeCheckedResource linkToBeCheckedResource;
-    public static CategoryStatisticsResource statisticsResource;
 
     public static void init(ServletContext servletContext) throws IOException {
 
@@ -52,9 +42,6 @@ public class Configuration {
         //this is necessary for core module methods.
         eu.clarin.cmdi.curation.main.Configuration.init(path);
 
-        checkedLinkResource = eu.clarin.cmdi.curation.main.Configuration.checkedLinkResource;
-        linkToBeCheckedResource = eu.clarin.cmdi.curation.main.Configuration.linkToBeCheckedResource;
-        statisticsResource = eu.clarin.cmdi.curation.main.Configuration.statisticsResource;
 
         logger.info("Initializing configuration from: " + path);
         Properties properties = new Properties();
@@ -103,10 +90,7 @@ public class Configuration {
 
     private static void loadVariables(Properties properties) {
 
-        OUTPUT_DIRECTORY = properties.getProperty("OUTPUT_DIRECTORY");
         RECORDS_PATH = properties.getProperty("RECORDS_PATH");
-
-        BASE_URL = properties.getProperty("BASE_URL");
 
         //collection categorizing into europeana and clarin based on the data folder
         String dataDirectory = properties.getProperty("DATA_DIRECTORY");
@@ -137,7 +121,5 @@ public class Configuration {
         } catch (IOException e) {
             logger.error("There was an error creating the profiles/instances xml/html folder: " + e.getMessage());
         }
-
-
     }
 }
