@@ -90,7 +90,7 @@
         <dependency>
             <groupId>eu.clarin.cmdi</groupId>
             <artifactId>resource-availability-status-api</artifactId>
-            <version>3.0.7</version>
+            <version>3.0.8</version>
         </dependency>
 
         <dependency>
@@ -99,7 +99,6 @@
             <version>2.4.0</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.ibatis</groupId>
             <artifactId>ibatis-core</artifactId>

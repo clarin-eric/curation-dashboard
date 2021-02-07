@@ -152,7 +152,8 @@ public class URLValidator extends CMDSubprocessor {
                 }
                 if (checkedLinkOptional != null && !checkedLinkOptional.isEmpty()) {
                     checkedLink = checkedLinkOptional.get();
-                } else {
+ /*               } 
+                else {
                     try {
                         checkedLink = httpLinkChecker.checkLink(url);//redirect follow level is current level, because this is the first request it is set to 0
                     } catch (Exception e) {
@@ -173,27 +174,27 @@ public class URLValidator extends CMDSubprocessor {
                     checkedLink.setExpectedMimeType(expectedMimeType);
 
                     checkedLink.setRecord(report.getName());
+                }*/
+	                Category category = checkedLink.getCategory();
+	                if (category.equals(Category.Ok)) {
+	                    //do nothing
+	                } else if (category.equals(Category.Broken)) {
+	                    addMessage(Severity.ERROR, "Url: " + checkedLink.getUrl() + " Category:" + category);
+	                    numOfBrokenLinks++;
+	                } else if (category.equals(Category.Undetermined)) {
+	                    addMessage(Severity.WARNING, "Url: " + checkedLink.getUrl() + " Category:" + category);
+	                    numOfUndeterminedLinks++;
+	                } else if (category.equals(Category.Restricted_Access)) {
+	                    addMessage(Severity.WARNING, "Url: " + checkedLink.getUrl() + " Category:" + category);
+	                    numOfRestrictedAccessLinks++;
+	                } else {//blocked by robots.txt
+	                    addMessage(Severity.WARNING, "Url: " + checkedLink.getUrl() + " Category:" + category);
+	                    numOfBlockedByRobotsTxtLinks++;
+	                }
+	
+	                CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(checkedLink);
+	                report.addURLElement(urlElementReport);
                 }
-                Category category = checkedLink.getCategory();
-                if (category.equals(Category.Ok)) {
-                    //do nothing
-                } else if (category.equals(Category.Broken)) {
-                    addMessage(Severity.ERROR, "Url: " + checkedLink.getUrl() + " Category:" + category);
-                    numOfBrokenLinks++;
-                } else if (category.equals(Category.Undetermined)) {
-                    addMessage(Severity.WARNING, "Url: " + checkedLink.getUrl() + " Category:" + category);
-                    numOfUndeterminedLinks++;
-                } else if (category.equals(Category.Restricted_Access)) {
-                    addMessage(Severity.WARNING, "Url: " + checkedLink.getUrl() + " Category:" + category);
-                    numOfRestrictedAccessLinks++;
-                } else {//blocked by robots.txt
-                    addMessage(Severity.WARNING, "Url: " + checkedLink.getUrl() + " Category:" + category);
-                    numOfBlockedByRobotsTxtLinks++;
-                }
-
-                CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement().convertFromLinkCheckerURLElement(checkedLink);
-                report.addURLElement(urlElementReport);
-
 
             }
 
