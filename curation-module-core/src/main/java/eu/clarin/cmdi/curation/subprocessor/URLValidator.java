@@ -64,6 +64,7 @@ public class URLValidator extends CMDSubprocessor {
         //these values are used to create instance url report and used for the score
         //collection statistics are done through the database
         long numOfUniqueLinks = urlMap.keySet().size();
+        long numOfCheckedLinks = 0;
         long numOfBrokenLinks = 0;
         long numOfUndeterminedLinks = 0;
         long numOfRestrictedAccessLinks = 0;
@@ -139,7 +140,7 @@ public class URLValidator extends CMDSubprocessor {
 
         } else {//instance mode
 
-            HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
+//            HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
 
             for (String url : urlMap.keySet()) {
                 //first check if database has this url
@@ -151,6 +152,7 @@ public class URLValidator extends CMDSubprocessor {
                     //error doesn't matter, treat it as if it is not in the database
                 }
                 if (checkedLinkOptional != null && !checkedLinkOptional.isEmpty()) {
+                	numOfCheckedLinks++;
                     checkedLink = checkedLinkOptional.get();
  /*               } 
                 else {
@@ -199,7 +201,7 @@ public class URLValidator extends CMDSubprocessor {
             }
 
         }
-        report.urlReport = createInstanceURLReport(numOfLinks.get(), numOfUniqueLinks, numOfBrokenLinks, numOfUndeterminedLinks, numOfRestrictedAccessLinks, numOfBlockedByRobotsTxtLinks);
+        report.urlReport = createInstanceURLReport(numOfLinks.get(), numOfUniqueLinks, numOfCheckedLinks, numOfBrokenLinks, numOfUndeterminedLinks, numOfRestrictedAccessLinks, numOfBlockedByRobotsTxtLinks);
 
     }
 
@@ -210,12 +212,12 @@ public class URLValidator extends CMDSubprocessor {
         return new Score(score, 1.0, "url-validation", msgs);
     }
 
-    private URLReport createInstanceURLReport(long numOfLinks, long numOfUniqueLinks, long numOfBrokenLinks, long numOfUndeterminedLinks, long numOfRestrictedAccessLinks, long numOfBlockedByRobotsTxtLinks) {
+    private URLReport createInstanceURLReport(long numOfLinks, long numOfUniqueLinks, long numOfCheckedLinks, long numOfBrokenLinks, long numOfUndeterminedLinks, long numOfRestrictedAccessLinks, long numOfBlockedByRobotsTxtLinks) {
         URLReport report = new URLReport();
         report.numOfLinks = numOfLinks;
 
         //all links are checked in instances
-        report.numOfCheckedLinks = numOfLinks;
+        report.numOfCheckedLinks = numOfCheckedLinks;
         report.numOfUndeterminedLinks = numOfUndeterminedLinks;
         report.numOfRestrictedAccessLinks = numOfRestrictedAccessLinks;
         report.numOfBlockedByRobotsTxtLinks = numOfBlockedByRobotsTxtLinks;
