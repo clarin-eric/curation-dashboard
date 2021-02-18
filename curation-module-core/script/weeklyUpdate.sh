@@ -60,9 +60,6 @@ for name in resourceClass_tf-extended profileName2resourceClass_tf-extended_noRe
 	rm $name.csv
 done
 
-#echo "recharging curate vlo..."
-#java -cp $BIN_DIR/vlo-importer-4.4.3-importer.jar $VM_ARGS -Dprojectname=vlo-importer $LOG4J -DconfigFile=$CONF_DIR/VloConfig-acdh.xml eu.clarin.cmdi.vlo.importer.MetadataImporterRunner
-
 echo "Finished!"
 ELAPSED_TIME=$(($SECONDS - $START_TIME))
 echo "Elapsed time: $(($ELAPSED_TIME/60)) min"
