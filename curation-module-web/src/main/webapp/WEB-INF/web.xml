@@ -3,7 +3,7 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-  <display-name>Curation Module</display-name>
+  <display-name>Curation Dashboard</display-name>
 
   <context-param>
     <param-name>config.location</param-name>
