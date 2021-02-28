@@ -33,7 +33,7 @@ public class Configuration {
     public static boolean SAVE_REPORT;
     public static Path OUTPUT_DIRECTORY = null;
     public static Path CACHE_DIRECTORY = null;
-    public static int THREAD_POOL_SIZE = 100;
+    public static int THREADPOOL_SIZE = 100;
     public static Collection<String> FACETS = null;
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;
@@ -93,7 +93,7 @@ public class Configuration {
         } else {
             TIMEOUT = Integer.parseInt(timeout);
         }
-        THREAD_POOL_SIZE = Integer.parseInt(config.getProperty("THREAD_POOL_SIZE", "100"));
+        THREADPOOL_SIZE = Integer.parseInt(config.getProperty("THREADPOOL_SIZE", "100"));
 
         String[] facets = config.getProperty("FACETS").split(",");
         FACETS = Arrays.stream(facets).map(String::trim).collect(Collectors.toList());

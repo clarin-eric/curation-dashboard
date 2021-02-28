@@ -56,7 +56,7 @@ public class CollectionAggregator {
         report.fileReport.minFileSize = collection.getMinFileSize();
         report.fileReport.maxFileSize = collection.getMaxFileSize();
 
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Configuration.THREAD_POOL_SIZE);
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Configuration.THREADPOOL_SIZE);
 
         while (!collection.getChildren().isEmpty()) {
 
