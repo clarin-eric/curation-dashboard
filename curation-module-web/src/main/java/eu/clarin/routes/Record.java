@@ -14,6 +14,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.LinkOption;
+import java.nio.file.Paths;
 
 //this route is to make records available to view
 @Path("/record")
@@ -23,7 +25,12 @@ public class Record {
     @Path("/{filepath : .+}")
     public Response handleView(@PathParam("filepath") String filePath) {
         try {
-            String file = FileManager.readFile(Configuration.RECORDS_PATH + "/" + filePath);
+        	// the next three lines assure that the path is a sub-path of RECORDS_PATH
+        	java.nio.file.Path path = Paths.get(Configuration.RECORDS_PATH, filePath).toRealPath(LinkOption.NOFOLLOW_LINKS);
+        	if(!path.startsWith(Configuration.RECORDS_PATH))
+        		throw new IOException();
+        	
+            String file = FileManager.readFile(path.toString());
             return ResponseManager.returnResponse(200, file, MediaType.TEXT_XML);
 
         } catch (IOException e) {
