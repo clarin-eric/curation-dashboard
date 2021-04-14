@@ -41,7 +41,7 @@ public class Instance {
                     String instanceHTML = FileManager.readFile(location + instanceName);
 
                     //replace to put the url based on the server (this way xml and html files are not server url dependent)
-                    String xmlLink = Configuration.BASE_URL + "instance/" + split[0] + ".xml";
+                    String xmlLink = Configuration.BASE_URL + "/instance/" + split[0] + ".xml";
                     xmlLink = "<a href='"+xmlLink+"'>"+xmlLink+"</a>";
                     instanceHTML = instanceHTML.replaceFirst(Pattern.quote("selfURLPlaceHolder"), xmlLink);
 
