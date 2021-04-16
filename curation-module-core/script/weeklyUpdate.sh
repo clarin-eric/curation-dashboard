@@ -51,16 +51,21 @@ set -e
 
 echo "generating new reports, downloading necessary profiles..."
 java $VM_ARGS -Dprojectname=curate $LOG4J -jar $BIN_DIR/curate.jar -config $CONF_DIR/config.properties -r -path $DATA_DIR/clarin/$CMDI_PATH $DATA_DIR/europeana/$CMDI_PATH
-echo "report generation finished. creating value maps..."
+echo "report generation finished."
 
-# create value maps
-for name in resourceClass_tf-extended profileName2resourceClass_tf-extended_noResourceClassProfiles collection modality organisation; do
-	curl -O https://raw.githubusercontent.com/acdh-oeaw/VLO-mapping/master/value-maps/$name.csv
-	java -jar $BIN_DIR/vlo-mapping-creator.jar $name.csv > $WORK_DIR/value_maps/$name.xml
-	rm $name.csv
-done
+if [ -e "$BIN_DIR/vlo-mapping-creator.jar" ]; then
+	echo "creating value maps..."
+	# create value maps
+	for name in resourceClass_tf-extended profileName2resourceClass_tf-extended_noResourceClassProfiles collection modality organisation; do
+		curl -O https://raw.githubusercontent.com/acdh-oeaw/VLO-mapping/master/value-maps/$name.csv
+		java -jar "$BIN_DIR/vlo-mapping-creator.jar" $name.csv > $WORK_DIR/value_maps/$name.xml
+		rm $name.csv
+	done
+	echo "Finished!"
+else
+	echo "Skipping value map creation - mapping creator binary not found"
+fi
 
-echo "Finished!"
 ELAPSED_TIME=$(($SECONDS - $START_TIME))
 echo "Elapsed time: $(($ELAPSED_TIME/60)) min"
 echo "please restart curate webapp with 'docker-manage -e clarin-curate -v'"
