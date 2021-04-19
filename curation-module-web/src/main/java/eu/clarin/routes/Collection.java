@@ -46,7 +46,7 @@ public class Collection {
                     String collectionHTML = FileManager.readFile(location + collectionName);
 
                     //replace to put the url based on the server (this way xml and html files are not server url dependent)
-                    String xmlLink = Configuration.BASE_URL + "/collection/" + split[0] + ".xml";
+                    String xmlLink = Configuration.BASE_URL + "collection/" + split[0] + ".xml";
                     xmlLink = "<a href='"+xmlLink+"'>"+xmlLink+"</a>";
                     collectionHTML = collectionHTML.replaceFirst(Pattern.quote("selfURLPlaceHolder"), xmlLink);
 

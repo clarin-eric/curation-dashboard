@@ -28,7 +28,7 @@ public class Record {
         	// the next three lines assure that the path is a sub-path of RECORDS_PATH
         	java.nio.file.Path path = Paths.get(Configuration.RECORDS_PATH, filePath).toRealPath(LinkOption.NOFOLLOW_LINKS);
         	if(!path.startsWith(Configuration.RECORDS_PATH))
-        		throw new IOException();
+        		return ResponseManager.returnError(404, "Path not permitted.");
         	
             String file = FileManager.readFile(path.toString());
             return ResponseManager.returnResponse(200, file, MediaType.TEXT_XML);

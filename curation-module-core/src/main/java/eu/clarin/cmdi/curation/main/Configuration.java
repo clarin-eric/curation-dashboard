@@ -138,6 +138,8 @@ public class Configuration {
 
         USERAGENT = config.getProperty("USERAGENT");
         BASE_URL = config.getProperty("BASE_URL");
+        if(!BASE_URL.endsWith("/"))
+        	BASE_URL += "/";
     }
 
     public static class StormycheckerConstants{
