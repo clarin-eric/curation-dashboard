@@ -3,11 +3,11 @@
     <parent>
         <artifactId>curation-module</artifactId>
         <groupId>eu.clarin.cmdi</groupId>
-        <version>5.0.5</version>
+        <version>5.0.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>curation-module-core</artifactId>
-    <version>5.0.5</version>
+    <version>5.0.6</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.25</slf4j.version>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>28.1-jre</version>
+            <version>30.0-jre</version>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
