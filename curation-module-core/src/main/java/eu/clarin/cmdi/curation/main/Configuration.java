@@ -1,8 +1,7 @@
 package eu.clarin.cmdi.curation.main;
 
 import eu.clarin.cmdi.rasa.helpers.RasaFactory;
-import eu.clarin.cmdi.rasa.helpers.impl.ACDHRasaFactory;
-import eu.clarin.cmdi.rasa.linkResources.CategoryStatisticsResource;
+import eu.clarin.cmdi.rasa.helpers.impl.RasaFactoryBuilderImpl;
 import eu.clarin.cmdi.rasa.linkResources.CheckedLinkResource;
 import eu.clarin.cmdi.rasa.linkResources.LinkToBeCheckedResource;
 import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
@@ -17,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,8 +24,8 @@ public class Configuration {
 
     private static Logger logger = LoggerFactory.getLogger(Configuration.class);
 
-
-    public static Long reportGenerationDate = System.currentTimeMillis();
+    //prevent milliseconds
+    public static Timestamp reportGenerationDate = new Timestamp((System.currentTimeMillis()/1000)*1000);
 
     public static String SCORE_NUMERIC_DISPLAY_FORMAT;
     public static String TIMESTAMP_DISPLAY_FORMAT;
@@ -45,7 +45,6 @@ public class Configuration {
 
     public static CheckedLinkResource checkedLinkResource;
     public static LinkToBeCheckedResource linkToBeCheckedResource;
-    public static CategoryStatisticsResource statisticsResource;
 
     //this is a boolean that is set by core-module(false) and web-module(true)
     public static boolean enableProfileLoadTimer = false;
@@ -113,16 +112,15 @@ public class Configuration {
             REDIRECT_FOLLOW_LIMIT = Integer.parseInt(redirectFollowLimit);
         }
         
-        final Properties hikari = new Properties();
+        final Properties hikariProperties = new Properties();
         
         config.entrySet()
         	.stream().filter(es -> es.getKey().toString().startsWith("HIKARI."))
-        	.forEach(es -> hikari.setProperty(es.getKey().toString().substring(7), es.getValue().toString()));
+        	.forEach(es -> hikariProperties.setProperty(es.getKey().toString().substring(7), es.getValue().toString()));
 
-        factory = new ACDHRasaFactory(hikari);
+        factory = new RasaFactoryBuilderImpl().getRasaFactory(hikariProperties);
         checkedLinkResource = factory.getCheckedLinkResource();
         linkToBeCheckedResource = factory.getLinkToBeCheckedResource();
-        statisticsResource = factory.getStatisticsResource();
 
 
         String vloConfigLocation = config.getProperty("VLO_CONFIG_LOCATION");
@@ -140,15 +138,5 @@ public class Configuration {
         BASE_URL = config.getProperty("BASE_URL");
         if(!BASE_URL.endsWith("/"))
         	BASE_URL += "/";
-    }
-
-    public static class StormycheckerConstants{
-
-        public static final List<Integer> okStatusCodes = new ArrayList<>(Arrays.asList(200, 304));
-
-        public static final List<Integer> redirectStatusCodes = new ArrayList<>(Arrays.asList(301, 302, 303, 307, 308));
-
-        //this determines what status codes will not be considered broken links. urls with these codes will also not factor into the url-scores
-        public static final List<Integer> undeterminedStatusCodes = new ArrayList<>(Arrays.asList(401, 405, 429));
     }
 }

@@ -2,7 +2,6 @@ package eu.clarin.helpers;
 
 import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
-import eu.clarin.cmdi.rasa.filters.impl.ACDHCheckedLinkFilter;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import eu.clarin.main.Configuration;
 import org.slf4j.Logger;
@@ -136,8 +135,7 @@ public class LinkCheckerStatisticsHelper {
 
         StringBuilder sb = new StringBuilder();
 
-        ACDHCheckedLinkFilter filter = new ACDHCheckedLinkFilter(collectionName, category);
-        try (Stream<CheckedLink> links = Configuration.checkedLinkResource.get(Optional.of(filter), start, end)) {
+        try (Stream<CheckedLink> links = Configuration.checkedLinkResource.get(Configuration.checkedLinkResource.getCheckedLinkFilter().setProviderGroupIs(collectionName).setCategoryIs(category).setLimit(start, end))) {
 
             links.forEach(checkedLink -> {
                 sb.append("<tr>");
@@ -195,7 +193,7 @@ public class LinkCheckerStatisticsHelper {
 
                 String method = checkedLink.getMethod() == null ? "N/A" : checkedLink.getMethod();
                 sb.append("<b>Method: </b>").append(method).append("<br>");
-                sb.append("<b>Timestamp: </b>").append(checkedLink.getTimestamp());
+                sb.append("<b>Timestamp: </b>").append(checkedLink.getCheckingDate());
                 sb.append("</td>");
                 //info end
 

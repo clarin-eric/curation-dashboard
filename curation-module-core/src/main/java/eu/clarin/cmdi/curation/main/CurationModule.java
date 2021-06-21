@@ -10,13 +10,13 @@ import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
-import eu.clarin.cmdi.curation.utils.HTTPLinkChecker;
+import eu.clarin.cmdi.curation.utils.FileDownloader;
+
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,7 +55,7 @@ public class CurationModule implements CurationModuleInterface {
     public Report<?> processCMDInstance(URL url) throws IOException, FileSizeException, ExecutionException, TransformerException, SAXException, VTDException, ParserConfigurationException {
         String path = FileNameEncoder.encode(url.toString()) + ".xml";
         Path cmdiFilePath = Paths.get(System.getProperty("java.io.tmpdir"), path);
-        new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(url.toString(), cmdiFilePath.toFile());
+        new FileDownloader(15000).download(url.toString(), cmdiFilePath.toFile());
         long size = Files.size(cmdiFilePath);
         CMDInstance cmdInstance = new CMDInstance(cmdiFilePath, size);
         cmdInstance.setUrl(url.toString());

@@ -10,7 +10,7 @@ import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParser;
 import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParserFactory;
 import eu.clarin.cmdi.curation.main.Configuration;
-import eu.clarin.cmdi.curation.utils.HTTPLinkChecker;
+import eu.clarin.cmdi.curation.utils.FileDownloader;
 import eu.clarin.cmdi.curation.xml.SchemaResourceResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 class ProfileCacheFactory {
@@ -80,9 +79,6 @@ class ProfileCacheFactory {
         @Override
         public ProfileCacheEntry load(ProfileHeader header) throws IOException, VTDException, SAXException, URISyntaxException {
 
-            String profile = header.getId() != null ? header.getId() : header.getSchemaLocation();
-//            logger.info("Profile {} is not in the cache, it will be loaded", profile);
-
             Path xsd;
             if (isPublicProfilesCache) {
 
@@ -92,14 +88,14 @@ class ProfileCacheFactory {
                 //try to load it from the disk
 
 
-                logger.debug("profile {} is public. Loading schema from {}", header.getId(), xsd);
+                logger.info("profile {} is public. Loading schema from {}", header.getId(), xsd);
 
                 if (!Files.exists(xsd)) {// keep public profiles on disk
                     // if not download it
                     Files.createFile(xsd);
 
-                    logger.info("XSD for the {} is not in the local cache, it will be downloaded", header.getSchemaLocation());
-                    new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(header.getSchemaLocation(), xsd.toFile());
+                    logger.debug("XSD for the {} is not in the local cache, it will be downloaded", header.getSchemaLocation());
+                    new FileDownloader(15000).download(header.getSchemaLocation(), xsd.toFile());
                 }
 
             } else {//non-public profiles are not cached on disk
@@ -155,7 +151,7 @@ class ProfileCacheFactory {
         if (header.getSchemaLocation().startsWith("file:")) {
             Files.move(Paths.get(new URI(header.getSchemaLocation())), xsd, StandardCopyOption.REPLACE_EXISTING);
         } else {
-            new HTTPLinkChecker(15000, 5, Configuration.USERAGENT).download(header.getSchemaLocation(), xsd.toFile());
+            new FileDownloader(15000).download(header.getSchemaLocation(), xsd.toFile());
         }
     }
 

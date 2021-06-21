@@ -7,7 +7,6 @@ import java.util.Deque;
 
 import eu.clarin.cmdi.curation.processor.CollectionProcessor;
 import eu.clarin.cmdi.curation.report.CollectionReport;
-import eu.clarin.cmdi.curation.report.Report;
 
 public class CMDCollection {
 

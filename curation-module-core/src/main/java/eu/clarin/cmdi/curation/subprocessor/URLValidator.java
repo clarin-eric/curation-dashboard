@@ -1,16 +1,14 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.exception.CategoryException;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.URLReport;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.curation.utils.HTTPLinkChecker;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.DAO.LinkToBeChecked;
-import eu.clarin.cmdi.rasa.filters.impl.ACDHCheckedLinkFilter;
+import eu.clarin.cmdi.rasa.filters.CheckedLinkFilter;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
@@ -19,14 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 public class URLValidator extends CMDSubprocessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(URLValidator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(URLValidator.class);
 
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report) {
@@ -72,73 +69,59 @@ public class URLValidator extends CMDSubprocessor {
 
         if (Configuration.COLLECTION_MODE) {
 
-            List<LinkToBeChecked> linksToBeChecked = new ArrayList<>();
-            List<String> linksToBeUpdated = new ArrayList<>();
-
             for (String url : urlMap.keySet()) {
 
                 String finalRecord = report.getName();
                 String finalCollection = parentName != null ? parentName : finalRecord;
-
-                try {
-                    Optional<LinkToBeChecked> linkToBeCheckedOptional = Configuration.linkToBeCheckedResource.get(url);
-                    if (linkToBeCheckedOptional.isEmpty()) {//not in the database
                     	
-                    	String expectedMimeType = urlMap.get(url).getMimeType();
-                        expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
-                        
-                        LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType, Configuration.reportGenerationDate);
-                        linksToBeChecked.add(linkToBeChecked);
-                    } 
-                    else {
-                        linksToBeUpdated.add(url);//update the harvestDate of the link
-                    }
-                } catch (SQLException e) {
-                    logger.error("Error when getting " + url + " from the database: " + e.getMessage());
-                }
-            }
-//todo make these count queries directly to mysql
-            //get the numbers of links directly from database instead of getting each link and adding it manually here
-            try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Broken)))) {
-                numOfBrokenLinks = stream.count();
-            } 
-            catch (SQLException e) {
-                logger.error("Error when getting number of broken links from the database: " + e.getMessage());
-            }
+            	String expectedMimeType = urlMap.get(url).getMimeType();
+                expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
+                
+                LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, Configuration.reportGenerationDate, finalRecord, finalCollection, expectedMimeType, Configuration.reportGenerationDate);
 
-            try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Undetermined)))) {
-                numOfUndeterminedLinks = stream.count();
-            } 
-            catch (SQLException e) {
-                logger.error("Error when getting number of undetermined links from the database: " + e.getMessage());
+                
+                try {//save link
+					  Configuration.linkToBeCheckedResource.save(linkToBeChecked); 
+				} 
+				catch(SQLException e) { 
+					LOG.error("Error when saving " + linkToBeChecked + ": " + e.getMessage()); 
+				}
             }
+			
+			  //create a general filter where category is set and overridden for each
+			/*
+			 * CheckedLinkFilter filter =
+			 * Configuration.checkedLinkResource.getCheckedLinkFilter()
+			 * .setProviderGroupIs(report.getName())
+			 * .setInjectionDateIs(Configuration.reportGenerationDate); //get the numbers of
+			 * links directly from database instead of getting each link and adding it
+			 * manually here try { numOfBrokenLinks =
+			 * Configuration.checkedLinkResource.getCount(filter.setCategoryIs(Category.
+			 * Broken)); } catch (SQLException e) {
+			 * logger.error("Error when getting number of broken links from the database: "
+			 * + e.getMessage()); }
+			 * 
+			 * try { numOfUndeterminedLinks =
+			 * Configuration.checkedLinkResource.getCount(filter.setCategoryIs(Category.
+			 * Undetermined)); } catch (SQLException e) { logger.
+			 * error("Error when getting number of undetermined links from the database: " +
+			 * e.getMessage()); }
+			 * 
+			 * try { numOfRestrictedAccessLinks =
+			 * Configuration.checkedLinkResource.getCount(filter.setCategoryIs(Category.
+			 * Restricted_Access));; } catch (SQLException e) { logger.
+			 * error("Error when getting number of restricted access links from the database: "
+			 * + e.getMessage()); }
+			 * 
+			 * try { numOfBlockedByRobotsTxtLinks =
+			 * Configuration.checkedLinkResource.getCount(filter.setCategoryIs(Category.
+			 * Blocked_By_Robots_txt));; } catch (SQLException e) { logger.
+			 * error("Error when getting number of blocked by robots.txt links from the database: "
+			 * + e.getMessage()); }
+			 */
 
-            try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Restricted_Access)))) {
-                numOfRestrictedAccessLinks = stream.count();
-            } 
-            catch (SQLException e) {
-                logger.error("Error when getting number of restricted access links from the database: " + e.getMessage());
-            }
-
-            try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Optional.of(new ACDHCheckedLinkFilter(parentName, report.getName(), Category.Blocked_By_Robots_txt)))) {
-                numOfBlockedByRobotsTxtLinks = stream.count();
-            } catch (SQLException e) {
-                logger.error("Error when getting number of blocked by robots.txt links from the database: " + e.getMessage());
-            }
-
-            try {//update the harvest date for existing links
-                Configuration.linkToBeCheckedResource.updateDate(linksToBeUpdated, Configuration.reportGenerationDate);
-            } catch (SQLException e) {
-                logger.error("Error when updating " + linksToBeUpdated + " to urls table: " + e.getMessage());
-            }
-
-            try {//save all links not in database in a batch to urls table
-                Configuration.linkToBeCheckedResource.save(linksToBeChecked);
-            } catch (SQLException e) {
-                logger.error("Error when saving " + linksToBeChecked + " to urls table: " + e.getMessage());
-            }
-
-        } else {//instance mode
+        } 
+        else {//instance mode
 
 //            HTTPLinkChecker httpLinkChecker = new HTTPLinkChecker(Configuration.TIMEOUT, Configuration.REDIRECT_FOLLOW_LIMIT, Configuration.USERAGENT);
 
@@ -146,8 +129,8 @@ public class URLValidator extends CMDSubprocessor {
                 //first check if database has this url
                 Optional<CheckedLink> checkedLinkOptional = null;
                 CheckedLink checkedLink = new CheckedLink();
-                try {
-                    checkedLinkOptional = Configuration.checkedLinkResource.get(url);
+                try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(Configuration.checkedLinkResource.getCheckedLinkFilter().setUrlIn(url))){
+                    checkedLinkOptional = stream.findFirst();
                 } catch (SQLException e) {
                     //error doesn't matter, treat it as if it is not in the database
                 }

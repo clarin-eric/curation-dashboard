@@ -8,7 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class CCRServiceFactory {
-	private static Logger logger = LoggerFactory.getLogger(CCRServiceFactory.class);
+	private static Logger LOG = LoggerFactory.getLogger(CCRServiceFactory.class);
 	static String CCR_REST_API_URL = "https://openskos.meertens.knaw.nl/ccr/api/";
 	
 	private static CCRServiceFactory fac = null;
@@ -41,7 +41,7 @@ public class CCRServiceFactory {
 
 
 		} catch (Exception e) {
-			logger.error("", e);
+			LOG.error("", e);
 		}
 	}
 	

@@ -128,7 +128,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             expectedContentType = checkedLink.getExpectedMimeType();
             byteSize = String.valueOf(checkedLink.getByteSize());
             duration = TimeUtils.humanizeToTime(checkedLink.getDuration());
-            timestamp = checkedLink.getTimestamp().toString();
+            timestamp = checkedLink.getCheckingDate().toString();
             colorCode = CategoryColor.getColor(checkedLink.getCategory());
 
             return this;
