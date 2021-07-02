@@ -84,7 +84,7 @@ public class URLValidator extends CMDSubprocessor {
 					  Configuration.linkToBeCheckedResource.save(linkToBeChecked); 
 				} 
 				catch(SQLException e) { 
-					LOG.error("Error when saving " + linkToBeChecked + ": " + e.getMessage()); 
+					LOG.error("Error when saving " + linkToBeChecked + ": " + e.getMessage(), e); 
 				}
             }
 			

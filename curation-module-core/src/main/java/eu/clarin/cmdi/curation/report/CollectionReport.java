@@ -6,7 +6,6 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.DAO.Statistics.CategoryStatistics;
 import eu.clarin.cmdi.rasa.filters.CheckedLinkFilter;
-import eu.clarin.cmdi.rasa.filters.LinkToBeCheckedFilter;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -235,7 +234,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
 
         //url statistics
-    	CheckedLinkFilter filter = Configuration.checkedLinkResource.getCheckedLinkFilter().setProviderGroupIs(getName()).setIngestionDateIs(Configuration.reportGenerationDate);
+    	CheckedLinkFilter filter = Configuration.checkedLinkResource.getCheckedLinkFilter().setProviderGroupIs(getName()).setIsActive(true);
 
         
         try (Stream<CategoryStatistics> stream = Configuration.checkedLinkResource.getCategoryStatistics(filter)){
@@ -245,29 +244,43 @@ public class CollectionReport implements Report<CollectionReport> {
                 xmlStatistics.avgRespTime = statistics.getAvgRespTime();
                 xmlStatistics.maxRespTime = statistics.getMaxRespTime();
                 xmlStatistics.category = statistics.getCategory().name();
-                xmlStatistics.count = statistics.getCount();
+                xmlStatistics.count = statistics.getCount();                
+                urlReport.totNumOfCheckedLinks += statistics.getCount();
+                switch(statistics.getCategory()) {
+                	case Broken:
+                		urlReport.totNumOfBrokenLinks = (int) statistics.getCount();
+                		break;
+                	case Undetermined:
+                		urlReport.totNumOfUndeterminedLinks = (int) statistics.getCount();
+                		break;
+                	case Restricted_Access:
+                		urlReport.totNumOfRestrictedAccessLinks = (int) statistics.getCount();
+                		break;
+                	case Blocked_By_Robots_txt:
+                		urlReport.totNumOfBlockedByRobotsTxtLinks = (int) statistics.getCount();
+                		break;
+					default:
+						break;
+                }
+                
                 xmlStatistics.colorCode = CategoryColor.getColor(statistics.getCategory());
                 urlReport.category.add(xmlStatistics);
             });
-            
-            
-            urlReport.totNumOfCheckedLinks = (int) Configuration.checkedLinkResource.getCount(filter);
-
-            urlReport.totNumOfBrokenLinks = (int) Configuration.checkedLinkResource.getCount(filter.setCategoryIs(Category.Broken));
-
-            urlReport.totNumOfBrokenLinks = (int) Configuration.checkedLinkResource.getCount(filter.setCategoryIs(Category.Undetermined));
-
-            urlReport.totNumOfBrokenLinks = (int) Configuration.checkedLinkResource.getCount(filter.setCategoryIs(Category.Restricted_Access));
-
-            urlReport.totNumOfBrokenLinks = (int) Configuration.checkedLinkResource.getCount(filter.setCategoryIs(Category.Blocked_By_Robots_txt));
-
-            urlReport.totNumOfUniqueLinks = (int) Configuration.linkToBeCheckedResource.getCount(Configuration.linkToBeCheckedResource.getLinkToBeCheckedFilter().setProviderGroupIs(getName()));
+        }
+        catch(Exception ex) {
+        	LOG.error("couldn't get category statistics for provider group '{}' from database", getName());
+        }
+        
+        try {    
+            urlReport.totNumOfUniqueLinks = Configuration.linkToBeCheckedResource.getCount(
+            		Configuration.linkToBeCheckedResource.getLinkToBeCheckedFilter().setProviderGroupIs(getName()).setIsActive(true));
 
             urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
             urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
             urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
 
-            eu.clarin.cmdi.rasa.DAO.Statistics.Statistics statistics = Configuration.checkedLinkResource.getStatistics(Configuration.checkedLinkResource.getCheckedLinkFilter());
+            eu.clarin.cmdi.rasa.DAO.Statistics.Statistics statistics = Configuration.checkedLinkResource.getStatistics(
+            		Configuration.checkedLinkResource.getCheckedLinkFilter().setProviderGroupIs(getName()).setIsActive(true));
             if (statistics == null) {//collection was not found in the database
                 urlReport.avgRespTime = 0.0;
                 urlReport.maxRespTime = 0L;

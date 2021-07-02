@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
     @XmlElement(name = "overall")
-    private Overall overall = new Overall();
+    private Overall overall = null;
 
     @XmlElement(name = "collection")
     private List<CMDCollection> collections = new ArrayList<CMDCollection>();
@@ -66,6 +66,10 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
         if (report instanceof CollectionReport) {
             this.collections.add(new CMDCollection((CollectionReport) report));
         }
+    }
+    
+    public void createOverall() {
+    	this.overall = new Overall();
     }
 
     public static class CMDCollection {
@@ -117,7 +121,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
         }
 
         public Overall() {
-        	CheckedLinkFilter filter = Configuration.checkedLinkResource.getCheckedLinkFilter().setProviderGroupIs("Overall");
+        	CheckedLinkFilter filter = Configuration.checkedLinkResource.getCheckedLinkFilter().setProviderGroupIs("Overall").setIsActive(true);
         	
             try(Stream<CategoryStatistics> stream = Configuration.checkedLinkResource.getCategoryStatistics(filter)) {
             	
@@ -131,14 +135,19 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 	                    xmlStatistics.colorCode = CategoryColor.getColor(statistics.getCategory());
 	                    this.statistics.add(xmlStatistics);
 	                });
+            }
+            catch(Exception ex) {
+            	LOG.error("There was a problem getting the overall category statistics: " + ex.getMessage());
+            }
+            try {
 
                 eu.clarin.cmdi.rasa.DAO.Statistics.Statistics statistics = Configuration.checkedLinkResource.getStatistics(filter);
                 this.avgRespTime = statistics.getAvgRespTime();
                 this.count = (int) statistics.getCount();
                 this.maxRespTime = statistics.getMaxRespTime();
 
-            } catch (SQLException e) {
-                LOG.error("There was a problem getting the overall statistics: " + e.getMessage());
+            } catch (SQLException ex) {
+                LOG.error("There was a problem getting the overall statistics: " + ex.getMessage());
                 this.avgRespTime = 0;
                 this.count = 0;
                 this.maxRespTime = 0;
