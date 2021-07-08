@@ -1,10 +1,12 @@
-SET @@global.time_zone = '+00:00';
+DROP DATABASE  IF EXISTS `linkchecker_test`;
+CREATE DATABASE  IF NOT EXISTS `linkchecker_test` CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `linkchecker_test`;
+
 CREATE TABLE `providerGroup` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(256) NOT NULL,
-  `name_hash` char(32) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_name_hash` (`name_hash`)
+  UNIQUE KEY `idx_name` (`name`)
 );
 
 
@@ -22,11 +24,10 @@ CREATE TABLE `context` (
 
 CREATE TABLE `url` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `url` varchar(1024) NOT NULL,
-  `url_hash` char(32) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
+  `url` varchar(1024) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `nextFetchDate` datetime NOT NULL DEFAULT NOW(),
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_url_hash` (`url_hash`)
+  UNIQUE KEY `idx_url` (`url`)
 );
 
 
@@ -54,7 +55,7 @@ CREATE TABLE `status` (
   `contentType` varchar(256) DEFAULT NULL,
   `byteSize` int DEFAULT NULL,
   `duration` int DEFAULT NULL,
-  `checkingDate` timestamp NOT NULL,
+  `checkingDate` datetime NOT NULL,
   `redirectCount` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_url_id` (`url_id`),
@@ -74,7 +75,7 @@ CREATE TABLE `history` (
   `contentType` varchar(256) DEFAULT NULL,
   `byteSize` int DEFAULT NULL,
   `duration` int DEFAULT NULL,
-  `checkingDate` timestamp NOT NULL,
+  `checkingDate` datetime NOT NULL,
   `redirectCount` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_url_id_ceckingDate` (`url_id`,`checkingDate`)
