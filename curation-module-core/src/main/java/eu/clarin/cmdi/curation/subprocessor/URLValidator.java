@@ -8,7 +8,6 @@ import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.DAO.LinkToBeChecked;
-import eu.clarin.cmdi.rasa.filters.CheckedLinkFilter;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
@@ -77,7 +76,7 @@ public class URLValidator extends CMDSubprocessor {
             	String expectedMimeType = urlMap.get(url).getMimeType();
                 expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
                 
-                LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, Configuration.reportGenerationDate, finalRecord, finalCollection, expectedMimeType, Configuration.reportGenerationDate);
+                LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType, Configuration.reportGenerationDate);
 
                 
                 try {//save link
@@ -212,12 +211,4 @@ public class URLValidator extends CMDSubprocessor {
 
         return report;
     }
-
-    private URLReport createDisabledURLReport(long numOfLinks) {
-        URLReport report = new URLReport();
-        report.numOfLinks = numOfLinks;
-
-        return report;
-    }
-
 }
