@@ -124,12 +124,12 @@
 		<dependency>
 			<groupId>eu.clarin.cmdi</groupId>
 			<artifactId>rasa-api</artifactId>
-			<version>4.0.0-alpha_1</version>
+			<version>4.0.0-alpha_2</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.clarin.cmdi</groupId>
 			<artifactId>rasa-mysql-impl</artifactId>
-			<version>4.0.0-alpha_1</version>
+			<version>4.0.0-alpha_2</version>
 		</dependency>
 	</dependencies>
 	<build>
