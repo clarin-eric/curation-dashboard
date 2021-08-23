@@ -210,8 +210,6 @@ public class Main {
                 dumpAsHTML(linkCheckerReport, CurationEntityType.STATISTICS);
                 LOG.info("Creating statistics table finished.");
 
-                LOG.info("Deleting old links if there are any...");
-
                 Configuration.tearDown();
             } else
                 throw new Exception("Only path is allowed for curation of collections root");
