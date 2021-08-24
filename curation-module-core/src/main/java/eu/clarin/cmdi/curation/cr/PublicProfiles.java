@@ -22,7 +22,7 @@ public class PublicProfiles {
 			XMLMarshaller<PublicProfiles> publicProfilesMarshaller = new XMLMarshaller<>(PublicProfiles.class);
 			Collection<ProfileHeader> publicProfiles = publicProfilesMarshaller
 					//.unmarshal(new URL(CRService.CR_REST_1_2_PROFILES).openStream())
-			        .unmarshal(new URL(Configuration.VLO_CONFIG.getComponentRegistryRESTURL() + "?registrySpace=published&status=production").openStream())
+			        .unmarshal(new URL(Configuration.VLO_CONFIG.getComponentRegistryRESTURL() + "?registrySpace=published&status=production&status=development").openStream())
 					.profileDescription;
 			
 			publicProfiles.forEach(p -> {

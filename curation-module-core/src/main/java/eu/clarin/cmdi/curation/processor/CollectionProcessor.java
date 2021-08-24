@@ -10,14 +10,14 @@ import org.slf4j.LoggerFactory;
 
 public class CollectionProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(CollectionProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CollectionProcessor.class);
 
     public CollectionReport process(CMDCollection collection) {
 
         long start = System.currentTimeMillis();
 
         CollectionReport report = new CollectionReport();
-        logger.info("Started report generation for collection: " + collection.getPath());
+        LOG.info("Started report generation for collection: " + collection.getPath());
 
         CollectionAggregator collectionAggregator = null;
         try {
@@ -28,13 +28,12 @@ public class CollectionProcessor {
 
 
         } catch (Exception e) {
-            logger.error("Exception when processing " + collectionAggregator.getClass().toString() + " : " + e.getMessage());
-//            logger.error("here is stack trace: ",e);
+            LOG.error("Exception when processing " + collectionAggregator.getClass().toString() + " : " + e.getMessage());
             addInvalidFile(report, e);
         }
 
         long end = System.currentTimeMillis();
-        logger.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for collection: " + report.getName());
+        LOG.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for collection: " + report.getName());
 
         return report;
     }

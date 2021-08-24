@@ -2,9 +2,7 @@ package eu.clarin.cmdi.curation.entities;
 
 import eu.clarin.cmdi.curation.exception.ProfileNotFoundException;
 import eu.clarin.cmdi.curation.processor.CMDProfileProcessor;
-import eu.clarin.cmdi.curation.processor.CollectionProcessor;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
-import eu.clarin.cmdi.curation.report.Report;
 
 import java.io.IOException;
 import java.nio.file.Path;

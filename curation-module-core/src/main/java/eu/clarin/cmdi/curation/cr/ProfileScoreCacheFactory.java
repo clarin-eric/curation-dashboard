@@ -12,9 +12,6 @@ import com.google.common.cache.LoadingCache;
 
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
-import eu.clarin.cmdi.curation.report.ErrorReport;
-import eu.clarin.cmdi.curation.report.Report;
-import eu.clarin.cmdi.curation.report.Score;
 
 class ProfileScoreCacheFactory{
 	

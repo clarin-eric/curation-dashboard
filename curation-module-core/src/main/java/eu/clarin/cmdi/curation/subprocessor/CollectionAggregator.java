@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class CollectionAggregator {
 
-    private static final Logger logger = LoggerFactory.getLogger(CollectionAggregator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CollectionAggregator.class);
 
     protected Collection<Message> msgs = null;
 
@@ -66,8 +66,13 @@ public class CollectionAggregator {
                 try {
                     CMDInstanceReport cmdInstanceReport = instance.generateReport(report.getName());
                     cmdInstanceReport.mergeWithParent(report);
-                } catch (TransformerException | FileSizeException | IOException | ExecutionException | ParserConfigurationException | SAXException | VTDException e) {
-                    logger.error("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()+ " Skipping to next instance...");
+                } 
+                catch(TransformerException | FileSizeException | SAXException | VTDException e) {
+                    LOG.info("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()+ " Skipping to next instance...");
+                    new ErrorReport(instance.getPath().toString(), e.getMessage()).mergeWithParent(report);
+                }
+                catch (IOException | ExecutionException | ParserConfigurationException e) {
+                    LOG.error("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()+ " Skipping to next instance...");
                     new ErrorReport(instance.getPath().toString(), e.getMessage()).mergeWithParent(report);
                 }
             });
@@ -79,7 +84,7 @@ public class CollectionAggregator {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
-                logger.error("Error occured while waiting for the threadpool to terminate.");
+                LOG.error("Error occured while waiting for the threadpool to terminate.");
             }
         }
 

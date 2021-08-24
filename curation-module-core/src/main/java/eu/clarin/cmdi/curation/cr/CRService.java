@@ -22,7 +22,7 @@ import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import eu.clarin.cmdi.curation.main.Configuration;
 
 public class CRService implements ICRService {
-	static final Logger logger = LoggerFactory.getLogger(CRService.class);
+	static final Logger LOG = LoggerFactory.getLogger(CRService.class);
 	
 	//https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles?registrySpace=published&status=*
 	//https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles?registrySpace=published&status=production
@@ -88,10 +88,10 @@ public class CRService implements ICRService {
                         header.setCmdiVersion("1.1");
                 }
                 catch (MalformedURLException ex) {
-                    logger.error("Schema location "  + schemaLocation + " is no valid URL.");
+                    LOG.error("Schema location "  + schemaLocation + " is no valid URL.");
                 }
                 catch (IOException ex) {
-                    logger.error("Couldn't read from schema location: " + schemaLocation);
+                    LOG.error("Couldn't read from schema location: " + schemaLocation);
                 }  
 			}
 		}

@@ -5,8 +5,7 @@ import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.DAO.Statistics.CategoryStatistics;
-import eu.clarin.cmdi.rasa.filters.impl.ACDHStatisticsCountFilter;
-import eu.clarin.cmdi.rasa.helpers.Table;
+import eu.clarin.cmdi.rasa.filters.CheckedLinkFilter;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +15,8 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  *
@@ -31,7 +30,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionReport implements Report<CollectionReport> {
 
-    private static final Logger logger = LoggerFactory.getLogger(CollectionReport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CollectionReport.class);
 
     @XmlAttribute(name = "score")
     public Double score = 0.0;
@@ -131,7 +130,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
     @Override
     public void mergeWithParent(CollectionReport parentReport) {
-        logger.error("this should never happen??? a collection report cant have a parent to get merged into");
+        LOG.error("this should never happen??? a collection report cant have a parent to get merged into");
 //        parentReport.score += score;
 //        if (insMinScore < parentReport.insMinScore)
 //            parentReport.insMinScore = insMinScore;
@@ -235,46 +234,53 @@ public class CollectionReport implements Report<CollectionReport> {
 
 
         //url statistics
-        try {
-        	//delete non-confirmed links BEFORE writing statistics
-        	int rows = Configuration.linkToBeCheckedResource.deleteOldLinks(Configuration.reportGenerationDate, this.getName());
-        	logger.info("Deleted " + rows + " rows of collection '" + getName() + "' from the table, because they were old (not harvested/found in the records during current report generation).");
-        	
-            List<CategoryStatistics> stats = Configuration.statisticsResource.getCategoryStatistics(getName());
-            for (CategoryStatistics statistics : stats) {
+    	CheckedLinkFilter filter = Configuration.checkedLinkResource.getCheckedLinkFilter().setProviderGroupIs(getName()).setIsActive(true);
+
+        
+        try (Stream<CategoryStatistics> stream = Configuration.checkedLinkResource.getCategoryStatistics(filter)){
+       	
+            stream.forEach(statistics -> {
                 Statistics xmlStatistics = new Statistics();
                 xmlStatistics.avgRespTime = statistics.getAvgRespTime();
                 xmlStatistics.maxRespTime = statistics.getMaxRespTime();
                 xmlStatistics.category = statistics.getCategory().name();
-                xmlStatistics.count = statistics.getCount();
+                xmlStatistics.count = statistics.getCount();                
+                urlReport.totNumOfCheckedLinks += statistics.getCount();
+                switch(statistics.getCategory()) {
+                	case Broken:
+                		urlReport.totNumOfBrokenLinks = (int) statistics.getCount();
+                		break;
+                	case Undetermined:
+                		urlReport.totNumOfUndeterminedLinks = (int) statistics.getCount();
+                		break;
+                	case Restricted_Access:
+                		urlReport.totNumOfRestrictedAccessLinks = (int) statistics.getCount();
+                		break;
+                	case Blocked_By_Robots_txt:
+                		urlReport.totNumOfBlockedByRobotsTxtLinks = (int) statistics.getCount();
+                		break;
+					default:
+						break;
+                }
+                
                 xmlStatistics.colorCode = CategoryColor.getColor(statistics.getCategory());
                 urlReport.category.add(xmlStatistics);
-            }
-
-
-            ACDHStatisticsCountFilter filter = new ACDHStatisticsCountFilter(getName(), null, Table.STATUS);
-            urlReport.totNumOfCheckedLinks = (int) Configuration.statisticsResource.countTable(filter);
-
-            filter = new ACDHStatisticsCountFilter(getName(), null, Collections.singletonList(Category.Broken), Table.STATUS);
-            urlReport.totNumOfBrokenLinks = (int) Configuration.statisticsResource.countTable(filter);
-
-            filter = new ACDHStatisticsCountFilter(getName(), null, Collections.singletonList(Category.Undetermined), Table.STATUS);
-            urlReport.totNumOfUndeterminedLinks = (int) Configuration.statisticsResource.countTable(filter);
-
-            filter = new ACDHStatisticsCountFilter(getName(), null, Collections.singletonList(Category.Restricted_Access), Table.STATUS);
-            urlReport.totNumOfRestrictedAccessLinks = (int) Configuration.statisticsResource.countTable(filter);
-
-            filter = new ACDHStatisticsCountFilter(getName(), null, Collections.singletonList(Category.Blocked_By_Robots_txt), Table.STATUS);
-            urlReport.totNumOfBlockedByRobotsTxtLinks = (int) Configuration.statisticsResource.countTable(filter);
-
-            filter = new ACDHStatisticsCountFilter(getName(), null, Table.URLS);
-            urlReport.totNumOfUniqueLinks = (int) Configuration.statisticsResource.countTable(filter);
+            });
+        }
+        catch(Exception ex) {
+        	LOG.error("couldn't get category statistics for provider group '{}' from database", getName());
+        }
+        
+        try {    
+            urlReport.totNumOfUniqueLinks = Configuration.linkToBeCheckedResource.getCount(
+            		Configuration.linkToBeCheckedResource.getLinkToBeCheckedFilter().setProviderGroupIs(getName()).setIsActive(true));
 
             urlReport.avgNumOfLinks = (double) urlReport.totNumOfLinks / fileReport.numOfFiles;
             urlReport.avgNumOfUniqueLinks = (double) urlReport.totNumOfUniqueLinks / fileReport.numOfFiles;
             urlReport.avgNumOfBrokenLinks = 1.0 * (double) urlReport.totNumOfBrokenLinks / fileReport.numOfFiles;
 
-            eu.clarin.cmdi.rasa.DAO.Statistics.Statistics statistics = Configuration.statisticsResource.getOverallStatistics(getName());
+            eu.clarin.cmdi.rasa.DAO.Statistics.Statistics statistics = Configuration.checkedLinkResource.getStatistics(
+            		Configuration.checkedLinkResource.getCheckedLinkFilter().setProviderGroupIs(getName()).setIsActive(true));
             if (statistics == null) {//collection was not found in the database
                 urlReport.avgRespTime = 0.0;
                 urlReport.maxRespTime = 0L;
@@ -284,7 +290,7 @@ public class CollectionReport implements Report<CollectionReport> {
             }
 
         } catch (SQLException e) {
-            logger.error("There was a problem calculating average values: " + e.getMessage());
+            LOG.error("There was a problem calculating average values: " + e.getMessage(), e);
         }
 
 

@@ -7,7 +7,7 @@ import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.ErrorReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
-import eu.clarin.cmdi.curation.utils.HTTPLinkChecker;
+import eu.clarin.cmdi.curation.utils.FileDownloader;
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
@@ -78,7 +78,7 @@ public class Curate {
             resultFileName = System.currentTimeMillis() + "_" + FileNameEncoder.encode(urlStr);
             path = System.getProperty("java.io.tmpdir") + "/" + resultFileName;
 
-            HTTPLinkChecker linkChecker = new HTTPLinkChecker();
+            FileDownloader linkChecker = new FileDownloader();
             try {
                 linkChecker.download(urlStr, new File(path));
             } catch (IOException e) {

@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class Main {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
 
@@ -144,9 +144,13 @@ public class Main {
                 CollectionsReport collectionsReport = new CollectionsReport();
                 LinkCheckerReport linkCheckerReport = new LinkCheckerReport();
 
-                logger.info("Processing collections: Generating reports...");
+                LOG.info("Processing collections: Generating reports...");
 
                 for (String path : cmd.getOptionValues("path")) {
+                	if(!Files.exists(Paths.get(path))){
+                		LOG.error("the collection input path '{}' doesn't exist", path);
+                		continue;
+                	}
                     //dump(curator.processCollection(Paths.get(path)), type);
                     for (File file : new File(path).listFiles()) {
 //                        logger.info("Starting report generation for collection: " + file.toPath());
@@ -172,16 +176,18 @@ public class Main {
 
                     }
                 }
-                logger.info("Creating collections table...");
+                linkCheckerReport.createOverall();
+                
+                LOG.info("Creating collections table...");
 
                 // dumping the collections table
                 dumpAsXML(collectionsReport, CurationEntityType.COLLECTION);
                 dumpAsHTML(collectionsReport, CurationEntityType.COLLECTION);
                 dumpAsTSV(collectionsReport, CurationEntityType.COLLECTION);
 
-                logger.info("Creating collections table finished.");
+                LOG.info("Creating collections table finished.");
 
-                logger.info("Creating profiles table...");
+                LOG.info("Creating profiles table...");
 
                 //now dumping the public profile reports
                 ProfilesReport profilesReport = new ProfilesReport();
@@ -196,15 +202,13 @@ public class Main {
                 dumpAsXML(profilesReport, CurationEntityType.PROFILE);
                 dumpAsHTML(profilesReport, CurationEntityType.PROFILE);
                 dumpAsTSV(profilesReport, CurationEntityType.PROFILE);
-                logger.info("Creating profiles table finished..");
+                LOG.info("Creating profiles table finished..");
 
-                logger.info("Creating statistics table...");
+                LOG.info("Creating statistics table...");
                 //dumping the linkchecker statistics table
                 dumpAsXML(linkCheckerReport, CurationEntityType.STATISTICS);
                 dumpAsHTML(linkCheckerReport, CurationEntityType.STATISTICS);
-                logger.info("Creating statistics table finished.");
-
-                logger.info("Deleting old links if there are any...");
+                LOG.info("Creating statistics table finished.");
 
                 Configuration.tearDown();
             } else
