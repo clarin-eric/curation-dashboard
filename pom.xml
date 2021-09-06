@@ -6,27 +6,21 @@
     <artifactId>curation-module</artifactId>
     <name>Curation Module</name>
     <packaging>pom</packaging>
-
     <version>5.1.1</version>
-
     <organization>
         <name>CLARIN</name>
         <url>http://www.clarin.eu</url>
     </organization>
-
     <modules>
         <module>curation-module-core</module>
         <module>curation-module-web</module>
     </modules>
-
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <junit.version>4.13.1</junit.version>
         <slf4j.version>1.7.30</slf4j.version>
     </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -45,8 +39,6 @@
             </plugin>
         </plugins>
     </build>
-
-
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -90,5 +82,4 @@
             </snapshots>
         </repository>
     </repositories>
-
 </project>

@@ -12,7 +12,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.7.25</slf4j.version>
-		<rasa.version>4.0.0</rasa.version>
+		<rasa.version>4.0.1</rasa.version>
 	</properties>
 	<dependencies>
 
