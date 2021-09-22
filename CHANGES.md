@@ -1,4 +1,4 @@
-# version 5.1.0
+# version 5.1.1
 - upgrading [RASA](https://github.com/clarin-eric/resource-availability-status-api) dependency to version 4.0.1
 
 # version 5.1.0
