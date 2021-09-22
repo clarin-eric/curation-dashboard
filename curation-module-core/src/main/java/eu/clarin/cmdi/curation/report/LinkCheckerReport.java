@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.report;
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport.Statistics;
 import eu.clarin.cmdi.curation.utils.CategoryColor;
+import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.DAO.Statistics.CategoryStatistics;
 import eu.clarin.cmdi.rasa.filters.CheckedLinkFilter;
@@ -21,6 +22,8 @@ import java.util.stream.Stream;
 @XmlRootElement(name = "linkchecker-report")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class LinkCheckerReport implements Report<LinkCheckerReport> {
+   @XmlAttribute(name = "creation-time")
+   public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
    @XmlElement(name = "overall")
    private Overall overall = null;

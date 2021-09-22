@@ -5,73 +5,75 @@ import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 @XmlRootElement(name = "error-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorReport implements Report<CollectionReport> {
+   @XmlAttribute(name = "creation-time")
+   public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
-    public String name;
-    public String error;
+   public String name;
+   public String error;
 
-    public ErrorReport(String name, String error) {
-        this.name = name;
-        this.error = error;
-    }
+   public ErrorReport(String name, String error) {
+      this.name = name;
+      this.error = error;
+   }
 
-    //for JAXB
-    ErrorReport() {
-    }
+   // for JAXB
+   ErrorReport() {
+   }
 
-    @Override
-    public void setParentName(String parentName) {
-        //dont do anything, error reports dont have parent reports
-    }
+   @Override
+   public void setParentName(String parentName) {
+      // dont do anything, error reports dont have parent reports
+   }
 
-    @Override
-    public String getParentName() {
-        return null;
-    }
+   @Override
+   public String getParentName() {
+      return null;
+   }
 
-    @Override
-    public String getName() {
-        return name;
-    }
+   @Override
+   public String getName() {
+      return name;
+   }
 
-    @Override
-    public boolean isValid() {
-        return false;
-    }
+   @Override
+   public boolean isValid() {
+      return false;
+   }
 
-    @Override
-    public void toXML(OutputStream os) {
-        XMLMarshaller<ErrorReport> instanceMarshaller = new
-                XMLMarshaller<>(ErrorReport.class);
-        instanceMarshaller.marshal(this, os);
-    }
+   @Override
+   public void toXML(OutputStream os) {
+      XMLMarshaller<ErrorReport> instanceMarshaller = new XMLMarshaller<>(ErrorReport.class);
+      instanceMarshaller.marshal(this, os);
+   }
 
-    @Override
-    public void addSegmentScore(Score segmentScore) {
-        throw new UnsupportedOperationException();
-    }
+   @Override
+   public void addSegmentScore(Score segmentScore) {
+      throw new UnsupportedOperationException();
+   }
 
+   /*
+    * when processing collection we are adding the invalid records to the
+    * collection list
+    */
 
-    /*
-     * when processing collection we are adding the invalid records to the collection list
-     */
+   @Override
+   public void mergeWithParent(CollectionReport parentReport) {
+      if (parentReport.file == null) {
+         parentReport.file = new ArrayList<>();
+      }
 
-    @Override
-    public void mergeWithParent(CollectionReport parentReport) {
-        if (parentReport.file == null) {
-            parentReport.file = new ArrayList<>();
-        }
-
-        CollectionReport.InvalidFile invalidFile = new CollectionReport.InvalidFile();
-        invalidFile.recordName = name;
-        invalidFile.reason = error;
-        parentReport.addInvalidFile(invalidFile);
-    }
-
+      CollectionReport.InvalidFile invalidFile = new CollectionReport.InvalidFile();
+      invalidFile.recordName = name;
+      invalidFile.reason = error;
+      parentReport.addInvalidFile(invalidFile);
+   }
 }

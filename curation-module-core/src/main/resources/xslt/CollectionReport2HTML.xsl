@@ -54,8 +54,8 @@
 				<hr />
 
 				<p>
-					Timestamp:
-					<xsl:value-of select="./@timestamp" />
+					Creation time:
+					<xsl:value-of select="./@creation-time" />
 				</p>
 
 				<hr/>

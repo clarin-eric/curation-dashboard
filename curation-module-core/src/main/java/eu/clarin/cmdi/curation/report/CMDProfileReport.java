@@ -12,13 +12,12 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 
 /**
  * A selection of values from a single CMDProfileReport which will form a line in a statistical overview
- *
- * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
  */
 @XmlRootElement(name = "profile-report")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -30,8 +29,8 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
     @XmlAttribute(name = "max-score")
     public double maxScore;
 
-    @XmlAttribute
-    public Long timeStamp = System.currentTimeMillis();
+    @XmlAttribute(name = "creation-time")
+    public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
     @XmlElement(name = "header-section")
     public ProfileHeader header;

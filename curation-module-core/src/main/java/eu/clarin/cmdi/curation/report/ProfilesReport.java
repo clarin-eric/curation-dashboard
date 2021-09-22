@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.report;
 
+import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 import java.io.OutputStream;
@@ -13,130 +14,122 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
-/*
- * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
- */
 @XmlRootElement(name = "profiles")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProfilesReport implements Report<ProfilesReport> {
+   @XmlAttribute(name = "creation-time")
+   public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
+   @XmlElement(name = "profile")
+   private List<Profile> profiles = new ArrayList<Profile>();
 
-    @XmlElement(name = "profile")
-    private List<Profile> profiles = new ArrayList<Profile>();
+   @Override
+   public void setParentName(String parentName) {
 
-    @Override
-    public void setParentName(String parentName) {
+   }
 
+   @Override
+   public String getParentName() {
 
-    }
+      return null;
+   }
 
-    @Override
-    public String getParentName() {
+   @Override
+   public String getName() {
 
-        return null;
-    }
+      return "ProfilesReport";
+   }
 
-    @Override
-    public String getName() {
+   @Override
+   public boolean isValid() {
 
-        return "ProfilesReport";
-    }
+      return false;
+   }
 
-    @Override
-    public boolean isValid() {
+   @Override
+   public void addSegmentScore(Score segmentScore) {
 
-        return false;
-    }
+   }
 
-    @Override
-    public void addSegmentScore(Score segmentScore) {
+   @Override
+   public void toXML(OutputStream os) {
+      XMLMarshaller<ProfilesReport> instanceMarshaller = new XMLMarshaller<>(ProfilesReport.class);
+      instanceMarshaller.marshal(this, os);
+   }
 
+   @Override
+   public void mergeWithParent(ProfilesReport parentReport) {
 
-    }
+   }
 
-    @Override
-    public void toXML(OutputStream os) {
-        XMLMarshaller<ProfilesReport> instanceMarshaller = new
-                XMLMarshaller<>(ProfilesReport.class);
-        instanceMarshaller.marshal(this, os);
-    }
+   public void addReport(Report<?> report) {
+      if (report instanceof CMDProfileReport) {
 
-    @Override
-    public void mergeWithParent(ProfilesReport parentReport) {
+         this.profiles.add(new Profile((CMDProfileReport) report));
 
+      }
+   }
 
-    }
+   @XmlRootElement
+   @XmlAccessorType(XmlAccessType.FIELD)
+   public static class Profile {
 
-    public void addReport(Report<?> report) {
-        if (report instanceof CMDProfileReport) {
+      @XmlAttribute
+      private String id;
+      @XmlElement
+      private String name;
+      @XmlElement
+      private String reportName;
+      @XmlElement
+      private double score;
+      @XmlElement
+      private double facetCoverage;
+      @XmlElement
+      private double percOfElementsWithConcept;
 
-            this.profiles.add(new Profile((CMDProfileReport) report));
+      @XmlElementWrapper(name = "facets")
+      @XmlElement(name = "facet")
+      private List<Facet> facets = new ArrayList<Facet>();
+      @XmlElement
+      private double collectionUsage;
+      @XmlElement
+      private double instanceUsage;
 
-        }
-    }
+      public Profile() {
 
+      }
 
-    @XmlRootElement
-    @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Profile {
+      public Profile(CMDProfileReport report) {
+         this.id = report.header.getId();
+         this.name = report.header.getName();
+         this.reportName = report.getName();
+         this.score = report.score;
+         this.facetCoverage = report.facet.profileCoverage;
+         this.percOfElementsWithConcept = report.elements.percWithConcept;
+         this.collectionUsage = report.collectionUsage.size();
 
-        @XmlAttribute
-        private String id;
-        @XmlElement
-        private String name;
-        @XmlElement
-        private String reportName;
-        @XmlElement
-        private double score;
-        @XmlElement
-        private double facetCoverage;
-        @XmlElement
-        private double percOfElementsWithConcept;
+         report.collectionUsage.forEach(usage -> this.instanceUsage += usage.count);
+         report.facet.coverage.forEach(f -> facets.add(new Facet(f.name, f.coveredByProfile)));
+      }
+   }
 
-        @XmlElementWrapper(name = "facets")
-        @XmlElement(name = "facet")
-        private List<Facet> facets = new ArrayList<Facet>();
-        @XmlElement
-        private double collectionUsage;
-        @XmlElement
-        private double instanceUsage;
+   @XmlRootElement
+   @XmlAccessorType(XmlAccessType.FIELD)
 
-        public Profile() {
+   private static class Facet {
+      @XmlAttribute
+      private String name;
+      @XmlAttribute
+      private boolean covered;
 
-        }
+      @SuppressWarnings("unused")
+      public Facet() {
 
-        public Profile(CMDProfileReport report) {
-            this.id = report.header.getId();
-            this.name = report.header.getName();
-            this.reportName = report.getName();
-            this.score = report.score;
-            this.facetCoverage = report.facet.profileCoverage;
-            this.percOfElementsWithConcept = report.elements.percWithConcept;            
-            this.collectionUsage = report.collectionUsage.size();           
-            
-            report.collectionUsage.forEach(usage -> this.instanceUsage+=usage.count);
-            report.facet.coverage.forEach(f -> facets.add(new Facet(f.name, f.coveredByProfile)));
-        }
-    }
+      }
 
-    @XmlRootElement
-    @XmlAccessorType(XmlAccessType.FIELD)
-
-    private static class Facet {
-        @XmlAttribute
-        private String name;
-        @XmlAttribute
-        private boolean covered;
-
-        @SuppressWarnings("unused")
-		public Facet() {
-        	
-        }
-
-        public Facet(String name, boolean covered) {
-            this.name = name;
-            this.covered = covered;
-        }
-    }
+      public Facet(String name, boolean covered) {
+         this.name = name;
+         this.covered = covered;
+      }
+   }
 }
