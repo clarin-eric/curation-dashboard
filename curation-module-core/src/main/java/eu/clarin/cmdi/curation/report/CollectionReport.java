@@ -6,7 +6,6 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.DAO.Statistics.CategoryStatistics;
 import eu.clarin.cmdi.rasa.filters.CheckedLinkFilter;
-import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -417,6 +416,15 @@ public class CollectionReport implements Report<CollectionReport> {
 
         @XmlAttribute
         public String colorCode;
+        
+        public Statistics() {
+           
+        }
+        
+        public Statistics(String category, String colorCode) {
+           this.category = category;
+           this.colorCode = colorCode;
+        }
     }
 
     @XmlRootElement

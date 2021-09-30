@@ -1,23 +1,16 @@
 package eu.clarin.cmdi.curation.report;
 
-import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.report.CollectionReport.Statistics;
 import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
-import eu.clarin.cmdi.rasa.DAO.Statistics.CategoryStatistics;
-import eu.clarin.cmdi.rasa.filters.CheckedLinkFilter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 
 import javax.xml.bind.annotation.*;
 import java.io.OutputStream;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Stream;
 
 @XmlRootElement(name = "linkchecker-report")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
@@ -26,7 +19,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
    public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
    @XmlElement(name = "overall")
-   private Overall overall = null;
+   private Overall overall = new Overall();
 
    @XmlElement(name = "collection")
    private List<CMDCollection> collections = new ArrayList<CMDCollection>();
@@ -70,11 +63,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
       }
    }
 
-   public void createOverall() {
-      this.overall = new Overall();
-   }
-
-   public static class CMDCollection {
+   public class CMDCollection {
       @XmlAttribute
       private String name;
 
@@ -100,13 +89,23 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
          this.count = report.urlReport.totNumOfCheckedLinks;
          this.avgRespTime = report.urlReport.avgRespTime;
          this.maxRespTime = report.urlReport.maxRespTime;
-      }
+         
+         LinkCheckerReport.this.overall.avgRespTime = (LinkCheckerReport.this.overall.avgRespTime
+               * LinkCheckerReport.this.overall.count
+               + report.urlReport.avgRespTime * report.urlReport.totNumOfCheckedLinks)
+               / (LinkCheckerReport.this.overall.count + report.urlReport.totNumOfCheckedLinks);
 
+         LinkCheckerReport.this.overall.count += report.urlReport.totNumOfCheckedLinks;
+         if (LinkCheckerReport.this.overall.maxRespTime < report.urlReport.maxRespTime) {
+            LinkCheckerReport.this.overall.maxRespTime = report.urlReport.maxRespTime;
+         }
+         
+         report.urlReport.category.forEach(LinkCheckerReport.this.overall::addStatistics);
+      }
    }
 
-   public static class Overall {
-      private static final Logger LOG = LoggerFactory.getLogger(Overall.class);
-      private List<Statistics> statistics = new ArrayList<>();
+   public class Overall {
+      private List<Statistics> statistics;
       @XmlAttribute
       private int count;
 
@@ -122,39 +121,24 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
       }
 
       public Overall() {
-         CheckedLinkFilter filter = Configuration.checkedLinkResource.getCheckedLinkFilter()
-               .setProviderGroupIs("Overall").setIsActive(true);
-         try {
-
-            eu.clarin.cmdi.rasa.DAO.Statistics.Statistics statistics = Configuration.checkedLinkResource
-                  .getStatistics(filter);
-            this.avgRespTime = statistics.getAvgRespTime();
-            this.count = (int) statistics.getCount();
-            this.maxRespTime = statistics.getMaxRespTime();
-
-         } catch (SQLException ex) {
-            LOG.error("There was a problem getting the overall statistics: " + ex.getMessage());
-            this.avgRespTime = 0;
-            this.count = 0;
-            this.maxRespTime = 0;
-         }
-         // since the call of getCategoryStatistics modifies the filter object, make sure to call getStatistics first 
-         // or make a new filter object
-         try (Stream<CategoryStatistics> stream = Configuration.checkedLinkResource.getCategoryStatistics(filter)) {
-
-            stream.forEach(statistics -> {
-               Statistics xmlStatistics = new Statistics();
-               xmlStatistics.avgRespTime = statistics.getAvgRespTime();
-               xmlStatistics.maxRespTime = statistics.getMaxRespTime();
-               xmlStatistics.category = statistics.getCategory().name();
-               xmlStatistics.count = statistics.getCount();
-               xmlStatistics.colorCode = CategoryColor.getColor(statistics.getCategory());
-               this.statistics.add(xmlStatistics);
-            });
-         } 
-         catch (Exception ex) {
-            LOG.error("There was a problem getting the overall category statistics: " + ex.getMessage());
-         }
+         this.statistics = List.of(new Statistics(Category.Broken.name(), CategoryColor.getColor(Category.Broken)),
+               new Statistics(Category.Ok.name(), CategoryColor.getColor(Category.Ok)),
+               new Statistics(Category.Undetermined.name(), CategoryColor.getColor(Category.Undetermined)));
+      }
+      
+      public void addStatistics(Statistics statisticsObj) {
+         this.statistics.stream()
+         .filter(s -> s.category.equals(statisticsObj.category))
+         .findFirst()
+         .ifPresent(s -> {
+            s.avgRespTime =
+               (s.avgRespTime * s.count + statisticsObj.avgRespTime * statisticsObj.count)
+               / (s.count + statisticsObj.count);
+            s.count += statisticsObj.count;
+            if(s.maxRespTime < statisticsObj.maxRespTime) {
+               s.maxRespTime = statisticsObj.maxRespTime;
+            }
+         });
       }
    }
 }
