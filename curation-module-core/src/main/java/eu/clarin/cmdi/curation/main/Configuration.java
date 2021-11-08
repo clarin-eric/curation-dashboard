@@ -34,6 +34,7 @@ public class Configuration {
     public static Path OUTPUT_DIRECTORY = null;
     public static Path CACHE_DIRECTORY = null;
     public static int THREADPOOL_SIZE = 100;
+    public static String SOURCE;
     public static Collection<String> FACETS = null;
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;
@@ -66,8 +67,6 @@ public class Configuration {
         Properties config = new Properties();
         config.load(Configuration.class.getResourceAsStream("/config.properties"));
         readProperties(config);
-        //readProperties(new PropertiesConfiguration("config.properties"));
-
     }
 
     public static void tearDown() {
@@ -93,6 +92,8 @@ public class Configuration {
             TIMEOUT = Integer.parseInt(timeout);
         }
         THREADPOOL_SIZE = Integer.parseInt(config.getProperty("THREADPOOL_SIZE", "100"));
+        
+        SOURCE = config.getProperty("SOURCE");
 
         String[] facets = config.getProperty("FACETS").split(",");
         FACETS = Arrays.stream(facets).map(String::trim).collect(Collectors.toList());

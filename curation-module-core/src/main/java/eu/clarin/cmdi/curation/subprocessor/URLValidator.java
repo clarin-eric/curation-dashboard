@@ -78,7 +78,7 @@ public class URLValidator extends CMDSubprocessor {
             String expectedMimeType = urlMap.get(url).getMimeType();
             expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
-            LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType,
+            LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, Configuration.SOURCE, finalRecord, finalCollection, expectedMimeType,
                   Configuration.reportGenerationDate);
 
             try {// save link
