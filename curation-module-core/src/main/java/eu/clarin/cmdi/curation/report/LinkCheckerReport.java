@@ -104,7 +104,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
       }
    }
 
-   public class Overall {
+   public static class Overall {
       private List<Statistics> statistics;
       @XmlAttribute
       private int count;
