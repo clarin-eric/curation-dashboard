@@ -6,6 +6,7 @@
 			<head>
 			</head>
 			<body>
+			   <div id="creation-time">created at <xsl:value-of select="./@creation-time" /></div>
 				<h1>Collection Report</h1>
 				<xsl:variable name="collectionName">
 					<xsl:value-of select="./file-section/provider" />
@@ -52,13 +53,6 @@
 				</p>
 
 				<hr />
-
-				<p>
-					Creation time:
-					<xsl:value-of select="./@creation-time" />
-				</p>
-
-				<hr/>
 
 				<h2>File Section</h2>
 				<p>

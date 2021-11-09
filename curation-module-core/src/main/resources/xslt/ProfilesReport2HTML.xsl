@@ -13,6 +13,7 @@
     </xsl:function>
     <xsl:output method="html" indent="yes"></xsl:output>
     <xsl:template match="/profiles">
+        <div id="creation-time">created at <xsl:value-of select="./@creation-time" /></div>
         <table id="profiles" class="display text-nowrap" width="100%">
             <thead>
                 <tr>

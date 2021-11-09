@@ -117,3 +117,8 @@ a:hover {
 .highlight-button{
     background-color: #d8d8d8 !important;
 }
+#creation-time{
+	text-align: right;
+	font-family: "Lucida Console", "Courier New", monospace;
+	font-size: 8px;
+}

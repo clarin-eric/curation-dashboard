@@ -5,7 +5,7 @@
             <head>
             </head>
             <body>
-
+               <div id="creation-time">created at <xsl:value-of select="./@creation-time" /></div>
                 <xsl:variable name="schemaLoc">
                     <xsl:value-of select="./header-section/schemaLocation"/>
                 </xsl:variable>

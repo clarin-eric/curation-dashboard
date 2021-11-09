@@ -15,8 +15,8 @@
     <xsl:template match="/collections-report">
         <html>
             <body>
+               <div id="creation-time">created at <xsl:value-of select="./@creation-time" /></div>
                 <table id="collections" class="display text-nowrap" width="100%">
-
                     <thead>
                         <tr>
                             <th data-sortable="true">Name</th>
