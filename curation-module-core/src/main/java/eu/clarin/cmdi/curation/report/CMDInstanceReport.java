@@ -42,8 +42,8 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     @XmlAttribute(name = "score-percentage")
     public double scorePercentage;
 
-    @XmlAttribute
-    public String timeStamp = TimeUtils.humanizeToDate(System.currentTimeMillis());
+    @XmlAttribute(name = "creation-time")
+    public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
     // sub reports **************************************
 

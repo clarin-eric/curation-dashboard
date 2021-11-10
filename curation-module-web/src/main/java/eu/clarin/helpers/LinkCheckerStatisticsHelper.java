@@ -1,6 +1,7 @@
 package eu.clarin.helpers;
 
 import eu.clarin.cmdi.curation.utils.CategoryColor;
+import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import eu.clarin.main.Configuration;
@@ -101,6 +102,7 @@ public class LinkCheckerStatisticsHelper {
     public static String createURLTable(String collectionName, Category category) throws SQLException {
         StringBuilder sb = new StringBuilder();
 
+        sb.append("<div id=\"creation-time\">" + TimeUtils.humanizeToDate(System.currentTimeMillis()) + "</div>");
         sb.append("<div>");
         sb.append("<h1>Link Checking Statistics (Category:" + category + "):</h1>");
         sb.append("<h3>").append(collectionName.replace("_", " ")).append(":</h3>");
