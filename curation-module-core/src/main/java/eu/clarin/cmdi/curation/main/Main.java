@@ -176,7 +176,6 @@ public class Main {
 
                     }
                 }
-                linkCheckerReport.createOverall();
                 
                 LOG.info("Creating collections table...");
 
