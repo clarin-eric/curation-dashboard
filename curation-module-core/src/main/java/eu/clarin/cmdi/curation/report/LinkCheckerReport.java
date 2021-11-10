@@ -59,11 +59,11 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
    public void addReport(Report<?> report) {
       if (report instanceof CollectionReport) {
-         this.collections.add(new CMDCollection((CollectionReport) report));
+         this.collections.add(new CMDCollection((CollectionReport) report, this));
       }
    }
 
-   public class CMDCollection {
+   public static class CMDCollection {
       @XmlAttribute
       private String name;
 
@@ -83,24 +83,24 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
       }
 
-      public CMDCollection(CollectionReport report) {
-         this.name = report.getName();
-         this.statistics = report.urlReport.category;
-         this.count = report.urlReport.totNumOfCheckedLinks;
-         this.avgRespTime = report.urlReport.avgRespTime;
-         this.maxRespTime = report.urlReport.maxRespTime;
+      public CMDCollection(CollectionReport collectionReport, LinkCheckerReport linkcheckerReport) {
+         this.name = collectionReport.getName();
+         this.statistics = collectionReport.urlReport.category;
+         this.count = collectionReport.urlReport.totNumOfCheckedLinks;
+         this.avgRespTime = collectionReport.urlReport.avgRespTime;
+         this.maxRespTime = collectionReport.urlReport.maxRespTime;
          
-         LinkCheckerReport.this.overall.avgRespTime = (LinkCheckerReport.this.overall.avgRespTime
-               * LinkCheckerReport.this.overall.count
-               + report.urlReport.avgRespTime * report.urlReport.totNumOfCheckedLinks)
-               / (LinkCheckerReport.this.overall.count + report.urlReport.totNumOfCheckedLinks);
+         linkcheckerReport.overall.avgRespTime = (linkcheckerReport.overall.avgRespTime
+               * linkcheckerReport.overall.count
+               + collectionReport.urlReport.avgRespTime * collectionReport.urlReport.totNumOfCheckedLinks)
+               / (linkcheckerReport.overall.count + collectionReport.urlReport.totNumOfCheckedLinks);
 
-         LinkCheckerReport.this.overall.count += report.urlReport.totNumOfCheckedLinks;
-         if (LinkCheckerReport.this.overall.maxRespTime < report.urlReport.maxRespTime) {
-            LinkCheckerReport.this.overall.maxRespTime = report.urlReport.maxRespTime;
+         linkcheckerReport.overall.count += collectionReport.urlReport.totNumOfCheckedLinks;
+         if (linkcheckerReport.overall.maxRespTime < collectionReport.urlReport.maxRespTime) {
+            linkcheckerReport.overall.maxRespTime = collectionReport.urlReport.maxRespTime;
          }
          
-         report.urlReport.category.forEach(LinkCheckerReport.this.overall::addStatistics);
+         collectionReport.urlReport.category.forEach(linkcheckerReport.overall::addStatistics);
       }
    }
 
