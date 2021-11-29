@@ -1,7 +1,6 @@
 package eu.clarin.routes;
 
 import eu.clarin.helpers.FileManager;
-import eu.clarin.helpers.HTMLHelpers.NavbarButton;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
 import org.apache.log4j.Logger;
@@ -66,12 +65,11 @@ public class Collection {
         try {
             String collections = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/collections/CollectionsReport.html");
 
-            return ResponseManager.returnHTML(200, collections, new NavbarButton("/collection/tsv", "Export as TSV"));
+            return ResponseManager.returnHTML(200, collections);
         } catch (IOException e) {
             logger.error("Error when reading CollectionsReport.html: ", e);
             return ResponseManager.returnServerError();
         }
-
     }
 
     @GET

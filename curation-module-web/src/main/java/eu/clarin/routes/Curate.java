@@ -11,7 +11,8 @@ import eu.clarin.cmdi.curation.utils.FileDownloader;
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
+
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -32,13 +33,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 
+@Slf4j
 @Path("/curate")
 public class Curate {
-
-    private static final Logger logger = Logger.getLogger(Curate.class);
 
     @GET
     @Path("/")
@@ -91,7 +90,7 @@ public class Curate {
             return curate(content, resultFileName, path);
 
         } catch (IOException | TransformerException | JAXBException e) {
-            logger.error("There was a problem generating the report: ", e);
+            log.error("There was a problem generating the report: ", e);
             return ResponseManager.returnServerError();
         }
     }
@@ -117,7 +116,7 @@ public class Curate {
 
             return curate(content, resultFileName, tempPath);
         } catch (IOException | TransformerException | JAXBException e) {
-            logger.error("There was a problem generating the report: ", e);
+            log.error("There was a problem generating the report: ", e);
             return ResponseManager.returnServerError();
         }
     }
@@ -142,7 +141,7 @@ public class Curate {
             return ResponseManager.returnError(400, "Input URL is malformed.");
 
         } catch (Exception e) {
-            logger.error("There was an exception processing the cmd instance: " ,e);
+            log.error("There was an exception processing the cmd instance: " ,e);
             return ResponseManager.returnError(400, "There was a problem when processing the input. Please make sure to upload a valid cmd file.");
         }
 

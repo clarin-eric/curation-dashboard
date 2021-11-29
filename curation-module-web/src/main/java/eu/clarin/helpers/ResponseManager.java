@@ -7,6 +7,8 @@ import org.apache.log4j.Logger;
 import javax.imageio.ImageIO;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,6 +23,10 @@ public final class ResponseManager {
     public static Response returnFile(int status, InputStream fileStream, String type, String fileName) {
         return Response.status(status).entity(fileStream).type(type).header("content-disposition", "attachment; filename = " + fileName).build();
     }
+    
+    public static Response returnFile(int status, StreamingOutput streamingOutput, String type, String fileName) {
+       return Response.status(status).entity(streamingOutput).type(type).header("content-disposition", "attachment; filename = " + fileName).build();
+   }
 
     public static Response returnResponse(int status, Object entity, String mediaType) {
         return Response.status(status).entity(entity).type(mediaType).build();
