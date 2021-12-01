@@ -82,7 +82,7 @@ public class URLValidator extends CMDSubprocessor {
             expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
             linkList.add(
-                  new LinkToBeChecked(url, Configuration.SOURCE, finalRecord, finalCollection, expectedMimeType,
+                  new LinkToBeChecked(url, Configuration.LINK_DATA_SOURCE, finalRecord, finalCollection, expectedMimeType,
                         Configuration.reportGenerationDate)
                );
          }

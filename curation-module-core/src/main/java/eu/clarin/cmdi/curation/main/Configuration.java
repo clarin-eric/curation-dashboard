@@ -34,7 +34,7 @@ public class Configuration {
     public static Path OUTPUT_DIRECTORY = null;
     public static Path CACHE_DIRECTORY = null;
     public static int THREADPOOL_SIZE = 100;
-    public static String SOURCE;
+    public static String LINK_DATA_SOURCE;
     public static Collection<String> FACETS = null;
     public static int REDIRECT_FOLLOW_LIMIT;
     public static int TIMEOUT;
@@ -93,7 +93,7 @@ public class Configuration {
         }
         THREADPOOL_SIZE = Integer.parseInt(config.getProperty("THREADPOOL_SIZE", "100"));
         
-        SOURCE = config.getProperty("SOURCE");
+        LINK_DATA_SOURCE = config.getProperty("LINK_DATA_SOURCE");
 
         String[] facets = config.getProperty("FACETS").split(",");
         FACETS = Arrays.stream(facets).map(String::trim).collect(Collectors.toList());

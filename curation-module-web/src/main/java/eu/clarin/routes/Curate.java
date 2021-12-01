@@ -68,7 +68,7 @@ public class Curate {
         String path;
         String resultFileName;
         if (!url) {
-            path = Configuration.RECORDS_PATH + "/" + urlStr;//here it is regarded as a path instead of url.
+            path = Configuration.DATA_DIRECTORY + "/" + urlStr;//here it is regarded as a path instead of url.
             resultFileName = urlStr.split("/")[urlStr.split("/").length-1];
             if(!FileManager.exists(path)){
                 return ResponseManager.returnError(400, "Given URL is invalid");

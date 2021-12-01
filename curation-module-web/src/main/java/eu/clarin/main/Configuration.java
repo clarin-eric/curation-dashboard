@@ -1,8 +1,7 @@
 package eu.clarin.main;
 
 import eu.clarin.helpers.FileManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ServletContext;
 import java.io.FileInputStream;
@@ -24,12 +23,11 @@ import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 
+@Slf4j
 public class Configuration extends eu.clarin.cmdi.curation.main.Configuration{
 
-    private static Logger logger = LoggerFactory.getLogger(Configuration.class);
-
     public static String VIEW_RESOURCES_PATH;
-    public static String RECORDS_PATH;
+    public static String DATA_DIRECTORY;
     public static ArrayList<String> clarinCollections;
     public static ArrayList<String> europeanaCollections;
 
@@ -43,7 +41,7 @@ public class Configuration extends eu.clarin.cmdi.curation.main.Configuration{
         eu.clarin.cmdi.curation.main.Configuration.init(path);
 
 
-        logger.info("Initializing configuration from: " + path);
+        log.info("Initializing configuration from: " + path);
         Properties properties = new Properties();
         properties.load(new FileInputStream(path));
         loadVariables(properties);
@@ -63,9 +61,9 @@ public class Configuration extends eu.clarin.cmdi.curation.main.Configuration{
 
             try {
                 FileManager.cleanFolders(Arrays.asList(instancesXmlFolder, instancesHtmlFolder), null);
-                logger.info("Cleaned temp instances.");
+                log.info("Cleaned temp instances.");
             } catch (IOException e) {
-                logger.error("Error when cleaning instances: " + e.getMessage());
+                log.error("Error when cleaning instances: " + e.getMessage());
             }
         };
 
@@ -74,9 +72,9 @@ public class Configuration extends eu.clarin.cmdi.curation.main.Configuration{
             String profilesHtmlFolder = OUTPUT_DIRECTORY + "/html/profiles";
             try {
                 FileManager.cleanFolders(Arrays.asList(profilesHtmlFolder, profilesXmlFolder), "^\\d{13}_.+$");
-                logger.info("Cleaned temp profiles.");
+                log.info("Cleaned temp profiles.");
             } catch (IOException e) {
-                logger.error("Error when cleaning profiles: " + e.getMessage());
+                log.error("Error when cleaning profiles: " + e.getMessage());
             }
         };
 
@@ -90,23 +88,21 @@ public class Configuration extends eu.clarin.cmdi.curation.main.Configuration{
 
     private static void loadVariables(Properties properties) {
 
-        RECORDS_PATH = properties.getProperty("RECORDS_PATH");
-
         //collection categorizing into europeana and clarin based on the data folder
-        String dataDirectory = properties.getProperty("DATA_DIRECTORY");
-        try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/clarin/results/cmdi/"))) {
+        DATA_DIRECTORY = properties.getProperty("DATA_DIRECTORY");
+        try (Stream<Path> walk = Files.walk(Paths.get(DATA_DIRECTORY + "/clarin/results/cmdi/"))) {
             clarinCollections = (ArrayList<String>) walk.filter(Files::isDirectory).filter(path -> !path.getFileName().toString().equals("cmdi")).map(file -> file.getFileName().toString()).collect(Collectors.toList());
         } catch (IOException e) {
-            logger.error("Error when reading folders from :" + dataDirectory + "/clarin/results/cmdi, Message:" + e.getMessage());
+            log.error("Error when reading folders from :" + DATA_DIRECTORY + "/clarin/results/cmdi, Message:" + e.getMessage());
         }
 
-        try (Stream<Path> walk = Files.walk(Paths.get(dataDirectory + "/europeana/results/cmdi/"))) {
+        try (Stream<Path> walk = Files.walk(Paths.get(DATA_DIRECTORY + "/europeana/results/cmdi/"))) {
             europeanaCollections = (ArrayList<String>) walk.filter(Files::isDirectory).filter(path -> !path.getFileName().toString().equals("cmdi")).map(file -> file.getFileName().toString()).collect(Collectors.toList());
         } catch (IOException e) {
-            logger.error("Error when reading folders from :" + dataDirectory + "/europeana/results/cmdi, Message:" + e.getMessage());
+            log.error("Error when reading folders from :" + DATA_DIRECTORY + "/europeana/results/cmdi, Message:" + e.getMessage());
         }
-        logger.info("Clarin collections: " + clarinCollections);
-        logger.info("Europeana collections: " + europeanaCollections);
+        log.info("Clarin collections: " + clarinCollections);
+        log.info("Europeana collections: " + europeanaCollections);
 
         //create Instances directory if it doesn't exist
         try {
@@ -119,7 +115,7 @@ public class Configuration extends eu.clarin.cmdi.curation.main.Configuration{
             path = Paths.get(OUTPUT_DIRECTORY + "/html/profiles");
             Files.createDirectories(path);
         } catch (IOException e) {
-            logger.error("There was an error creating the profiles/instances xml/html folder: " + e.getMessage());
+            log.error("There was an error creating the profiles/instances xml/html folder: " + e.getMessage());
         }
     }
 }
