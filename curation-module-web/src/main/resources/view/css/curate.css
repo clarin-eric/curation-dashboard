@@ -118,7 +118,12 @@ a:hover {
     background-color: #d8d8d8 !important;
 }
 #creation-time{
-	text-align: right;
+	float: left;
 	font-family: "Lucida Console", "Courier New", monospace;
 	font-size: 8px;
+}
+#download{
+   float: right;
+   font-family: "Lucida Console", "Courier New", monospace;
+   font-size: 10px;
 }

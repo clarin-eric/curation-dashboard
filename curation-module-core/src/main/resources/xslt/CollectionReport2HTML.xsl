@@ -2,26 +2,41 @@
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:template match="/collection-report">
+		<xsl:variable name="collectionName">
+			<xsl:value-of select="./file-section/provider" />
+		</xsl:variable>
 		<html>
 			<head>
 			</head>
 			<body>
-			   <div id="creation-time">created at <xsl:value-of select="./@creation-time" /></div>
+				<div id="creation-time">
+					created at
+					<xsl:value-of select="./@creation-time" />
+				</div>
+				<div id="download">
+					download as
+					<a>
+						<xsl:attribute name="href">
+					    <xsl:text>/download/xml/collections/</xsl:text>
+					    <xsl:value-of select="$collectionName" />
+				    </xsl:attribute>
+						<xsl:text> xml</xsl:text>
+					</a>
+					<a>
+						<xsl:attribute name="href">
+                   <xsl:text>/download/json/collections/</xsl:text>
+                   <xsl:value-of select="$collectionName" />
+                </xsl:attribute>
+						<xsl:text> json</xsl:text>
+					</a>
+				</div>
+				<br />
 				<h1>Collection Report</h1>
-				<xsl:variable name="collectionName">
-					<xsl:value-of select="./file-section/provider" />
-				</xsl:variable>
-
 				<h3>
 					Collection name:
 					<xsl:value-of
 						select="replace($collectionName,'_',' ')" />
 				</h3>
-
-				<!-- <xsl:variable name="url"><xsl:value-of select="./@url"/></xsl:variable> -->
-				<!-- <p>URL: <a href="{$url}"><xsl:copy-of select="$url"/></a></p> -->
-				<p>URL: selfURLPlaceHolder</p>
-
 				<p>
 					Total Score:
 					<xsl:value-of select="./@score" />
@@ -227,50 +242,53 @@
 					<h3>Invalid Records:</h3>
 					<table class="reportTable">
 						<thead>
-						<tr>
-							<th>File</th>
-							<th>Info</th>
-							<th>Validate</th>
-						</tr>						
+							<tr>
+								<th>File</th>
+								<th>Info</th>
+								<th>Validate</th>
+							</tr>
 						</thead>
 						<tbody>
 							<xsl:for-each
 								select="./xml-validation-section/invalid-records/record">
 
-									<xsl:if test="not(position() > 100)">
-										<tr>
-											<td>
+								<xsl:if test="not(position() > 100)">
+									<tr>
+										<td>
 											<a>
-												<xsl:attribute name="href">/record/<xsl:value-of select="./@name" /></xsl:attribute>
+												<xsl:attribute name="href">/record/<xsl:value-of
+													select="./@name" /></xsl:attribute>
 												<xsl:value-of select="./@name" />
 											</a>
-												
-											</td>
-											<td>
-												<button type="button" class="showUrlInfo btn btn-info" onClick="toggleInfo(this)">Show</button>
-											</td>
-											<td>
-												<button type="button" class="btn btn-info">
-													<xsl:attribute name="onClick">window.open('/curate?url-input=<xsl:value-of
-														select="./@name"></xsl:value-of>')</xsl:attribute>
-													Validate file
-												</button>
-											</td>
-										</tr>
-										<tr hidden="true">
-											<td colspan="3">
-												<ul>
-													<xsl:for-each select="issue">
-														<li>
-															<xsl:value-of select="."></xsl:value-of>
-														</li>
-													</xsl:for-each>
-												</ul>
-											</td>
-										</tr>
-									</xsl:if>
+
+										</td>
+										<td>
+											<button type="button" class="showUrlInfo btn btn-info"
+												onClick="toggleInfo(this)">Show</button>
+										</td>
+										<td>
+											<button type="button" class="btn btn-info">
+												<xsl:attribute name="onClick">window.open('/curate?url-input=<xsl:value-of
+													select="./@name"></xsl:value-of>')</xsl:attribute>
+												Validate file
+											</button>
+										</td>
+									</tr>
+									<tr hidden="true">
+										<td colspan="3">
+											<ul>
+												<xsl:for-each select="issue">
+													<li>
+														<xsl:value-of select="."></xsl:value-of>
+													</li>
+												</xsl:for-each>
+											</ul>
+										</td>
+									</tr>
+								</xsl:if>
 							</xsl:for-each>
-							<xsl:if test="count(./xml-validation-section/invalid-records/record) > 100">
+							<xsl:if
+								test="count(./xml-validation-section/invalid-records/record) > 100">
 								<tr>
 									<td colspan="3">[...] complete list in downloadable report</td>
 								</tr>
@@ -383,7 +401,7 @@
 					<tbody>
 						<xsl:for-each
 							select="./url-validation-section/statistics/category">
-							<xsl:sort select="@category"/>
+							<xsl:sort select="@category" />
 
 							<xsl:variable name="category">
 								<xsl:value-of select="./@category" />
@@ -426,7 +444,11 @@
 								<xsl:value-of select="./@reason"/></font></li> -->
 							<li>
 								Invalid file:
-								<a><xsl:attribute name="href"><xsl:value-of select="." /></xsl:attribute><xsl:value-of select="." /></a>
+								<a>
+									<xsl:attribute name="href"><xsl:value-of
+										select="." /></xsl:attribute>
+									<xsl:value-of select="." />
+								</a>
 								<br />
 								<font color="#dbd839">
 									Reason:

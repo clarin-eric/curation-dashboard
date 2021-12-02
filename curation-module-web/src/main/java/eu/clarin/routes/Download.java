@@ -26,21 +26,21 @@ import lombok.extern.slf4j.Slf4j;
 public class Download {
    
    @GET
-   @Path("/{curationEntityType}/{reportName}/{outputType}")
-   public Response getFile(@PathParam("curationEntityType") String curationEntityType, @PathParam("reportName") String reportName, @PathParam("outputType") String outputType) {
+   @Path("/{outputType}/{curationEntityType}/{reportName}")
+   public Response getFile(@PathParam("outputType") String outputType, @PathParam("curationEntityType") String curationEntityType, @PathParam("reportName") String reportName) {
       
       java.nio.file.Path xmlPath = Paths.get(Configuration.OUTPUT_DIRECTORY.toString(), "xml", curationEntityType, reportName + ".xml");
        
       try {
          
-         if("tsv".equalsIgnoreCase(outputType) || "json".equalsIgnoreCase("outputType")) {
+         if("tsv".equalsIgnoreCase(outputType) || "json".equalsIgnoreCase(outputType)) {
             return ResponseManager.returnFile(
                   200, 
                   (StreamingOutput) outputStream -> {
+                     String xslFileName = "tsv".equalsIgnoreCase(outputType)?"/xslt/" + reportName + "2" + outputType.toUpperCase() + ".xsl":"/xslt/XML2JSON.xsl";
                      TransformerFactory factory = TransformerFactory.newInstance();
-                     Source xslt = "tsv".equalsIgnoreCase(outputType)?
-                           new StreamSource(this.getClass().getResourceAsStream("/xslt/" + reportName + "2" + outputType.toUpperCase() + ".xsl")):
-                              new StreamSource(this.getClass().getResourceAsStream("/xslt/XML2JSON.xsl"));
+                     
+                     Source xslt = new StreamSource(this.getClass().getResourceAsStream(xslFileName));
 
                      try {
                         Transformer transformer = factory.newTransformer(xslt);
