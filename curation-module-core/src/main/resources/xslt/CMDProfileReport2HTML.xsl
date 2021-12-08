@@ -21,15 +21,15 @@
                    <xsl:value-of
 							select="translate(./header-section/id,'.:','__')" />
                 </xsl:attribute>
-						<xsl:text> xml</xsl:text>
-					</a>
+						<xsl:text>xml</xsl:text>
+					</a><xsl:text> </xsl:text>
 					<a>
 						<xsl:attribute name="href">
                    <xsl:text>/download/json/profiles/</xsl:text>
                    <xsl:value-of
 							select="translate(./header-section/id,'.:','__')" />
                 </xsl:attribute>
-						<xsl:text> json</xsl:text>
+						<xsl:text>json</xsl:text>
 					</a>
 				</div>
 				<br />

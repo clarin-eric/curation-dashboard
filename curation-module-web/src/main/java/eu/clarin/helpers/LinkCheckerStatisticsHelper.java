@@ -51,7 +51,13 @@ public class LinkCheckerStatisticsHelper {
 
         StringBuilder sb = new StringBuilder();
 
-        try (Stream<CheckedLink> links = Configuration.checkedLinkResource.get(Configuration.checkedLinkResource.getCheckedLinkFilter().setProviderGroupIs(collectionName).setCategoryIs(category).setLimit(start, end))) {
+        try (Stream<CheckedLink> links = Configuration.checkedLinkResource.get(
+                 Configuration.checkedLinkResource.getCheckedLinkFilter()
+                    .setProviderGroupIs(collectionName)
+                    .setCategoryIs(category)
+                    .setIsActive(true)
+                    .setLimit(start, end)
+                    )) {
 
             links.forEach(checkedLink -> {
                 sb.append("<tr>");

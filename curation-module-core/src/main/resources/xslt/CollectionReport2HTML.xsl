@@ -14,20 +14,20 @@
 					<xsl:value-of select="./@creation-time" />
 				</div>
 				<div id="download">
-					download as
+					download as 
 					<a>
 						<xsl:attribute name="href">
 					    <xsl:text>/download/xml/collections/</xsl:text>
 					    <xsl:value-of select="$collectionName" />
 				    </xsl:attribute>
-						<xsl:text> xml</xsl:text>
-					</a>
+						<xsl:text>xml</xsl:text>
+					</a><xsl:text> </xsl:text>
 					<a>
 						<xsl:attribute name="href">
                    <xsl:text>/download/json/collections/</xsl:text>
                    <xsl:value-of select="$collectionName" />
                 </xsl:attribute>
-						<xsl:text> json</xsl:text>
+						<xsl:text>json</xsl:text>
 					</a>
 				</div>
 				<br />

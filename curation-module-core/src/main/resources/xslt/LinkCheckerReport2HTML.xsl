@@ -9,7 +9,7 @@
 			<head></head>
 			<body>
 			   <div id="creation-time">created at <xsl:value-of select="./@creation-time" /></div>
-			   <div id="download">download as <a href="/download/xml/statistics/LinkCheckerReport">xml</a> <a href="/download/json/statistics/LinkCheckerReport">json</a></div>
+			   <div id="download">download as <a href="/download/xml/statistics/LinkCheckerReport">xml</a><xsl:text> </xsl:text><a href="/download/json/statistics/LinkCheckerReport">json</a></div>
 				<br />
 				<h3>Overall</h3>
 				<table class="reportTable">
