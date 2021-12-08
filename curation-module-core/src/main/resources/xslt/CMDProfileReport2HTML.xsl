@@ -9,11 +9,11 @@
 			<head>
 			</head>
 			<body>
-				<div id="creation-time">
+				<div class="creation-time">
 					created at
 					<xsl:value-of select="./@creation-time" />
 				</div>
-				<div id="download">
+				<div class="download">
 					download as
 					<a>
 						<xsl:attribute name="href">
@@ -22,7 +22,8 @@
 							select="translate(./header-section/id,'.:','__')" />
                 </xsl:attribute>
 						<xsl:text>xml</xsl:text>
-					</a><xsl:text> </xsl:text>
+					</a>
+					<xsl:text> </xsl:text>
 					<a>
 						<xsl:attribute name="href">
                    <xsl:text>/download/json/profiles/</xsl:text>
@@ -32,7 +33,7 @@
 						<xsl:text>json</xsl:text>
 					</a>
 				</div>
-				<br />
+				<div class="clear" />
 				<h1>CMD Profile Report</h1>
 				<table class="reportTable">
 					<tr>
@@ -88,7 +89,15 @@
 				</table>
 				<hr />
 
-				<h2>Score Section</h2>
+				<details>
+					<summary>
+						<h2>Score Section</h2>
+					</summary>
+					<p>
+					    is the profile public? {0, 1}; percentage of elements (except header and resources) with concept [0, 1]; 
+					    percentage of defined facets covered by profile [0, 1]
+				  </p>
+				</details>
 				<table class="reportTable">
 					<thead>
 						<tr>
@@ -132,7 +141,12 @@
 
 				<hr />
 
-				<h2>Facets Section</h2>
+				<details>
+					<summary>
+						<h2>Facets Section</h2>
+					</summary>
+					<p>is the specific facet covered by the profile?</p>
+				</details>
 				<table class="reportTable">
 					<thead>
 						<tr>
@@ -191,7 +205,12 @@
 				</table>
 				<hr />
 
-				<h2>Usage Section</h2>
+				<details>
+					<summary>
+						<h2>Usage Section</h2>
+					</summary>
+					<p>which collection is using the profile for how many CMD-files?</p>
+				</details>
 				<table class="reportTable">
 					<thead>
 						<tr>
@@ -218,7 +237,13 @@
 					</tbody>
 				</table>
 				<hr />
-				<h2>Cmd Component Section</h2>
+
+				<details>
+					<summary>
+						<h2>Cmd Component Section</h2>
+					</summary>
+					<p></p>
+				</details>
 				<table class="reportTable">
 					<thead>
 						<tr>
@@ -268,7 +293,12 @@
 					</tbody>
 				</table>
 				<hr />
-				<h2>Cmd Concepts Section</h2>
+				<details>
+					<summary>
+						<h2>Cmd Concepts Section</h2>
+					</summary>
+					<p></p>
+				</details>
 				<p>
 					Total number of elements:
 					<xsl:value-of select="./cmd-concepts-section/@total" />
@@ -340,7 +370,12 @@
 				<xsl:if test="./score-section//issue">
 
 					<hr />
-					<h2>Issues</h2>
+					<details>
+						<summary>
+							<h2>Issues</h2>
+						</summary>
+						<p></p>
+					</details>
 					<table class="reportTable">
 						<thead>
 							<tr>

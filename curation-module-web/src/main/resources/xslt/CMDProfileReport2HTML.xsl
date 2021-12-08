@@ -70,7 +70,10 @@
                 </table>
                 <hr/>
 
-                <h2>Score Section</h2>
+                <details>
+                <summary><h2>Score Section</h2></summary>
+                <p></p>
+                </details>
                 <table class="reportTable">
                     <thead>
                         <tr>

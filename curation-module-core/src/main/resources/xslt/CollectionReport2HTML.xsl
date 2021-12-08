@@ -9,19 +9,20 @@
 			<head>
 			</head>
 			<body>
-				<div id="creation-time">
+				<div class="creation-time">
 					created at
 					<xsl:value-of select="./@creation-time" />
 				</div>
-				<div id="download">
-					download as 
+				<div class="download">
+					download as
 					<a>
 						<xsl:attribute name="href">
 					    <xsl:text>/download/xml/collections/</xsl:text>
 					    <xsl:value-of select="$collectionName" />
 				    </xsl:attribute>
 						<xsl:text>xml</xsl:text>
-					</a><xsl:text> </xsl:text>
+					</a>
+					<xsl:text> </xsl:text>
 					<a>
 						<xsl:attribute name="href">
                    <xsl:text>/download/json/collections/</xsl:text>
@@ -30,7 +31,7 @@
 						<xsl:text>json</xsl:text>
 					</a>
 				</div>
-				<br />
+				<div class="clear" />
 				<h1>Collection Report</h1>
 				<h3>
 					Collection name:
@@ -68,8 +69,12 @@
 				</p>
 
 				<hr />
-
-				<h2>File Section</h2>
+				<details>
+					<summary>
+						<h2>File Section</h2>
+					</summary>
+					<p>general information on the number of files and the file size</p>
+				</details>
 				<p>
 					Number of files:
 					<xsl:value-of select="./file-section/numOfFiles" />
@@ -97,7 +102,12 @@
 
 				<hr />
 
-				<h2>Header Section</h2>
+				<details>
+					<summary>
+						<h2>Header Section</h2>
+					</summary>
+					<p></p>
+				</details>
 				<table class="reportTable">
 					<caption>Profiles in Collection</caption>
 					<thead>
@@ -150,7 +160,12 @@
 					</tbody>
 				</table>
 
-				<h2>Facet Section</h2>
+				<details>
+					<summary>
+						<h2>Facet Section</h2>
+					</summary>
+					<p></p>
+				</details>
 				<table class="reportTable">
 					<thead>
 						<tr>
@@ -186,7 +201,12 @@
 
 				<hr />
 
-				<h2>ResourceProxy Section</h2>
+				<details>
+					<summary>
+						<h2>ResourceProxy Section</h2>
+					</summary>
+					<p></p>
+				</details>
 				<p>
 					Total number of resource proxies:
 					<xsl:value-of
@@ -220,7 +240,12 @@
 
 				<hr />
 
-				<h2>XML Validation Section</h2>
+				<details>
+					<summary>
+						<h2>XML Validation Section</h2>
+					</summary>
+					<p></p>
+				</details>
 				<p>
 					Number of Records:
 					<xsl:value-of
@@ -298,7 +323,12 @@
 				</xsl:if>
 				<hr />
 
-				<h2>XML Populated Section</h2>
+				<details>
+					<summary>
+						<h2>XML Populated Section</h2>
+					</summary>
+					<p></p>
+				</details>
 				<p>
 					Total number of XML elements:
 					<xsl:value-of
@@ -337,7 +367,12 @@
 
 				<hr />
 
-				<h2>URL Validation Section</h2>
+				<details>
+					<summary>
+						<h2>URL Validation Section</h2>
+					</summary>
+					<p>total number links, of unique links (within a collection the same URL might occur multiple times) and link checking results</p>
+				</details>
 				<p>
 					Total number of links:
 					<xsl:value-of
@@ -437,7 +472,12 @@
 				<hr />
 				<xsl:if test="./invalid-files/file">
 					<hr />
-					<h2>Invalid Files Section</h2>
+					<details>
+						<summary>
+							<h2>Invalid Files Section</h2>
+						</summary>
+						<p>number of non processed CMD-files of a collection and the reason for not processing the files</p>
+					</details>
 					<ol>
 						<xsl:for-each select="./invalid-files/file">
 							<!--<li><font color="#dbd839"><xsl:copy-of select="." />, reason: 

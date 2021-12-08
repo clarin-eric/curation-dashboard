@@ -18,11 +18,12 @@
 	<xsl:template match="/profiles">
 		<html>
 			<body>
-				<div id="creation-time">
+				<div class="creation-time">
 					created at
 					<xsl:value-of select="./@creation-time" />
 				</div>
-				<div id="download">download as <a href="/download/xml/profiles/ProfilesReport">xml</a><xsl:text> </xsl:text><a href="/download/json/profiles/ProfilesReport">json</a><xsl:text> </xsl:text><a href="/download/tsv/profiles/ProfilesReport">tsv</a></div>
+				<div class="download">download as <a href="/download/xml/profiles/ProfilesReport">xml</a><xsl:text> </xsl:text><a href="/download/json/profiles/ProfilesReport">json</a><xsl:text> </xsl:text><a href="/download/tsv/profiles/ProfilesReport">tsv</a></div>
+				<div class="clear" />
 				<table id="profiles" class="display text-nowrap" width="100%">
 					<thead>
 						<tr>
