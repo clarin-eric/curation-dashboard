@@ -54,7 +54,7 @@
     |Header|Profile is public?|{0, 1}|
     |Facet|Percentage of defined facets covered by profile|[0, 1]|
     |Cmd-concepts|Percentage of elements (except header and resources) with concept|[0, 1]|
-    |---| **Sum** |[0, 3]|
+    |---|Sum|[0, 3]|
     
     **Instance**
     
