@@ -60,6 +60,7 @@
     **Instance**
     
     |Context|Criteria|Value set|
+    |---|---|---|
     |File size|File size <= defined file size?|{0, 1}
     |File size|Sum File size|{0, 1}|
     |Header|Valid schema location from attribute “schemaLocation” or “noNamespaceSchemaLocation” available?|{0, 1}|
@@ -67,19 +68,19 @@
     |Header|MdProfile available and valid (against regular expression)?|{0, 1}|
     |Header|MdCollectionDisplayName available?|{0, 1}|
     |Header|MdSelfLink available?|{0, 1}|
-    |---|**Sum Header**|{1,..., 5}|
+    ||**Sum Header**|{1,..., 5}|
     |Facet|Percentage of of defined facets covered by instance|[0, 1]|
-    |---|**Sum Facet**|[0, 1]|
+    ||**Sum Facet**|[0, 1]|
     |URL|Percentage of valid links|[0, 1]|
-    |---|**Sum URL**|[0, 1]|
+    ||**Sum URL**|[0, 1]|
     |XML|Is the xml valid?|{0, 1}|
     |XML|Percentage of populated elements|[0, 1]|
-    |---|**Sum XML**|[0, 2]|
-    |---|**Sum Profile**|[0, 3]|
+    ||**Sum XML**|[0, 2]|
+    ||**Sum Profile**|[0, 3]|
     |Resource Proxy|Percentage of RP with mime type|[0, 1]|
     |Resource Proxy|Percentage of RP with references|[0, 1]|
-    |---|**Sum Resource Proxy**|[0, 2]|
-    |---|**Sum over all**|[0, 15]|
+    ||**Sum Resource Proxy**|[0, 2]|
+    ||**Sum over all**|[0, 15]|
           
     
 1. **What technology is the Link Checker based?**
