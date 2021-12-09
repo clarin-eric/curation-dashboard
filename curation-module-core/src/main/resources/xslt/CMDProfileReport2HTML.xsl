@@ -88,15 +88,20 @@
 					</xsl:if>
 				</table>
 				<hr />
-
 				<details>
 					<summary>
 						<h2>Score Section</h2>
 					</summary>
 					<p>
-					    is the profile public? {0, 1}; percentage of elements (except header and resources) with concept [0, 1]; 
-					    percentage of defined facets covered by profile [0, 1]
-				  </p>
+						The scoring is based on public state of the profile, the
+						percentage of elements (except header and resources) with concept
+						and
+						percentage of defined facets covered by the profile.
+						<br />
+						For details on scoring, have a look at the
+						<a href="/faq">FAQ</a>
+						, please.
+					</p>
 				</details>
 				<table class="reportTable">
 					<thead>
@@ -145,7 +150,10 @@
 					<summary>
 						<h2>Facets Section</h2>
 					</summary>
-					<p>is the specific facet covered by the profile?</p>
+					<p>The facet section shows if a specific facet is covered by the
+						profile.
+						In other words, if the profile defines an element for the facet.
+					</p>
 				</details>
 				<table class="reportTable">
 					<thead>
@@ -209,7 +217,7 @@
 					<summary>
 						<h2>Usage Section</h2>
 					</summary>
-					<p>which collection is using the profile for how many CMD-files?</p>
+					<p>The usage section shows in which collection the profile is used</p>
 				</details>
 				<table class="reportTable">
 					<thead>
@@ -237,12 +245,19 @@
 					</tbody>
 				</table>
 				<hr />
-
 				<details>
 					<summary>
 						<h2>Cmd Component Section</h2>
 					</summary>
-					<p></p>
+					<p>
+						The components section shows information on the kind, id and the
+						usage of concepts in the profile.
+						<br />
+						For more information on componets, have a look at the
+						<a
+							href="https://www.clarin.eu/content/component-registry-documentation">Component Registry Documentation</a>
+						, please.
+					</p>
 				</details>
 				<table class="reportTable">
 					<thead>
@@ -297,7 +312,14 @@
 					<summary>
 						<h2>Cmd Concepts Section</h2>
 					</summary>
-					<p></p>
+					<p>
+						The concepts section shows information on the kind, state and the
+						number of concepts used in the profile.
+						<br />
+						For more information on concepts, have a look at the
+						<a href="https://www.clarin.eu/content/clarin-concept-registry">CLARIN Concept Registry</a>
+						, please.
+					</p>
 				</details>
 				<p>
 					Total number of elements:
@@ -374,7 +396,8 @@
 						<summary>
 							<h2>Issues</h2>
 						</summary>
-						<p></p>
+						<p>The issues section shows the number and the kind of issues,
+							which might have an impact on the processing of the profile.</p>
 					</details>
 					<table class="reportTable">
 						<thead>

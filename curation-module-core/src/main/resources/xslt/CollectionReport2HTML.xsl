@@ -73,7 +73,7 @@
 					<summary>
 						<h2>File Section</h2>
 					</summary>
-					<p>general information on the number of files and the file size</p>
+					<p>General information on the number of files and the file size.</p>
 				</details>
 				<p>
 					Number of files:
@@ -106,7 +106,16 @@
 					<summary>
 						<h2>Header Section</h2>
 					</summary>
-					<p></p>
+					<p>
+						The header section shows information on the profile usage in the
+						collection.
+						<br />
+						Important note: the score of this section differs from the score
+						of the underlying profile. For more information
+						on scoring have a look at the
+						<a href="/faq">FAQ</a>
+						, please.
+					</p>
 				</details>
 				<table class="reportTable">
 					<caption>Profiles in Collection</caption>
@@ -164,7 +173,11 @@
 					<summary>
 						<h2>Facet Section</h2>
 					</summary>
-					<p></p>
+					<p>The facet section shows the facet coverage within the
+						collection. It's quite evident that the facet coverage of a
+						certain CMD file can't be higher than those of the profile it is
+						based on.
+					</p>
 				</details>
 				<table class="reportTable">
 					<thead>
@@ -205,7 +218,11 @@
 					<summary>
 						<h2>ResourceProxy Section</h2>
 					</summary>
-					<p></p>
+					<p>The resource proxy section shows information on the number of
+						resource proxies on the kind (the mime type) of resources.
+						A resource proxy is a link to an external resource, described by
+						the CMD file.
+					</p>
 				</details>
 				<p>
 					Total number of resource proxies:
@@ -244,7 +261,8 @@
 					<summary>
 						<h2>XML Validation Section</h2>
 					</summary>
-					<p></p>
+					<p>The XML validation section shows the result of a simple
+						validation of each CMD file against its profile. </p>
 				</details>
 				<p>
 					Number of Records:
@@ -327,7 +345,8 @@
 					<summary>
 						<h2>XML Populated Section</h2>
 					</summary>
-					<p></p>
+					<p>The XML populated section shows information on the number of xml
+						elements and the fact if these elements are conatining data. </p>
 				</details>
 				<p>
 					Total number of XML elements:
@@ -371,7 +390,10 @@
 					<summary>
 						<h2>URL Validation Section</h2>
 					</summary>
-					<p>total number links, of unique links (within a collection the same URL might occur multiple times) and link checking results</p>
+					<p>The URL validation section shows information on the number of
+						links and the results of link checking for the links which
+						have been checked so far.
+					</p>
 				</details>
 				<p>
 					Total number of links:
@@ -476,7 +498,9 @@
 						<summary>
 							<h2>Invalid Files Section</h2>
 						</summary>
-						<p>number of non processed CMD-files of a collection and the reason for not processing the files</p>
+						<p>The invalid files section shows the number of non processed
+							CMD-files of a collection and the reason for not processing these
+							files.</p>
 					</details>
 					<ol>
 						<xsl:for-each select="./invalid-files/file">

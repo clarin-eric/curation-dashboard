@@ -47,6 +47,9 @@
     and they also affect the overall score of the collections. 
     
 1. **How does scoring work?**
+     
+    A score value is calculated for profiles, instances and collections (which is the sum of its instance scores). 
+    The next two tables show the criteria on which the scoring is based on as well as the value set:
 
     **Profile**
     
@@ -134,18 +137,8 @@
     
 1. **The Curation Dashboard reports my links incorrectly. What should I do?**
 
-    If the status code of these broken links are 0, then we are aware of this issue and it will be fixed
-    when we change the classification system from status codes into 
-    categories to make the results more transparent. If not, please create an issue on 
-    our [github page](https://github.com/clarin-eric/clarin-curation-module/issues), 
-    so that we can investigate more closely.
-    
-    <!--
-     when the issue is resolved, replace this text with this:
-     If you suspect the reason for the reports being wrong is the Link Checker and your links work fine,
-     please create an issue on our [github page](https://github.com/clarin-eric/clarin-curation-module/issues).     
-     -->
-    
+    If you suspect the reason for the reports being wrong is the Link Checker and your links work fine,
+    please create an issue on our [github page](https://github.com/clarin-eric/clarin-curation-module/issues).     
     
 1. **The byte size of my link is shown as null but the link has a correct response body. What's wrong?**
 
