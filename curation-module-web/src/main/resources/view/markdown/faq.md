@@ -1,19 +1,21 @@
 # Frequently Asked Questions
 
-1. **What is the Curation Module?**
+1. **What is the Curation Dashboard?**
 
-    The Curation Module is a web application, which determines and grades
+    Curation Dashboard is a software bundle, which determines and grades
     the quality of metadata harvested by CLARIN for language resources, in order to support their authors and
-    curators to improve the provided metadata quality.
+    curators to improve the provided metadata quality. 
+    It consists of three parts: a stand alone application for reports generation (curation-core), a web application (curation-web) 
+    and another stand alone application for link checking (linkchecker). 
 
 1. **What do VLO, record, collection, CMDI and other terms mean?**
 
     For a general overview of VLO, you can visit its [about page](https://vlo.clarin.eu/about). 
     For more general info, [the CLARIN Metadata FAQ page](https://vlo.clarin.eu/about) is a good starting point.
 
-1. **What does the Curation Module do exactly?**
+1. **What does the Curation Dashboard do exactly?**
 
-    The Curation Module processes publicly available CMDI records, 
+    The Curation Dashboard processes publicly available CMDI records, 
     collections and profiles. It grades them and gives them scores
     based on different quality aspects. It also provides information on 
     them and on what properties were graded.
@@ -26,43 +28,104 @@
      This metadata is the output of the harvesting process, the result of which 
      can be found at https://vlo.clarin.eu/.
      
-1. **How often does the Curation Module generate reports?**
+1. **How often does the Curation Dashboard generate reports?**
 
-    It generates the reports twice a week: Tuesday and Saturday night CET.
+    The core-application of Curation Dashboard generates the reports three times a week in the early morning hours CET.
     
 1. **Is there a limit on file sizes?**
 
-    Yes, the Curation Module doesn't process files larger than 50 megabytes. 
+    Yes, the Curation Dashboard doesn't process files larger than 50 megabytes. 
     Such files are ignored when collection reports are generated.
         
 1. **What is the Link Checker?**
 
-    The Link Checker checks the availability of a resource at the addresses
+    The Link Checker is a stand alone application which checks the availability of a resource at the addresses
     referenced in the metadata. In practice, the resources are URLs (or more commonly links),
     which can be checked via HTTP requests. The Link Checker then saves the responses to the requests in a database. 
     The links are extracted from CMD Records within the collections.
-    Results of the checking can be directly viewed on the [Link Checker Statistics page](https://curate.acdh.oeaw.ac.at/statistics)
-    and they also affect the overall score of the collections.
+    Results of the checking can be directly viewed on the [Link Checker Statistics page](https://curate.clarin.eu/statistics)
+    and they also affect the overall score of the collections. 
+    
+1. **How does scoring work?**
+
+    **Profile**
+    
+    |Context|Criteria|Value set|
+    |-|-|-|
+    |Header|Profile is public?|{0, 1}|
+    |-|-|-|
+    |Facet|Percentage of defined facets covered by profile|[0, 1]|
+    |-|-|-|
+    |Cmd-concepts|Percentage of elements (except header and resources) with concept|[0, 1]|
+    |-|-|-|
+    | | Sum|[0, 3]|
+    |-|-|-|
+    
+    **Instance**
+    
+    |Context|Criteria|Value set|
+    |-|-|-|
+    |File size|File size <= defined file size?|{0, 1}
+    |-|-|-|
+    |File size|Sum File size|{0, 1}|
+    |-|-|-|
+    |Header|Valid schema location from attribute “schemaLocation” or “noNamespaceSchemaLocation” available?|{0, 1}|
+    |-|-|-|
+    |Header|Schema comes from Component Registry?|{0, 1}|
+    |-|-|-|
+    |Header|MdProfile available and valid (against regular expression)?|{0, 1}|
+    |-|-|-|
+    |Header|MdCollectionDisplayName available?|{0, 1}|
+    |-|-|-|
+    |Header|MdSelfLink available?|{0, 1}|
+    |-|-|-|
+    |Header|Sum Header|{1,..., 5}|
+    |-|-|-|
+    |Facet|Percentage of of defined facets covered by instance|[0, 1]|
+    |-|-|-|
+    |Facet|Sum Facet|[0, 1]|
+    |-|-|-|
+    |URL|Percentage of valid links|[0, 1]|
+    |-|-|-|
+    |URL|Sum URL|[0, 1]|
+    |-|-|-|
+    |XML|Is the xml valid?|{0, 1}|
+    |-|-|-|
+    |XML|Percentage of populated elements|[0, 1]|
+    |-|-|-|
+    |XML|Sum XML|[0, 2]|
+    |-|-|-|
+    |Profile|Sum Profile|[0, 3]|
+    |Resource Proxy|Percentage of RP with mime type|[0, 1]|
+    |-|-|-|
+    |Resource Proxy|Percentage of RP with references|[0, 1]|
+    |-|-|-|
+    |Resource Proxy|Sum Resource Proxy|[0, 2]|
+    ||Sum over all|[0, 15]|
+    |-|-|-|
+
+    
+          
     
 1. **What technology is the Link Checker based?**
 
     The old implementation of the Link Checker was replaced by a new 
-    [codebase](https://github.com/acdh-oeaw/stormychecker) called Stormychecker, 
+    [codebase](https://github.com/clarin-eric/linkchecker), 
     which is based on [Stormcrawler](http://stormcrawler.net/), 
     which in turn is based on [Apache Storm](https://storm.apache.org/).
 
-1. **How does Link Checker/Stormychecker work?**
+1. **How does the Link Checker work?**
 
-    When the Curation Module generates its collection reports, all resource links
+    When the Curation Dashboard generates its collection reports, all resource links
     within the records are extracted and saved into
-    a database. Link Checker then continuously checks these links and saves their results in the database. 
+    a database. The Link Checker then continuously checks these links and saves their results in the database. 
     At the time of writing, there
-    are approximately 5 million links, so the Link Checker never stops. It takes approximately two months to go over all the links.
+    are approximately 7 million links, so the Link Checker never stops. It takes approximately two months to go over all the links.
     When it's finished, it restarts, so that the results can stay up-to-date. Note
     that as a result of the prioritisation logic inside the Link Checker,
     it doesn't necessarily take two months before the status of a given link is updated.
     
-1. **What request method does Link Checker use?**
+1. **What request method does the Link Checker use?**
 
     The Link Checker always sends a `HEAD` request first. If it is unsuccessful for whatever reason, it tries
     a `GET` request. However, it doesn't read the response payload in case of `GET`. All info is extracted from
@@ -71,7 +134,7 @@
 1. **Does Link Checker follow redirects?**
 
     Yes it does. It even records how many redirects the link points to. 
-    However, there is a hard limit of 5 redirects.
+    However, there is a hard limit of 20 redirects.
     
 1. **What is 0 status code?**
 
@@ -83,18 +146,17 @@
 
 1. **What categories are there?**
 
-    Currently there are only 3 categories: 
+    Currently there are only 5 categories: 
     
     1. Ok
     2. Broken
     3. Undetermined
+    4. Restricted access
+    5. Blocked by robots.txt
     
-    They are color coded as green, red and yellow respectively. 
-    However, we plan to change the classification
-    system from status codes into categories to make the results more transparent.
-    So there will be more categories in the future. 
+    They are color coded as green, red, yellow, blue and purple respectively. 
     
-1. **The Curation Module reports my links incorrectly. What should I do?**
+1. **The Curation Dashboard reports my links incorrectly. What should I do?**
 
     If the status code of these broken links are 0, then we are aware of this issue and it will be fixed
     when we change the classification system from status codes into 
