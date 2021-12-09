@@ -62,7 +62,7 @@
     |Context|Criteria|Value set|
     |---|---|---|
     |File size|File size <= defined file size?|{0, 1}
-    |File size|Sum File size|{0, 1}|
+    ||**Sum File size**|{0, 1}|
     |Header|Valid schema location from attribute “schemaLocation” or “noNamespaceSchemaLocation” available?|{0, 1}|
     |Header|Schema comes from Component Registry?|{0, 1}|
     |Header|MdProfile available and valid (against regular expression)?|{0, 1}|
