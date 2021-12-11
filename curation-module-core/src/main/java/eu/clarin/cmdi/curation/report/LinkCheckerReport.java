@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.*;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 @XmlRootElement(name = "linkchecker-report")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
@@ -104,7 +104,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
    }
 
    public static class Overall {
-      private HashMap<String, Statistics> statistics;
+      private TreeMap<String, Statistics> statistics;
       @XmlAttribute
       private int count;
 
@@ -120,7 +120,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
       }
 
       public Overall() {
-         this.statistics = new HashMap<String, Statistics>();
+         this.statistics = new TreeMap<String, Statistics>();
       }
       
       public void addStatistics(Statistics statisticsObj) {
