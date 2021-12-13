@@ -35,13 +35,15 @@ public class Download {
    public Response getFile(@PathParam("outputType") String outputType, @PathParam("curationEntityType") String curationEntityType, @PathParam("reportName") String reportName, @PathParam("category") String category) {
       
       if("statistics".equalsIgnoreCase(curationEntityType)) {
-         try (Stream<CheckedLink> checkedLinkStream = Configuration.checkedLinkResource.get(
-               Configuration.checkedLinkResource.getCheckedLinkFilter()
-                  .setProviderGroupIs(reportName)
-                  .setCategoryIs(Category.valueOf(category))
-                  .setIsActive(true)
+         
+         try {
+            Stream<CheckedLink> checkedLinkStream = Configuration.checkedLinkResource.get(
+                  Configuration.checkedLinkResource.getCheckedLinkFilter()
+                     .setProviderGroupIs(reportName)
+                     .setCategoryIs(Category.valueOf(category))
+                     .setIsActive(true)
 
-                  )) {
+                     );
             return ResponseManager.returnFile(
                   200, 
                   (StreamingOutput) outputStream -> {

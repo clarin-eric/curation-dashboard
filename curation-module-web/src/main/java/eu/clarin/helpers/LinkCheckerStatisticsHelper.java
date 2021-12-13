@@ -16,9 +16,10 @@ public class LinkCheckerStatisticsHelper {
     public static String createURLTable(String collectionName, Category category) throws SQLException {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("<div class=\"creation-time\">" + TimeUtils.humanizeToDate(System.currentTimeMillis()) + "</div><br />");
+        sb.append("<div class=\"creation-time\">" + TimeUtils.humanizeToDate(System.currentTimeMillis()) + "</div>");
         if(!"overall".equals(category)) {
-           sb.append("<div class=\"download\"><a href=\"/download/xml/statistics/" + collectionName + "/" + category + "\">xml</></div>");
+           sb.append("<div class=\"download\"><a href=\"/download/xml/statistics/" + collectionName + "/" + category + "\">xml</></a>");
+           sb.append("&nbsp;<a href=\"/download/json/statistics/" + collectionName + "/" + category + "\">json</></a></div>");
         }
         sb.append("<div class=\"clear\" />");
         sb.append("<div>");

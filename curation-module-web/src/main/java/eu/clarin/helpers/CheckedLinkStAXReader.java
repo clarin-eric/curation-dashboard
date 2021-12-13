@@ -44,7 +44,7 @@ public class CheckedLinkStAXReader implements XMLStreamReader {
    };
    
 
-   
+   private Stream<CheckedLink> checkedLinkStream;
    private Iterator<CheckedLink> checkedLinkIter;
    private CheckedLink checkedLink;
    
@@ -53,8 +53,9 @@ public class CheckedLinkStAXReader implements XMLStreamReader {
    
    public CheckedLinkStAXReader(Stream<CheckedLink> checkedLinkStream) {
       
-      this.checkedLinkIter = checkedLinkStream.iterator();
-      
+      this.checkedLinkStream = checkedLinkStream;
+      this.checkedLinkIter = checkedLinkStream.iterator();      
+
    }
 
    @Override
@@ -365,6 +366,7 @@ public class CheckedLinkStAXReader implements XMLStreamReader {
             this.basicIndex = 2;
          }
          else {
+            this.checkedLinkStream.close();
             this.basicIndex = 4;
          }
          break;
