@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="error" name="curation-web">
+	<Appenders>
+		<Appenders>
+			<Console name="STDOUT" target="SYSTEM_OUT">
+				<PatternLayout pattern="%d %p [%c{1}#%M:%L] - %m%n" />
+			</Console>
+		</Appenders>
+		<RollingFile name="FILE"
+			fileName="${catalina.base}/logs/curate.log"
+			filePattern="${catalina.base}/logs/curate_%d{yyyy-MM-dd}.log.gz"
+			ignoreExceptions="false">
+			<PatternLayout>
+				<Pattern>%d %p [%c#%M:%L] - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" />
+			</Policies>
+			<DefaultRolloverStrategy max="5" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Root level="error">
+		   <AppenderRef ref="STDOUT" /> 
+			<AppenderRef ref="FILE" />
+		</Root>
+	</Loggers>
+</Configuration>
