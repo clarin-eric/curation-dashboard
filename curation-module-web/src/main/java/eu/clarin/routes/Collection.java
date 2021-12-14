@@ -3,7 +3,7 @@ package eu.clarin.routes;
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -16,10 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Path("/collection")
 public class Collection {
-
-    private static final Logger logger = Logger.getLogger(Collection.class);
 
     @GET
     @Path("/{collectionName}")
@@ -54,7 +53,7 @@ public class Collection {
                     return ResponseManager.returnError(400, "Collection name must end with either xml or html.");
             }
         } catch (IOException e) {
-            logger.error("There was an error reading the collection: " + collectionName);
+            log.error("There was an error reading the collection: " + collectionName);
             return ResponseManager.returnError(404, "The collection " + collectionName + " doesn't exist.");
         }
     }
@@ -67,7 +66,7 @@ public class Collection {
 
             return ResponseManager.returnHTML(200, collections);
         } catch (IOException e) {
-            logger.error("Error when reading CollectionsReport.html: ", e);
+            log.error("Error when reading CollectionsReport.html: ", e);
             return ResponseManager.returnServerError();
         }
     }
@@ -82,7 +81,7 @@ public class Collection {
             fileInStream = new FileInputStream(collectionsTSVPath);
             return ResponseManager.returnFile(200, fileInStream, "text/tab-separated-values", "CollectionsReport.tsv");
         } catch (FileNotFoundException e) {
-            logger.error("There was an error getting the collectionsReport.tsv file: ", e);
+            log.error("There was an error getting the collectionsReport.tsv file: ", e);
             return ResponseManager.returnServerError();
         }
 

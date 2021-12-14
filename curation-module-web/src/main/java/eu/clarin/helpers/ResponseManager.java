@@ -2,7 +2,7 @@ package eu.clarin.helpers;
 
 import eu.clarin.helpers.HTMLHelpers.HtmlManipulator;
 import eu.clarin.helpers.HTMLHelpers.NavbarButton;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import javax.ws.rs.core.MediaType;
@@ -16,9 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
+@Slf4j
 public final class ResponseManager {
-
-    private static final Logger logger = Logger.getLogger(ResponseManager.class);
 
     public static Response returnFile(int status, InputStream fileStream, String type, String fileName) {
         return Response.status(status).entity(fileStream).type(type).header("content-disposition", "attachment; filename = " + fileName).build();
@@ -37,7 +36,7 @@ public final class ResponseManager {
         try {
             return Response.status(status).entity(HtmlManipulator.addContentToGenericHTML(content)).type(MediaType.TEXT_HTML).build();
         } catch (IOException e) {
-            logger.error("Error reading generic.html");
+            log.error("Error reading generic.html");
             return returnServerError();
         }
     }
@@ -47,7 +46,7 @@ public final class ResponseManager {
         try {
             return Response.status(status).entity(HtmlManipulator.addContentToGenericHTML(content, button)).type(MediaType.TEXT_HTML).build();
         } catch (IOException e) {
-            logger.error("Error reading generic.html");
+            log.error("Error reading generic.html");
             return returnServerError();
         }
     }
@@ -82,7 +81,7 @@ public final class ResponseManager {
 
             return Response.status(status).entity(byteArrayInputStream).type(mimeType).build();
         } catch (IOException e) {
-            logger.error("Error while sending image response.");
+            log.error("Error while sending image response.");
             return returnServerError();
         }
 

@@ -3,13 +3,10 @@
  */
 package eu.clarin.cmdi.curation.utils;
 
-import org.apache.log4j.Logger;
-
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 /**
  *
