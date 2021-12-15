@@ -17,7 +17,7 @@ public class LinkCheckerStatisticsHelper {
         StringBuilder sb = new StringBuilder();
 
         sb.append("<div class=\"creation-time\">" + TimeUtils.humanizeToDate(System.currentTimeMillis()) + "</div>");
-        if(!"overall".equals(category)) {
+        if(!"overall".equals(collectionName)) {
            sb.append("<div class=\"download\"><a href=\"/download/xml/statistics/" + collectionName + "/" + category + "\">xml</></a>");
            sb.append("&nbsp;<a href=\"/download/json/statistics/" + collectionName + "/" + category + "\">json</></a></div>");
         }

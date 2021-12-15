@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stax.StAXSource;
@@ -31,58 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 public class Download {
    
    @GET
-   @Path("/{outputType}/{curationEntityType}/{reportName}/{category}")
-   public Response getFile(@PathParam("outputType") String outputType, @PathParam("curationEntityType") String curationEntityType, @PathParam("reportName") String reportName, @PathParam("category") String category) {
-      
-      if("statistics".equalsIgnoreCase(curationEntityType)) {
-         
-         try {
-            Stream<CheckedLink> checkedLinkStream = Configuration.checkedLinkResource.get(
-                  Configuration.checkedLinkResource.getCheckedLinkFilter()
-                     .setProviderGroupIs(reportName)
-                     .setCategoryIs(Category.valueOf(category))
-                     .setIsActive(true)
-
-                     );
-            return ResponseManager.returnFile(
-                  200, 
-                  (StreamingOutput) outputStream -> {
-                     TransformerFactory factory = TransformerFactory.newInstance();
-                     
-                     
-
-                     try {
-                        
-                        Transformer transformer = null;
-                     
-                        if("json".equalsIgnoreCase(outputType)) {
-                           Source xslt = new StreamSource(this.getClass().getResourceAsStream("/xslt/XML2JSON.xsl"));
-                           transformer = factory.newTransformer(xslt);
-                        }
-                        else {
-                           transformer = factory.newTransformer();
-                        }
-                        transformer.transform(new StAXSource(new CheckedLinkStAXReader(checkedLinkStream)), new StreamResult(outputStream));
-                     }
-                     catch (TransformerConfigurationException e) {
-                        log.error("", e);
-                     }
-                     catch (TransformerException e) {
-                        log.error("", e);
-                     }
-                  },
-                  "application/" + outputType,
-                  reportName + "." + outputType);
-            
-
-
-         }
-         catch(Exception ex) {
-            log.error("", ex);
-         }
-      }
-      
-      
+   @Path("/{outputType}/{curationEntityType}/{reportName}")
+   public Response getFile(@PathParam("outputType") String outputType, @PathParam("curationEntityType") String curationEntityType, @PathParam("reportName") String reportName) {
       
       java.nio.file.Path xmlPath = Paths.get(Configuration.OUTPUT_DIRECTORY.toString(), "xml", curationEntityType, reportName + ".xml");
        
@@ -101,11 +50,8 @@ public class Download {
                         Transformer transformer = factory.newTransformer(xslt);
                         transformer.transform(new StreamSource(xmlPath.toFile()), new StreamResult(outputStream));
                      }
-                     catch (TransformerConfigurationException e) {
-                        log.error("", e);
-                     }
-                     catch (TransformerException e) {
-                        log.error("", e);
+                     catch (TransformerException ex) {
+                       throw new RuntimeException(ex);
                      }
                   },
                   "application/" + outputType,
@@ -114,9 +60,55 @@ public class Download {
          
          return ResponseManager.returnFile(200,Files.newInputStream(xmlPath),"application/xml",xmlPath.getFileName().toString());
       }
-      catch (IOException e) {
-         log.error("", e);
+      catch (IOException ex) {
+         log.error("couldn't write statistics to output", ex);
          return ResponseManager.returnServerError();
       }     
+   }
+   
+   @GET
+   @Path("/{outputType}/statistics/{collectionName}/{category}")
+   public Response getStatistics(@PathParam("outputType") String outputType, @PathParam("collectionName") String collectionName, @PathParam("category") String category) {
+      
+      if(!"overall".equalsIgnoreCase(category)) {   
+         try {
+            Stream<CheckedLink> checkedLinkStream = Configuration.checkedLinkResource.get(
+                  Configuration.checkedLinkResource.getCheckedLinkFilter()
+                     .setProviderGroupIs(collectionName)
+                     .setCategoryIs(Category.valueOf(category))
+                     .setIsActive(true)   
+                     );
+            return ResponseManager.returnFile(
+                  200, 
+                  (StreamingOutput) outputStream -> {
+                     TransformerFactory factory = TransformerFactory.newInstance();
+   
+                     try {
+                        
+                        Transformer transformer = null;
+                     
+                        if("json".equalsIgnoreCase(outputType)) {
+                           Source xslt = new StreamSource(this.getClass().getResourceAsStream("/xslt/XML2JSON.xsl"));
+                           transformer = factory.newTransformer(xslt);
+                        }
+                        else {
+                           transformer = factory.newTransformer();
+                        }
+                        transformer.transform(new StAXSource(new CheckedLinkStAXReader(checkedLinkStream)), new StreamResult(outputStream));
+                     }
+                     catch (TransformerException e) {
+                        throw new RuntimeException(e);
+                     }
+
+                  },
+                  "application/" + outputType,
+                  collectionName + "." + outputType);
+         }
+         catch(Exception ex) {
+            log.error("couldn't write statistics to output", ex);
+         }
+      }
+      
+      return ResponseManager.returnServerError();
    }
 }

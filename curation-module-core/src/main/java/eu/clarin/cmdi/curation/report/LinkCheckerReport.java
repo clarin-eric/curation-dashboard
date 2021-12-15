@@ -5,6 +5,9 @@ import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 import javax.xml.bind.annotation.*;
+
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -136,7 +139,13 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
             }
          }
          else {
-            this.statistics.put(statisticsObj.category, statisticsObj);
+            this.statistics.put(statisticsObj.category, new Statistics() {{
+                  this.category = statisticsObj.category;
+                  this.colorCode = statisticsObj.colorCode;
+                  this.count = statisticsObj.count;
+                  this.avgRespTime = statisticsObj.avgRespTime;
+                  this.maxRespTime = statisticsObj.maxRespTime;
+               }});
          }
       }
    }
