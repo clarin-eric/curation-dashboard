@@ -3,7 +3,10 @@ package eu.clarin.routes;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Calendar;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -67,8 +70,8 @@ public class Download {
    }
    
    @GET
-   @Path("/{outputType}/statistics/{collectionName}/{category}")
-   public Response getStatistics(@PathParam("outputType") String outputType, @PathParam("collectionName") String collectionName, @PathParam("category") String category) {
+   @Path("/zip/statistics/{collectionName}/{category}")
+   public Response getStatistics(@PathParam("collectionName") String collectionName, @PathParam("category") String category) {
       
       if(!"overall".equalsIgnoreCase(category)) {   
          try {
@@ -81,28 +84,46 @@ public class Download {
             return ResponseManager.returnFile(
                   200, 
                   (StreamingOutput) outputStream -> {
-                     TransformerFactory factory = TransformerFactory.newInstance();
-   
-                     try {
-                        
-                        Transformer transformer = null;
                      
-                        if("json".equalsIgnoreCase(outputType)) {
-                           Source xslt = new StreamSource(this.getClass().getResourceAsStream("/xslt/XML2JSON.xsl"));
-                           transformer = factory.newTransformer(xslt);
+                     ZipOutputStream zipOutStream = new ZipOutputStream(outputStream);
+                     
+                     zipOutStream.putNextEntry(new ZipEntry(collectionName + ".xml"));
+                     
+                     zipOutStream.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
+                     zipOutStream.write(String.format("<checkedLinks created-at=\"%1$tF %1$tT\">\n", Calendar.getInstance()).getBytes());
+                     
+                     checkedLinkStream.forEach(checkedLink -> {
+                        
+                        try {
+                           zipOutStream.write(String.format(
+                                 "   <link url=\"%1$s\" checkingDate=\"%2$tF %2$tT\" method=\"%3$s\" statusCode=\"%4$s\" category=\"%5$s\" byteSize=\"%6$s\" duration=\"%7$s\" message=\"%8$s\" />\n", 
+                                 checkedLink.getUrl(), 
+                                 checkedLink.getCheckingDate(), 
+                                 checkedLink.getMethod(),
+                                 (checkedLink.getStatus()!=null?checkedLink.getStatus():""),
+                                 checkedLink.getCategory(), 
+                                 (checkedLink.getByteSize()!=null?checkedLink.getByteSize():""),
+                                 (checkedLink.getDuration()!=null?checkedLink.getDuration():""),
+                                 (checkedLink.getMessage()!=null?checkedLink.getMessage():"")
+                              ).getBytes());
                         }
-                        else {
-                           transformer = factory.newTransformer();
-                        }
-                        transformer.transform(new StAXSource(new CheckedLinkStAXReader(checkedLinkStream)), new StreamResult(outputStream));
-                     }
-                     catch (TransformerException e) {
-                        throw new RuntimeException(e);
-                     }
+                        catch (IOException e) {
+                           
+                           log.error("can't write checkedLink: %1 to zip output", checkedLink.toString());
+                        }                        
+                     });
+                     
+                     checkedLinkStream.close();
+                     
+                     zipOutStream.write("</checkedLinks>".getBytes());
+                     zipOutStream.closeEntry();
+                     zipOutStream.close();
+   
 
                   },
-                  "application/" + outputType,
-                  collectionName + "." + outputType);
+                  "application/zip",
+                  collectionName + ".zip");           
+
          }
          catch(Exception ex) {
             log.error("couldn't write statistics to output", ex);
@@ -111,4 +132,5 @@ public class Download {
       
       return ResponseManager.returnServerError();
    }
+
 }

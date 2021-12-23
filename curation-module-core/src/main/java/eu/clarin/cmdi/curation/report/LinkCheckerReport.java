@@ -6,13 +6,11 @@ import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 import javax.xml.bind.annotation.*;
 
-import org.apache.commons.lang3.SerializationUtils;
-
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 @XmlRootElement(name = "linkchecker-report")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
@@ -24,7 +22,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
    private Overall overall = new Overall();
 
    @XmlElement(name = "collection")
-   private List<CMDCollection> collections = new ArrayList<CMDCollection>();
+   private Set<CMDCollection> collections = new TreeSet<CMDCollection>((col1, col2) -> col1.name.compareTo(col2.name));
 
    @Override
    public void setParentName(String parentName) {

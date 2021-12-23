@@ -18,13 +18,21 @@ public class LinkCheckerStatisticsHelper {
 
         sb.append("<div class=\"creation-time\">" + TimeUtils.humanizeToDate(System.currentTimeMillis()) + "</div>");
         if(!"overall".equals(collectionName)) {
-           sb.append("<div class=\"download\"><a href=\"/download/xml/statistics/" + collectionName + "/" + category + "\">xml</></a>");
-           sb.append("&nbsp;<a href=\"/download/json/statistics/" + collectionName + "/" + category + "\">json</></a></div>");
+           sb.append("<div class=\"download\"><a href=\"/download/zip/statistics/" + collectionName + "/" + category + "\">zip</></a></div>");
         }
         sb.append("<div class=\"clear\" />");
         sb.append("<div>");
         sb.append("<h1>Link Checking Statistics (Category:" + category + "):</h1>");
-        sb.append("<h3>").append(collectionName.replace("_", " ")).append(":</h3>");
+        sb.append("<h3>").append(collectionName.replace("_", " ")).append(":</h3>"); 
+        sb.append(  
+              "(total: "  +  
+              Configuration.checkedLinkResource.getCount(
+                 Configuration.checkedLinkResource.getCheckedLinkFilter()
+                    .setProviderGroupIs(collectionName)
+                    .setCategoryIs(category)
+                    .setIsActive(true)) +
+              ")<br />"
+           );
 
         List<String> columnNames = Arrays.asList("Url", "Status", "Info", "Record");
 

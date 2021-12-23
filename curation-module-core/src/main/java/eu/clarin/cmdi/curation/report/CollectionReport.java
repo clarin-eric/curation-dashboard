@@ -4,6 +4,7 @@ import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.DAO.Statistics.CategoryStatistics;
 import eu.clarin.cmdi.rasa.filters.CheckedLinkFilter;
 import org.slf4j.Logger;
@@ -223,10 +224,21 @@ public class CollectionReport implements Report<CollectionReport> {
                 urlReport.maxRespTime = statistics.getMaxRespTime();
             }
 
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) {
             LOG.error("There was a problem calculating average values: " + e.getMessage(), e);
         }
+        
+        // creating zip file for download
+        filter = Configuration.checkedLinkResource.getCheckedLinkFilter().setProviderGroupIs(getName()).setIsActive(true);
 
+        try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(filter)){
+           
+        
+        }
+        catch(Exception ex) {
+           LOG.error("couldn't zip file for provider group '{}' from database", getName());
+          }
 
         int totCheckedUndeterminedAndRestrictedAndBlockedRemoved = urlReport.totNumOfCheckedLinks - (urlReport.totNumOfUndeterminedLinks + urlReport.totNumOfRestrictedAccessLinks + urlReport.totNumOfBlockedByRobotsTxtLinks);
 
