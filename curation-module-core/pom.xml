@@ -94,6 +94,11 @@
 			<artifactId>ibatis-core</artifactId>
 			<version>3.0</version>
 		</dependency>
+		        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>2.1.2</version>
+        </dependency>
 
 		<!--github link: https://github.com/acdh-oeaw/stormychecker -->
 		<!-- <dependency> -->

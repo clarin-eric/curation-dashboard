@@ -18,7 +18,9 @@ public class LinkCheckerStatisticsHelper {
 
         sb.append("<div class=\"creation-time\">" + TimeUtils.humanizeToDate(System.currentTimeMillis()) + "</div>");
         if(!"overall".equals(collectionName)) {
-           sb.append("<div class=\"download\"><a href=\"/download/zip/statistics/" + collectionName + "/" + category + "\">zip</></a></div>");
+           sb.append("<div class=\"download\">download as zipped <a href=\"/download/xml/statistics/" + collectionName + "/" + category + "\">xml</a>");
+           sb.append(" <a href=\"/download/json/statistics/" + collectionName + "/" + category + "\">json</a>");
+           sb.append(" <a href=\"/download/tsv/statistics/" + collectionName + "/" + category + "\">tsv</a></div>");
         }
         sb.append("<div class=\"clear\" />");
         sb.append("<div>");
