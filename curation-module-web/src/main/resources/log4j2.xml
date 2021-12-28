@@ -5,8 +5,8 @@
 			<PatternLayout pattern="%d %p [%c{1}#%M:%L] - %m%n" />
 		</Console>
 		<RollingFile name="FILE"
-			fileName="${catalina.base}/logs/curate.log"
-			filePattern="${catalina.base}/logs/curate_%d{yyyy-MM-dd}.log.gz"
+			fileName="${sys:catalina.home}/logs/curate.log"
+			filePattern="${sys:catalina.home}/logs/curate_%d{yyyy-MM-dd}.log.gz"
 			ignoreExceptions="false">
 			<PatternLayout>
 				<Pattern>%d %p [%c#%M:%L] - %m%n</Pattern>

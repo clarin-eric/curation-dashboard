@@ -7,7 +7,7 @@
 
   <context-param>
     <param-name>config.location</param-name>
-    <param-value>/data/curation/conf/config.properties</param-value>
+    <param-value>/usr/local/curation-module/conf/config.properties</param-value>
   </context-param>
 
   <servlet>
