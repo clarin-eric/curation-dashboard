@@ -9,5 +9,9 @@
 		<Root level="error">
 			<AppenderRef ref="STDOUT" />
 		</Root>
+		<Logger name="eu.clarin.cmdi.curation.processor.CollectionProcessor"
+			level="info" additivity="false">
+			<AppenderRef ref="STDOUT" />
+		</Logger>
 	</Loggers>
 </Configuration>
