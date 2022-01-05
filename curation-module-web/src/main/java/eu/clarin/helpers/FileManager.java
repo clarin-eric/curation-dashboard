@@ -1,7 +1,6 @@
 package eu.clarin.helpers;
 
 import eu.clarin.cmdi.curation.report.Report;
-import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBContext;
@@ -20,8 +19,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileManager {
-
-    private static final Logger logger = Logger.getLogger(FileManager.class);
 
     public static String readFile(String path) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
@@ -48,7 +45,7 @@ public class FileManager {
 
     }
 
-    public static String marshall(Report report) throws JAXBException {
+    public static String marshall(Report<?> report) throws JAXBException {
 
         JAXBContext jc = JAXBContext.newInstance(report.getClass());
 
@@ -73,26 +70,24 @@ public class FileManager {
 
         for (String folder : folderPaths) {
 
-            Stream<Path> walk = Files.walk(Paths.get(folder));
-            List<String> walkResult = walk.filter(Files::isRegularFile)
-                    .map(x -> x.toString()).collect(Collectors.toList());
-
-
-            for (String filePath : walkResult) {
-                if (regexFilter != null) {
-                    String fileName = filePath.split("/")[filePath.split("/").length - 1];
-                    Pattern p = Pattern.compile(regexFilter);
-                    Matcher m = p.matcher(fileName);
-                    if (m.find()) {
-                        deleteFile(filePath);
-                    }
-                } else {
-                    deleteFile(filePath);
-                }
-
+            try(Stream<Path> walk = Files.walk(Paths.get(folder))){
+               List<String> walkResult = walk.filter(Files::isRegularFile)
+                       .map(x -> x.toString()).collect(Collectors.toList());
+   
+   
+               for (String filePath : walkResult) {
+                   if (regexFilter != null) {
+                       String fileName = filePath.split("/")[filePath.split("/").length - 1];
+                       Pattern p = Pattern.compile(regexFilter);
+                       Matcher m = p.matcher(fileName);
+                       if (m.find()) {
+                           deleteFile(filePath);
+                       }
+                   } else {
+                       deleteFile(filePath);
+                   }
+               }
             }
-
-
         }
     }
 

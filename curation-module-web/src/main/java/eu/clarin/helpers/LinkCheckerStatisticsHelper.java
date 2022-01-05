@@ -1,109 +1,40 @@
 package eu.clarin.helpers;
 
 import eu.clarin.cmdi.curation.utils.CategoryColor;
+import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import eu.clarin.main.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-//this class creates a html report
 public class LinkCheckerStatisticsHelper {
-    private static final Logger logger = LoggerFactory.getLogger(LinkCheckerStatisticsHelper.class);
-
-//this is the mongo implementation, left here for inspiration...
-//    private AggregateIterable<Document> getStatusStatistics() {
-//
-//        return linksChecked.aggregate(Arrays.asList(
-//                Aggregates.group("$status",
-//                        Accumulators.sum("count", 1),
-//                        Accumulators.avg("avg_resp", "$duration"),
-//                        Accumulators.max("max_resp", "$duration")
-//                ),
-//                Aggregates.sort(orderBy(ascending("_id")))
-//        ));
-//
-//    }
-
-//    private AggregateIterable<Document> getStatusStatistics(String collectionName) {
-//        if (collectionName.equals("Overall")) {
-//            return getStatusStatistics();
-//        }
-//
-//        return linksChecked.aggregate(Arrays.asList(
-//                Aggregates.match(eq("collection", collectionName)),
-//                Aggregates.group("$status",
-//                        Accumulators.sum("count", 1),
-//                        Accumulators.avg("avg_resp", "$duration"),
-//                        Accumulators.max("max_resp", "$duration")
-//                ),
-//                Aggregates.sort(orderBy(ascending("_id")))
-//        ));
-//    }
-
-//    private AggregateIterable<Document> getStatusStatisticsTotal() {
-//
-//        return linksChecked.aggregate(Arrays.asList(
-//                Aggregates.group("_id",
-//                        Accumulators.sum("count", 1)
-//                )
-//        ));
-//
-//    }
-//
-//    private AggregateIterable<Document> getStatusStatisticsTotal(String collectionName) {
-//        if (collectionName.equals("Overall")) {
-//            return getStatusStatisticsTotal();
-//        }
-//
-//        return linksChecked.aggregate(Arrays.asList(
-//                Aggregates.match(eq("collection", collectionName)),
-//                Aggregates.group("_id",
-//                        Accumulators.sum("count", 1)
-//                )
-//        ));
-//
-//    }
-
-//    //this method doesn't take 0 status codes into consideration. 0 means there was an error in the URL and there was no request sent.
-//    private AggregateIterable<Document> getStatusStatisticsAvg() {
-//
-//        return linksChecked.aggregate(Arrays.asList(
-//                Aggregates.match(not(eq("status", 0))),
-//                Aggregates.group("_id",
-//                        Accumulators.avg("avg_resp", "$duration")
-//                )
-//        ));
-//    }
-//
-//
-//    //this method doesn't take 0 status codes into consideration. 0 means there was an error in the URL and there was no request sent.
-//    private AggregateIterable<Document> getStatusStatisticsAvg(String collectionName) {
-//        if (collectionName.equals("Overall")) {
-//            return getStatusStatisticsAvg();
-//        }
-//
-//        return linksChecked.aggregate(Arrays.asList(
-//                Aggregates.match(and(eq("collection", collectionName), not(eq("status", 0)))),
-//                Aggregates.group("_id",
-//                        Accumulators.avg("avg_resp", "$duration")
-//                )
-//        ));
-//
-//    }
 
     public static String createURLTable(String collectionName, Category category) throws SQLException {
         StringBuilder sb = new StringBuilder();
 
+        sb.append("<div class=\"creation-time\">" + TimeUtils.humanizeToDate(System.currentTimeMillis()) + "</div>");
+        if(!"overall".equals(collectionName)) {
+           sb.append("<div class=\"download\">download as zipped <a href=\"/download/xml/statistics/" + collectionName + "/" + category + "\">xml</a>");
+           sb.append(" <a href=\"/download/json/statistics/" + collectionName + "/" + category + "\">json</a>");
+           sb.append(" <a href=\"/download/tsv/statistics/" + collectionName + "/" + category + "\">tsv</a></div>");
+        }
+        sb.append("<div class=\"clear\" />");
         sb.append("<div>");
         sb.append("<h1>Link Checking Statistics (Category:" + category + "):</h1>");
-        sb.append("<h3>").append(collectionName.replace("_", " ")).append(":</h3>");
+        sb.append("<h3>").append(collectionName.replace("_", " ")).append(":</h3>"); 
+        sb.append(  
+              "(total: "  +  
+              Configuration.checkedLinkResource.getCount(
+                 Configuration.checkedLinkResource.getCheckedLinkFilter()
+                    .setProviderGroupIs(collectionName)
+                    .setCategoryIs(category)
+                    .setIsActive(true)) +
+              ")<br />"
+           );
 
         List<String> columnNames = Arrays.asList("Url", "Status", "Info", "Record");
 
@@ -135,7 +66,13 @@ public class LinkCheckerStatisticsHelper {
 
         StringBuilder sb = new StringBuilder();
 
-        try (Stream<CheckedLink> links = Configuration.checkedLinkResource.get(Configuration.checkedLinkResource.getCheckedLinkFilter().setProviderGroupIs(collectionName).setCategoryIs(category).setLimit(start, end))) {
+        try (Stream<CheckedLink> links = Configuration.checkedLinkResource.get(
+                 Configuration.checkedLinkResource.getCheckedLinkFilter()
+                    .setProviderGroupIs(collectionName)
+                    .setCategoryIs(category)
+                    .setIsActive(true)
+                    .setLimit(start, end)
+                    )) {
 
             links.forEach(checkedLink -> {
                 sb.append("<tr>");

@@ -2,25 +2,42 @@
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:template match="/collection-report">
+		<xsl:variable name="collectionName">
+			<xsl:value-of select="./file-section/provider" />
+		</xsl:variable>
 		<html>
 			<head>
 			</head>
 			<body>
+				<div class="creation-time">
+					created at
+					<xsl:value-of select="./@creation-time" />
+				</div>
+				<div class="download">
+					download as
+					<a>
+						<xsl:attribute name="href">
+					    <xsl:text>/download/xml/collections/</xsl:text>
+					    <xsl:value-of select="$collectionName" />
+				    </xsl:attribute>
+						<xsl:text>xml</xsl:text>
+					</a>
+					<xsl:text> </xsl:text>
+					<a>
+						<xsl:attribute name="href">
+                   <xsl:text>/download/json/collections/</xsl:text>
+                   <xsl:value-of select="$collectionName" />
+                </xsl:attribute>
+						<xsl:text>json</xsl:text>
+					</a>
+				</div>
+				<div class="clear" />
 				<h1>Collection Report</h1>
-				<xsl:variable name="collectionName">
-					<xsl:value-of select="./file-section/provider" />
-				</xsl:variable>
-
 				<h3>
 					Collection name:
 					<xsl:value-of
 						select="replace($collectionName,'_',' ')" />
 				</h3>
-
-				<!-- <xsl:variable name="url"><xsl:value-of select="./@url"/></xsl:variable> -->
-				<!-- <p>URL: <a href="{$url}"><xsl:copy-of select="$url"/></a></p> -->
-				<p>URL: selfURLPlaceHolder</p>
-
 				<p>
 					Total Score:
 					<xsl:value-of select="./@score" />
@@ -52,15 +69,12 @@
 				</p>
 
 				<hr />
-
-				<p>
-					Creation time:
-					<xsl:value-of select="./@creation-time" />
-				</p>
-
-				<hr/>
-
-				<h2>File Section</h2>
+				<details>
+					<summary>
+						<h2>File Section</h2>
+					</summary>
+					<p>General information on the number of files and the file size.</p>
+				</details>
 				<p>
 					Number of files:
 					<xsl:value-of select="./file-section/numOfFiles" />
@@ -88,7 +102,21 @@
 
 				<hr />
 
-				<h2>Header Section</h2>
+				<details>
+					<summary>
+						<h2>Header Section</h2>
+					</summary>
+					<p>
+						The header section shows information on the profile usage in the
+						collection.
+						<br />
+						Important note: the score of this section differs from the score
+						of the underlying profile. For more information
+						on scoring have a look at the
+						<a href="/faq">FAQ</a>
+						, please.
+					</p>
+				</details>
 				<table class="reportTable">
 					<caption>Profiles in Collection</caption>
 					<thead>
@@ -141,7 +169,16 @@
 					</tbody>
 				</table>
 
-				<h2>Facet Section</h2>
+				<details>
+					<summary>
+						<h2>Facet Section</h2>
+					</summary>
+					<p>The facet section shows the facet coverage within the
+						collection. It's quite evident that the facet coverage of a
+						certain CMD file can't be higher than those of the profile it is
+						based on.
+					</p>
+				</details>
 				<table class="reportTable">
 					<thead>
 						<tr>
@@ -177,7 +214,16 @@
 
 				<hr />
 
-				<h2>ResourceProxy Section</h2>
+				<details>
+					<summary>
+						<h2>ResourceProxy Section</h2>
+					</summary>
+					<p>The resource proxy section shows information on the number of
+						resource proxies on the kind (the mime type) of resources.
+						A resource proxy is a link to an external resource, described by
+						the CMD file.
+					</p>
+				</details>
 				<p>
 					Total number of resource proxies:
 					<xsl:value-of
@@ -211,7 +257,13 @@
 
 				<hr />
 
-				<h2>XML Validation Section</h2>
+				<details>
+					<summary>
+						<h2>XML Validation Section</h2>
+					</summary>
+					<p>The XML validation section shows the result of a simple
+						validation of each CMD file against its profile. </p>
+				</details>
 				<p>
 					Number of Records:
 					<xsl:value-of
@@ -233,50 +285,53 @@
 					<h3>Invalid Records:</h3>
 					<table class="reportTable">
 						<thead>
-						<tr>
-							<th>File</th>
-							<th>Info</th>
-							<th>Validate</th>
-						</tr>						
+							<tr>
+								<th>File</th>
+								<th>Info</th>
+								<th>Validate</th>
+							</tr>
 						</thead>
 						<tbody>
 							<xsl:for-each
 								select="./xml-validation-section/invalid-records/record">
 
-									<xsl:if test="not(position() > 100)">
-										<tr>
-											<td>
+								<xsl:if test="not(position() > 100)">
+									<tr>
+										<td>
 											<a>
-												<xsl:attribute name="href">/record/<xsl:value-of select="./@name" /></xsl:attribute>
+												<xsl:attribute name="href">/record/<xsl:value-of
+													select="./@name" /></xsl:attribute>
 												<xsl:value-of select="./@name" />
 											</a>
-												
-											</td>
-											<td>
-												<button type="button" class="showUrlInfo btn btn-info" onClick="toggleInfo(this)">Show</button>
-											</td>
-											<td>
-												<button type="button" class="btn btn-info">
-													<xsl:attribute name="onClick">window.open('/curate?url-input=<xsl:value-of
-														select="./@name"></xsl:value-of>')</xsl:attribute>
-													Validate file
-												</button>
-											</td>
-										</tr>
-										<tr hidden="true">
-											<td colspan="3">
-												<ul>
-													<xsl:for-each select="issue">
-														<li>
-															<xsl:value-of select="."></xsl:value-of>
-														</li>
-													</xsl:for-each>
-												</ul>
-											</td>
-										</tr>
-									</xsl:if>
+
+										</td>
+										<td>
+											<button type="button" class="showUrlInfo btn btn-info"
+												onClick="toggleInfo(this)">Show</button>
+										</td>
+										<td>
+											<button type="button" class="btn btn-info">
+												<xsl:attribute name="onClick">window.open('/curate?url-input=<xsl:value-of
+													select="./@name"></xsl:value-of>')</xsl:attribute>
+												Validate file
+											</button>
+										</td>
+									</tr>
+									<tr hidden="true">
+										<td colspan="3">
+											<ul>
+												<xsl:for-each select="issue">
+													<li>
+														<xsl:value-of select="."></xsl:value-of>
+													</li>
+												</xsl:for-each>
+											</ul>
+										</td>
+									</tr>
+								</xsl:if>
 							</xsl:for-each>
-							<xsl:if test="count(./xml-validation-section/invalid-records/record) > 100">
+							<xsl:if
+								test="count(./xml-validation-section/invalid-records/record) > 100">
 								<tr>
 									<td colspan="3">[...] complete list in downloadable report</td>
 								</tr>
@@ -286,7 +341,13 @@
 				</xsl:if>
 				<hr />
 
-				<h2>XML Populated Section</h2>
+				<details>
+					<summary>
+						<h2>XML Populated Section</h2>
+					</summary>
+					<p>The XML populated section shows information on the number of xml
+						elements and the fact if these elements are conatining data. </p>
+				</details>
 				<p>
 					Total number of XML elements:
 					<xsl:value-of
@@ -325,7 +386,15 @@
 
 				<hr />
 
-				<h2>URL Validation Section</h2>
+				<details>
+					<summary>
+						<h2>URL Validation Section</h2>
+					</summary>
+					<p>The URL validation section shows information on the number of
+						links and the results of link checking for the links which
+						have been checked so far.
+					</p>
+				</details>
 				<p>
 					Total number of links:
 					<xsl:value-of
@@ -389,7 +458,7 @@
 					<tbody>
 						<xsl:for-each
 							select="./url-validation-section/statistics/category">
-							<xsl:sort select="@category"/>
+							<xsl:sort select="@category" />
 
 							<xsl:variable name="category">
 								<xsl:value-of select="./@category" />
@@ -425,14 +494,25 @@
 				<hr />
 				<xsl:if test="./invalid-files/file">
 					<hr />
-					<h2>Invalid Files Section</h2>
+					<details>
+						<summary>
+							<h2>Invalid Files Section</h2>
+						</summary>
+						<p>The invalid files section shows the number of non processed
+							CMD-files of a collection and the reason for not processing these
+							files.</p>
+					</details>
 					<ol>
 						<xsl:for-each select="./invalid-files/file">
 							<!--<li><font color="#dbd839"><xsl:copy-of select="." />, reason: 
 								<xsl:value-of select="./@reason"/></font></li> -->
 							<li>
 								Invalid file:
-								<a><xsl:attribute name="href"><xsl:value-of select="." /></xsl:attribute><xsl:value-of select="." /></a>
+								<a>
+									<xsl:attribute name="href"><xsl:value-of
+										select="." /></xsl:attribute>
+									<xsl:value-of select="." />
+								</a>
 								<br />
 								<font color="#dbd839">
 									Reason:

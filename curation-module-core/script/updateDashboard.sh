@@ -12,7 +12,6 @@ RESULTSETS="clarin.tar.bz2 others.tar.bz2 europeana.tar.bz2"
 #RESULTSETS="clarin.tar.bz2"
 CMDI_PATH=results/cmdi
 
-LOG4J=-Dlog4j.configuration=file:$CONF_DIR/log4j.properties
 VM_ARGS="-Xms4G -Xmx8G -XX:+UseG1GC -XX:-UseParallelGC -XX:+UseStringDeduplication -XX:MaxHeapFreeRatio=20 -XX:MinHeapFreeRatio=10 -XX:GCTimeRatio=20"
 
 XSD_CACHE=$WORK_DIR/xsd_cache
@@ -50,7 +49,7 @@ set -e
 #done
 
 echo "generating new reports, downloading necessary profiles..."
-java $VM_ARGS -Dprojectname=curate $LOG4J -jar $BIN_DIR/curate.jar -config $CONF_DIR/config.properties -r -path $DATA_DIR/clarin/$CMDI_PATH $DATA_DIR/europeana/$CMDI_PATH
+java $VM_ARGS -Dprojectname=curate -jar $BIN_DIR/curate.jar -config $CONF_DIR/config.properties -r -path $DATA_DIR/clarin/$CMDI_PATH $DATA_DIR/europeana/$CMDI_PATH
 echo "report generation finished."
 
 if [ -e "$BIN_DIR/vlo-mapping-creator.jar" ]; then

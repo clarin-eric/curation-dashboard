@@ -1,16 +1,16 @@
 package eu.clarin.cmdi.curation.report;
 
 import eu.clarin.cmdi.curation.report.CollectionReport.Statistics;
-import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
-import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 
 import javax.xml.bind.annotation.*;
+
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 @XmlRootElement(name = "linkchecker-report")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
@@ -22,7 +22,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
    private Overall overall = new Overall();
 
    @XmlElement(name = "collection")
-   private List<CMDCollection> collections = new ArrayList<CMDCollection>();
+   private Set<CMDCollection> collections = new TreeSet<CMDCollection>((col1, col2) -> col1.name.compareTo(col2.name));
 
    @Override
    public void setParentName(String parentName) {
@@ -105,7 +105,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
    }
 
    public static class Overall {
-      private List<Statistics> statistics;
+      private TreeMap<String, Statistics> statistics;
       @XmlAttribute
       private int count;
 
@@ -117,28 +117,34 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
       @XmlElement
       public Collection<Statistics> getStatistics() {
-         return this.statistics;
+         return this.statistics.values();
       }
 
       public Overall() {
-         this.statistics = List.of(new Statistics(Category.Broken.name(), CategoryColor.getColor(Category.Broken)),
-               new Statistics(Category.Ok.name(), CategoryColor.getColor(Category.Ok)),
-               new Statistics(Category.Undetermined.name(), CategoryColor.getColor(Category.Undetermined)));
+         this.statistics = new TreeMap<String, Statistics>();
       }
       
       public void addStatistics(Statistics statisticsObj) {
-         this.statistics.stream()
-         .filter(s -> s.category.equals(statisticsObj.category))
-         .findFirst()
-         .ifPresent(s -> {
+         if(this.statistics.containsKey(statisticsObj.category)) {
+            Statistics s = this.statistics.get(statisticsObj.category);
+            
             s.avgRespTime =
-               (s.avgRespTime * s.count + statisticsObj.avgRespTime * statisticsObj.count)
-               / (s.count + statisticsObj.count);
+                  (s.avgRespTime * s.count + statisticsObj.avgRespTime * statisticsObj.count)
+                  / (s.count + statisticsObj.count);
             s.count += statisticsObj.count;
             if(s.maxRespTime < statisticsObj.maxRespTime) {
                s.maxRespTime = statisticsObj.maxRespTime;
             }
-         });
+         }
+         else {
+            this.statistics.put(statisticsObj.category, new Statistics() {{
+                  this.category = statisticsObj.category;
+                  this.colorCode = statisticsObj.colorCode;
+                  this.count = statisticsObj.count;
+                  this.avgRespTime = statisticsObj.avgRespTime;
+                  this.maxRespTime = statisticsObj.maxRespTime;
+               }});
+         }
       }
    }
 }

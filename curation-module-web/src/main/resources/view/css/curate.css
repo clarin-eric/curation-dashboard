@@ -117,3 +117,40 @@ a:hover {
 .highlight-button{
     background-color: #d8d8d8 !important;
 }
+div.creation-time{
+   float: left;
+   font-family: "Lucida Console", "Courier New", monospace;
+   font-size: 0.8em;
+}
+div.download {
+   float: right;
+   font-family: "Lucida Console", "Courier New", monospace;
+   font-size: 0.8em;
+}
+div.clear{
+   clear: both;
+}  
+summary h2:after {
+   font-size: 0.8em;
+   content: "(+)";
+   display: inline-block;
+   padding-left: 10px;
+}  
+details summary { 
+   list-style-type: none; 
+}
+
+details summary::-webkit-details-marker {
+  display:none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary:focus {
+  outline: none;
+}
+
+details[open] h2:after{
+   content: "(-)";
+}

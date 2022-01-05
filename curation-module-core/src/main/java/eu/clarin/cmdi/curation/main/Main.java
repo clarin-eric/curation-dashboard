@@ -182,7 +182,7 @@ public class Main {
                 // dumping the collections table
                 dumpAsXML(collectionsReport, CurationEntityType.COLLECTION);
                 dumpAsHTML(collectionsReport, CurationEntityType.COLLECTION);
-                dumpAsTSV(collectionsReport, CurationEntityType.COLLECTION);
+//                dumpAsTSV(collectionsReport, CurationEntityType.COLLECTION);
 
                 LOG.info("Creating collections table finished.");
 
@@ -200,7 +200,7 @@ public class Main {
                 //dumping the profiles table
                 dumpAsXML(profilesReport, CurationEntityType.PROFILE);
                 dumpAsHTML(profilesReport, CurationEntityType.PROFILE);
-                dumpAsTSV(profilesReport, CurationEntityType.PROFILE);
+//                dumpAsTSV(profilesReport, CurationEntityType.PROFILE);
                 LOG.info("Creating profiles table finished..");
 
                 LOG.info("Creating statistics table...");
@@ -287,33 +287,28 @@ public class Main {
 
     }
 
-    private static void dumpAsTSV(Report<?> report, CurationEntityType type) throws TransformerException, JAXBException, IOException {
-        Path path = Configuration.OUTPUT_DIRECTORY.resolve("tsv");
-
-        switch (type) {
-            case PROFILE:
-                path = path.resolve("profiles");
-                break;
-            case INSTANCE:
-                path = path.resolve("instances");
-                break;
-            case COLLECTION:
-                path = path.resolve("collections");
-                break;
-		default:
-			break;
-        }
-
-        Files.createDirectories(path);
-        String filename = FileNameEncoder.encode(report.getName()) + ".tsv";
-        path = path.resolve(filename);
-
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Source xslt = new StreamSource(Main.class.getResourceAsStream("/xslt/" + report.getClass().getSimpleName() + "2TSV.xsl"));
-
-        Transformer transformer = factory.newTransformer(xslt);
-        transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), new StreamResult(path.toFile()));
-    }
+   /*
+    * private static void dumpAsTSV(Report<?> report, CurationEntityType type)
+    * throws TransformerException, JAXBException, IOException { Path path =
+    * Configuration.OUTPUT_DIRECTORY.resolve("tsv");
+    * 
+    * switch (type) { case PROFILE: path = path.resolve("profiles"); break; case
+    * INSTANCE: path = path.resolve("instances"); break; case COLLECTION: path =
+    * path.resolve("collections"); break; default: break; }
+    * 
+    * Files.createDirectories(path); String filename =
+    * FileNameEncoder.encode(report.getName()) + ".tsv"; path =
+    * path.resolve(filename);
+    * 
+    * TransformerFactory factory = TransformerFactory.newInstance(); Source xslt =
+    * new StreamSource(Main.class.getResourceAsStream("/xslt/" +
+    * report.getClass().getSimpleName() + "2TSV.xsl"));
+    * 
+    * Transformer transformer = factory.newTransformer(xslt);
+    * transformer.transform(new
+    * JAXBSource(JAXBContext.newInstance(report.getClass()), report), new
+    * StreamResult(path.toFile())); }
+    */
 
     private static Options createHelpOption() {
         Option help = new Option("help", "print this message");

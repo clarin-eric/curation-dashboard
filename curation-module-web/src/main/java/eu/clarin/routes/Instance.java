@@ -3,7 +3,7 @@ package eu.clarin.routes;
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -13,10 +13,9 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Path("/instance")
 public class Instance {
-
-    private static final Logger logger = Logger.getLogger(Instance.class);
 
     @GET
     @Path("/{instanceName}")
@@ -50,7 +49,7 @@ public class Instance {
                     return ResponseManager.returnError(400, "Instance name must end with either '.xml' or '.html'.");
             }
         } catch (IOException e) {
-            logger.error("There was an error reading the instance: " + instanceName, e);
+            log.error("There was an error reading the instance: " + instanceName, e);
             return ResponseManager.returnError(404, "The instance " + instanceName + " doesn't exist.");
         }
 

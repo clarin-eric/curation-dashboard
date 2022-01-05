@@ -4,17 +4,13 @@ package eu.clarin.routes;
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
-import org.apache.log4j.Logger;
 
-import javax.imageio.ImageIO;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,14 +19,18 @@ import java.util.Map;
 
 @Path("/view")
 public class View {
-
-    private static final Logger logger = Logger.getLogger(View.class);
+   
     //fundament has these types of files
     private final List<String> textExtensions = Arrays.asList("css", "js", "svg");//svg is image but is saved as text
     private final List<String> imageExtensions = Arrays.asList("jpg", "jpeg", "png");
 
     private static Map<String, String> extensionMimeTypes = new HashMap<>() {
-        {
+        /**
+       * 
+       */
+      private static final long serialVersionUID = 1L;
+
+      {
             put("css", "text/css");//css is not in mediatypes
             put("js", "text/javascript");//also js
             put("svg",MediaType.APPLICATION_SVG_XML);

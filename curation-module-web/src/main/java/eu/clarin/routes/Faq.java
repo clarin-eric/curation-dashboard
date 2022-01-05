@@ -3,7 +3,7 @@ package eu.clarin.routes;
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -13,10 +13,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+@Slf4j
 @Path("/faq")
 public class Faq {
-
-    private static final Logger logger = Logger.getLogger(Faq.class);
 
     @GET
     @Path("/")
@@ -26,7 +25,7 @@ public class Faq {
 
             return ResponseManager.returnHTML(200, faq);
         } catch (IOException e) {
-            logger.error("Error when reading faq.html: ", e);
+            log.error("Error when reading faq.html: ", e);
             return ResponseManager.returnServerError();
         }
     }
@@ -42,7 +41,7 @@ public class Faq {
             return ResponseManager.returnFile(200, fileInStream, "text/markdown", "faq.md");
 
         } catch (FileNotFoundException e) {
-            logger.error("There was an error getting the faq.md file: ", e);
+            log.error("There was an error getting the faq.md file: ", e);
             return ResponseManager.returnServerError();
         }
     }

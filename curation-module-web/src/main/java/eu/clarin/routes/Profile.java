@@ -4,7 +4,7 @@ import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.HTMLHelpers.NavbarButton;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -17,10 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Path("/profile")
 public class Profile {
-
-    private static final Logger logger = Logger.getLogger(Profile.class);
 
     @GET
     @Path("/{profileName}")
@@ -53,7 +52,7 @@ public class Profile {
                     return ResponseManager.returnError(400, "Profile name must end with either xml or html.");
             }
         } catch (IOException e) {
-            logger.error("There was an error reading the profile: " + profileName);
+            log.error("There was an error reading the profile: " + profileName);
             return ResponseManager.returnError(404, "The profile " + profileName + " doesn't exist.");
         }
     }
@@ -66,7 +65,7 @@ public class Profile {
 
             return ResponseManager.returnHTML(200, profiles, new NavbarButton("/profile/tsv", "Export as TSV"));
         } catch (IOException e) {
-            logger.error("Error when reading ProfilesReport.html: ", e);
+            log.error("Error when reading ProfilesReport.html: ", e);
             return ResponseManager.returnServerError();
         }
 
@@ -82,7 +81,7 @@ public class Profile {
             fileInStream = new FileInputStream(profilesTSVPath);
             return ResponseManager.returnFile(200, fileInStream, "text/tab-separated-values", "ProfilesReport.tsv");
         } catch (FileNotFoundException e) {
-            logger.error("There was an error getting the profilesReport.tsv file: ", e);
+            log.error("There was an error getting the profilesReport.tsv file: ", e);
             return ResponseManager.returnServerError();
         }
     }

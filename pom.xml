@@ -6,7 +6,7 @@
     <artifactId>curation-module</artifactId>
     <name>Curation Module</name>
     <packaging>pom</packaging>
-    <version>5.1.2</version>
+    <version>5.2.0</version>
     <organization>
         <name>CLARIN</name>
         <url>http://www.clarin.eu</url>
@@ -40,16 +40,6 @@
         </plugins>
     </build>
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

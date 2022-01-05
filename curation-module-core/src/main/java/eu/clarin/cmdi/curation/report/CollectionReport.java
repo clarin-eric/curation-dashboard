@@ -4,6 +4,7 @@ import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.DAO.Statistics.CategoryStatistics;
 import eu.clarin.cmdi.rasa.filters.CheckedLinkFilter;
 import org.slf4j.Logger;
@@ -130,71 +131,6 @@ public class CollectionReport implements Report<CollectionReport> {
     @Override
     public void mergeWithParent(CollectionReport parentReport) {
         LOG.error("this should never happen??? a collection report cant have a parent to get merged into");
-//        parentReport.score += score;
-//        if (insMinScore < parentReport.insMinScore)
-//            parentReport.insMinScore = insMinScore;
-//
-//        if (insMaxScore > parentReport.insMaxScore)
-//            parentReport.insMaxScore = insMaxScore;
-//
-//        // ResProxies
-//
-//        parentReport.resProxyReport.totNumOfResProxies += resProxyReport.totNumOfResProxies;
-//        parentReport.resProxyReport.totNumOfResourcesWithMime += resProxyReport.totNumOfResourcesWithMime;
-//        parentReport.resProxyReport.totNumOfResProxiesWithReferences += resProxyReport.totNumOfResProxiesWithReferences;
-//
-//        // XMLValidator
-//        parentReport.xmlValidationReport.totNumOfRecords += xmlValidationReport.totNumOfRecords;
-//        parentReport.xmlValidationReport.totNumOfValidRecords += xmlValidationReport.totNumOfValidRecords;
-//        parentReport.xmlValidationReport.record.addAll(this.xmlValidationReport.record);
-//
-//        // XMLPopulatedValidator
-//        parentReport.xmlPopulatedReport.totNumOfXMLElements += xmlPopulatedReport.totNumOfXMLElements;
-//        parentReport.xmlPopulatedReport.totNumOfXMLSimpleElements += xmlPopulatedReport.totNumOfXMLSimpleElements;
-//        parentReport.xmlPopulatedReport.totNumOfXMLEmptyElement += xmlPopulatedReport.totNumOfXMLEmptyElement;
-//
-//        // URL
-//        parentReport.urlReport.totNumOfLinks += urlReport.totNumOfLinks;
-////        parentReport.urlReport.totNumOfUniqueLinks += urlReport.totNumOfUniqueLinks;
-//        parentReport.urlReport.totNumOfCheckedLinks += urlReport.totNumOfCheckedLinks;
-////        parentReport.urlReport.totNumOfResProxiesLinks += urlReport.totNumOfResProxiesLinks;
-//        parentReport.urlReport.totNumOfBrokenLinks += urlReport.totNumOfBrokenLinks;
-//
-//        // Facet
-//        facetReport.facet.forEach(facet -> {
-//            FacetCollectionStruct parFacet = parentReport.facetReport.facet.stream().filter(f -> f.name.equals(facet.name)).findFirst().orElse(null);
-//            parFacet.cnt += facet.cnt;
-//        });
-//
-//        // Profiles
-//        for (Profile p : headerReport.profiles.profiles)
-//            parentReport.handleProfile(p);
-//
-//        // MDSelfLinks
-//        if (headerReport.duplicatedMDSelfLink != null && !headerReport.duplicatedMDSelfLink.isEmpty()) {
-//
-//            if (parentReport.headerReport.duplicatedMDSelfLink == null) {
-//                parentReport.headerReport.duplicatedMDSelfLink = new ArrayList<>();
-//            }
-//
-//            for (String mdSelfLink : headerReport.duplicatedMDSelfLink)
-//                if (!parentReport.headerReport.duplicatedMDSelfLink.contains(mdSelfLink))
-//                    parentReport.headerReport.duplicatedMDSelfLink.add(mdSelfLink);
-//        }
-//
-//        // invalid files
-//        if (this.file != null) {
-//            if (parentReport.file == null)
-//                parentReport.file = new ArrayList<>();
-//            parentReport.file.addAll(this.file);
-//        }
-
-//        // urls
-//        if (this.url != null) {
-//            if (parentReport.url == null)
-//                parentReport.url = new ArrayList<>();
-//            parentReport.url.addAll(this.url);
-//        }
 
     }
 
@@ -288,10 +224,21 @@ public class CollectionReport implements Report<CollectionReport> {
                 urlReport.maxRespTime = statistics.getMaxRespTime();
             }
 
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) {
             LOG.error("There was a problem calculating average values: " + e.getMessage(), e);
         }
+        
+        // creating zip file for download
+        filter = Configuration.checkedLinkResource.getCheckedLinkFilter().setProviderGroupIs(getName()).setIsActive(true);
 
+        try (Stream<CheckedLink> stream = Configuration.checkedLinkResource.get(filter)){
+           
+        
+        }
+        catch(Exception ex) {
+           LOG.error("couldn't zip file for provider group '{}' from database", getName());
+          }
 
         int totCheckedUndeterminedAndRestrictedAndBlockedRemoved = urlReport.totNumOfCheckedLinks - (urlReport.totNumOfUndeterminedLinks + urlReport.totNumOfRestrictedAccessLinks + urlReport.totNumOfBlockedByRobotsTxtLinks);
 

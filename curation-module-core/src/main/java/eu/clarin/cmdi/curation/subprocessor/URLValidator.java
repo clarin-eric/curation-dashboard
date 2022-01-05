@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class URLValidator extends CMDSubprocessor {
@@ -69,6 +70,8 @@ public class URLValidator extends CMDSubprocessor {
       long numOfBlockedByRobotsTxtLinks = 0;
 
       if (Configuration.COLLECTION_MODE) {
+         
+         List<LinkToBeChecked> linkList = new ArrayList<LinkToBeChecked>();
 
          for (String url : urlMap.keySet()) {
 
@@ -78,15 +81,17 @@ public class URLValidator extends CMDSubprocessor {
             String expectedMimeType = urlMap.get(url).getMimeType();
             expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
-            LinkToBeChecked linkToBeChecked = new LinkToBeChecked(url, finalRecord, finalCollection, expectedMimeType,
-                  Configuration.reportGenerationDate);
-
-            try {// save link
-               Configuration.linkToBeCheckedResource.save(linkToBeChecked);
-            }
-            catch (SQLException e) {
-               LOG.error("Error when saving " + linkToBeChecked + ": " + e.getMessage(), e);
-            }
+            linkList.add(
+                  new LinkToBeChecked(url, Configuration.LINK_DATA_SOURCE, finalRecord, finalCollection, expectedMimeType,
+                        Configuration.reportGenerationDate)
+               );
+         }
+         
+         try {// save links
+            Configuration.linkToBeCheckedResource.save(linkList);
+         }
+         catch (SQLException e) {
+            LOG.error("Error when saving link list" + linkList.stream().map(LinkToBeChecked::toString).collect(Collectors.joining(System.lineSeparator())) + ": " + e.getMessage(), e);
          }
       }
       else {// instance mode

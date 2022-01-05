@@ -7,7 +7,7 @@ import eu.clarin.helpers.LinkCheckerStatisticsHelper;
 import eu.clarin.helpers.ResponseManager;
 
 import eu.clarin.main.Configuration;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -17,21 +17,20 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+@Slf4j
 @Path("/statistics")
 public class Statistics {
-
-    private static final Logger logger = Logger.getLogger(Statistics.class);
 
     @GET
     @Path("/")
     public Response getStatistics() {
         try {
-            logger.info("Statistics report requested.");
+            log.info("Statistics report requested.");
             String statistics = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/statistics/LinkCheckerReport.html");
 
             return ResponseManager.returnHTML(200, statistics);
         } catch (IOException e) {
-            logger.error("Error when reading linkCheckerStatistics.html: ", e);
+            log.error("Error when reading linkCheckerStatistics.html: ", e);
             return ResponseManager.returnServerError();
         }
     }
@@ -39,7 +38,7 @@ public class Statistics {
     @GET
     @Path("/{collectionName}/{category}")
     public Response getStatusStatsInit(@PathParam("collectionName") String collectionName, @PathParam("category") String category) {
-        logger.info("URL category table requested for collection " + collectionName);
+        log.info("URL category table requested for collection " + collectionName);
         String urlStatistics = null;
 
         Category categoryEnum = Arrays.stream(Category.values())
@@ -52,7 +51,7 @@ public class Statistics {
         try {
             urlStatistics = LinkCheckerStatisticsHelper.createURLTable(collectionName, categoryEnum);
         } catch (SQLException e) {
-            logger.error("Error in statistics: "+e.getMessage());
+            log.error("Error in statistics: "+e.getMessage());
             return ResponseManager.returnServerError();
         }
         return ResponseManager.returnHTML(200, urlStatistics);
@@ -62,7 +61,7 @@ public class Statistics {
     @GET
     @Path("/{collectionName}/{category}/{batchCount}")
     public Response getStatusStats(@PathParam("collectionName") String collectionName, @PathParam("category") String category, @PathParam("batchCount") int batchCount) {
-        logger.info("URL batch requested with count " + batchCount + " for collection " + collectionName);
+        log.info("URL batch requested with count " + batchCount + " for collection " + collectionName);
         String urlBatchStatistics = null;
 
         Category categoryEnum = Arrays.stream(Category.values())
@@ -75,7 +74,7 @@ public class Statistics {
         try {
             urlBatchStatistics = LinkCheckerStatisticsHelper.getHtmlRowsInBatch(collectionName, categoryEnum, batchCount);
         } catch (SQLException e) {
-            logger.error("Error in statistics: "+e.getMessage());
+            log.error("Error in statistics: "+e.getMessage());
             return ResponseManager.returnServerError();
         }
         return ResponseManager.returnTextResponse(200, urlBatchStatistics, "text/html");
