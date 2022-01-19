@@ -171,7 +171,7 @@
 1. **I have more questions. Where can I ask them?**
 
     Feel free to ask any questions by creating issues on our 
-    [github page](https://github.com/clarin-eric/clarin- curation-module/issues) or by sending us an email to 
+    [github page](https://github.com/clarin-eric/clarin-curation-module/issues) or by sending us an email to 
     [metadata-curation@clarin.eu](mailto:metadata-curation@clarin.eu).
     
 1. **Where can I report issues?**
