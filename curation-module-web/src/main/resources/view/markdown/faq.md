@@ -52,38 +52,38 @@
     The next two tables show the criteria on which the scoring is based on as well as the value set:
 
     **Profile**
-    
-    |Context|Criteria|Value set|
-    |---|---|---|
-    |Header|Profile is public?|{0, 1}|
-    |Facet|Percentage of defined facets covered by profile|[0, 1]|
-    |Cmd-concepts|Percentage of elements (except header and resources) with concept|[0, 1]|
-    ||**Sum**|[0, 3]|
+ 
+ |Context|Criteria|Value set|
+ |---|---|---|
+ |Header|Profile is public?|{0, 1}|
+ |Facet|Percentage of defined facets covered by profile|[0, 1]|
+ |Cmd-concepts|Percentage of elements (except header and resources) with concept|[0, 1]|
+ ||**Sum**|[0, 3]|
     
     **Instance**
     
-    |Context|Criteria|Value set|
-    |---|---|---|
-    |File size|File size <= defined file size?|{0, 1}
-    ||**Sum File size**|{0, 1}|
-    |Header|Valid schema location from attribute “schemaLocation” or “noNamespaceSchemaLocation” available?|{0, 1}|
-    |Header|Schema comes from Component Registry?|{0, 1}|
-    |Header|MdProfile available and valid (against regular expression)?|{0, 1}|
-    |Header|MdCollectionDisplayName available?|{0, 1}|
-    |Header|MdSelfLink available?|{0, 1}|
-    ||**Sum Header**|{1,..., 5}|
-    |Facet|Percentage of of defined facets covered by instance|[0, 1]|
-    ||**Sum Facet**|[0, 1]|
-    |URL|Percentage of valid links|[0, 1]|
-    ||**Sum URL**|[0, 1]|
-    |XML|Is the xml valid?|{0, 1}|
-    |XML|Percentage of populated elements|[0, 1]|
-    ||**Sum XML**|[0, 2]|
-    ||**Sum Profile**|[0, 3]|
-    |Resource Proxy|Percentage of RP with mime type|[0, 1]|
-    |Resource Proxy|Percentage of RP with references|[0, 1]|
-    ||**Sum Resource Proxy**|[0, 2]|
-    ||**Sum over all**|[0, 15]|
+ |Context|Criteria|Value set|
+ |---|---|---|
+ |File size|File size <= defined file size?|{0, 1}
+ ||**Sum File size**|{0, 1}|
+ |Header|Valid schema location from attribute “schemaLocation” or “noNamespaceSchemaLocation” available?|{0, 1}|
+ |Header|Schema comes from Component Registry?|{0, 1}|
+ |Header|MdProfile available and valid (against regular expression)?|{0, 1}|
+ |Header|MdCollectionDisplayName available?|{0, 1}|
+ |Header|MdSelfLink available?|{0, 1}|
+ ||**Sum Header**|{1,..., 5}|
+ |Facet|Percentage of of defined facets covered by instance|[0, 1]|
+ ||**Sum Facet**|[0, 1]|
+ |URL|Percentage of valid links|[0, 1]|
+ ||**Sum URL**|[0, 1]|
+ |XML|Is the xml valid?|{0, 1}|
+ |XML|Percentage of populated elements|[0, 1]|
+ ||**Sum XML**|[0, 2]|
+ ||**Sum Profile**|[0, 3]|
+ |Resource Proxy|Percentage of RP with mime type|[0, 1]|
+ |Resource Proxy|Percentage of RP with references|[0, 1]|
+ ||**Sum Resource Proxy**|[0, 2]|
+ ||**Sum over all**|[0, 15]|
           
     
 1. **What technology is the Link Checker based?**
@@ -170,7 +170,9 @@
     
 1. **I have more questions. Where can I ask them?**
 
-    Feel free to ask any questions by creating issues on our [github page](https://github.com/clarin-eric/clarin-curation-module/issues).
+    Feel free to ask any questions by creating issues on our 
+    [github page](https://github.com/clarin-eric/clarin- curation-module/issues) or by sending us an email to 
+    [metadata-curation@clarin.eu](mailto:metadata-curation@clarin.eu).
     
 1. **Where can I report issues?**
 
