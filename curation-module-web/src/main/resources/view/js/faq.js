@@ -15,6 +15,6 @@ $(document).ready( function () {
 
 //convert md to html with showdownjs and return
 function convert(mdFile){
-        var converter = new showdown.Converter();
+        var converter = new showdown.Converter({tables: true});
         return converter.makeHtml(mdFile);
 }
