@@ -62,7 +62,6 @@
     
     **Instance**
     
-    |---|---|---|
     |Context|Criteria|Value set|
     |---|---|---|
     |File size|File size <= defined file size?|{0, 1}
