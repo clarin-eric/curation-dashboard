@@ -6,14 +6,14 @@
 	<parent>
 		<groupId>eu.clarin.cmdi</groupId>
 		<artifactId>curation-module</artifactId>
-		<version>5.2.0</version>
+		<version>5.3.0</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>curation-module-web</artifactId>
 	<packaging>war</packaging>
 
-	<name>curation-module-web</name>
+	<name>curation-dashboard-web</name>
 	<url>https://curate.acdh.oeaw.ac.at/</url>
 
 	<properties>
@@ -76,8 +76,8 @@
 		</dependency>
 		<dependency>
 			<groupId>eu.clarin.cmdi</groupId>
-			<artifactId>curation-module-core</artifactId>
-			<version>5.2.0</version>
+			<artifactId>curation-dashboard-core</artifactId>
+			<version>5.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
