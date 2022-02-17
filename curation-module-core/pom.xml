@@ -96,7 +96,7 @@
 		<dependency>
 			<groupId>eu.clarin.cmdi</groupId>
 			<artifactId>vlo-importer</artifactId>
-			<version>4.9.5-SNAPSHOT</version>
+			<version>4.9.5-RC1</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.clarin.cmdi</groupId>
