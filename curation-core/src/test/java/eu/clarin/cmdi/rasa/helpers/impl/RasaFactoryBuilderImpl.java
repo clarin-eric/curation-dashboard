@@ -240,11 +240,6 @@ public class RasaFactoryBuilderImpl implements RasaFactoryBuilder {
          return null;
       }
 
-      @Override
-      public Boolean updateNextFetchDate(Long linkId, Timestamp nextFetchDate) throws SQLException {
-         // TODO Auto-generated method stub
-         return null;
-      }
 
       @Override
       public Boolean delete(String url) throws SQLException {
@@ -254,12 +249,6 @@ public class RasaFactoryBuilderImpl implements RasaFactoryBuilder {
 
       @Override
       public Boolean delete(List<String> urls) throws SQLException {
-         // TODO Auto-generated method stub
-         return null;
-      }
-
-      @Override
-      public List<String> getCollectionNames() throws SQLException {
          // TODO Auto-generated method stub
          return null;
       }
@@ -284,6 +273,18 @@ public class RasaFactoryBuilderImpl implements RasaFactoryBuilder {
 
       @Override
       public LinkToBeCheckedFilter getLinkToBeCheckedFilter() {
+         // TODO Auto-generated method stub
+         return null;
+      }
+
+      @Override
+      public Stream<LinkToBeChecked> getNextLinksToCheck() throws SQLException {
+         // TODO Auto-generated method stub
+         return null;
+      }
+
+      @Override
+      public Boolean updateURLs() throws SQLException {
          // TODO Auto-generated method stub
          return null;
       }

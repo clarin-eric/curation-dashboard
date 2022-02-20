@@ -21,11 +21,11 @@ import eu.clarin.cmdi.curation.report.Concept;
 import eu.clarin.cmdi.curation.report.FacetReport.Coverage;
 import eu.clarin.cmdi.curation.report.FacetReport.FacetValueStruct;
 import eu.clarin.cmdi.curation.report.FacetReport.ValueNode;
-import eu.clarin.cmdi.curation.vlo_extensions.FacetMappingCacheFactory;
+import eu.clarin.cmdi.curation.vlo_extensions.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.curation.xml.CMDXPathService;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
-import eu.clarin.cmdi.vlo.importer.mapping.FacetMapping;
+import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
@@ -91,7 +91,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
     private void facetsToNodes(CMDInstance entity, CMDInstanceReport report, Map<Integer, ValueNode> nodesMap,
             VTDNav nav) throws IOException, ExecutionException {
 
-        FacetMapping facetMapping = FacetMappingCacheFactory.getInstance().getFacetMapping(report.header);
+        FacetsMapping facetMapping = FacetsMappingCacheFactory.getInstance().getFacetsMapping(report.header);
 
         Map<String, List<ValueSet>> facetValuesMap = entity.getCMDIData().getDocument();
 

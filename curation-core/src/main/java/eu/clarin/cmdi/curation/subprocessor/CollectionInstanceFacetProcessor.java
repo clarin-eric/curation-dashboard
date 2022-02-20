@@ -13,9 +13,9 @@ import eu.clarin.cmdi.curation.entities.CMDInstance;
 
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.FacetReport.Coverage;
-import eu.clarin.cmdi.curation.vlo_extensions.FacetMappingCacheFactory;
+import eu.clarin.cmdi.curation.vlo_extensions.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.curation.report.Score;
-import eu.clarin.cmdi.vlo.importer.mapping.FacetMapping;
+import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
 
@@ -40,9 +40,9 @@ public class CollectionInstanceFacetProcessor extends CMDSubprocessor {
         entity.setParsedInstance(null);
 
 
-        FacetMapping facetMapping;
+        FacetsMapping facetMapping;
         try {
-            facetMapping = FacetMappingCacheFactory.getInstance().getFacetMapping(report.header);
+            facetMapping = FacetsMappingCacheFactory.getInstance().getFacetsMapping(report.header);
 
             report.facets = new FacetReportCreator().createFacetReport(report.header, facetMapping);
 

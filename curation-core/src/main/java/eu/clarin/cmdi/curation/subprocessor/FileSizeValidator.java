@@ -10,7 +10,7 @@ import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.vlo_extensions.CMDIDataImplFactory;
-import eu.clarin.cmdi.curation.vlo_extensions.FacetMappingCacheFactory;
+import eu.clarin.cmdi.curation.vlo_extensions.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.vlo.LanguageCodeUtils;
 import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
 import eu.clarin.cmdi.vlo.config.FieldNameService;
@@ -62,7 +62,7 @@ public class FileSizeValidator extends CMDSubprocessor {
 
             final VLOMarshaller marshaller = new VLOMarshaller();
 
-            final FacetMappingFactory facetMappingFactory = FacetMappingCacheFactory.getInstance();
+            final FacetMappingFactory facetMappingFactory = FacetsMappingCacheFactory.getInstance();
 
             return new CMDIParserVTDXML<>(
                     MetadataImporter.registerPostProcessors(vloConfig, fieldNameService, languageCodeUtils),

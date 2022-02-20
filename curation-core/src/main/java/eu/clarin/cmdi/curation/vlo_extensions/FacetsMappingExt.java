@@ -6,8 +6,8 @@ import java.util.LinkedHashMap;
 import org.apache.commons.collections.CollectionUtils;
 
 import eu.clarin.cmdi.vlo.importer.Pattern;
-import eu.clarin.cmdi.vlo.importer.mapping.FacetConfiguration;
-import eu.clarin.cmdi.vlo.importer.mapping.FacetMapping;
+import eu.clarin.cmdi.vlo.importer.mapping.FacetDefinition;
+import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 
 /*
  * This is an extension of the FacetMapping class which is only necessary in the curation module. The goal of the extension is 
@@ -20,57 +20,58 @@ import eu.clarin.cmdi.vlo.importer.mapping.FacetMapping;
  * 
 * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
 */
-public class FacetMappingExt extends FacetMapping {
+public class FacetsMappingExt extends FacetsMapping {
     
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    private static final LinkedHashMap<String, FacetConfiguration> _facetsMapExt = new LinkedHashMap<String, FacetConfiguration>();
+    private static final LinkedHashMap<String, FacetDefinition> _facetsMapExt = new LinkedHashMap<String, FacetDefinition>();
     
-    FacetMapping facetMapping;
+    FacetsMapping facetsMapping;
     
 
     static {
-        FacetConfiguration facetConfig; 
+        FacetDefinition facetConfig; 
         
-        facetConfig = new FacetConfiguration(null, "curation_schemaLocation");
+        facetConfig = new FacetDefinition(null, "curation_schemaLocation");
         facetConfig.setPattern(new Pattern("/cmd:CMD/@*[local-name()='schemaLocation']"));
         _facetsMapExt.put("curation_schemaLocation", facetConfig);
         
-        facetConfig = new FacetConfiguration(null, "curation_noNamespaceSchemaLocation");
+        facetConfig = new FacetDefinition(null, "curation_noNamespaceSchemaLocation");
         facetConfig.setPattern(new Pattern("/cmd:CMD/@*[local-name()='noNamespaceSchemaLocation']"));
         _facetsMapExt.put("curation_noNamespaceSchemaLocation", facetConfig);       
         
-        facetConfig = new FacetConfiguration(null, "curation_mdProfile");
+        facetConfig = new FacetDefinition(null, "curation_mdProfile");
         facetConfig.setPattern(new Pattern("/cmd:CMD/cmd:Header/cmd:MdProfile/text()"));
         _facetsMapExt.put("curation_mdProfile", facetConfig);       
         
         
     }
     
-    public FacetMappingExt(FacetMapping facetMapping) {
-        this.facetMapping = facetMapping;
+    public FacetsMappingExt(FacetsMapping facetsMapping) {
+       super(facetsMapping.getFacetsConfigurations());
+       this.facetsMapping = facetsMapping;
     }
 
 
     @SuppressWarnings("unchecked")
     @Override
-    public Collection<FacetConfiguration> getFacetConfigurations() {
+    public Collection<FacetDefinition> getFacetDefinitions() {
 
-        return CollectionUtils.union(this.facetMapping.getFacetConfigurations(), _facetsMapExt.values());
+        return CollectionUtils.union(this.facetsMapping.getFacetDefinitions(), _facetsMapExt.values());
 
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Collection<String> getFacetConfigurationNames() {
-        return CollectionUtils.union(this.facetMapping.getFacetConfigurationNames(), _facetsMapExt.keySet());
+        return CollectionUtils.union(this.facetsMapping.getFacetConfigurationNames(), _facetsMapExt.keySet());
     }
 
     @Override
-    public FacetConfiguration getFacetConfiguration(String facetName) {
-        return _facetsMapExt.containsKey(facetName)? _facetsMapExt.get(facetName):this.facetMapping.getFacetConfiguration(facetName);
+    public FacetDefinition getFacetDefinition(String facetName) {
+        return _facetsMapExt.containsKey(facetName)? _facetsMapExt.get(facetName):this.facetsMapping.getFacetDefinition(facetName);
     }
 
 }

@@ -32,23 +32,23 @@ import eu.clarin.cmdi.vlo.importer.mapping.*;
  *
  * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
  */
-public class FacetMappingCacheFactory extends FacetMappingFactory {
-    private static final Logger logger = LoggerFactory.getLogger(FacetMappingCacheFactory.class);
-    private final LoadingCache<ProfileHeader, FacetMapping> facetMappingPublicCache;
-    private final LoadingCache<ProfileHeader, FacetMapping> facetMappingNonPublicCache;
+public class FacetsMappingCacheFactory extends FacetMappingFactory {
+    private static final Logger logger = LoggerFactory.getLogger(FacetsMappingCacheFactory.class);
+    private final LoadingCache<ProfileHeader, FacetsMapping> facetMappingPublicCache;
+    private final LoadingCache<ProfileHeader, FacetsMapping> facetMappingNonPublicCache;
 
-    private static FacetMappingCacheFactory _facetMappingCacheFactory;
+    private static FacetsMappingCacheFactory _facetMappingCacheFactory;
 
-    public static FacetMappingCacheFactory getInstance() throws IOException {
+    public static FacetsMappingCacheFactory getInstance() throws IOException {
         if (_facetMappingCacheFactory == null) {
             VLOMarshaller marshaller = new VLOMarshaller();
-            _facetMappingCacheFactory = new FacetMappingCacheFactory(Configuration.VLO_CONFIG, marshaller);
+            _facetMappingCacheFactory = new FacetsMappingCacheFactory(Configuration.VLO_CONFIG, marshaller);
         }
         return _facetMappingCacheFactory;
     }
 
 
-    private FacetMappingCacheFactory(VloConfig vloConfig, VLOMarshaller marshaller) {
+    private FacetsMappingCacheFactory(VloConfig vloConfig, VLOMarshaller marshaller) {
         super(vloConfig, marshaller);
 
 
@@ -62,16 +62,16 @@ public class FacetMappingCacheFactory extends FacetMappingFactory {
                 .build(new FacetMappingCacheLoader());
     }
 
-    public FacetMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
+    public FacetsMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
         try {
-            return getFacetMapping(new CRService().createProfileHeader(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(profileId), "1.x", false));
+            return getFacetsMapping(new CRService().createProfileHeader(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(profileId), "1.x", false));
         } catch (ExecutionException ex) {
             logger.error("error while attempting to get facetMap for profileId {}", profileId, ex);
         }
         return null;
     }
 
-    public FacetMapping getFacetMapping(ProfileHeader header) throws ExecutionException {
+    public FacetsMapping getFacetsMapping(ProfileHeader header) throws ExecutionException {
         return header.isPublic() ? this.facetMappingPublicCache.get(header) : this.facetMappingNonPublicCache.get(header);
     }
 
@@ -88,10 +88,10 @@ public class FacetMappingCacheFactory extends FacetMappingFactory {
     }
 
 
-    private class FacetMappingCacheLoader extends CacheLoader<ProfileHeader, FacetMapping> {
+    private class FacetMappingCacheLoader extends CacheLoader<ProfileHeader, FacetsMapping> {
         @Override
-        public FacetMapping load(ProfileHeader header) {
-            return new FacetMappingExt(FacetMappingCacheFactory.this.createMapping(
+        public FacetsMapping load(ProfileHeader header) {
+            return new FacetsMappingExt(FacetsMappingCacheFactory.this.createMapping(
                     new ConceptLinkPathMapper() {
 
                         @Override

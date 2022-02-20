@@ -6,8 +6,8 @@ package eu.clarin.cmdi.curation.subprocessor;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Score;
-import eu.clarin.cmdi.curation.vlo_extensions.FacetMappingCacheFactory;
-import eu.clarin.cmdi.vlo.importer.mapping.FacetMapping;
+import eu.clarin.cmdi.curation.vlo_extensions.FacetsMappingCacheFactory;
+import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -19,8 +19,8 @@ public class ProfileFacetHandler {
 
     public void process(CMDProfileReport report) throws IOException, ExecutionException {
 
-        FacetMapping facetMapping;
-        facetMapping = FacetMappingCacheFactory.getInstance().getFacetMapping(report.header);
+        FacetsMapping facetMapping;
+        facetMapping = FacetsMappingCacheFactory.getInstance().getFacetsMapping(report.header);
         report.facet = new FacetReportCreator().createFacetReport(report.header, facetMapping);
 
     }

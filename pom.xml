@@ -6,17 +6,11 @@
     <artifactId>curation-dashboard</artifactId>
     <name>Curation Dashboard</name>
     <packaging>pom</packaging>
-    <version>5.3.0</version>
+    <version>5.3.0-SNAPSHOT</version>
     <organization>
         <name>CLARIN</name>
         <url>http://www.clarin.eu</url>
     </organization>
-    <modules>
-        
-        
-        <module>curation-dashboard-core</module>
-        <module>curation-dashboard-web</module>
-    </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -74,4 +68,8 @@
             </snapshots>
         </repository>
     </repositories>
+    <modules>
+    	<module>curation-core</module>
+    	<module>curation-web</module>
+    </modules>
 </project>
