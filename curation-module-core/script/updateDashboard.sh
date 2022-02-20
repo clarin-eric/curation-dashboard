@@ -3,6 +3,7 @@ START_TIME=$SECONDS
 
 WORK_DIR=/usr/local/curation-module
 BIN_DIR=$WORK_DIR/bin
+LIB_DIR=$WORK_DIR/lib
 DATA_DIR=$WORK_DIR/data
 CONF_DIR=$WORK_DIR/conf
 
@@ -49,7 +50,7 @@ set -e
 #done
 
 echo "generating new reports, downloading necessary profiles..."
-java $VM_ARGS -Dprojectname=curate -jar $BIN_DIR/curate.jar -config $CONF_DIR/config.properties -r -path $DATA_DIR/clarin/$CMDI_PATH $DATA_DIR/europeana/$CMDI_PATH
+java $VM_ARGS -Dprojectname=curate -cp "${BIN_DIR}/curate.jar:${LIB_DIR}/*" eu.clarin.cmdi.curation.main.Main -config $CONF_DIR/config.properties -r -path $DATA_DIR/clarin/$CMDI_PATH $DATA_DIR/europeana/$CMDI_PATH
 echo "report generation finished."
 
 if [ -e "$BIN_DIR/vlo-mapping-creator.jar" ]; then
