@@ -11,7 +11,7 @@
 	<artifactId>curation-web</artifactId>
 	<packaging>war</packaging>
 
-	<name>curation-dashboard-web</name>
+	<name>curation-web</name>
 	<url>https://curate.acdh.oeaw.ac.at/</url>
 
 	<properties>
