@@ -95,23 +95,7 @@
 		<dependency>
 			<groupId>eu.clarin.cmdi</groupId>
 			<artifactId>vlo-importer</artifactId>
-			<version>4.10.2</version>
-			<exclusions>
-				<exclusion>
-					<groupId>eu.clarin.cmdi</groupId>
-					<artifactId>
-            			resource-availability-status-api
-            		</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-			</exclusions>
+			<version>4.10.1</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.clarin.cmdi</groupId>
