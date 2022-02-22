@@ -3,7 +3,6 @@ package eu.clarin.cmdi.curation.report;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.report.CollectionReport.Record;
-import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
@@ -129,7 +128,6 @@ public class CMDInstanceReport implements Report<CollectionReport> {
             byteSize = String.valueOf(checkedLink.getByteSize());
             duration = TimeUtils.humanizeToTime(checkedLink.getDuration());
             timestamp = checkedLink.getCheckingDate().toString();
-            colorCode = CategoryColor.getColor(checkedLink.getCategory());
 
             return this;
         }

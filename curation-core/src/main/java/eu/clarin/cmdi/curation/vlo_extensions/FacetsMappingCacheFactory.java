@@ -2,7 +2,6 @@ package eu.clarin.cmdi.curation.vlo_extensions;
 
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

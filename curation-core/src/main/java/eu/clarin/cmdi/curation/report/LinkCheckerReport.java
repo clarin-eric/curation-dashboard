@@ -139,7 +139,6 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
          else {
             this.statistics.put(statisticsObj.category, new Statistics() {{
                   this.category = statisticsObj.category;
-                  this.colorCode = statisticsObj.colorCode;
                   this.count = statisticsObj.count;
                   this.avgRespTime = statisticsObj.avgRespTime;
                   this.maxRespTime = statisticsObj.maxRespTime;

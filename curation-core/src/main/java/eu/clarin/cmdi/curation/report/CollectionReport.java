@@ -1,7 +1,6 @@
 package eu.clarin.cmdi.curation.report;
 
 import eu.clarin.cmdi.curation.main.Configuration;
-import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
@@ -16,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 /**
@@ -198,7 +198,6 @@ public class CollectionReport implements Report<CollectionReport> {
 						break;
                 }
                 
-                xmlStatistics.colorCode = CategoryColor.getColor(statistics.getCategory());
                 urlReport.category.add(xmlStatistics);
             });
         }
@@ -343,7 +342,7 @@ public class CollectionReport implements Report<CollectionReport> {
         public Double avgRespTime = 0.0;
         public Long maxRespTime = 0L;
         @XmlElementWrapper(name = "statistics")
-        public Collection<Statistics> category = new ArrayList<>();
+        public Collection<Statistics> category = new TreeSet<Statistics>((stats1,stats2) -> stats1.category.compareTo(stats2.category));
     }
 
     @XmlRootElement
@@ -360,17 +359,13 @@ public class CollectionReport implements Report<CollectionReport> {
 
         @XmlAttribute
         public String category;
-
-        @XmlAttribute
-        public String colorCode;
         
         public Statistics() {
            
         }
         
-        public Statistics(String category, String colorCode) {
+        public Statistics(String category) {
            this.category = category;
-           this.colorCode = colorCode;
         }
     }
 

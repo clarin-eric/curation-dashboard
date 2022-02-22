@@ -95,9 +95,12 @@
 
     <fields>
         <field key="NAME">name</field>
+        <field key="CREATOR">creator</field>
         <field key="DESCRIPTION">description</field>
         <field key="COLLECTION">collection</field>
         <field key="LANGUAGE_CODE">languageCode</field>
+        <field key="LANGUAGE_COUNT">_languageCount</field>
+        <field key="MULTILINGUAL">multilingual</field>
         <field key="MODALITY">modality</field>
         <field key="CONTINENT">continent</field>
         <field key="COUNTRY">country</field>
@@ -114,6 +117,7 @@
         <field key="RESOURCE">_resourceRef</field>
         <field key="SELF_LINK">_selfLink</field>
         <field key="ID">id</field>
+        <field key="HARVESTER_ROOT">_harvesterRoot</field>
         <field key="DATA_PROVIDER">dataProvider</field>
         <field key="FILENAME">_fileName</field>
         <field key="FORMAT">format</field>
@@ -122,6 +126,7 @@
         <field key="SEARCH_SERVICE">_contentSearchRef</field>
         <field key="LAST_SEEN">_lastSeen</field>
         <field key="CLARIN_PROFILE">_componentProfile</field>
+        <field key="CLARIN_PROFILE_ID">_componentProfileId</field>
         <field key="HIERARCHY_WEIGHT">_hierarchyWeight</field>
         <field key="HAS_PART">_hasPart</field>
         <field key="HAS_PART_COUNT">_hasPartCount</field>
@@ -131,6 +136,8 @@
         <field key="COMPLETE_METADATA">metadataSource</field>
         <field key="PROJECT_NAME">projectName</field>
         <field key="TEMPORAL_COVERAGE">temporalCoverage</field>
+        <field key="TEMPORAL_COVERAGE_START">temporalCoverage_s</field>
+        <field key="TEMPORAL_COVERAGE_END">temporalCoverage_e</field>
         <field key="DAYS_SINCE_LAST_SEEN">_daysSinceLastSeen</field>
         <field key="HAS_PART_COUNT_WEIGHT">_hasPartCountWeight</field>
         <field key="LANGUAGE_NAME">_languageName</field>

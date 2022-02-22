@@ -154,3 +154,21 @@ summary:focus {
 details[open] h2:after{
    content: "(-)";
 }
+.Ok{
+	background-color: #00FF80;
+}
+.Undetermined{
+	background-color: #BFFF00;
+}
+.Restricted_Access{
+	background-color: #F4FA58;
+}
+.Blocked_By_Robots_txt{
+	background-color: #FE9A2E;
+} 
+.Broken{
+	background-color: #F78181;
+}
+.Invalid_URL{
+	background-color: #FA5858;
+}

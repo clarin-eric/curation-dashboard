@@ -458,15 +458,11 @@
 					<tbody>
 						<xsl:for-each
 							select="./url-validation-section/statistics/category">
-							<xsl:sort select="@category" />
-
 							<xsl:variable name="category">
 								<xsl:value-of select="./@category" />
 							</xsl:variable>
-							<xsl:variable name="color">
-								<xsl:value-of select="./@colorCode" />
-							</xsl:variable>
-							<tr style="background-color:{$color}">
+
+							<tr class="{$category}">
 								<td align="right">
 									<a href="/statistics/{$collectionName}/{$category}">
 										<xsl:copy-of select="$category" />

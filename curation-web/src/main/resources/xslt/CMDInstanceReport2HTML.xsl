@@ -456,24 +456,21 @@
 					</thead>
 					<tbody>
 						<xsl:for-each select="./single-url-report/url">
-							<xsl:sort select="@category" />
 							<xsl:variable name="category">
 								<xsl:value-of select="./@category" />
 							</xsl:variable>
 							<xsl:variable name="link">
 								<xsl:value-of select="." />
 							</xsl:variable>
-							<xsl:variable name="color">
-								<xsl:value-of select="./@color-code" />
-							</xsl:variable>
+
 
 							<tr>
-								<td style="background-color:{$color}">
+								<td class="{$category}">
 									<a href="{$link}">
 										<xsl:value-of select="." />
 									</a>
 								</td>
-								<td style="background-color:{$color}">
+								<td class="{$category}">
 									<xsl:copy-of select="$category" />
 								</td>
 

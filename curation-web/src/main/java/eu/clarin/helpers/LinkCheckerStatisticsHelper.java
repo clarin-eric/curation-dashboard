@@ -80,7 +80,7 @@ public class LinkCheckerStatisticsHelper {
                 String urlWithBreak = url.replace("_", "_<wbr>");
 
                 //url
-                sb.append("<td style='background-color:" + CategoryColor.getColor(category) + "'>");
+                sb.append("<td class='" + category.name() + "'>");
                 sb.append("<a href='").append(url).append("'>").append(urlWithBreak).append("</a>");
                 sb.append("</td>");
 
