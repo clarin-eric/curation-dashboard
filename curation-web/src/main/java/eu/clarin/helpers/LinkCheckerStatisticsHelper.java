@@ -1,6 +1,5 @@
 package eu.clarin.helpers;
 
-import eu.clarin.cmdi.curation.utils.CategoryColor;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
