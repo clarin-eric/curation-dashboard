@@ -4,12 +4,6 @@
 
 <web-app>
   <display-name>Curation Dashboard</display-name>
-
-  <context-param>
-    <param-name>config.location</param-name>
-    <param-value>/usr/local/curation-module/conf/config.properties</param-value>
-  </context-param>
-
   <servlet>
     <servlet-name>Jersey Web Application</servlet-name>
     <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>

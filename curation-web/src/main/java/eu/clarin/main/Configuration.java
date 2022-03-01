@@ -35,7 +35,7 @@ public class Configuration extends eu.clarin.cmdi.curation.main.Configuration{
 
         VIEW_RESOURCES_PATH = servletContext.getRealPath("/WEB-INF/classes/view/");
 
-        String path = servletContext.getInitParameter("config.location");
+        String path = System.getenv("CONFIG_LOCATION");
 
         //this is necessary for core module methods.
         eu.clarin.cmdi.curation.main.Configuration.init(path);
