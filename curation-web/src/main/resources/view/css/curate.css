@@ -132,7 +132,7 @@ div.clear{
 }  
 summary h2:after {
    font-size: 0.8em;
-   content: "(+)";
+   content: url(/view/images/info-14.png);
    display: inline-block;
    padding-left: 10px;
 }  
@@ -152,7 +152,7 @@ summary:focus {
 }
 
 details[open] h2:after{
-   content: "(-)";
+   content: url(/view/images/info_open-14.png);
 }
 .Ok{
 	background-color: #00FF80;
