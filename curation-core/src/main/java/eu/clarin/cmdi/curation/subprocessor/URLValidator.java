@@ -83,7 +83,7 @@ public class URLValidator extends CMDSubprocessor {
 
             linkList.add(
                   new LinkToBeChecked(url, Configuration.LINK_DATA_SOURCE, finalRecord, finalCollection, expectedMimeType,
-                        Configuration.reportGenerationDate)
+                        Configuration.REPORT_GENERATION_DATE)
                );
          }
          

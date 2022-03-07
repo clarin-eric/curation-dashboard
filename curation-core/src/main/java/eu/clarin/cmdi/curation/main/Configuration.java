@@ -25,7 +25,7 @@ public class Configuration {
    private static Logger logger = LoggerFactory.getLogger(Configuration.class);
 
    // prevent milliseconds
-   public static Timestamp reportGenerationDate = new Timestamp((System.currentTimeMillis() / 1000) * 1000);
+   public static Timestamp REPORT_GENERATION_DATE = new Timestamp((System.currentTimeMillis() / 1000) * 1000);
 
    public static String SCORE_NUMERIC_DISPLAY_FORMAT;
    public static String TIMESTAMP_DISPLAY_FORMAT;

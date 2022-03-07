@@ -32,6 +32,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -243,6 +244,12 @@ public class Main {
             Files.createDirectories(path);
             String filename = FileNameEncoder.encode(report.getName()) + ".xml";
             path = path.resolve(filename);
+            
+            // rollover for files
+            if(Files.exists(path)) {
+               Path rolloverPath = path.getParent().resolve(path.getFileName().toString().replace(".", "_" + Files.getLastModifiedTime(path) + "."));
+               Files.copy(path, rolloverPath, StandardCopyOption.REPLACE_EXISTING);
+            }
 
             marshaller.marshal(report, Files.newOutputStream(path));
 
@@ -276,6 +283,13 @@ public class Main {
         Files.createDirectories(path);
         String filename = FileNameEncoder.encode(report.getName()) + ".html";
         path = path.resolve(filename);
+        
+        // rollover for files
+        if(Files.exists(path)) {
+           Path rolloverPath = path.getParent().resolve(path.getFileName().toString().replace(".", "_" + Files.getLastModifiedTime(path) + "."));
+           Files.copy(path, rolloverPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        
 
         TransformerFactory factory = TransformerFactory.newInstance();
 
@@ -286,29 +300,6 @@ public class Main {
 
 
     }
-
-   /*
-    * private static void dumpAsTSV(Report<?> report, CurationEntityType type)
-    * throws TransformerException, JAXBException, IOException { Path path =
-    * Configuration.OUTPUT_DIRECTORY.resolve("tsv");
-    * 
-    * switch (type) { case PROFILE: path = path.resolve("profiles"); break; case
-    * INSTANCE: path = path.resolve("instances"); break; case COLLECTION: path =
-    * path.resolve("collections"); break; default: break; }
-    * 
-    * Files.createDirectories(path); String filename =
-    * FileNameEncoder.encode(report.getName()) + ".tsv"; path =
-    * path.resolve(filename);
-    * 
-    * TransformerFactory factory = TransformerFactory.newInstance(); Source xslt =
-    * new StreamSource(Main.class.getResourceAsStream("/xslt/" +
-    * report.getClass().getSimpleName() + "2TSV.xsl"));
-    * 
-    * Transformer transformer = factory.newTransformer(xslt);
-    * transformer.transform(new
-    * JAXBSource(JAXBContext.newInstance(report.getClass()), report), new
-    * StreamResult(path.toFile())); }
-    */
 
     private static Options createHelpOption() {
         Option help = new Option("help", "print this message");
