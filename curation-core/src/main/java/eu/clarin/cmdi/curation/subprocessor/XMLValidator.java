@@ -94,19 +94,6 @@ public class XMLValidator extends CMDSubprocessor {
         return new Score(valid ? 1.0 : 0.0, 1.0, "xml-validation", list);
     }
 
-    //set custom xerces features here, if u really need them
-//    private void setValidationFeatures(ValidatorHandler validator) {
-//		try {
-//		    validator.setFeature("http://apache.org/xml/features/warn-on-duplicate-entitydef", true);
-//		    validator.setFeature("http://apache.org/xml/features/continue-after-fatal-error", true);
-//		    validator.setFeature("http://xml.org/sax/features/validation", true);
-//		    validator.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
-//		} catch (Exception e) {
-//		    logger.warn("feature is not supported", e);
-//		}
-//    }
-
-
     class CMDIInstanceContentHandler extends DefaultHandler {
 
         CMDInstance instance;
@@ -116,12 +103,6 @@ public class XMLValidator extends CMDSubprocessor {
         boolean elemWithValue;
 
         Locator locator;
-
-        // for handling attributes
-        // private TypeInfoProvider provider;
-        // public CMDIContentHandler(TypeInfoProvider provider) {
-        // this.provider = provider;
-        // }
 
         public CMDIInstanceContentHandler(CMDInstance instance, CMDInstanceReport report) {
             this.instance = instance;

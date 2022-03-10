@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.report;
 import eu.clarin.cmdi.curation.report.CollectionReport.Statistics;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 
 import javax.xml.bind.annotation.*;
 
@@ -85,7 +86,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
       public CMDCollection(CollectionReport collectionReport, LinkCheckerReport linkcheckerReport) {
          this.name = collectionReport.getName();
-         this.statistics = collectionReport.urlReport.category;
+         this.statistics = collectionReport.urlReport.statistics;
          this.count = collectionReport.urlReport.totNumOfCheckedLinks;
          this.avgRespTime = collectionReport.urlReport.avgRespTime;
          this.maxRespTime = collectionReport.urlReport.maxRespTime;
@@ -100,12 +101,12 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
             linkcheckerReport.overall.maxRespTime = collectionReport.urlReport.maxRespTime;
          }
          
-         collectionReport.urlReport.category.forEach(linkcheckerReport.overall::addStatistics);
+         collectionReport.urlReport.statistics.forEach(linkcheckerReport.overall::addStatistics);
       }
    }
 
    public static class Overall {
-      private TreeMap<String, Statistics> statistics;
+      private TreeMap<Category, Statistics> statistics;
       @XmlAttribute
       private int count;
 
@@ -121,7 +122,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
       }
 
       public Overall() {
-         this.statistics = new TreeMap<String, Statistics>();
+         this.statistics = new TreeMap<Category, Statistics>();
       }
       
       public void addStatistics(Statistics statisticsObj) {

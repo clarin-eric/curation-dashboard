@@ -26,7 +26,7 @@
 							<xsl:variable name="category">
 								<xsl:value-of select="./@category" />
 							</xsl:variable>
-							<tr class="background-color:{$category}">
+							<tr class="{$category}">
 
 								<td>
 									<a href="/statistics/Overall/{$category}">
@@ -110,7 +110,7 @@
 								<xsl:variable name="category">
 									<xsl:value-of select="./@category" />
 								</xsl:variable>
-								<tr style="{$category}">
+								<tr class="{$category}">
 									<td>
 										<a href="/statistics/{$name}/{$category}">
 											<xsl:value-of select="@category"></xsl:value-of>

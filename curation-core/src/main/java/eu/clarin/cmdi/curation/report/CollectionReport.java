@@ -6,6 +6,9 @@ import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.DAO.Statistics.CategoryStatistics;
 import eu.clarin.cmdi.rasa.filters.CheckedLinkFilter;
+import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
+
+import org.checkerframework.checker.units.qual.s;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +17,7 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -178,7 +182,7 @@ public class CollectionReport implements Report<CollectionReport> {
                 Statistics xmlStatistics = new Statistics();
                 xmlStatistics.avgRespTime = statistics.getAvgRespTime();
                 xmlStatistics.maxRespTime = statistics.getMaxRespTime();
-                xmlStatistics.category = statistics.getCategory().name();
+                xmlStatistics.category = statistics.getCategory();
                 xmlStatistics.count = statistics.getCount();                
                 urlReport.totNumOfCheckedLinks += statistics.getCount();
                 switch(statistics.getCategory()) {
@@ -198,7 +202,7 @@ public class CollectionReport implements Report<CollectionReport> {
 						break;
                 }
                 
-                urlReport.category.add(xmlStatistics);
+                urlReport.statistics.add(xmlStatistics);
             });
         }
         catch(Exception ex) {
@@ -342,12 +346,12 @@ public class CollectionReport implements Report<CollectionReport> {
         public Double avgRespTime = 0.0;
         public Long maxRespTime = 0L;
         @XmlElementWrapper(name = "statistics")
-        public Collection<Statistics> category = new TreeSet<Statistics>((stats1,stats2) -> stats1.category.compareTo(stats2.category));
+        public Collection<Statistics> statistics = new TreeSet<Statistics>();
     }
 
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Statistics {
+    public static class Statistics implements Comparator<Statistics>{
         @XmlAttribute
         public long count;
 
@@ -358,15 +362,22 @@ public class CollectionReport implements Report<CollectionReport> {
         public double maxRespTime;
 
         @XmlAttribute
-        public String category;
+        public Category category;
         
         public Statistics() {
            
         }
         
-        public Statistics(String category) {
+        public Statistics(Category category) {
            this.category = category;
         }
+
+      @Override
+      public int compare(Statistics stat1, Statistics stat2) {
+         
+         return stat1.category.compareTo(stat2.category);
+      
+      }
     }
 
     @XmlRootElement
