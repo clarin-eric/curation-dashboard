@@ -84,11 +84,6 @@
          <scope>provided</scope>
       </dependency>
       <dependency>
-         <groupId>net.sf.saxon</groupId>
-         <artifactId>Saxon-HE</artifactId>
-         <version>10.3</version>
-      </dependency>
-      <dependency>
          <groupId>org.commonmark</groupId>
          <artifactId>commonmark</artifactId>
          <version>${commonmark.version}</version>
