@@ -84,11 +84,11 @@
 
 	<languageNameVariantsUrl>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/LanguageNameVariantsMap.xml</languageNameVariantsUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/LanguageNameVariantsMap.xml -->
 
-	<licenseAvailabilityMapUrl>${vloconfig.mappingFilesLocation}LicenseAvailabilityMap.xml</licenseAvailabilityMapUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/LicenseAvailabilityMap.xml -->
+	<licenseAvailabilityMapUrl>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/LicenseAvailabilityMap.xml</licenseAvailabilityMapUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/LicenseAvailabilityMap.xml -->
 
-	<licenseURIMapUrl>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/LicenseAvailabilityMap.xml</licenseURIMapUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/LicenseURIMap.xml -->
+	<licenseURIMapUrl>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/LicenseURIMap.xml</licenseURIMapUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/LicenseURIMap.xml -->
 
-	<licenseTypeMapUrl>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/LicenseURIMap.xml</licenseTypeMapUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/LicenseTypeMap.xml -->
+	<licenseTypeMapUrl>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/LicenseTypeMap.xml</licenseTypeMapUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/LicenseTypeMap.xml -->
 
 	<valueMappingsFile>/usr/local/curation-module/conf/value_maps/master.xml</valueMappingsFile> <!-- bundled resource: /value-maps/dist/master.xml -->
 
