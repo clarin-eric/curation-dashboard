@@ -27,7 +27,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -226,32 +225,19 @@ public class Main {
         marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
 
         if (Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null) {
-            Path path = Configuration.OUTPUT_DIRECTORY.resolve("xml");
-            switch (type) {
-                case PROFILE:
-                    path = path.resolve("profiles");
-                    break;
-                case INSTANCE:
-                    path = path.resolve("instances");
-                    break;
-                case COLLECTION:
-                    path = path.resolve("collections");
-                    break;
-                case STATISTICS:
-                    path = path.resolve("statistics");
-            }
+            Path path = Configuration.OUTPUT_DIRECTORY
+                  .resolve("xml")
+                  .resolve(type.toString().toLowerCase() + "s");
 
             Files.createDirectories(path);
             String filename = FileNameEncoder.encode(report.getName()) + ".xml";
             path = path.resolve(filename);
-            
-            // rollover for files
-            if(Files.exists(path)) {
-               Path rolloverPath = path.getParent().resolve(path.getFileName().toString().replace(".", "_" + Files.getLastModifiedTime(path) + "."));
-               Files.copy(path, rolloverPath, StandardCopyOption.REPLACE_EXISTING);
-            }
 
             marshaller.marshal(report, Files.newOutputStream(path));
+            
+            // instead of a rollover we create a copy with report generation date in filename
+            copyStampedFile(path);
+            
 
         } else {//print to console
             marshaller.marshal(report, System.out);
@@ -264,31 +250,15 @@ public class Main {
     }
 
     private static void dumpAsHTML(Report<?> report, CurationEntityType type) throws TransformerException, JAXBException, IOException {
-        Path path = Configuration.OUTPUT_DIRECTORY.resolve("html");
-
-        switch (type) {
-            case PROFILE:
-                path = path.resolve("profiles");
-                break;
-            case INSTANCE:
-                path = path.resolve("instances");
-                break;
-            case COLLECTION:
-                path = path.resolve("collections");
-                break;
-            case STATISTICS:
-                path = path.resolve("statistics");
-        }
+        Path path = Configuration.OUTPUT_DIRECTORY
+              .resolve("html")
+              .resolve(type.toString().toLowerCase() + "s");
 
         Files.createDirectories(path);
         String filename = FileNameEncoder.encode(report.getName()) + ".html";
         path = path.resolve(filename);
         
-        // rollover for files
-        if(Files.exists(path)) {
-           Path rolloverPath = path.getParent().resolve(path.getFileName().toString().replace(".", "_" + Files.getLastModifiedTime(path) + "."));
-           Files.copy(path, rolloverPath, StandardCopyOption.REPLACE_EXISTING);
-        }
+        copyStampedFile(path);
         
 
         TransformerFactory factory = TransformerFactory.newInstance();
@@ -299,6 +269,12 @@ public class Main {
         transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), new StreamResult(path.toFile()));
 
 
+    }
+    
+    private static void copyStampedFile(Path path) throws IOException {
+       String stampedFileName = path.getFileName().toString().replace(".", "_" + String.format("%1tF", Configuration.REPORT_GENERATION_DATE) + ".");
+       Path stampedPath = path.getParent().resolve(stampedFileName);
+       Files.copy(path, stampedPath, StandardCopyOption.REPLACE_EXISTING);
     }
 
     private static Options createHelpOption() {
@@ -345,29 +321,5 @@ public class Main {
         options.addOptionGroup(curationInputParams);
 
         return options;
-    }
-
-    private static OutputStream getOutputStream(Report report, CurationEntityType type) throws IOException {
-        if (Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null) {
-            Path path = null;
-            switch (type) {
-                case PROFILE:
-                    path = Configuration.OUTPUT_DIRECTORY.resolve("profiles");
-                    break;
-                case INSTANCE:
-                    path = Configuration.OUTPUT_DIRECTORY.resolve("instances");
-                    break;
-                case COLLECTION:
-                    path = Configuration.OUTPUT_DIRECTORY.resolve("collections");
-                    break;
-            }
-
-            Files.createDirectories(path);
-            path = path.resolve(report.getName() + ".xml");
-            return Files.newOutputStream(path);
-        }
-
-        return System.out;
-
     }
 }

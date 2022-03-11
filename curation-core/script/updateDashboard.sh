@@ -20,37 +20,17 @@ XSD_CACHE=$WORK_DIR/xsd_cache
 # terminate script if anything goes wrong
 set -e
 
-#delete old data in case not done before
-#echo "delete old data in case not done before..."
-#if [ -e $DATA_DIR ]; then
-#	chmod -R a+w $DATA_DIR
-#	rm -rf $DATA_DIR
-#fi
+# set data paths
+if [ -z "$PROVIDER_SETS" ]; then
+   export PROVIDER_SETS="clarin europeana"
+fi
 
-# create new data directory
-#mkdir -p $DATA_DIR/clarin
-#mkdir $DATA_DIR/europeana
-
-#get harvested collections
-#for RESULTSET in $RESULTSETS; do
-#	if [ "$RESULTSET" = "europeana.tar.bz2" ]; then
-#		cd $DATA_DIR/europeana
-#	else
-#		cd $DATA_DIR/clarin
-#	fi
-#	#download tar
-#	wget $HARVESTER_URL/$RESULTSET
-#
-#	echo "unpacking $RESULTSET..."
-#	#unpack CMDI 1.2 files
-#	tar -xjf $RESULTSET $CMDI_PATH
-#
-#	#delete tar
-#	rm $RESULTSET
-#done
+for providerSet in $PROVIDER_SETS; do
+   DATA_PATHS="$DATA_PATHS ${DATA_DIR}/${providerSet}/${CMDI_PATH}"
+done 
 
 echo "generating new reports, downloading necessary profiles..."
-java $VM_ARGS -Dprojectname=curate -cp "${BIN_DIR}/curate.jar:${LIB_DIR}/*" eu.clarin.cmdi.curation.main.Main -config $CONF_DIR/config.properties -r -path $DATA_DIR/clarin/$CMDI_PATH $DATA_DIR/europeana/$CMDI_PATH
+java $VM_ARGS -Dprojectname=curate -cp "${BIN_DIR}/curate.jar:${LIB_DIR}/*" eu.clarin.cmdi.curation.main.Main -config ${CONF_DIR}/config.properties -r -path ${DATA_PATHS}
 echo "report generation finished."
 
 if [ -e "$BIN_DIR/vlo-mapping-creator.jar" ]; then
