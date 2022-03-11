@@ -6,7 +6,7 @@
 		</Console>
 		<RollingFile name="FILE"
 			fileName="${sys:catalina.home}/logs/curation.log"
-			filePattern="${sys:catalina.home}/logs/curate_%d{yyyy-MM-dd}.log.gz"
+			filePattern="${sys:catalina.home}/logs/curation_%d{yyyy-MM-dd}.log.gz"
 			ignoreExceptions="false">
 			<PatternLayout>
 				<Pattern>%d %p [%c#%M:%L] - %m%n</Pattern>

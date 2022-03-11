@@ -43,7 +43,7 @@
     referenced in the metadata. In practice, the resources are URLs (or more commonly links),
     which can be checked via HTTP requests. The Link Checker then saves the responses to the requests in a database. 
     The links are extracted from CMD Records within the collections.
-    Results of the checking can be directly viewed on the [Link Checker Statistics page](https://curate.clarin.eu/statistics)
+    Results of the checking can be directly viewed on the [Link Checker Statistics page](https://curation.clarin.eu/statistics)
     and they also affect the overall score of the collections. 
     
 1. **How does scoring work?**

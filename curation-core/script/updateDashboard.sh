@@ -30,7 +30,7 @@ for providerSet in $PROVIDER_SETS; do
 done 
 
 echo "generating new reports, downloading necessary profiles..."
-java $VM_ARGS -Dprojectname=curate -cp "${BIN_DIR}/curate.jar:${LIB_DIR}/*" eu.clarin.cmdi.curation.main.Main -config ${CONF_DIR}/config.properties -r -path ${DATA_PATHS}
+java $VM_ARGS -Dprojectname=curation -cp "${BIN_DIR}/curation.jar:${LIB_DIR}/*" eu.clarin.cmdi.curation.main.Main -config ${CONF_DIR}/config.properties -r -path ${DATA_PATHS}
 echo "report generation finished."
 
 if [ -e "$BIN_DIR/vlo-mapping-creator.jar" ]; then
@@ -48,6 +48,3 @@ fi
 
 ELAPSED_TIME=$(($SECONDS - $START_TIME))
 echo "Elapsed time: $(($ELAPSED_TIME/60)) min"
-echo "please restart curate webapp with 'docker-manage -e clarin-curate -v'"
-#restart curate webapp
-#docker-manage -e clarin-curate -v

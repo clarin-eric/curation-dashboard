@@ -10,7 +10,6 @@
    <packaging>war</packaging>
 
    <name>curation-web</name>
-   <url>https://curate.acdh.oeaw.ac.at/</url>
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -101,20 +100,20 @@
             <filtering>true</filtering>
          </resource>
       </resources>
-      <finalName>curate</finalName>
+      <finalName>curation</finalName>
       <plugins>
          <plugin>
             <artifactId>maven-war-plugin</artifactId>
             <version>3.2.3</version>
             <executions>
                <execution>
-                  <id>curate</id>
+                  <id>curation</id>
                   <phase>install</phase>
                   <goals>
                      <goal>war</goal>
                   </goals>
                   <configuration>
-                     <warName>curate</warName>
+                     <warName>curation</warName>
                   </configuration>
                </execution>
                <execution>
