@@ -116,7 +116,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
       @XmlAttribute
       private long maxRespTime;
 
-      @XmlElement
+      @XmlElement(name = "statistics")
       public Collection<Statistics> getStatistics() {
          return this.statistics.values();
       }

@@ -8,7 +8,6 @@ import eu.clarin.cmdi.rasa.DAO.Statistics.CategoryStatistics;
 import eu.clarin.cmdi.rasa.filters.CheckedLinkFilter;
 import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 
-import org.checkerframework.checker.units.qual.s;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,25 +177,25 @@ public class CollectionReport implements Report<CollectionReport> {
         
         try (Stream<CategoryStatistics> stream = Configuration.checkedLinkResource.getCategoryStatistics(filter)){
        	
-            stream.forEach(statistics -> {
+            stream.forEach(categoryStats -> {
                 Statistics xmlStatistics = new Statistics();
-                xmlStatistics.avgRespTime = statistics.getAvgRespTime();
-                xmlStatistics.maxRespTime = statistics.getMaxRespTime();
-                xmlStatistics.category = statistics.getCategory();
-                xmlStatistics.count = statistics.getCount();                
-                urlReport.totNumOfCheckedLinks += statistics.getCount();
-                switch(statistics.getCategory()) {
+                xmlStatistics.avgRespTime = categoryStats.getAvgRespTime();
+                xmlStatistics.maxRespTime = categoryStats.getMaxRespTime();
+                xmlStatistics.category = categoryStats.getCategory();
+                xmlStatistics.count = categoryStats.getCount();                
+                urlReport.totNumOfCheckedLinks += categoryStats.getCount();
+                switch(categoryStats.getCategory()) {
                 	case Broken:
-                		urlReport.totNumOfBrokenLinks = (int) statistics.getCount();
+                		urlReport.totNumOfBrokenLinks = (int) categoryStats.getCount();
                 		break;
                 	case Undetermined:
-                		urlReport.totNumOfUndeterminedLinks = (int) statistics.getCount();
+                		urlReport.totNumOfUndeterminedLinks = (int) categoryStats.getCount();
                 		break;
                 	case Restricted_Access:
-                		urlReport.totNumOfRestrictedAccessLinks = (int) statistics.getCount();
+                		urlReport.totNumOfRestrictedAccessLinks = (int) categoryStats.getCount();
                 		break;
                 	case Blocked_By_Robots_txt:
-                		urlReport.totNumOfBlockedByRobotsTxtLinks = (int) statistics.getCount();
+                		urlReport.totNumOfBlockedByRobotsTxtLinks = (int) categoryStats.getCount();
                 		break;
 					default:
 						break;
@@ -206,7 +205,8 @@ public class CollectionReport implements Report<CollectionReport> {
             });
         }
         catch(Exception ex) {
-        	LOG.error("couldn't get category statistics for provider group '{}' from database", getName());
+           
+        	LOG.error("couldn't get category statistics for provider group '{}' from database", getName(), ex);
         }
         
         try {    
@@ -351,7 +351,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
     @XmlRootElement
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Statistics implements Comparator<Statistics>{
+    public static class Statistics implements Comparable<Statistics>{
         @XmlAttribute
         public long count;
 
@@ -373,10 +373,9 @@ public class CollectionReport implements Report<CollectionReport> {
         }
 
       @Override
-      public int compare(Statistics stat1, Statistics stat2) {
+      public int compareTo(Statistics other) {
          
-         return stat1.category.compareTo(stat2.category);
-      
+         return this.category.compareTo(other.category);
       }
     }
 
