@@ -256,9 +256,7 @@ public class Main {
 
         Files.createDirectories(path);
         String filename = FileNameEncoder.encode(report.getName()) + ".html";
-        path = path.resolve(filename);
-        
-        copyStampedFile(path);
+        path = path.resolve(filename);       
         
 
         TransformerFactory factory = TransformerFactory.newInstance();
@@ -267,7 +265,8 @@ public class Main {
 
         Transformer transformer = factory.newTransformer(xslt);
         transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), new StreamResult(path.toFile()));
-
+        
+        copyStampedFile(path);
 
     }
     
