@@ -227,7 +227,7 @@ public class Main {
         if (Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null) {
             Path path = Configuration.OUTPUT_DIRECTORY
                   .resolve("xml")
-                  .resolve(type.toString().toLowerCase() + "s");
+                  .resolve(type.toString());
 
             Files.createDirectories(path);
             String filename = FileNameEncoder.encode(report.getName()) + ".xml";
@@ -252,7 +252,7 @@ public class Main {
     private static void dumpAsHTML(Report<?> report, CurationEntityType type) throws TransformerException, JAXBException, IOException {
         Path path = Configuration.OUTPUT_DIRECTORY
               .resolve("html")
-              .resolve(type.toString().toLowerCase() + "s");
+              .resolve(type.toString());
 
         Files.createDirectories(path);
         String filename = FileNameEncoder.encode(report.getName()) + ".html";

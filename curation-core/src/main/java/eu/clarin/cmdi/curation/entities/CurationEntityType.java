@@ -1,5 +1,19 @@
 package eu.clarin.cmdi.curation.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum CurationEntityType {
-    PROFILE,INSTANCE,COLLECTION,STATISTICS
+
+   PROFILE("profiles"), INSTANCE("instances"), COLLECTION("collections"), STATISTICS("statistics");
+
+   private final String stringValue;
+
+   @Override
+   public String toString() {
+      
+      return this.stringValue;
+   }
 }

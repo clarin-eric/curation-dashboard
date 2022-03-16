@@ -16,7 +16,6 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -345,7 +344,7 @@ public class CollectionReport implements Report<CollectionReport> {
         public int totNumOfBlockedByRobotsTxtLinks;
         public Double avgRespTime = 0.0;
         public Long maxRespTime = 0L;
-        @XmlElementWrapper(name = "statistics")
+        @XmlElementWrapper(name = "linkchecker")
         public Collection<Statistics> statistics = new TreeSet<Statistics>();
     }
 

@@ -37,23 +37,25 @@ public class Statistics {
 
     @GET
     @Path("/{collectionName}/{category}")
-    public Response getStatusStatsInit(@PathParam("collectionName") String collectionName, @PathParam("category") String category) {
+    public Response getStatusStatsInit(@PathParam("collectionName") String collectionName, @PathParam("category") String categoryString) {
         log.info("URL category table requested for collection " + collectionName);
         String urlStatistics = null;
 
-        Category categoryEnum = Arrays.stream(Category.values())
-                .filter(c -> c.name().equalsIgnoreCase(category)).findAny().orElse(null);
+        try {
+              Category category = Category.valueOf(categoryString);
+              
+              try {
+                 urlStatistics = LinkCheckerStatisticsHelper.createURLTable(collectionName, category);
+             } catch (SQLException e) {
+                 log.error("Error in statistics: "+e.getMessage());
+                 return ResponseManager.returnServerError();
+             }     
+        }
+        catch(Exception ex) {      
 
-        if(categoryEnum==null){
             return ResponseManager.returnError(400,"Given category doesn't match any of the following categories: "+ Arrays.toString(Category.values()));
         }
 
-        try {
-            urlStatistics = LinkCheckerStatisticsHelper.createURLTable(collectionName, categoryEnum);
-        } catch (SQLException e) {
-            log.error("Error in statistics: "+e.getMessage());
-            return ResponseManager.returnServerError();
-        }
         return ResponseManager.returnHTML(200, urlStatistics);
     }
 

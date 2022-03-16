@@ -457,7 +457,7 @@
 					</thead>
 					<tbody>
 						<xsl:for-each
-							select="./url-validation-section/statistics/category">
+							select="./url-validation-section/linkchecker/statistics">
 							<xsl:variable name="category">
 								<xsl:value-of select="./@category" />
 							</xsl:variable>
