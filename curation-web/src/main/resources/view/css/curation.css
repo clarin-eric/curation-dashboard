@@ -154,6 +154,7 @@ summary:focus {
 details[open] h2:after{
    content: url(/view/images/info_open-14.png);
 }
+/*
 .Ok{
 	background-color: #00FF80;
 }
@@ -172,3 +173,4 @@ details[open] h2:after{
 .Invalid_URL{
 	background-color: #FA5858;
 }
+*/

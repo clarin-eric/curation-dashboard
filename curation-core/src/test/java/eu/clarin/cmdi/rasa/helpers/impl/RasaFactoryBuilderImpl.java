@@ -27,7 +27,7 @@ import eu.clarin.cmdi.rasa.linkResources.LinkToBeCheckedResource;
 public class RasaFactoryBuilderImpl implements RasaFactoryBuilder {
 
    @Override
-   public RasaFactory getRasaFactory(Properties properties) {
+   public RasaFactory getRasaFactory() {
 
       return new MockFactory();
    }
@@ -55,7 +55,14 @@ public class RasaFactoryBuilderImpl implements RasaFactoryBuilder {
       public void tearDown() {
          // TODO Auto-generated method stub
          
-      }      
+      }
+
+      @Override
+      public RasaFactory init(Properties properties) {
+         // TODO Auto-generated method stub
+         return null;
+      }
+  
    }
    
    private class MockCheckedLinkResource implements CheckedLinkResource{
@@ -289,5 +296,11 @@ public class RasaFactoryBuilderImpl implements RasaFactoryBuilder {
          return null;
       }
       
+   }
+
+   @Override
+   public RasaFactory getRasaFactory(Properties properties) {
+      // TODO Auto-generated method stub
+      return null;
    }
 }

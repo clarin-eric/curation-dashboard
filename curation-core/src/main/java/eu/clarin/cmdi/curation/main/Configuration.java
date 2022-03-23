@@ -122,7 +122,8 @@ public class Configuration {
       config.entrySet().stream().filter(es -> es.getKey().toString().startsWith("HIKARI."))
             .forEach(es -> hikariProperties.setProperty(es.getKey().toString().substring(7), es.getValue().toString()));
 
-      factory = new RasaFactoryBuilderImpl().getRasaFactory(hikariProperties);
+      factory = new RasaFactoryBuilderImpl().getRasaFactory();
+      factory.init(hikariProperties);
       checkedLinkResource = factory.getCheckedLinkResource();
       linkToBeCheckedResource = factory.getLinkToBeCheckedResource();
 
