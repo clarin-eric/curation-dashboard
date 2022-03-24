@@ -60,7 +60,7 @@ public final class ResponseManager {
     }
 
     public static Response returnServerError() {
-        return returnError(500, "There was a server error. Please report it on <a href='https://github.com/clarin-eric/clarin-curation-module/issues'>github</a>.");
+        return returnError(500, "There was a server error. Please report it on <a href='https://github.com/clarin-eric/curation-dashboard/issues'>github</a>.");
     }
 
     public static Response redirect(String URL) {

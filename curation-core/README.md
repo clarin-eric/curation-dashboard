@@ -7,9 +7,7 @@ Java Standard Edition, version 8 or higher
 ### Running curation module
  
  1. `mvn install` in the working directory
- 2. `cd curation-module-core/target`
- 3. java 8`java -jar curation-module-core-1.2-SNAPSHOT-jar-with-dependencies.jar [flags]`
-    java 9/10`java --add-modules java.xml.bind -jar curation-module-core-1.2-SNAPSHOT-jar-with-dependencies.jar [flags]`
+ 2. `cd curation-core/target`
  
    **Usage:**
 ```
@@ -58,6 +56,6 @@ Java Standard Edition, version 8 or higher
 
   **Examples:**
   
- - Local instance: `java -jar curation-module-core-1.2-SNAPSHOT-jar-with-dependencies.jar -config /path/to/clarin-curation-module/curation-module-core/src/main/resources/config.properties -i -path /path/to/instance/instance.xml`
- - Instance from URL: `java -jar curation-module-core-1.2-SNAPSHOT-jar-with-dependencies.jar -config /path/to/clarin-curation-module/curation-module-core/src/main/resources/config.properties -i -url http://url.com/to/instance`
- - Local collection: `java -jar curation-module-core-1.2-SNAPSHOT-jar-with-dependencies.jar -config /path/to/clarin-curation-module/curation-module-core/src/main/resources/config.properties -c -path /path/to/collection/`
+ - Local instance: `java -jar curation-core-1.2-SNAPSHOT-jar-with-dependencies.jar -config /path/to/clarin-curation-dashboard/curation-core/src/main/resources/config.properties -i -path /path/to/instance/instance.xml`
+ - Instance from URL: `java -jar curation-core-1.2-SNAPSHOT-jar-with-dependencies.jar -config /path/to/clarin-curation-dashboard/curation-core/src/main/resources/config.properties -i -url http://url.com/to/instance`
+ - Local collection: `java -jar curation-core-1.2-SNAPSHOT-jar-with-dependencies.jar -config /path/to/clarin-curation-dashboard/curation-core/src/main/resources/config.properties -c -path /path/to/collection/`

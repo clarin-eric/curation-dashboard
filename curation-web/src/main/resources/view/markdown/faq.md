@@ -138,7 +138,7 @@
 1. **The Curation Dashboard reports my links incorrectly. What should I do?**
 
     If you suspect the reason for the reports being wrong is the Link Checker and your links work fine,
-    please create an issue on our [github page](https://github.com/clarin-eric/clarin-curation-module/issues).     
+    please create an issue on our [github page](https://github.com/clarin-eric/curation-dashboard/issues).     
     
 1. **The byte size of my link is shown as null but the link has a correct response body. What's wrong?**
 
@@ -154,7 +154,7 @@
     3. A csv file containing all the links in a particular link checker statistics view (it currently loads only 100 links)
     4. A fast lane for links to check them as soon as possible (to avoid waiting 2 months to check a link again)
     
-    If you wish to suggest a change or a new feature, feel free to do so on our [github page](https://github.com/clarin-eric/clarin-curation-module/issues).
+    If you wish to suggest a change or a new feature, feel free to do so on our [github page](https://github.com/clarin-eric/curation-dashboard/issues).
     
 1. **The Link Checker is making more requests than my server can handle, or
      even causing high loads on my servers. What should I do?**
@@ -170,8 +170,8 @@
     
 1. **I have more questions. Where can I ask them?**
 
-    Feel free to ask any questions by creating issues on our [github page](https://github.com/clarin-eric/clarin-curation-module/issues).
+    Feel free to ask any questions by creating issues on our [github page](https://github.com/clarin-eric/curation-dashboard/issues).
     
 1. **Where can I report issues?**
 
-    Feel free to report issues on our [github page](https://github.com/clarin-eric/clarin-curation-module/issues).
+    Feel free to report issues on our [github page](https://github.com/clarin-eric/curation-dashboard/issues).
