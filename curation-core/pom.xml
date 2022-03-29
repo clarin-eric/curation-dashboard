@@ -9,7 +9,7 @@
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <log4j.version>2.17.1</log4j.version>
-      <rasa.version>5.0.1-beta1</rasa.version>
+      <rasa.version>5.0.1-beta2</rasa.version>
    </properties>
    <dependencies>
       <dependency>
