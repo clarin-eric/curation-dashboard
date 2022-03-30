@@ -86,12 +86,11 @@ public class LinkCheckerStatisticsHelper {
             sb.append("<button class='showUrlInfo btn btn-info'>Show</button>");
             sb.append("</td>");
 
-
             sb.append("</tr>");
 
             // info
             sb.append("<tr hidden><td colspan='3'>");
-            String message = checkedLink.getMessage().replace("_", "_<wbr>");
+            String message = checkedLink.getMessage() == null? "N/A" : checkedLink.getMessage().replace("_", "_<wbr>");
             sb.append("<b>Message: </b> ").append(message).append("<br>");
 
             sb.append("<b>Byte Size: </b>")
