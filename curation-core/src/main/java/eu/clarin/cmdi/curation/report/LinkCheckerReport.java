@@ -129,10 +129,12 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
          if(this.statistics.containsKey(statisticsObj.category)) {
             Statistics s = this.statistics.get(statisticsObj.category);
             
-            s.avgRespTime =
-                  (s.avgRespTime * s.count + statisticsObj.avgRespTime * statisticsObj.count)
-                  / (s.count + statisticsObj.count);
-            s.count += statisticsObj.count;
+            if(statisticsObj.avgRespTime > 0) {
+               s.avgRespTime =
+                     (s.avgRespTime * s.count + statisticsObj.avgRespTime * statisticsObj.count)
+                     / (s.count + statisticsObj.count);
+               s.count += statisticsObj.count;
+            }
             if(s.maxRespTime < statisticsObj.maxRespTime) {
                s.maxRespTime = statisticsObj.maxRespTime;
             }

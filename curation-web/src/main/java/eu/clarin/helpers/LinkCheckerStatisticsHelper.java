@@ -90,15 +90,20 @@ public class LinkCheckerStatisticsHelper {
 
             // info
             sb.append("<tr hidden><td colspan='3'>");
-            String message = checkedLink.getMessage() == null? "N/A" : checkedLink.getMessage().replace("_", "_<wbr>");
-            sb.append("<b>Message: </b> ").append(message).append("<br>");
+
+            sb.append("<b>Message: </b> ")
+               .append(checkedLink.getMessage() == null? "N/A" : checkedLink.getMessage().replace("_", "_<wbr>")).append("<br>");
 
             sb.append("<b>Byte Size: </b>")
-                  .append(checkedLink.getByteSize() == null ? "N/A" : checkedLink.getByteSize()).append("<br>");
-            sb.append("<b>Request Duration(ms): </b>").append(checkedLink.getDuration()).append("<br>");
+               .append(checkedLink.getByteSize() == null ? "N/A" : checkedLink.getByteSize()).append("<br>");
+            
+            sb.append("<b>Request Duration(ms): </b>")
+               .append(checkedLink.getDuration() == null? "N/A":checkedLink.getDuration()).append("<br>");
 
-            String method = checkedLink.getMethod() == null ? "N/A" : checkedLink.getMethod();
-            sb.append("<b>Method: </b>").append(method).append("<br>");
+            sb.append("<b>Method: </b>")
+               .append(checkedLink.getMethod() == null ? "N/A" : checkedLink.getMethod()).append("<br>");
+            
+            // null check not necessary since checkingDate is non nullable
             sb.append("<b>Timestamp: </b>").append(checkedLink.getCheckingDate());
             sb.append("</td>");
             // info end
