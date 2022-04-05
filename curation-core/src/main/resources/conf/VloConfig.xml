@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<VloConfig>
+
+	<deleteAllFirst>true</deleteAllFirst>
+
+	<maxDaysInSolr>0</maxDaysInSolr>
+
+	<solrUrl>http://solr:8983/solr/vlo-index/</solrUrl>
+
+	<homeUrl>https://vlo.arz.oeaw.ac.at</homeUrl>
+
+	<helpUrl>http://www.clarin.eu/vlo</helpUrl>
+
+	<xi:include href="dataroots-local.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude"></xi:include>
+
+	<fileProcessingThreads>2</fileProcessingThreads>
+
+	<solrThreads>2</solrThreads>
+
+	<availabilityStatusUpdaterBatchSize></availabilityStatusUpdaterBatchSize>
+
+	<!-- Wicket: the maximum number of page instances which will be stored in 
+		the application scoped second level cache for faster retrieval -->
+	<pagesInApplicationCache>40</pagesInApplicationCache>
+
+	<!-- Wicket: the maximum size (in KILOBYTES) of the File where page instances 
+		per session are stored. -->
+	<sessionCacheSize>10000</sessionCacheSize>
+
+	<maxDocsInList>1024</maxDocsInList>
+
+	<minDocsInSolrQueue>1024</minDocsInSolrQueue>
+
+	<solrTimeOut>300</solrTimeOut>
+
+	<!-- Authentication for Solr server -->
+	<!-- Read-only user (e.g. for Webapp) -->
+	<solrUserReadOnly>${vloconfig.solrUserReadOnly}</solrUserReadOnly>
+	<solrUserReadOnlyPass>${vloconfig.solrUserReadOnlyPass}
+	</solrUserReadOnlyPass>
+	<!-- Read-Write user (Importer) -->
+	<solrUserReadWrite>${vloconfig.solrUserReadWrite}</solrUserReadWrite>
+	<solrUserReadWritePass>${vloconfig.solrUserReadWritePass}
+	</solrUserReadWritePass>
+
+	<vloExposureEnabled>${vloconfig.vloExposureEnabled}
+	</vloExposureEnabled>
+	<!-- Authentication for Postgresql DB (for vlo-exposure) -->
+	<vloExposureDbName>${vloconfig.vloExposureDbName}</vloExposureDbName>
+	<vloExposurePort>${vloconfig.vloExposurePort}</vloExposurePort>
+	<vloExposureHost>${vloconfig.vloExposureHost}</vloExposureHost>
+	<vloExposureUsername>${vloconfig.vloExposureUsername}
+	</vloExposureUsername>
+	<vloExposurePassword>${vloconfig.vloExposurePassword}
+	</vloExposurePassword>
+
+	<!-- Max record file size to accept in bytes -->
+	<maxFileSize>50000000</maxFileSize>
+
+	<useHandleResolver>false</useHandleResolver>
+
+	<printMapping>false</printMapping>
+
+	<!-- leave empty to use default packaged definition -->
+	<facetConceptsFile>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/mapping/facetConcepts.xml</facetConceptsFile>
+
+	<facetsConfigFile>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/config/facetsConfiguration.xml</facetsConfigFile>
+
+	<profileSchemaUrl>https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/{PROFILE_ID}/xsd</profileSchemaUrl>
+
+	<componentRegistryRESTURL>https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/</componentRegistryRESTURL>
+
+	<handleServerUrl>http://hdl.handle.net/</handleServerUrl>
+
+	<conceptRegistryUrl>https://concepts.clarin.eu/ccr/api/find-concepts</conceptRegistryUrl>
+
+	<vocabularyRegistryUrl>http://clavas.clarin.eu/clavas/public/api/find-concepts</vocabularyRegistryUrl>
+
+	<!-- Mapping file locations. These can be an absolute URL, absolute file 
+		path or packaged resource location. Evaluated in the this order. -->
+
+	<organisationNamesUrl>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/OrganisationControlledVocabulary.xml</organisationNamesUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/OrganisationControlledVocabulary.xml -->
+
+	<languageNameVariantsUrl>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/LanguageNameVariantsMap.xml</languageNameVariantsUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/LanguageNameVariantsMap.xml -->
+
+	<licenseAvailabilityMapUrl>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/LicenseAvailabilityMap.xml</licenseAvailabilityMapUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/LicenseAvailabilityMap.xml -->
+
+	<licenseURIMapUrl>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/LicenseURIMap.xml</licenseURIMapUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/LicenseURIMap.xml -->
+
+	<licenseTypeMapUrl>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/LicenseTypeMap.xml</licenseTypeMapUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/LicenseTypeMap.xml -->
+
+	<valueMappingsFile>/usr/local/curation-module/conf/value_maps/master.xml</valueMappingsFile> <!-- bundled resource: /value-maps/dist/master.xml -->
+
+	<fields>
+		<field key="NAME">name</field>
+		<field key="CREATOR">creator</field>
+		<field key="DESCRIPTION">description</field>
+		<field key="COLLECTION">collection</field>
+		<field key="LANGUAGE_CODE">languageCode</field>
+		<field key="LANGUAGE_COUNT">_languageCount</field>
+		<field key="MULTILINGUAL">multilingual</field>
+		<field key="MODALITY">modality</field>
+		<field key="CONTINENT">continent</field>
+		<field key="COUNTRY">country</field>
+		<field key="GENRE">genre</field>
+		<field key="SUBJECT">subject</field>
+		<field key="ORGANISATION">organisation</field>
+		<field key="LICENSE">license</field>
+		<field key="LICENSE_TYPE">licenseType</field>
+		<field key="AVAILABILITY">availability</field>
+		<field key="ACCESS_INFO">accessInfo</field>
+		<field key="KEYWORDS">keywords</field>
+		<field key="NATIONAL_PROJECT">nationalProject</field>
+		<field key="RESOURCE_CLASS">resourceClass</field>
+		<field key="RESOURCE">_resourceRef</field>
+		<field key="SELF_LINK">_selfLink</field>
+		<field key="ID">id</field>
+		<field key="HARVESTER_ROOT">_harvesterRoot</field>
+		<field key="DATA_PROVIDER">dataProvider</field>
+		<field key="FILENAME">_fileName</field>
+		<field key="FORMAT">format</field>
+		<field key="LANDINGPAGE">_landingPageRef</field>
+		<field key="SEARCHPAGE">_searchPageRef</field>
+		<field key="SEARCH_SERVICE">_contentSearchRef</field>
+		<field key="LAST_SEEN">_lastSeen</field>
+		<field key="CLARIN_PROFILE">_componentProfile</field>
+		<field key="CLARIN_PROFILE_ID">_componentProfileId</field>
+		<field key="HIERARCHY_WEIGHT">_hierarchyWeight</field>
+		<field key="HAS_PART">_hasPart</field>
+		<field key="HAS_PART_COUNT">_hasPartCount</field>
+		<field key="RESOURCE_COUNT">_resourceRefCount</field>
+		<field key="IS_PART_OF">_isPartOf</field>
+		<field key="SOLR_SCORE">score</field>
+		<field key="COMPLETE_METADATA">metadataSource</field>
+		<field key="PROJECT_NAME">projectName</field>
+		<field key="TEMPORAL_COVERAGE">temporalCoverage</field>
+		<field key="TEMPORAL_COVERAGE_START">temporalCoverage_s</field>
+		<field key="TEMPORAL_COVERAGE_END">temporalCoverage_e</field>
+		<field key="DAYS_SINCE_LAST_SEEN">_daysSinceLastSeen</field>
+		<field key="HAS_PART_COUNT_WEIGHT">_hasPartCountWeight</field>
+		<field key="LANGUAGE_NAME">_languageName</field>
+		<field key="OAI_ENDPOINT_URI">_oaiEndpointURI</field>
+		<field key="SIGNATURE">_signature</field>
+		<field key="RECORD_PID">recordPid</field>
+		<field key="RESOURCE_AVAILABILITY_SCORE">_resourceAvailabilityScore</field>
+	</fields>
+
+	<deprecatedFields>
+		<field key="DEPRECATED_LANGUAGE">language</field>
+	</deprecatedFields>
+
+	<!-- Note: primary and secondary facet fields, search result fields, ignored 
+		fields and technical fields have been moved to the facets configuration file 
+		(facetsConfiguration.xml) in the VLO mappings project -->
+
+	<!-- If this many facets or more than this have values, hide non-primary 
+		facets -->
+	<hideSecondaryFacetsLimit>8</hideSecondaryFacetsLimit>
+
+	<!-- This defines the availability levels shown in the web app and their 
+		display values and descriptions Descriptions are shown on the record page 
+		and as tooltip in the availability facet. Values have been adapted from <https://www.clarin.eu/content/license-categories>. -->
+	<availability>
+		<availabilityValue value="PUB">
+			<displayValue>Public</displayValue>
+			<description>PUB language resources can be distributed publicly. The
+				distribution of these materials is not restricted by copyright or
+				personal data protection issues.
+			</description>
+		</availabilityValue>
+		<availabilityValue value="ACA">
+			<displayValue>Academic</displayValue>
+			<description>ACA language resources can be accessed only for research
+				purposes. The end-user does not need to ask for usage permission but
+				can access the resources via e.g. federated login.
+			</description>
+		</availabilityValue>
+		<availabilityValue value="RES">
+			<displayValue>Restricted for individual</displayValue>
+			<description>RES language resources have additional restrictions,
+				which require permission from the rights holder. These resources
+				may contain material whose usage is limited due to copyright
+				and/or personal data protection issues.
+			</description>
+		</availabilityValue>
+		<availabilityValue value="UNSPECIFIED">
+			<displayValue>Unspecified</displayValue>
+			<description>No specification of availability (contact the original
+				provider)
+			</description>
+		</availabilityValue>
+	</availability>
+
+	<countryComponentUrl>https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/components/clarin.eu:cr1:c_1271859438104/xml</countryComponentUrl>
+
+	<languageLinkTemplate>https://infra.clarin.eu/content/language_info/data/{}.html</languageLinkTemplate>
+
+	<feedbackFromUrl>${vloconfig.feedbackFromUrl}</feedbackFromUrl>
+
+	<language2LetterCodeComponentUrl>https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/components/clarin.eu:cr1:c_1271859438109/xml</language2LetterCodeComponentUrl>
+
+	<language3LetterCodeComponentUrl>https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/components/clarin.eu:cr1:c_1271859438110/xml</language3LetterCodeComponentUrl>
+
+	<silToISO639CodesUrl>https://infra.clarin.eu/CMDI/1.1/xslt/sil_to_iso6393.xml</silToISO639CodesUrl>
+
+	<FederatedContentSearchUrl>${vloconfig.federatedContentSearchUrl}</FederatedContentSearchUrl>
+
+	<cqlEndpointFilter>http://cqlservlet.mpi.nl/</cqlEndpointFilter>
+
+	<cqlEndpointAlternative>http://cqlservlet.mpi.nl/
+	</cqlEndpointAlternative>
+
+	<!-- Set to -1 to disable virtual collection creation from VLO -->
+	<vcrMaximumItemsCount>${vloconfig.vcrMaximumItemsCount}
+	</vcrMaximumItemsCount>
+
+	<vcrSubmitEndpoint>${vloconfig.vcrSubmitEndpoint}</vcrSubmitEndpoint>
+
+	<centreRegistryCentresListJsonUrl>${vloconfig.centreRegistryCentresListJsonUrl}</centreRegistryCentresListJsonUrl>
+
+	<centreRegistryOaiPmhEndpointsListJsonUrl>${vloConfig.centreRegistryOaiPmhEndpointsListJsonUrl}</centreRegistryOaiPmhEndpointsListJsonUrl>
+
+	<webAppLocale>${vloConfig.webAppLocale}</webAppLocale>
+
+	<otherProvidersMarkupFile>${vloConfig.otherProvidersMarkupFile}</otherProvidersMarkupFile>
+
+	<lrSwitchboardBaseUrl>${vloconfig.lrSwitchboardBaseUrl}</lrSwitchboardBaseUrl>
+
+	<lrSwitchboardPopupScriptUrl>${vloconfig.lrSwitchboardBaseUrl}popup/switchboardpopup.js</lrSwitchboardPopupScriptUrl>
+
+	<lrSwitchboardPopupStyleUrl>${vloconfig.lrSwitchboardBaseUrl}popup/switchboardpopup.css</lrSwitchboardPopupStyleUrl>
+
+	<lrSwitchboardPopupEnabled>true</lrSwitchboardPopupEnabled>
+
+	<linkCheckerDbConnectionString>${vloconfig.linkCheckerDbConnectionString}</linkCheckerDbConnectionString>
+
+	<linkCheckerDbUser>${vloconfig.linkCheckerDbUser}</linkCheckerDbUser>
+
+	<linkCheckerDbPassword>${vloconfig.linkCheckerDbPassword}</linkCheckerDbPassword>
+
+	<linkCheckerDbPoolsize>${vloconfig.linkCheckerDbPoolsize}</linkCheckerDbPoolsize>
+
+	<linkCheckerMaxDaysSinceChecked>${vloconfig.linkCheckerMaxDaysSinceChecked}</linkCheckerMaxDaysSinceChecked>
+
+	<!-- makes the score for the result ranking visible in the search results -->
+	<showResultScores>false</showResultScores>
+
+	<processHierarchies>true</processHierarchies>
+
+	<enableFcsLinks>${vloConfig.enableFcsLinks}</enableFcsLinks>
+
+	<!-- fields that are used to generate a document signature to identify duplicates -->
+	<signatureFields>
+		<signatureField>LANGUAGE_CODE</signatureField>
+		<signatureField>NAME</signatureField>
+	</signatureFields>
+
+	<dataSetStructuredData>
+		<enabled>true</enabled>
+		<include field="HARVESTER_ROOT">CLARIN Centres</include>
+	</dataSetStructuredData>
+
+</VloConfig>

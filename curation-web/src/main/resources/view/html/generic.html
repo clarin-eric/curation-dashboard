@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Curation Dashboard</title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<link rel="icon" href="/view/images/favicon.png" type="image/png" />
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Curation Dashboard">
+
+<link rel="stylesheet" id="fundament-styles"
+	href="/view/fundament/css/fundament.min.css" type="text/css" />
+<link rel="stylesheet" id="curation-styles" href="/view/css/curation.css"
+	type="text/css" />
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+<link rel="stylesheet" id="dropzone-styles"
+	href="/view/css/dropzone.min.css" type="text/css" />
+
+</head>
+<body class="home">
+	<div class="hfeed site" id="page">
+
+		<!-- ******************* The Navbar Area ******************* -->
+		<div class="wrapper-fluid wrapper-navbar sticky-navbar fixed-top"
+			id="wrapper-navbar" itemscope itemtype="http://schema.org/WebSite">
+
+			<nav class="navbar navbar-expand-lg navbar-light headerSize">
+				<div class="col-md-6 d-flex justify-content-center">
+					<h1>Curation Dashboard ${version}</h1>
+				</div>
+				<div class="col-md-6 d-flex justify-content-around">
+               <a href="https://www.clarin.eu/"><img
+						src="/view/images/clarin-logo-wide.png"></a>
+				</div>
+
+			</nav>
+
+		</div>
+
+		<div class="row">
+			<div class="col-md-2 position-fixed leftMenu">
+				<div class="row" id="buttons">
+					<div class="col leftButton">
+						<a href="/">
+							<button id="validatorButton" type="button"
+								class="btn leftButton navbar navbar-brand navbar-light bg-light">
+								Validator</button>
+						</a>
+					</div>
+					<div class="col leftButton">
+						<a href="/profile/table">
+							<button id="profilesButton" type="button"
+								class="btn leftButton navbar navbar-brand navbar-light bg-light">
+								Profiles</button>
+						</a>
+					</div>
+					<div class="col leftButton">
+						<a href="/collection/table">
+							<button id="collectionsButton" type="button"
+								class="btn leftButton navbar navbar-brand navbar-light bg-light">
+								Collections</button>
+						</a>
+					</div>
+					<div class="col leftButton">
+						<a href="/statistics">
+							<button id="statisticsButton" type="button"
+								class="btn leftButton navbar navbar-brand navbar-light bg-light">
+								Link checking</button>
+						</a>
+					</div>
+					<div class="col leftButton">
+						<a href="/help">
+							<button id="helpButton" type="button"
+								class="btn leftButton navbar navbar-brand navbar-light bg-light">
+								Help</button>
+						</a>
+					</div>
+					<div class="col content leftButton">
+						<!--last element gets bottom padding to create separation for page specific buttons -->
+						<a href="/faq">
+							<button id="faqButton" type="button"
+								class="btn leftButton navbar navbar-brand navbar-light bg-light">
+								FAQ</button>
+						</a>
+					</div>
+
+				</div>
+
+			</div>
+			<div class="col-md-2"></div>
+			<!--placeholder so that content dont overlap-->
+			<div class="col-md-10">
+				<div id="content" class="fullscreen content">
+					<!--Here comes dynamic content from jsoup-->
+				</div>
+			</div>
+		</div>
+		<!-- .row -->
+
+		<div class="fixed-bottom wrapper fundament-default-footer footerSize"
+			id="wrapper-footer-full">
+			<div class="container" id="footer-full-content" tabindex="-1">
+				<div class="row">
+					<!-- .footer-widget -->
+					<div class="footer-widget col-lg-3 col-md-4 col-sm-4 ml-auto">
+						<div class="textwidget custom-html-widget">
+							<p>
+								<a class="helpdesk-button"
+									href="https://github.com/clarin-eric/curation-dashboard">CODE</a>
+							</p>
+						</div>
+					</div>
+					<div class="footer-widget col-lg-3 col-md-4 col-sm-4 ml-auto">
+						<div class="textwidget custom-html-widget">
+							<p>
+								<a class="helpdesk-button"
+									href="https://github.com/clarin-eric/curation-dashboard/issues">FEEDBACK</a>
+							</p>
+						</div>
+					</div>
+					<!-- .footer-widget -->
+				</div>
+			</div>
+		</div>
+		<!-- #wrapper-footer-full -->
+	</div>
+	<script type="text/javascript"
+		src="/view/fundament/vendor/jquery/jquery.min.js"></script>
+	<script type="text/javascript"
+		src="/view/fundament/js/fundament.min.js"></script>
+	<script type="text/javascript" src="/view/js/dropzone.min.js"></script>
+	<script type="text/javascript" src="/view/js/curation.js"></script>
+	<script type="text/javascript"
+		src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript"
+		src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
+	<!-- Matomo -->
+	<script type="text/javascript">
+		var _paq = window._paq = window._paq || [];
+		/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+		_paq.push([ 'trackPageView' ]);
+		_paq.push([ 'enableLinkTracking' ]);
+		(function() {
+			var u = "https://stats.clarin.eu/";
+			_paq.push([ 'setTrackerUrl', u + 'matomo.php' ]);
+			_paq.push([ 'setSiteId', '37' ]);
+			var d = document, g = d.createElement('script'), s = d
+					.getElementsByTagName('script')[0];
+			g.type = 'text/javascript';
+			g.async = true;
+			g.src = u + 'matomo.js';
+			s.parentNode.insertBefore(g, s);
+		})();
+	</script>
+	<!-- End Matomo Code -->
+</body>
+
+</html>

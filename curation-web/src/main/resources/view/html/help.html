@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div class="maxTextWidth">
+    <p>
+    <h1>Information about Curation Dashboard</h1>
+    <p>
+        Curation Dashboard is a service originally developed by the technical team of the <a
+            href="https://www.oeaw.ac.at/acdh/projects/clarin/">ACDH-CH</a> hosted and maintained by <a
+            href="https://www.clarin.eu/">CLARIN-ERIC</a>.
+        Its goal is to support CMD metadata authors and curators to improve quality of metadata for language resources.
+
+        More information:
+    </p>
+    <ul>
+        <li><a href="https://www.clarin.eu/content/component-metadata">CMD -Component Metadata</a> - the CLARIN metadata
+            framework.
+        </li>
+        <li><a href="https://github.com/clarin-eric/curation-dashboard">Code on Github</a></li>
+        <li><a href="https://office.clarin.eu/v/CE-2016-0742-CLARINPLUS-D2_1.pdf">CLARIN-PLUS deliverable D2.1</a> -
+            specification document for the Curation Dashboard from 2016, formulated in the context of <a
+                    href="https://www.clarin.eu/content/factsheet-clarin-plus">CLARIN-PLUS</a> project
+        </li>
+    </ul>
+
+    <h2>Structure and functionality</h2>
+    <p>
+        Curation Dashboard consists of three modules:
+    </p>
+    <ul>
+        <li>Core Module</li>
+        <li>Web Module</li>
+        <li>Link Checker Module</li>
+    </ul>
+
+
+    <h3>Core Module</h3>
+
+    <p>
+        This module does the actual analysis of individual CMD profiles, records and whole collections according to a
+        number
+        of
+        quality criteria and generates reports and statistics which help discover potential problems that cause a lower
+        metadata quality.
+    </p>
+    <p>The reports are re-generated regularly (twice weekly) on the most recent dump of CMDI records as collected by the
+        <a
+                href="https://vlo.clarin.eu/oai-harvest-viewer/">CLARIN-VLO harvester</a>.
+    </p>
+    <h3>Web Module</h3>
+    <p>
+        This is the user facing web application. It offers four main functions:
+    </p>
+    <ul>
+        <li>presenting pre-computed statistics for <a href="https://curation.clarin.eu/profile/table">CMD
+            profiles</a>
+        </li>
+        <li>presenting pre-computed statistics for <a
+                href="https://curation.clarin.eu/collection/table">collections</a>
+        </li>
+        <li>on the fly <a href="https://curation.clarin.eu/">validation of individual profiles and metadata
+            records</a>
+            (either by their URLs or uploading them as files)
+        </li>
+        <li>presenting pre-computed statistics for <a href="https://curation.clarin.eu/statistics">link
+            checking</a> and a continuously generated statistics in detail view <br />
+            (hence values might differ if links of the provider have been checked in the meantime)
+        </li>
+    </ul>
+
+
+    <h3>Link Checker Module (Stormychecker)</h3>
+    <p>
+        It checks constantly and repeatedly (with respecting the robots.txt files) all the URLs contained in metadata
+        records of the
+        collections. Checking means sending HEAD and/or GET requests to URLs and saving the results (just the request
+        meta-information, the headers, not the payload itself) in a database.
+        Core module later uses these results to generate statistics and takes them into consideration when assessing the
+        quality of the metadata. Additionally, the results are also used by the <a href="https://vlo.clarin.eu/">CLARIN
+        metadata catalogue, the VLO</a>, to indicate the availability of a resource.</p>
+    <p>
+        This module is maintained in a <a href="https://github.com/clarin-eric/linkchecker">separate code-base</a>.
+    </p>
+
+    <h2>Frequently Asked Questions and Feedback</h2>
+    <p>
+        You can go to our <a href="/faq">faq</a> page, which tries to answer the most common questions. If your question
+        is not answered,
+        feel free to create an issue on our github page, reachable via <a
+            href="https://github.com/clarin-eric/curation-dashboard/issues">feedback</a>.
+    </p>
+</div>
+</body>
+</html>
