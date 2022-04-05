@@ -2,15 +2,12 @@
    <parent>
       <groupId>eu.clarin.cmdi</groupId>
       <artifactId>curation-dashboard</artifactId>
-      <version>5.3.0-beta1</version>
+      <version>${revision}</version>
    </parent>
-
    <modelVersion>4.0.0</modelVersion>
    <artifactId>curation-web</artifactId>
    <packaging>war</packaging>
-
    <name>curation-web</name>
-
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <jersey.version>2.34</jersey.version>
@@ -73,7 +70,7 @@
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
          <artifactId>curation-core</artifactId>
-         <version>5.3.0-beta1</version>
+         <version>${project.version}</version>
          <scope>compile</scope>
       </dependency>
       <dependency>
