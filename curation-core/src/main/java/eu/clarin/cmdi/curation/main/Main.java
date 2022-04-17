@@ -11,9 +11,9 @@ import eu.clarin.cmdi.curation.report.LinkCheckerReport;
 import eu.clarin.cmdi.curation.report.ProfilesReport;
 import eu.clarin.cmdi.curation.report.Report;
 import eu.clarin.cmdi.curation.utils.FileNameEncoder;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.cli.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -35,9 +35,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class Main {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
 
@@ -144,11 +143,11 @@ public class Main {
                 CollectionsReport collectionsReport = new CollectionsReport();
                 LinkCheckerReport linkCheckerReport = new LinkCheckerReport();
 
-                LOG.info("Processing collections: Generating reports...");
+                log.info("Processing collections: Generating reports...");
 
                 for (String path : cmd.getOptionValues("path")) {
                 	if(!Files.exists(Paths.get(path))){
-                		LOG.error("the collection input path '{}' doesn't exist", path);
+                		log.error("the collection input path '{}' doesn't exist", path);
                 		continue;
                 	}
                     //dump(curator.processCollection(Paths.get(path)), type);
@@ -177,16 +176,16 @@ public class Main {
                     }
                 }
                 
-                LOG.info("Creating collections table...");
+                log.info("Creating collections table...");
 
                 // dumping the collections table
                 dumpAsXML(collectionsReport, CurationEntityType.COLLECTION);
                 dumpAsHTML(collectionsReport, CurationEntityType.COLLECTION);
 //                dumpAsTSV(collectionsReport, CurationEntityType.COLLECTION);
 
-                LOG.info("Creating collections table finished.");
+                log.info("Creating collections table finished.");
 
-                LOG.info("Creating profiles table...");
+                log.info("Creating profiles table...");
 
                 //now dumping the public profile reports
                 ProfilesReport profilesReport = new ProfilesReport();
@@ -201,15 +200,22 @@ public class Main {
                 dumpAsXML(profilesReport, CurationEntityType.PROFILE);
                 dumpAsHTML(profilesReport, CurationEntityType.PROFILE);
 //                dumpAsTSV(profilesReport, CurationEntityType.PROFILE);
-                LOG.info("Creating profiles table finished..");
+                log.info("Creating profiles table finished..");
 
-                LOG.info("Creating statistics table...");
+                log.info("Creating statistics table...");
                 //dumping the linkchecker statistics table
                 dumpAsXML(linkCheckerReport, CurationEntityType.STATISTICS);
                 dumpAsHTML(linkCheckerReport, CurationEntityType.STATISTICS);
-                LOG.info("Creating statistics table finished.");
-
-                Configuration.tearDown();
+                log.info("Creating statistics table finished.");
+                
+                log.info("Deactivating links older than {} days", Configuration.DEACTIVATE_LINKS_AFTER);
+                Configuration.linkToBeCheckedResource.deactivateLinksAfter(Configuration.DEACTIVATE_LINKS_AFTER);
+                
+                log.info("Deleting links older than {}) days", Configuration.DELETE_LINKS_AFTER);
+                Configuration.linkToBeCheckedResource.deleteLinksAfter(Configuration.DELETE_LINKS_AFTER); 
+                
+                log.info("processing finished - terminating program");
+                
             } else
                 throw new Exception("Only path is allowed for curation of collections root");
         } else
