@@ -1,7 +1,7 @@
 #!/bin/bash
 START_TIME=$SECONDS
 
-WORK_DIR=/usr/local/curation-module
+WORK_DIR=/app/curation-dashbaord
 BIN_DIR=$WORK_DIR/bin
 LIB_DIR=$WORK_DIR/lib
 DATA_DIR=$WORK_DIR/data
