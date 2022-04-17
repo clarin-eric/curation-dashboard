@@ -47,12 +47,12 @@ public class Statistics {
               try {
                  urlStatistics = LinkCheckerStatisticsHelper.createURLTable(collectionName, category);
              } catch (SQLException e) {
-                 log.error("Error in statistics: "+e.getMessage());
+                 log.error("Error in statistics", e);
                  return ResponseManager.returnServerError();
              }     
         }
         catch(Exception ex) {      
-
+           log.error("Error in statistics", ex);
             return ResponseManager.returnError(400,"Given category doesn't match any of the following categories: "+ Arrays.toString(Category.values()));
         }
 
@@ -76,7 +76,7 @@ public class Statistics {
         try {
             urlBatchStatistics = LinkCheckerStatisticsHelper.getHtmlRowsInBatch(collectionName, categoryEnum, batchCount);
         } catch (SQLException e) {
-            log.error("Error in statistics: "+e.getMessage());
+            log.error("Error in statistics", e);
             return ResponseManager.returnServerError();
         }
         return ResponseManager.returnTextResponse(200, urlBatchStatistics, "text/html");

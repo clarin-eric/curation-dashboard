@@ -1,3 +1,9 @@
+# version 5.3.0
+- renaming project to curation-dashboard, modules to curation-core and curation-web
+- trimming of URLs for storage and look up
+- new category »Invalid_URL« for URLs which can't be processed with Java URL class
+- ordering link checking results in reports for severity (from »Ok« to »Invalid_URL«)
+
 # version 5.2.0
 - calculate total linkchecker statistics from category statistics and overall from provider group statistics to prevent database access at different times while linkchecker changes data continuously 
 
