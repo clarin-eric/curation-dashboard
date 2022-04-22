@@ -40,6 +40,7 @@ public class Configuration {
    public static int REDIRECT_FOLLOW_LIMIT;
    public static int TIMEOUT;
    public static String DOC_URL;
+   public static String CR_QUERY;
    
    public static int DEACTIVATE_LINKS_AFTER;
    public static int DELETE_LINKS_AFTER;
@@ -157,5 +158,7 @@ public class Configuration {
       
       DEACTIVATE_LINKS_AFTER = Integer.parseInt(config.getProperty("DEACTIVATE_LINKS_AFTER", "7"));
       DELETE_LINKS_AFTER = Integer.parseInt(config.getProperty("DELETE_LINKS_AFTER", "30"));
+      
+      CR_QUERY = config.getProperty("CR_QUERY", "");
    }
 }
