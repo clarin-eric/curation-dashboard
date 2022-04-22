@@ -1,7 +1,6 @@
 package eu.clarin.cmdi.curation.main;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;

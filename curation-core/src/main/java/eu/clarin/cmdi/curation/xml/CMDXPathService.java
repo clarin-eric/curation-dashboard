@@ -6,9 +6,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
 import com.ximpleware.ParseException;
@@ -16,8 +13,6 @@ import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
 public class CMDXPathService {
-
-    private static final Logger logger = LoggerFactory.getLogger(CMDXPathService.class);
 
     private VTDNav navigator = null;
 

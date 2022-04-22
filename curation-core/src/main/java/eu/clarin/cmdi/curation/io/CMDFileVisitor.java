@@ -2,7 +2,6 @@ package eu.clarin.cmdi.curation.io;
 
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

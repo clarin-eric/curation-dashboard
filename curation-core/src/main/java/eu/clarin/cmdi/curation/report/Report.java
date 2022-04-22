@@ -9,7 +9,7 @@ import java.io.OutputStream;
 
  *
  */
-public interface Report<R extends Report> {
+public interface Report<R extends Report<?>> {
 
 	public void setParentName(String parentName);
 

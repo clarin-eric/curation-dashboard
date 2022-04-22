@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.cr;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 
@@ -20,19 +21,24 @@ public class PublicProfiles {
 	public static Collection<ProfileHeader> createPublicProfiles(){
 		try{
 			XMLMarshaller<PublicProfiles> publicProfilesMarshaller = new XMLMarshaller<>(PublicProfiles.class);
-			Collection<ProfileHeader> publicProfiles = publicProfilesMarshaller
-					//.unmarshal(new URL(CRService.CR_REST_1_2_PROFILES).openStream())
-			        .unmarshal(new URL(Configuration.VLO_CONFIG.getComponentRegistryRESTURL() + "?registrySpace=published&status=production&status=development").openStream())
+
+			Collection<ProfileHeader> publicProfiles = null;
+			
+			try(InputStream in = new URL(Configuration.VLO_CONFIG.getComponentRegistryRESTURL() + "?" + Configuration.CR_QUERY).openStream()){
+			   publicProfiles = publicProfilesMarshaller
+			      .unmarshal(in)
 					.profileDescription;
 			
-			publicProfiles.forEach(p -> {
-				p.setCmdiVersion("1.x");
-				p.setSchemaLocation(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(p.getId()));
-			});
+   			publicProfiles.forEach(p -> {
+   				p.setCmdiVersion("1.x");
+   				p.setSchemaLocation(Configuration.VLO_CONFIG.getComponentRegistryProfileSchema(p.getId()));
+   			});
+			}
 			
 			return publicProfiles;
 			
-		}catch(Exception e){
+		}
+		catch(Exception e){
 			throw new RuntimeException("Unable to read xml from " + Configuration.VLO_CONFIG.getComponentRegistryRESTURL() + ", CLARIN Component Registry is unavailable! Please try later", e);
 		}		
 	}

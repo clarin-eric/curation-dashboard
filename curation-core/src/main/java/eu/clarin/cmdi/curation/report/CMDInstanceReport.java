@@ -6,8 +6,6 @@ import eu.clarin.cmdi.curation.report.CollectionReport.Record;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
 import java.io.OutputStream;
@@ -21,8 +19,6 @@ import java.util.Collection;
 @XmlRootElement(name = "instance-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDInstanceReport implements Report<CollectionReport> {
-
-    private static final Logger logger = LoggerFactory.getLogger(CMDInstanceReport.class);
 
     public String parentName;
 

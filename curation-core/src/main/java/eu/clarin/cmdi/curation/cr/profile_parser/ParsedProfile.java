@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -108,14 +107,6 @@ public class ParsedProfile {
 			!= null? true : false;			
 		}else
 			return xpaths.containsKey(xpath);
-	}
-	
-	//for generic xpaths 
-	private Collection<CMDINode> getNodesForXPath(String xpath){
-		if(xpaths.containsKey(xpath))
-			return Arrays.asList(xpaths.get(xpath));		
-		
-		return null;
 	}
 	
 	private String preprocessXPath(String xpath){		
