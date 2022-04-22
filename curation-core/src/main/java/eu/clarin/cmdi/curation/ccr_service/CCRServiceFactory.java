@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.ccr_service;
 
-import eu.clarin.cmdi.curation.ccr_service.ICCRService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
