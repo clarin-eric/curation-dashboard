@@ -126,7 +126,7 @@ public class Configuration {
 
 
       // in a test we don't want to instantiate a HikariDataSource    
-      if(Class.forName(Configuration.class.getClassLoader().getUnnamedModule(), "org.junit.Test") == null) {
+      if(Class.forName(Configuration.class.getClassLoader().getUnnamedModule(), "org.junit.jupiter.api.Test") == null) {
 
          factory.init(new HikariDataSource(new HikariConfig(hikariProperties)));
       }
@@ -159,6 +159,6 @@ public class Configuration {
       DEACTIVATE_LINKS_AFTER = Integer.parseInt(config.getProperty("DEACTIVATE_LINKS_AFTER", "7"));
       DELETE_LINKS_AFTER = Integer.parseInt(config.getProperty("DELETE_LINKS_AFTER", "30"));
       
-      CR_QUERY = config.getProperty("CR_QUERY", "");
+      CR_QUERY = config.getProperty("CR_QUERY", "registrySpace=published&status=production&status=development");
    }
 }

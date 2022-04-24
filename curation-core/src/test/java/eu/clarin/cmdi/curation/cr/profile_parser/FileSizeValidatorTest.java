@@ -1,22 +1,25 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
-import org.junit.Before;
 
-import org.junit.Test;
 
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.subprocessor.FileSizeValidator;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 public class FileSizeValidatorTest extends TestBase{
     CMDInstance entity; 
     
-    @Before
+    @BeforeEach
     public void init() {
         Path path;
         try {
