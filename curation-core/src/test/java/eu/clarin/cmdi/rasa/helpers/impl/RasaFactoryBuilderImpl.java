@@ -307,6 +307,12 @@ public class RasaFactoryBuilderImpl implements RasaFactoryBuilder {
          // TODO Auto-generated method stub
          return null;
       }
+
+      @Override
+      public Stream<Map<String, Object>> get(String sqlString) throws SQLException {
+         // TODO Auto-generated method stub
+         return null;
+      }
       
    }
 

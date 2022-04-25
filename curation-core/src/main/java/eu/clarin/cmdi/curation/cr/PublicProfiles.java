@@ -10,21 +10,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.main.Configuration;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
+import lombok.extern.slf4j.Slf4j;
 
 @XmlRootElement(name="profileDescriptions")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Slf4j
 public class PublicProfiles {
 	
 	private Collection<ProfileHeader> profileDescription;
 	
 	
 	public static Collection<ProfileHeader> createPublicProfiles(){
-		try{
+		
+	   String cr = null;
+	   
+	   try{
 			XMLMarshaller<PublicProfiles> publicProfilesMarshaller = new XMLMarshaller<>(PublicProfiles.class);
 
 			Collection<ProfileHeader> publicProfiles = null;
 			
-			try(InputStream in = new URL(Configuration.VLO_CONFIG.getComponentRegistryRESTURL() + "?" + Configuration.CR_QUERY).openStream()){
+			cr = Configuration.VLO_CONFIG.getComponentRegistryRESTURL() + "?" + Configuration.CR_QUERY;
+			log.trace("component registry URL: {}", cr);
+			
+			try(InputStream in = new URL(cr).openStream()){
 			   publicProfiles = publicProfilesMarshaller
 			      .unmarshal(in)
 					.profileDescription;
@@ -39,7 +47,7 @@ public class PublicProfiles {
 			
 		}
 		catch(Exception e){
-			throw new RuntimeException("Unable to read xml from " + Configuration.VLO_CONFIG.getComponentRegistryRESTURL() + ", CLARIN Component Registry is unavailable! Please try later", e);
+			throw new RuntimeException("Unable to read xml from " + cr + ", CLARIN Component Registry is unavailable! Please try later", e);
 		}		
 	}
 }

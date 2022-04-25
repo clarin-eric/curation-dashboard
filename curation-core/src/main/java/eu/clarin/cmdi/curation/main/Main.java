@@ -38,293 +38,306 @@ import java.util.Map;
 @Slf4j
 public class Main {
 
-    public static void main(String[] args) throws Exception {
+   public static void main(String[] args) throws Exception {
 
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());//to log uncaught exceptions
+      Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());// to log uncaught exceptions
 
-        CommandLineParser parser = new DefaultParser();
+      CommandLineParser parser = new DefaultParser();
 
-        Options helpOptions = createHelpOption();
+      Options helpOptions = createHelpOption();
 
-        Options options = createOptions();
+      Options options = createOptions();
 
-        CommandLine cmd = null;
+      CommandLine cmd = null;
 
-        try {
-            cmd = parser.parse(helpOptions, args);
-            if (cmd.hasOption("help")) {
-                HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("curation module", options);
-                return;
+      try {
+         cmd = parser.parse(helpOptions, args);
+         if (cmd.hasOption("help")) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("curation module", options);
+            return;
 
-                /*
-                 usage: curation module
-                 -c                 curate a collection
-                 -config <file>     a path to the configuration file
-                 -i                 curate an instance
-                 -id <profilesId>   Space separated CLARIN profile IDs in format:
-                                    clarin.eu:cr1:p_xxx
-                 -p                 curate a profile
-                 -path <path>       Space separated paths to file or folder to be curated
-                 -url <url>         Space separated urls to profile or instance to be
-                                    curated
-                * */
-            }
-        } catch (org.apache.commons.cli.ParseException e) {
-            //do nothing
-        }
+            /*
+             * usage: curation module -c curate a collection -config <file> a path to the
+             * configuration file -i curate an instance -id <profilesId> Space separated
+             * CLARIN profile IDs in format: clarin.eu:cr1:p_xxx -p curate a profile -path
+             * <path> Space separated paths to file or folder to be curated -url <url> Space
+             * separated urls to profile or instance to be curated
+             */
+         }
+      }
+      catch (org.apache.commons.cli.ParseException e) {
+         // do nothing
+      }
 
-        cmd = parser.parse(options, args);
+      cmd = parser.parse(options, args);
 
-        // init configuration file
-        if (cmd.hasOption("config")) {
-            Configuration.init(cmd.getOptionValue("config"));
-        } else {
-            Configuration.initDefault();
-        }
+      // init configuration file
+      if (cmd.hasOption("config")) {
+         Configuration.init(cmd.getOptionValue("config"));
+      }
+      else {
+         Configuration.initDefault();
+      }
 
-        Configuration.enableProfileLoadTimer = false;
+      Configuration.enableProfileLoadTimer = false;
 
-        CurationModule curator = new CurationModule();
-        CurationEntityType type = null;
+      CurationModule curator = new CurationModule();
+      CurationEntityType type = null;
 
-        if (cmd.hasOption("p")) {// profile
-            type = CurationEntityType.PROFILE;
-            if (cmd.hasOption("id")) {
-                Configuration.OUTPUT_DIRECTORY = null;
-                for (String id : cmd.getOptionValues("id"))
-                    dumpAsXML(curator.processCMDProfile(id), type);
-            } else if (cmd.hasOption("url")) {
-                Configuration.OUTPUT_DIRECTORY = null;
-                for (String url : cmd.getOptionValues("url"))
-                    dumpAsXML(curator.processCMDProfile(new URL(url)), type);
-            } else {
-                throw new Exception("Only id and url options are allowed for profiles curation");
-            }
-        } else if (cmd.hasOption("i")) {// instance
-            type = CurationEntityType.INSTANCE;
-            if (cmd.hasOption("url")) {
-                for (String url : cmd.getOptionValues("url"))
-                    dumpAsXML(curator.processCMDInstance(new URL(url)), type);
-            } else if (cmd.hasOption("path")) {
-                for (String path : cmd.getOptionValues("path"))
-                    dumpAsXML(curator.processCMDInstance(Paths.get(path)), type);
-            } else
-                throw new Exception("Only path and url options are allowed for instances curation");
+      if (cmd.hasOption("p")) {// profile
+         type = CurationEntityType.PROFILE;
+         if (cmd.hasOption("id")) {
+            Configuration.OUTPUT_DIRECTORY = null;
+            for (String id : cmd.getOptionValues("id"))
+               dumpAsXML(curator.processCMDProfile(id), type);
+         }
+         else if (cmd.hasOption("url")) {
+            Configuration.OUTPUT_DIRECTORY = null;
+            for (String url : cmd.getOptionValues("url"))
+               dumpAsXML(curator.processCMDProfile(new URL(url)), type);
+         }
+         else {
+            throw new Exception("Only id and url options are allowed for profiles curation");
+         }
+      }
+      else if (cmd.hasOption("i")) {// instance
+         type = CurationEntityType.INSTANCE;
+         if (cmd.hasOption("url")) {
+            for (String url : cmd.getOptionValues("url"))
+               dumpAsXML(curator.processCMDInstance(new URL(url)), type);
+         }
+         else if (cmd.hasOption("path")) {
+            for (String path : cmd.getOptionValues("path"))
+               dumpAsXML(curator.processCMDInstance(Paths.get(path)), type);
+         }
+         else
+            throw new Exception("Only path and url options are allowed for instances curation");
 
-        } else if (cmd.hasOption("c")) {// collection
-            type = CurationEntityType.COLLECTION;
-            Configuration.COLLECTION_MODE = true;
-            if (cmd.hasOption("path")) {
-                Report<?> report;
-
-                for (String path : cmd.getOptionValues("path")) {
-                    report = curator.processCollection(Paths.get(path));
-
-                    dumpAsXML(report, type);
-                    dumpAsHTML(report, type);
-                }
-            } else
-                throw new Exception("Only path is allowed for collection curation");
-        } else if (cmd.hasOption("r")) {// public profiles and collections
-            Configuration.COLLECTION_MODE = true;
-
-            // generating reports for public profiles
-            // reports are stored in a map to add profile usage in the next step
-            Map<String, Report<?>> profileReports = new HashMap<String, Report<?>>();
-
-            for (ProfileHeader pHeader : PublicProfiles.createPublicProfiles()) {
-                profileReports.put(pHeader.getId(), curator.processCMDProfile(pHeader.getId()));
-            }
-
+      }
+      else if (cmd.hasOption("c")) {// collection
+         type = CurationEntityType.COLLECTION;
+         Configuration.COLLECTION_MODE = true;
+         if (cmd.hasOption("path")) {
             Report<?> report;
-            if (cmd.hasOption("path")) {
 
-                CollectionsReport collectionsReport = new CollectionsReport();
-                LinkCheckerReport linkCheckerReport = new LinkCheckerReport();
+            for (String path : cmd.getOptionValues("path")) {
+               report = curator.processCollection(Paths.get(path));
 
-                log.info("Processing collections: Generating reports...");
+               dumpAsXML(report, type);
+               dumpAsHTML(report, type);
+            }
+         }
+         else
+            throw new Exception("Only path is allowed for collection curation");
+      }
+      else if (cmd.hasOption("r")) {// public profiles and collections
+         Configuration.COLLECTION_MODE = true;
 
-                for (String path : cmd.getOptionValues("path")) {
-                	if(!Files.exists(Paths.get(path))){
-                		log.error("the collection input path '{}' doesn't exist", path);
-                		continue;
-                	}
-                    //dump(curator.processCollection(Paths.get(path)), type);
-                    for (File file : new File(path).listFiles()) {
+         // generating reports for public profiles
+         // reports are stored in a map to add profile usage in the next step
+         Map<String, Report<?>> profileReports = new HashMap<String, Report<?>>();
+
+         for (ProfileHeader pHeader : PublicProfiles.createPublicProfiles()) {
+            try {
+               profileReports.put(pHeader.getId(), curator.processCMDProfile(pHeader.getId()));
+            }
+            catch(Exception ex) {
+               log.info("can't process profile {}", pHeader.getId());
+               log.trace("", ex);
+            }
+         }
+
+         Report<?> report;
+         if (cmd.hasOption("path")) {
+
+            CollectionsReport collectionsReport = new CollectionsReport();
+            LinkCheckerReport linkCheckerReport = new LinkCheckerReport();
+
+            log.info("Processing collections: Generating reports...");
+
+            for (String path : cmd.getOptionValues("path")) {
+               if (!Files.exists(Paths.get(path))) {
+                  log.error("the collection input path '{}' doesn't exist", path);
+                  continue;
+               }
+               // dump(curator.processCollection(Paths.get(path)), type);
+               for (File file : new File(path).listFiles()) {
 //                        logger.info("Starting report generation for collection: " + file.toPath());
-                        report = curator.processCollection(file.toPath());
+                  report = curator.processCollection(file.toPath());
 
-                        dumpAsXML(report, CurationEntityType.COLLECTION);
-                        dumpAsHTML(report, CurationEntityType.COLLECTION);
+                  dumpAsXML(report, CurationEntityType.COLLECTION);
+                  dumpAsHTML(report, CurationEntityType.COLLECTION);
 
-                        collectionsReport.addReport(report);
-                        linkCheckerReport.addReport(report);
+                  collectionsReport.addReport(report);
+                  linkCheckerReport.addReport(report);
 
-                        if (report instanceof CollectionReport) { //no ErrorReport
-                            CollectionReport collectionReport = (CollectionReport) report;
+                  if (report instanceof CollectionReport) { // no ErrorReport
+                     CollectionReport collectionReport = (CollectionReport) report;
 
-                            for (CollectionReport.Profile profile : collectionReport.headerReport.profiles.profiles) {
-                                profileReports.computeIfPresent(profile.name, (key, cmdProfileReport) -> {
-                                    if (cmdProfileReport instanceof CMDProfileReport)
-                                        ((CMDProfileReport) cmdProfileReport).addCollectionUsage(collectionReport.fileReport.provider, profile.count);
-                                    return cmdProfileReport;
-                                });
-                            }
-                        }
+                     for (CollectionReport.Profile profile : collectionReport.headerReport.profiles.profiles) {
+                        profileReports.computeIfPresent(profile.name, (key, cmdProfileReport) -> {
+                           if (cmdProfileReport instanceof CMDProfileReport)
+                              ((CMDProfileReport) cmdProfileReport)
+                                    .addCollectionUsage(collectionReport.fileReport.provider, profile.count);
+                           return cmdProfileReport;
+                        });
+                     }
+                  }
 
-                    }
-                }
-                
-                log.info("Creating collections table...");
+               }
+            }
 
-                // dumping the collections table
-                dumpAsXML(collectionsReport, CurationEntityType.COLLECTION);
-                dumpAsHTML(collectionsReport, CurationEntityType.COLLECTION);
+            log.info("Creating collections table...");
+
+            // dumping the collections table
+            dumpAsXML(collectionsReport, CurationEntityType.COLLECTION);
+            dumpAsHTML(collectionsReport, CurationEntityType.COLLECTION);
 //                dumpAsTSV(collectionsReport, CurationEntityType.COLLECTION);
 
-                log.info("Creating collections table finished.");
+            log.info("Creating collections table finished.");
 
-                log.info("Creating profiles table...");
+            log.info("Creating profiles table...");
 
-                //now dumping the public profile reports
-                ProfilesReport profilesReport = new ProfilesReport();
+            // now dumping the public profile reports
+            ProfilesReport profilesReport = new ProfilesReport();
 
-                for (Report<?> cmdProfileReport : profileReports.values()) {
-                    profilesReport.addReport(cmdProfileReport);
-                    dumpAsXML(cmdProfileReport, CurationEntityType.PROFILE);
-                    dumpAsHTML(cmdProfileReport, CurationEntityType.PROFILE);
-                }
+            for (Report<?> cmdProfileReport : profileReports.values()) {
+               profilesReport.addReport(cmdProfileReport);
+               dumpAsXML(cmdProfileReport, CurationEntityType.PROFILE);
+               dumpAsHTML(cmdProfileReport, CurationEntityType.PROFILE);
+            }
 
-                //dumping the profiles table
-                dumpAsXML(profilesReport, CurationEntityType.PROFILE);
-                dumpAsHTML(profilesReport, CurationEntityType.PROFILE);
+            // dumping the profiles table
+            dumpAsXML(profilesReport, CurationEntityType.PROFILE);
+            dumpAsHTML(profilesReport, CurationEntityType.PROFILE);
 //                dumpAsTSV(profilesReport, CurationEntityType.PROFILE);
-                log.info("Creating profiles table finished..");
+            log.info("Creating profiles table finished..");
 
-                log.info("Creating statistics table...");
-                //dumping the linkchecker statistics table
-                dumpAsXML(linkCheckerReport, CurationEntityType.STATISTICS);
-                dumpAsHTML(linkCheckerReport, CurationEntityType.STATISTICS);
-                log.info("Creating statistics table finished.");
-                
-                log.info("Deactivating links older than {} days", Configuration.DEACTIVATE_LINKS_AFTER);
-                Configuration.linkToBeCheckedResource.deactivateLinksAfter(Configuration.DEACTIVATE_LINKS_AFTER);
-                
-                log.info("Deleting links older than {}) days", Configuration.DELETE_LINKS_AFTER);
-                Configuration.linkToBeCheckedResource.deleteLinksAfter(Configuration.DELETE_LINKS_AFTER); 
-                
-                log.info("processing finished - terminating program");
-                
-            } else
-                throw new Exception("Only path is allowed for curation of collections root");
-        } else
-            throw new Exception("Curation module can curate profiles (-p), instances (-i), collection (-c) or collection root (-r)");
-    }
+            log.info("Creating statistics table...");
+            // dumping the linkchecker statistics table
+            dumpAsXML(linkCheckerReport, CurationEntityType.STATISTICS);
+            dumpAsHTML(linkCheckerReport, CurationEntityType.STATISTICS);
+            log.info("Creating statistics table finished.");
 
+            log.info("Deactivating links older than {} days", Configuration.DEACTIVATE_LINKS_AFTER);
+            Configuration.linkToBeCheckedResource.deactivateLinksAfter(Configuration.DEACTIVATE_LINKS_AFTER);
 
-    private static void dumpAsXML(Report<?> report, CurationEntityType type) throws Exception {
-        JAXBContext jc = JAXBContext.newInstance(report.getClass());
+            log.info("Deleting links older than {}) days", Configuration.DELETE_LINKS_AFTER);
+            Configuration.linkToBeCheckedResource.deleteLinksAfter(Configuration.DELETE_LINKS_AFTER);
 
-        Marshaller marshaller = jc.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
+            log.info("processing finished - terminating program");
 
-        if (Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null) {
-            Path path = Configuration.OUTPUT_DIRECTORY
-                  .resolve("xml")
-                  .resolve(type.toString());
+         }
+         else
+            throw new Exception("Only path is allowed for curation of collections root");
+      }
+      else
+         throw new Exception(
+               "Curation module can curate profiles (-p), instances (-i), collection (-c) or collection root (-r)");
+   }
 
-            Files.createDirectories(path);
-            String filename = FileNameEncoder.encode(report.getName()) + ".xml";
-            path = path.resolve(filename);
+   private static void dumpAsXML(Report<?> report, CurationEntityType type) throws Exception {
+      JAXBContext jc = JAXBContext.newInstance(report.getClass());
 
-            marshaller.marshal(report, Files.newOutputStream(path));
-            
-            // instead of a rollover we create a copy with report generation date in filename
-            copyStampedFile(path);
-            
+      Marshaller marshaller = jc.createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+      marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
 
-        } else {//print to console
-            marshaller.marshal(report, System.out);
+      if (Configuration.SAVE_REPORT && Configuration.OUTPUT_DIRECTORY != null) {
+         Path path = Configuration.OUTPUT_DIRECTORY.resolve("xml").resolve(type.toString());
 
-            System.out.println("-----------------------------------------------------------------");
+         Files.createDirectories(path);
+         String filename = FileNameEncoder.encode(report.getName()) + ".xml";
+         path = path.resolve(filename);
 
-        }
+         marshaller.marshal(report, Files.newOutputStream(path));
 
+         // instead of a rollover we create a copy with report generation date in
+         // filename
+         copyStampedFile(path);
 
-    }
+      }
+      else {// print to console
+         marshaller.marshal(report, System.out);
 
-    private static void dumpAsHTML(Report<?> report, CurationEntityType type) throws TransformerException, JAXBException, IOException {
-        Path path = Configuration.OUTPUT_DIRECTORY
-              .resolve("html")
-              .resolve(type.toString());
+         System.out.println("-----------------------------------------------------------------");
 
-        Files.createDirectories(path);
-        String filename = FileNameEncoder.encode(report.getName()) + ".html";
-        path = path.resolve(filename);       
-        
+      }
 
-        TransformerFactory factory = TransformerFactory.newInstance();
+   }
 
-        Source xslt = new StreamSource(Main.class.getResourceAsStream("/xslt/" + report.getClass().getSimpleName() + "2HTML.xsl"));
+   private static void dumpAsHTML(Report<?> report, CurationEntityType type)
+         throws TransformerException, JAXBException, IOException {
+      Path path = Configuration.OUTPUT_DIRECTORY.resolve("html").resolve(type.toString());
 
-        Transformer transformer = factory.newTransformer(xslt);
-        transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report), new StreamResult(path.toFile()));
-        
-        copyStampedFile(path);
+      Files.createDirectories(path);
+      String filename = FileNameEncoder.encode(report.getName()) + ".html";
+      path = path.resolve(filename);
 
-    }
-    
-    private static void copyStampedFile(Path path) throws IOException {
-       String stampedFileName = path.getFileName().toString().replace(".", "_" + String.format("%1tF", Configuration.REPORT_GENERATION_DATE) + ".");
-       Path stampedPath = path.getParent().resolve(stampedFileName);
-       Files.copy(path, stampedPath, StandardCopyOption.REPLACE_EXISTING);
-    }
+      TransformerFactory factory = TransformerFactory.newInstance();
 
-    private static Options createHelpOption() {
-        Option help = new Option("help", "print this message");
-        Options options = new Options();
-        options.addOption(help);
-        return options;
-    }
+      Source xslt = new StreamSource(
+            Main.class.getResourceAsStream("/xslt/" + report.getClass().getSimpleName() + "2HTML.xsl"));
 
-    private static Options createOptions() {
+      Transformer transformer = factory.newTransformer(xslt);
+      transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report),
+            new StreamResult(path.toFile()));
 
-        Option configurationFile = Option.builder("config").argName("file").
-                hasArg().required(false).desc("a path to the configuration file").build();
+      copyStampedFile(path);
 
+   }
 
-        Option profileCuration = Option.builder("p").desc("curate a profile").build();
+   private static void copyStampedFile(Path path) throws IOException {
+      String stampedFileName = path.getFileName().toString().replace(".",
+            "_" + String.format("%1tF", Configuration.REPORT_GENERATION_DATE) + ".");
+      Path stampedPath = path.getParent().resolve(stampedFileName);
+      Files.copy(path, stampedPath, StandardCopyOption.REPLACE_EXISTING);
+   }
 
-        Option instanceCuration = Option.builder("i").desc("curate an instance").build();
+   private static Options createHelpOption() {
+      Option help = new Option("help", "print this message");
+      Options options = new Options();
+      options.addOption(help);
+      return options;
+   }
 
-        Option collectionCuration = Option.builder("c").desc("curate a collection").build();
+   private static Options createOptions() {
 
-        Option resultsCuration = Option.builder("r").desc("curate all collections from a folder").build();
+      Option configurationFile = Option.builder("config").argName("file").hasArg().required(false)
+            .desc("a path to the configuration file").build();
 
-        OptionGroup curationGroup = new OptionGroup();
-        curationGroup.addOption(profileCuration).addOption(instanceCuration).addOption(collectionCuration).addOption(resultsCuration);
-        curationGroup.setRequired(true);
+      Option profileCuration = Option.builder("p").desc("curate a profile").build();
 
-        Option paramId = Option.builder("id").argName("profilesId").hasArgs().
-                numberOfArgs(Option.UNLIMITED_VALUES).desc("Space separated CLARIN profile IDs in format: clarin.eu:cr1:p_xxx").build();
+      Option instanceCuration = Option.builder("i").desc("curate an instance").build();
 
-        Option paramPath = Option.builder("path").argName("path").hasArgs().
-                numberOfArgs(Option.UNLIMITED_VALUES).desc("Space separated paths to file or folder to be curated").build();
+      Option collectionCuration = Option.builder("c").desc("curate a collection").build();
 
-        Option paramUrl = Option.builder("url").argName("url").hasArgs().
-                numberOfArgs(Option.UNLIMITED_VALUES).desc("Space separated urls to profile or instance to be curated").build();
+      Option resultsCuration = Option.builder("r").desc("curate all collections from a folder").build();
 
-        OptionGroup curationInputParams = new OptionGroup();
-        curationInputParams.addOption(paramId).addOption(paramPath).addOption(paramUrl);
-        curationInputParams.setRequired(true);
+      OptionGroup curationGroup = new OptionGroup();
+      curationGroup.addOption(profileCuration).addOption(instanceCuration).addOption(collectionCuration)
+            .addOption(resultsCuration);
+      curationGroup.setRequired(true);
 
-        Options options = new Options();
-        options.addOption(configurationFile);
-        options.addOptionGroup(curationGroup);
-        options.addOptionGroup(curationInputParams);
+      Option paramId = Option.builder("id").argName("profilesId").hasArgs().numberOfArgs(Option.UNLIMITED_VALUES)
+            .desc("Space separated CLARIN profile IDs in format: clarin.eu:cr1:p_xxx").build();
 
-        return options;
-    }
+      Option paramPath = Option.builder("path").argName("path").hasArgs().numberOfArgs(Option.UNLIMITED_VALUES)
+            .desc("Space separated paths to file or folder to be curated").build();
+
+      Option paramUrl = Option.builder("url").argName("url").hasArgs().numberOfArgs(Option.UNLIMITED_VALUES)
+            .desc("Space separated urls to profile or instance to be curated").build();
+
+      OptionGroup curationInputParams = new OptionGroup();
+      curationInputParams.addOption(paramId).addOption(paramPath).addOption(paramUrl);
+      curationInputParams.setRequired(true);
+
+      Options options = new Options();
+      options.addOption(configurationFile);
+      options.addOptionGroup(curationGroup);
+      options.addOptionGroup(curationInputParams);
+
+      return options;
+   }
 }
