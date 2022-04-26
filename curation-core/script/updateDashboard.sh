@@ -21,7 +21,12 @@ XSD_CACHE=$WORK_DIR/xsd_cache
 set -e
 
 # set data paths
-for providerSet in "${PROVIDER_SETS:='clarin europeana'}"; do
+if [ -z "$PROVIDER_SETS" ]; then
+   echo "PROVIDER_SETS not set. Using default value 'clarin europeana'"
+   export PROVIDER_SETS="clarin europeana"
+fi
+
+for providerSet in $PROVIDER_SETS; do
    DATA_PATHS="$DATA_PATHS ${DATA_DIR}/${providerSet}/${CMDI_PATH}"
 done 
 
