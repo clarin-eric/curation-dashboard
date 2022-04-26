@@ -22,6 +22,8 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 @Slf4j
 public class Configuration {
 
@@ -130,6 +132,9 @@ public class Configuration {
 
          factory.init(new HikariDataSource(new HikariConfig(hikariProperties)));
       }
+      else {
+         log.info("assuming testmode since class org.junit.jupiter.api.Test in classpath. Using DataSource dummy!");
+      }
       
       checkedLinkResource = factory.getCheckedLinkResource();
       linkToBeCheckedResource = factory.getLinkToBeCheckedResource();
@@ -149,16 +154,41 @@ public class Configuration {
       }
 
       USERAGENT = config.getProperty("USERAGENT");
+      
       BASE_URL = config.getProperty("BASE_URL");
-      if (!BASE_URL.endsWith("/")) {
-         BASE_URL += "/";
-      }
+      if (!BASE_URL.endsWith("/") && (BASE_URL += "/").isEmpty());
+    
 
-      DOC_URL = config.getProperty("DOC_URL", "");
+      if(StringUtils.isNotEmpty(config.getProperty("DOC_URL"))) {
+         DOC_URL = config.getProperty("DOC_URL");
+         if(!DOC_URL.endsWith("/") && (DOC_URL += "/").isEmpty());
+      }
+      else {
+         log.warn("DOC_URL is empty. Using default value 'https://raw.githubusercontent.com/clarin-eric/cereal/main/curation-dashboard/markdown/'");
+         DOC_URL = "https://raw.githubusercontent.com/clarin-eric/cereal/main/curation-dashboard/markdown/";
+      }
       
-      DEACTIVATE_LINKS_AFTER = Integer.parseInt(config.getProperty("DEACTIVATE_LINKS_AFTER", "7"));
-      DELETE_LINKS_AFTER = Integer.parseInt(config.getProperty("DELETE_LINKS_AFTER", "30"));
-      
-      CR_QUERY = config.getProperty("CR_QUERY", "registrySpace=published&status=production&status=development");
+      if(StringUtils.isNumeric(config.getProperty("DEACTIVATE_LINKS_AFTER"))) {
+         DEACTIVATE_LINKS_AFTER = Integer.parseInt(config.getProperty("DEACTIVATE_LINKS_AFTER"));
+      }
+      else {
+         log.warn("DEACTIVATE_LINKS_AFTER: {} not valid. Using default value 7", config.getProperty("DEACTIVATE_LINKS_AFTER"));
+         DEACTIVATE_LINKS_AFTER = 7;
+      }
+      if(StringUtils.isNumeric(config.getProperty("DELETE_LINKS_AFTER"))) { 
+         DELETE_LINKS_AFTER = Integer.parseInt(config.getProperty("DELETE_LINKS_AFTER"));
+      }
+      else {
+         log.warn("DELETE_LINKS_AFTER: {} not valid. Using default value 30", config.getProperty("DELETE_LINKS_AFTER"));
+         DELETE_LINKS_AFTER = 30;
+      }
+      if(StringUtils.isNotEmpty(config.getProperty("CR_QUERY"))) {
+         CR_QUERY = config.getProperty("CR_QUERY");
+      }
+      else {
+         log.warn("CR_QUERY is empty. Using default value 'registrySpace=published&status=production&status=development'");
+         CR_QUERY = "registrySpace=published&status=production&status=development";
+      }
+         
    }
 }
