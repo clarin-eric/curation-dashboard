@@ -94,7 +94,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         public String message;
 
         @XmlAttribute(name = "http-status")
-        public Integer status;
+        public String status;
 
         @XmlAttribute(name = "content-type")
         public String contentType;
@@ -116,13 +116,13 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
         public URLElement convertFromLinkCheckerURLElement(CheckedLink checkedLink) {
             url = checkedLink.getUrl();
-            method = checkedLink.getMethod();
-            status = checkedLink.getStatus();
+            method = checkedLink.getMethod()==null?"n/a":checkedLink.getMethod();
+            status = checkedLink.getStatus()==null?"n/a":String.valueOf(checkedLink.getStatus());
             category = checkedLink.getCategory().name();
-            contentType = checkedLink.getContentType();
-            expectedContentType = checkedLink.getExpectedMimeType();
-            byteSize = String.valueOf(checkedLink.getByteSize());
-            duration = TimeUtils.humanizeToTime(checkedLink.getDuration());
+            contentType = checkedLink.getContentType()==null?"n/a":checkedLink.getContentType();
+            expectedContentType = checkedLink.getExpectedMimeType()==null?"n/a":checkedLink.getExpectedMimeType();
+            byteSize = checkedLink.getByteSize()==null?"n/a":String.valueOf(checkedLink.getByteSize());
+            duration = checkedLink.getDuration()==null?"n/a":TimeUtils.humanizeToTime(checkedLink.getDuration());
             timestamp = checkedLink.getCheckingDate().toString();
 
             return this;
