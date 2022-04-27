@@ -6,8 +6,6 @@ import eu.clarin.cmdi.curation.report.CollectionReport.Record;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.*;
 import java.io.OutputStream;
@@ -21,8 +19,6 @@ import java.util.Collection;
 @XmlRootElement(name = "instance-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDInstanceReport implements Report<CollectionReport> {
-
-    private static final Logger logger = LoggerFactory.getLogger(CMDInstanceReport.class);
 
     public String parentName;
 
@@ -98,7 +94,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         public String message;
 
         @XmlAttribute(name = "http-status")
-        public Integer status;
+        public String status;
 
         @XmlAttribute(name = "content-type")
         public String contentType;
@@ -120,13 +116,13 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
         public URLElement convertFromLinkCheckerURLElement(CheckedLink checkedLink) {
             url = checkedLink.getUrl();
-            method = checkedLink.getMethod();
-            status = checkedLink.getStatus();
+            method = checkedLink.getMethod()==null?"n/a":checkedLink.getMethod();
+            status = checkedLink.getStatus()==null?"n/a":String.valueOf(checkedLink.getStatus());
             category = checkedLink.getCategory().name();
-            contentType = checkedLink.getContentType();
-            expectedContentType = checkedLink.getExpectedMimeType();
-            byteSize = String.valueOf(checkedLink.getByteSize());
-            duration = TimeUtils.humanizeToTime(checkedLink.getDuration());
+            contentType = checkedLink.getContentType()==null?"n/a":checkedLink.getContentType();
+            expectedContentType = checkedLink.getExpectedMimeType()==null?"n/a":checkedLink.getExpectedMimeType();
+            byteSize = checkedLink.getByteSize()==null?"n/a":String.valueOf(checkedLink.getByteSize());
+            duration = checkedLink.getDuration()==null?"n/a":TimeUtils.humanizeToTime(checkedLink.getDuration());
             timestamp = checkedLink.getCheckingDate().toString();
 
             return this;
