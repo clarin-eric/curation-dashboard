@@ -192,7 +192,7 @@ public class Download {
                               category).getBytes()
                         );
                   
-                  zipOutStream.write("url\tcheckingDate\tmethod\tstatusCode\tbyteSize\tduration\tredirects\tmessage\n".getBytes());
+                  zipOutStream.write("url\tcheckingDate\tmethod\tstatusCode\tbyteSize\tduration\tredirects\tmessage\tcollection\trecord\texpected-mime-type\n".getBytes());
    
                   checkedLinkStream.forEach(checkedLink -> {
    

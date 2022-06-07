@@ -104,19 +104,16 @@ public class LinkCheckerStatisticsHelper {
                .append(checkedLink.getMethod() == null ? "N/A" : checkedLink.getMethod()).append("<br>");
             
             // null check not necessary since checkingDate is non nullable
-            sb.append("<b>Timestamp: </b>").append(checkedLink.getCheckingDate());
+            sb.append("<b>Timestamp: </b>").append(checkedLink.getCheckingDate()).append("<br>");
             
             sb.append("<b>Collection: </b>")
             .append(checkedLink.getProviderGroup() == null ? "N/A" : checkedLink.getProviderGroup()).append("<br>");
-            sb.append("</td>");
             
             sb.append("<b>Record: </b>")
             .append(checkedLink.getRecord() == null ? "N/A" : checkedLink.getRecord()).append("<br>");
-            sb.append("</td>");
             
             sb.append("<b>Expected mime-type: </b>")
-            .append(checkedLink.getExpectedMimeType() == null ? "N/A" : checkedLink.getExpectedMimeType()).append("<br>");
-            sb.append("</td>");
+            .append(checkedLink.getExpectedMimeType() == null ? "N/A" : checkedLink.getExpectedMimeType());
             
             // info end
 
