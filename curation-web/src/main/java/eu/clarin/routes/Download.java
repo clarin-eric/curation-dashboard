@@ -103,16 +103,24 @@ public class Download {
                   checkedLinkStream.forEach(checkedLink -> {
    
                      try {
-                        zipOutStream.write(String.format(
-                              "   <link url=\"%1$s\" checkingDate=\"%2$tF %2$tT\" method=\"%3$s\" statusCode=\"%4$s\" byteSize=\"%5$s\" duration=\"%6$s\" redirects=\"%7$s\" message=\"%8$s\" />\n",
-                              checkedLink.getUrl(), 
-                              checkedLink.getCheckingDate(), 
-                              checkedLink.getMethod(),
-                              checkedLink.getStatus(), 
-                              checkedLink.getByteSize(),
-                              checkedLink.getDuration(),
-                              checkedLink.getRedirectCount(),
-                              checkedLink.getMessage()).getBytes());
+                        zipOutStream.write(
+                           String
+                              .format(
+                                 "   <link url=\"%1$s\" checkingDate=\"%2$tF %2$tT\" method=\"%3$s\" statusCode=\"%4$s\" byteSize=\"%5$s\" duration=\"%6$s\" redirects=\"%7$s\" message=\"%8$s\" collection=\"%9$s\" record=\"%10$s\" expected-mime-type=\"%11$s\" />\n",
+                                 checkedLink.getUrl(), 
+                                 checkedLink.getCheckingDate(), 
+                                 checkedLink.getMethod(),
+                                 checkedLink.getStatus(), 
+                                 checkedLink.getByteSize(),
+                                 checkedLink.getDuration(),
+                                 checkedLink.getRedirectCount(),
+                                 checkedLink.getMessage(),
+                                 checkedLink.getProviderGroup(),
+                                 checkedLink.getRecord(),
+                                 checkedLink.getExpectedMimeType()
+                              )
+                              .getBytes()
+                           );
                      }
                      catch (IOException e) {
    
@@ -146,19 +154,24 @@ public class Download {
                         }
                         else {
                            zipOutStream.write(",".getBytes());
-                        }
-                        
-                        zipOutStream.write(String.format(
-                              "\n      { \"url\": \"%1$s\", \"checkingDate\": \"%2$tF %2$tT\", \"method\": \"%3$s\", \"statusCode\": %4$s, \"byteSize\": %5$s, \"duration\": %6$s, \"redirects\": %7$s, \"message\": \"%8$s\" }",
-                              checkedLink.getUrl(), 
-                              checkedLink.getCheckingDate(), 
-                              checkedLink.getMethod(),
-                              checkedLink.getStatus(), 
-                              checkedLink.getByteSize(),
-                              checkedLink.getDuration(),
-                              checkedLink.getRedirectCount(),
-                              checkedLink.getMessage()).getBytes());
-
+                        }                        
+                        zipOutStream.write(
+                              String.format(
+                                 "\n      { \"url\": \"%1$s\", \"checkingDate\": \"%2$tF %2$tT\", \"method\": \"%3$s\", \"statusCode\": %4$s, \"byteSize\": %5$s, \"duration\": %6$s, \"redirects\": %7$s, \"message\": \"%8$s\", \"collection\": \"%9$s\", \"record\": \"%10$s\", \"expected-mime-type\": \"%11$s\" }",
+                                 checkedLink.getUrl(), 
+                                 checkedLink.getCheckingDate(), 
+                                 checkedLink.getMethod(),
+                                 checkedLink.getStatus(), 
+                                 checkedLink.getByteSize(),
+                                 checkedLink.getDuration(),
+                                 checkedLink.getRedirectCount(),
+                                 checkedLink.getMessage(),
+                                 checkedLink.getProviderGroup(),
+                                 checkedLink.getRecord(),
+                                 checkedLink.getExpectedMimeType()                              
+                              )
+                              .getBytes()
+                           );
                      }
                      catch (IOException e) {
    
@@ -184,16 +197,23 @@ public class Download {
                   checkedLinkStream.forEach(checkedLink -> {
    
                      try {
-                        zipOutStream.write(String.format(
-                              "%1$s\t%2$tF %2$tT\t%3$s\t%4$s\t%5$s\t%6$s\t%7$s\t%8$s\n",
-                              checkedLink.getUrl(), 
-                              checkedLink.getCheckingDate(), 
-                              checkedLink.getMethod(),
-                              checkedLink.getStatus(), 
-                              checkedLink.getByteSize(),
-                              checkedLink.getDuration(),
-                              checkedLink.getRedirectCount(),
-                              checkedLink.getMessage()).getBytes());
+                        zipOutStream.write(
+                           String
+                              .format(
+                                 "%1$s\t%2$tF %2$tT\t%3$s\t%4$s\t%5$s\t%6$s\t%7$s\t%8$s\t%9$s\t%10$s\t%11$s\n",
+                                 checkedLink.getUrl(), 
+                                 checkedLink.getCheckingDate(), 
+                                 checkedLink.getMethod(),
+                                 checkedLink.getStatus(), 
+                                 checkedLink.getByteSize(),
+                                 checkedLink.getDuration(),
+                                 checkedLink.getRedirectCount(),
+                                 checkedLink.getMessage(),
+                                 checkedLink.getProviderGroup(),
+                                 checkedLink.getRecord(),
+                                 checkedLink.getExpectedMimeType()
+                              )
+                              .getBytes());
                      }
                      catch (IOException e) {
    
