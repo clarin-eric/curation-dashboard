@@ -36,6 +36,7 @@ public class Configuration {
    public static boolean SAVE_REPORT;
    public static Path OUTPUT_DIRECTORY = null;
    public static Path CACHE_DIRECTORY = null;
+   public static Path DATA_DIRECTORY;
    public static int THREADPOOL_SIZE = 100;
    public static String LINK_DATA_SOURCE;
    public static Collection<String> FACETS = null;
@@ -106,6 +107,7 @@ public class Configuration {
 
       String outDir = config.getProperty("OUTPUT_DIRECTORY");
       String cacheDir = config.getProperty("CACHE_DIRECTORY");
+      String dataDir = config.getProperty("DATA_DIRECTORY");
 
       if (outDir != null && !outDir.isEmpty()) {
          OUTPUT_DIRECTORY = Files.createDirectories(Paths.get(outDir));
@@ -113,6 +115,8 @@ public class Configuration {
       if (cacheDir != null && !cacheDir.isEmpty()) {
          CACHE_DIRECTORY = Files.createDirectories(Paths.get(cacheDir));
       }
+      
+      DATA_DIRECTORY = Files.createDirectories(Paths.get(dataDir));
 
       String redirectFollowLimit = config.getProperty("REDIRECT_FOLLOW_LIMIT");
       if (redirectFollowLimit != null && !redirectFollowLimit.isEmpty()) {

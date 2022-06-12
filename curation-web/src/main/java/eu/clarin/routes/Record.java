@@ -22,7 +22,7 @@ public class Record {
     public Response handleView(@PathParam("filepath") String filePath) {
         try {
         	// the next three lines assure that the path is a sub-path of RECORDS_PATH
-        	java.nio.file.Path path = Paths.get(Configuration.DATA_DIRECTORY, filePath).toRealPath(LinkOption.NOFOLLOW_LINKS);
+        	java.nio.file.Path path = Paths.get(Configuration.DATA_DIRECTORY.toString(), filePath).toRealPath(LinkOption.NOFOLLOW_LINKS);
         	if(!path.startsWith(Configuration.DATA_DIRECTORY))
         		return ResponseManager.returnError(404, "Path not permitted.");
         	

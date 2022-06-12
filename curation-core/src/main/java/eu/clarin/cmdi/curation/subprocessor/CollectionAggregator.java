@@ -69,11 +69,11 @@ public class CollectionAggregator {
                 } 
                 catch(TransformerException | FileSizeException | SAXException | VTDException e) {
                     LOG.info("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()+ " Skipping to next instance...");
-                    new ErrorReport(instance.getPath().toString(), e.getMessage()).mergeWithParent(report);
+                    new ErrorReport(instance.getPath().resolve(Configuration.DATA_DIRECTORY).toString(), e.getMessage()).mergeWithParent(report);
                 }
                 catch (IOException | ExecutionException | ParserConfigurationException e) {
                     LOG.error("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()+ " Skipping to next instance...");
-                    new ErrorReport(instance.getPath().toString(), e.getMessage()).mergeWithParent(report);
+                    new ErrorReport(instance.getPath().resolve(Configuration.DATA_DIRECTORY).toString(), e.getMessage()).mergeWithParent(report);
                 }
             });
         }
