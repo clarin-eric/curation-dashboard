@@ -124,7 +124,7 @@ public class FileSizeValidator extends CMDSubprocessor {
          
          //file in the data directory
          if (filePath.startsWith(Configuration.DATA_DIRECTORY)) {
-            report.fileReport.location = filePath.resolve(Configuration.DATA_DIRECTORY).toString();
+            report.fileReport.location = Configuration.DATA_DIRECTORY.relativize(filePath).toString();
          }
          //otherwise
          else {

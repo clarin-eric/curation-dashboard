@@ -15,6 +15,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
@@ -68,12 +69,13 @@ public class CollectionAggregator {
                     cmdInstanceReport.mergeWithParent(report);
                 } 
                 catch(TransformerException | FileSizeException | SAXException | VTDException e) {
+                   
                     LOG.info("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()+ " Skipping to next instance...");
-                    new ErrorReport(instance.getPath().resolve(Configuration.DATA_DIRECTORY).toString(), e.getMessage()).mergeWithParent(report);
+                    new ErrorReport(Configuration.DATA_DIRECTORY.relativize(instance.getPath()).toString(), e.getMessage()).mergeWithParent(report);
                 }
                 catch (IOException | ExecutionException | ParserConfigurationException e) {
                     LOG.error("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()+ " Skipping to next instance...");
-                    new ErrorReport(instance.getPath().resolve(Configuration.DATA_DIRECTORY).toString(), e.getMessage()).mergeWithParent(report);
+                    new ErrorReport(Configuration.DATA_DIRECTORY.relativize(instance.getPath()).toString(), e.getMessage()).mergeWithParent(report);
                 }
             });
         }
