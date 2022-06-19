@@ -505,7 +505,7 @@
 							<li>
 								Invalid file:
 								<a>
-									<xsl:attribute name="href">/record<xsl:value-of
+									<xsl:attribute name="href">/record/<xsl:value-of
 										select="." /></xsl:attribute>
 									<xsl:value-of select="." />
 								</a>
