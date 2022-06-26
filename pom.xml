@@ -10,7 +10,7 @@
       <url>http://www.clarin.eu</url>
    </organization>
    <properties>
-      <revision>5.4.0-beta1</revision>
+      <revision>5.4.0-beta2</revision>
       <maven.compiler.source>11</maven.compiler.source>
       <maven.compiler.target>11</maven.compiler.target>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
