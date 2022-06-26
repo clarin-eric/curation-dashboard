@@ -131,10 +131,12 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
             
             if(statisticsObj.avgRespTime > 0) {
                s.avgRespTime =
-                     (s.avgRespTime * s.count + statisticsObj.avgRespTime * statisticsObj.count)
-                     / (s.count + statisticsObj.count);
-               s.count += statisticsObj.count;
+                     (s.avgRespTime * s.nonNullCount + statisticsObj.avgRespTime * statisticsObj.count)
+                     / (s.nonNullCount + statisticsObj.count);
+               s.nonNullCount += statisticsObj.count;
             }
+            s.count += statisticsObj.count;
+            
             if(s.maxRespTime < statisticsObj.maxRespTime) {
                s.maxRespTime = statisticsObj.maxRespTime;
             }

@@ -353,6 +353,9 @@ public class CollectionReport implements Report<CollectionReport> {
     public static class Statistics implements Comparable<Statistics>{
         @XmlAttribute
         public long count;
+        
+        @XmlTransient
+        public long nonNullCount;
 
         @XmlAttribute
         public double avgRespTime;
