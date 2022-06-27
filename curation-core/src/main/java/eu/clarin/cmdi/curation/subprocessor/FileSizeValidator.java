@@ -43,123 +43,129 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileSizeValidator extends CMDSubprocessor {
-    private final static Logger LOG = LoggerFactory.getLogger(FileSizeValidator.class);
+   private final static Logger LOG = LoggerFactory.getLogger(FileSizeValidator.class);
 
-    private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
+   private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
 
-    private static final CMDIDataProcessor<Map<String, List<ValueSet>>> _processor = getProcessor();
+   private static final CMDIDataProcessor<Map<String, List<ValueSet>>> _processor = getProcessor();
 
+   private static CMDIDataProcessor<Map<String, List<ValueSet>>> getProcessor() {
+      try {
+         final VloConfig vloConfig = new DefaultVloConfigFactory().newConfig();
 
-    private static CMDIDataProcessor<Map<String, List<ValueSet>>> getProcessor() {
-        try {
-            final VloConfig vloConfig = new DefaultVloConfigFactory().newConfig();
+         final LanguageCodeUtils languageCodeUtils = new LanguageCodeUtils(vloConfig);
 
-            final LanguageCodeUtils languageCodeUtils = new LanguageCodeUtils(vloConfig);
+         final FieldNameService fieldNameService = new FieldNameServiceImpl(vloConfig);
 
-            final FieldNameService fieldNameService = new FieldNameServiceImpl(vloConfig);
+         final CMDIDataImplFactory cmdiDataFactory = new CMDIDataImplFactory(fieldNameService);
 
-            final CMDIDataImplFactory cmdiDataFactory = new CMDIDataImplFactory(fieldNameService);
+         final VLOMarshaller marshaller = new VLOMarshaller();
 
-            final VLOMarshaller marshaller = new VLOMarshaller();
+         final FacetMappingFactory facetMappingFactory = FacetsMappingCacheFactory.getInstance();
 
-            final FacetMappingFactory facetMappingFactory = FacetsMappingCacheFactory.getInstance();
+         return new CMDIParserVTDXML<>(
+               MetadataImporter.registerPostProcessors(vloConfig, fieldNameService, languageCodeUtils),
+               MetadataImporter.registerPostMappingFilters(fieldNameService), vloConfig, facetMappingFactory,
+               marshaller, cmdiDataFactory, fieldNameService, false);
 
-            return new CMDIParserVTDXML<>(
-                    MetadataImporter.registerPostProcessors(vloConfig, fieldNameService, languageCodeUtils),
-                    MetadataImporter.registerPostMappingFilters(fieldNameService),
-                    vloConfig, facetMappingFactory, marshaller, cmdiDataFactory, fieldNameService, false);
+      }
+      catch (IOException ex) {
+         LOG.error("couldn't instatiate CMDIDataProcessor - so instance parsing won't work!");
+         return null;
+      }
+   }
 
+   private boolean isLatestVersion(Path path) throws IOException {
+      String line = null;
+      Matcher matcher;
 
-        } catch (IOException ex) {
-            LOG.error("couldn't instatiate CMDIDataProcessor - so instance parsing won't work!");
-            return null;
-        }
-    }
+      try (BufferedReader reader = Files.newBufferedReader(path)) {
 
-    private boolean isLatestVersion(Path path) throws IOException {
-        String line = null;
-        Matcher matcher;
+         while ((line = reader.readLine()) != null)
+            if ((matcher = _pattern.matcher(line)).find())
+               return matcher.group(3) != null;
+      }
+      catch (IOException ex) {
+         LOG.error("can't identitfy cmdi version by namespace", ex);
+      }
+      return false;
+   }
 
-        try (BufferedReader reader = Files.newBufferedReader(path)) {
+   @Override
+   public void process(CMDInstance entity, CMDInstanceReport report)
+         throws IOException, TransformerException, FileSizeException {
 
-            while ((line = reader.readLine()) != null)
-                if ((matcher = _pattern.matcher(line)).find())
-                    return matcher.group(3) != null;
-        } catch (IOException ex) {
-            LOG.error("can't identitfy cmdi version by namespace", ex);
-        }
-        return false;
-    }
+      // convert cmdi 1.1 to 1.2 if necessary
 
+      if (!isLatestVersion(entity.getPath())) {
+         Path newPath = Files.createTempFile(null, ".xml");
 
-    @Override
-    public void process(CMDInstance entity, CMDInstanceReport report) throws IOException, TransformerException, FileSizeException {
+         TransformerFactory factory = TransformerFactory.newInstance();
+         Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/xslt/cmd-record-1_1-to-1_2.xsl"));
 
-        //convert cmdi 1.1 to 1.2 if necessary
+         Transformer transformer = factory.newTransformer(xslt);
+         transformer.transform(new StreamSource(entity.getPath().toFile()), new StreamResult(newPath.toFile()));
 
-        if (!isLatestVersion(entity.getPath())) {
-            Path newPath = Files.createTempFile(null, ".xml");
+         this.addMessage(Severity.INFO, "tranformed cmdi version 1.1 into version 1.2");
 
-            TransformerFactory factory = TransformerFactory.newInstance();
-            Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/xslt/cmd-record-1_1-to-1_2.xsl"));
+         entity.setPath(newPath);
+         entity.setSize(Files.size(newPath));
+      }
 
-            Transformer transformer = factory.newTransformer(xslt);
-            transformer.transform(new StreamSource(entity.getPath().toFile()), new StreamResult(newPath.toFile()));
+      report.fileReport = new FileReport();
+      report.fileReport.size = entity.getSize();
+      
+      //from instance upload
+      if (entity.getUrl() != null) {
+         report.fileReport.location = FileNameEncoder.encode(entity.getUrl());
+      }
+      else {
+         Path filePath = entity.getPath();
+         
+         //file in the data directory
+         if (filePath.startsWith(Configuration.DATA_DIRECTORY)) {
+            report.fileReport.location = Configuration.DATA_DIRECTORY.relativize(filePath).toString();
+         }
+         //otherwise
+         else {
+            report.fileReport.location = filePath.toString();
+         }
 
-            this.addMessage(Severity.INFO, "tranformed cmdi version 1.1 into version 1.2");
+      }
 
-            entity.setPath(newPath);
-            entity.setSize(Files.size(newPath));
-        }
+      if (report.fileReport.size > Configuration.MAX_FILE_SIZE) {
+         addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + Configuration.MAX_FILE_SIZE + "B)");
+         // don't assess when assessing collections
+         if (Configuration.COLLECTION_MODE) {
+            throw new FileSizeException(entity.getPath().getFileName().toString(), report.fileReport.size);
+         }
+      }
 
-        report.fileReport = new FileReport();
-        report.fileReport.size = entity.getSize();
-        if (entity.getUrl() != null) {
-            report.fileReport.location = FileNameEncoder.encode(entity.getUrl());
-        } else {
-            int index;
-            String path = entity.getPath().toString();
+      CMDIData<Map<String, List<ValueSet>>> cmdiData = null;
+      try {
+         cmdiData = _processor.process(entity.getPath().toFile(), new ResourceStructureGraph());
+      }
+      catch (Exception e) {
+         throw new IOException(e);
+      }
 
-            if ((index = path.indexOf("/clarin")) != -1 || (index = path.indexOf("/europeana")) != -1) {
-                report.fileReport.location = path.substring(index + 1);
-            } else {
-                report.fileReport.location = path;
-            }
+      entity.setCMDIData(cmdiData);
 
-        }
+      // create xpath/value pairs only in instance mode
+      if (!Configuration.COLLECTION_MODE) {
 
-        if (report.fileReport.size > Configuration.MAX_FILE_SIZE) {
-            addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + Configuration.MAX_FILE_SIZE + "B)");
-            //don't assess when assessing collections
-            if (Configuration.COLLECTION_MODE) {
-                throw new FileSizeException(entity.getPath().getFileName().toString(), report.fileReport.size);
-            }
-        }
+         InstanceParser transformer = new InstanceParser();
 
-        CMDIData<Map<String, List<ValueSet>>> cmdiData = null;
-        try {
-            cmdiData = _processor.process(entity.getPath().toFile(), new ResourceStructureGraph());
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
+         LOG.debug("parsing instance...");
+         entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));
+         LOG.debug("...done");
 
+      }
+   }
 
-        entity.setCMDIData(cmdiData);
-
-        //create xpath/value pairs only in instance mode
-        if (!Configuration.COLLECTION_MODE) {
-
-            InstanceParser transformer = new InstanceParser();
-
-            LOG.debug("parsing instance...");
-            entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));
-            LOG.debug("...done");
-
-        }
-    }
-
-    public Score calculateScore() {
-        //in case that size exceeds the limit msgs will be created and it will contain a single msg
-        return new Score(msgs == null ? 1.0 : 0, 1.0, "file-size", msgs);
-    }
+   public Score calculateScore() {
+      // in case that size exceeds the limit msgs will be created and it will contain
+      // a single msg
+      return new Score(msgs == null ? 1.0 : 0, 1.0, "file-size", msgs);
+   }
 }

@@ -27,7 +27,6 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 public class Configuration extends eu.clarin.cmdi.curation.main.Configuration{
 
     public static String VIEW_RESOURCES_PATH;
-    public static String DATA_DIRECTORY;
     public static ArrayList<String> clarinCollections;
     public static ArrayList<String> europeanaCollections;
 
@@ -47,10 +46,6 @@ public class Configuration extends eu.clarin.cmdi.curation.main.Configuration{
         loadVariables(properties);
         scheduleCleaningTemp();
 
-    }
-
-    public static void tearDown(){
-        eu.clarin.cmdi.curation.main.Configuration.tearDown();
     }
 
     private static void scheduleCleaningTemp() {
@@ -89,7 +84,7 @@ public class Configuration extends eu.clarin.cmdi.curation.main.Configuration{
     private static void loadVariables(Properties properties) {
 
         //collection categorizing into europeana and clarin based on the data folder
-        DATA_DIRECTORY = properties.getProperty("DATA_DIRECTORY");
+
         try (Stream<Path> walk = Files.walk(Paths.get(DATA_DIRECTORY + "/clarin/results/cmdi/"))) {
             clarinCollections = (ArrayList<String>) walk.filter(Files::isDirectory).filter(path -> !path.getFileName().toString().equals("cmdi")).map(file -> file.getFileName().toString()).collect(Collectors.toList());
         } catch (IOException e) {

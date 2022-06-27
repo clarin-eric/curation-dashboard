@@ -26,11 +26,4 @@ public class ApplicationInit implements ServletContextListener {
             logger.error("There was a problem loading the properties file:" + e.getMessage());
         }
     }
-
-    @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        Configuration.tearDown();
-    }
-
-
 }

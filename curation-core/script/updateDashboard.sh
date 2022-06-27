@@ -1,7 +1,7 @@
 #!/bin/bash
 START_TIME=$SECONDS
 
-WORK_DIR=/usr/local/curation-module
+WORK_DIR=/app/curation-dashboard
 BIN_DIR=$WORK_DIR/bin
 LIB_DIR=$WORK_DIR/lib
 DATA_DIR=$WORK_DIR/data
@@ -22,6 +22,7 @@ set -e
 
 # set data paths
 if [ -z "$PROVIDER_SETS" ]; then
+   echo "PROVIDER_SETS not set. Using default value 'clarin europeana'"
    export PROVIDER_SETS="clarin europeana"
 fi
 

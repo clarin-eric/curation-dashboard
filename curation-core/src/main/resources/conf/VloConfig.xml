@@ -90,7 +90,7 @@
 
 	<licenseTypeMapUrl>https://raw.githubusercontent.com/clarin-eric/VLO-mapping/master/uniform-maps/LicenseTypeMap.xml</licenseTypeMapUrl> <!-- bundled resource: /vlo-mapping/uniform-maps/LicenseTypeMap.xml -->
 
-	<valueMappingsFile>/usr/local/curation-module/conf/value_maps/master.xml</valueMappingsFile> <!-- bundled resource: /value-maps/dist/master.xml -->
+	<valueMappingsFile>app/curation-dashboard/conf/value_maps/master.xml</valueMappingsFile> <!-- bundled resource: /value-maps/dist/master.xml -->
 
 	<fields>
 		<field key="NAME">name</field>

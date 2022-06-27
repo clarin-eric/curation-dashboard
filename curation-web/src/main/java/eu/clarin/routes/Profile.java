@@ -63,7 +63,7 @@ public class Profile {
         try {
             String profiles = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/profiles/ProfilesReport.html");
 
-            return ResponseManager.returnHTML(200, profiles, new NavbarButton("/profile/tsv", "Export as TSV"));
+            return ResponseManager.returnHTML(200, profiles);
         } catch (IOException e) {
             log.error("Error when reading ProfilesReport.html: ", e);
             return ResponseManager.returnServerError();

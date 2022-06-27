@@ -1,7 +1,5 @@
 package eu.clarin.cmdi.curation.ccr_service;
 
-import eu.clarin.cmdi.curation.ccr_service.CCRConcept;
-
 import java.util.Collection;
 
 public interface ICCRService {

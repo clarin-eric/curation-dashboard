@@ -7,8 +7,10 @@ import eu.clarin.cmdi.rasa.linkResources.LinkToBeCheckedResource;
 import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.config.XmlVloConfigFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,9 +22,10 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Configuration {
+import org.apache.commons.lang3.StringUtils;
 
-   private static Logger logger = LoggerFactory.getLogger(Configuration.class);
+@Slf4j
+public class Configuration {
 
    // prevent milliseconds
    public static Timestamp REPORT_GENERATION_DATE = new Timestamp((System.currentTimeMillis() / 1000) * 1000);
@@ -33,12 +36,17 @@ public class Configuration {
    public static boolean SAVE_REPORT;
    public static Path OUTPUT_DIRECTORY = null;
    public static Path CACHE_DIRECTORY = null;
+   public static Path DATA_DIRECTORY;
    public static int THREADPOOL_SIZE = 100;
    public static String LINK_DATA_SOURCE;
    public static Collection<String> FACETS = null;
    public static int REDIRECT_FOLLOW_LIMIT;
    public static int TIMEOUT;
    public static String DOC_URL;
+   public static String CR_QUERY;
+   
+   public static int DEACTIVATE_LINKS_AFTER;
+   public static int DELETE_LINKS_AFTER;
 
    public static VloConfig VLO_CONFIG;
 
@@ -57,7 +65,7 @@ public class Configuration {
    private static RasaFactory factory;
 
    public static void init(String file) throws IOException {
-      logger.info("Initializing configuration from {}", file);
+      log.info("Initializing configuration from {}", file);
       Properties config = new Properties();
       config.load(new FileInputStream(file));
       readProperties(config);
@@ -65,17 +73,12 @@ public class Configuration {
    }
 
    public static void initDefault() throws IOException {
-      logger.info("Initializing configuration with default config file");
+      log.info("Initializing configuration with default config file");
       Properties config = new Properties();
       config.load(Configuration.class.getResourceAsStream("/config.properties"));
       readProperties(config);
    }
 
-   public static void tearDown() {
-      logger.info("Finished report generation. Stopping Curation Module...");
-      factory.tearDown();
-      logger.info("Curation Module stopped.");
-   }
 
    private static void readProperties(Properties config) throws IOException {
 
@@ -88,7 +91,7 @@ public class Configuration {
       if (timeout == null || timeout.isEmpty()) {
          // in ms(if config file doesnt have it)
          int TIMEOUTDEFAULT = 5000;
-         logger.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT
+         log.info("Timeout is not specified in config.properties file. Default timeout is assumed: " + TIMEOUTDEFAULT
                + "ms.");
          TIMEOUT = TIMEOUTDEFAULT;
       }
@@ -104,6 +107,7 @@ public class Configuration {
 
       String outDir = config.getProperty("OUTPUT_DIRECTORY");
       String cacheDir = config.getProperty("CACHE_DIRECTORY");
+      String dataDir = config.getProperty("DATA_DIRECTORY");
 
       if (outDir != null && !outDir.isEmpty()) {
          OUTPUT_DIRECTORY = Files.createDirectories(Paths.get(outDir));
@@ -111,6 +115,8 @@ public class Configuration {
       if (cacheDir != null && !cacheDir.isEmpty()) {
          CACHE_DIRECTORY = Files.createDirectories(Paths.get(cacheDir));
       }
+      
+      DATA_DIRECTORY = Files.createDirectories(Paths.get(dataDir));
 
       String redirectFollowLimit = config.getProperty("REDIRECT_FOLLOW_LIMIT");
       if (redirectFollowLimit != null && !redirectFollowLimit.isEmpty()) {
@@ -123,30 +129,70 @@ public class Configuration {
             .forEach(es -> hikariProperties.setProperty(es.getKey().toString().substring(7), es.getValue().toString()));
 
       factory = new RasaFactoryBuilderImpl().getRasaFactory();
-      factory.init(hikariProperties);
+
+
+      // in a test we don't want to instantiate a HikariDataSource    
+      if(Class.forName(Configuration.class.getClassLoader().getUnnamedModule(), "org.junit.jupiter.api.Test") == null) {
+
+         factory.init(new HikariDataSource(new HikariConfig(hikariProperties)));
+      }
+      else {
+         log.info("assuming testmode since class org.junit.jupiter.api.Test in classpath. Using DataSource dummy!");
+      }
+      
       checkedLinkResource = factory.getCheckedLinkResource();
       linkToBeCheckedResource = factory.getLinkToBeCheckedResource();
 
       String vloConfigLocation = config.getProperty("VLO_CONFIG_LOCATION");
 
       if (vloConfigLocation == null || vloConfigLocation.isEmpty()) {
-         logger.warn(
+         log.warn(
                "loading default VloConfig.xml from vlo-commons.jar - PROGRAM WILL WORK BUT WILL PROBABABLY DELIVER UNATTENDED RESULTS!!!");
-         logger.warn("make sure to define a valid VLO_CONFIG_LOCATION in the file config.properties");
+         log.warn("make sure to define a valid VLO_CONFIG_LOCATION in the file config.properties");
          VLO_CONFIG = new DefaultVloConfigFactory().newConfig();
       }
       else {
-         logger.info("loading VloConfig.xml from location {}", vloConfigLocation);
+         log.info("loading VloConfig.xml from location {}", vloConfigLocation);
          VLO_CONFIG = new XmlVloConfigFactory(new File(config.getProperty("VLO_CONFIG_LOCATION")).toURI().toURL())
                .newConfig();
       }
 
       USERAGENT = config.getProperty("USERAGENT");
+      
       BASE_URL = config.getProperty("BASE_URL");
-      if (!BASE_URL.endsWith("/")) {
-         BASE_URL += "/";
-      }
+      if (!BASE_URL.endsWith("/") && (BASE_URL += "/").isEmpty());
+    
 
-      DOC_URL = config.getProperty("DOC_URL", "");
+      if(StringUtils.isNotEmpty(config.getProperty("DOC_URL"))) {
+         DOC_URL = config.getProperty("DOC_URL");
+         if(!DOC_URL.endsWith("/") && (DOC_URL += "/").isEmpty());
+      }
+      else {
+         log.warn("DOC_URL is empty. Using default value 'https://raw.githubusercontent.com/clarin-eric/cereal/main/curation-dashboard/markdown/'");
+         DOC_URL = "https://raw.githubusercontent.com/clarin-eric/cereal/main/curation-dashboard/markdown/";
+      }
+      
+      if(StringUtils.isNumeric(config.getProperty("DEACTIVATE_LINKS_AFTER"))) {
+         DEACTIVATE_LINKS_AFTER = Integer.parseInt(config.getProperty("DEACTIVATE_LINKS_AFTER"));
+      }
+      else {
+         log.warn("DEACTIVATE_LINKS_AFTER: {} not valid. Using default value 7", config.getProperty("DEACTIVATE_LINKS_AFTER"));
+         DEACTIVATE_LINKS_AFTER = 7;
+      }
+      if(StringUtils.isNumeric(config.getProperty("DELETE_LINKS_AFTER"))) { 
+         DELETE_LINKS_AFTER = Integer.parseInt(config.getProperty("DELETE_LINKS_AFTER"));
+      }
+      else {
+         log.warn("DELETE_LINKS_AFTER: {} not valid. Using default value 30", config.getProperty("DELETE_LINKS_AFTER"));
+         DELETE_LINKS_AFTER = 30;
+      }
+      if(StringUtils.isNotEmpty(config.getProperty("CR_QUERY"))) {
+         CR_QUERY = config.getProperty("CR_QUERY");
+      }
+      else {
+         log.warn("CR_QUERY is empty. Using default value 'registrySpace=published&status=production&status=development'");
+         CR_QUERY = "registrySpace=published&status=production&status=development";
+      }
+         
    }
 }

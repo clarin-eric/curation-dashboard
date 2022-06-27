@@ -1,7 +1,5 @@
 package eu.clarin.cmdi.rasa.helpers.impl;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -10,6 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
+
+import javax.sql.DataSource;
 
 import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 import eu.clarin.cmdi.rasa.DAO.LinkToBeChecked;
@@ -46,12 +46,6 @@ public class RasaFactoryBuilderImpl implements RasaFactoryBuilder {
       }
 
       @Override
-      public void writeStatusSummary(Writer writer) throws IOException {
-         // TODO Auto-generated method stub
-         
-      }
-
-      @Override
       public void tearDown() {
          // TODO Auto-generated method stub
          
@@ -59,6 +53,12 @@ public class RasaFactoryBuilderImpl implements RasaFactoryBuilder {
 
       @Override
       public RasaFactory init(Properties properties) {
+         // TODO Auto-generated method stub
+         return null;
+      }
+
+      @Override
+      public RasaFactory init(DataSource dataSource) {
          // TODO Auto-generated method stub
          return null;
       }
@@ -292,6 +292,24 @@ public class RasaFactoryBuilderImpl implements RasaFactoryBuilder {
 
       @Override
       public Boolean updateURLs() throws SQLException {
+         // TODO Auto-generated method stub
+         return null;
+      }
+
+      @Override
+      public Boolean deactivateLinksAfter(int periodInDays) throws SQLException {
+         // TODO Auto-generated method stub
+         return null;
+      }
+
+      @Override
+      public Boolean deleteLinksAfter(int periodInDays) throws SQLException {
+         // TODO Auto-generated method stub
+         return null;
+      }
+
+      @Override
+      public Stream<Map<String, Object>> get(String sqlString) throws SQLException {
          // TODO Auto-generated method stub
          return null;
       }
