@@ -1,0 +1,7 @@
+logging:
+   level:
+      root: TRACE
+curation:
+   ccr-service:
+      restApiUrl: "https://openskos.meertens.knaw.nl/ccr/api/find-concepts"
+      allConceptsQuery: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000"

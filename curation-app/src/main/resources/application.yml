@@ -1,0 +1,29 @@
+curation:
+   mode: collection
+   link_data_source: CMD
+   max_file_size: 100000
+   score_numeric_display_format: "#0.0000"
+   directories:
+      home: /app/curation
+      reports: ./public
+      data: ./data
+      xsd_cache: ./xsd_cache
+   facets: 
+      - languageCode
+      - collection
+      - resourceClass
+      - modality
+      - format
+      - keywords
+      - genre
+      - subject
+      - country
+      - organisation
+      - name
+      - description
+      - license
+      - availability
+   vlo_config_location: ./conf/VloConfig.xml
+   thread_pool_size: 10
+   base_url:
+   doc_url:
