@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import eu.clarin.cmdi.curation.configuration.CurationConfig;
+import eu.clarin.cmdi.curation.cr.conf.CRProperties;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class PublicProfiles {
 	@Autowired
 	private static VloConfig vloConf;
 	@Autowired
-	private static CurationConfig conf;
+	private static CRProperties crProps;
 	
 	
 	public static Collection<ProfileHeader> createPublicProfiles(){
@@ -37,7 +37,7 @@ public class PublicProfiles {
 
 			Collection<ProfileHeader> publicProfiles = null;
 			
-			cr = vloConf.getComponentRegistryRESTURL() + "?" + conf.getCrQuery();
+			cr = vloConf.getComponentRegistryRESTURL() + "?" + crProps.getCrQuery();
 			log.trace("component registry URL: {}", cr);
 			
 			try(InputStream in = new URL(cr).openStream()){

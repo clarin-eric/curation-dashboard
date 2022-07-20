@@ -4,26 +4,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDNav;
 
-import eu.clarin.cmdi.curation.ccr_service.CCRConcept;
-import eu.clarin.cmdi.curation.ccr_service.CCRServiceFactory;
-import eu.clarin.cmdi.curation.ccr_service.ICCRService;
+import eu.clarin.cmdi.curation.ccr.CCRConcept;
+import eu.clarin.cmdi.curation.ccr.CCRServiceFactory;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Concept;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public abstract class ProfileParser {
+   
+   @Autowired
+   CCRServiceFactory fac;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProfileParser.class);
-
-    private ICCRService ccr = CCRServiceFactory.getCCRService(false);
+//    private ICCRService ccr = CCRServiceFactory.getCCRService(false);
 
     protected VTDNav vn;
 
@@ -71,7 +72,7 @@ public abstract class ProfileParser {
             _new.name = extractAttributeValue("name");
             if (_new.name == null) {
                 _new.name = "";
-                LOG.error("Element at {} doesn't have specified name, xpaths will be invalid", vn.getCurrentIndex());
+                log.error("Element at {} doesn't have specified name, xpaths will be invalid", vn.getCurrentIndex());
             }
 
 
@@ -179,7 +180,7 @@ public abstract class ProfileParser {
         if (uri.startsWith("http://purl.org/dc/terms/")) {
             concept = new Concept(uri, uri.substring("http://purl.org/dc/terms/".length()), "DC");
         } else {
-            CCRConcept ccrConcept = ccr.getConcept(uri);
+            CCRConcept ccrConcept = fac.getCCRService().getConcept(uri);
             if (ccrConcept != null)
                 concept = new Concept(uri, ccrConcept.getPrefLabel(), ccrConcept.getStatus().toString());
             else
