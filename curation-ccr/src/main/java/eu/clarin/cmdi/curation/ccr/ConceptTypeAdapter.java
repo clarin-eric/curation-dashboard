@@ -6,7 +6,7 @@ import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 
-class ConceptTypeAdapter extends TypeAdapter<CCRConcept> {
+public class ConceptTypeAdapter extends TypeAdapter<CCRConcept> {
 
 	@Override
 	public CCRConcept read(final JsonReader in) throws IOException {

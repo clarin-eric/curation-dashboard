@@ -1,7 +1,7 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
-import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.exception.ProfileNotFoundException;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
@@ -34,7 +34,7 @@ public class ProfileHeaderHandler {
             throw new ProfileNotFoundException("can' find profile " + entity);
         }
 
-        CRService service = new CRService();
+        CRServiceImpl service = new CRServiceImpl();
 
         if (schemaLocation.startsWith(vloConf.getComponentRegistryRESTURL()))
             report.header = service.getPublicProfiles()

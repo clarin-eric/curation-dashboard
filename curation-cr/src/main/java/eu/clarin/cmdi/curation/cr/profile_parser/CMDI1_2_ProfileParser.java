@@ -8,13 +8,20 @@ import java.util.Map;
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDGen;
 
+import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 
 class CMDI1_2_ProfileParser extends ProfileParser{
 
-	private static final String ENVELOPE_URL = "https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd";
+	public CMDI1_2_ProfileParser(CCRService ccrService) {
+      
+	   super(ccrService);
+     
+   }
+
+   private static final String ENVELOPE_URL = "https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd";
 
 	private static Map<String, CMDINode> envelope = null;
 
@@ -68,7 +75,7 @@ class CMDI1_2_ProfileParser extends ProfileParser{
 		
 		//add xpaths from envelope
 		if(envelope == null){
-			CMDI1_1_ProfileParser envelopeParser = new CMDI1_1_ProfileParser();
+			CMDI1_1_ProfileParser envelopeParser = new CMDI1_1_ProfileParser(ccrService);
 			VTDGen vg = new VTDGen();
 
 			

@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
@@ -32,7 +32,7 @@ public class ProfileElementsHandler{
     public void process(CMDProfileReport report) throws ExecutionException {
         ParsedProfile parsedProfile;
 
-        parsedProfile = new CRService().getParsedProfile(report.header);
+        parsedProfile = new CRServiceImpl().getParsedProfile(report.header);
 
         report.components = createComponentSegment(parsedProfile);
         report.elements = createElementSegment(parsedProfile);

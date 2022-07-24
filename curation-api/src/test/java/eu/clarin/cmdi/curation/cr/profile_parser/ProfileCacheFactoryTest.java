@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 
 
 public class ProfileCacheFactoryTest extends TestBase{
@@ -20,7 +20,7 @@ public class ProfileCacheFactoryTest extends TestBase{
 
         
         try {
-            CRService crService = new CRService();
+            CRServiceImpl crService = new CRServiceImpl();
             
             ProfileHeader ph = new ProfileHeader();
             
@@ -45,7 +45,7 @@ public class ProfileCacheFactoryTest extends TestBase{
     
     //@Test
     public void testParsedPrivateProfile() {
-        CRService crService = new CRService();
+        CRServiceImpl crService = new CRServiceImpl();
         
         ProfileHeader ph = new ProfileHeader();
         
@@ -75,7 +75,7 @@ public class ProfileCacheFactoryTest extends TestBase{
 
         
         try {
-            List<ProfileHeader> profiles = (List<ProfileHeader>) new CRService().getPublicProfiles();
+            List<ProfileHeader> profiles = (List<ProfileHeader>) new CRServiceImpl().getPublicProfiles();
             
             assertNotNull(profiles);
             

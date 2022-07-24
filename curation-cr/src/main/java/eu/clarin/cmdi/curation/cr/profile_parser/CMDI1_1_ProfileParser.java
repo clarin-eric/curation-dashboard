@@ -6,13 +6,19 @@ import java.util.Map;
 
 import com.ximpleware.VTDException;
 
+import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 
 class CMDI1_1_ProfileParser extends ProfileParser{
 	
+	public CMDI1_1_ProfileParser(CCRService ccrService) {
+      
+	   super(ccrService);
+      
+   }
 
-	@Override
+   @Override
 	protected String getCMDVersion() {
 		return "1.1";
 	}

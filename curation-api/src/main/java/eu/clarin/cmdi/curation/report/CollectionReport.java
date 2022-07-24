@@ -173,7 +173,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
       // url statistics
 
-      try (Stream<AggregatedStatus> stream = aRepository.findAllByProviderGroupName(getName())) {
+      try (Stream<AggregatedStatus> stream = aRepository.findAllByProvidergroupName(getName())) {
 
          stream.forEach(categoryStats -> {
             Statistics xmlStatistics = new Statistics();

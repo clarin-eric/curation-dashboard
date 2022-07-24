@@ -7,8 +7,8 @@ import java.util.concurrent.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
-import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.report.FacetReport;
 import eu.clarin.cmdi.curation.report.FacetReport.Coverage;
@@ -20,7 +20,7 @@ class FacetReportCreator {
    private CurationConfig conf;
 	
 	public FacetReport createFacetReport(ProfileHeader header, FacetsMapping facetMapping) throws ExecutionException {
-	    Map<String, CMDINode> elements = new CRService().getParsedProfile(header).getElements();
+	    Map<String, CMDINode> elements = new CRServiceImpl().getParsedProfile(header).getElements();
 		FacetReport facetReport = new FacetReport();
 		facetReport.numOfFacets = conf.getFacets().size();
 		facetReport.coverage = new ArrayList<>();

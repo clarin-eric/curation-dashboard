@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 
 public class ProfileParserTest extends TestBase{
        
@@ -21,7 +21,7 @@ public class ProfileParserTest extends TestBase{
         header.setCmdiVersion("1.2");
 
         
-        ParsedProfile profile = new CRService().getParsedProfile(header);
+        ParsedProfile profile = new CRServiceImpl().getParsedProfile(header);
         
         profile.getXPaths().forEach(xpath -> System.out.println(xpath));
         

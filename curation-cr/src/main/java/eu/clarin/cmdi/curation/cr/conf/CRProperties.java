@@ -8,11 +8,13 @@ import org.springframework.stereotype.Component;
 import lombok.Data;
 
 @Component
-@ConfigurationProperties(prefix = "curation.directory")
+@ConfigurationProperties(prefix = "curation")
 @Data
 public class CRProperties {
    
    private Path xsdCache;
+   
+   private String crRestUrl;
    
    private String crQuery;
 }

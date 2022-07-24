@@ -1,7 +1,9 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
+import eu.clarin.cmdi.cpa.model.Client;
 import eu.clarin.cmdi.cpa.model.Status;
 import eu.clarin.cmdi.cpa.model.Url;
+import eu.clarin.cmdi.cpa.repository.ClientRepository;
 import eu.clarin.cmdi.cpa.repository.StatusRepository;
 import eu.clarin.cmdi.cpa.repository.UrlRepository;
 import eu.clarin.cmdi.cpa.service.LinkService;
@@ -32,6 +34,8 @@ public class URLValidator extends CMDSubprocessor {
    private UrlRepository uRepository;
    @Autowired
    private StatusRepository sRepository;
+   @Autowired
+   private ClientRepository clRepository;
 
    @Override
    public void process(CMDInstance entity, CMDInstanceReport report) {
@@ -79,27 +83,29 @@ public class URLValidator extends CMDSubprocessor {
       long numOfInvalidLinks = 0;
 
       if (conf.getMode().equals("collection")) {
+         
+         Client client = clRepository.findByEmailAndToken("", "");
 
 
          for (String url : urlMap.keySet()) {
 
-            String finalRecord = report.getName();
-            String finalCollection = parentName != null ? parentName : finalRecord;
+            String origin = report.getName();
+            String providergroup = parentName != null ? parentName : origin;
 
             String expectedMimeType = urlMap.get(url).getMimeType();
             expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
-            uService.save(url, conf.getLinkDataSource(), finalRecord, finalCollection, expectedMimeType);
+            uService.save(client, url, origin, providergroup, expectedMimeType);
          }
       }
       else {// instance mode
          for (String url : urlMap.keySet()) {
 
             // first check if database has this url
-            Url urlEntity = uRepository.findByUrl(url);
+            Url urlEntity = uRepository.findByName(url);
             Status statusEntity;
             
-            if((urlEntity = uRepository.findByUrl(url)) != null && (statusEntity = sRepository.findByUrl(urlEntity)) != null) {
+            if((urlEntity = uRepository.findByName(url)) != null && (statusEntity = sRepository.findByUrl(urlEntity)) != null) {
                numOfCheckedLinks++;
                
                switch(statusEntity.getCategory()) {
@@ -107,27 +113,27 @@ public class URLValidator extends CMDSubprocessor {
                   break;
 
                case Broken:
-                  addMessage(Severity.ERROR, "Url: " + urlEntity.getUrl() + " Category:" + statusEntity.getCategory());
+                  addMessage(Severity.ERROR, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
                   numOfBrokenLinks++;
                   break;
                   
                case Invalid_URL:
-                  addMessage(Severity.ERROR, "Url: " + urlEntity.getUrl() + " Category:" + statusEntity.getCategory());
+                  addMessage(Severity.ERROR, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
                   numOfInvalidLinks++;
                   break;
 
                case Undetermined:
-                  addMessage(Severity.WARNING, "Url: " + urlEntity.getUrl() + " Category:" + statusEntity.getCategory());
+                  addMessage(Severity.WARNING, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
                   numOfUndeterminedLinks++;
                   break;
 
                case Restricted_Access:
-                  addMessage(Severity.WARNING, "Url: " + urlEntity.getUrl() + " Category:" + statusEntity.getCategory());
+                  addMessage(Severity.WARNING, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
                   numOfRestrictedAccessLinks++;
                   break;
 
                case Blocked_By_Robots_txt: 
-                  addMessage(Severity.WARNING, "Url: " + urlEntity.getUrl() + " Category:" + statusEntity.getCategory());
+                  addMessage(Severity.WARNING, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
                   numOfBlockedByRobotsTxtLinks++;
                }
                

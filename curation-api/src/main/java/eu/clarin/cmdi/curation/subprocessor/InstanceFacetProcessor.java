@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.ximpleware.*;
 
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
-import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
@@ -65,7 +65,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
             throws ExecutionException, VTDException {
         Map<Integer, ValueNode> nodesMap = new LinkedHashMap<Integer, ValueNode>();
 
-        Map<String, CMDINode> elements = new CRService().getParsedProfile(report.header).getElements();
+        Map<String, CMDINode> elements = new CRServiceImpl().getParsedProfile(report.header).getElements();
         ParsedInstance parsedInstance = entity.getParsedInstance();
 
         AutoPilot ap = new AutoPilot(nav);

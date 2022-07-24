@@ -1,0 +1,10 @@
+logging:
+   level:
+      root: TRACE
+curation:
+   xsd_cache: /tmp/curation/xsd_cache
+   cr_rest_url: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
+   cr_query: "?registrySpace=published&status=production&status=development&&status=deprecated"
+   ccr-service:
+      restApiUrl: "https://openskos.meertens.knaw.nl/ccr/api/find-concepts"
+      allConceptsQuery: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000"

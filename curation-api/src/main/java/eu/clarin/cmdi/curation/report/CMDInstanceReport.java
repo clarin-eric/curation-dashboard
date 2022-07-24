@@ -1,13 +1,11 @@
 package eu.clarin.cmdi.curation.report;
 
 import eu.clarin.cmdi.cpa.model.Status;
-import eu.clarin.cmdi.cpa.model.Url;
 import eu.clarin.cmdi.curation.cr.ProfileHeader;
 import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.report.CollectionReport.Record;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
-import eu.clarin.cmdi.rasa.DAO.CheckedLink;
 
 import javax.xml.bind.annotation.*;
 import java.io.OutputStream;
@@ -117,12 +115,12 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         public String colorCode;
 
         public URLElement convertFromLinkCheckerURLElement(Status statusEntity) {
-            url = statusEntity.getUrl().getUrl();
+            url = statusEntity.getUrl().getName();
             method = statusEntity.getMethod()==null?"n/a":statusEntity.getMethod();
-            status = statusEntity.getStatus()==null?"n/a":String.valueOf(statusEntity.getStatus());
+            status = statusEntity.getStatusCode()==null?"n/a":String.valueOf(statusEntity.getStatusCode());
             category = statusEntity.getCategory().name();
             contentType = statusEntity.getContentType()==null?"n/a":statusEntity.getContentType();
-            byteSize = statusEntity.getByteSize()==null?"n/a":String.valueOf(statusEntity.getByteSize());
+            byteSize = statusEntity.getContentLength()==null?"n/a":String.valueOf(statusEntity.getContentLength());
             duration = statusEntity.getDuration()==null?"n/a":TimeUtils.humanizeToTime(statusEntity.getDuration());
             timestamp = statusEntity.getCheckingDate().toString();
 

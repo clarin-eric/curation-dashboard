@@ -17,33 +17,34 @@ import javax.xml.bind.Unmarshaller;
  */
 public class XMLMarshaller<T> {
 
-	final Class<T> typeParamClass;
+   final Class<T> typeParamClass;
 
-	public XMLMarshaller(Class<T> typeParamClass) {
-		this.typeParamClass = typeParamClass;
-	}
+   public XMLMarshaller(Class<T> typeParamClass) {
+      this.typeParamClass = typeParamClass;
+   }
 
-	@SuppressWarnings("unchecked")
-    public T unmarshal(InputStream is) throws JAXBException {
-		JAXBContext jc = JAXBContext.newInstance(typeParamClass);
-		Unmarshaller unmarshaller = jc.createUnmarshaller();
-		return (T) unmarshaller.unmarshal(is);
-	}
+   @SuppressWarnings("unchecked")
+   public T unmarshal(InputStream is) throws JAXBException {
+      JAXBContext jc = JAXBContext.newInstance(typeParamClass);
+      Unmarshaller unmarshaller = jc.createUnmarshaller();
+      return (T) unmarshaller.unmarshal(is);
+   }
 
-	public void marshal(T object, OutputStream os)  {
-		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(typeParamClass);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+   public void marshal(T object, OutputStream os) {
+      try {
+         JAXBContext jaxbContext = JAXBContext.newInstance(typeParamClass);
+         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-			// output pretty printed
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			jaxbMarshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
+         // output pretty printed
+         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+         jaxbMarshaller.setProperty(javax.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
 
-			jaxbMarshaller.marshal(object, os);
+         jaxbMarshaller.marshal(object, os);
 
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-	}
+      }
+      catch (JAXBException e) {
+         e.printStackTrace();
+      }
+   }
 
 }

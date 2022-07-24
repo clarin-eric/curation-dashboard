@@ -20,7 +20,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Message;
@@ -41,7 +41,7 @@ public class XMLValidator extends CMDSubprocessor {
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report) throws ExecutionException, IOException, ParserConfigurationException, SAXException {
 
-            ValidatorHandler schemaValidator = new CRService().getSchema(report.header).newValidatorHandler();
+            ValidatorHandler schemaValidator = new CRServiceImpl().getSchema(report.header).newValidatorHandler();
             msgs = new ArrayList<>();
             schemaValidator.setErrorHandler(new CMDErrorHandler(report, msgs));
             schemaValidator.setContentHandler(new CMDIInstanceContentHandler(entity, report));

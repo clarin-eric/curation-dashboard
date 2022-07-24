@@ -8,8 +8,9 @@ import java.util.regex.Matcher;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import eu.clarin.cmdi.curation.cache.ProfileScoreCache;
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
-import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Score;
@@ -24,6 +25,8 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
    private CurationConfig conf; 
    @Autowired
    private VloConfig vloConf;
+   @Autowired
+   ProfileScoreCache pCache;
 
    
     boolean missingSchema = false;
@@ -37,7 +40,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
     public void process(CMDInstance entity, CMDInstanceReport report) throws IOException, ExecutionException {
         Map<String, List<ValueSet>> keyValuesMap = entity.getCMDIData().getDocument();
 
-        CRService crService = new CRService();
+        CRServiceImpl crService = new CRServiceImpl();
 
         String schemaLocation = keyValuesMap.containsKey("curation_schemaLocation") && !keyValuesMap.get("curation_schemaLocation").isEmpty() ? keyValuesMap.get("curation_schemaLocation").get(0).getValue() : null;
 
@@ -77,7 +80,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 			addMessage(Severity.WARNING, "Current CMD version is 1.2 but this recordName is using " + cmdVersion);*/
 
         if (!missingMdprofile) {
-            if (!keyValuesMap.get("curation_mdProfile").get(0).getValue().matches(CRService.PROFILE_ID_FORMAT)) {
+            if (!keyValuesMap.get("curation_mdProfile").get(0).getValue().matches(CRServiceImpl.PROFILE_ID_FORMAT)) {
                 invalidMdprofile = true;
                 addMessage(Severity.ERROR, "Format for value in the element /cmd:CMD/cmd:Header/cmd:MdProfile must be: clarin.eu:cr1:p_xxxxxxxxxxxxx!");
 //				mdprofile = extractProfile(mdprofile);
@@ -108,9 +111,9 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
         report.header = crService.createProfileHeader(schemaLocation, "1.x", false);
         report.fileReport.collection = mdCollectionDisplayName;
 
-        report.profileScore = crService.getScore(report.header);
+        report.profileScore = pCache.getScore(report.header);
 
-        report.addSegmentScore(new Score(report.profileScore, CRService.PROFILE_MAX_SCORE, "profiles-score", null));
+        report.addSegmentScore(new Score(report.profileScore, pCache.getScore(report.header), "profiles-score", null));
 
     }
 
@@ -139,7 +142,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
 
 
     private String extractProfile(String str) {
-        Matcher m = CRService.PROFILE_ID_PATTERN.matcher(str);
+        Matcher m = CRServiceImpl.PROFILE_ID_PATTERN.matcher(str);
         return m.find() ? m.group() : null;
 
     }

@@ -22,7 +22,7 @@ class CCRServiceTests {
 	@Test
 	void getCCRService() {
 	   
-	   ICCRService service = fac.getCCRService();
+	   CCRService service = fac.getCCRService();
 	   
 	   assertTrue(service.getAll().size() > 0);
 	}

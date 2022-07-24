@@ -8,11 +8,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import eu.clarin.cmdi.curation.cr.conf.CRProperties;
 import eu.clarin.cmdi.curation.xml.XMLMarshaller;
-import eu.clarin.cmdi.vlo.config.VloConfig;
 import lombok.extern.slf4j.Slf4j;
 
 @XmlRootElement(name="profileDescriptions")
@@ -20,15 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PublicProfiles {
 	
-	private Collection<ProfileHeader> profileDescription;
-	
-	@Autowired
-	private static VloConfig vloConf;
-	@Autowired
-	private static CRProperties crProps;
+	private Collection<ProfileHeader> profileDescription;	
 	
 	
-	public static Collection<ProfileHeader> createPublicProfiles(){
+	public static Collection<ProfileHeader> createPublicProfiles(String schemaRestUrl, String query){
 		
 	   String cr = null;
 	   
@@ -37,7 +28,7 @@ public class PublicProfiles {
 
 			Collection<ProfileHeader> publicProfiles = null;
 			
-			cr = vloConf.getComponentRegistryRESTURL() + "?" + crProps.getCrQuery();
+			cr = schemaRestUrl + query;
 			log.trace("component registry URL: {}", cr);
 			
 			try(InputStream in = new URL(cr).openStream()){
@@ -47,7 +38,7 @@ public class PublicProfiles {
 			
    			publicProfiles.forEach(p -> {
    				p.setCmdiVersion("1.x");
-   				p.setSchemaLocation(vloConf.getComponentRegistryProfileSchema(p.getId()));
+   				p.setSchemaLocation(schemaRestUrl + "/" + p.getId() + "/xsd");
    			});
 			}
 			
