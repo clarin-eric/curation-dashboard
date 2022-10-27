@@ -6,6 +6,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -14,28 +15,41 @@ import org.springframework.context.annotation.Import;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest()
-@Import(CCRServiceTests.TestConfig.class)
 @EnableConfigurationProperties
 @EnableAutoConfiguration
 @ComponentScan
-@EnableCaching 
+@Import(CCRServiceTests.TestConfig.class)
+@EnableCaching
 class CCRServiceTests {
-   
-   @Autowired
-   CCRServiceFactory fac;
 
-	@Test
-	void getCCRService() {
-	   
-	   CCRService service = fac.getCCRService();
-	   
+   @Autowired
+   CCRService service;
+
+   @Autowired
+   CacheManager cacheManager;
+
+   @Test
+   void getAll() {
 
       assertTrue(service.getAll().size() > 0);
 
-	}
+      assertTrue(cacheManager.getCache("ccrCache").get("getCCRConceptMap") != null);
+
+   }
    
-     @SpringBootConfiguration     
-     public static class TestConfig { }
-    
+   @Test
+   void useCache() {
+
+      service.getAll();
+
+      assertTrue(cacheManager.getCache("ccrCache").get("getCCRConceptMap") != null);
+
+   }
+
+   @SpringBootConfiguration
+
+   public static class TestConfig {
+
+   }
 
 }
