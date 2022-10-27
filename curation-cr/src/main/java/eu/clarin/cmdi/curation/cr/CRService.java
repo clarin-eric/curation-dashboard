@@ -5,6 +5,7 @@ import java.util.Collection;
 import javax.xml.validation.Schema;
 
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
+import eu.clarin.cmdi.curation.pph.ProfileHeader;
 
 public interface CRService {
 	
@@ -20,6 +21,6 @@ public interface CRService {
 
 	boolean isSchemaCRResident(String schemaLocation);
 
-	Collection<ProfileHeader> getPublicProfiles();
+	Collection<ProfileHeader> getPublicProfileHeaders();
 	
 }

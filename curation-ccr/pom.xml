@@ -3,7 +3,7 @@
    <parent>
       <groupId>eu.clarin.cmdi</groupId>
       <artifactId>curation-dashboard</artifactId>
-      <version>${revision}</version>
+      <version>6.0.0-SNAPSHOT</version>
    </parent>
    <artifactId>curation-ccr</artifactId>
    <dependencies>
@@ -15,15 +15,19 @@
          <groupId>commons-io</groupId>
          <artifactId>commons-io</artifactId>
          <version>2.11.0</version>
-      </dependency>     
+      </dependency>
       <dependency>
          <groupId>com.google.code.gson</groupId>
          <artifactId>gson</artifactId>
       </dependency>
       <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-configuration-processor</artifactId>
+         <optional>true</optional>
+      </dependency>
+      <dependency>
       	<groupId>org.springframework.boot</groupId>
-      	<artifactId>spring-boot-configuration-processor</artifactId>
-      	<optional>true</optional>
+      	<artifactId>spring-boot-starter-cache</artifactId>
       </dependency>
    </dependencies>
 </project>

@@ -11,7 +11,8 @@ import com.ximpleware.VTDNav;
 
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.CCRService;
-import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.pph.ProfileHeader;
+import eu.clarin.cmdi.curation.cr.exception.NoParsedProfileException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Concept;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +31,19 @@ public abstract class ProfileParser {
 
    private CRElement _cur;
 
-   public ParsedProfile parse(VTDNav navigator, ProfileHeader header) throws VTDException {
+   public ParsedProfile parse(VTDNav navigator, ProfileHeader header) throws NoParsedProfileException{
       vn = navigator;
-      fillInHeader(vn, header);
-      Collection<CRElement> nodes = processElements();
-      return new ParsedProfile(header, createMap(nodes));
+      try {
+         fillInHeader(vn, header);
+         Collection<CRElement> nodes = processElements();
+         return new ParsedProfile(header, createMap(nodes));
+      }
+      catch (VTDException e) {
+         
+         log.error("profile not parsable!");
+         log.debug("", e);
+         throw new NoParsedProfileException();
+      }
    }
 
    protected abstract String getCMDVersion();
@@ -43,7 +52,7 @@ public abstract class ProfileParser {
 
    protected abstract CRElement processNameAttributeNode() throws VTDException;
 
-   protected abstract Map<String, CMDINode> createMap(Collection<CRElement> nodes) throws VTDException;
+   protected abstract Map<String, CMDINode> createMap(Collection<CRElement> nodes) throws VTDException, NoParsedProfileException;
 
    protected ProfileHeader fillInHeader(VTDNav vn, ProfileHeader header) throws VTDException {
       AutoPilot ap = new AutoPilot(vn);
@@ -172,7 +181,7 @@ public abstract class ProfileParser {
       return ind != -1 ? vn.toNormalizedString(ind) : null;
    }
 
-   protected Concept createConcept(String uri) {
+   protected Concept createConcept(String uri){
 
       if (uri == null)
          return null;
@@ -182,6 +191,8 @@ public abstract class ProfileParser {
       }
       else {
          CCRConcept ccrConcept = ccrService.getConcept(uri);
+
+
          if (ccrConcept != null)
             concept = new Concept(uri, ccrConcept.getPrefLabel(), ccrConcept.getStatus().toString());
          else

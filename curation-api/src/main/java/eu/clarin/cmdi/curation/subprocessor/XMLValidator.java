@@ -13,6 +13,7 @@ import javax.xml.validation.ValidatorHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -20,7 +21,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Message;
@@ -29,6 +30,9 @@ import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.xml.CMDErrorHandler;
 
 public class XMLValidator extends CMDSubprocessor {
+   
+   @Autowired
+   private CRService crService;
 
     static final Logger logger = LoggerFactory.getLogger(XMLValidator.class);
 
@@ -39,9 +43,9 @@ public class XMLValidator extends CMDSubprocessor {
 
 
     @Override
-    public void process(CMDInstance entity, CMDInstanceReport report) throws ExecutionException, IOException, ParserConfigurationException, SAXException {
+    public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
 
-            ValidatorHandler schemaValidator = new CRServiceImpl().getSchema(report.header).newValidatorHandler();
+            ValidatorHandler schemaValidator = crService.getSchema(report.header).newValidatorHandler();
             msgs = new ArrayList<>();
             schemaValidator.setErrorHandler(new CMDErrorHandler(report, msgs));
             schemaValidator.setContentHandler(new CMDIInstanceContentHandler(entity, report));

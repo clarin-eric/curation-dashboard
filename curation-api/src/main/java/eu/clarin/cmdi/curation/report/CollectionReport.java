@@ -3,8 +3,8 @@ package eu.clarin.cmdi.curation.report;
 import eu.clarin.cmdi.cpa.model.AggregatedStatus;
 import eu.clarin.cmdi.cpa.repository.AggregatedStatusRepository;
 import eu.clarin.cmdi.cpa.utils.Category;
+import eu.clarin.cmdi.curation.cr.xml.XMLMarshaller;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
-import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;

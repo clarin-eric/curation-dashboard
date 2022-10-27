@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.pph.ProfileHeader;
 
 public class ParsedProfile {
 	

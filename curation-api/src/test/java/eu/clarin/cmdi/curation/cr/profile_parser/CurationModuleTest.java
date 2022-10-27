@@ -1,7 +1,7 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
-import eu.clarin.cmdi.curation.main.CurationModule;
+import eu.clarin.cmdi.curation.main.CurationModuleImpl;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Report;
 
@@ -27,7 +27,7 @@ public class CurationModuleTest extends TestBase{
         try {
             path = Paths.get(getClass().getClassLoader().getResource("cmdi/cmdi-1_1.xml").toURI());
 
-            CurationModule curation = new CurationModule();
+            CurationModuleImpl curation = new CurationModuleImpl();
             
             report = curation.processCMDInstance(path);
         }
@@ -49,7 +49,7 @@ public class CurationModuleTest extends TestBase{
         try {
             path = Paths.get(getClass().getClassLoader().getResource("cmdi/cmdi-1_2.xml").toURI());
 
-            CurationModule curation = new CurationModule();
+            CurationModuleImpl curation = new CurationModuleImpl();
             
             report = curation.processCMDInstance(path);
         }
@@ -69,7 +69,7 @@ public class CurationModuleTest extends TestBase{
         try {
             path = Paths.get(getClass().getClassLoader().getResource("cmdi/cmdi-1_x.xml").toURI());
 
-            CurationModule curation = new CurationModule();
+            CurationModuleImpl curation = new CurationModuleImpl();
             
             report = curation.processCMDInstance(path);
         }

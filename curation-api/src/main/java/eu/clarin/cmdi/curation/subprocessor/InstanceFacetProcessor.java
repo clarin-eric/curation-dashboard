@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.ximpleware.*;
 
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
-import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
@@ -38,10 +38,13 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
    
    @Autowired
    private CurationConfig conf;
+   @Autowired
+   private CRService crService;
+   
 
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report)
-            throws IOException, VTDException, ExecutionException {
+            throws Exception {
 
         // parse instance
         CMDXPathService xmlService = new CMDXPathService(entity.getPath());
@@ -62,10 +65,10 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
     }
 
     private Map<Integer, ValueNode> getValueNodesMap(CMDInstance entity, CMDInstanceReport report, VTDNav nav)
-            throws ExecutionException, VTDException {
+            throws Exception {
         Map<Integer, ValueNode> nodesMap = new LinkedHashMap<Integer, ValueNode>();
 
-        Map<String, CMDINode> elements = new CRServiceImpl().getParsedProfile(report.header).getElements();
+        Map<String, CMDINode> elements = crService.getParsedProfile(report.header).getElements();
         ParsedInstance parsedInstance = entity.getParsedInstance();
 
         AutoPilot ap = new AutoPilot(nav);
@@ -92,7 +95,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
     }
 
     private void facetsToNodes(CMDInstance entity, CMDInstanceReport report, Map<Integer, ValueNode> nodesMap,
-            VTDNav nav) throws IOException, ExecutionException {
+            VTDNav nav) throws Exception {
 
         FacetsMapping facetMapping = FacetsMappingCacheFactory.getInstance().getFacetsMapping(report.header);
 

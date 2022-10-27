@@ -3,7 +3,7 @@ package eu.clarin.cmdi.curation.cache;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
-import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import lombok.extern.slf4j.Slf4j;

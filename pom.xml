@@ -10,7 +10,7 @@
    <artifactId>curation-dashboard</artifactId>
    <name>Curation Dashboard</name>
    <packaging>pom</packaging>
-   <version>${revision}</version>
+   <version>6.0.0-SNAPSHOT</version>
    <organization>
       <name>CLARIN</name>
       <url>http://www.clarin.eu</url>
@@ -25,16 +25,12 @@
    <dependencies>
       <dependency>
          <groupId>org.springframework.boot</groupId>
-         <artifactId>spring-boot-starter-data-jpa</artifactId>
+         <artifactId>spring-boot-starter</artifactId>
       </dependency>
       <dependency>
          <groupId>org.projectlombok</groupId>
          <artifactId>lombok</artifactId>
          <optional>true</optional>
-      </dependency>
-      <dependency>
-         <groupId>org.springframework.boot</groupId>
-         <artifactId>spring-boot-starter-cache</artifactId>
       </dependency>
       <dependency>
          <groupId>org.springframework.boot</groupId>
@@ -44,35 +40,10 @@
    </dependencies>
    <build>
       <plugins>
-         <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>flatten-maven-plugin</artifactId>
-            <version>1.2.2</version>
-            <configuration></configuration>
-            <executions>
-               <!-- enable flattening -->
-               <execution>
-                  <id>flatten</id>
-                  <phase>process-resources</phase>
-                  <goals>
-                     <goal>flatten</goal>
-                  </goals>
-               </execution>
-               <!-- ensure proper cleanup -->
-               <execution>
-                  <id>flatten.clean</id>
-                  <phase>clean</phase>
-                  <goals>
-                     <goal>clean</goal>
-                  </goals>
-               </execution>
-            </executions>
-         </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.0.0-M6</version>
-         </plugin>
+      <!-- 
+      no spring-boot-maven-plugin here, since we don't want to create an executable of any module
+      see https://spring.io/guides/gs/multi-module/
+      -->
       </plugins>
    </build>
    <repositories>
@@ -101,10 +72,12 @@
       </repository>
    </repositories>
    <modules>
+      <!--
       <module>curation-core</module>
       <module>curation-web</module>
       <module>curation-api</module>
-      <module>curation-cr</module>
+            -->
+      <module>curation-ph</module>
       <module>curation-ccr</module>
    </modules>
 </project>

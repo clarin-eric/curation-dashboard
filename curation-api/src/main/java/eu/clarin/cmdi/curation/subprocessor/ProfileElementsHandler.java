@@ -9,7 +9,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
@@ -26,13 +28,16 @@ import eu.clarin.cmdi.curation.report.Score;
  *
  */
 public class ProfileElementsHandler{
+   
+   @Autowired
+   private CRService crService;
 
     protected Collection<Message> msgs = null;
 
-    public void process(CMDProfileReport report) throws ExecutionException {
+    public void process(CMDProfileReport report) throws Exception {
         ParsedProfile parsedProfile;
 
-        parsedProfile = new CRServiceImpl().getParsedProfile(report.header);
+        parsedProfile = crService.getParsedProfile(report.header);
 
         report.components = createComponentSegment(parsedProfile);
         report.elements = createElementSegment(parsedProfile);

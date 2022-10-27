@@ -12,8 +12,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.ximpleware.NavException;
 
-import eu.clarin.cmdi.curation.cr.ProfileHeader;
-import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
+import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.Pattern;
@@ -35,6 +35,8 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
 
    @Autowired
    private static VloConfig vloConf; 
+   @Autowired
+   private CRService crService;
 
 
    private final LoadingCache<ProfileHeader, FacetsMapping> facetMappingPublicCache;
@@ -62,7 +64,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
 
    public FacetsMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
       try {
-         return getFacetsMapping(new CRServiceImpl()
+         return getFacetsMapping(crService
                .createProfileHeader(vloConf.getComponentRegistryProfileSchema(profileId), "1.x", false));
       }
       catch (ExecutionException ex) {
@@ -78,7 +80,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
    public Map<String, List<Pattern>> createConceptLinkPathMapping(ProfileHeader header) throws Exception {
       Map<String, List<Pattern>> result = new HashMap<>();
 
-      Map<String, CMDINode> elements = new CRServiceImpl().getParsedProfile(header).getElements();
+      Map<String, CMDINode> elements = crService.getParsedProfile(header).getElements();
 
       for (Map.Entry<String, CMDINode> element : elements.entrySet()) {
          result.computeIfAbsent(element.getValue().concept.uri, k -> new ArrayList<Pattern>())
@@ -100,20 +102,22 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
                Map<String, CMDINode> elements;
 
                try {
-                  elements = new CRServiceImpl().getParsedProfile(header).getElements();
+                  elements = crService.getParsedProfile(header).getElements();
 
                   for (Map.Entry<String, CMDINode> element : elements.entrySet()) {
                      if (element.getValue().concept != null)
                         result.computeIfAbsent(element.getValue().concept.uri, k -> new ArrayList<Pattern>())
                               .add(new Pattern(element.getKey()));
                   }
-
-                  return result;
                }
                catch (ExecutionException e) {
                   throw new NavException(Arrays.toString(e.getCause().getStackTrace()));
                }
-
+               catch (Exception e) {
+                  // TODO Auto-generated catch block
+                  e.printStackTrace();
+               }
+               return result;
             }
 
             @Override

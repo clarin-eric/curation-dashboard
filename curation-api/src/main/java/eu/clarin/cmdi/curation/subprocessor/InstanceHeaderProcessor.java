@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import eu.clarin.cmdi.curation.cache.ProfileScoreCache;
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
@@ -27,6 +28,8 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
    private VloConfig vloConf;
    @Autowired
    ProfileScoreCache pCache;
+   @Autowired
+   private CRService crService;
 
    
     boolean missingSchema = false;
@@ -39,8 +42,6 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
     @Override
     public void process(CMDInstance entity, CMDInstanceReport report) throws IOException, ExecutionException {
         Map<String, List<ValueSet>> keyValuesMap = entity.getCMDIData().getDocument();
-
-        CRServiceImpl crService = new CRServiceImpl();
 
         String schemaLocation = keyValuesMap.containsKey("curation_schemaLocation") && !keyValuesMap.get("curation_schemaLocation").isEmpty() ? keyValuesMap.get("curation_schemaLocation").get(0).getValue() : null;
 

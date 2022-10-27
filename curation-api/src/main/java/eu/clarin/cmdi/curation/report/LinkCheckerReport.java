@@ -1,9 +1,9 @@
 package eu.clarin.cmdi.curation.report;
 
 import eu.clarin.cmdi.cpa.utils.Category;
+import eu.clarin.cmdi.curation.cr.xml.XMLMarshaller;
 import eu.clarin.cmdi.curation.report.CollectionReport.Statistics;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
-import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 import javax.xml.bind.annotation.*;
 

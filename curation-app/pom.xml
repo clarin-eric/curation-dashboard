@@ -2,15 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>eu.clarin.cmdi</groupId>
+   <parent>
+      <groupId>eu.clarin.cmdi</groupId>
+      <artifactId>curation-dashboard</artifactId>
+      <version>6.0.0-SNAPSHOT</version>
+   </parent>
 	<artifactId>curation-app</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>curation-app</name>
 	<description>curation application for reports generation</description>
 	<properties>

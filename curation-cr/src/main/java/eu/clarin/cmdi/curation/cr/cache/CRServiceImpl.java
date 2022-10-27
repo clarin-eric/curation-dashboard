@@ -35,13 +35,14 @@ import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.CCRServiceFactory;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.ProfileCacheEntry;
-import eu.clarin.cmdi.curation.cr.ProfileHeader;
-import eu.clarin.cmdi.curation.cr.PublicProfiles;
+import eu.clarin.cmdi.curation.pph.ProfileHeader;
+import eu.clarin.cmdi.curation.pph.PPHService;
 import eu.clarin.cmdi.curation.cr.conf.CRProperties;
+import eu.clarin.cmdi.curation.cr.exception.NoParsedProfileException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParser;
 import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParserFactory;
-import eu.clarin.cmdi.curation.xml.SchemaResourceResolver;
+import eu.clarin.cmdi.curation.cr.xml.SchemaResourceResolver;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -59,7 +60,7 @@ public class CRServiceImpl implements CRService {
 
 
 
-   private final Collection<ProfileHeader> publicProfiles;
+   private final Collection<ProfileHeader> profileHeaders;
 
    /*
     * Profile is considered to be public if schema resides in Component Registry
@@ -68,14 +69,15 @@ public class CRServiceImpl implements CRService {
    
    private final SchemaFactory schemaFactory;
    
+   
    @Autowired
-   public CRServiceImpl(CRProperties crProps, CCRServiceFactory ccrServiceFac) {
+   public CRServiceImpl(CRProperties crProps, CCRServiceFactory ccrServiceFac, PPHService pdService) {
       
       this.crProps = crProps;
       this.ccrService = ccrServiceFac.getCCRService();
       
       schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-      schemaFactory.setResourceResolver(new SchemaResourceResolver());   
+
       
       String CR_REST = crProps.getCrRestUrl().replaceFirst("http(s)?", "(http|https)")
             .replaceFirst("/1\\..+", "/.+");
@@ -93,18 +95,22 @@ public class CRServiceImpl implements CRService {
          }
       }
       
-      publicProfiles = PublicProfiles.createPublicProfiles(crProps.getCrRestUrl(), crProps.getCrQuery());
+      profileHeaders = pdService.getProfileHeaders();
    }
    
    private synchronized Schema createSchema(File schemaFile) throws SAXException {
+      
+      schemaFactory.setResourceResolver(new SchemaResourceResolver());
+      
       return schemaFactory.newSchema(schemaFile);
+      
    }
 
    @Override
    public ProfileHeader createProfileHeader(String schemaLocation, String cmdiVersion, boolean isLocalFile) {
       ProfileHeader header = null;
       if (!isLocalFile && schemaLocation.startsWith(crProps.getCrRestUrl()))
-         header = publicProfiles.stream().filter(h -> schemaLocation.contains(h.getId())).findFirst().orElse(null);
+         header = profileHeaders.stream().filter(h -> schemaLocation.contains(h.getId())).findFirst().orElse(null);
 
       if (header == null) {
          header = new ProfileHeader();
@@ -144,7 +150,7 @@ public class CRServiceImpl implements CRService {
    }
 
    @Override
-   public ParsedProfile getParsedProfile(ProfileHeader header) throws ExecutionException, IOException, URISyntaxException, VTDException, SAXException {
+   public ParsedProfile getParsedProfile(ProfileHeader header) throws ExecutionException, IOException, URISyntaxException, VTDException, SAXException, NoParsedProfileException {
       
       return (isPublicCache(header)? getPublicEntry(header):getPrivateEntry(header)).getParsedProfile();
       
@@ -155,18 +161,18 @@ public class CRServiceImpl implements CRService {
    }
 
    @Override
-   public Schema getSchema(ProfileHeader header) throws ExecutionException, IOException, URISyntaxException, VTDException, SAXException {
+   public Schema getSchema(ProfileHeader header) throws ExecutionException, IOException, URISyntaxException, VTDException, SAXException, NoParsedProfileException {
       return (isPublicCache(header)? getPublicEntry(header):getPrivateEntry(header)).getSchema();
    }
 
    @Override
    public boolean isNameUnique(String name) {
-      return publicProfiles.stream().filter(h -> h.getName().equals(name)).count() <= 1;
+      return profileHeaders.stream().filter(h -> h.getName().equals(name)).count() <= 1;
    }
 
    @Override
    public boolean isDescriptionUnique(String description) {
-      return publicProfiles.stream().filter(h -> h.getName().equals(description)).count() <= 1;
+      return profileHeaders.stream().filter(h -> h.getName().equals(description)).count() <= 1;
    }
 
    @Override
@@ -175,8 +181,8 @@ public class CRServiceImpl implements CRService {
    }
 
    @Override
-   public Collection<ProfileHeader> getPublicProfiles() {
-      return publicProfiles;
+   public Collection<ProfileHeader> getPublicProfileHeaders() {
+      return profileHeaders;
    }
 
    public String getIdFromSchemaLocation(String schemaLocation) {
@@ -200,16 +206,16 @@ public class CRServiceImpl implements CRService {
    }
    
    @Cacheable("publicProfileCache")
-   private ProfileCacheEntry getPublicEntry(ProfileHeader header) throws IOException, URISyntaxException, VTDException, SAXException {
+   private ProfileCacheEntry getPublicEntry(ProfileHeader header) throws IOException, URISyntaxException, VTDException, SAXException, NoParsedProfileException {
       return getProfileCacheEntry(header);
    }
    
    @Cacheable("privateProfileCache")
-   private ProfileCacheEntry getPrivateEntry(ProfileHeader header) throws IOException, URISyntaxException, VTDException, SAXException {
+   private ProfileCacheEntry getPrivateEntry(ProfileHeader header) throws IOException, URISyntaxException, VTDException, SAXException, NoParsedProfileException {
       return getProfileCacheEntry(header);
    }
    
-   private ProfileCacheEntry getProfileCacheEntry(ProfileHeader header) throws IOException, URISyntaxException, VTDException, SAXException {
+   private ProfileCacheEntry getProfileCacheEntry(ProfileHeader header) throws IOException, URISyntaxException, VTDException, SAXException, NoParsedProfileException {
       Path xsd;
       if (isPublicCache(header)) {
 

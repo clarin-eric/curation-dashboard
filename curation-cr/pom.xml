@@ -3,11 +3,10 @@
    <parent>
       <groupId>eu.clarin.cmdi</groupId>
       <artifactId>curation-dashboard</artifactId>
-      <version>${revision}</version>
+      <version>6.0.0-SNAPSHOT</version>
    </parent>
    <artifactId>curation-cr</artifactId>
    <properties>
-      <vlo.version>4.10.2</vlo.version>
    </properties>
    <dependencies>
       <dependency>
@@ -16,43 +15,36 @@
          <version>2.13.4</version>
       </dependency>
       <dependency>
-         <groupId>com.google.guava</groupId>
-         <artifactId>guava</artifactId>
-         <version>30.0-jre</version>
-      </dependency>
-      <dependency>
-         <groupId>com.google.code.gson</groupId>
-         <artifactId>gson</artifactId>
-      </dependency>      
-      <dependency>
          <groupId>org.glassfish.jaxb</groupId>
          <artifactId>jaxb-runtime</artifactId>
       </dependency>
       <dependency>
          <groupId>org.apache.commons</groupId>
          <artifactId>commons-lang3</artifactId>
+      </dependency>     
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-configuration-processor</artifactId>
+         <optional>true</optional>
       </dependency>
-            <dependency>
+      <dependency>
+         <groupId>commons-io</groupId>
+         <artifactId>commons-io</artifactId>
+         <version>2.11.0</version>
+      </dependency>
+      <dependency>
          <groupId>eu.clarin.cmdi</groupId>
-         <artifactId>vlo-commons</artifactId>
-         <version>${vlo.version}</version>
+         <artifactId>curation-ccr</artifactId>
+         <version>${revision}</version>
       </dependency>
-            <dependency>
-            	<groupId>org.springframework.boot</groupId>
-            	<artifactId>
-            		spring-boot-configuration-processor
-            	</artifactId>
-            	<optional>true</optional>
-            </dependency>
-            <dependency>
-               <groupId>commons-io</groupId>
-               <artifactId>commons-io</artifactId>
-               <version>2.11.0</version>
-            </dependency>  
-            <dependency>
-            	<groupId>eu.clarin.cmdi</groupId>
-            	<artifactId>curation-ccr</artifactId>
-            	<version>${revision}</version>
-            </dependency>
+      <dependency>
+         <groupId>eu.clarin.cmdi</groupId>
+         <artifactId>curation-pph</artifactId>
+         <version>${revision}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-cache</artifactId>
+      </dependency>
    </dependencies>
 </project>

@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import eu.clarin.cmdi.curation.cr.xml.XMLMarshaller;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
-import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 @XmlRootElement(name = "error-report")
 @XmlAccessorType(XmlAccessType.FIELD)

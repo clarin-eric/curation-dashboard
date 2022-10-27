@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
-import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.ProfileDescription;
 import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.exception.ProfileNotFoundException;
@@ -18,11 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ProfileHeaderHandler {
    
    @Autowired
+   private CRService crService;
+   @Autowired
    private VloConfig vloConf;
 
 	protected Collection<Message> msgs = null;
 
-    public void process(CMDProfile entity, CMDProfileReport report) throws ProfileNotFoundException {
+    public void process(CMDProfile entity, CMDProfileReport report) throws Exception {
         String schemaLocation;
         boolean isLocalFile = false;
 
@@ -34,10 +37,8 @@ public class ProfileHeaderHandler {
             throw new ProfileNotFoundException("can' find profile " + entity);
         }
 
-        CRServiceImpl service = new CRServiceImpl();
-
         if (schemaLocation.startsWith(vloConf.getComponentRegistryRESTURL()))
-            report.header = service.getPublicProfiles()
+            report.header = crService.getPublicProfiles()
                     .stream()
                     .filter(h -> h.getSchemaLocation().equals(schemaLocation))
                     .findFirst()
@@ -45,7 +46,7 @@ public class ProfileHeaderHandler {
 
 
         if (report.header == null) {
-            report.header = new ProfileHeader();
+            report.header = new ProfileDescription();
             report.header.setSchemaLocation(schemaLocation);
             report.header.setCmdiVersion(entity.getCmdiVersion());
 
@@ -58,10 +59,10 @@ public class ProfileHeaderHandler {
         if (!report.header.isPublic())
             addMessage(Severity.ERROR, "Profile is not public");
 
-        if (!service.isNameUnique(report.header.getName()))
+        if (!crService.isNameUnique(report.header.getName()))
             addMessage(Severity.WARNING, "The name: " + report.header.getName() + " of the profile is not unique");
 
-        if (!service.isDescriptionUnique(report.header.getDescription()))
+        if (!crService.isDescriptionUnique(report.header.getDescription()))
             addMessage(Severity.WARNING,
                     "The description: " + report.header.getDescription() + " of the profile is not unique");
     }

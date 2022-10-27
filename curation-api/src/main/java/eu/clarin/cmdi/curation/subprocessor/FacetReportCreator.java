@@ -2,13 +2,12 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
-import eu.clarin.cmdi.curation.cr.ProfileHeader;
-import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
+import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.ProfileDescription;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.report.FacetReport;
 import eu.clarin.cmdi.curation.report.FacetReport.Coverage;
@@ -18,9 +17,11 @@ class FacetReportCreator {
    
    @Autowired
    private CurationConfig conf;
+   @Autowired
+   private CRService crService;
 	
-	public FacetReport createFacetReport(ProfileHeader header, FacetsMapping facetMapping) throws ExecutionException {
-	    Map<String, CMDINode> elements = new CRServiceImpl().getParsedProfile(header).getElements();
+	public FacetReport createFacetReport(ProfileDescription header, FacetsMapping facetMapping) throws Exception {
+	    Map<String, CMDINode> elements = crService.getParsedProfile(header).getElements();
 		FacetReport facetReport = new FacetReport();
 		facetReport.numOfFacets = conf.getFacets().size();
 		facetReport.coverage = new ArrayList<>();

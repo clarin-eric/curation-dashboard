@@ -3,8 +3,10 @@ package eu.clarin.cmdi.curation.ccr;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 
 import org.springframework.context.annotation.Import;
@@ -14,6 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest()
 @Import(CCRServiceTests.TestConfig.class)
 @EnableConfigurationProperties
+@EnableAutoConfiguration
+@ComponentScan
+@EnableCaching 
 class CCRServiceTests {
    
    @Autowired
@@ -24,12 +29,13 @@ class CCRServiceTests {
 	   
 	   CCRService service = fac.getCCRService();
 	   
-	   assertTrue(service.getAll().size() > 0);
+
+      assertTrue(service.getAll().size() > 0);
+
 	}
-	
-	@SpringBootConfiguration	
-	@ComponentScan
-	public static class TestConfig {
-	}
+   
+     @SpringBootConfiguration     
+     public static class TestConfig { }
+    
 
 }

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.cr.ProfileDescription;
 import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 
 public class ProfileParserTest extends TestBase{
@@ -14,7 +14,7 @@ public class ProfileParserTest extends TestBase{
     @Test 
     public void testParseProfile_1_2() throws Exception {
         
-        ProfileHeader header = new ProfileHeader();
+        ProfileDescription header = new ProfileDescription();
         
         header.setId("clarin.eu:cr1:p_1493735943947");
         header.setSchemaLocation("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.1/profiles/clarin.eu:cr1:p_1493735943947/1.2/xsd");

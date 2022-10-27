@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.cr.ProfileDescription;
 import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 
 
@@ -22,7 +22,7 @@ public class ProfileCacheFactoryTest extends TestBase{
         try {
             CRServiceImpl crService = new CRServiceImpl();
             
-            ProfileHeader ph = new ProfileHeader();
+            ProfileDescription ph = new ProfileDescription();
             
             ph.setId("clarin.eu:cr1:p_1527668176046");
             ph.setSchemaLocation("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1527668176046/xsd");
@@ -47,7 +47,7 @@ public class ProfileCacheFactoryTest extends TestBase{
     public void testParsedPrivateProfile() {
         CRServiceImpl crService = new CRServiceImpl();
         
-        ProfileHeader ph = new ProfileHeader();
+        ProfileDescription ph = new ProfileDescription();
         
         ph.setId("clarin.eu:cr1:p_1475136016193");
         ph.setSchemaLocation(" https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.1/profiles/clarin.eu:cr1:p_1475136016193/1.2/xsd");
@@ -75,7 +75,7 @@ public class ProfileCacheFactoryTest extends TestBase{
 
         
         try {
-            List<ProfileHeader> profiles = (List<ProfileHeader>) new CRServiceImpl().getPublicProfiles();
+            List<ProfileDescription> profiles = (List<ProfileDescription>) new CRServiceImpl().getPublicProfiles();
             
             assertNotNull(profiles);
             

@@ -22,7 +22,7 @@ public abstract class CMDSubprocessor {
 
     protected Collection<Message> msgs = null;
 
-    public abstract void process(CMDInstance entity, CMDInstanceReport report) throws IOException, ExecutionException, ParserConfigurationException, SAXException, TransformerException, FileSizeException, VTDException;
+    public abstract void process(CMDInstance entity, CMDInstanceReport report) throws IOException, ExecutionException, ParserConfigurationException, SAXException, TransformerException, FileSizeException, VTDException, Exception;
 
     protected void addMessage(Severity lvl, String message) {
         if (msgs == null) {

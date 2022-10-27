@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import eu.clarin.cmdi.curation.cr.ProfileHeader;
+import eu.clarin.cmdi.curation.cr.ProfileDescription;
+import eu.clarin.cmdi.curation.cr.xml.XMLMarshaller;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
-import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 
 /**
@@ -33,7 +33,7 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
     public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
     @XmlElement(name = "header-section")
-    public ProfileHeader header;
+    public ProfileDescription header;
 
     @XmlElement(name = "cmd-components-section")
     public Components components;
