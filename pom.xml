@@ -77,7 +77,8 @@
       <module>curation-web</module>
       <module>curation-api</module>
             -->
-      <module>curation-ph</module>
+      <module>curation-pph</module>
       <module>curation-ccr</module>
+      <module>curation-cr</module>
    </modules>
 </project>
