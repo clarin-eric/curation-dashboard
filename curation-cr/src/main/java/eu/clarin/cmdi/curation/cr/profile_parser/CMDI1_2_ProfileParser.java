@@ -10,7 +10,7 @@ import com.ximpleware.VTDGen;
 
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
-import eu.clarin.cmdi.curation.cr.exception.NoParsedProfileException;
+import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 
@@ -71,7 +71,7 @@ class CMDI1_2_ProfileParser extends ProfileParser{
 	}
 	
 	@Override
-	protected Map<String, CMDINode> createMap(Collection<CRElement> nodes) throws VTDException, NoParsedProfileException{
+	protected Map<String, CMDINode> createMap(Collection<CRElement> nodes) throws VTDException, NoProfileCacheEntryException{
 		Map<String, CMDINode> xpaths = new LinkedHashMap<>();
 		
 		//add xpaths from envelope

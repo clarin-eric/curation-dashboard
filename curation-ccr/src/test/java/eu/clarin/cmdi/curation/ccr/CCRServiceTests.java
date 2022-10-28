@@ -13,6 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest()
 @EnableConfigurationProperties
@@ -33,8 +34,6 @@ class CCRServiceTests {
 
       assertTrue(service.getAll().size() > 0);
 
-      assertTrue(cacheManager.getCache("ccrCache").get("getCCRConceptMap") != null);
-
    }
    
    @Test
@@ -42,7 +41,7 @@ class CCRServiceTests {
 
       service.getAll();
 
-      assertTrue(cacheManager.getCache("ccrCache").get("getCCRConceptMap") != null);
+      assertNotNull(cacheManager.getCache("ccrCache").get("getCCRConceptMap"));
 
    }
 

@@ -5,14 +5,14 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.clarin.cmdi.curation.ccr.cache.CCRConceptMapCache;
+import eu.clarin.cmdi.curation.ccr.cache.CCRCache;
 
 
 @Service
 class CCRServiceImpl implements CCRService {
 
    @Autowired
-   private CCRConceptMapCache cache;
+   private CCRCache cache;
 
    @Override
    public CCRConcept getConcept(String url) {

@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import com.ximpleware.VTDException;
 
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
+import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
@@ -22,7 +23,7 @@ public class CMDInstanceProcessor {
    @Autowired
    private CurationConfig conf;
 
-    public CMDInstanceReport process(CMDInstance record, String parentName) throws FileSizeException, TransformerException, IOException, ExecutionException, ParserConfigurationException, SAXException, VTDException {
+    public CMDInstanceReport process(CMDInstance record, String parentName) throws FileSizeException, TransformerException, IOException, ExecutionException, ParserConfigurationException, SAXException, VTDException, NoProfileCacheEntryException {
 
         CMDInstanceReport report = new CMDInstanceReport();
 

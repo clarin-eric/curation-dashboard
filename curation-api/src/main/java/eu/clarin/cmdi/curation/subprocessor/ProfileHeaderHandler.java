@@ -1,8 +1,8 @@
 package eu.clarin.cmdi.curation.subprocessor;
 
 import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.CRServiceImpl;
 import eu.clarin.cmdi.curation.cr.ProfileDescription;
-import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.exception.ProfileNotFoundException;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;

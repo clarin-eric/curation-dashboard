@@ -1,11 +1,11 @@
 package eu.clarin.cmdi.curation.report;
 
 import eu.clarin.cmdi.cpa.model.Status;
-import eu.clarin.cmdi.curation.cr.ProfileDescription;
-import eu.clarin.cmdi.curation.cr.xml.XMLMarshaller;
+import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.curation.report.CollectionReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.report.CollectionReport.Record;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
+import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 import javax.xml.bind.annotation.*;
 import java.io.OutputStream;
@@ -44,7 +44,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
     // Header
     @XmlElement(name = "profile-section")
-    public ProfileDescription header;
+    public ProfileHeader header;
 
     // file
     @XmlElement(name = "file-section")

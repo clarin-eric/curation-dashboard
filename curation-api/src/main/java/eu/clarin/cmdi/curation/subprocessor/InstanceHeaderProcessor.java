@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import eu.clarin.cmdi.curation.cache.ProfileScoreCache;
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
 import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
+import eu.clarin.cmdi.curation.cr.CRServiceImpl;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Score;

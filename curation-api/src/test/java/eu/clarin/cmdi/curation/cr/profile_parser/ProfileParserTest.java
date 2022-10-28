@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
+import eu.clarin.cmdi.curation.cr.CRServiceImpl;
 import eu.clarin.cmdi.curation.cr.ProfileDescription;
-import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 
 public class ProfileParserTest extends TestBase{
        

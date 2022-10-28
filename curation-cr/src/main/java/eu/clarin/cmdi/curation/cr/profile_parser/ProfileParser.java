@@ -12,7 +12,7 @@ import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
-import eu.clarin.cmdi.curation.cr.exception.NoParsedProfileException;
+import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Concept;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public abstract class ProfileParser {
 
    private CRElement _cur;
 
-   public ParsedProfile parse(VTDNav navigator, ProfileHeader header) throws NoParsedProfileException{
+   public ParsedProfile parse(VTDNav navigator, ProfileHeader header) throws NoProfileCacheEntryException{
       vn = navigator;
       try {
          fillInHeader(vn, header);
@@ -42,7 +42,7 @@ public abstract class ProfileParser {
          
          log.error("profile not parsable!");
          log.debug("", e);
-         throw new NoParsedProfileException();
+         throw new NoProfileCacheEntryException();
       }
    }
 
@@ -52,7 +52,7 @@ public abstract class ProfileParser {
 
    protected abstract CRElement processNameAttributeNode() throws VTDException;
 
-   protected abstract Map<String, CMDINode> createMap(Collection<CRElement> nodes) throws VTDException, NoParsedProfileException;
+   protected abstract Map<String, CMDINode> createMap(Collection<CRElement> nodes) throws VTDException, NoProfileCacheEntryException;
 
    protected ProfileHeader fillInHeader(VTDNav vn, ProfileHeader header) throws VTDException {
       AutoPilot ap = new AutoPilot(vn);

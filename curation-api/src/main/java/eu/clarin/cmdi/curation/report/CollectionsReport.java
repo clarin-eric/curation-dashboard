@@ -1,7 +1,7 @@
 package eu.clarin.cmdi.curation.report;
 
-import eu.clarin.cmdi.curation.cr.xml.XMLMarshaller;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
+import eu.clarin.cmdi.curation.xml.XMLMarshaller;
 
 import java.io.OutputStream;
 import java.util.ArrayList;

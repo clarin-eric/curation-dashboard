@@ -4,36 +4,30 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Vector;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
-import eu.clarin.cmdi.curation.pph.PPHService;
-import eu.clarin.cmdi.curation.pph.conf.PHProperties;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
+@Component
 @Slf4j
-public class PPHServiceImpl implements PPHService {
+public class PPHCache {
+   
+   @Cacheable(value = "pphCache", key = "#query")
+   public Map<String, ProfileHeader> getProfileHeadersMap(String restUrl, String query) {
 
-   @Autowired
-   PHProperties props;
-
-   @Cacheable("pphCache")
-   public Collection<ProfileHeader> getProfileHeaders(String restUrl, String query) {
-
-      Vector<ProfileHeader> profileHeaders = new Vector<ProfileHeader>();
+      Map<String, ProfileHeader> profileHeaders = new ConcurrentHashMap<String, ProfileHeader>();
 
       try {
 
@@ -47,15 +41,16 @@ public class PPHServiceImpl implements PPHService {
          parser.parse(in, new DefaultHandler() {
 
             private StringBuilder elementValue;
+            private ProfileHeader header;
 
             @Override
             public void startElement(String uri, String localName, String qName, Attributes attributes)
                   throws SAXException {
                switch(qName) {
                   case "profileDescription":
-                     profileHeaders.add(new ProfileHeader());
-                     profileHeaders.lastElement().setCmdiVersion("1.x");
-                     profileHeaders.lastElement().setPublic(true);
+                     header = new ProfileHeader();
+                     header.setCmdiVersion("1.x");
+                     header.setPublic(true);
                      break;
                      
                   case "id":
@@ -73,17 +68,18 @@ public class PPHServiceImpl implements PPHService {
             public void endElement(String uri, String localName, String qName) throws SAXException {
                switch (qName) {
                   case "id":
-                     profileHeaders.lastElement().setId(elementValue.toString());
-                     profileHeaders.lastElement().setSchemaLocation(restUrl + "/" + elementValue.toString() + "/xsd");
+                     header.setId(elementValue.toString());
+                     profileHeaders.put(header.getId(), header);
+                     header.setSchemaLocation(restUrl + "/" + elementValue.toString() + "/xsd");
                      break;
                   case "name":
-                     profileHeaders.lastElement().setName(elementValue.toString());
+                     header.setName(elementValue.toString());
                      break;
                   case "description":
-                     profileHeaders.lastElement().setDescription(elementValue.toString());
+                     header.setDescription(elementValue.toString());
                      break;
                   case "status":
-                     profileHeaders.lastElement().setStatus(elementValue.toString().toLowerCase());
+                     header.setStatus(elementValue.toString().toLowerCase());
                      break;
                    default:
                       break;
@@ -126,10 +122,5 @@ public class PPHServiceImpl implements PPHService {
       return profileHeaders;
    }
 
-   @Override
-   public Collection<ProfileHeader> getProfileHeaders() {
 
-      return getProfileHeaders(props.getCrRestUrl(), props.getCrQuery());
-
-   }
 }

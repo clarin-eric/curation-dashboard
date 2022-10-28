@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import eu.clarin.cmdi.curation.cr.CRServiceImpl;
 import eu.clarin.cmdi.curation.cr.ProfileDescription;
-import eu.clarin.cmdi.curation.cr.cache.CRServiceImpl;
 
 
 public class ProfileCacheFactoryTest extends TestBase{

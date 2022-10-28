@@ -43,8 +43,7 @@ public class InstanceFacetProcessor extends CMDSubprocessor {
    
 
     @Override
-    public void process(CMDInstance entity, CMDInstanceReport report)
-            throws Exception {
+    public void process(CMDInstance entity, CMDInstanceReport report) {
 
         // parse instance
         CMDXPathService xmlService = new CMDXPathService(entity.getPath());

@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import com.ximpleware.VTDException;
+
+import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.processor.CMDInstanceProcessor;
@@ -45,7 +47,7 @@ public class CMDInstance {
         this.size = size;
     }
 
-    public CMDInstanceReport generateReport(String parentName) throws TransformerException, FileSizeException, IOException, ExecutionException, ParserConfigurationException, SAXException, VTDException {
+    public CMDInstanceReport generateReport(String parentName) throws TransformerException, FileSizeException, IOException, ExecutionException, ParserConfigurationException, SAXException, VTDException, NoProfileCacheEntryException {
         return new CMDInstanceProcessor().process(this, parentName);
     }
 

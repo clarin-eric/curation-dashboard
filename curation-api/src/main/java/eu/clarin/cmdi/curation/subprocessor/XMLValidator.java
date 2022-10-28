@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -22,6 +21,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Message;
@@ -43,7 +43,7 @@ public class XMLValidator extends CMDSubprocessor {
 
 
     @Override
-    public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
+    public void process(CMDInstance entity, CMDInstanceReport report) throws NoProfileCacheEntryException, ParserConfigurationException, SAXException, IOException{
 
             ValidatorHandler schemaValidator = crService.getSchema(report.header).newValidatorHandler();
             msgs = new ArrayList<>();

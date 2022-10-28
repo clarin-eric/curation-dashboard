@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import lombok.Data;
 
 @Component
-@ConfigurationProperties(prefix = "curation")
+@ConfigurationProperties(prefix = "curation.pph-service")
 @Data
 public class CRProperties {
    

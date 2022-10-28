@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class CCRConceptMapCache {
+public class CCRCache {
    
    @Autowired
    private CCRProperties ccrProps;
