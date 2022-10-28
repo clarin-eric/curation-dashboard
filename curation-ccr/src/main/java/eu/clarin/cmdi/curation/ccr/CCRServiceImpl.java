@@ -1,12 +1,11 @@
-package eu.clarin.cmdi.curation.ccr.cache;
-
-import eu.clarin.cmdi.curation.ccr.CCRConcept;
-import eu.clarin.cmdi.curation.ccr.CCRService;
+package eu.clarin.cmdi.curation.ccr;
 
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import eu.clarin.cmdi.curation.ccr.cache.CCRConceptMapCache;
 
 
 @Service

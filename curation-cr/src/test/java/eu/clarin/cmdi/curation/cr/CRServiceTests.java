@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
 import eu.clarin.cmdi.curation.cr.conf.CRProperties;
@@ -15,9 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest()
-@Import(TestConfig.class)
+@EnableCaching
+//@Import(TestConfig.class)
 @EnableConfigurationProperties
 @EnableAutoConfiguration
+@ComponentScan(basePackages = "eu.clarin.cmdi.curation")
 @Slf4j
 class CRServiceTests {
    

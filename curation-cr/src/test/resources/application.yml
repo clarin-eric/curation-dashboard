@@ -1,6 +1,6 @@
 logging:
    level:
-      root: ERROR
+      root: TRACE
 curation:
    xsd_cache: /tmp/curation/xsd_cache
    cr_rest_url: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
