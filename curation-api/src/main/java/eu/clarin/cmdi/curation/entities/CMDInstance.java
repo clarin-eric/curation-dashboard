@@ -1,27 +1,17 @@
 package eu.clarin.cmdi.curation.entities;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
-import com.ximpleware.VTDException;
-
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
-import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.processor.CMDInstanceProcessor;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 public class CMDInstance {
 
@@ -47,7 +37,7 @@ public class CMDInstance {
         this.size = size;
     }
 
-    public CMDInstanceReport generateReport(String parentName) throws TransformerException, FileSizeException, IOException, ExecutionException, ParserConfigurationException, SAXException, VTDException, NoProfileCacheEntryException {
+    public CMDInstanceReport generateReport(String parentName) throws Exception {
         return new CMDInstanceProcessor().process(this, parentName);
     }
 

@@ -1,12 +1,10 @@
 package eu.clarin.cmdi.curation.entities;
 
-import eu.clarin.cmdi.curation.exception.ProfileNotFoundException;
+import eu.clarin.cmdi.curation.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.processor.CMDProfileProcessor;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.concurrent.ExecutionException;
 
 /**
  *
@@ -23,7 +21,7 @@ public class CMDProfile {
         this.cmdiVersion = cmdiVersion;
     }
 
-    public CMDProfileReport generateReport() throws ExecutionException, ProfileNotFoundException, IOException {
+    public CMDProfileReport generateReport() throws SubprocessorException {
         return new CMDProfileProcessor().process(this);
     }
 

@@ -1,29 +1,19 @@
 package eu.clarin.cmdi.curation.processor;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-import com.ximpleware.VTDException;
-
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.subprocessor.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 public class CMDInstanceProcessor {
    
    @Autowired
    private CurationConfig conf;
 
-    public CMDInstanceReport process(CMDInstance record, String parentName) throws FileSizeException, TransformerException, IOException, ExecutionException, ParserConfigurationException, SAXException, VTDException, NoProfileCacheEntryException {
+    public CMDInstanceReport process(CMDInstance record, String parentName) throws Exception {
 
         CMDInstanceReport report = new CMDInstanceReport();
 

@@ -3,11 +3,8 @@
  */
 package eu.clarin.cmdi.curation.processor;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
 import eu.clarin.cmdi.curation.entities.CMDProfile;
-import eu.clarin.cmdi.curation.exception.ProfileNotFoundException;
+import eu.clarin.cmdi.curation.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.subprocessor.ProfileElementsHandler;
 import eu.clarin.cmdi.curation.subprocessor.ProfileFacetHandler;
@@ -17,7 +14,7 @@ import eu.clarin.cmdi.curation.subprocessor.ProfileHeaderHandler;
  */
 public class CMDProfileProcessor {
 
-    public CMDProfileReport process(CMDProfile profile) throws ProfileNotFoundException, ExecutionException, IOException {
+    public CMDProfileReport process(CMDProfile profile) throws SubprocessorException {
 
         CMDProfileReport report = new CMDProfileReport();
 

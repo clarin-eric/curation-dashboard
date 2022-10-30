@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
-public class URLValidator extends CMDSubprocessor {
+public class URLValidator extends AbstractCMDSubprocessor {
 
    @Autowired
    private CurationConfig conf;
@@ -155,7 +155,7 @@ public class URLValidator extends CMDSubprocessor {
       double score = report.urlReport.percOfValidLinks != null && !Double.isNaN(report.urlReport.percOfValidLinks)
             ? report.urlReport.percOfValidLinks
             : 0;
-      return new Score(score, 1.0, "url-validation", msgs);
+      return new Score(score, 1.0, "url-validation", this.getMessages());
    }
 
    private URLReport createInstanceURLReport(long numOfLinks, long numOfUniqueLinks, long numOfCheckedLinks,

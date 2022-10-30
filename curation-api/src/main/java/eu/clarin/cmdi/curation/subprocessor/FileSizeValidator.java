@@ -2,8 +2,8 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.instance_parser.InstanceParser;
-import eu.clarin.cmdi.curation.io.FileSizeException;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport.FileReport;
 import eu.clarin.cmdi.curation.report.Score;
@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -44,16 +45,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class FileSizeValidator extends CMDSubprocessor {
+public class FileSizeValidator extends AbstractCMDSubprocessor {
 
    private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
 
-   private static final CMDIDataProcessor<Map<String, List<ValueSet>>> _processor = getProcessor();
+   private CMDIDataProcessor<Map<String, List<ValueSet>>> processor;
    
    @Autowired
    private CurationConfig conf;
 
-   private static CMDIDataProcessor<Map<String, List<ValueSet>>> getProcessor() {
+   public FileSizeValidator() {
+      
       try {
          final VloConfig vloConfig = new DefaultVloConfigFactory().newConfig();
 
@@ -67,7 +69,7 @@ public class FileSizeValidator extends CMDSubprocessor {
 
          final FacetMappingFactory facetMappingFactory = FacetsMappingCacheFactory.getInstance();
 
-         return new CMDIParserVTDXML<>(
+         this.processor = new CMDIParserVTDXML<>(
                MetadataImporter.registerPostProcessors(vloConfig, fieldNameService, languageCodeUtils),
                MetadataImporter.registerPostMappingFilters(fieldNameService), vloConfig, facetMappingFactory,
                marshaller, cmdiDataFactory, fieldNameService, false);
@@ -75,11 +77,10 @@ public class FileSizeValidator extends CMDSubprocessor {
       }
       catch (IOException ex) {
          log.error("couldn't instatiate CMDIDataProcessor - so instance parsing won't work!");
-         return null;
       }
    }
 
-   private boolean isLatestVersion(Path path) throws IOException {
+   private boolean isLatestVersion(Path path){
       String line = null;
       Matcher matcher;
 
@@ -96,24 +97,55 @@ public class FileSizeValidator extends CMDSubprocessor {
    }
 
    @Override
-   public void process(CMDInstance entity, CMDInstanceReport report)
-         throws IOException, TransformerException, FileSizeException {
+   public void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException{
 
       // convert cmdi 1.1 to 1.2 if necessary
 
       if (!isLatestVersion(entity.getPath())) {
-         Path newPath = Files.createTempFile(null, ".xml");
+         Path newPath = null;
+         
+         try {
+            newPath = Files.createTempFile(null, ".xml");
+         }
+         catch (IOException e) {
+            
+            log.error("can't create temporary outputfile for CMD1.1 to CMD1.x transformation");
+            throw new SubprocessorException();
+         }
 
          TransformerFactory factory = TransformerFactory.newInstance();
          Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/xslt/cmd-record-1_1-to-1_2.xsl"));
 
-         Transformer transformer = factory.newTransformer(xslt);
-         transformer.transform(new StreamSource(entity.getPath().toFile()), new StreamResult(newPath.toFile()));
+         Transformer transformer;
+         try {
+            transformer = factory.newTransformer(xslt);
+            transformer.transform(new StreamSource(entity.getPath().toFile()), new StreamResult(newPath.toFile()));
+         }
+         catch (TransformerConfigurationException e) {
+            
+            log.error("can't create Transormer object from resource '/xslt/cmd-record-1_1-to-1_2.xsl' - make sure that the resource is in the classpath!");
+            throw new SubprocessorException();
+         }
+         catch (TransformerException e) {
+            
+            log.error("can't transfrom input file '{}'", entity.getPath());
+            throw new SubprocessorException();
+            
+         }
+         
 
          this.addMessage(Severity.INFO, "tranformed cmdi version 1.1 into version 1.2");
 
          entity.setPath(newPath);
-         entity.setSize(Files.size(newPath));
+         try {
+            entity.setSize(Files.size(newPath));
+         }
+         catch (IOException e) {
+
+            log.error("can't get size from temporary transfromer output file '{}'", newPath);
+            throw new SubprocessorException();
+            
+         }
       }
 
       report.fileReport = new FileReport();
@@ -138,19 +170,29 @@ public class FileSizeValidator extends CMDSubprocessor {
       }
 
       if (report.fileReport.size > conf.getMaxFileSize()) {
-         addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + conf.getMaxFileSize()+ "B)");
+         this.addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + conf.getMaxFileSize()+ "B)");
          // don't assess when assessing collections
          if (conf.getMode().equalsIgnoreCase("collection")) {
-            throw new FileSizeException(entity.getPath().getFileName().toString(), report.fileReport.size);
+            throw new SubprocessorException();
          }
       }
 
       CMDIData<Map<String, List<ValueSet>>> cmdiData = null;
+
       try {
-         cmdiData = _processor.process(entity.getPath().toFile(), new ResourceStructureGraph());
+         cmdiData = processor.process(entity.getPath().toFile(), new ResourceStructureGraph());
+      }
+      catch (TransformerException e) {
+
+         log.error("can't create CMDIData object from file '{}'", entity.getPath());
+         throw new SubprocessorException();
+         
       }
       catch (Exception e) {
-         throw new IOException(e);
+         
+         log.error("can't create CMDIData object from file '{}'", entity.getPath());
+         throw new SubprocessorException();
+      
       }
 
       entity.setCMDIData(cmdiData);
@@ -161,7 +203,21 @@ public class FileSizeValidator extends CMDSubprocessor {
          InstanceParser transformer = new InstanceParser();
 
          log.debug("parsing instance...");
-         entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));
+         try {
+            entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));
+         }
+         catch (TransformerException e) {
+            
+            log.error("can't transform CMD instance file '{}'", entity.getPath());
+            throw new SubprocessorException();
+         
+         }
+         catch (IOException e) {
+            
+            log.error("can't read CMD file '{}'", entity.getPath());
+            throw new SubprocessorException();
+         
+         }
          log.debug("...done");
 
       }
@@ -170,6 +226,6 @@ public class FileSizeValidator extends CMDSubprocessor {
    public Score calculateScore() {
       // in case that size exceeds the limit msgs will be created and it will contain
       // a single msg
-      return new Score(msgs == null ? 1.0 : 0, 1.0, "file-size", msgs);
+      return new Score(this.getMessages().size() == 0 ? 1.0 : 0, 1.0, "file-size", this.getMessages());
    }
 }

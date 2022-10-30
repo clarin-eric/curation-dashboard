@@ -83,6 +83,10 @@ public class CollectionAggregator {
                new ErrorReport(conf.getDirectory().getData().relativize(instance.getPath()).toString(), e.getMessage())
                      .mergeWithParent(report);
             }
+            catch (Exception e) {
+               // TODO Auto-generated catch block
+               e.printStackTrace();
+            }
          });
       }
 

@@ -13,7 +13,7 @@ import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
-public class ResourceProxyProcessor extends CMDSubprocessor {
+public class ResourceProxyProcessor extends AbstractCMDSubprocessor {
 
 	@Override
 	public void process(CMDInstance entity, CMDInstanceReport report) {
@@ -61,7 +61,7 @@ public class ResourceProxyProcessor extends CMDSubprocessor {
 
 	public Score calculateScore(CMDInstanceReport report) {
 		double score = report.resProxyReport.percOfResourcesWithMime + report.resProxyReport.percOfResProxiesWithReferences;
-		return new Score(score, 2.0, "cmd-res-proxy", msgs);		
+		return new Score(score, 2.0, "cmd-res-proxy", this.getMessages());		
 	}
 
 }

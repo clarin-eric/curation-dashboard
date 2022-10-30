@@ -23,13 +23,16 @@ import org.xml.sax.helpers.DefaultHandler;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
 import eu.clarin.cmdi.curation.xml.CMDErrorHandler;
+import lombok.extern.slf4j.Slf4j;
 
-public class XMLValidator extends CMDSubprocessor {
+@Slf4j
+public class XMLValidator extends AbstractCMDSubprocessor {
    
    @Autowired
    private CRService crService;
@@ -43,20 +46,54 @@ public class XMLValidator extends CMDSubprocessor {
 
 
     @Override
-    public void process(CMDInstance entity, CMDInstanceReport report) throws NoProfileCacheEntryException, ParserConfigurationException, SAXException, IOException{
+    public void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
 
-            ValidatorHandler schemaValidator = crService.getSchema(report.header).newValidatorHandler();
-            msgs = new ArrayList<>();
-            schemaValidator.setErrorHandler(new CMDErrorHandler(report, msgs));
+            ValidatorHandler schemaValidator;
+            try {
+               schemaValidator = crService.getSchema(report.header).newValidatorHandler();
+            }
+            catch (NoProfileCacheEntryException e) {
+               
+               log.error("no ProfileCacheEntry for profile id '{}'", report.header);
+               throw new SubprocessorException();
+            }
+
+            schemaValidator.setErrorHandler(new CMDErrorHandler(report, this.getMessages()));
             schemaValidator.setContentHandler(new CMDIInstanceContentHandler(entity, report));
             // setValidationFeatures(schemaValidator);
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
             parserFactory.setNamespaceAware(true);
 
-            SAXParser parser = parserFactory.newSAXParser();
-            XMLReader reader = parser.getXMLReader();
+            SAXParser parser;
+            XMLReader reader;
+            
+            try {
+               parser = parserFactory.newSAXParser();
+               reader = parser.getXMLReader();
+            }
+            catch (ParserConfigurationException|SAXException e) {
+
+               log.error("can't configure SAXParser for XML validation");
+               throw new SubprocessorException();
+            
+            }
+            
             reader.setContentHandler(schemaValidator);
-            reader.parse(new InputSource(entity.getPath().toUri().toString()));
+            try {
+               reader.parse(new InputSource(entity.getPath().toUri().toString()));
+            }
+            catch (IOException e) {
+               
+               log.error("can't read input file '{}' for XML validation", entity.getPath());
+               throw new SubprocessorException();
+               
+            }
+            catch (SAXException e) {
+               
+               log.error("can't parse input file '{}' for XML validation", entity.getPath());
+               throw new SubprocessorException();
+               
+            }
 
             report.xmlPopulatedReport = new CMDInstanceReport.XMLPopulatedReport();
             report.xmlPopulatedReport.numOfXMLElements = numOfXMLElements;
@@ -66,7 +103,7 @@ public class XMLValidator extends CMDSubprocessor {
 
             report.xmlValidityReport = new CMDInstanceReport.XMLValidityReport();
             
-            for (Message m : msgs) {
+            for (Message m : this.getMessages()) {
 
                 if (m.getLvl().equals(Severity.FATAL) || m.getLvl().equals(Severity.ERROR)) {
                     if(report.xmlValidityReport.issues.size() < 3)
@@ -91,7 +128,7 @@ public class XMLValidator extends CMDSubprocessor {
     //This method is extra because xmlValidator gives two seperate scores.
     //The architecture was designed for one score per validator apparently. But I inherited the code and can't deal with the whole architecture. This might bite me in the ass later but whatever.
     public Score calculateValidityScore() {
-        List<Message> list = new ArrayList<>(msgs);
+        List<Message> list = new ArrayList<>(this.getMessages());
 
         Collections.sort(list, (m1, m2) -> m2.getLvl().getPriority() - m1.getLvl().getPriority());
         // we don't take into account errors and warnings from xml parser

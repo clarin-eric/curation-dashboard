@@ -20,7 +20,7 @@ import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
 
-public class InstanceHeaderProcessor extends CMDSubprocessor {
+public class InstanceHeaderProcessor extends AbstractCMDSubprocessor {
    
    @Autowired
    private CurationConfig conf; 
@@ -138,7 +138,7 @@ public class InstanceHeaderProcessor extends CMDSubprocessor {
         if (!missingMdSelfLink)
             score++;
 
-        return new Score(score, 5.0, "cmd-header-schema", msgs);
+        return new Score(score, 5.0, "cmd-header-schema", this.getMessages());
     }
 
 

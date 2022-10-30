@@ -1,18 +1,14 @@
 package eu.clarin.cmdi.curation.vlo_extensions;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.ximpleware.NavException;
 
+import eu.clarin.cmdi.curation.cache.FacetMappingCache;
 import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.vlo.config.VloConfig;
@@ -34,17 +30,18 @@ import lombok.extern.slf4j.Slf4j;
 public class FacetsMappingCacheFactory extends FacetMappingFactory {
 
    @Autowired
-   private static VloConfig vloConf; 
+   private static VloConfig vloConf;
    @Autowired
    private CRService crService;
+   @Autowired
+   FacetMappingCache cache;
 
-
-   private final LoadingCache<ProfileHeader, FacetsMapping> facetMappingPublicCache;
-   private final LoadingCache<ProfileHeader, FacetsMapping> facetMappingNonPublicCache;
+//   private final LoadingCache<ProfileHeader, FacetsMapping> facetMappingPublicCache;
+//   private final LoadingCache<ProfileHeader, FacetsMapping> facetMappingNonPublicCache;
 
    private static FacetsMappingCacheFactory _facetMappingCacheFactory;
 
-   public static FacetsMappingCacheFactory getInstance() throws IOException {
+   public static FacetsMappingCacheFactory getInstance(){
       if (_facetMappingCacheFactory == null) {
          VLOMarshaller marshaller = new VLOMarshaller();
          _facetMappingCacheFactory = new FacetsMappingCacheFactory(vloConf, marshaller);
@@ -53,31 +50,25 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
    }
 
    private FacetsMappingCacheFactory(VloConfig vloConfig, VLOMarshaller marshaller) {
+
       super(vloConfig, marshaller);
 
-      this.facetMappingPublicCache = CacheBuilder.newBuilder().concurrencyLevel(4).build(new FacetMappingCacheLoader());
-
-      this.facetMappingNonPublicCache = CacheBuilder.newBuilder().concurrencyLevel(4)
-            .expireAfterWrite(8, TimeUnit.HOURS)// keep non public profiles 8 hours in cache
-            .build(new FacetMappingCacheLoader());
    }
 
    public FacetsMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
-      try {
-         return getFacetsMapping(crService
-               .createProfileHeader(vloConf.getComponentRegistryProfileSchema(profileId), "1.x", false));
-      }
-      catch (ExecutionException ex) {
-         log.error("error while attempting to get facetMap for profileId {}", profileId, ex);
-      }
-      return null;
+
+      return getFacetsMapping(
+            crService.createProfileHeader(vloConf.getComponentRegistryProfileSchema(profileId), "1.x", false));
+
    }
 
-   public FacetsMapping getFacetsMapping(ProfileHeader header) throws ExecutionException {
-      return header.isPublic() ? this.facetMappingPublicCache.get(header) : this.facetMappingNonPublicCache.get(header);
+   public FacetsMapping getFacetsMapping(ProfileHeader header) {
+      return header.isPublic() ? cache.getPublicFacetMapping(header, createFacetsMapping(header))
+            : cache.getNonPublicFacetMapping(header, createFacetsMapping(header));
    }
 
-   public Map<String, List<Pattern>> createConceptLinkPathMapping(ProfileHeader header) throws Exception {
+   public Map<String, List<Pattern>> createConceptLinkPathMapping(ProfileHeader header)
+         throws NoProfileCacheEntryException {
       Map<String, List<Pattern>> result = new HashMap<>();
 
       Map<String, CMDINode> elements = crService.getParsedProfile(header).getElements();
@@ -90,47 +81,42 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
       return result;
    }
 
-   private class FacetMappingCacheLoader extends CacheLoader<ProfileHeader, FacetsMapping> {
-      @Override
-      public FacetsMapping load(ProfileHeader header) {
-         return new FacetsMappingExt(FacetsMappingCacheFactory.this.createMapping(new ConceptLinkPathMapper() {
+   private FacetsMapping createFacetsMapping(ProfileHeader header) {
+      return new FacetsMappingExt(createMapping(new ConceptLinkPathMapper() {
 
-            @Override
-            public Map<String, List<Pattern>> createConceptLinkPathMapping() throws NavException {
-               Map<String, List<Pattern>> result = new HashMap<>();
+         @Override
+         public Map<String, List<Pattern>> createConceptLinkPathMapping() throws NavException {
+            Map<String, List<Pattern>> result = new HashMap<>();
 
-               Map<String, CMDINode> elements;
+            Map<String, CMDINode> elements;
 
-               try {
-                  elements = crService.getParsedProfile(header).getElements();
+            try {
+               elements = crService.getParsedProfile(header).getElements();
 
-                  for (Map.Entry<String, CMDINode> element : elements.entrySet()) {
-                     if (element.getValue().concept != null)
-                        result.computeIfAbsent(element.getValue().concept.uri, k -> new ArrayList<Pattern>())
-                              .add(new Pattern(element.getKey()));
-                  }
+               for (Map.Entry<String, CMDINode> element : elements.entrySet()) {
+                  if (element.getValue().concept != null)
+                     result.computeIfAbsent(element.getValue().concept.uri, k -> new ArrayList<Pattern>())
+                           .add(new Pattern(element.getKey()));
                }
-               catch (ExecutionException e) {
-                  throw new NavException(Arrays.toString(e.getCause().getStackTrace()));
-               }
-               catch (Exception e) {
-                  // TODO Auto-generated catch block
-                  e.printStackTrace();
-               }
-               return result;
             }
+            catch (NoProfileCacheEntryException e) {
 
-            @Override
-            public String getXsd() {
-               return header.getId();
+               log.error("no ProfileCacheEntry object for profile id '{}'", header.getId());
+
             }
+            return result;
+         }
 
-            @Override
-            public Boolean useLocalXSDCache() {
-               return true;
-            }
+         @Override
+         public String getXsd() {
+            return header.getId();
+         }
 
-         }));
-      }
+         @Override
+         public Boolean useLocalXSDCache() {
+            return true;
+         }
+
+      }));
    }
 }

@@ -6,38 +6,46 @@ package eu.clarin.cmdi.curation.subprocessor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
+import eu.clarin.cmdi.curation.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Component;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Components;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Concepts;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Elements;
 import eu.clarin.cmdi.curation.report.Concept;
-import eu.clarin.cmdi.curation.report.Message;
 import eu.clarin.cmdi.curation.report.Score;
+import lombok.extern.slf4j.Slf4j;
 
 /**
 
  *
  */
-public class ProfileElementsHandler{
+@Slf4j
+public class ProfileElementsHandler extends AbstractMessageCollection{
    
    @Autowired
    private CRService crService;
 
-    protected Collection<Message> msgs = null;
 
-    public void process(CMDProfileReport report) throws Exception {
-        ParsedProfile parsedProfile;
+    public void process(CMDProfileReport report) throws SubprocessorException {
+        ParsedProfile parsedProfile = null;
 
-        parsedProfile = crService.getParsedProfile(report.header);
+        try {
+         parsedProfile = crService.getParsedProfile(report.header);
+      }
+      catch (NoProfileCacheEntryException e) {
+         
+         log.error("can't get ParsedProfile for profile id '{}'", report.header.getId());
+         throw new SubprocessorException();
+      }
 
         report.components = createComponentSegment(parsedProfile);
         report.elements = createElementSegment(parsedProfile);
@@ -46,7 +54,7 @@ public class ProfileElementsHandler{
 
     public Score calculateScore(CMDProfileReport report) {
         double score = report.elements.percWithConcept;
-        return new Score(score, 1.0, "cmd-concepts-section", msgs);
+        return new Score(score, 1.0, "cmd-concepts-section", this.getMessages());
     }
 
     private Components createComponentSegment(ParsedProfile parsedProfile) {
