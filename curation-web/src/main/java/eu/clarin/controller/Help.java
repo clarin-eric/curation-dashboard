@@ -1,19 +1,18 @@
-package eu.clarin.routes;
+package eu.clarin.controller;
 
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
-
 import org.commonmark.Extension;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,11 +21,11 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@Path("/help")
+@RestController
+@RequestMapping("/help")
 public class Help {
 
-    @GET
-    @Path("/")
+    @GetMapping("/")
     public Response getHelp() {
        try {            
           List<Extension> extensions = Arrays.asList(TablesExtension.create());

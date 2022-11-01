@@ -1,25 +1,24 @@
-package eu.clarin.routes;
+package eu.clarin.controller;
 
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 @Slf4j
-@Path("/instance")
+@RestController
+@RequestMapping("/instance")
 public class Instance {
 
-    @GET
-    @Path("/{instanceName}")
-    public Response getInstance(@PathParam("instanceName") String instanceName) {
+    @GetMapping("/{instanceName}")
+    public Response getInstance(@PathVariable("instanceName") String instanceName) {
 
         String[] split = instanceName.split("\\.");
         if (split.length != 2) {

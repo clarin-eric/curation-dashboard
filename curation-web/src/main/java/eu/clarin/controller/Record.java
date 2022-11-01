@@ -1,25 +1,25 @@
-package eu.clarin.routes;
+package eu.clarin.controller;
 
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.LinkOption;
 import java.nio.file.Paths;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 //this route is to make records available to view
-@Path("/record")
+@RestController
+@RequestMapping("/record")
 public class Record {
 
-    @GET
-    @Path("/{filepath : .+}")
-    public Response handleView(@PathParam("filepath") String filePath) {
+    @GetMapping("/{filepath : .+}")
+    public Response handleView(@PathVariable("filepath") String filePath) {
         try {
         	// the next three lines assure that the path is a sub-path of RECORDS_PATH
         	java.nio.file.Path path = Paths.get(Configuration.DATA_DIRECTORY.toString(), filePath).toRealPath(LinkOption.NOFOLLOW_LINKS);

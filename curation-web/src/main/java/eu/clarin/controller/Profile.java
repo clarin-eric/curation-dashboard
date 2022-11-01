@@ -1,4 +1,4 @@
-package eu.clarin.routes;
+package eu.clarin.controller;
 
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.HTMLHelpers.NavbarButton;
@@ -6,24 +6,24 @@ import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Pattern;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 @Slf4j
-@Path("/profile")
+@RestController
+@RequestMapping("/profile")
 public class Profile {
 
-    @GET
-    @Path("/{profileName}")
-    public Response getProfile(@PathParam("profileName") String profileName) {
+    @GetMapping("/{profileName}")
+    public Response getProfile(@PathVariable("profileName") String profileName) {
 
         String[] split = profileName.split("\\.");
         if (split.length != 2) {
@@ -57,8 +57,7 @@ public class Profile {
         }
     }
 
-    @GET
-    @Path("/table")
+    @GetMapping("/table")
     public Response getProfilesTable() {
         try {
             String profiles = FileManager.readFile(Configuration.OUTPUT_DIRECTORY + "/html/profiles/ProfilesReport.html");
@@ -71,8 +70,7 @@ public class Profile {
 
     }
 
-    @GET
-    @Path("/tsv")
+    @GetMapping("/tsv")
     public Response getProfilesTSV() {
         String profilesTSVPath = Configuration.OUTPUT_DIRECTORY + "/tsv/profiles/ProfilesReport.tsv";
 
@@ -85,6 +83,4 @@ public class Profile {
             return ResponseManager.returnServerError();
         }
     }
-
-
 }

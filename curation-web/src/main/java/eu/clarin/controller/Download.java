@@ -1,4 +1,4 @@
-package eu.clarin.routes;
+package eu.clarin.controller;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,11 +10,6 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -22,20 +17,23 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import eu.clarin.cmdi.rasa.DAO.CheckedLink;
-import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Path("/download")
+@RestController
+@RequestMapping("/download")
 public class Download {
 
-   @GET
-   @Path("/{outputType}/{curationEntityType}/{reportName}")
-   public Response getFile(@PathParam("outputType") String outputType,
-         @PathParam("curationEntityType") String curationEntityType, @PathParam("reportName") String reportName) {
+   @GetMapping("/{outputType}/{curationEntityType}/{reportName}")
+   public Response getFile(@PathVariable("outputType") String outputType,
+         @PathVariable("curationEntityType") String curationEntityType, @PathVariable("reportName") String reportName) {
 
       java.nio.file.Path xmlPath = Paths.get(Configuration.OUTPUT_DIRECTORY.toString(), "xml", curationEntityType,
             reportName + ".xml");
@@ -70,10 +68,9 @@ public class Download {
       }
    }
 
-   @GET
-   @Path("/{outputType}/statistics/{collectionName}/{category}")
-   public Response getStatistics(@PathParam("outputType") String outputType,
-         @PathParam("collectionName") String collectionName, @PathParam("category") String category) {
+   @GetMapping("/{outputType}/statistics/{collectionName}/{category}")
+   public Response getStatistics(@PathVariable("outputType") String outputType,
+         @PathVariable("collectionName") String collectionName, @PathVariable("category") String category) {
 
       if (Arrays.asList("xml", "json", "tsv").contains(outputType) && !"overall".equalsIgnoreCase(category)) {
          try {

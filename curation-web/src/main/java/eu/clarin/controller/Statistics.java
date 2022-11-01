@@ -1,7 +1,5 @@
-package eu.clarin.routes;
+package eu.clarin.controller;
 
-
-import eu.clarin.cmdi.rasa.helpers.statusCodeMapper.Category;
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.LinkCheckerStatisticsHelper;
 import eu.clarin.helpers.ResponseManager;
@@ -9,20 +7,21 @@ import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 @Slf4j
-@Path("/statistics")
+@RestController
+@RequestMapping("/statistics")
 public class Statistics {
 
-    @GET
-    @Path("/")
+    @GetMapping("/")
     public Response getStatistics() {
         try {
             log.info("Statistics report requested.");
@@ -35,9 +34,8 @@ public class Statistics {
         }
     }
 
-    @GET
-    @Path("/{collectionName}/{category}")
-    public Response getStatusStatsInit(@PathParam("collectionName") String collectionName, @PathParam("category") String categoryString) {
+    @GetMapping("/{collectionName}/{category}")
+    public Response getStatusStatsInit(@PathVariable("collectionName") String collectionName, @PathVariable("category") String categoryString) {
         log.info("URL category table requested for collection " + collectionName);
         String urlStatistics = null;
 
@@ -60,8 +58,7 @@ public class Statistics {
     }
 
 
-    @GET
-    @Path("/{collectionName}/{category}/{batchCount}")
+    @GetMapping("/{collectionName}/{category}/{batchCount}")
     public Response getStatusStats(@PathParam("collectionName") String collectionName, @PathParam("category") String category, @PathParam("batchCount") int batchCount) {
         log.info("URL batch requested with count " + batchCount + " for collection " + collectionName);
         String urlBatchStatistics = null;

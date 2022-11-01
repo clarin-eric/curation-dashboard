@@ -1,15 +1,10 @@
-package eu.clarin.routes;
+package eu.clarin.controller;
 
 
 import eu.clarin.helpers.FileManager;
 import eu.clarin.helpers.ResponseManager;
 import eu.clarin.main.Configuration;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,7 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Path("/view")
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/view")
 public class View {
    
     //fundament has these types of files
@@ -41,9 +42,8 @@ public class View {
     };
 
 
-    @GET
-    @Path("/{filepath : .+}")
-    public Response handleView(@PathParam("filepath") String filePath) {
+    @GetMapping("/{filepath : .+}")
+    public Response handleView(@PathVariable("filepath") String filePath) {
         try {
 
             String extension = filePath.split("\\.")[filePath.split("\\.").length - 1];
