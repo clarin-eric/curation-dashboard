@@ -18,6 +18,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -101,22 +102,25 @@ public class PPHCache {
       catch (MalformedURLException e) {
 
          log.error("malformed lookup URL '{}'", (restUrl + query));
+         throw new PPHServiceNotAvailableException(e);
 
       }
       catch (IOException e) {
          
          log.error("IOException while reading stream from URL '{}'", (restUrl + query));
+         throw new PPHServiceNotAvailableException(e);
          
       }
       catch (SAXException e) {
 
          log.error("stream not parsable for ProfileHeader");
+         throw new PPHServiceNotAvailableException(e);
 
       }
       catch (ParserConfigurationException e) {
 
-         log.error("", e);
-
+         log.error("can't configure new SAXParser");
+         throw new PPHServiceNotAvailableException(e);
       }
 
       return profileHeaders;

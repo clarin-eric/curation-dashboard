@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.entities;
 
-import eu.clarin.cmdi.curation.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.processor.CMDProfileProcessor;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 
@@ -21,7 +20,7 @@ public class CMDProfile {
         this.cmdiVersion = cmdiVersion;
     }
 
-    public CMDProfileReport generateReport() throws SubprocessorException {
+    public CMDProfileReport generateReport() {
         return new CMDProfileProcessor().process(this);
     }
 

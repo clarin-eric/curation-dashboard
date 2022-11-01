@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.processor;
 
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.subprocessor.*;
 
@@ -13,7 +14,7 @@ public class CMDInstanceProcessor {
    @Autowired
    private CurationConfig conf;
 
-    public CMDInstanceReport process(CMDInstance record, String parentName) throws Exception {
+    public CMDInstanceReport process(CMDInstance record, String parentName) throws SubprocessorException {
 
         CMDInstanceReport report = new CMDInstanceReport();
 

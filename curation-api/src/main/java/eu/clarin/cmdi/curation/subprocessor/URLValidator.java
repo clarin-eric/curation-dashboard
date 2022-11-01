@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
-public class URLValidator extends AbstractCMDSubprocessor {
+public class URLValidator extends AbstractSubprocessor {
 
    @Autowired
    private CurationConfig conf;

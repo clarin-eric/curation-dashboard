@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.ConceptTypeAdapter;
 import eu.clarin.cmdi.curation.ccr.config.CCRProperties;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -82,20 +83,19 @@ public class CCRCache {
          catch (NoSuchAlgorithmException ex) {
 
             log.error("SSL algorithm not available from SSL context");
-            log.debug("", ex);
+            throw new CCRServiceNotAvailableException(ex);
 
          }
          catch (KeyManagementException ex) {
             
             log.error("couldn't set trust all certificate - this might be forbidden by policy settings");
-            log.debug("", ex);
+            throw new CCRServiceNotAvailableException(ex);
             
          }
          catch (MalformedURLException ex) {
             
             log.error("can't extract hostname from URL '{}'", ccrProps.getRestApiUrl());
-            log.debug("", ex);
-            
+            throw new CCRServiceNotAvailableException(ex);            
          }
       } // end switch off validation check
       
@@ -128,11 +128,13 @@ public class CCRCache {
       catch(MalformedURLException ex) {
          
          log.error("the URL '{}' is no valid URL for lookup", restApiUrl);
+         throw new CCRServiceNotAvailableException(ex);
          
       }
       catch (IOException ex) {
          
          log.error("can't parse incoming stream to JSON object", ex);
+         throw new CCRServiceNotAvailableException(ex);
       }
       
       return concepts;

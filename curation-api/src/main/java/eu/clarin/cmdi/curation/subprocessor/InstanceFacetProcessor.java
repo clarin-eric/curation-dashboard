@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +25,7 @@ import eu.clarin.cmdi.curation.report.Concept;
 import eu.clarin.cmdi.curation.report.FacetReport.Coverage;
 import eu.clarin.cmdi.curation.report.FacetReport.FacetValueStruct;
 import eu.clarin.cmdi.curation.report.FacetReport.ValueNode;
+import eu.clarin.cmdi.curation.subprocessor.ext.FacetReportCreator;
 import eu.clarin.cmdi.curation.vlo_extensions.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.curation.xml.CMDXPathService;
 import eu.clarin.cmdi.curation.report.Score;
@@ -36,7 +36,7 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class InstanceFacetProcessor extends AbstractCMDSubprocessor {
+public class InstanceFacetProcessor extends AbstractSubprocessor {
 
    @Autowired
    private CurationConfig conf;
@@ -44,7 +44,7 @@ public class InstanceFacetProcessor extends AbstractCMDSubprocessor {
    private CRService crService;
 
    @Override
-   public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
+   public void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
 
       // parse instance
       CMDXPathService xmlService;
@@ -54,13 +54,13 @@ public class InstanceFacetProcessor extends AbstractCMDSubprocessor {
       catch (ParseException e) {
 
          log.error("can't parse file '{}' for instance facet processing", entity.getPath());
-         throw new SubprocessorException();
+         throw new SubprocessorException(e);
 
       }
       catch (IOException e) {
 
          log.error("can't read file '{}' for instance facet processing", entity.getPath());
-         throw new SubprocessorException();
+         throw new RuntimeException(e);
 
       }
 
@@ -82,7 +82,7 @@ public class InstanceFacetProcessor extends AbstractCMDSubprocessor {
 
    }
 
-   private Map<Integer, ValueNode> getValueNodesMap(CMDInstance entity, CMDInstanceReport report, VTDNav nav) throws Exception {
+   private Map<Integer, ValueNode> getValueNodesMap(CMDInstance entity, CMDInstanceReport report, VTDNav nav) throws SubprocessorException {
       Map<Integer, ValueNode> nodesMap = new LinkedHashMap<Integer, ValueNode>();
 
       Map<String, CMDINode> elements;
@@ -91,8 +91,9 @@ public class InstanceFacetProcessor extends AbstractCMDSubprocessor {
       }
       catch (NoProfileCacheEntryException e) {
          
-         log.error("no ProfileCacheEntry for profile id '{}'", report.header.getId());
-         throw e;
+         log.debug("no ProfileCacheEntry for profile id '{}'", report.header.getId());
+         
+         throw new SubprocessorException(e);
       }
       ParsedInstance parsedInstance = entity.getParsedInstance();
 
@@ -116,21 +117,21 @@ public class InstanceFacetProcessor extends AbstractCMDSubprocessor {
             }
             catch (XPathParseException e) {
                
-               log.error("can't parse xpath '{}'", xpath);
-               throw e;
+               log.debug("can't parse xpath '{}'", xpath);
+               throw new SubprocessorException(e);
             }
             try {
                nodesMap.put(ap.evalXPath(), val);
             }
             catch (XPathEvalException e) {
                
-               log.error("can't evaluate xpath '{}'", xpath);
-               throw e;
+               log.debug("can't evaluate xpath '{}'", xpath);
+               throw new SubprocessorException(e);
             }
             catch (NavException e) {
                
-               log.error("can't navigate in document");
-               throw e;
+               log.debug("can't navigate in document");
+               throw new SubprocessorException(e);
             }
             ap.resetXPath();
          }

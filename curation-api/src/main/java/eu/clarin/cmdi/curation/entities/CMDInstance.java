@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import eu.clarin.cmdi.curation.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.processor.CMDInstanceProcessor;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
@@ -37,7 +38,7 @@ public class CMDInstance {
         this.size = size;
     }
 
-    public CMDInstanceReport generateReport(String parentName) throws Exception {
+    public CMDInstanceReport generateReport(String parentName) throws SubprocessorException {
         return new CMDInstanceProcessor().process(this, parentName);
     }
 

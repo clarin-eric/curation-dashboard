@@ -13,7 +13,7 @@ import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
-public class CollectionInstanceResourceProxyProcessor extends AbstractCMDSubprocessor {
+public class CollectionInstanceResourceProxyProcessor extends AbstractSubprocessor {
 
 	@Override
 	public void process(CMDInstance entity, CMDInstanceReport report) {

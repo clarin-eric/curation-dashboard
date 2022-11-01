@@ -1,11 +1,12 @@
 /**
  *
  */
-package eu.clarin.cmdi.curation.subprocessor;
+package eu.clarin.cmdi.curation.subprocessor.ext;
 
 import eu.clarin.cmdi.curation.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.report.Score;
+import eu.clarin.cmdi.curation.subprocessor.AbstractMessageCollection;
 import eu.clarin.cmdi.curation.vlo_extensions.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 

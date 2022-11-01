@@ -2,6 +2,8 @@ package eu.clarin.cmdi.curation.ccr;
 
 import java.util.Collection;
 
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+
 
 public interface CCRService {
 	

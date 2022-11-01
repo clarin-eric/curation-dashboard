@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.subprocessor;
+package eu.clarin.cmdi.curation.subprocessor.ext;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -17,7 +17,7 @@ import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-class FacetReportCreator {
+public class FacetReportCreator {
 
    @Autowired
    private CurationConfig conf;

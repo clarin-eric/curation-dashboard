@@ -2,7 +2,7 @@ package eu.clarin.cmdi.curation.processor;
 
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.report.CollectionReport;
-import eu.clarin.cmdi.curation.subprocessor.CollectionAggregator;
+import eu.clarin.cmdi.curation.subprocessor.ext.CollectionAggregator;
 import eu.clarin.cmdi.curation.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class CollectionProcessor {
 
 
         } catch (Exception e) {
-            LOG.error("Exception when processing " + collectionAggregator.getClass().toString() + " : " + e.getMessage());
+            LOG.debug("Exception when processing " + collectionAggregator.getClass().toString() + " : " + e.getMessage());
             addInvalidFile(report, e);
         }
 

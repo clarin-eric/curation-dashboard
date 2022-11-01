@@ -26,6 +26,7 @@ import com.ximpleware.VTDGen;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.cr.ProfileCacheEntry;
 import eu.clarin.cmdi.curation.cr.conf.CRProperties;
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParser;
@@ -95,18 +96,18 @@ public class CRCache {
       }
       catch (MalformedURLException e) {
          
-         log.error("the schema location URL '{}' is malformed", header.getSchemaLocation());
+         log.debug("the schema location URL '{}' is malformed", header.getSchemaLocation());
          throw new NoProfileCacheEntryException();
          
       }
       catch (IOException e) {
          
-         log.error("can't access xsd file '{}'", xsd);
-         throw new NoProfileCacheEntryException();
+         log.debug("can't access xsd file '{}'", xsd);
+         throw new CRServiceStorageException(e);
       }
       catch (URISyntaxException e) {
          
-         log.error("can't copy URI '{}' is malformed", header.getSchemaLocation());
+         log.debug("can't copy URI '{}' is malformed", header.getSchemaLocation());
          throw new NoProfileCacheEntryException();
       }
 
@@ -125,7 +126,7 @@ public class CRCache {
       catch (IOException e) {
          
          log.error("can't read file '{}'", xsd);
-         throw new NoProfileCacheEntryException();
+         throw new CRServiceStorageException(e);
       
       }
       catch (ParseException e) {

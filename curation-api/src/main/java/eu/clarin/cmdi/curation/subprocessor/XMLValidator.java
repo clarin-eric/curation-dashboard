@@ -32,7 +32,7 @@ import eu.clarin.cmdi.curation.xml.CMDErrorHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class XMLValidator extends AbstractCMDSubprocessor {
+public class XMLValidator extends AbstractSubprocessor {
    
    @Autowired
    private CRService crService;
@@ -55,7 +55,7 @@ public class XMLValidator extends AbstractCMDSubprocessor {
             catch (NoProfileCacheEntryException e) {
                
                log.error("no ProfileCacheEntry for profile id '{}'", report.header);
-               throw new SubprocessorException();
+               throw new SubprocessorException(e);
             }
 
             schemaValidator.setErrorHandler(new CMDErrorHandler(report, this.getMessages()));
@@ -74,7 +74,7 @@ public class XMLValidator extends AbstractCMDSubprocessor {
             catch (ParserConfigurationException|SAXException e) {
 
                log.error("can't configure SAXParser for XML validation");
-               throw new SubprocessorException();
+               throw new RuntimeException(e);
             
             }
             
@@ -85,13 +85,13 @@ public class XMLValidator extends AbstractCMDSubprocessor {
             catch (IOException e) {
                
                log.error("can't read input file '{}' for XML validation", entity.getPath());
-               throw new SubprocessorException();
+               throw new RuntimeException(e);
                
             }
             catch (SAXException e) {
                
                log.error("can't parse input file '{}' for XML validation", entity.getPath());
-               throw new SubprocessorException();
+               throw new SubprocessorException(e);
                
             }
 

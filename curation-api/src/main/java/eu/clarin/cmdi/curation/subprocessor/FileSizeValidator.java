@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.subprocessor;
 
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
+import eu.clarin.cmdi.curation.exception.NoCMDIDataProcessorException;
 import eu.clarin.cmdi.curation.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.instance_parser.InstanceParser;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
@@ -45,7 +46,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class FileSizeValidator extends AbstractCMDSubprocessor {
+public class FileSizeValidator extends AbstractSubprocessor {
 
    private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
 
@@ -77,6 +78,7 @@ public class FileSizeValidator extends AbstractCMDSubprocessor {
       }
       catch (IOException ex) {
          log.error("couldn't instatiate CMDIDataProcessor - so instance parsing won't work!");
+         throw new NoCMDIDataProcessorException(ex);
       }
    }
 
@@ -110,7 +112,7 @@ public class FileSizeValidator extends AbstractCMDSubprocessor {
          catch (IOException e) {
             
             log.error("can't create temporary outputfile for CMD1.1 to CMD1.x transformation");
-            throw new SubprocessorException();
+            throw new RuntimeException(e);
          }
 
          TransformerFactory factory = TransformerFactory.newInstance();
@@ -123,13 +125,13 @@ public class FileSizeValidator extends AbstractCMDSubprocessor {
          }
          catch (TransformerConfigurationException e) {
             
-            log.error("can't create Transormer object from resource '/xslt/cmd-record-1_1-to-1_2.xsl' - make sure that the resource is in the classpath!");
-            throw new SubprocessorException();
+            log.error("can't create Transformer object from resource '/xslt/cmd-record-1_1-to-1_2.xsl' - make sure that the resource is in the classpath!");
+            throw new RuntimeException(e);
          }
          catch (TransformerException e) {
             
             log.error("can't transfrom input file '{}'", entity.getPath());
-            throw new SubprocessorException();
+            throw new SubprocessorException(e);
             
          }
          
@@ -143,7 +145,7 @@ public class FileSizeValidator extends AbstractCMDSubprocessor {
          catch (IOException e) {
 
             log.error("can't get size from temporary transfromer output file '{}'", newPath);
-            throw new SubprocessorException();
+            throw new SubprocessorException(e);
             
          }
       }
@@ -184,21 +186,21 @@ public class FileSizeValidator extends AbstractCMDSubprocessor {
       }
       catch (TransformerException e) {
 
-         log.error("can't create CMDIData object from file '{}'", entity.getPath());
-         throw new SubprocessorException();
+         log.debug("can't transform file '{}'", entity.getPath());
+         throw new SubprocessorException(e);
          
       }
       catch (Exception e) {
          
-         log.error("can't create CMDIData object from file '{}'", entity.getPath());
-         throw new SubprocessorException();
+         log.debug("can't create CMDIData object from file '{}'", entity.getPath());
+         throw new SubprocessorException(e);
       
       }
 
       entity.setCMDIData(cmdiData);
 
       // create xpath/value pairs only in instance mode
-      if (!conf.getMode().equalsIgnoreCase("collection")) {
+      if (!"collection".equalsIgnoreCase(conf.getMode())) {
 
          InstanceParser transformer = new InstanceParser();
 
@@ -209,17 +211,16 @@ public class FileSizeValidator extends AbstractCMDSubprocessor {
          catch (TransformerException e) {
             
             log.error("can't transform CMD instance file '{}'", entity.getPath());
-            throw new SubprocessorException();
+            throw new SubprocessorException(e);
          
          }
          catch (IOException e) {
             
             log.error("can't read CMD file '{}'", entity.getPath());
-            throw new SubprocessorException();
+            throw new SubprocessorException(e);
          
          }
          log.debug("...done");
-
       }
    }
 

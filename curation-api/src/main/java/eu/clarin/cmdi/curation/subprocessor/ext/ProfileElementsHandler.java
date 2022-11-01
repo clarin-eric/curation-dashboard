@@ -1,7 +1,7 @@
 /**
  *
  */
-package eu.clarin.cmdi.curation.subprocessor;
+package eu.clarin.cmdi.curation.subprocessor.ext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +20,7 @@ import eu.clarin.cmdi.curation.report.CMDProfileReport.Component;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Components;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Concepts;
 import eu.clarin.cmdi.curation.report.CMDProfileReport.Elements;
+import eu.clarin.cmdi.curation.subprocessor.AbstractMessageCollection;
 import eu.clarin.cmdi.curation.report.Concept;
 import eu.clarin.cmdi.curation.report.Score;
 import lombok.extern.slf4j.Slf4j;

@@ -6,18 +6,19 @@ import java.util.List;
 import java.util.Map;
 
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-
+import eu.clarin.cmdi.curation.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.report.FacetReport.Coverage;
+import eu.clarin.cmdi.curation.subprocessor.ext.FacetReportCreator;
 import eu.clarin.cmdi.curation.vlo_extensions.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
-public class CollectionInstanceFacetProcessor extends AbstractCMDSubprocessor {
+public class CollectionInstanceFacetProcessor extends AbstractSubprocessor {
 
    @Override
-   public void process(CMDInstance entity, CMDInstanceReport report) throws Exception {
+   public void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
 
       Map<String, List<ValueSet>> facetValuesMap = entity.getCMDIData().getDocument();
 

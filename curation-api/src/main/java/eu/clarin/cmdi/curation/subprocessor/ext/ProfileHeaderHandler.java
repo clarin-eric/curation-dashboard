@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.subprocessor;
+package eu.clarin.cmdi.curation.subprocessor.ext;
 
 import eu.clarin.cmdi.curation.entities.CMDProfile;
 import eu.clarin.cmdi.curation.exception.SubprocessorException;
@@ -8,6 +8,7 @@ import eu.clarin.cmdi.curation.report.CMDProfileReport;
 
 import eu.clarin.cmdi.curation.report.Score;
 import eu.clarin.cmdi.curation.report.Severity;
+import eu.clarin.cmdi.curation.subprocessor.AbstractMessageCollection;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import lombok.extern.slf4j.Slf4j;
 

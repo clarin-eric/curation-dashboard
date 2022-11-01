@@ -30,9 +30,9 @@ public class XMLMarshaller<T> {
 		return (T) unmarshaller.unmarshal(is);
 	}
 
-	public void marshal(T object, OutputStream os)  {
+	public void marshal(Object object, OutputStream os)  {
 		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(typeParamClass);
+			JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
 			// output pretty printed

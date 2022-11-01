@@ -1,25 +1,18 @@
-package eu.clarin.cmdi.curation.subprocessor;
-
-import com.ximpleware.VTDException;
+package eu.clarin.cmdi.curation.subprocessor.ext;
 
 import eu.clarin.cmdi.curation.configuration.CurationConfig;
 import eu.clarin.cmdi.curation.entities.CMDCollection;
 import eu.clarin.cmdi.curation.entities.CMDInstance;
-import eu.clarin.cmdi.curation.io.FileSizeException;
+import eu.clarin.cmdi.curation.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.report.*;
 import eu.clarin.cmdi.curation.report.CollectionReport.*;
 import eu.clarin.cmdi.curation.report.CollectionReport.FacetReport;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -70,22 +63,17 @@ public class CollectionAggregator {
                CMDInstanceReport cmdInstanceReport = instance.generateReport(report.getName());
                cmdInstanceReport.mergeWithParent(report);
             }
-            catch (TransformerException | FileSizeException | SAXException | VTDException e) {
+            catch (SubprocessorException e) {
 
-               log.info("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()
+               log.debug("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()
                      + " Skipping to next instance...");
                new ErrorReport(conf.getDirectory().getData().relativize(instance.getPath()).toString(), e.getMessage())
                      .mergeWithParent(report);
             }
-            catch (IOException | ExecutionException | ParserConfigurationException e) {
-               log.error("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()
-                     + " Skipping to next instance...");
-               new ErrorReport(conf.getDirectory().getData().relativize(instance.getPath()).toString(), e.getMessage())
-                     .mergeWithParent(report);
-            }
+
             catch (Exception e) {
-               // TODO Auto-generated catch block
-               e.printStackTrace();
+               
+               log.error("", e);
             }
          });
       }
