@@ -20,7 +20,7 @@ public class PPHServiceImpl implements PPHService {
    @Override
    public Collection<ProfileHeader> getProfileHeaders() {
 
-      return pphCache.getProfileHeadersMap(props.getCrRestUrl(), props.getCrQuery()).values();
+      return pphCache.getProfileHeadersMap(props.getRestApi(), props.getQuery()).values();
 
    }
 
@@ -28,7 +28,7 @@ public class PPHServiceImpl implements PPHService {
    @Override
    public ProfileHeader getProfileHeader(String id) {
       
-      return pphCache.getProfileHeadersMap(props.getCrRestUrl(), props.getCrQuery()).get(id);
+      return pphCache.getProfileHeadersMap(props.getRestApi(), props.getQuery()).get(id);
    
    }
 }

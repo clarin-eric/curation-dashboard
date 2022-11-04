@@ -11,9 +11,9 @@ import lombok.Data;
 @Data
 public class CCRProperties {
    
-   private String restApiUrl;
+   private String restApi;
    
-   private String allConceptsQuery;
+   private String query;
    
    private boolean enableTimer;
 

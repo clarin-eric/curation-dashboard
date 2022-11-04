@@ -39,19 +39,19 @@ class ProfileHeadersTests {
       assertEquals(
             service.getProfileHeaders().stream()
                   .filter(header -> header.getStatus().equals("deprecated")).count(),
-            pphCache.getProfileHeadersMap(crProps.getCrRestUrl(), "?status=deprecated").size());
+            pphCache.getProfileHeadersMap(crProps.getRestApi(), "?status=deprecated").size());
 
       assertEquals(
             service.getProfileHeaders().stream()
                   .filter(header -> header.getStatus().equals("development")).count(),
-                  pphCache.getProfileHeadersMap(crProps.getCrRestUrl(), "?status=development").size());
+                  pphCache.getProfileHeadersMap(crProps.getRestApi(), "?status=development").size());
 
    }
    @Test
    void useCache() {
       service.getProfileHeaders();
       
-      assertNotNull(cacheManager.getCache("pphCache").get(crProps.getCrQuery()));
+      assertNotNull(cacheManager.getCache("pphCache").get(crProps.getQuery()));
    }
    
    @SpringBootConfiguration   

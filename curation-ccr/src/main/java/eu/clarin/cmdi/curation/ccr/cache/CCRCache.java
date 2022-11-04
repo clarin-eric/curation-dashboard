@@ -43,7 +43,7 @@ public class CCRCache {
       
       final Map<String, CCRConcept>concepts = new ConcurrentHashMap<String, CCRConcept>();
 
-      log.debug("Fetching from {}", ccrProps.getRestApiUrl());
+      log.debug("Fetching from {}", ccrProps.getRestApi());
 
       /*
        * wowasa (2017-05-26): validation check might be switched off to bypass expired
@@ -73,7 +73,7 @@ public class CCRCache {
             sc.init(null, trustAllCerts, new java.security.SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
             
-            String refHostName = new URL(ccrProps.getRestApiUrl()).getHost();
+            String refHostName = new URL(ccrProps.getRestApi()).getHost();
             
             HttpsURLConnection
             .setDefaultHostnameVerifier((hostname, session) -> hostname.equals(refHostName));
@@ -94,7 +94,7 @@ public class CCRCache {
          }
          catch (MalformedURLException ex) {
             
-            log.error("can't extract hostname from URL '{}'", ccrProps.getRestApiUrl());
+            log.error("can't extract hostname from URL '{}'", ccrProps.getRestApi());
             throw new CCRServiceNotAvailableException(ex);            
          }
       } // end switch off validation check
@@ -102,7 +102,7 @@ public class CCRCache {
 
 
       
-      String restApiUrl = ccrProps.getRestApiUrl() + ccrProps.getAllConceptsQuery();
+      String restApiUrl = ccrProps.getRestApi() + ccrProps.getQuery();
       
       try {
          String json = IOUtils.toString(new URL(restApiUrl).openStream(),

@@ -14,7 +14,7 @@ public class PHProperties {
    
    private Path xsdCache;
    
-   private String crRestUrl;
+   private String RestApi;
    
-   private String crQuery;
+   private String query;
 }
