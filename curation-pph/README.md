@@ -1,26 +1,15 @@
 # Curation Public Profile Header Service (PPH)
 
 ## What it does
+The CCR service is providing a Map of ProfileHeader. A Profile is a Java object which contains profile informations id, name, description, etc. 
+The key of each ProfileHeader is its id.  
 
-The service provides the descriptions of public profiles. A profile description might look like this:
+## How it works
+The application.yml defines a curation.pph-service.restApi and a curation.pph-service.query. Both is combined to an URL 
+and a get request the this URL. This request returns an XML document of profileDescription elements for public profiles. 
+Each element is parsed to a ProfileHeader object. 
 
-```xml
-<profileDescription>
-   <id>clarin.eu:cr1:p_1357720977520</id>
-   <name>AnnotatedCorpusProfile</name>
-   <description>A CMDI profile for annotated text corpus resources.</description>
-   <registrationDate>2013-01-31T11:57:12+00:00</registrationDate>
-   <creatorName>nalida</creatorName>
-   <userId>22</userId>
-   <domainName/>
-   <ns2:href>http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1357720977520</ns2:href>
-   <groupName>CLARIN</groupName>
-   <status>DEPRECATED</status>
-   <successor>clarin.eu:cr1:p_1442920133046</successor>
-   <commentsCount>0</commentsCount>
-   <isPublic>true</isPublic>
-   <recommended>false</recommended>
-   <showInEditor>true</showInEditor>
-</profileDescription>
-```
-This information is stored in a ProfileHeader objects and most of the element informations are available by getter methods. 
+## What should I look for
+The Map of ProfileHeader is declared as Cacheable to have the opportunity to configure a reload of the Map with the means of 
+Spring Boot. Whenever you call the Map you MUST make sure to enable caching (@EnableCaching) since otherwise the Map is 
+reloaded for each call.   
