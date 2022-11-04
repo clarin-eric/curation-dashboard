@@ -14,7 +14,7 @@ public class CRProperties {
    
    private Path xsdCache;
    
-   private String crRestUrl;
+   private String restApi;
    
-   private String crQuery;
+   private String query;
 }

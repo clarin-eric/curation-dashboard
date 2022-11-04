@@ -50,7 +50,7 @@ public class CRServiceImpl implements CRService {
 
       this.props = props;
 
-      String CR_REST = props.getCrRestUrl().replaceFirst("http(s)?", "(http|https)").replaceFirst("/1\\..+", "/.+");
+      String CR_REST = props.getRestApi().replaceFirst("http(s)?", "(http|https)").replaceFirst("/1\\..+", "/.+");
 
       this.CR_REST_PATTERN = Pattern.compile(CR_REST);
 
@@ -69,7 +69,7 @@ public class CRServiceImpl implements CRService {
    @Override
    public ProfileHeader createProfileHeader(String schemaLocation, String cmdiVersion, boolean isLocalFile) {
       ProfileHeader header = null;
-      if (!isLocalFile && schemaLocation.startsWith(props.getCrRestUrl()))
+      if (!isLocalFile && schemaLocation.startsWith(props.getRestApi()))
          header = pphService.getProfileHeader(getIdFromSchemaLocation(schemaLocation));
 
       if (header == null) {
