@@ -1,7 +1,11 @@
 package eu.clarin.cmdi.curation.pph;
 
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
+
 import lombok.Data;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 @Data
 public class ProfileHeader {
 	
