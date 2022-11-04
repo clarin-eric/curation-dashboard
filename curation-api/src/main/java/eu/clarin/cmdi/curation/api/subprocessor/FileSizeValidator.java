@@ -21,13 +21,15 @@ import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.MetadataImporter;
 import eu.clarin.cmdi.vlo.importer.ResourceStructureGraph;
 import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
-import eu.clarin.cmdi.vlo.importer.mapping.FacetMappingFactory;
 import eu.clarin.cmdi.vlo.importer.processor.CMDIDataProcessor;
 import eu.clarin.cmdi.vlo.importer.processor.CMDIParserVTDXML;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -46,16 +48,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
+@Component
+@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class FileSizeValidator extends AbstractSubprocessor {
 
    private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
 
    private CMDIDataProcessor<Map<String, List<ValueSet>>> processor;
    
-   @Autowired
    private CurationConfig conf;
 
-   public FileSizeValidator() {
+
+   @Autowired
+   private FileSizeValidator(CurationConfig conf, FacetsMappingCacheFactory fac) {
+      
+      this.conf = conf;
       
       try {
          final VloConfig vloConfig = new DefaultVloConfigFactory().newConfig();
@@ -68,11 +75,10 @@ public class FileSizeValidator extends AbstractSubprocessor {
 
          final VLOMarshaller marshaller = new VLOMarshaller();
 
-         final FacetMappingFactory facetMappingFactory = FacetsMappingCacheFactory.getInstance();
 
          this.processor = new CMDIParserVTDXML<>(
                MetadataImporter.registerPostProcessors(vloConfig, fieldNameService, languageCodeUtils),
-               MetadataImporter.registerPostMappingFilters(fieldNameService), vloConfig, facetMappingFactory,
+               MetadataImporter.registerPostMappingFilters(fieldNameService), vloConfig, fac,
                marshaller, cmdiDataFactory, fieldNameService, false);
 
       }

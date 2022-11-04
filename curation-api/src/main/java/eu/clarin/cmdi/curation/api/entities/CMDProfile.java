@@ -5,15 +5,24 @@ import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 
 import java.nio.file.Path;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 /**
  *
  */
 
+@Component
+@Scope("prototype")
 public class CMDProfile {
 
     private String schemaLocation;
     private String cmdiVersion;
     protected Path path = null;
+    
+    @Autowired
+    CMDProfileProcessor processor;
 
     public CMDProfile(String schemaLocation, String cmdiVersion) {
         this.schemaLocation = schemaLocation;
@@ -21,7 +30,7 @@ public class CMDProfile {
     }
 
     public CMDProfileReport generateReport() {
-        return new CMDProfileProcessor().process(this);
+        return processor.process(this);
     }
 
     public String getCmdiVersion() {

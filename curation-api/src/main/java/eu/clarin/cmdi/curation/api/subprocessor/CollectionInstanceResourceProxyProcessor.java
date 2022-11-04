@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
+
 import eu.clarin.cmdi.curation.api.entities.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.Score;
@@ -13,7 +17,13 @@ import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
+@Component
+@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class CollectionInstanceResourceProxyProcessor extends AbstractSubprocessor {
+   
+   private CollectionInstanceResourceProxyProcessor() {
+      
+   }
 
 	@Override
 	public void process(CMDInstance entity, CMDInstanceReport report) {

@@ -19,11 +19,16 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
+@Component
+@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class URLValidator extends AbstractSubprocessor {
 
    @Autowired
@@ -36,6 +41,10 @@ public class URLValidator extends AbstractSubprocessor {
    private StatusRepository sRepository;
    @Autowired
    private ClientRepository clRepository;
+   
+   private URLValidator() {
+      
+   }
 
    @Override
    public void process(CMDInstance entity, CMDInstanceReport report) {

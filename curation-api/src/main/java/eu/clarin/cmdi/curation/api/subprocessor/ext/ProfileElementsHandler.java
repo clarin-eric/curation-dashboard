@@ -9,12 +9,15 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.Concept;
 import eu.clarin.cmdi.curation.api.report.Score;
-import eu.clarin.cmdi.curation.api.report.CMDProfileReport.Component;
+//import eu.clarin.cmdi.curation.api.report.CMDProfileReport.Component;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.Components;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.Concepts;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.Elements;
@@ -30,6 +33,8 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @Slf4j
+@Component
+@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ProfileElementsHandler extends AbstractMessageCollection{
    
    @Autowired
@@ -64,18 +69,18 @@ public class ProfileElementsHandler extends AbstractMessageCollection{
         comp.total = crComponents.size();
         comp.required = 0;
         comp.unique = 0;
-        comp.components = new ArrayList<Component>();
+        comp.components = new ArrayList<eu.clarin.cmdi.curation.api.report.CMDProfileReport.Component>();
 
         crComponents.forEach(crc -> {
 
             if (crc.isRequired)
                 comp.required++;
 
-            Component component = comp.components.stream().filter(c -> c.id.equals(crc.component.id)).findFirst().orElse(null);
+            eu.clarin.cmdi.curation.api.report.CMDProfileReport.Component component = comp.components.stream().filter(c -> c.id.equals(crc.component.id)).findFirst().orElse(null);
             if (component != null) {
                 component.count++;
             } else {
-                component = new Component();
+                component = new eu.clarin.cmdi.curation.api.report.CMDProfileReport.Component();
                 component.id = crc.component.id;
                 component.name = crc.component.name;
                 component.count = 1;

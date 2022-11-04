@@ -13,6 +13,9 @@ import javax.xml.validation.ValidatorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -32,6 +35,8 @@ import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
+@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class XMLValidator extends AbstractSubprocessor {
    
    @Autowired
@@ -43,6 +48,10 @@ public class XMLValidator extends AbstractSubprocessor {
     int numOfXMLSimpleElements = 0;
     int numOfXMLEmptyElement = 0;
     boolean valid = true;
+    
+    private XMLValidator() {
+       
+    }
 
 
     @Override

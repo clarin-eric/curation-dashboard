@@ -10,6 +10,9 @@ import eu.clarin.cmdi.curation.api.subprocessor.AbstractMessageCollection;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -18,6 +21,8 @@ import java.util.concurrent.ThreadPoolExecutor;
  *
  */
 @Slf4j
+@Component
+@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class CollectionAggregator extends AbstractMessageCollection{
 
    @Autowired

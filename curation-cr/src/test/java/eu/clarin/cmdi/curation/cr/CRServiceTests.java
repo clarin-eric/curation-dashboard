@@ -27,11 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class CRServiceTests {
    
    @Autowired
-   CRService crService;
-   
+   CRService crService;   
    @Autowired
-   CRProperties crProps;
-   
+   CRProperties crProps;  
    @Autowired
    PPHService phService;
    @Autowired

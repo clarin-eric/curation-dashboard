@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
 
 import com.ximpleware.*;
 
@@ -36,12 +39,20 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
+@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class InstanceFacetProcessor extends AbstractSubprocessor {
 
    @Autowired
    private CurationConfig conf;
    @Autowired
    private CRService crService;
+   @Autowired
+   private FacetsMappingCacheFactory fac;
+   
+   private InstanceFacetProcessor() {
+      
+   }
 
    @Override
    public void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
@@ -143,7 +154,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
    private void facetsToNodes(CMDInstance entity, CMDInstanceReport report, Map<Integer, ValueNode> nodesMap,
          VTDNav nav) throws SubprocessorException {
 
-      FacetsMapping facetMapping = FacetsMappingCacheFactory.getInstance().getFacetsMapping(report.header);
+      FacetsMapping facetMapping = fac.getFacetsMapping(report.header);
 
       Map<String, List<ValueSet>> facetValuesMap = entity.getCMDIData().getDocument();
 

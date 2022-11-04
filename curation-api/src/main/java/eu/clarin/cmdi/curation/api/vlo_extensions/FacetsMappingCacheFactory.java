@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.api.vlo_extensions;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.ximpleware.NavException;
 
@@ -26,39 +27,35 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
  */
+@Service
 @Slf4j
 public class FacetsMappingCacheFactory extends FacetMappingFactory {
 
-   @Autowired
-   private static VloConfig vloConf;
-   @Autowired
+   
+   private VloConfig vloConfig; 
+
    private CRService crService;
-   @Autowired
-   FacetMappingCache cache;
+
+   private FacetMappingCache cache;
 
 //   private final LoadingCache<ProfileHeader, FacetsMapping> facetMappingPublicCache;
 //   private final LoadingCache<ProfileHeader, FacetsMapping> facetMappingNonPublicCache;
 
-   private static FacetsMappingCacheFactory _facetMappingCacheFactory;
 
-   public static FacetsMappingCacheFactory getInstance(){
-      if (_facetMappingCacheFactory == null) {
-         VLOMarshaller marshaller = new VLOMarshaller();
-         _facetMappingCacheFactory = new FacetsMappingCacheFactory(vloConf, marshaller);
-      }
-      return _facetMappingCacheFactory;
-   }
+    @Autowired
+   public FacetsMappingCacheFactory(VloConfig vloConfig, CRService crService, FacetMappingCache cache) {
 
-   private FacetsMappingCacheFactory(VloConfig vloConfig, VLOMarshaller marshaller) {
-
-      super(vloConfig, marshaller);
-
+      super(vloConfig, new VLOMarshaller());
+      this.vloConfig = vloConfig;
+      this.crService = crService;
+      this.cache = cache;
+      
    }
 
    public FacetsMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
 
       return getFacetsMapping(
-            crService.createProfileHeader(vloConf.getComponentRegistryProfileSchema(profileId), "1.x", false));
+            crService.createProfileHeader(vloConfig.getComponentRegistryProfileSchema(profileId), "1.x", false));
 
    }
 

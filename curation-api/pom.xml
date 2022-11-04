@@ -69,6 +69,10 @@
                <groupId>net.sf.saxon</groupId>
                <artifactId>Saxon-HE</artifactId>
             </exclusion>
+            <exclusion>
+            	<groupId>org.apache.logging.log4j</groupId>
+            	<artifactId>log4j-slf4j-impl</artifactId>
+            </exclusion>
          </exclusions>
       </dependency>
       <dependency>
@@ -90,6 +94,11 @@
          <groupId>eu.clarin.cmdi</groupId>
          <artifactId>curation-cr</artifactId>
          <version>${revision}</version>
+      </dependency>
+      <dependency>
+         <groupId>com.h2database</groupId>
+         <artifactId>h2</artifactId>
+         <scope>test</scope>
       </dependency>
    </dependencies>
    <build>

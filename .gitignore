@@ -1,6 +1,6 @@
-/.settings/
-/src/
-/.project
-.idea/
-*.iml
-/bin/
+**/.settings/
+**/src/
+**/.project
+**/.idea/
+**/*.iml
+**/bin/

@@ -1,5 +1,8 @@
 package eu.clarin.cmdi.curation.api.processor;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import eu.clarin.cmdi.curation.api.entities.CMDCollection;
 import eu.clarin.cmdi.curation.api.report.CollectionReport;
 import eu.clarin.cmdi.curation.api.subprocessor.ext.CollectionAggregator;
@@ -7,7 +10,13 @@ import eu.clarin.cmdi.curation.api.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
+@Scope("prototype")
 public class CollectionProcessor {
+
+   private CollectionProcessor() {
+      super();
+   }
 
    public CollectionReport process(CMDCollection collection) {
 

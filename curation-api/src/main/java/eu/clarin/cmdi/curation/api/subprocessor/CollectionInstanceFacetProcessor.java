@@ -5,6 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
+
 import eu.clarin.cmdi.curation.api.entities.CMDInstance;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
@@ -15,7 +20,19 @@ import eu.clarin.cmdi.curation.api.vlo_extensions.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
+@Component
+@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class CollectionInstanceFacetProcessor extends AbstractSubprocessor {
+   
+   @Autowired
+   final FacetsMappingCacheFactory fac;
+   
+
+   private CollectionInstanceFacetProcessor(FacetsMappingCacheFactory fac) {
+      
+      this.fac = fac;
+   
+   }
 
    @Override
    public void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
@@ -37,7 +54,7 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor {
 
       FacetsMapping facetMapping;
       try {
-         facetMapping = FacetsMappingCacheFactory.getInstance().getFacetsMapping(report.header);
+         facetMapping = fac.getFacetsMapping(report.header);
 
          report.facets = new FacetReportCreator().createFacetReport(report.header, facetMapping);
 

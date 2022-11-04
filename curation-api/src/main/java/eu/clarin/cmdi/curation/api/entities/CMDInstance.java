@@ -7,6 +7,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.api.processor.CMDInstanceProcessor;
@@ -14,81 +18,83 @@ import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
+@Component
+@Scope(value="prototype")
 public class CMDInstance {
 
+   public static Collection<String> mdSelfLinks = Collections.synchronizedCollection(new HashSet<>());
+   public static Collection<String> duplicateMDSelfLink = Collections.synchronizedCollection(new HashSet<>());
 
-    public static Collection<String> mdSelfLinks = Collections.synchronizedCollection(new HashSet<>());
-    public static Collection<String> duplicateMDSelfLink = Collections.synchronizedCollection(new HashSet<>());
+   private ParsedInstance parsedInstance = null;
 
-    private ParsedInstance parsedInstance = null;
+   private CMDIData<Map<String, List<ValueSet>>> cmdiData;
 
-    private CMDIData<Map<String, List<ValueSet>>> cmdiData;
+   protected Path path = null;
+   protected long size = 0;
+   protected String url;
+   
+   @Autowired
+   CMDInstanceProcessor processor;
 
-    protected Path path = null;
-    protected long size = 0;
-	protected String url;
+   public CMDInstance(Path path) {
+      this.path = path;
+   }
 
+   public CMDInstance(Path path, long size) {
+      this.path = path;
+      this.size = size;
+   }
 
-    public CMDInstance(Path path) {
-        this.path = path;
-    }
+   public CMDInstanceReport generateReport(String parentName) throws SubprocessorException {
+      return processor.process(this, parentName);
+   }
 
-    public CMDInstance(Path path, long size) {
-        this.path = path;
-        this.size = size;
-    }
+   public ParsedInstance getParsedInstance() {
+      return parsedInstance;
+   }
 
-    public CMDInstanceReport generateReport(String parentName) throws SubprocessorException {
-        return new CMDInstanceProcessor().process(this, parentName);
-    }
+   public void setParsedInstance(ParsedInstance parsedInstance) {
+      this.parsedInstance = parsedInstance;
+   }
 
+   public Path getPath() {
+      return path;
+   }
 
-    public ParsedInstance getParsedInstance() {
-        return parsedInstance;
-    }
+   public void setPath(Path path) {
+      this.path = path;
+   }
 
-    public void setParsedInstance(ParsedInstance parsedInstance) {
-        this.parsedInstance = parsedInstance;
-    }
+   public long getSize() {
+      return size;
+   }
 
-    public Path getPath() {
-        return path;
-    }
+   public void setSize(long size) {
+      this.size = size;
+   }
 
-    public void setPath(Path path) {
-        this.path = path;
-    }
+   public String getUrl() {
+      return url;
+   }
 
-    public long getSize() {
-        return size;
-    }
+   public void setUrl(String url) {
+      this.url = url;
+   }
 
-    public void setSize(long size) {
-        this.size = size;
-    }
+   @Override
+   public String toString() {
+      int cnt = path.getNameCount();
+      String name = path.getName(cnt - 1).toString();
+      if (cnt > 1)
+         name = path.getName(cnt - 2) + "/" + name;
+      return "CMD Instance: " + name;
+   }
 
-	public String getUrl() {
-		return url;
-	}
+   public CMDIData<Map<String, List<ValueSet>>> getCMDIData() {
+      return this.cmdiData;
+   }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-    @Override
-    public String toString() {
-        int cnt = path.getNameCount();
-        String name = path.getName(cnt - 1).toString();
-        if (cnt > 1)
-            name = path.getName(cnt - 2) + "/" + name;
-        return "CMD Instance: " + name;
-    }
-
-    public CMDIData<Map<String, List<ValueSet>>> getCMDIData() {
-        return this.cmdiData;
-    }
-
-    public void setCMDIData(CMDIData<Map<String, List<ValueSet>>> cmdiData) {
-        this.cmdiData = cmdiData;
-    }
+   public void setCMDIData(CMDIData<Map<String, List<ValueSet>>> cmdiData) {
+      this.cmdiData = cmdiData;
+   }
 }

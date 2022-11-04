@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.cache.ProfileScoreCache;
 import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
@@ -20,6 +23,8 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
+@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class InstanceHeaderProcessor extends AbstractSubprocessor {
 
    @Autowired
@@ -37,6 +42,10 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor {
    boolean invalidMdprofile = false;
    boolean missingMdCollectionDisplayName = false;
    boolean missingMdSelfLink = false;
+   
+   private InstanceHeaderProcessor() {
+      
+   }
 
    @Override
    public void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
