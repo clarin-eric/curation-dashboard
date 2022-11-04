@@ -73,12 +73,12 @@
    </repositories>
    <modules>
       <!--
-      <module>curation-core</module>
       <module>curation-web</module>
-      <module>curation-api</module>
-            -->
+      -->
       <module>curation-pph</module>
       <module>curation-ccr</module>
       <module>curation-cr</module>
+      <module>curation-api</module>
+      <module>curation-app</module>
    </modules>
 </project>

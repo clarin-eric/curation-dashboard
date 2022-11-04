@@ -1,8 +1,9 @@
 package eu.clarin.main;
 
-import eu.clarin.cmdi.curation.exception.UncaughtExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import eu.clarin.cmdi.curation.api.exception.UncaughtExceptionHandler;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;

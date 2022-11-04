@@ -37,7 +37,7 @@ public class Configuration extends eu.clarin.cmdi.curation.main.Configuration{
         String path = System.getenv("CONFIG_LOCATION");
 
         //this is necessary for core module methods.
-        eu.clarin.cmdi.curation.main.Configuration.init(path);
+        eu.clarin.cmdi.curation.api.Configuration.init(path);
 
 
         log.info("Initializing configuration from: " + path);

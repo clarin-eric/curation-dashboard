@@ -7,6 +7,7 @@
    <modelVersion>4.0.0</modelVersion>
    <artifactId>curation-api</artifactId>
    <properties>
+      <cpa.version>0.0.1-SNAPSHOT</cpa.version>
    </properties>
    <dependencies>
       <dependency>
@@ -76,14 +77,14 @@
          <version>10.3</version>
       </dependency>
       <dependency>
-      	<groupId>org.springframework.boot</groupId>
-      	<artifactId>spring-boot-configuration-processor</artifactId>
-      	<optional>true</optional>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-configuration-processor</artifactId>
+         <optional>true</optional>
       </dependency>
       <dependency>
-      	<groupId>eu.clarin.cmdi</groupId>
-      	<artifactId>cpa</artifactId>
-      	<version>${cpa.version}</version>
+         <groupId>eu.clarin.cmdi</groupId>
+         <artifactId>cpa</artifactId>
+         <version>${cpa.version}</version>
       </dependency>
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
@@ -92,7 +93,6 @@
       </dependency>
    </dependencies>
    <build>
-      <plugins>
-      </plugins>
+      <plugins></plugins>
    </build>
 </project>

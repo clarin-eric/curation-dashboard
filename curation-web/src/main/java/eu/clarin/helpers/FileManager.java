@@ -1,11 +1,12 @@
 package eu.clarin.helpers;
 
-import eu.clarin.cmdi.curation.report.Report;
-
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+
+import eu.clarin.cmdi.curation.api.report.Report;
+
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
