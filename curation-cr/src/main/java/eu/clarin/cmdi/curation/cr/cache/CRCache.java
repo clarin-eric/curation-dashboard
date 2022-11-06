@@ -59,7 +59,7 @@ public class CRCache {
       return getProfileCacheEntry(header);
    }
    
-   @Cacheable(value = "privateProfileCache", key = "header.id")
+   @Cacheable(value = "privateProfileCache", key = "#header.id")
    public ProfileCacheEntry getPrivateEntry(ProfileHeader header) throws NoProfileCacheEntryException {
       return getProfileCacheEntry(header);
    }
