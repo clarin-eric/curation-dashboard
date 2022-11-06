@@ -82,6 +82,10 @@ public class CRCache {
 
       try {
          if (Files.notExists(xsd) || Files.size(xsd) == 0 || !isPublicCache(header)) {// keep public profiles on disk
+            // create directories if they don't exist
+            if(Files.notExists(xsd.getParent())) {
+               Files.createDirectories(xsd.getParent());
+            }
             
             Files.createFile(xsd);
             log.debug("XSD for the {} is not in the local cache, it will be downloaded", header.getSchemaLocation());
