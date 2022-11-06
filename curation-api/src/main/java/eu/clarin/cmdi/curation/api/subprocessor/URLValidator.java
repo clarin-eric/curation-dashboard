@@ -19,8 +19,6 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -28,7 +26,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Component
-@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class URLValidator extends AbstractSubprocessor {
 
    @Autowired
@@ -41,19 +38,11 @@ public class URLValidator extends AbstractSubprocessor {
    private StatusRepository sRepository;
    @Autowired
    private ClientRepository clRepository;
-   
-   private URLValidator() {
-      
-   }
 
    @Override
-   public void process(CMDInstance entity, CMDInstanceReport report) {
-      // do nothing this is not used, not really good coding, is it???
-   }
+   public synchronized void process(CMDInstance entity, CMDInstanceReport report) {
 
-   public void process(CMDInstance entity, CMDInstanceReport report, String parentName) {
-
-      CMDIData<Map<String, List<ValueSet>>> data = entity.getCMDIData();
+      CMDIData<Map<String, List<ValueSet>>> data = entity.getCmdiData();
 
       Map<String, Resource> urlMap = new HashMap<>();
 
@@ -92,19 +81,18 @@ public class URLValidator extends AbstractSubprocessor {
       long numOfInvalidLinks = 0;
 
       if (conf.getMode().equals("collection")) {
-         
-         Client client = clRepository.findByEmailAndToken("", "");
 
+         Client client = clRepository.findByEmailAndToken("", "");
 
          for (String url : urlMap.keySet()) {
 
-            String origin = report.getName();
-            String providergroup = parentName != null ? parentName : origin;
+            // TODO : the providerGroup- and origin setting is not correct yet
+            String providergroup = report.getName();
 
             String expectedMimeType = urlMap.get(url).getMimeType();
             expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
-            uService.save(client, url, origin, providergroup, expectedMimeType);
+            uService.save(client, url, report.getName(), providergroup, expectedMimeType);
          }
       }
       else {// instance mode
@@ -113,11 +101,12 @@ public class URLValidator extends AbstractSubprocessor {
             // first check if database has this url
             Url urlEntity = uRepository.findByName(url);
             Status statusEntity;
-            
-            if((urlEntity = uRepository.findByName(url)) != null && (statusEntity = sRepository.findByUrl(urlEntity)) != null) {
+
+            if ((urlEntity = uRepository.findByName(url)) != null
+                  && (statusEntity = sRepository.findByUrl(urlEntity)) != null) {
                numOfCheckedLinks++;
-               
-               switch(statusEntity.getCategory()) {
+
+               switch (statusEntity.getCategory()) {
                case Ok:
                   break;
 
@@ -125,27 +114,30 @@ public class URLValidator extends AbstractSubprocessor {
                   addMessage(Severity.ERROR, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
                   numOfBrokenLinks++;
                   break;
-                  
+
                case Invalid_URL:
                   addMessage(Severity.ERROR, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
                   numOfInvalidLinks++;
                   break;
 
                case Undetermined:
-                  addMessage(Severity.WARNING, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
+                  addMessage(Severity.WARNING,
+                        "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
                   numOfUndeterminedLinks++;
                   break;
 
                case Restricted_Access:
-                  addMessage(Severity.WARNING, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
+                  addMessage(Severity.WARNING,
+                        "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
                   numOfRestrictedAccessLinks++;
                   break;
 
-               case Blocked_By_Robots_txt: 
-                  addMessage(Severity.WARNING, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
+               case Blocked_By_Robots_txt:
+                  addMessage(Severity.WARNING,
+                        "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
                   numOfBlockedByRobotsTxtLinks++;
                }
-               
+
                CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement()
                      .convertFromLinkCheckerURLElement(statusEntity);
                report.addURLElement(urlElementReport);
@@ -157,7 +149,7 @@ public class URLValidator extends AbstractSubprocessor {
 
    }
 
-   public Score calculateScore(CMDInstanceReport report) {
+   public synchronized Score calculateScore(CMDInstanceReport report) {
       // it can influence the score, if one collection was done with enabled and the
       // other without
 

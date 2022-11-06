@@ -87,11 +87,11 @@ public class CRCache {
                Files.createDirectories(xsd.getParent());
             }
             
-            Files.createFile(xsd);
+//            Files.createFile(xsd);
             log.debug("XSD for the {} is not in the local cache, it will be downloaded", header.getSchemaLocation());
 
             if (header.getSchemaLocation().startsWith("file:")) {
-               Files.move(Paths.get(new URI(header.getSchemaLocation())), xsd, StandardCopyOption.REPLACE_EXISTING);
+               Files.copy(Paths.get(new URI(header.getSchemaLocation())), xsd, StandardCopyOption.REPLACE_EXISTING);
             }
             else {
                FileUtils.copyURLToFile(new URL(header.getSchemaLocation()), xsd.toFile());

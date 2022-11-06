@@ -31,25 +31,20 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FacetsMappingCacheFactory extends FacetMappingFactory {
 
-   
-   private VloConfig vloConfig; 
+   private VloConfig vloConfig;
 
    private CRService crService;
 
    private FacetMappingCache cache;
 
-//   private final LoadingCache<ProfileHeader, FacetsMapping> facetMappingPublicCache;
-//   private final LoadingCache<ProfileHeader, FacetsMapping> facetMappingNonPublicCache;
-
-
-    @Autowired
+   @Autowired
    public FacetsMappingCacheFactory(VloConfig vloConfig, CRService crService, FacetMappingCache cache) {
 
       super(vloConfig, new VLOMarshaller());
       this.vloConfig = vloConfig;
       this.crService = crService;
       this.cache = cache;
-      
+
    }
 
    public FacetsMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {

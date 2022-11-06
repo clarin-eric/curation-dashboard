@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import com.ximpleware.*;
@@ -40,7 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class InstanceFacetProcessor extends AbstractSubprocessor {
 
    @Autowired
@@ -49,13 +46,9 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
    private CRService crService;
    @Autowired
    private FacetsMappingCacheFactory fac;
-   
-   private InstanceFacetProcessor() {
-      
-   }
 
    @Override
-   public void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
+   public synchronized void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
 
       // parse instance
       CMDXPathService xmlService;
@@ -156,7 +149,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
 
       FacetsMapping facetMapping = fac.getFacetsMapping(report.header);
 
-      Map<String, List<ValueSet>> facetValuesMap = entity.getCMDIData().getDocument();
+      Map<String, List<ValueSet>> facetValuesMap = entity.getCmdiData().getDocument();
 
       /*
        * We need to know if a value is mapped to the origin facet. The facetValuesMap
@@ -232,7 +225,8 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
 
    }
 
-   public Score calculateScore(CMDInstanceReport report) {
+   @Override
+   public synchronized Score calculateScore(CMDInstanceReport report) {
       return new Score(report.facets.instanceCoverage, 1.0, "facet-mapping", this.getMessages());
    }
 

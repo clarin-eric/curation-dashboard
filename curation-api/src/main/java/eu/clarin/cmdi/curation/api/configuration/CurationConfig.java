@@ -9,7 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import eu.clarin.cmdi.cpa.model.Client;
 import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.config.XmlVloConfigFactory;
@@ -25,8 +24,6 @@ public class CurationConfig {
    private String mode;
    
    private int maxFileSize;
-   
-   private String scoreNumericDisplayFormat;
    
    private Collection<String> facets;
    

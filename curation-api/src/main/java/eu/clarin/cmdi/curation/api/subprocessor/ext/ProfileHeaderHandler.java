@@ -12,13 +12,10 @@ import eu.clarin.cmdi.vlo.config.VloConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ProfileHeaderHandler extends AbstractMessageCollection{
 
    @Autowired
@@ -27,7 +24,7 @@ public class ProfileHeaderHandler extends AbstractMessageCollection{
    private VloConfig vloConf;
 
 
-   public void process(CMDProfile entity, CMDProfileReport report) throws SubprocessorException {
+   public synchronized void process(CMDProfile entity, CMDProfileReport report) throws SubprocessorException {
 
       boolean isLocalFile = false;
 
@@ -68,7 +65,7 @@ public class ProfileHeaderHandler extends AbstractMessageCollection{
        */
    }
 
-   public Score calculateScore(CMDProfileReport report) {
+   public synchronized Score calculateScore(CMDProfileReport report) {
       double score = report.header.isPublic() ? 1.0 : 0;
       return new Score(score, 1.0, "header-section", this.getMessages());
    }

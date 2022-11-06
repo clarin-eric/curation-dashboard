@@ -27,8 +27,6 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import javax.xml.transform.Source;
@@ -49,7 +47,6 @@ import java.util.regex.Pattern;
 
 @Slf4j
 @Component
-@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class FileSizeValidator extends AbstractSubprocessor {
 
    private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
@@ -60,7 +57,7 @@ public class FileSizeValidator extends AbstractSubprocessor {
 
 
    @Autowired
-   private FileSizeValidator(CurationConfig conf, FacetsMappingCacheFactory fac) {
+   public FileSizeValidator(CurationConfig conf, FacetsMappingCacheFactory fac) {
       
       this.conf = conf;
       
@@ -105,7 +102,7 @@ public class FileSizeValidator extends AbstractSubprocessor {
    }
 
    @Override
-   public void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException{
+   public synchronized void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException{
 
       // convert cmdi 1.1 to 1.2 if necessary
 
@@ -203,7 +200,7 @@ public class FileSizeValidator extends AbstractSubprocessor {
       
       }
 
-      entity.setCMDIData(cmdiData);
+      entity.setCmdiData(cmdiData);
 
       // create xpath/value pairs only in instance mode
       if (!"collection".equalsIgnoreCase(conf.getMode())) {
@@ -230,7 +227,8 @@ public class FileSizeValidator extends AbstractSubprocessor {
       }
    }
 
-   public Score calculateScore() {
+   @Override
+   public synchronized Score calculateScore(CMDInstanceReport report) {
       // in case that size exceeds the limit msgs will be created and it will contain
       // a single msg
       return new Score(this.getMessages().size() == 0 ? 1.0 : 0, 1.0, "file-size", this.getMessages());

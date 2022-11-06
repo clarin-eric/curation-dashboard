@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.cache.ProfileScoreCache;
@@ -24,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class InstanceHeaderProcessor extends AbstractSubprocessor {
 
    @Autowired
@@ -43,13 +40,10 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor {
    boolean missingMdCollectionDisplayName = false;
    boolean missingMdSelfLink = false;
    
-   private InstanceHeaderProcessor() {
-      
-   }
 
    @Override
-   public void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
-      Map<String, List<ValueSet>> keyValuesMap = entity.getCMDIData().getDocument();
+   public synchronized void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
+      Map<String, List<ValueSet>> keyValuesMap = entity.getCmdiData().getDocument();
 
       String schemaLocation = keyValuesMap.containsKey("curation_schemaLocation")
             && !keyValuesMap.get("curation_schemaLocation").isEmpty()
@@ -148,7 +142,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor {
 
    }
 
-   public Score calculateScore(CMDInstanceReport report) {
+   public synchronized Score calculateScore(CMDInstanceReport report) {
       double score = 0;
 
       // schema exists

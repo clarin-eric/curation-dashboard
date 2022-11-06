@@ -16,7 +16,23 @@ curation:
       query: "?registrySpace=published&status=production&status=development&&status=deprecated"
    ccr-service:
       restApi: "https://openskos.meertens.knaw.nl/ccr/api/find-concepts"
-      query: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000"     
+      query: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000" 
+   facets: 
+      - languageCode
+      - collection
+      - resourceClass
+      - modality
+      - format
+      - keywords
+      - genre
+      - subject
+      - country
+      - organisation
+      - name
+      - description
+      - license
+      - availability
+   score_numeric_display_format: "#0.0000"                
 logging:
    level:
-      root: TRACE         
+      root: ERROR         

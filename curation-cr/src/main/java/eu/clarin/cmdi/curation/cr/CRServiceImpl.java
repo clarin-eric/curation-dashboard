@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.cr;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -84,8 +85,8 @@ public class CRServiceImpl implements CRService {
             CharBuffer buffer = CharBuffer.allocate(1000);
 
             InputStreamReader reader;
-            try {
-               reader = new InputStreamReader(new URL(schemaLocation).openStream());
+            try(InputStream in = new URL(schemaLocation).openStream()) {
+               reader = new InputStreamReader(in);
                reader.read(buffer);
                String content = buffer.rewind().toString();
 

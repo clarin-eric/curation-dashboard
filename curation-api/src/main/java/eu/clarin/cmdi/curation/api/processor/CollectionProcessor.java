@@ -14,10 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 @Scope("prototype")
 public class CollectionProcessor {
 
-   private CollectionProcessor() {
-      super();
-   }
-
    public CollectionReport process(CMDCollection collection) {
 
       long start = System.currentTimeMillis();

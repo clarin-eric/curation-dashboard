@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.entities.CMDInstance;
@@ -18,16 +16,11 @@ import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
 @Component
-@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class CollectionInstanceResourceProxyProcessor extends AbstractSubprocessor {
-   
-   private CollectionInstanceResourceProxyProcessor() {
-      
-   }
 
 	@Override
-	public void process(CMDInstance entity, CMDInstanceReport report) {
-	    CMDIData<Map<String, List<ValueSet>>> cmdiData = entity.getCMDIData();
+	public synchronized void process(CMDInstance entity, CMDInstanceReport report) {
+	    CMDIData<Map<String, List<ValueSet>>> cmdiData = entity.getCmdiData();
 	    
 		report.resProxyReport = new ResProxyReport();
 		
@@ -79,7 +72,8 @@ public class CollectionInstanceResourceProxyProcessor extends AbstractSubprocess
 	    
 	}
 
-	public Score calculateScore(CMDInstanceReport report) {
+	@Override
+	public synchronized Score calculateScore(CMDInstanceReport report) {
 		double score = report.resProxyReport.percOfResourcesWithMime + report.resProxyReport.percOfResProxiesWithReferences;
 		return new Score(score, 2.0, "cmd-res-proxy", this.getMessages());		
 	}

@@ -17,9 +17,11 @@ import eu.clarin.cmdi.curation.api.processor.CMDInstanceProcessor;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
+import lombok.Data;
 
 @Component
 @Scope(value="prototype")
+@Data
 public class CMDInstance {
 
    public static Collection<String> mdSelfLinks = Collections.synchronizedCollection(new HashSet<>());
@@ -29,9 +31,9 @@ public class CMDInstance {
 
    private CMDIData<Map<String, List<ValueSet>>> cmdiData;
 
-   protected Path path = null;
-   protected long size = 0;
-   protected String url;
+   private Path path = null;
+   private long size = 0;
+   private String url;
    
    @Autowired
    CMDInstanceProcessor processor;
@@ -47,54 +49,5 @@ public class CMDInstance {
 
    public CMDInstanceReport generateReport(String parentName) throws SubprocessorException {
       return processor.process(this, parentName);
-   }
-
-   public ParsedInstance getParsedInstance() {
-      return parsedInstance;
-   }
-
-   public void setParsedInstance(ParsedInstance parsedInstance) {
-      this.parsedInstance = parsedInstance;
-   }
-
-   public Path getPath() {
-      return path;
-   }
-
-   public void setPath(Path path) {
-      this.path = path;
-   }
-
-   public long getSize() {
-      return size;
-   }
-
-   public void setSize(long size) {
-      this.size = size;
-   }
-
-   public String getUrl() {
-      return url;
-   }
-
-   public void setUrl(String url) {
-      this.url = url;
-   }
-
-   @Override
-   public String toString() {
-      int cnt = path.getNameCount();
-      String name = path.getName(cnt - 1).toString();
-      if (cnt > 1)
-         name = path.getName(cnt - 2) + "/" + name;
-      return "CMD Instance: " + name;
-   }
-
-   public CMDIData<Map<String, List<ValueSet>>> getCMDIData() {
-      return this.cmdiData;
-   }
-
-   public void setCMDIData(CMDIData<Map<String, List<ValueSet>>> cmdiData) {
-      this.cmdiData = cmdiData;
    }
 }

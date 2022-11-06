@@ -10,9 +10,11 @@ import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.processor.CollectionProcessor;
 import eu.clarin.cmdi.curation.api.report.CollectionReport;
+import lombok.Data;
 
 @Component
-@Scope("prototype")
+@Scope(value="prototype")
+@Data
 public class CMDCollection {
 
    @Autowired
@@ -20,11 +22,11 @@ public class CMDCollection {
 
    Deque<CMDInstance> children;
 
-   long numOfFiles;
-   long maxFileSize = 0;
-   long minFileSize = Long.MAX_VALUE;
-   protected Path path = null;
-   protected long size = 0;
+   private long numOfFiles;
+   private long maxFileSize = 0;
+   private long minFileSize = Long.MAX_VALUE;
+   private Path path = null;
+   private long size = 0;
 
    public CMDCollection(Path path) {
       this.path = path;
@@ -49,50 +51,5 @@ public class CMDCollection {
 
    public Deque<CMDInstance> getChildren() {
       return children;
-   }
-
-   public long getNumOfFiles() {
-      return numOfFiles;
-   }
-
-   public void setNumOfFiles(long numOfFiles) {
-      this.numOfFiles = numOfFiles;
-   }
-
-   public long getMaxFileSize() {
-      return maxFileSize;
-   }
-
-   public void setMaxFileSize(long maxFileSize) {
-      this.maxFileSize = maxFileSize;
-   }
-
-   public long getMinFileSize() {
-      return minFileSize;
-   }
-
-   public void setMinFileSize(long minFileSize) {
-      this.minFileSize = minFileSize;
-   }
-
-   public Path getPath() {
-      return path;
-   }
-
-   public void setPath(Path path) {
-      this.path = path;
-   }
-
-   public long getSize() {
-      return size;
-   }
-
-   public void setSize(long size) {
-      this.size = size;
-   }
-
-   @Override
-   public String toString() {
-      return "Collection: " + path.toString();
    }
 }

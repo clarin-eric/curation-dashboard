@@ -26,10 +26,6 @@ public class CMDProfileProcessor {
    
    @Autowired
    ApplicationContext ctx;
-   
-   private CMDProfileProcessor() {
-      super();
-   }
 
    public CMDProfileReport process(CMDProfile profile) {
 

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -28,14 +29,16 @@ public class CurationModuleImpl implements CurationModule {
 
    @Autowired
    private VloConfig vloConf;
+   @Autowired
+   private ApplicationContext ctx;
 
    @Override public Report<?> processCMDProfile(String profileId) {
-      return new CMDProfile(vloConf.getComponentRegistryProfileSchema(profileId), "1.x").generateReport();
+      return processCMDProfile(vloConf.getComponentRegistryProfileSchema(profileId));
    }
 
    @Override
    public Report<?> processCMDProfile(URL schemaLocation) {
-      return new CMDProfile(schemaLocation.toString(), "1.x").generateReport();
+      return ctx.getBean(CMDProfile.class, schemaLocation.toString(), "1.x").generateReport();
    }
 
    @Override

@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.entities.CMDInstance;
@@ -21,23 +19,17 @@ import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
 @Component
-@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class CollectionInstanceFacetProcessor extends AbstractSubprocessor {
    
    @Autowired
-   final FacetsMappingCacheFactory fac;
-   
-
-   private CollectionInstanceFacetProcessor(FacetsMappingCacheFactory fac) {
-      
-      this.fac = fac;
-   
-   }
+   private FacetsMappingCacheFactory fac;
+   @Autowired
+   private FacetReportCreator facetReportCreator;
 
    @Override
-   public void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
+   public synchronized void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
 
-      Map<String, List<ValueSet>> facetValuesMap = entity.getCMDIData().getDocument();
+      Map<String, List<ValueSet>> facetValuesMap = entity.getCmdiData().getDocument();
 
       /*
        * We need to know if a value is mapped to the origin facet. The facetValuesMap
@@ -56,7 +48,7 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor {
       try {
          facetMapping = fac.getFacetsMapping(report.header);
 
-         report.facets = new FacetReportCreator().createFacetReport(report.header, facetMapping);
+         report.facets = facetReportCreator.createFacetReport(report.header, facetMapping);
 
          int numOfCoveredByIns = 0;
 
@@ -74,13 +66,13 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor {
 
       }
       finally {
-         entity.setCMDIData(null);
+         entity.setCmdiData(null);
          entity.setParsedInstance(null);
       }
 
    }
-
-   public Score calculateScore(CMDInstanceReport report) {
+   @Override
+   public synchronized Score calculateScore(CMDInstanceReport report) {
       return new Score(report.facets.instanceCoverage, 1.0, "facet-mapping", this.getMessages());
    }
 }

@@ -2,7 +2,6 @@ curation:
    mode: collection
    link_data_source: CMD
    max_file_size: 100000
-   score_numeric_display_format: "#0.0000"
    directories:
       home: /app/curation
       reports: ./public
