@@ -165,8 +165,8 @@ public class FileSizeValidator extends AbstractSubprocessor {
          Path filePath = entity.getPath();
          
          //file in the data directory
-         if (filePath.startsWith(conf.getDirectory().getData())) {
-            report.fileReport.location = conf.getDirectory().getData().relativize(filePath).toString();
+         if (filePath.startsWith(conf.getDirectory().getDataRoot())) {
+            report.fileReport.location = conf.getDirectory().getDataRoot().relativize(filePath).toString();
          }
          //otherwise
          else {
