@@ -26,7 +26,7 @@ import eu.clarin.cmdi.curation.api.report.Concept;
 import eu.clarin.cmdi.curation.api.report.Score;
 import eu.clarin.cmdi.curation.api.report.Severity;
 import eu.clarin.cmdi.curation.api.subprocessor.ext.FacetReportCreator;
-import eu.clarin.cmdi.curation.api.vlo_extensions.FacetsMappingCacheFactory;
+import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.curation.api.xml.CMDXPathService;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;

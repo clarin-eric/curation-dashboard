@@ -10,7 +10,7 @@ import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.Score;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractMessageCollection;
-import eu.clarin.cmdi.curation.api.vlo_extensions.FacetsMappingCacheFactory;
+import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 
 @Component

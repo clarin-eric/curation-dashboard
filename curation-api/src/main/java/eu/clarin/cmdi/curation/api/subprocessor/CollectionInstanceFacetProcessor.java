@@ -14,7 +14,7 @@ import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport.Coverage;
 import eu.clarin.cmdi.curation.api.report.Score;
 import eu.clarin.cmdi.curation.api.subprocessor.ext.FacetReportCreator;
-import eu.clarin.cmdi.curation.api.vlo_extensions.FacetsMappingCacheFactory;
+import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
