@@ -1,7 +1,7 @@
 /**
  *
  */
-package eu.clarin.cmdi.curation.api.subprocessor.ext;
+package eu.clarin.cmdi.curation.api.subprocessor.profile;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.subprocessor;
+package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
 import java.util.HashSet;
 
@@ -13,6 +13,7 @@ import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport.Coverage;
 import eu.clarin.cmdi.curation.api.report.Score;
+import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.subprocessor.ext.FacetReportCreator;
 import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;

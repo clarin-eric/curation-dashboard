@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.subprocessor;
+package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport.ValueNode
 import eu.clarin.cmdi.curation.api.report.Concept;
 import eu.clarin.cmdi.curation.api.report.Score;
 import eu.clarin.cmdi.curation.api.report.Severity;
+import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.subprocessor.ext.FacetReportCreator;
 import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.curation.api.xml.CMDXPathService;

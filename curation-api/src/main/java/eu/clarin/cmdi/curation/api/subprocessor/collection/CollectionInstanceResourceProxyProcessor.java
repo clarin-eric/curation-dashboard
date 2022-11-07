@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.subprocessor;
+package eu.clarin.cmdi.curation.api.subprocessor.collection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,7 @@ import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.Score;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport.ResProxyReport;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport.ResourceType;
+import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;

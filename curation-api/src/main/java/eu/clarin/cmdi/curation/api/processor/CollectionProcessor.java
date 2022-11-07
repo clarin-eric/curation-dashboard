@@ -1,11 +1,12 @@
 package eu.clarin.cmdi.curation.api.processor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.report.CollectionReport;
-import eu.clarin.cmdi.curation.api.subprocessor.ext.CollectionAggregator;
+import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionAggregator;
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Scope("prototype")
 public class CollectionProcessor {
+   
+   @Autowired
+   CollectionAggregator collectionAggregator;
 
    public CollectionReport process(CMDCollection collection) {
 
@@ -21,9 +25,7 @@ public class CollectionProcessor {
       CollectionReport report = new CollectionReport();
       log.info("Started report generation for collection: " + collection.getPath());
 
-      CollectionAggregator collectionAggregator = null;
       try {
-         collectionAggregator = new CollectionAggregator();
 
          collectionAggregator.process(collection, report);
          report.addSegmentScore(collectionAggregator.calculateScore(report));

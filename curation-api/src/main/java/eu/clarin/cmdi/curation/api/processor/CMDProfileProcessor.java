@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
-import eu.clarin.cmdi.curation.api.subprocessor.ext.ProfileElementsHandler;
-import eu.clarin.cmdi.curation.api.subprocessor.ext.ProfileFacetHandler;
-import eu.clarin.cmdi.curation.api.subprocessor.ext.ProfileHeaderHandler;
+import eu.clarin.cmdi.curation.api.subprocessor.profile.ProfileElementsHandler;
+import eu.clarin.cmdi.curation.api.subprocessor.profile.ProfileFacetHandler;
+import eu.clarin.cmdi.curation.api.subprocessor.profile.ProfileHeaderHandler;
 import lombok.extern.slf4j.Slf4j;
 
 /**

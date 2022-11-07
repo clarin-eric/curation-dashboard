@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.subprocessor.ext;
+package eu.clarin.cmdi.curation.api.subprocessor.profile;
 
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;

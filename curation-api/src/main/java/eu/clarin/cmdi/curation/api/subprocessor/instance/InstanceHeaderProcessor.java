@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.subprocessor;
+package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +14,7 @@ import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.Score;
 import eu.clarin.cmdi.curation.api.report.Severity;
+import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.CRServiceImpl;
 import eu.clarin.cmdi.vlo.config.VloConfig;

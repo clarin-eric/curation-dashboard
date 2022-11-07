@@ -20,8 +20,6 @@ public class CMDCollection {
    @Autowired
    CollectionProcessor processor;
 
-   Deque<CMDInstance> children;
-
    private long numOfFiles;
    private long maxFileSize = 0;
    private long minFileSize = Long.MAX_VALUE;
@@ -30,26 +28,9 @@ public class CMDCollection {
 
    public CMDCollection(Path path) {
       this.path = path;
-      children = new ArrayDeque<>();
    }
 
    public CollectionReport generateReport() {
       return processor.process(this);
-   }
-
-   public void addChild(CMDInstance child) {
-      children.add(child);
-
-      numOfFiles++;
-      size += child.getSize();
-      if (child.getSize() > maxFileSize)
-         maxFileSize = child.getSize();
-      if (child.getSize() < minFileSize)
-         minFileSize = child.getSize();
-
-   }
-
-   public Deque<CMDInstance> getChildren() {
-      return children;
    }
 }

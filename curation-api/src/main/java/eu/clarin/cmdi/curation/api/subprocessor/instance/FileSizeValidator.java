@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.subprocessor;
+package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
 import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
@@ -9,6 +9,7 @@ import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.Score;
 import eu.clarin.cmdi.curation.api.report.Severity;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport.FileReport;
+import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.vlo_extension.CMDIDataImplFactory;
 import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;

@@ -5,6 +5,13 @@ import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.subprocessor.*;
+import eu.clarin.cmdi.curation.api.subprocessor.instance.CollectionInstanceFacetProcessor;
+import eu.clarin.cmdi.curation.api.subprocessor.instance.FileSizeValidator;
+import eu.clarin.cmdi.curation.api.subprocessor.instance.InstanceFacetProcessor;
+import eu.clarin.cmdi.curation.api.subprocessor.instance.InstanceHeaderProcessor;
+import eu.clarin.cmdi.curation.api.subprocessor.instance.ResourceProxyProcessor;
+import eu.clarin.cmdi.curation.api.subprocessor.instance.URLValidator;
+import eu.clarin.cmdi.curation.api.subprocessor.instance.XMLValidator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.stream.Stream;
@@ -65,5 +72,4 @@ public class CMDInstanceProcessor {
 
       return report;
    }
-
 }
