@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.vlo_extensions;
+package eu.clarin.cmdi.curation.api.vlo_extension;
 
 import eu.clarin.cmdi.vlo.config.FieldNameService;
 import eu.clarin.cmdi.vlo.importer.CMDIData;

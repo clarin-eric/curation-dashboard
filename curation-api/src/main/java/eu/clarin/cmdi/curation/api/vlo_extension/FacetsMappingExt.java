@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.vlo_extensions;
+package eu.clarin.cmdi.curation.api.vlo_extension;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.vlo_extensions;
+package eu.clarin.cmdi.curation.api.vlo_extension;
 
 import java.util.*;
 
@@ -19,13 +19,8 @@ import eu.clarin.cmdi.vlo.importer.mapping.*;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * The FacetMappingCacheFactory extends the FacetMappingFactory for two reasons:
- * 1. To cache public and non-public profiles in two separate, configurable
- * caches 2. To assure the presence of some custom facets like schemaLocation,
- * which we need imperatively in the CMDIData object but which are not defined
- * in the standard facetConfig.xml file
  *
- * @author Wolfgang Walter SAUER (wowasa) &lt;wolfgang.sauer@oeaw.ac.at&gt;
+ * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
  */
 @Service
 @Slf4j
