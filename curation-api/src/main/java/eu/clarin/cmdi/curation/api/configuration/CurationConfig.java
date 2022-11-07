@@ -37,6 +37,10 @@ public class CurationConfig {
    
    private String crQuery;
    
+   private String clientUsername;
+   
+   private String clientPassword;
+   
    @Bean
    public VloConfig vloConfig() {
       try {
@@ -66,11 +70,11 @@ public class CurationConfig {
       
       private Path home;
       
-      private Path reports;
+      private Path dataRoot;
       
-      private Path data;
+      private Collection<Path> in;
       
-      private Path xsdCache;
+      private Path out;
+      
    }
-
 }
