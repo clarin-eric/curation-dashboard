@@ -308,6 +308,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
     public static class URLReport {
         public long numOfLinks;
         public long numOfUniqueLinks;
+        public long numOfInvalidLinks;
         public long numOfCheckedLinks;
         public long numOfUndeterminedLinks;
         public long numOfRestrictedAccessLinks;
@@ -319,5 +320,4 @@ public class CMDInstanceReport implements Report<CollectionReport> {
         }
 
     }
-
 }
