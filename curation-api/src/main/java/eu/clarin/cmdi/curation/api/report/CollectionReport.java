@@ -255,6 +255,7 @@ public class CollectionReport implements Report<CollectionReport> {
       public long avgSize;
       public long minFileSize;
       public long maxFileSize;
+      public long collectionSize;
    }
 
    @XmlRootElement
