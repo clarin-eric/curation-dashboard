@@ -7,6 +7,8 @@ import eu.clarin.cmdi.cpa.repository.ClientRepository;
 import eu.clarin.cmdi.cpa.repository.StatusRepository;
 import eu.clarin.cmdi.cpa.repository.UrlRepository;
 import eu.clarin.cmdi.cpa.service.LinkService;
+import eu.clarin.cmdi.cpa.utils.Category;
+import eu.clarin.cmdi.cpa.utils.UrlValidator;
 import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
@@ -41,7 +43,9 @@ public class URLValidator extends AbstractSubprocessor {
    private ClientRepository clRepository;
 
    @Override
-   public synchronized void process(CMDInstance entity, CMDInstanceReport report) {
+   public synchronized void process(CMDInstance entity, CMDInstanceReport instanceReport) {
+      
+      URLReport report = new URLReport();
 
       CMDIData<Map<String, List<ValueSet>>> data = entity.getCmdiData();
 
@@ -71,82 +75,90 @@ public class URLValidator extends AbstractSubprocessor {
       if (selfLink.startsWith("http://") || selfLink.startsWith("https://"))
          urlMap.computeIfAbsent(selfLink, key -> null);
 
-      // these values are used to create instance url report and used for the score
-      // collection statistics are done through the database
-      long numOfUniqueLinks = urlMap.keySet().size();
-      long numOfCheckedLinks = 0;
-      long numOfBrokenLinks = 0;
-      long numOfUndeterminedLinks = 0;
-      long numOfRestrictedAccessLinks = 0;
-      long numOfBlockedByRobotsTxtLinks = 0;
-      long numOfInvalidLinks = 0;
 
-      if (conf.getMode().equals("collection")) {
+      if ("collection".equals(conf.getMode())) {
 
+         //TODO
          Client client = clRepository.findByEmailAndToken("", "");
 
          for (String url : urlMap.keySet()) {
 
-            // TODO : the providerGroup- and origin setting is not correct yet
-            String providergroup = report.getName();
+            String origin = conf.getDirectory().getDataRoot().relativize(entity.getPath()).toString();
+
+            String providergroup = instanceReport.parentName;
 
             String expectedMimeType = urlMap.get(url).getMimeType();
             expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
 
-            uService.save(client, url, report.getName(), providergroup, expectedMimeType);
+            uService.save(client, url, origin, providergroup, expectedMimeType);
          }
-      }
+      } // end collection mode
       else {// instance mode
          for (String url : urlMap.keySet()) {
-
-            // first check if database has this url
-            Url urlEntity = uRepository.findByName(url);
-            Status statusEntity;
-
-            if ((urlEntity = uRepository.findByName(url)) != null
+            
+            Url urlEntity = null;
+            Status statusEntity = null;
+            
+            if(!UrlValidator.validate(url).isValid()) {
+               addMessage(Severity.ERROR, "Url: " + url + " Category:" + Category.Invalid_URL);
+               report.numOfInvalidLinks++;
+            }
+            else if((urlEntity = uRepository.findByName(url)) != null
                   && (statusEntity = sRepository.findByUrl(urlEntity)) != null) {
-               numOfCheckedLinks++;
+               
+               report.numOfCheckedLinks++;
+               
+               long numOfValidLinks = 0;
 
                switch (statusEntity.getCategory()) {
                case Ok:
+                  numOfValidLinks++;
                   break;
-
+                  
                case Broken:
                   addMessage(Severity.ERROR, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
-                  numOfBrokenLinks++;
+                  report.numOfBrokenLinks++;
                   break;
 
                case Invalid_URL:
                   addMessage(Severity.ERROR, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
-                  numOfInvalidLinks++;
+                  report.numOfInvalidLinks++;
                   break;
 
                case Undetermined:
                   addMessage(Severity.WARNING,
                         "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
-                  numOfUndeterminedLinks++;
+                  numOfValidLinks++;
+                  report.numOfUndeterminedLinks++;
                   break;
 
                case Restricted_Access:
                   addMessage(Severity.WARNING,
                         "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
-                  numOfRestrictedAccessLinks++;
+                  numOfValidLinks++;
+                  report.numOfRestrictedAccessLinks++;
                   break;
 
                case Blocked_By_Robots_txt:
                   addMessage(Severity.WARNING,
                         "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
-                  numOfBlockedByRobotsTxtLinks++;
+                  numOfValidLinks++;
+                  report.numOfBlockedByRobotsTxtLinks++;
                }
 
                CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement()
                      .convertFromLinkCheckerURLElement(statusEntity);
-               report.addURLElement(urlElementReport);
+               instanceReport.addURLElement(urlElementReport);
+            
+               report.percOfValidLinks = report.numOfCheckedLinks == 0 ? 0
+                     : (numOfValidLinks / (double) report.numOfCheckedLinks);            
             }
          }
-      }
-      report.urlReport = createInstanceURLReport(numOfLinks.get(), numOfUniqueLinks, numOfCheckedLinks,
-            numOfBrokenLinks, numOfUndeterminedLinks, numOfRestrictedAccessLinks, numOfBlockedByRobotsTxtLinks);
+      } // end instance mode
+      
+
+      
+      instanceReport.urlReport = report;
 
    }
 
@@ -158,26 +170,5 @@ public class URLValidator extends AbstractSubprocessor {
             ? report.urlReport.percOfValidLinks
             : 0;
       return new Score(score, 1.0, "url-validation", this.getMessages());
-   }
-
-   private URLReport createInstanceURLReport(long numOfLinks, long numOfUniqueLinks, long numOfCheckedLinks,
-         long numOfBrokenLinks, long numOfUndeterminedLinks, long numOfRestrictedAccessLinks,
-         long numOfBlockedByRobotsTxtLinks) {
-      URLReport report = new URLReport();
-      report.numOfLinks = numOfLinks;
-
-      // all links are checked in instances
-      report.numOfCheckedLinks = numOfCheckedLinks;
-      report.numOfUndeterminedLinks = numOfUndeterminedLinks;
-      report.numOfRestrictedAccessLinks = numOfRestrictedAccessLinks;
-      report.numOfBlockedByRobotsTxtLinks = numOfBlockedByRobotsTxtLinks;
-      report.numOfUniqueLinks = numOfUniqueLinks;
-      report.numOfBrokenLinks = numOfBrokenLinks;
-
-      long numOfCheckedUndeterminedRemoved = numOfLinks - numOfUndeterminedLinks;
-      report.percOfValidLinks = numOfLinks == 0 ? 0
-            : (numOfCheckedUndeterminedRemoved - numOfBrokenLinks) / (double) numOfCheckedUndeterminedRemoved;
-
-      return report;
    }
 }
