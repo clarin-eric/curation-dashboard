@@ -23,6 +23,8 @@ public class CollectionProcessor {
       long start = System.currentTimeMillis();
 
       CollectionReport report = new CollectionReport();
+      report.fileReport.provider = collection.getPath().getName(collection.getPath().getNameCount()).toString();
+      
       log.info("Started report generation for collection: " + collection.getPath());
 
       try {
