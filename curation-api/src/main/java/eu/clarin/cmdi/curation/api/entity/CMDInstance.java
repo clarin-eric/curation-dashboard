@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.entities;
+package eu.clarin.cmdi.curation.api.entity;
 
 import java.nio.file.Path;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.entities;
+package eu.clarin.cmdi.curation.api.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

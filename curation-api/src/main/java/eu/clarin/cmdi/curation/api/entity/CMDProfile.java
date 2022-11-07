@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.entities;
+package eu.clarin.cmdi.curation.api.entity;
 
 import eu.clarin.cmdi.curation.api.processor.CMDProfileProcessor;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;

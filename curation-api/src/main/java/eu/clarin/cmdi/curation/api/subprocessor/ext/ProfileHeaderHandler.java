@@ -1,6 +1,6 @@
 package eu.clarin.cmdi.curation.api.subprocessor.ext;
 
-import eu.clarin.cmdi.curation.api.entities.CMDProfile;
+import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.Score;

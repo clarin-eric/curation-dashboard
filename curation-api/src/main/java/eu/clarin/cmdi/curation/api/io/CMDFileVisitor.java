@@ -8,8 +8,8 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import eu.clarin.cmdi.curation.api.entities.CMDCollection;
-import eu.clarin.cmdi.curation.api.entities.CMDInstance;
+import eu.clarin.cmdi.curation.api.entity.CMDCollection;
+import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 
 @Slf4j
 public class CMDFileVisitor implements FileVisitor<Path> {

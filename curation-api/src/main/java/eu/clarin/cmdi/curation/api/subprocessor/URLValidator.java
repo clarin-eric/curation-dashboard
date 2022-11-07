@@ -8,7 +8,7 @@ import eu.clarin.cmdi.cpa.repository.StatusRepository;
 import eu.clarin.cmdi.cpa.repository.UrlRepository;
 import eu.clarin.cmdi.cpa.service.LinkService;
 import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
-import eu.clarin.cmdi.curation.api.entities.CMDInstance;
+import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.Score;
 import eu.clarin.cmdi.curation.api.report.Severity;

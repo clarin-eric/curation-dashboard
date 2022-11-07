@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.cache.ProfileScoreCache;
 import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
-import eu.clarin.cmdi.curation.api.entities.CMDInstance;
+import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.Score;

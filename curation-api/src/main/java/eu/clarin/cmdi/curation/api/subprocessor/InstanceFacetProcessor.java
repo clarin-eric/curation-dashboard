@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import com.ximpleware.*;
 
 import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
-import eu.clarin.cmdi.curation.api.entities.CMDInstance;
+import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance.InstanceNode;
