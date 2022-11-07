@@ -24,6 +24,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+
+
 /**
  *
  */
@@ -38,7 +40,7 @@ public class CollectionAggregator extends AbstractMessageCollection{
    private ApplicationContext ctx;
 
    public void process(CMDCollection collection, CollectionReport report) {
-
+      
       for (String facetName : conf.getFacets()) {
          FacetCollectionStruct facet = new FacetCollectionStruct();
          facet.name = facetName;
@@ -60,12 +62,26 @@ public class CollectionAggregator extends AbstractMessageCollection{
 
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-               // TODO Auto-generated method stub
+
                return null;
             }
 
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+               
+               report.fileReport.numOfFiles++;
+               
+               if(attrs.size() > report.fileReport.maxFileSize) {
+                  report.fileReport.maxFileSize = attrs.size();
+               }
+               if(report.fileReport.minFileSize == 0) {
+                  report.fileReport.minFileSize = attrs.size();
+               }
+               else if(attrs.size() < report.fileReport.minFileSize) {
+                  report.fileReport.minFileSize = attrs.size();
+               }
+               report.fileReport.collectionSize += attrs.size();
+               
                
                CMDInstance instance = ctx.getBean(CMDInstance.class, file, attrs.size());
                
@@ -79,7 +95,7 @@ public class CollectionAggregator extends AbstractMessageCollection{
 
                      log.debug("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()
                            + " Skipping to next instance...");
-                     new ErrorReport(conf.getDirectory().getData().relativize(instance.getPath()).toString(), e.getMessage())
+                     new ErrorReport(conf.getDirectory().getDataRoot().relativize(instance.getPath()).toString(), e.getMessage())
                            .mergeWithParent(report);
                   }
 
@@ -100,7 +116,7 @@ public class CollectionAggregator extends AbstractMessageCollection{
 
             @Override
             public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-               // TODO Auto-generated method stub
+
                return null;
             }
             
