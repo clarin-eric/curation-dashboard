@@ -32,7 +32,8 @@ curation:
       - description
       - license
       - availability
-   score_numeric_display_format: "#0.0000"                
+   clientUsername: testUser
+   clientPassword: testPassword             
 logging:
    level:
       root: ERROR         
