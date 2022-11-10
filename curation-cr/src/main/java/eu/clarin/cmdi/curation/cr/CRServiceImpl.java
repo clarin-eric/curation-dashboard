@@ -120,7 +120,7 @@ public class CRServiceImpl implements CRService {
    private ProfileCacheEntry getEntry(ProfileHeader header) throws NoProfileCacheEntryException {
       
       if(header.getId() == null || header.getId().isEmpty()) {
-         header = createProfileHeader(header.getSchemaLocation(), header.getCmdiVersion(), header.isLocalFile());
+         header.setId(createProfileHeader(header.getSchemaLocation(), header.getCmdiVersion(), header.isLocalFile()).getId());
       }
 
       return (crCache.isPublicCache(header) ? crCache.getPublicEntry(header) : crCache.getPrivateEntry(header));
