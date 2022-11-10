@@ -20,7 +20,7 @@ import eu.clarin.cmdi.curation.api.report.Report;
 @SpringBootTest
 @Import(TestConfig.class)
 
-public class CurationTest {
+public class ProfileTest {
    
    @Autowired
    CurationModule curation;
