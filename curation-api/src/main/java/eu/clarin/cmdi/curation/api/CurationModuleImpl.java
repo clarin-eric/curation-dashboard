@@ -51,7 +51,7 @@ public class CurationModuleImpl implements CurationModule {
    public Report<?> processCMDInstance(Path path) {
       if (Files.exists(path)) {
             try {
-               return new CMDInstance(path, Files.size(path)).generateReport(null);
+               return ctx.getBean(CMDInstance.class, path, Files.size(path)).generateReport(null);
             }
             catch (SubprocessorException e) {
                // TODO Auto-generated catch block
