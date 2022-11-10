@@ -128,7 +128,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor {
       if (missingMdSelfLink) {
          addMessage(Severity.ERROR, "Value for CMD/Header/MdSelfLink is missing");
       }
-      else if (conf.getMode().equalsIgnoreCase("collection")) {// collect mdSelfLinks when assessing collection
+      else if ("collection".equalsIgnoreCase(conf.getMode())) {// collect mdSelfLinks when assessing collection
          if (!CMDInstance.mdSelfLinks.add(mdSelfLink))
             CMDInstance.duplicateMDSelfLink.add(mdSelfLink);
       }

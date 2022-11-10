@@ -178,7 +178,7 @@ public class FileSizeValidator extends AbstractSubprocessor {
       if (report.fileReport.size > conf.getMaxFileSize()) {
          this.addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + conf.getMaxFileSize()+ "B)");
          // don't assess when assessing collections
-         if (conf.getMode().equalsIgnoreCase("collection")) {
+         if ("collection".equalsIgnoreCase(conf.getMode())) {
             throw new SubprocessorException();
          }
       }
