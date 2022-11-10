@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.ximpleware.*;
@@ -47,6 +48,8 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
    private CRService crService;
    @Autowired
    private FacetsMappingCacheFactory fac;
+   @Autowired
+   ApplicationContext ctx;
 
    @Override
    public synchronized void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
@@ -163,7 +166,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
       facetValuesMap.values().forEach(
             list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getOriginFacetConfig().getName())));
 
-      report.facets = new FacetReportCreator().createFacetReport(report.header, facetMapping);
+      report.facets = ctx.getBean(FacetReportCreator.class).createFacetReport(report.header, facetMapping);
 
       int numOfCoveredByIns = 0;
 
