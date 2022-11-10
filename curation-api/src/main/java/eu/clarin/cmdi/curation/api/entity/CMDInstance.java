@@ -36,7 +36,7 @@ public class CMDInstance {
    private String url;
    
    @Autowired
-   CMDInstanceProcessor processor;
+   private CMDInstanceProcessor processor;
 
    public CMDInstance(Path path) {
       this.path = path;
