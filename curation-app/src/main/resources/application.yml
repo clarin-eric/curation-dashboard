@@ -2,10 +2,10 @@ curation:
    mode: collection
    link_data_source: CMD
    max_file_size: 100000
-   directories:
+   directory:
       home: /app/curation
       reports: ./public
-      data: ./data
+      dataRoot: /data/report/cmdi
       xsd_cache: ./xsd_cache
    facets: 
       - languageCode
