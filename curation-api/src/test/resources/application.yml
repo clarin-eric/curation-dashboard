@@ -33,7 +33,12 @@ curation:
       - license
       - availability
    clientUsername: testUser
-   clientPassword: testPassword             
+   clientPassword: testPassword
+   directory:
+      home: /app/curation
+      reports: ./public
+      dataRoot: /data/result/cmdi
+   max_file_size: 100000              
 logging:
    level:
       root: ERROR         
