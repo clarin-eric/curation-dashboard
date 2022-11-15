@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -31,7 +29,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 @Slf4j
 @Component
-@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class CollectionAggregator extends AbstractMessageCollection{
 
    @Autowired
@@ -48,13 +45,6 @@ public class CollectionAggregator extends AbstractMessageCollection{
          report.facetReport.facet.add(facet);
       }
 
-      // add info regarding file statistics
-      report.fileReport.provider = collection.getPath().getFileName().toString();
-      report.fileReport.numOfFiles = collection.getNumOfFiles();
-      report.fileReport.size = collection.getSize();
-      report.fileReport.minFileSize = collection.getMinFileSize();
-      report.fileReport.maxFileSize = collection.getMaxFileSize();
-
       ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadPoolSize());
       
       try {
@@ -63,7 +53,7 @@ public class CollectionAggregator extends AbstractMessageCollection{
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 
-               return null;
+               return FileVisitResult.CONTINUE;
             }
 
             @Override
@@ -80,7 +70,7 @@ public class CollectionAggregator extends AbstractMessageCollection{
                else if(attrs.size() < report.fileReport.minFileSize) {
                   report.fileReport.minFileSize = attrs.size();
                }
-               report.fileReport.collectionSize += attrs.size();
+               report.fileReport.size += attrs.size();
                
                
                CMDInstance instance = ctx.getBean(CMDInstance.class, file, attrs.size());
@@ -105,19 +95,19 @@ public class CollectionAggregator extends AbstractMessageCollection{
                   }
                }); // end executor.submit            
                
-               return null;
+               return FileVisitResult.CONTINUE;
             }
 
             @Override
             public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
                // TODO Auto-generated method stub
-               return null;
+               return FileVisitResult.CONTINUE;
             }
 
             @Override
             public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 
-               return null;
+               return FileVisitResult.CONTINUE;
             }
             
          });
