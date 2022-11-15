@@ -87,7 +87,7 @@
       </dependency>
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
-         <artifactId>cpa</artifactId>
+         <artifactId>curation-persistence</artifactId>
          <version>${cpa.version}</version>
       </dependency>
       <dependency>
