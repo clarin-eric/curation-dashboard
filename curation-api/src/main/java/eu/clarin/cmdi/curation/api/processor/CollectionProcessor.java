@@ -23,24 +23,34 @@ public class CollectionProcessor {
       long start = System.currentTimeMillis();
 
       CollectionReport report = new CollectionReport();
-      report.fileReport.provider = collection.getPath().getName(collection.getPath().getNameCount()).toString();
       
       log.info("Started report generation for collection: " + collection.getPath());
+      
+      if(collection.getPath().getNameCount() >= 1) {
+      
 
-      try {
-
-         collectionAggregator.process(collection, report);
-         report.addSegmentScore(collectionAggregator.calculateScore(report));
-
+         
+         report.fileReport.provider = collection.getPath().getName(collection.getPath().getNameCount() -1).toString();
+   
+         try {
+   
+            collectionAggregator.process(collection, report);
+            report.addSegmentScore(collectionAggregator.calculateScore(report));
+   
+         }
+         catch (Exception e) {
+            log.debug("Exception when processing " + collectionAggregator.getClass().toString() + " : " + e.getMessage());
+            addInvalidFile(report, e);
+         }
+   
+         long end = System.currentTimeMillis();
+         log.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for collection: "
+               + report.getName());
+         
       }
-      catch (Exception e) {
-         log.debug("Exception when processing " + collectionAggregator.getClass().toString() + " : " + e.getMessage());
-         addInvalidFile(report, e);
+      else {
+         log.error("the provider group is the last name in the path. Therefore the collection path MUSTN'T be the root directory");
       }
-
-      long end = System.currentTimeMillis();
-      log.info("It took " + TimeUtils.humanizeToTime(end - start) + " to generate the report for collection: "
-            + report.getName());
 
       return report;
    }
