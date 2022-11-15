@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.api;
 
+import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
@@ -77,7 +78,8 @@ public class CurationModuleImpl implements CurationModule {
          FileUtils.copyURLToFile(url, cmdiFilePath.toFile());
    
          long size = Files.size(cmdiFilePath);
-         CMDInstance cmdInstance = new CMDInstance(cmdiFilePath, size);
+         
+         CMDInstance cmdInstance = ctx.getBean(CMDInstance.class, cmdiFilePath, size);
          cmdInstance.setUrl(url.toString());
    
          CMDInstanceReport report = cmdInstance.generateReport(null);
@@ -104,8 +106,9 @@ public class CurationModuleImpl implements CurationModule {
 
    @Override
    public Report<?> processCollection(Path path) {
+      
+      return ctx.getBean(CMDCollection.class, path).generateReport();
 
-      return null;
    }
 
    @Override
