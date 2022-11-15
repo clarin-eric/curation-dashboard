@@ -153,9 +153,8 @@ public class FileSizeValidator extends AbstractSubprocessor {
             
          }
       }
-
-      report.fileReport = new FileReport();
-      report.fileReport.size = entity.getSize();
+      
+      report.fileReport = new CMDInstanceReport.FileReport();
       
       //from instance upload
       if (entity.getUrl() != null) {
