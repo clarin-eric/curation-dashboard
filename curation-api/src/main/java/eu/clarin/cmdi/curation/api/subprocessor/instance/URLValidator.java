@@ -14,7 +14,6 @@ import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.Score;
 import eu.clarin.cmdi.curation.api.report.Severity;
-import eu.clarin.cmdi.curation.api.report.CMDInstanceReport.URLReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
@@ -25,7 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
+
+import javax.annotation.PostConstruct;
 
 @Slf4j
 @Component
@@ -41,17 +41,23 @@ public class URLValidator extends AbstractSubprocessor {
    private StatusRepository sRepository;
    @Autowired
    private ClientRepository clRepository;
+   
+   private Client client;
+   
+   @PostConstruct
+   public void init() {
+      
+      this.client = this.clRepository.findByName(conf.getClientUsername()).get();
+   }
 
    @Override
    public synchronized void process(CMDInstance entity, CMDInstanceReport instanceReport) {
       
-      URLReport report = new URLReport();
+      instanceReport.urlReport = new CMDInstanceReport.URLReport();
 
       CMDIData<Map<String, List<ValueSet>>> data = entity.getCmdiData();
 
       Map<String, Resource> urlMap = new HashMap<>();
-
-      final AtomicLong numOfLinks = new AtomicLong(0); // has to be final for use in lambda expression
 
       ArrayList<Resource> resources = new ArrayList<>();
       resources.addAll(data.getDataResources());
@@ -64,7 +70,7 @@ public class URLValidator extends AbstractSubprocessor {
             && (resource.getResourceName().startsWith("http://") || resource.getResourceName().startsWith("https://")))
             .forEach(resource -> {
                urlMap.computeIfAbsent(resource.getResourceName(), key -> resource);
-               numOfLinks.incrementAndGet();
+               instanceReport.urlReport.numOfLinks++;
             });
 
       String selfLink = (data.getDocument().get("_selfLink") != null && !data.getDocument().get("_selfLink").isEmpty())
@@ -77,9 +83,6 @@ public class URLValidator extends AbstractSubprocessor {
 
 
       if ("collection".equals(conf.getMode())) {
-
-         //TODO
-         Client client = clRepository.findByEmailAndToken("", "");
 
          for (String url : urlMap.keySet()) {
 
@@ -96,69 +99,59 @@ public class URLValidator extends AbstractSubprocessor {
       else {// instance mode
          for (String url : urlMap.keySet()) {
             
-            Url urlEntity = null;
-            Status statusEntity = null;
+            Optional<Url> urlOptional = null;
+            Optional<Status> statusOptional = null;
             
             if(!UrlValidator.validate(url).isValid()) {
                addMessage(Severity.ERROR, "Url: " + url + " Category:" + Category.Invalid_URL);
-               report.numOfInvalidLinks++;
+               instanceReport.urlReport.numOfInvalidLinks++;
             }
-            else if((urlEntity = uRepository.findByName(url)) != null
-                  && (statusEntity = sRepository.findByUrl(urlEntity)) != null) {
+            else if((urlOptional = uRepository.findByName(url)).isPresent()
+                  && (statusOptional = sRepository.findByUrl(urlOptional.get())).isPresent()) {
                
-               report.numOfCheckedLinks++;
+               instanceReport.urlReport.numOfCheckedLinks++;
                
                long numOfValidLinks = 0;
 
-               switch (statusEntity.getCategory()) {
-               case Ok:
-                  numOfValidLinks++;
-                  break;
-                  
-               case Broken:
-                  addMessage(Severity.ERROR, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
-                  report.numOfBrokenLinks++;
-                  break;
-
-               case Invalid_URL:
-                  addMessage(Severity.ERROR, "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
-                  report.numOfInvalidLinks++;
-                  break;
-
-               case Undetermined:
-                  addMessage(Severity.WARNING,
-                        "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
-                  numOfValidLinks++;
-                  report.numOfUndeterminedLinks++;
-                  break;
-
-               case Restricted_Access:
-                  addMessage(Severity.WARNING,
-                        "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
-                  numOfValidLinks++;
-                  report.numOfRestrictedAccessLinks++;
-                  break;
-
-               case Blocked_By_Robots_txt:
-                  addMessage(Severity.WARNING,
-                        "Url: " + urlEntity.getName() + " Category:" + statusEntity.getCategory());
-                  numOfValidLinks++;
-                  report.numOfBlockedByRobotsTxtLinks++;
+               switch (statusOptional.get().getCategory()) {
+                  case Ok -> numOfValidLinks++;               
+                  case Broken -> {
+                     addMessage(Severity.ERROR, "Url: " + urlOptional.get().getName() + " Category:" + statusOptional.get().getCategory());
+                     instanceReport.urlReport.numOfBrokenLinks++;
+                  }
+                  case Invalid_URL -> {
+                     addMessage(Severity.ERROR, "Url: " + urlOptional.get().getName() + " Category:" + statusOptional.get().getCategory());
+                     instanceReport.urlReport.numOfInvalidLinks++;
+                  }
+                  case Undetermined -> {
+                     addMessage(Severity.WARNING,
+                           "Url: " + urlOptional.get().getName() + " Category:" + statusOptional.get().getCategory());
+                     numOfValidLinks++;
+                     instanceReport.urlReport.numOfUndeterminedLinks++;
+                  }
+                  case Restricted_Access -> {
+                     addMessage(Severity.WARNING,
+                           "Url: " + urlOptional.get().getName() + " Category:" + statusOptional.get().getCategory());
+                     numOfValidLinks++;
+                     instanceReport.urlReport.numOfRestrictedAccessLinks++;
+                  }
+                  case Blocked_By_Robots_txt -> {
+                     addMessage(Severity.WARNING,
+                           "Url: " + urlOptional.get().getName() + " Category:" + statusOptional.get().getCategory());
+                     numOfValidLinks++;
+                     instanceReport.urlReport.numOfBlockedByRobotsTxtLinks++;
+                  }
                }
 
                CMDInstanceReport.URLElement urlElementReport = new CMDInstanceReport.URLElement()
-                     .convertFromLinkCheckerURLElement(statusEntity);
+                     .convertFromLinkCheckerURLElement(statusOptional.get());
                instanceReport.addURLElement(urlElementReport);
             
-               report.percOfValidLinks = report.numOfCheckedLinks == 0 ? 0
-                     : (numOfValidLinks / (double) report.numOfCheckedLinks);            
+               instanceReport.urlReport.percOfValidLinks = instanceReport.urlReport.numOfCheckedLinks == 0 ? 0
+                     : (numOfValidLinks / (double) instanceReport.urlReport.numOfCheckedLinks);            
             }
          }
       } // end instance mode
-      
-
-      
-      instanceReport.urlReport = report;
 
    }
 
