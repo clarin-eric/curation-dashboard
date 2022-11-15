@@ -1,13 +1,9 @@
 package eu.clarin.cmdi.curation.api.report;
 
-import eu.clarin.cmdi.cpa.model.AggregatedStatus;
-import eu.clarin.cmdi.cpa.repository.AggregatedStatusRepository;
 import eu.clarin.cmdi.cpa.utils.Category;
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
 import eu.clarin.cmdi.curation.api.xml.XMLMarshaller;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.xml.bind.annotation.*;
 import java.io.OutputStream;
@@ -15,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
-import java.util.stream.Stream;
 
 /**
  *
@@ -29,9 +24,6 @@ import java.util.stream.Stream;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Slf4j
 public class CollectionReport implements Report<CollectionReport> {
-
-   @Autowired
-   private AggregatedStatusRepository aRepository;
    
    @XmlAttribute(name = "score")
    public Double score = 0.0;
@@ -185,39 +177,30 @@ public class CollectionReport implements Report<CollectionReport> {
 
       // url statistics
 
-      try (Stream<AggregatedStatus> stream = aRepository.findAllByProvidergroupName(getName())) {
-
-         stream.forEach(categoryStats -> {
-            Statistics xmlStatistics = new Statistics();
-            xmlStatistics.avgRespTime = categoryStats.getAvgDuration();
-            xmlStatistics.maxRespTime = categoryStats.getMaxDuration();
-            xmlStatistics.category = categoryStats.getCategory();
-            xmlStatistics.count = categoryStats.getNumber();
-            urlReport.totNumOfCheckedLinks += categoryStats.getNumber();
-            switch (categoryStats.getCategory()) {
-            case Broken:
-               urlReport.totNumOfBrokenLinks = categoryStats.getNumber().intValue();
-               break;
-            case Undetermined:
-               urlReport.totNumOfUndeterminedLinks = categoryStats.getNumber().intValue();
-               break;
-            case Restricted_Access:
-               urlReport.totNumOfRestrictedAccessLinks = categoryStats.getNumber().intValue();
-               break;
-            case Blocked_By_Robots_txt:
-               urlReport.totNumOfBlockedByRobotsTxtLinks = (int) categoryStats.getNumber().intValue();
-               break;
-            default:
-               break;
-            }
-
-            urlReport.statistics.add(xmlStatistics);
-         });
-      }
-      catch (Exception ex) {
-
-         log.error("couldn't get category statistics for provider group '{}' from database", getName(), ex);
-      }
+      /*
+       * try (Stream<AggregatedStatus> stream =
+       * aRepository.findAllByProvidergroupName(getName())) {
+       * 
+       * stream.forEach(categoryStats -> { Statistics xmlStatistics = new
+       * Statistics(); xmlStatistics.avgRespTime = categoryStats.getAvgDuration();
+       * xmlStatistics.maxRespTime = categoryStats.getMaxDuration();
+       * xmlStatistics.category = categoryStats.getCategory(); xmlStatistics.count =
+       * categoryStats.getNumber(); urlReport.totNumOfCheckedLinks +=
+       * categoryStats.getNumber(); switch (categoryStats.getCategory()) { case
+       * Broken: urlReport.totNumOfBrokenLinks = categoryStats.getNumber().intValue();
+       * break; case Undetermined: urlReport.totNumOfUndeterminedLinks =
+       * categoryStats.getNumber().intValue(); break; case Restricted_Access:
+       * urlReport.totNumOfRestrictedAccessLinks =
+       * categoryStats.getNumber().intValue(); break; case Blocked_By_Robots_txt:
+       * urlReport.totNumOfBlockedByRobotsTxtLinks = (int)
+       * categoryStats.getNumber().intValue(); break; default: break; }
+       * 
+       * urlReport.statistics.add(xmlStatistics); }); } catch (Exception ex) {
+       * 
+       * log.
+       * error("couldn't get category statistics for provider group '{}' from database"
+       * , getName(), ex); }
+       */
 
 
       int totCheckedUndeterminedAndRestrictedAndBlockedRemoved = urlReport.totNumOfCheckedLinks
@@ -255,7 +238,6 @@ public class CollectionReport implements Report<CollectionReport> {
       public long avgSize;
       public long minFileSize;
       public long maxFileSize;
-      public long collectionSize;
    }
 
    @XmlRootElement
