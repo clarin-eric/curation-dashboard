@@ -8,7 +8,6 @@ import eu.clarin.cmdi.curation.api.instance_parser.InstanceParser;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.Score;
 import eu.clarin.cmdi.curation.api.report.Severity;
-import eu.clarin.cmdi.curation.api.report.CMDInstanceReport.FileReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.vlo_extension.CMDIDataImplFactory;
@@ -155,6 +154,7 @@ public class FileSizeValidator extends AbstractSubprocessor {
       }
       
       report.fileReport = new CMDInstanceReport.FileReport();
+      report.fileReport.size = entity.getSize();
       
       //from instance upload
       if (entity.getUrl() != null) {
