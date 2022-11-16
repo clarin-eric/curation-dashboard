@@ -1,5 +1,7 @@
 package eu.clarin.cmdi.curation.api.subprocessor.collection;
 
+import eu.clarin.cmdi.cpa.model.AggregatedStatus;
+import eu.clarin.cmdi.cpa.repository.AggregatedStatusRepository;
 import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
@@ -21,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Stream;
 
 
 
@@ -35,6 +38,8 @@ public class CollectionAggregator extends AbstractMessageCollection{
    private CurationConfig conf;
    @Autowired
    private ApplicationContext ctx;
+   @Autowired
+   AggregatedStatusRepository aRep;
 
    public void process(CMDCollection collection, CollectionReport report) {
       
@@ -100,7 +105,7 @@ public class CollectionAggregator extends AbstractMessageCollection{
 
             @Override
             public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-               // TODO Auto-generated method stub
+               log.error("can't access file '{}'", file);
                return FileVisitResult.CONTINUE;
             }
 
@@ -113,8 +118,8 @@ public class CollectionAggregator extends AbstractMessageCollection{
          });
       }
       catch (IOException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
+         
+         log.error("can't access colletion '{}'", collection.getPath());
       } //end Files.walkFileTree
 
       executor.shutdown();
@@ -129,6 +134,38 @@ public class CollectionAggregator extends AbstractMessageCollection{
       }
 
       report.calculateAverageValues();
+      
+      
+      try (Stream<AggregatedStatus> stream = aRep.findAllByProvidergroupName(report.getName())) {
+
+         stream.forEach(categoryStats -> {
+            Statistics xmlStatistics = new Statistics();
+            xmlStatistics.avgRespTime = categoryStats.getAvgDuration();
+            xmlStatistics.maxRespTime = categoryStats.getMaxDuration();
+            xmlStatistics.category = categoryStats.getCategory();
+            xmlStatistics.count = categoryStats.getNumber();
+            report.urlReport.totNumOfCheckedLinks += categoryStats.getNumber();
+
+            switch (categoryStats.getCategory()) {
+               case Invalid_URL -> report.urlReport.totNumOfInvalidLinks = categoryStats.getNumber().intValue();
+               case Broken -> report.urlReport.totNumOfBrokenLinks = categoryStats.getNumber().intValue();
+               case Undetermined -> report.urlReport.totNumOfUndeterminedLinks = categoryStats.getNumber().intValue();
+               case Restricted_Access ->
+                  report.urlReport.totNumOfRestrictedAccessLinks = categoryStats.getNumber().intValue();
+               case Blocked_By_Robots_txt ->
+                  report.urlReport.totNumOfBlockedByRobotsTxtLinks = (int) categoryStats.getNumber().intValue();
+               default -> throw new IllegalArgumentException("Unexpected value: " + categoryStats.getCategory());
+            }
+
+            report.urlReport.statistics.add(xmlStatistics);
+         });
+      }
+      catch (Exception ex) {
+
+         log.error("couldn't get category statistics for provider group '{}' from database", report.getName(), ex);
+      }
+       
+
 
       if (!CMDInstance.duplicateMDSelfLink.isEmpty()) {
          report.headerReport.duplicatedMDSelfLink = CMDInstance.duplicateMDSelfLink;
