@@ -5,6 +5,7 @@
 package eu.clarin.cmdi.curation.api;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
@@ -33,6 +34,7 @@ import eu.clarin.cmdi.curation.api.report.Report;
 public class InstanceTest {
    
    private Report<?> report;
+   
    
    @Autowired
    CurationModule curation;
@@ -78,5 +80,29 @@ public class InstanceTest {
       this.report.toXML(System.out);
       
    }
+   
+   @Test
+   @Order(3)
+   public void profileSection() {
+      
+      CMDInstanceReport instanceReport = CMDInstanceReport.class.cast(report);
+      
+      assertEquals("clarin.eu:cr1:p_1288172614026", instanceReport.header.getId());
+      
+      assertEquals("1.2", instanceReport.header.getCmdiVersion());
+      
+   }
 
+   
+   @Test
+   @Order(4)
+   public void fileSection() {
+      
+      CMDInstanceReport instanceReport = CMDInstanceReport.class.cast(report);
+      
+      assertTrue(instanceReport.fileReport.location.endsWith("SAW_Leipzig_Repository/cts_muqtabas_urn_cts_muqtabas_oclc_4770057679_i_29_TEIP5_.xml"));
+      
+      assertEquals(6510, instanceReport.fileReport.size);
+   
+   }
 }
