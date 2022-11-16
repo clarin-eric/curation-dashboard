@@ -177,31 +177,7 @@ public class CollectionReport implements Report<CollectionReport> {
 
       // url statistics
 
-      /*
-       * try (Stream<AggregatedStatus> stream =
-       * aRepository.findAllByProvidergroupName(getName())) {
-       * 
-       * stream.forEach(categoryStats -> { Statistics xmlStatistics = new
-       * Statistics(); xmlStatistics.avgRespTime = categoryStats.getAvgDuration();
-       * xmlStatistics.maxRespTime = categoryStats.getMaxDuration();
-       * xmlStatistics.category = categoryStats.getCategory(); xmlStatistics.count =
-       * categoryStats.getNumber(); urlReport.totNumOfCheckedLinks +=
-       * categoryStats.getNumber(); switch (categoryStats.getCategory()) { case
-       * Broken: urlReport.totNumOfBrokenLinks = categoryStats.getNumber().intValue();
-       * break; case Undetermined: urlReport.totNumOfUndeterminedLinks =
-       * categoryStats.getNumber().intValue(); break; case Restricted_Access:
-       * urlReport.totNumOfRestrictedAccessLinks =
-       * categoryStats.getNumber().intValue(); break; case Blocked_By_Robots_txt:
-       * urlReport.totNumOfBlockedByRobotsTxtLinks = (int)
-       * categoryStats.getNumber().intValue(); break; default: break; }
-       * 
-       * urlReport.statistics.add(xmlStatistics); }); } catch (Exception ex) {
-       * 
-       * log.
-       * error("couldn't get category statistics for provider group '{}' from database"
-       * , getName(), ex); }
-       */
-
+      // done by sql query in CollectionAggregator
 
       int totCheckedUndeterminedAndRestrictedAndBlockedRemoved = urlReport.totNumOfCheckedLinks
             - (urlReport.totNumOfUndeterminedLinks + urlReport.totNumOfRestrictedAccessLinks
@@ -299,6 +275,7 @@ public class CollectionReport implements Report<CollectionReport> {
       public int totNumOfUniqueLinks;
       public int totNumOfCheckedLinks;
       public Double avgNumOfUniqueLinks = 0.0;
+      public int totNumOfInvalidLinks;
       public int totNumOfBrokenLinks;
       public Double avgNumOfBrokenLinks = 0.0;
       public Double ratioOfValidLinks = 0.0;
