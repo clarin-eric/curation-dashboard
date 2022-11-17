@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.ccr.config;
+package eu.clarin.cmdi.curation.ccr.conf;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;

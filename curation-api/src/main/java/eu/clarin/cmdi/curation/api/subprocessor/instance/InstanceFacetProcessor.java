@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.ximpleware.*;
 
-import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance;
@@ -43,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 public class InstanceFacetProcessor extends AbstractSubprocessor {
 
    @Autowired
-   private CurationConfig conf;
+   private ApiConfig conf;
    @Autowired
    private CRService crService;
    @Autowired

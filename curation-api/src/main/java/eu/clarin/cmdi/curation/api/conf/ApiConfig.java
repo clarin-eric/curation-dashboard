@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.configuration;
+package eu.clarin.cmdi.curation.api.conf;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @ConfigurationProperties(prefix = "curation")
 @Data
 @Slf4j
-public class CurationConfig {
+public class ApiConfig {
    
    private String mode;
    
