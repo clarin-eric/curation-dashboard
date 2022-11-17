@@ -1,6 +1,6 @@
 package eu.clarin.cmdi.curation.api.processor;
 
-import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class CMDInstanceProcessor {
 
    @Autowired
-   private CurationConfig conf;
+   private ApiConfig conf;
    @Autowired
    FileSizeValidator fileSizeValidator;
    @Autowired

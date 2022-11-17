@@ -9,7 +9,7 @@ import eu.clarin.cmdi.cpa.repository.UrlRepository;
 import eu.clarin.cmdi.cpa.service.LinkService;
 import eu.clarin.cmdi.cpa.utils.Category;
 import eu.clarin.cmdi.cpa.utils.UrlValidator;
-import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.Score;
@@ -32,7 +32,7 @@ import javax.annotation.PostConstruct;
 public class URLValidator extends AbstractSubprocessor {
 
    @Autowired
-   private CurationConfig conf;
+   private ApiConfig conf;
    @Autowired
    private LinkService uService;
    @Autowired

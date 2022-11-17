@@ -27,7 +27,7 @@ import com.google.gson.JsonObject;
 
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.ConceptTypeAdapter;
-import eu.clarin.cmdi.curation.ccr.config.CCRProperties;
+import eu.clarin.cmdi.curation.ccr.conf.CCRProperties;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 

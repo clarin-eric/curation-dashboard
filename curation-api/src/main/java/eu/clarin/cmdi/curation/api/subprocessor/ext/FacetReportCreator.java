@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Scope;
 
 import org.springframework.stereotype.Component;
 
-import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport.Coverage;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FacetReportCreator {
 
    @Autowired
-   private CurationConfig conf;
+   private ApiConfig conf;
    @Autowired
    private CRService crService;
 

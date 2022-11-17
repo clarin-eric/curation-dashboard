@@ -1,6 +1,6 @@
 package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
-import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.exception.NoCMDIDataProcessorException;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
@@ -53,11 +53,11 @@ public class FileSizeValidator extends AbstractSubprocessor {
 
    private CMDIDataProcessor<Map<String, List<ValueSet>>> processor;
    
-   private CurationConfig conf;
+   private ApiConfig conf;
 
 
    @Autowired
-   public FileSizeValidator(CurationConfig conf, FacetsMappingCacheFactory fac) {
+   public FileSizeValidator(ApiConfig conf, FacetsMappingCacheFactory fac) {
       
       this.conf = conf;
       

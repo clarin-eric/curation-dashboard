@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
-import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.report.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.Report;
 
@@ -38,7 +38,7 @@ public class CollectionTest {
    @Autowired
    CurationModule curation;
    @Autowired
-   CurationConfig config;
+   ApiConfig config;
    
    @BeforeAll
    public void createInstanceReport() throws URISyntaxException {

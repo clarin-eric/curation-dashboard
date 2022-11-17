@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.cache.ProfileScoreCache;
-import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class InstanceHeaderProcessor extends AbstractSubprocessor {
 
    @Autowired
-   private CurationConfig conf;
+   private ApiConfig conf;
    @Autowired
    private VloConfig vloConf;
    @Autowired

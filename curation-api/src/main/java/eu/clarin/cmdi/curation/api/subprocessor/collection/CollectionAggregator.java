@@ -2,7 +2,7 @@ package eu.clarin.cmdi.curation.api.subprocessor.collection;
 
 import eu.clarin.cmdi.cpa.model.AggregatedStatus;
 import eu.clarin.cmdi.cpa.repository.AggregatedStatusRepository;
-import eu.clarin.cmdi.curation.api.configuration.CurationConfig;
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -35,12 +36,13 @@ import java.util.stream.Stream;
 public class CollectionAggregator extends AbstractMessageCollection{
 
    @Autowired
-   private CurationConfig conf;
+   private ApiConfig conf;
    @Autowired
    private ApplicationContext ctx;
    @Autowired
    AggregatedStatusRepository aRep;
 
+   @Transactional
    public void process(CMDCollection collection, CollectionReport report) {
       
       for (String facetName : conf.getFacets()) {
