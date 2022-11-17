@@ -4,8 +4,9 @@ curation:
    max_file_size: 100000
    directory:
       home: /app/curation
-      reports: ./public
       dataRoot: /data/report/cmdi
+      in: 
+      out: ./public
       xsd_cache: ./xsd_cache
    facets: 
       - languageCode

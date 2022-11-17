@@ -36,8 +36,9 @@ curation:
    clientPassword: testPassword
    directory:
       home: /app/curation
-      reports: ./public
       dataRoot: /data/result/cmdi
+      in:
+      out: ./public
    max_file_size: 100000
    threadPoolSize: 3           
 logging:
