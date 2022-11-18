@@ -25,8 +25,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import javax.annotation.PostConstruct;
-
 @Slf4j
 @Component
 public class URLValidator extends AbstractSubprocessor {
@@ -42,13 +40,6 @@ public class URLValidator extends AbstractSubprocessor {
    @Autowired
    private ClientRepository clRepository;
    
-   private Client client;
-   
-   @PostConstruct
-   public void init() {
-      
-      this.client = this.clRepository.findByName(conf.getClientUsername()).get();
-   }
 
    @Override
    public synchronized void process(CMDInstance entity, CMDInstanceReport instanceReport) {
@@ -83,6 +74,8 @@ public class URLValidator extends AbstractSubprocessor {
 
 
       if ("collection".equals(conf.getMode())) {
+         
+         Client client = this.clRepository.findByName(conf.getClientUsername()).get();
 
          for (String url : urlMap.keySet()) {
 
