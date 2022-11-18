@@ -15,7 +15,7 @@ import java.util.TreeSet;
 
 @XmlRootElement(name = "linkchecker-report")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
-public class LinkCheckerReport implements Report<LinkCheckerReport> {
+public class AllLinkcheckerReport implements Report<AllLinkcheckerReport> {
    @XmlAttribute(name = "creation-time")
    public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
@@ -50,12 +50,12 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
    @Override
    public void toXML(OutputStream os) {
-      XMLMarshaller<LinkCheckerReport> instanceMarshaller = new XMLMarshaller<>(LinkCheckerReport.class);
+      XMLMarshaller<AllLinkcheckerReport> instanceMarshaller = new XMLMarshaller<>(AllLinkcheckerReport.class);
       instanceMarshaller.marshal(this, os);
    }
 
    @Override
-   public void mergeWithParent(LinkCheckerReport parentReport) {
+   public void mergeWithParent(AllLinkcheckerReport parentReport) {
    }
 
    public void addReport(Report<?> report) {
@@ -84,7 +84,7 @@ public class LinkCheckerReport implements Report<LinkCheckerReport> {
 
       }
 
-      public CMDCollection(CollectionReport collectionReport, LinkCheckerReport linkcheckerReport) {
+      public CMDCollection(CollectionReport collectionReport, AllLinkcheckerReport linkcheckerReport) {
          this.name = collectionReport.getName();
          this.statistics = collectionReport.urlReport.statistics;
          this.count = collectionReport.urlReport.totNumOfCheckedLinks;

@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "collections-report")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CollectionTableReport implements Report<CollectionTableReport> {
+public class AllCollectionReport implements Report<AllCollectionReport> {
 
    @XmlAttribute(name = "creation-time")
    public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
@@ -54,12 +54,12 @@ public class CollectionTableReport implements Report<CollectionTableReport> {
 
    @Override
    public void toXML(OutputStream os) {
-      XMLMarshaller<CollectionTableReport> instanceMarshaller = new XMLMarshaller<>(CollectionTableReport.class);
+      XMLMarshaller<AllCollectionReport> instanceMarshaller = new XMLMarshaller<>(AllCollectionReport.class);
       instanceMarshaller.marshal(this, os);
    }
 
    @Override
-   public void mergeWithParent(CollectionTableReport parentReport) {
+   public void mergeWithParent(AllCollectionReport parentReport) {
 
    }
 
