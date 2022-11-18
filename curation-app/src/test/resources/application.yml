@@ -37,8 +37,8 @@ curation:
    directory:
       home: /app/curation
       dataRoot: /data/result/cmdi
-      in:
-      out: ./public
+      in: /data/result/cmdi
+      out: /tmp/public
    max_file_size: 100000
    threadPoolSize: 3           
 logging:
