@@ -24,6 +24,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import eu.clarin.cmdi.curation.api.CurationModule;
 import eu.clarin.cmdi.curation.api.entity.CurationEntityType;
+import eu.clarin.cmdi.curation.api.report.AllPublicProfileReport;
 import eu.clarin.cmdi.curation.api.report.Report;
 import eu.clarin.cmdi.curation.app.conf.AppConfig;
 import eu.clarin.cmdi.curation.pph.PPHService;
@@ -82,9 +83,15 @@ public class CurationApp {
          
          final Collection<Report<?>> reports = new ArrayList<Report<?>>();
          
+         final AllPublicProfileReport allProfileReport = new AllPublicProfileReport();
+
+         
          reports.clear();
          pphService.getProfileHeaders().forEach(header -> {
-            reports.add(curation.processCMDProfile(header.getId()));
+            
+            Report<?> report = curation.processCMDProfile(header.getId());
+            allProfileReport.addReport(report);
+            reports.add(report);
          });
          
          
