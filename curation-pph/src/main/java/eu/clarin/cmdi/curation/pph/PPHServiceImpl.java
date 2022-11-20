@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.clarin.cmdi.curation.pph.cache.PPHCache;
-import eu.clarin.cmdi.curation.pph.conf.PHProperties;
+import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
 
 @Service
 public class PPHServiceImpl implements PPHService {
 
    @Autowired
-   PHProperties props;
+   PPHConfig props;
    @Autowired
    PPHCache pphCache;
 

@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
 
 import eu.clarin.cmdi.curation.pph.PPHService;
 import eu.clarin.cmdi.curation.pph.cache.PPHCache;
-import eu.clarin.cmdi.curation.pph.conf.PHProperties;
+import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ProfileHeadersTests {
 
    @Autowired
-   PHProperties crProps;
+   PPHConfig crProps;
    @Autowired
    PPHService service;
    @Autowired

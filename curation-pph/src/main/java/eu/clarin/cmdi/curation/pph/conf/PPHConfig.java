@@ -10,7 +10,7 @@ import lombok.Data;
 @Component
 @ConfigurationProperties(prefix = "curation.pph-service")
 @Data
-public class PHProperties {
+public class PPHConfig {
    
    private Path xsdCache;
    
