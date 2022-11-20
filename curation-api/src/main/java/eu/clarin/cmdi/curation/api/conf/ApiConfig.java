@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
 import eu.clarin.cmdi.vlo.config.VloConfig;
@@ -15,7 +15,7 @@ import eu.clarin.cmdi.vlo.config.XmlVloConfigFactory;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-@Configuration
+@Component
 @ConfigurationProperties(prefix = "curation")
 @Data
 @Slf4j
