@@ -20,8 +20,8 @@ import org.springframework.stereotype.Component;
 public class CMDProfile{
 
     private String schemaLocation;
+    
     private String cmdiVersion;
-    private Path path = null;
     
     @Autowired
     CMDProfileProcessor processor;
