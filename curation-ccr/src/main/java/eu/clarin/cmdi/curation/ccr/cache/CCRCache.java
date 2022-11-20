@@ -27,7 +27,7 @@ import com.google.gson.JsonObject;
 
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.ConceptTypeAdapter;
-import eu.clarin.cmdi.curation.ccr.conf.CCRProperties;
+import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CCRCache {
    
    @Autowired
-   private CCRProperties ccrProps;
+   private CCRConfig ccrProps;
    
    @Cacheable(value = "ccrCache", key = "#root.methodName")
    public Map<String, CCRConcept> getCCRConceptMap() {

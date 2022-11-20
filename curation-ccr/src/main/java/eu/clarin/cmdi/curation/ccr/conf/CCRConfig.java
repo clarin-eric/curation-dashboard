@@ -9,7 +9,7 @@ import lombok.Data;
 @Component
 @ConfigurationProperties(prefix = "curation.ccr-service")
 @Data
-public class CCRProperties {
+public class CCRConfig {
    
    private String restApi;
    
