@@ -8,6 +8,7 @@ import eu.clarin.cmdi.curation.api.report.Severity;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractMessageCollection;
 import eu.clarin.cmdi.curation.pph.PPHService;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
+import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,22 +22,14 @@ public class ProfileHeaderHandler extends AbstractMessageCollection{
    @Autowired
    private PPHService pphService;
    @Autowired
-   private VloConfig vloConf;
+   private PPHConfig pphConf;
 
 
    public synchronized void process(CMDProfile entity, CMDProfileReport report) throws SubprocessorException {
 
       boolean isLocalFile = false;
 
-      if (entity.getSchemaLocation() == null && entity.getSchemaLocation().isEmpty()) {
-         
-         log.error("no schema location in CMD file '{}' ", entity.getPath());
-         throw new SubprocessorException();
-         
-      }
-
-
-      if (entity.getSchemaLocation().startsWith(vloConf.getComponentRegistryRESTURL()))
+      if (entity.getSchemaLocation().startsWith(pphConf.getRestApi()))
          report.header = pphService.getProfileHeaders().stream()
                .filter(h -> h.getSchemaLocation().equals(entity.getSchemaLocation())).findFirst().orElse(null);
 
