@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.curation.pph.PPHService;
 import eu.clarin.cmdi.curation.cr.cache.CRCache;
-import eu.clarin.cmdi.curation.cr.conf.CRProperties;
+import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class CRServiceImpl implements CRService {
    public static final String PROFILE_ID_FORMAT = "clarin\\.eu:cr1:p_[0-9]+";
    public static final Pattern PROFILE_ID_PATTERN = Pattern.compile(PROFILE_ID_FORMAT);
 
-   private final CRProperties props;
+   private final CRConfig props;
 
    public final Pattern CR_REST_PATTERN;
 
@@ -47,7 +47,7 @@ public class CRServiceImpl implements CRService {
     */
 
    @Autowired
-   public CRServiceImpl(CRProperties props) {
+   public CRServiceImpl(CRConfig props) {
 
       this.props = props;
 

@@ -25,7 +25,7 @@ import com.ximpleware.VTDGen;
 
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.cr.ProfileCacheEntry;
-import eu.clarin.cmdi.curation.cr.conf.CRProperties;
+import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
@@ -43,7 +43,7 @@ public class CRCache {
    private final SchemaFactory schemaFactory;
    
    @Autowired
-   private CRProperties props;
+   private CRConfig props;
    @Autowired
    CCRService ccrService;
    @Autowired
