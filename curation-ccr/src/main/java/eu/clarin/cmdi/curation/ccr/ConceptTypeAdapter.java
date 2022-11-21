@@ -16,24 +16,23 @@ public class ConceptTypeAdapter extends TypeAdapter<CCRConcept> {
 		CCRStatus status = CCRStatus.UNKNOWN;
 		while(in.hasNext()){
 			switch (in.nextName()) {
-				case "prefLabel@en":
+				case "prefLabel@en" -> {
 					in.beginArray();
 					prefLabel = in.nextString();
 					in.endArray();
-					break;
-				case "uri":
+				}
+				case "uri" -> {
 					uri = in.nextString();
-					break;
-				case "status":
+				}
+				case "status" -> {
 					switch(in.nextString().toLowerCase()){
-						case "candidate": status = CCRStatus.CANDIDATE; break;
-						case "approved": status = CCRStatus.APPROVED; break;
-						case "expired": status = CCRStatus.EXPIRED; break;
-						default: status = CCRStatus.UNKNOWN;
+						case "candidate" -> status = CCRStatus.CANDIDATE;
+						case "approved" -> status = CCRStatus.APPROVED;
+						case "expired" -> status = CCRStatus.EXPIRED; 
+						default -> status = CCRStatus.UNKNOWN;
 					}
-					break;
-				case "xmlns": in.skipValue(); break;
-				default:break;
+				}
+				case "xmlns" -> in.skipValue(); 
 			}
 		}
 
