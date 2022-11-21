@@ -28,7 +28,7 @@ public class ProfileFacetHandler extends AbstractMessageCollection {
 
       facetMapping = fac.getFacetsMapping(report.header);
 
-      report.facet = facetReportCreator.createFacetReport(report.header, facetMapping);
+      report.facet = facetReportCreator.createFacetReport(this, report.header, facetMapping);
 
    }
 
