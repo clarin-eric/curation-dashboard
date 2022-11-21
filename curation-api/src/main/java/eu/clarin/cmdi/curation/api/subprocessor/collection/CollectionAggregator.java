@@ -43,7 +43,7 @@ public class CollectionAggregator extends AbstractMessageCollection{
    AggregatedStatusRepository aRep;
 
    @Transactional
-   public void process(CMDCollection collection, CollectionReport report) {
+   public void process(CMDCollection collection, CollectionReport report) throws IOException {
       
       for (String facetName : conf.getFacets()) {
          FacetCollectionStruct facet = new FacetCollectionStruct();
@@ -52,77 +52,64 @@ public class CollectionAggregator extends AbstractMessageCollection{
          report.facetReport.facet.add(facet);
       }
 
-      ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadPoolSize());
-      
-      try {
-         Files.walkFileTree(collection.getPath(), new FileVisitor<Path>() {
+      ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadPoolSize());    
 
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+      Files.walkFileTree(collection.getPath(), new FileVisitor<Path>() {
 
-               return FileVisitResult.CONTINUE;
-            }
+         @Override
+         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-               
-               report.fileReport.numOfFiles++;
-               
-               if(attrs.size() > report.fileReport.maxFileSize) {
-                  report.fileReport.maxFileSize = attrs.size();
-               }
-               if(report.fileReport.minFileSize == 0) {
-                  report.fileReport.minFileSize = attrs.size();
-               }
-               else if(attrs.size() < report.fileReport.minFileSize) {
-                  report.fileReport.minFileSize = attrs.size();
-               }
-               report.fileReport.size += attrs.size();
-               
-               
-               CMDInstance instance = ctx.getBean(CMDInstance.class, file, attrs.size());
-               
-               executor.submit(() -> {
-                  
-                  try {
-                     CMDInstanceReport cmdInstanceReport = instance.generateReport(report.getName());
-                     cmdInstanceReport.mergeWithParent(report);
-                  }
-                  catch (SubprocessorException e) {
+            return FileVisitResult.CONTINUE;
+         }
 
-                     log.debug("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()
-                           + " Skipping to next instance...");
-                     new ErrorReport(conf.getDirectory().getDataRoot().relativize(instance.getPath()).toString(), e.getMessage())
-                           .mergeWithParent(report);
-                  }
-
-                  catch (Exception e) {
-                     
-                     log.error("", e);
-                  }
-               }); // end executor.submit            
-               
-               return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-               log.error("can't access file '{}'", file);
-               return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-
-               return FileVisitResult.CONTINUE;
-            }
+         @Override
+         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
             
-         });
-      }
-      catch (IOException e) {
-         
-         log.error("can't access colletion '{}'", collection.getPath());
-      } //end Files.walkFileTree
+            report.fileReport.numOfFiles++;
+            
+            if(attrs.size() > report.fileReport.maxFileSize) {
+               report.fileReport.maxFileSize = attrs.size();
+            }
+            if(report.fileReport.minFileSize == 0) {
+               report.fileReport.minFileSize = attrs.size();
+            }
+            else if(attrs.size() < report.fileReport.minFileSize) {
+               report.fileReport.minFileSize = attrs.size();
+            }
+            report.fileReport.size += attrs.size();               
+            
+            CMDInstance instance = ctx.getBean(CMDInstance.class, file, attrs.size());
+            
+            executor.submit(() -> {
+               
+               try {
+                  CMDInstanceReport cmdInstanceReport = instance.generateReport(report.getName());
+                  cmdInstanceReport.mergeWithParent(report);
+               }
+               catch (SubprocessorException e) {
+
+                  log.debug("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()
+                        + " Skipping to next instance...");
+                  new ErrorReport(conf.getDirectory().getDataRoot().relativize(instance.getPath()).toString(), e.getMessage())
+                        .mergeWithParent(report);
+               }
+            }); // end executor.submit            
+            
+            return FileVisitResult.CONTINUE;
+         }
+
+         @Override
+         public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+            log.error("can't access file '{}'", file);
+            return FileVisitResult.CONTINUE;
+         }
+
+         @Override
+         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+
+            return FileVisitResult.CONTINUE;
+         }      
+      });
 
       executor.shutdown();
 
@@ -135,8 +122,7 @@ public class CollectionAggregator extends AbstractMessageCollection{
          }
       }
 
-      report.calculateAverageValues();
-      
+      report.calculateAverageValues();    
       
       try (Stream<AggregatedStatus> stream = aRep.findAllByProvidergroupName(report.getName())) {
 
@@ -166,12 +152,11 @@ public class CollectionAggregator extends AbstractMessageCollection{
 
          log.error("couldn't get category statistics for provider group '{}' from database", report.getName(), ex);
       }
-       
-
 
       if (!CMDInstance.duplicateMDSelfLink.isEmpty()) {
          report.headerReport.duplicatedMDSelfLink = CMDInstance.duplicateMDSelfLink;
       }
+      
       CMDInstance.duplicateMDSelfLink.clear();
       CMDInstance.mdSelfLinks.clear();
 
