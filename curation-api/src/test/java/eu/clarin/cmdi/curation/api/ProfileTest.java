@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
+import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.Report;
 
@@ -32,7 +33,7 @@ public class ProfileTest {
    CurationModule curation;
    
    @BeforeAll
-   public void createReport() throws URISyntaxException, MalformedURLException {
+   public void createReport() throws URISyntaxException, MalformedURLException, SubprocessorException {
       
       URI profileURI = this.getClass().getClassLoader().getResource("profile/LexicalResourceProfile.xsd").toURI();
       Path profilePath = Paths.get(profileURI);
