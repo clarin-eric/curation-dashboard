@@ -87,7 +87,6 @@ public class ProfileElementsHandler extends AbstractMessageCollection {
             component.count = 1;
             comp.components.add(component);
          }
-
       });
 
       comp.unique = comp.components.size();

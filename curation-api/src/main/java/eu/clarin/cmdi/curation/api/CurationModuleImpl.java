@@ -8,7 +8,7 @@ import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.ErrorReport;
 import eu.clarin.cmdi.curation.api.report.Report;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
-import eu.clarin.cmdi.vlo.config.VloConfig;
+import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.io.FileUtils;
@@ -28,22 +28,22 @@ import java.util.Collection;
 @Slf4j
 public class CurationModuleImpl implements CurationModule {
 
-   @Autowired
-   private VloConfig vloConf;
+   @Autowired//
+   private PPHConfig pphConf;
    @Autowired
    private ApplicationContext ctx;
 
-   @Override public Report<?> processCMDProfile(String profileId) {
-      return processCMDProfile(vloConf.getComponentRegistryProfileSchema(profileId));
+   @Override public Report<?> processCMDProfile(String profileId) throws MalformedURLException, SubprocessorException {
+      return processCMDProfile(new URL(pphConf.getRestApi() + "/" + profileId + "/xsd"));
    }
 
    @Override
-   public Report<?> processCMDProfile(URL schemaLocation) {
+   public Report<?> processCMDProfile(URL schemaLocation) throws SubprocessorException {
       return ctx.getBean(CMDProfile.class, schemaLocation.toString(), "1.x").generateReport();
    }
 
    @Override
-   public Report<?> processCMDProfile(Path path) throws MalformedURLException {
+   public Report<?> processCMDProfile(Path path) throws MalformedURLException, SubprocessorException {
 
       return processCMDProfile(path.toUri().toURL());
    }
@@ -112,7 +112,7 @@ public class CurationModuleImpl implements CurationModule {
    }
 
    @Override
-   public Report<?> aggregateReports(Collection<Report> reports) {
+   public Report<?> aggregateReports(Collection<Report<?>> reports) {
 
       return null;
    }

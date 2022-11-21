@@ -63,8 +63,7 @@ public class ProfileTest {
       
       assertNotNull(profileReport.facet);
       
-      
-      //report.toXML(System.out);
+      report.toXML(System.out);
       
    };
 }
