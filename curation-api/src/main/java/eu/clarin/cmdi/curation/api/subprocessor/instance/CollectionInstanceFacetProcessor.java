@@ -49,7 +49,7 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor {
       try {
          facetMapping = fac.getFacetsMapping(report.header);
 
-         report.facets = facetReportCreator.createFacetReport(report.header, facetMapping);
+         report.facets = facetReportCreator.createFacetReport(this, report.header, facetMapping);
 
          int numOfCoveredByIns = 0;
 

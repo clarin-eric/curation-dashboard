@@ -166,7 +166,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
       facetValuesMap.values().forEach(
             list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getOriginFacetConfig().getName())));
 
-      report.facets = ctx.getBean(FacetReportCreator.class).createFacetReport(report.header, facetMapping);
+      report.facets = ctx.getBean(FacetReportCreator.class).createFacetReport(this, report.header, facetMapping);
 
       int numOfCoveredByIns = 0;
 
