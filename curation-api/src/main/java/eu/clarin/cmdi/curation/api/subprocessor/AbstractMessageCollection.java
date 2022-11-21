@@ -18,7 +18,7 @@ public abstract class AbstractMessageCollection {
    
    }
 
-   protected void addMessage(Severity lvl, String message) {
+   public void addMessage(Severity lvl, String message) {
 
        messages.add(new Message(lvl, message));
    
