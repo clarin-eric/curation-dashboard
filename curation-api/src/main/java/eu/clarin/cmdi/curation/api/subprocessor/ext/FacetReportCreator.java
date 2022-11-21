@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 
 import org.springframework.stereotype.Component;
 
@@ -12,6 +11,8 @@ import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport.Coverage;
+import eu.clarin.cmdi.curation.api.report.Severity;
+import eu.clarin.cmdi.curation.api.subprocessor.AbstractMessageCollection;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
@@ -21,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@Scope(value="prototype")
 public class FacetReportCreator {
 
    @Autowired
@@ -29,7 +29,7 @@ public class FacetReportCreator {
    @Autowired
    private CRService crService;
 
-   public FacetReport createFacetReport(ProfileHeader header, FacetsMapping facetMapping) throws SubprocessorException {
+   public synchronized FacetReport createFacetReport(AbstractMessageCollection messageCollection, ProfileHeader header, FacetsMapping facetMapping) throws SubprocessorException {
       Map<String, CMDINode> elements;
 
       try {
@@ -37,7 +37,8 @@ public class FacetReportCreator {
       }
       catch (NoProfileCacheEntryException e) {
          
-         log.error("no ParsedProfile for profile id '{}'", header.getId());
+         log.debug("no ParsedProfile for profile id '{}'", header.getId());
+         messageCollection.addMessage(Severity.FATAL, "no ParsedProfile for profile id " + header.getId());
          throw new SubprocessorException();
       }
       FacetReport facetReport = new FacetReport();
