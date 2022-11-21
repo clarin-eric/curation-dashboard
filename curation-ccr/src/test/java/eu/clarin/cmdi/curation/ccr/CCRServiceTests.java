@@ -33,6 +33,9 @@ class CCRServiceTests {
    void getAll() {
 
       assertTrue(service.getAll().size() > 0);
+      
+      //test for URIs in uri field
+      assertTrue(service.getAll().stream().allMatch(concept -> concept.getUri().startsWith("http")));
 
    }
    
