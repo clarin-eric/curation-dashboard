@@ -1,10 +1,9 @@
 package eu.clarin.cmdi.curation.api.entity;
 
+import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.processor.CMDProfileProcessor;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 import lombok.Data;
-
-import java.nio.file.Path;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -25,14 +24,13 @@ public class CMDProfile{
     
     @Autowired
     CMDProfileProcessor processor;
-    
 
     public CMDProfile(String schemaLocation, String cmdiVersion) {
         this.schemaLocation = schemaLocation;
         this.cmdiVersion = cmdiVersion;
     }
 
-    public CMDProfileReport generateReport() {
+    public CMDProfileReport generateReport() throws SubprocessorException {
         return processor.process(this);
     }
 }
