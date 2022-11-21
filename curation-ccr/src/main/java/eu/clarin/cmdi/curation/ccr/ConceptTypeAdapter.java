@@ -39,7 +39,7 @@ public class ConceptTypeAdapter extends TypeAdapter<CCRConcept> {
 
 		in.endObject();
 
-		return new CCRConcept(prefLabel, uri, status);
+		return new CCRConcept(uri, prefLabel, status);
 	}
 
 	@Override
