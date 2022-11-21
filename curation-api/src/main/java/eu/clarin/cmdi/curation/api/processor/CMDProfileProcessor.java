@@ -27,28 +27,21 @@ public class CMDProfileProcessor {
    @Autowired
    ApplicationContext ctx;
 
-   public CMDProfileReport process(CMDProfile profile) {
+   public CMDProfileReport process(CMDProfile profile) throws SubprocessorException {
 
       CMDProfileReport report = new CMDProfileReport();
 
-      try {
+      ProfileHeaderHandler profileHeaderHandler = ctx.getBean(ProfileHeaderHandler.class);
+      profileHeaderHandler.process(profile, report);
+      report.addSegmentScore(profileHeaderHandler.calculateScore(report));
 
-         ProfileHeaderHandler profileHeaderHandler = ctx.getBean(ProfileHeaderHandler.class);
-         profileHeaderHandler.process(profile, report);
-         report.addSegmentScore(profileHeaderHandler.calculateScore(report));
+      ProfileElementsHandler profileElementsHandler = ctx.getBean(ProfileElementsHandler.class);
+      profileElementsHandler.process(report);
+      report.addSegmentScore(profileElementsHandler.calculateScore(report));
 
-         ProfileElementsHandler profileElementsHandler = ctx.getBean(ProfileElementsHandler.class);
-         profileElementsHandler.process(report);
-         report.addSegmentScore(profileElementsHandler.calculateScore(report));
-
-         ProfileFacetHandler profileFacetHandler = ctx.getBean(ProfileFacetHandler.class);
-         profileFacetHandler.process(report);
-         report.addSegmentScore(profileFacetHandler.calculateScore(report));
-      }
-      catch (SubprocessorException ex) {
-
-         log.debug("", ex);
-      }
+      ProfileFacetHandler profileFacetHandler = ctx.getBean(ProfileFacetHandler.class);
+      profileFacetHandler.process(report);
+      report.addSegmentScore(profileFacetHandler.calculateScore(report));
 
       return report;
 
