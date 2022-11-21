@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
+import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CollectionReport;
 import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionAggregator;
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
