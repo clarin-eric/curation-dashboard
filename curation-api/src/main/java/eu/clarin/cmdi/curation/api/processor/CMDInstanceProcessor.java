@@ -33,8 +33,10 @@ public class CMDInstanceProcessor {
    @Autowired
    InstanceFacetProcessor instanceFacetProcessor;
    
+   
+   
 
-   public CMDInstanceReport process(CMDInstance record, String parentName) {
+   public CMDInstanceReport process(CMDInstance record, String parentName) throws SubprocessorException {
 
       CMDInstanceReport report = new CMDInstanceReport();
 
@@ -54,10 +56,6 @@ public class CMDInstanceProcessor {
                   }
                   catch (SubprocessorException e) {
                      log.debug("can't process file '{}'", record.getPath());
-                  }
-                  catch (Exception e) {
-                     // TODO Auto-generated catch block
-                     e.printStackTrace();
                   }
                });
 
