@@ -34,108 +34,111 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-@Scope(value="prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class ProfileElementsHandler extends AbstractMessageCollection{
-   
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class ProfileElementsHandler extends AbstractMessageCollection {
+
    @Autowired
    private CRService crService;
 
+   public void process(CMDProfileReport report) throws SubprocessorException {
+      ParsedProfile parsedProfile = null;
 
-    public void process(CMDProfileReport report) throws SubprocessorException {
-        ParsedProfile parsedProfile = null;
-
-        try {
+      try {
          parsedProfile = crService.getParsedProfile(report.header);
       }
       catch (NoProfileCacheEntryException e) {
-         
-         log.error("can't get ParsedProfile for profile id '{}'", report.header.getId());
+
+         log.debug("can't get ParsedProfile for profile id '{}'", report.header.getId());
          throw new SubprocessorException();
       }
 
-        report.components = createComponentSegment(parsedProfile);
-        report.elements = createElementSegment(parsedProfile);
+      report.components = createComponentSegment(parsedProfile);
+      report.elements = createElementSegment(parsedProfile);
 
-    }
+   }
 
-    public Score calculateScore(CMDProfileReport report) {
-        double score = report.elements.percWithConcept;
-        return new Score(score, 1.0, "cmd-concepts-section", this.getMessages());
-    }
+   public Score calculateScore(CMDProfileReport report) {
+      double score = report.elements.percWithConcept;
+      return new Score(score, 1.0, "cmd-concepts-section", this.getMessages());
+   }
 
-    private Components createComponentSegment(ParsedProfile parsedProfile) {
-        Collection<CMDINode> crComponents = parsedProfile.getComponents();
-        Components comp = new Components();
-        comp.total = crComponents.size();
-        comp.required = 0;
-        comp.unique = 0;
-        comp.components = new ArrayList<eu.clarin.cmdi.curation.api.report.CMDProfileReport.Component>();
+   private Components createComponentSegment(ParsedProfile parsedProfile) {
+      Collection<CMDINode> crComponents = parsedProfile.getComponents();
+      Components comp = new Components();
+      comp.total = crComponents.size();
+      comp.required = 0;
+      comp.unique = 0;
+      comp.components = new ArrayList<eu.clarin.cmdi.curation.api.report.CMDProfileReport.Component>();
 
-        crComponents.forEach(crc -> {
+      crComponents.forEach(crc -> {
 
-            if (crc.isRequired)
-                comp.required++;
+         if (crc.isRequired)
+            comp.required++;
 
-            eu.clarin.cmdi.curation.api.report.CMDProfileReport.Component component = comp.components.stream().filter(c -> c.id.equals(crc.component.id)).findFirst().orElse(null);
-            if (component != null) {
-                component.count++;
-            } else {
-                component = new eu.clarin.cmdi.curation.api.report.CMDProfileReport.Component();
-                component.id = crc.component.id;
-                component.name = crc.component.name;
-                component.count = 1;
-                comp.components.add(component);
-            }
+         eu.clarin.cmdi.curation.api.report.CMDProfileReport.Component component = comp.components.stream()
+               .filter(c -> c.id.equals(crc.component.id)).findFirst().orElse(null);
+         if (component != null) {
+            component.count++;
+         }
+         else {
+            component = new eu.clarin.cmdi.curation.api.report.CMDProfileReport.Component();
+            component.id = crc.component.id;
+            component.name = crc.component.name;
+            component.count = 1;
+            comp.components.add(component);
+         }
 
-        });
+      });
 
-        comp.unique = comp.components.size();
-        return comp;
-    }
+      comp.unique = comp.components.size();
+      return comp;
+   }
 
-    private Elements createElementSegment(ParsedProfile parsedProfile) {
-        Collection<CMDINode> elemNodes = parsedProfile.getElements().entrySet()
-                .stream() //dont consider elements from header and resources, they dont have concept
-                .filter(e -> e.getKey().startsWith("/cmd:CMD/cmd:Components/"))
-                .map(Entry::getValue)
-                .collect(Collectors.toList());
-        Elements elems = new Elements();
-        elems.total = elemNodes.size();
-        elems.required = 0;
-        elems.withConcept = 0;
-        elems.concepts = new Concepts();
-        elems.concepts.total = 0;
-        elems.concepts.unique = 0;
-        elems.concepts.required = 0;
-        elems.concepts.concepts = new ArrayList<>();
+   private Elements createElementSegment(ParsedProfile parsedProfile) {
+      Collection<CMDINode> elemNodes = parsedProfile.getElements().entrySet().stream() // dont consider elements from
+                                                                                       // header and resources, they
+                                                                                       // dont have concept
+            .filter(e -> e.getKey().startsWith("/cmd:CMD/cmd:Components/")).map(Entry::getValue)
+            .collect(Collectors.toList());
+      Elements elems = new Elements();
+      elems.total = elemNodes.size();
+      elems.required = 0;
+      elems.withConcept = 0;
+      elems.concepts = new Concepts();
+      elems.concepts.total = 0;
+      elems.concepts.unique = 0;
+      elems.concepts.required = 0;
+      elems.concepts.concepts = new ArrayList<>();
 
-        elemNodes.forEach(n -> {
+      elemNodes.forEach(n -> {
+         if (n.isRequired)
+            elems.required++;
+
+         if (n.concept != null) {
+            elems.withConcept++;
+
             if (n.isRequired)
-                elems.required++;
+               elems.concepts.required++;
 
-            if (n.concept != null) {
-                elems.withConcept++;
+            Concept concept = elems.concepts.concepts.stream().filter(c -> c.uri.equals(n.concept.uri)).findFirst()
+                  .orElse(null);
 
-                if (n.isRequired)
-                    elems.concepts.required++;
-
-                Concept concept = elems.concepts.concepts.stream().filter(c -> c.uri.equals(n.concept.uri)).findFirst().orElse(null);
-
-                if (concept != null) {
-                    concept.count++;
-                } else {
-                    elems.concepts.concepts.add(new Concept(n.concept.uri, n.concept.prefLabel, n.concept.status));
-                }
+            if (concept != null) {
+               concept.count++;
             }
+            else {
+               elems.concepts.concepts.add(new Concept(n.concept.uri, n.concept.prefLabel, n.concept.status));
+            }
+         }
 
-        });
+      });
 
-        elems.concepts.total = elems.withConcept;
-        elems.concepts.unique = elems.concepts.concepts.size();
-        elems.percWithConcept = elems.total == 0.0 ? 0.0 : ((double) elems.withConcept) / elems.total;
+      elems.concepts.total = elems.withConcept;
+      elems.concepts.unique = elems.concepts.concepts.size();
+      elems.percWithConcept = elems.total == 0.0 ? 0.0 : ((double) elems.withConcept) / elems.total;
 
-        return elems;
+      return elems;
 
-    }
+   }
 
 }
