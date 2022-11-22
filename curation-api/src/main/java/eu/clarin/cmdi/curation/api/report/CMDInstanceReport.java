@@ -1,6 +1,6 @@
 package eu.clarin.cmdi.curation.api.report;
 
-import eu.clarin.cmdi.cpa.model.Status;
+import eu.clarin.linkchecker.persistence.model.Status;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport;
 import eu.clarin.cmdi.curation.api.report.CollectionReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.api.report.CollectionReport.Record;
@@ -159,49 +159,45 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
 
     @Override
-    public void mergeWithParent(CollectionReport parentReport) {
+    public synchronized void mergeWithParent(CollectionReport parentReport) {
 
-        mergeWithParent(parentReport, this);
-    }
+       parentReport.score += this.score;
+        if (this.score > parentReport.insMaxScore)
+            parentReport.insMaxScore = this.score;
 
-    private static synchronized void mergeWithParent(CollectionReport parentReport, CMDInstanceReport instanceReport) {
-        parentReport.score += instanceReport.score;
-        if (instanceReport.score > parentReport.insMaxScore)
-            parentReport.insMaxScore = instanceReport.score;
+        if (this.score < parentReport.insMinScore)
+            parentReport.insMinScore = this.score;
 
-        if (instanceReport.score < parentReport.insMinScore)
-            parentReport.insMinScore = instanceReport.score;
-
-        parentReport.maxPossibleScoreInstance = instanceReport.maxScore;
+        parentReport.maxPossibleScoreInstance = this.maxScore;
 
         // ResProxies
-        parentReport.resProxyReport.totNumOfResProxies += instanceReport.resProxyReport.numOfResProxies;
+        parentReport.resProxyReport.totNumOfResProxies += this.resProxyReport.numOfResProxies;
 
-        parentReport.resProxyReport.totNumOfResourcesWithMime += instanceReport.resProxyReport.numOfResourcesWithMime;
-        parentReport.resProxyReport.totNumOfResProxiesWithReferences += instanceReport.resProxyReport.numOfResProxiesWithReferences;
+        parentReport.resProxyReport.totNumOfResourcesWithMime += this.resProxyReport.numOfResourcesWithMime;
+        parentReport.resProxyReport.totNumOfResProxiesWithReferences += this.resProxyReport.numOfResProxiesWithReferences;
 
         // XMLPopulatedValidator
-        parentReport.xmlPopulatedReport.totNumOfXMLElements += instanceReport.xmlPopulatedReport.numOfXMLElements;
-        parentReport.xmlPopulatedReport.totNumOfXMLSimpleElements += instanceReport.xmlPopulatedReport.numOfXMLSimpleElements;
-        parentReport.xmlPopulatedReport.totNumOfXMLEmptyElement += instanceReport.xmlPopulatedReport.numOfXMLEmptyElement;
+        parentReport.xmlPopulatedReport.totNumOfXMLElements += this.xmlPopulatedReport.numOfXMLElements;
+        parentReport.xmlPopulatedReport.totNumOfXMLSimpleElements += this.xmlPopulatedReport.numOfXMLSimpleElements;
+        parentReport.xmlPopulatedReport.totNumOfXMLEmptyElement += this.xmlPopulatedReport.numOfXMLEmptyElement;
 
         // XMLValidator
         parentReport.xmlValidationReport.totNumOfRecords += 1;
-        parentReport.xmlValidationReport.totNumOfValidRecords += instanceReport.xmlValidityReport.valid ? 1 : 0;
-        if (!instanceReport.xmlValidityReport.valid) {
+        parentReport.xmlValidationReport.totNumOfValidRecords += this.xmlValidityReport.valid ? 1 : 0;
+        if (!this.xmlValidityReport.valid) {
             Record record = new Record();
-            record.name = instanceReport.fileReport.location;
-            record.issues = instanceReport.xmlValidityReport.issues;
+            record.name = this.fileReport.location;
+            record.issues = this.xmlValidityReport.issues;
             parentReport.xmlValidationReport.record.add(record);
         }
 
 
-        parentReport.urlReport.totNumOfLinks += instanceReport.urlReport.numOfLinks; 
+        parentReport.urlReport.totNumOfLinks += this.urlReport.numOfLinks; 
         // the other numbers are taken from the database
 
 
         // Facet
-        instanceReport.facets.coverage.stream()
+        this.facets.coverage.stream()
                 .filter(facet -> facet.coveredByInstance)
                 .map(facet -> facet.name)
                 .forEach(coveredFacet -> {
@@ -211,7 +207,7 @@ public class CMDInstanceReport implements Report<CollectionReport> {
                     }
                 });
 
-        parentReport.handleProfile(instanceReport.header.getId(), instanceReport.profileScore);
+        parentReport.handleProfile(this.header.getId(), this.profileScore);
 
     }
 

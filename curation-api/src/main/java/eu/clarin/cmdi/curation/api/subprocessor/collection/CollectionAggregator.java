@@ -1,7 +1,7 @@
 package eu.clarin.cmdi.curation.api.subprocessor.collection;
 
-import eu.clarin.cmdi.cpa.model.AggregatedStatus;
-import eu.clarin.cmdi.cpa.repository.AggregatedStatusRepository;
+import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
+import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
@@ -147,6 +147,11 @@ public class CollectionAggregator extends AbstractMessageCollection{
 
             report.urlReport.statistics.add(xmlStatistics);
          });
+      }
+      catch (IllegalArgumentException ex) {
+
+         log.error(ex.getMessage());
+         
       }
       catch (Exception ex) {
 

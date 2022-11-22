@@ -1,6 +1,6 @@
 package eu.clarin.cmdi.curation.api.report;
 
-import eu.clarin.cmdi.cpa.utils.Category;
+import eu.clarin.linkchecker.persistence.utils.Category;
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
 import eu.clarin.cmdi.curation.api.xml.XMLMarshaller;
 import lombok.extern.slf4j.Slf4j;

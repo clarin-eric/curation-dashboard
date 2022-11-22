@@ -1,6 +1,6 @@
 package eu.clarin.cmdi.curation.api.report;
 
-import eu.clarin.cmdi.cpa.utils.Category;
+import eu.clarin.linkchecker.persistence.utils.Category;
 import eu.clarin.cmdi.curation.api.report.CollectionReport.Statistics;
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
 import eu.clarin.cmdi.curation.api.xml.XMLMarshaller;

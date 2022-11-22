@@ -61,4 +61,24 @@ public class CollectionTest {
       this.report.toXML(System.out);
       
    }
+   
+   @Test
+   @Order(2)
+   public void sectionReportNotNull() {
+      
+      CollectionReport collectionReport = CollectionReport.class.cast(this.report);
+      
+      assertNotNull(collectionReport.fileReport);
+      
+      assertNotNull(collectionReport.headerReport);
+      
+      assertNotNull(collectionReport.resProxyReport);
+      
+      assertNotNull(collectionReport.urlReport);
+      
+      assertNotNull(collectionReport.xmlPopulatedReport);
+      
+      assertNotNull(collectionReport.xmlValidationReport);
+      
+   }
 }

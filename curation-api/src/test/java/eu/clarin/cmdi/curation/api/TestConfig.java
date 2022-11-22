@@ -9,11 +9,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootConfiguration
-@EnableJpaRepositories(basePackages = "eu.clarin.cmdi.cpa.repository")
-@EntityScan(basePackages = "eu.clarin.cmdi.cpa.model")
+@EnableJpaRepositories(basePackages = "eu.clarin.linkchecker.persistence.repository")
+@EntityScan(basePackages = "eu.clarin.linkchecker.persistence.model")
 @EnableCaching
 @EnableConfigurationProperties
-@ComponentScan("eu.clarin.cmdi")
+@ComponentScan("eu.clarin")
 @EnableAutoConfiguration
 public class TestConfig {
 

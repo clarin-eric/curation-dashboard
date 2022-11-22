@@ -1,14 +1,14 @@
 package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
-import eu.clarin.cmdi.cpa.model.Client;
-import eu.clarin.cmdi.cpa.model.Status;
-import eu.clarin.cmdi.cpa.model.Url;
-import eu.clarin.cmdi.cpa.repository.ClientRepository;
-import eu.clarin.cmdi.cpa.repository.StatusRepository;
-import eu.clarin.cmdi.cpa.repository.UrlRepository;
-import eu.clarin.cmdi.cpa.service.LinkService;
-import eu.clarin.cmdi.cpa.utils.Category;
-import eu.clarin.cmdi.cpa.utils.UrlValidator;
+import eu.clarin.linkchecker.persistence.model.Client;
+import eu.clarin.linkchecker.persistence.model.Status;
+import eu.clarin.linkchecker.persistence.model.Url;
+import eu.clarin.linkchecker.persistence.repository.ClientRepository;
+import eu.clarin.linkchecker.persistence.repository.StatusRepository;
+import eu.clarin.linkchecker.persistence.repository.UrlRepository;
+import eu.clarin.linkchecker.persistence.service.LinkService;
+import eu.clarin.linkchecker.persistence.utils.Category;
+import eu.clarin.linkchecker.persistence.utils.UrlValidator;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;

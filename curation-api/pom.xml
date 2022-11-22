@@ -7,7 +7,7 @@
    <modelVersion>4.0.0</modelVersion>
    <artifactId>curation-api</artifactId>
    <properties>
-      <cpa.version>0.0.1-SNAPSHOT</cpa.version>
+      <lpa.version>0.0.1-SNAPSHOT</lpa.version>
    </properties>
    <dependencies>
       <dependency>
@@ -86,9 +86,9 @@
          <optional>true</optional>
       </dependency>
       <dependency>
-         <groupId>eu.clarin.cmdi</groupId>
-         <artifactId>curation-persistence</artifactId>
-         <version>${cpa.version}</version>
+         <groupId>eu.clarin</groupId>
+         <artifactId>linkchecker-persistence</artifactId>
+         <version>${lpa.version}</version>
       </dependency>
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
