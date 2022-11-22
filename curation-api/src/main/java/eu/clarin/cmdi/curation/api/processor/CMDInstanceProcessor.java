@@ -7,8 +7,6 @@ import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.subprocessor.instance.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.stream.Stream;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,32 +30,39 @@ public class CMDInstanceProcessor {
    CollectionInstanceFacetProcessor collectionInstanceFacetProcessor;
    @Autowired
    InstanceFacetProcessor instanceFacetProcessor;
-   
-   
-   
 
    public CMDInstanceReport process(CMDInstance record, String parentName) throws SubprocessorException {
 
       CMDInstanceReport report = new CMDInstanceReport();
 
+      try {
+         fileSizeValidator.process(record, report);
+         report.addSegmentScore(fileSizeValidator.calculateScore(report));
 
-         
-         Stream.of(
-               fileSizeValidator, 
-               instanceHeaderProcessor, 
-               resourceProxyProcessor, 
-               urlValidator, 
-               xmlValidator, 
-               "collection".equalsIgnoreCase(conf.getMode())?collectionInstanceFacetProcessor:instanceFacetProcessor
-               ).forEach(subprocessor -> {
-                  try {
-                     subprocessor.process(record, report);
-                     report.addSegmentScore(subprocessor.calculateScore(report));
-                  }
-                  catch (SubprocessorException e) {
-                     log.debug("can't process file '{}'", record.getPath());
-                  }
-               });
+         instanceHeaderProcessor.process(record, report);
+         report.addSegmentScore(instanceHeaderProcessor.calculateScore(report));
+
+         resourceProxyProcessor.process(record, report);
+         report.addSegmentScore(resourceProxyProcessor.calculateScore(report));
+
+         urlValidator.process(record, report);
+         report.addSegmentScore(urlValidator.calculateScore(report));
+
+         xmlValidator.process(record, report);
+         report.addSegmentScore(xmlValidator.calculateScore(report));
+
+         if ("collection".equalsIgnoreCase(conf.getMode())) {
+            collectionInstanceFacetProcessor.process(record, report);
+            report.addSegmentScore(collectionInstanceFacetProcessor.calculateScore(report));
+         }
+         else {
+            instanceFacetProcessor.process(record, report);
+            report.addSegmentScore(instanceFacetProcessor.calculateScore(report));
+         }
+      }
+      catch (SubprocessorException e) {
+         log.debug("can't process file '{}'", record.getPath());
+      }
 
       return report;
    }
