@@ -45,11 +45,11 @@ import eu.clarin.cmdi.curation.pph.PPHService;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "eu.clarin.cmdi.cpa.repository")
-@EntityScan(basePackages = "eu.clarin.cmdi.cpa.model")
+@EnableJpaRepositories(basePackages = "eu.clarin.linkchecker.persistence.repository")
+@EntityScan(basePackages = "eu.clarin.linkchecker.persistence.model")
 @EnableCaching
 @EnableConfigurationProperties
-@ComponentScan("eu.clarin.cmdi")
+@ComponentScan({"eu.clarin.cmdi.curation", "eu.clarin.linkchecker.persistence"})
 @EnableAutoConfiguration
 @Slf4j
 public class CurationApp {
@@ -63,9 +63,6 @@ public class CurationApp {
    @Autowired
    private PPHService pphService;
 
-   
-
-
 	public static void main(String[] args) {
 		SpringApplication.run(CurationApp.class, args);
 	}
@@ -75,6 +72,8 @@ public class CurationApp {
       return args -> {
          
          prepareOutPaths();
+         
+/*         
                  
          final AllPublicProfileReport allProfileReport = new AllPublicProfileReport();
 
@@ -105,12 +104,42 @@ public class CurationApp {
                log.error("can't process public profile with profile id '{}'", header.getId());
             }
          });
-/*         
+         
+         try {
+            dumpAsXML(allProfileReport, CurationEntityType.PROFILE);
+            dumpAsHTML(allProfileReport, CurationEntityType.PROFILE);
+         }
+         catch (Exception e) {
+
+            log.error("can't dump report '{}'", e, allProfileReport.getName());                
+         
+         }
+         
+*/        
          final AllCollectionReport allCollectionReport = new AllCollectionReport();
          final AllLinkcheckerReport allLinkcheckerReport = new AllLinkcheckerReport();         
 
          conf.getDirectory().getIn().forEach(inPath -> processCollection(inPath, allCollectionReport,allLinkcheckerReport ));
-*/
+
+         try {
+            dumpAsXML(allCollectionReport, CurationEntityType.COLLECTION);
+            dumpAsHTML(allCollectionReport, CurationEntityType.COLLECTION);
+         }
+         catch (Exception e) {
+
+            log.error("can't dump report '{}'", e, allCollectionReport.getName());                
+         
+         }
+         
+         try {
+            dumpAsXML(allLinkcheckerReport, CurationEntityType.STATISTICS);
+            dumpAsHTML(allLinkcheckerReport, CurationEntityType.STATISTICS);
+         }
+         catch (Exception e) {
+
+            log.error("can't dump report '{}'", e, allLinkcheckerReport.getName());                
+         
+         }
       };
    }
    
@@ -124,30 +153,24 @@ public class CurationApp {
             allCollectionReport.addReport(report);
             allLinkcheckerReport.addReport(report);
             
-            dumpAsXML(report, CurationEntityType.PROFILE);
-            dumpAsHTML(report, CurationEntityType.PROFILE);
+            dumpAsXML(report, CurationEntityType.COLLECTION);
+            dumpAsHTML(report, CurationEntityType.COLLECTION);
             
          }
          else {
             processCollection(path, allCollectionReport, allLinkcheckerReport);
          }
       }
-      catch (IOException e) {
-         
-         log.error("can't process '{}'", path);
-      }
+
       catch (TransformerException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
+         
+         log.error("", e);
       }
       catch (JAXBException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
+
+         log.error("", e);
       }
-      catch (Exception e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      } 
+ 
    }
    
    private void prepareOutPaths() {
@@ -173,13 +196,19 @@ public class CurationApp {
       });      
    }
    
-   private boolean isCollectionRoot(Path path) throws IOException {
+   private boolean isCollectionRoot(Path path) {
       
-      return Files.walk(path, 1).anyMatch(fileOrDirectory -> Files.isRegularFile(fileOrDirectory));
-            
+      try {
+         return Files.walk(path, 1).anyMatch(fileOrDirectory -> Files.isRegularFile(fileOrDirectory));
+      }
+      catch (IOException e) {
+         
+         log.error("can't walk through path '{}'", path);
+         throw new RuntimeException(e);
+      }
    }
    
-   private void dumpAsXML(Report<?> report, CurationEntityType type) throws Exception {
+   private void dumpAsXML(Report<?> report, CurationEntityType type) throws JAXBException {
       
       JAXBContext jc = JAXBContext.newInstance(report.getClass());
 
@@ -192,15 +221,23 @@ public class CurationApp {
       String filename = FileNameEncoder.encode(report.getName()) + ".xml";
       path = path.resolve(filename);
 
-      marshaller.marshal(report, Files.newOutputStream(path));
+      try {
+         marshaller.marshal(report, Files.newOutputStream(path));
+      }
+      catch (IOException e) {
+         
+         log.error("can't create/write to file '{}'", path);
+         throw new RuntimeException(e);
+      
+      }
 
       // instead of a rollover we create a copy with report generation date in
       // filename
       copyStampedFile(path);
-
+   
    }
 
-   private void dumpAsHTML(Report<?> report, CurationEntityType type) throws TransformerException, JAXBException, IOException {
+   private void dumpAsHTML(Report<?> report, CurationEntityType type) throws TransformerException, JAXBException {
       
       Path path = this.conf.getDirectory().getOut().resolve("html").resolve(type.toString());
 
@@ -220,10 +257,17 @@ public class CurationApp {
 
    }
 
-   private void copyStampedFile(Path path) throws IOException {
+   private void copyStampedFile(Path path) {
       String stampedFileName = path.getFileName().toString().replace(".",
             "_" + String.format("%1tF", generationDate) + ".");
       Path stampedPath = path.getParent().resolve(stampedFileName);
-      Files.copy(path, stampedPath, StandardCopyOption.REPLACE_EXISTING);
+      try {
+         Files.copy(path, stampedPath, StandardCopyOption.REPLACE_EXISTING);
+      }
+      catch (IOException e) {
+         
+         log.error("can't copy file '{}' to stmped file '{}'", path, stampedPath);
+         throw new RuntimeException(e);
+      }
    }
 }
