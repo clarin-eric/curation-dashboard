@@ -37,10 +37,12 @@ curation:
    directory:
       home: /app/curation
       dataRoot: /data/result/cmdi
-      in: /data/result/cmdi
+      in: 
+        - /home/clarin/git/curation-dashboard/curation-api/src/test/resources/instance/SAW_Leipzig_Repository
       out: /tmp/public
    max_file_size: 100000
-   threadPoolSize: 3           
+   threadPoolSize: 3
+   mode: collection          
 logging:
    level:
       root: ERROR         
