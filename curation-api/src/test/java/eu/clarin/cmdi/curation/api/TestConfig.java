@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackages = "eu.clarin.linkchecker.persistence.model")
 @EnableCaching
 @EnableConfigurationProperties
-@ComponentScan("eu.clarin")
+@ComponentScan({"eu.clarin.cmdi.curation", "eu.clarin.linkchecker.persistence"})
 @EnableAutoConfiguration
 public class TestConfig {
 
