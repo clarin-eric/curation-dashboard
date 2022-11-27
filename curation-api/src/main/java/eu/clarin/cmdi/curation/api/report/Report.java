@@ -5,23 +5,25 @@ package eu.clarin.cmdi.curation.api.report;
 
 import java.io.OutputStream;
 
+import eu.clarin.cmdi.curation.api.xml.XMLMarshaller;
+
 /**
 
  *
  */
-public interface Report<R extends Report<?>> {
+public abstract class Report<R extends Report<?>> {
 
-	public void setParentName(String parentName);
 
-	public String getParentName();
-
-	public String getName();
+	public abstract String getName();
 	
-	public boolean isValid();
+	public abstract boolean isValid();
 	
-	public void addSegmentScore(Score segmentScore);
+	public abstract void addSegmentScore(Score segmentScore);
 	
-	public void toXML(OutputStream os);
+	public abstract void addReport(R parentReport);
 	
-	public void mergeWithParent(R parentReport);
+   public void toXML(OutputStream os) {
+      XMLMarshaller<?> instanceMarshaller = new XMLMarshaller<>(this.getClass());
+      instanceMarshaller.marshal(this, os);
+   };
 }

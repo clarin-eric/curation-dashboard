@@ -3,11 +3,9 @@ package eu.clarin.cmdi.curation.api.report;
 import eu.clarin.linkchecker.persistence.utils.Category;
 import eu.clarin.cmdi.curation.api.report.CollectionReport.Statistics;
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
-import eu.clarin.cmdi.curation.api.xml.XMLMarshaller;
 
 import javax.xml.bind.annotation.*;
 
-import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeMap;
@@ -15,7 +13,7 @@ import java.util.TreeSet;
 
 @XmlRootElement(name = "linkchecker-report")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
-public class AllLinkcheckerReport implements Report<AllLinkcheckerReport> {
+public class AllLinkcheckerReport extends Report<CollectionReport> {
    @XmlAttribute(name = "creation-time")
    public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
@@ -24,15 +22,6 @@ public class AllLinkcheckerReport implements Report<AllLinkcheckerReport> {
 
    @XmlElement(name = "collection")
    private Set<CMDCollection> collections = new TreeSet<CMDCollection>((col1, col2) -> col1.name.compareTo(col2.name));
-
-   @Override
-   public void setParentName(String parentName) {
-   }
-
-   @Override
-   public String getParentName() {
-      return null;
-   }
 
    @Override
    public String getName() {
@@ -49,19 +38,10 @@ public class AllLinkcheckerReport implements Report<AllLinkcheckerReport> {
    }
 
    @Override
-   public void toXML(OutputStream os) {
-      XMLMarshaller<AllLinkcheckerReport> instanceMarshaller = new XMLMarshaller<>(AllLinkcheckerReport.class);
-      instanceMarshaller.marshal(this, os);
-   }
+   public void addReport(CollectionReport collectionReport) {
 
-   @Override
-   public void mergeWithParent(AllLinkcheckerReport parentReport) {
-   }
+      this.collections.add(new CMDCollection((CollectionReport) collectionReport, this));
 
-   public void addReport(Report<?> report) {
-      if (report instanceof CollectionReport) {
-         this.collections.add(new CMDCollection((CollectionReport) report, this));
-      }
    }
 
    public static class CMDCollection {

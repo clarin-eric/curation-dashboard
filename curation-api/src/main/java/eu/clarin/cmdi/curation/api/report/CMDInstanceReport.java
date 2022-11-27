@@ -2,8 +2,6 @@ package eu.clarin.cmdi.curation.api.report;
 
 import eu.clarin.linkchecker.persistence.model.Status;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport;
-import eu.clarin.cmdi.curation.api.report.CollectionReport.FacetCollectionStruct;
-import eu.clarin.cmdi.curation.api.report.CollectionReport.Record;
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
 import eu.clarin.cmdi.curation.api.xml.XMLMarshaller;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
@@ -19,7 +17,7 @@ import java.util.Collection;
 
 @XmlRootElement(name = "instance-report")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CMDInstanceReport implements Report<CollectionReport> {
+public class CMDInstanceReport extends Report<CMDInstanceReport> {
 
     public String parentName;
 
@@ -147,67 +145,9 @@ public class CMDInstanceReport implements Report<CollectionReport> {
 
     }
 
-    @Override
-    public String getParentName() {
-        return parentName;
-    }
 
     @Override
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
-    }
-
-
-    @Override
-    public synchronized void mergeWithParent(CollectionReport parentReport) {
-
-       parentReport.score += this.score;
-        if (this.score > parentReport.insMaxScore)
-            parentReport.insMaxScore = this.score;
-
-        if (this.score < parentReport.insMinScore)
-            parentReport.insMinScore = this.score;
-
-        parentReport.maxPossibleScoreInstance = this.maxScore;
-
-        // ResProxies
-        parentReport.resProxyReport.totNumOfResProxies += this.resProxyReport.numOfResProxies;
-
-        parentReport.resProxyReport.totNumOfResourcesWithMime += this.resProxyReport.numOfResourcesWithMime;
-        parentReport.resProxyReport.totNumOfResProxiesWithReferences += this.resProxyReport.numOfResProxiesWithReferences;
-
-        // XMLPopulatedValidator
-        parentReport.xmlPopulatedReport.totNumOfXMLElements += this.xmlPopulatedReport.numOfXMLElements;
-        parentReport.xmlPopulatedReport.totNumOfXMLSimpleElements += this.xmlPopulatedReport.numOfXMLSimpleElements;
-        parentReport.xmlPopulatedReport.totNumOfXMLEmptyElement += this.xmlPopulatedReport.numOfXMLEmptyElement;
-
-        // XMLValidator
-        parentReport.xmlValidationReport.totNumOfRecords += 1;
-        parentReport.xmlValidationReport.totNumOfValidRecords += this.xmlValidityReport.valid ? 1 : 0;
-        if (!this.xmlValidityReport.valid) {
-            Record record = new Record();
-            record.name = this.fileReport.location;
-            record.issues = this.xmlValidityReport.issues;
-            parentReport.xmlValidationReport.record.add(record);
-        }
-
-
-        parentReport.urlReport.totNumOfLinks += this.urlReport.numOfLinks; 
-        // the other numbers are taken from the database
-
-
-        // Facet
-        this.facets.coverage.stream()
-                .filter(facet -> facet.coveredByInstance)
-                .map(facet -> facet.name)
-                .forEach(coveredFacet -> {
-                    FacetCollectionStruct parFacet = parentReport.facetReport.facet.stream().filter(f -> f.name.equals(coveredFacet)).findFirst().orElse(null);
-                    if (parFacet != null) {//in case of derived facet parFacet will be null
-                        parFacet.cnt++;
-                    }
-                });
-
-        parentReport.handleProfile(this.header.getId(), this.profileScore);
+    public void addReport(CMDInstanceReport instanceReport) {
 
     }
 

@@ -16,23 +16,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "profiles")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AllPublicProfileReport implements Report<AllPublicProfileReport> {
+public class AllPublicProfileReport extends Report<CMDProfileReport> {
    @XmlAttribute(name = "creation-time")
    public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
    @XmlElement(name = "profile")
    private List<Profile> profiles = new ArrayList<Profile>();
-
-   @Override
-   public void setParentName(String parentName) {
-
-   }
-
-   @Override
-   public String getParentName() {
-
-      return null;
-   }
 
    @Override
    public String getName() {
@@ -58,16 +47,10 @@ public class AllPublicProfileReport implements Report<AllPublicProfileReport> {
    }
 
    @Override
-   public void mergeWithParent(AllPublicProfileReport parentReport) {
+   public void addReport(CMDProfileReport profileReport) {
 
-   }
+      this.profiles.add(new Profile((CMDProfileReport) profileReport));
 
-   public void addReport(Report<?> report) {
-      if (report instanceof CMDProfileReport) {
-
-         this.profiles.add(new Profile((CMDProfileReport) report));
-
-      }
    }
 
    @XmlRootElement

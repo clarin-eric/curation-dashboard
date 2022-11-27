@@ -43,13 +43,13 @@ public class CollectionAggregator extends AbstractMessageCollection{
    AggregatedStatusRepository aRep;
 
    @Transactional
-   public void process(CMDCollection collection, CollectionReport report) throws IOException {
+   public void process(CMDCollection collection, CollectionReport collectionReport) throws IOException {
       
       for (String facetName : conf.getFacets()) {
          FacetCollectionStruct facet = new FacetCollectionStruct();
          facet.name = facetName;
          facet.cnt = 0;
-         report.facetReport.facet.add(facet);
+         collectionReport.facetReport.facet.add(facet);
       }
 
       ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadPoolSize());    
@@ -65,33 +65,33 @@ public class CollectionAggregator extends AbstractMessageCollection{
          @Override
          public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
             
-            report.fileReport.numOfFiles++;
+            collectionReport.fileReport.numOfFiles++;
             
-            if(attrs.size() > report.fileReport.maxFileSize) {
-               report.fileReport.maxFileSize = attrs.size();
+            if(attrs.size() > collectionReport.fileReport.maxFileSize) {
+               collectionReport.fileReport.maxFileSize = attrs.size();
             }
-            if(report.fileReport.minFileSize == 0) {
-               report.fileReport.minFileSize = attrs.size();
+            if(collectionReport.fileReport.minFileSize == 0) {
+               collectionReport.fileReport.minFileSize = attrs.size();
             }
-            else if(attrs.size() < report.fileReport.minFileSize) {
-               report.fileReport.minFileSize = attrs.size();
+            else if(attrs.size() < collectionReport.fileReport.minFileSize) {
+               collectionReport.fileReport.minFileSize = attrs.size();
             }
-            report.fileReport.size += attrs.size();               
+            collectionReport.fileReport.size += attrs.size();               
             
             CMDInstance instance = ctx.getBean(CMDInstance.class, file, attrs.size());
             
             executor.submit(() -> {
                
                try {
-                  CMDInstanceReport cmdInstanceReport = instance.generateReport(report.getName());
-                  cmdInstanceReport.mergeWithParent(report);
+                  CMDInstanceReport cmdInstanceReport = instance.generateReport(collectionReport.getName());
+                  collectionReport.addReport(cmdInstanceReport);
                }
                catch (SubprocessorException e) {
 
                   log.debug("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()
                         + " Skipping to next instance...");
                   new ErrorReport(conf.getDirectory().getDataRoot().relativize(instance.getPath()).toString(), e.getMessage())
-                        .mergeWithParent(report);
+                        .mergeWithParent(collectionReport);
                }
             }); // end executor.submit            
             
@@ -122,9 +122,9 @@ public class CollectionAggregator extends AbstractMessageCollection{
          }
       }
 
-      report.calculateAverageValues();    
+      collectionReport.calculateAverageValues();    
       
-      try (Stream<AggregatedStatus> stream = aRep.findAllByProvidergroupName(report.getName())) {
+      try (Stream<AggregatedStatus> stream = aRep.findAllByProvidergroupName(collectionReport.getName())) {
 
          stream.forEach(categoryStats -> {
             Statistics xmlStatistics = new Statistics();
@@ -132,20 +132,20 @@ public class CollectionAggregator extends AbstractMessageCollection{
             xmlStatistics.maxRespTime = categoryStats.getMaxDuration();
             xmlStatistics.category = categoryStats.getCategory();
             xmlStatistics.count = categoryStats.getNumber();
-            report.urlReport.totNumOfCheckedLinks += categoryStats.getNumber();
+            collectionReport.urlReport.totNumOfCheckedLinks += categoryStats.getNumber();
 
             switch (categoryStats.getCategory()) {
-               case Invalid_URL -> report.urlReport.totNumOfInvalidLinks = categoryStats.getNumber().intValue();
-               case Broken -> report.urlReport.totNumOfBrokenLinks = categoryStats.getNumber().intValue();
-               case Undetermined -> report.urlReport.totNumOfUndeterminedLinks = categoryStats.getNumber().intValue();
+               case Invalid_URL -> collectionReport.urlReport.totNumOfInvalidLinks = categoryStats.getNumber().intValue();
+               case Broken -> collectionReport.urlReport.totNumOfBrokenLinks = categoryStats.getNumber().intValue();
+               case Undetermined -> collectionReport.urlReport.totNumOfUndeterminedLinks = categoryStats.getNumber().intValue();
                case Restricted_Access ->
-                  report.urlReport.totNumOfRestrictedAccessLinks = categoryStats.getNumber().intValue();
+               collectionReport.urlReport.totNumOfRestrictedAccessLinks = categoryStats.getNumber().intValue();
                case Blocked_By_Robots_txt ->
-                  report.urlReport.totNumOfBlockedByRobotsTxtLinks = (int) categoryStats.getNumber().intValue();
+               collectionReport.urlReport.totNumOfBlockedByRobotsTxtLinks = (int) categoryStats.getNumber().intValue();
                default -> throw new IllegalArgumentException("Unexpected value: " + categoryStats.getCategory());
             }
 
-            report.urlReport.statistics.add(xmlStatistics);
+            collectionReport.urlReport.statistics.add(xmlStatistics);
          });
       }
       catch (IllegalArgumentException ex) {
@@ -155,11 +155,11 @@ public class CollectionAggregator extends AbstractMessageCollection{
       }
       catch (Exception ex) {
 
-         log.error("couldn't get category statistics for provider group '{}' from database", report.getName(), ex);
+         log.error("couldn't get category statistics for provider group '{}' from database", collectionReport.getName(), ex);
       }
 
       if (!CMDInstance.duplicateMDSelfLink.isEmpty()) {
-         report.headerReport.duplicatedMDSelfLink = CMDInstance.duplicateMDSelfLink;
+         collectionReport.headerReport.duplicatedMDSelfLink = CMDInstance.duplicateMDSelfLink;
       }
       
       CMDInstance.duplicateMDSelfLink.clear();

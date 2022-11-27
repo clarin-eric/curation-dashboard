@@ -21,7 +21,7 @@ import eu.clarin.cmdi.curation.pph.ProfileHeader;
  */
 @XmlRootElement(name = "profile-report")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CMDProfileReport implements Report<CMDProfileReport> {
+public class CMDProfileReport extends Report<CMDProfileReport> {
 
     @XmlAttribute(name = "score")
     public Double score = 0.0;
@@ -51,34 +51,14 @@ public class CMDProfileReport implements Report<CMDProfileReport> {
     @XmlElementWrapper(name = "score-section")
     @XmlElement(name = "score")
     public Collection<Score> segmentScores;
-
+    
     @Override
-    public void mergeWithParent(CMDProfileReport parentReport) {
-        // profile should not have a parent
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void toXML(OutputStream os) {
-        XMLMarshaller<CMDProfileReport> instanceMarshaller = new
-                XMLMarshaller<>(CMDProfileReport.class);
-        instanceMarshaller.marshal(this,
-                os);
-    }
-
-
-    @Override
-    public void setParentName(String parentName) {
-        //dont do anything, profile reports dont have parent reports
+    public void addReport(CMDProfileReport report) {
+       
     }
     
     public void addCollectionUsage(String collectionName, long count) {
         this.collectionUsage.add(new CollectionUsage(collectionName, count));
-    }
-
-    @Override
-    public String getParentName() {
-        return null;
     }
 
     @Override

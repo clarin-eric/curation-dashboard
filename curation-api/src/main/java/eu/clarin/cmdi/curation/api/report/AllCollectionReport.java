@@ -1,9 +1,7 @@
 package eu.clarin.cmdi.curation.api.report;
 
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
-import eu.clarin.cmdi.curation.api.xml.XMLMarshaller;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "collections-report")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AllCollectionReport implements Report<AllCollectionReport> {
+public class AllCollectionReport extends Report<CollectionReport> {
 
    @XmlAttribute(name = "creation-time")
    public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
@@ -24,16 +22,6 @@ public class AllCollectionReport implements Report<AllCollectionReport> {
    @XmlElement(name = "collection")
    private List<Collection> collections = new ArrayList<Collection>();
 
-   @Override
-   public void setParentName(String parentName) {
-
-   }
-
-   @Override
-   public String getParentName() {
-
-      return null;
-   }
 
    @Override
    public String getName() {
@@ -52,21 +40,12 @@ public class AllCollectionReport implements Report<AllCollectionReport> {
 
    }
 
-   @Override
-   public void toXML(OutputStream os) {
-      XMLMarshaller<AllCollectionReport> instanceMarshaller = new XMLMarshaller<>(AllCollectionReport.class);
-      instanceMarshaller.marshal(this, os);
-   }
 
    @Override
-   public void mergeWithParent(AllCollectionReport parentReport) {
-
-   }
-
-   public void addReport(Report<?> report) {
-      if (report instanceof CollectionReport) {
-         this.collections.add(new Collection((CollectionReport) report));
-      }
+   public void addReport(CollectionReport report) {
+      
+      this.collections.add(new Collection((CollectionReport) report));
+   
    }
 
    @XmlRootElement

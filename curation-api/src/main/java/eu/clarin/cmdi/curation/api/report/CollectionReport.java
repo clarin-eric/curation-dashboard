@@ -2,11 +2,9 @@ package eu.clarin.cmdi.curation.api.report;
 
 import eu.clarin.linkchecker.persistence.utils.Category;
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
-import eu.clarin.cmdi.curation.api.xml.XMLMarshaller;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.bind.annotation.*;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,7 +21,7 @@ import java.util.TreeSet;
 @XmlRootElement(name = "collection-report")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Slf4j
-public class CollectionReport implements Report<CollectionReport> {
+public class CollectionReport extends Report<CMDInstanceReport> {
    
    @XmlAttribute(name = "score")
    public Double score = 0.0;
@@ -121,22 +119,60 @@ public class CollectionReport implements Report<CollectionReport> {
    public String getName() {
       return fileReport.provider;
    }
-
+   
    @Override
-   public void setParentName(String parentName) {
-      // don't do anything, there is no parent to a collection
+   public synchronized void addReport(CMDInstanceReport instanceReport) {
+      
+      this.score += instanceReport.score;
+      if (instanceReport.score > this.insMaxScore)
+          this.insMaxScore = instanceReport.score;
+
+      if (instanceReport.score < this.insMinScore)
+          this.insMinScore = instanceReport.score;
+
+      this.maxPossibleScoreInstance = instanceReport.maxScore;
+
+      // ResProxies
+      this.resProxyReport.totNumOfResProxies += instanceReport.resProxyReport.numOfResProxies;
+
+      this.resProxyReport.totNumOfResourcesWithMime += instanceReport.resProxyReport.numOfResourcesWithMime;
+      this.resProxyReport.totNumOfResProxiesWithReferences += instanceReport.resProxyReport.numOfResProxiesWithReferences;
+
+      // XMLPopulatedValidator
+      this.xmlPopulatedReport.totNumOfXMLElements += instanceReport.xmlPopulatedReport.numOfXMLElements;
+      this.xmlPopulatedReport.totNumOfXMLSimpleElements += instanceReport.xmlPopulatedReport.numOfXMLSimpleElements;
+      this.xmlPopulatedReport.totNumOfXMLEmptyElement += instanceReport.xmlPopulatedReport.numOfXMLEmptyElement;
+
+      // XMLValidator
+      this.xmlValidationReport.totNumOfRecords += 1;
+      this.xmlValidationReport.totNumOfValidRecords += instanceReport.xmlValidityReport.valid ? 1 : 0;
+      if (!instanceReport.xmlValidityReport.valid) {
+          Record record = new Record();
+          record.name = instanceReport.fileReport.location;
+          record.issues = instanceReport.xmlValidityReport.issues;
+          this.xmlValidationReport.record.add(record);
+      }
+
+
+      this.urlReport.totNumOfLinks += instanceReport.urlReport.numOfLinks; 
+      // the other numbers are taken from the database
+
+
+      // Facet
+      instanceReport.facets.coverage.stream()
+              .filter(facet -> facet.coveredByInstance)
+              .map(facet -> facet.name)
+              .forEach(coveredFacet -> {
+                  FacetCollectionStruct parFacet = this.facetReport.facet.stream().filter(f -> f.name.equals(coveredFacet)).findFirst().orElse(null);
+                  if (parFacet != null) {//in case of derived facet parFacet will be null
+                      parFacet.cnt++;
+                  }
+              });
+
+      this.handleProfile(instanceReport.header.getId(), instanceReport.profileScore);
+      
    }
 
-   @Override
-   public String getParentName() {
-      return null;
-   }
-
-   @Override
-   public void mergeWithParent(CollectionReport parentReport) {
-      log.error("this should never happen??? a collection report cant have a parent to get merged into");
-
-   }
 
    @Override
    public void addSegmentScore(Score segmentScore) {
@@ -197,12 +233,6 @@ public class CollectionReport implements Report<CollectionReport> {
 
       scorePercentage = maxScore == 0.0 ? 0.0 : score / maxScore;
 
-   }
-
-   @Override
-   public void toXML(OutputStream os) {
-      XMLMarshaller<CollectionReport> instanceMarshaller = new XMLMarshaller<>(CollectionReport.class);
-      instanceMarshaller.marshal(this, os);
    }
 
    @XmlRootElement

@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.api.report;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,11 +8,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
-import eu.clarin.cmdi.curation.api.xml.XMLMarshaller;
 
 @XmlRootElement(name = "error-report")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ErrorReport implements Report<CollectionReport> {
+public class ErrorReport extends Report<ErrorReport> {
    @XmlAttribute(name = "creation-time")
    public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
 
@@ -29,31 +27,26 @@ public class ErrorReport implements Report<CollectionReport> {
    public ErrorReport() {
    }
 
-   @Override
-   public void setParentName(String parentName) {
-      // dont do anything, error reports dont have parent reports
-   }
-
-   @Override
-   public String getParentName() {
-      return null;
-   }
 
    @Override
    public String getName() {
+      
       return name;
+   
+   }
+   
+   @Override
+   public void addReport(ErrorReport report) {
+      
    }
 
    @Override
    public boolean isValid() {
+      
       return false;
+   
    }
 
-   @Override
-   public void toXML(OutputStream os) {
-      XMLMarshaller<ErrorReport> instanceMarshaller = new XMLMarshaller<>(ErrorReport.class);
-      instanceMarshaller.marshal(this, os);
-   }
 
    @Override
    public void addSegmentScore(Score segmentScore) {
@@ -65,7 +58,7 @@ public class ErrorReport implements Report<CollectionReport> {
     * collection list
     */
 
-   @Override
+
    public void mergeWithParent(CollectionReport parentReport) {
       if (parentReport.file == null) {
          parentReport.file = new ArrayList<>();
