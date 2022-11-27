@@ -1,45 +1,51 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>eu.clarin.cmdi</groupId>
       <artifactId>curation-dashboard</artifactId>
       <version>6.0.0-SNAPSHOT</version>
    </parent>
-   <modelVersion>4.0.0</modelVersion>
+   <groupId>eu.clarin.cmdi.curation</groupId>
    <artifactId>curation-web</artifactId>
-   <packaging>war</packaging>
    <name>curation-web</name>
+   <description>curation web application</description>
    <properties>
-      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <jersey.version>2.34</jersey.version>
-      <log4j.version>2.17.2</log4j.version>
       <commonmark.version>0.18.2</commonmark.version>
    </properties>
    <dependencies>
       <dependency>
-         <groupId>org.jsoup</groupId>
-         <artifactId>jsoup</artifactId>
-         <version>1.14.2</version>
+         <groupId>org.commonmark</groupId>
+         <artifactId>commonmark-ext-gfm-tables</artifactId>
+         <version>${commonmark.version}</version>
       </dependency>
       <dependency>
-         <groupId>org.springframework.boot</groupId>
-         <artifactId>spring-boot-starter-web</artifactId>
+         <groupId>eu.clarin.cmdi</groupId>
+         <artifactId>curation-api</artifactId>
+         <version>6.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.springframework.boot</groupId>
          <artifactId>spring-boot-starter-thymeleaf</artifactId>
       </dependency>
       <dependency>
-         <groupId>javax.xml.bind</groupId>
-         <artifactId>jaxb-api</artifactId>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-web</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.glassfish.jaxb</groupId>
-         <artifactId>jaxb-runtime</artifactId>
+         <groupId>org.projectlombok</groupId>
+         <artifactId>lombok</artifactId>
+         <optional>true</optional>
       </dependency>
       <dependency>
-         <groupId>org.commonmark</groupId>
-         <artifactId>commonmark</artifactId>
-         <version>${commonmark.version}</version>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-test</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-configuration-processor</artifactId>
+         <optional>true</optional>
       </dependency>
       <dependency>
          <groupId>org.commonmark</groupId>
@@ -47,19 +53,29 @@
          <version>${commonmark.version}</version>
       </dependency>
       <dependency>
-      	<groupId>eu.clarin.cmdi</groupId>
-      	<artifactId>curation-api</artifactId>
-      	<version>6.0.0-SNAPSHOT</version>
+         <groupId>eu.clarin.cmdi</groupId>
+         <artifactId>curation-api</artifactId>
+         <version>6.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>com.h2database</groupId>
+         <artifactId>h2</artifactId>
       </dependency>
    </dependencies>
    <build>
-      <resources>
-         <resource>
-            <directory>src/main/resources</directory>
-            <filtering>true</filtering>
-         </resource>
-      </resources>
-      <finalName>curation</finalName>
-      <plugins></plugins>
+      <plugins>
+         <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+               <excludes>
+                  <exclude>
+                     <groupId>org.projectlombok</groupId>
+                     <artifactId>lombok</artifactId>
+                  </exclude>
+               </excludes>
+            </configuration>
+         </plugin>
+      </plugins>
    </build>
 </project>

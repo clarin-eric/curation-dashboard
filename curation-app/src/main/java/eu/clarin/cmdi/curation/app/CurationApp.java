@@ -38,6 +38,7 @@ import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.AllCollectionReport;
 import eu.clarin.cmdi.curation.api.report.AllLinkcheckerReport;
 import eu.clarin.cmdi.curation.api.report.AllPublicProfileReport;
+import eu.clarin.cmdi.curation.api.report.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.Report;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.app.conf.AppConfig;
@@ -148,13 +149,13 @@ public class CurationApp {
       try {
          if(isCollectionRoot(path)) {
             
-            Report<?> report = curation.processCollection(path);
+            CollectionReport colectionReport = curation.processCollection(path);
             
-            allCollectionReport.addReport(report);
-            allLinkcheckerReport.addReport(report);
+            allCollectionReport.addReport(colectionReport);
+            allLinkcheckerReport.addReport(colectionReport);
             
-            dumpAsXML(report, CurationEntityType.COLLECTION);
-            dumpAsHTML(report, CurationEntityType.COLLECTION);
+            dumpAsXML(colectionReport, CurationEntityType.COLLECTION);
+            dumpAsHTML(colectionReport, CurationEntityType.COLLECTION);
             
          }
          else {

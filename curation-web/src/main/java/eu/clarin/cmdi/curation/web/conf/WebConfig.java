@@ -2,7 +2,7 @@
  * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
  *
  */
-package eu.clarin.cmdi.curation.app.conf;
+package eu.clarin.cmdi.curation.web.conf;
 
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -16,11 +16,11 @@ import lombok.Data;
 /**
  *
  */
+@Data
 @Component
 @ConfigurationProperties(prefix = "curation")
-@Data
-public class AppConfig {
-   
+public class WebConfig {
+
    private Directory directory = new Directory();
    
    private LocalDateTime startTime = LocalDateTime.now();
