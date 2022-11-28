@@ -25,7 +25,9 @@ public class AllLinkcheckerReport extends Report<CollectionReport> {
 
    @Override
    public String getName() {
+      
       return getClass().getSimpleName();
+   
    }
 
    @Override

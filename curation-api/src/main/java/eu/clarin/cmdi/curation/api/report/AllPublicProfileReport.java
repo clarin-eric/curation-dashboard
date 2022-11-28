@@ -26,7 +26,7 @@ public class AllPublicProfileReport extends Report<CMDProfileReport> {
    @Override
    public String getName() {
 
-      return "ProfilesReport";
+      return this.getClass().getSimpleName();
    }
 
    @Override

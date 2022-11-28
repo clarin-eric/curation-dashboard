@@ -26,7 +26,8 @@ public class AllCollectionReport extends Report<CollectionReport> {
    @Override
    public String getName() {
 
-      return "CollectionsReport";
+      return this.getClass().getSimpleName();
+      
    }
 
    @Override
