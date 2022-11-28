@@ -5,7 +5,6 @@ import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.*;
 import eu.clarin.cmdi.curation.api.report.CollectionReport.*;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractMessageCollection;
@@ -82,17 +81,10 @@ public class CollectionAggregator extends AbstractMessageCollection{
             
             executor.submit(() -> {
                
-               try {
-                  CMDInstanceReport cmdInstanceReport = instance.generateReport(collectionReport.getName());
-                  collectionReport.addReport(cmdInstanceReport);
-               }
-               catch (SubprocessorException e) {
 
-                  log.debug("Error while generating report for instance: " + instance.getPath() + ":" + e.getMessage()
-                        + " Skipping to next instance...");
-                  new ErrorReport(conf.getDirectory().getDataRoot().relativize(instance.getPath()).toString(), e.getMessage())
-                        .mergeWithParent(collectionReport);
-               }
+               CMDInstanceReport cmdInstanceReport = instance.generateReport();
+               collectionReport.addReport(cmdInstanceReport);
+
             }); // end executor.submit            
             
             return FileVisitResult.CONTINUE;

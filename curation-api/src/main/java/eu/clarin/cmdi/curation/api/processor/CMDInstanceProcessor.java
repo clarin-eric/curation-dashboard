@@ -31,7 +31,7 @@ public class CMDInstanceProcessor {
    @Autowired
    InstanceFacetProcessor instanceFacetProcessor;
 
-   public CMDInstanceReport process(CMDInstance record, String parentName) throws SubprocessorException {
+   public CMDInstanceReport process(CMDInstance record) {
 
       CMDInstanceReport report = new CMDInstanceReport();
 

@@ -3,7 +3,6 @@ package eu.clarin.cmdi.curation.api;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.CollectionReport;
@@ -21,7 +20,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @Service
 @Slf4j
@@ -33,28 +31,48 @@ public class CurationModuleImpl implements CurationModule {
    private ApplicationContext ctx;
 
    @Override
-   public CMDProfileReport processCMDProfile(String profileId) throws MalformedURLException, SubprocessorException {
-      return processCMDProfile(new URL(pphConf.getRestApi() + "/" + profileId + "/xsd"));
+   public CMDProfileReport processCMDProfile(String profileId) {
+      
+      String urlStr = pphConf.getRestApi() + "/" + profileId + "/xsd";
+      try {
+         return processCMDProfile(new URL(pphConf.getRestApi() + "/" + profileId + "/xsd"));
+      }
+      catch (MalformedURLException e) {
+         
+         log.error("malformed URL '{}' - check if property 'curation.pph-service.restApi' is set correctly", urlStr);
+         throw new RuntimeException(e);
+      }
+   
    }
 
    @Override
-   public CMDProfileReport processCMDProfile(URL schemaLocation) throws SubprocessorException {
+   public CMDProfileReport processCMDProfile(URL schemaLocation) {
       return ctx.getBean(CMDProfile.class, schemaLocation.toString(), "1.x").generateReport();
    }
 
    @Override
-   public CMDProfileReport processCMDProfile(Path path) throws MalformedURLException, SubprocessorException {
+   public CMDProfileReport processCMDProfile(Path path) {
 
-      return processCMDProfile(path.toUri().toURL());
+      try {
+         
+         return processCMDProfile(path.toUri().toURL());
+      
+      }
+      catch (MalformedURLException e) {
+         
+         log.error("can't create URL from path '{}'", path);
+         throw new RuntimeException(e);
+      
+      }
    }
 
    @Override
    public CMDInstanceReport processCMDInstance(Path path) {
       if (Files.exists(path)) {
          try {
-            return ctx.getBean(CMDInstance.class, path, Files.size(path)).generateReport(null);
+            return ctx.getBean(CMDInstance.class, path, Files.size(path)).generateReport();
          }
-         catch (SubprocessorException | IOException e) {
+         catch (IOException e) {
 
             throw new RuntimeException(e);
 
@@ -71,10 +89,10 @@ public class CurationModuleImpl implements CurationModule {
 
    @Override
    public CMDInstanceReport processCMDInstance(URL url) {
-      String path = FileNameEncoder.encode(url.toString()) + ".xml";
-      Path cmdiFilePath = Paths.get(System.getProperty("java.io.tmpdir"), path);
 
       try {
+         
+         Path cmdiFilePath = Files.createTempFile(FileNameEncoder.encode(url.toString()), "xml");
 
          FileUtils.copyURLToFile(url, cmdiFilePath.toFile());
 
@@ -83,7 +101,7 @@ public class CurationModuleImpl implements CurationModule {
          CMDInstance cmdInstance = ctx.getBean(CMDInstance.class, cmdiFilePath, size);
          cmdInstance.setUrl(url.toString());
 
-         CMDInstanceReport report = cmdInstance.generateReport(null);
+         CMDInstanceReport report = cmdInstance.generateReport();
 
          // Files.delete(path);
 
@@ -91,7 +109,7 @@ public class CurationModuleImpl implements CurationModule {
 
          return report;
       }
-      catch (SubprocessorException | IOException e) {
+      catch (IOException e) {
 
          throw new RuntimeException(e);
 

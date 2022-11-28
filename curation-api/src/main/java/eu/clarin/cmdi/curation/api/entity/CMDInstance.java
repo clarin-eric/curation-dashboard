@@ -47,7 +47,7 @@ public class CMDInstance {
       this.size = size;
    }
 
-   public CMDInstanceReport generateReport(String parentName) throws SubprocessorException {
-      return processor.process(this, parentName);
+   public CMDInstanceReport generateReport() {
+      return processor.process(this);
    }
 }

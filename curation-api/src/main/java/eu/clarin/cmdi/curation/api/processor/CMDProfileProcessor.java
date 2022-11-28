@@ -27,21 +27,28 @@ public class CMDProfileProcessor {
    @Autowired
    ApplicationContext ctx;
 
-   public CMDProfileReport process(CMDProfile profile) throws SubprocessorException {
+   public CMDProfileReport process(CMDProfile profile) {
 
       CMDProfileReport report = new CMDProfileReport();
 
-      ProfileHeaderHandler profileHeaderHandler = ctx.getBean(ProfileHeaderHandler.class);
-      profileHeaderHandler.process(profile, report);
-      report.addSegmentScore(profileHeaderHandler.calculateScore(report));
+      try {
+         ProfileHeaderHandler profileHeaderHandler = ctx.getBean(ProfileHeaderHandler.class);
+         profileHeaderHandler.process(profile, report);
+         report.addSegmentScore(profileHeaderHandler.calculateScore(report));
 
-      ProfileElementsHandler profileElementsHandler = ctx.getBean(ProfileElementsHandler.class);
-      profileElementsHandler.process(report);
-      report.addSegmentScore(profileElementsHandler.calculateScore(report));
+         ProfileElementsHandler profileElementsHandler = ctx.getBean(ProfileElementsHandler.class);
+         profileElementsHandler.process(report);
+         report.addSegmentScore(profileElementsHandler.calculateScore(report));
 
-      ProfileFacetHandler profileFacetHandler = ctx.getBean(ProfileFacetHandler.class);
-      profileFacetHandler.process(report);
-      report.addSegmentScore(profileFacetHandler.calculateScore(report));
+         ProfileFacetHandler profileFacetHandler = ctx.getBean(ProfileFacetHandler.class);
+         profileFacetHandler.process(report);
+         report.addSegmentScore(profileFacetHandler.calculateScore(report));
+      }
+      catch (SubprocessorException e) {
+
+         log.debug("can't process profile '{}'", profile.getSchemaLocation());
+      
+      }
 
       return report;
 

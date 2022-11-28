@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.api.entity;
 
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.processor.CMDProfileProcessor;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 import lombok.Data;
@@ -30,7 +29,7 @@ public class CMDProfile{
         this.cmdiVersion = cmdiVersion;
     }
 
-    public CMDProfileReport generateReport() throws SubprocessorException {
+    public CMDProfileReport generateReport() {
         return processor.process(this);
     }
 }
