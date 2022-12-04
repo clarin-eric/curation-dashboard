@@ -8,9 +8,9 @@ import lombok.Getter;
 public enum CurationEntityType {
 
    PROFILE("profiles"), 
-   INSTANCE("instances"), 
-   COLLECTION("collections"), 
-   STATISTICS("statistics");
+   INSTANCE("instance"), 
+   COLLECTION("collection"), 
+   LINKCHECKER("linkchecker");
 
    private final String stringValue;
 
