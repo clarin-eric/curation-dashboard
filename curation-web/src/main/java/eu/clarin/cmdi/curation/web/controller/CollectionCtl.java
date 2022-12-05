@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/collection")
 @Slf4j
-public class Collection {
+public class CollectionCtl {
 
    @Autowired
    WebConfig conf;
@@ -25,7 +25,7 @@ public class Collection {
    @GetMapping(value = {"", "/{collectionReportName}"})
    public String getCollection(@PathVariable(value = "collectionReportName", required = false) Optional<String> collectionReportName, Model model) {
 
-      Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("profile");
+      Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("collection");
       
       if(collectionReportName.isPresent()) {
          

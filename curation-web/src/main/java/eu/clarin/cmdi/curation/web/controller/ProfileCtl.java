@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/profile")
 @Slf4j
-public class Profile {
+public class ProfileCtl {
 
    @Autowired
    WebConfig conf;
