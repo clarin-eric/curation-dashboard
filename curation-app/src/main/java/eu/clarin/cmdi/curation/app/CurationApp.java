@@ -37,7 +37,8 @@ import eu.clarin.cmdi.curation.api.entity.CurationEntityType;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.AllCollectionReport;
 import eu.clarin.cmdi.curation.api.report.AllLinkcheckerReport;
-import eu.clarin.cmdi.curation.api.report.AllPublicProfileReport;
+import eu.clarin.cmdi.curation.api.report.AllProfileReport;
+import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.Report;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
@@ -74,25 +75,25 @@ public class CurationApp {
          
          prepareOutPaths();
          
-/*         
+         
                  
-         final AllPublicProfileReport allProfileReport = new AllPublicProfileReport();
+         final AllProfileReport allProfileReport = new AllProfileReport();
 
 
          pphService.getProfileHeaders().forEach(header -> {
             
-            Report<?> report;
+
             try {
-               report = curation.processCMDProfile(header.getId());
+               CMDProfileReport profileReport = curation.processCMDProfile(header.getId());
                
-               allProfileReport.addReport(report);
+               allProfileReport.addReport(profileReport);
                try {
-                  dumpAsXML(report, CurationEntityType.PROFILE);
-                  dumpAsHTML(report, CurationEntityType.PROFILE);
+                  dumpAsXML(profileReport, CurationEntityType.PROFILE);
+                  dumpAsHTML(profileReport, CurationEntityType.PROFILE);
                }
                catch (Exception e) {
 
-                  log.error("can't dump report '{}'", report.getName());                
+                  log.error("can't dump report '{}'", profileReport.getName());                
                
                }           
             }
@@ -116,7 +117,7 @@ public class CurationApp {
          
          }
          
-*/        
+        
          final AllCollectionReport allCollectionReport = new AllCollectionReport();
          final AllLinkcheckerReport allLinkcheckerReport = new AllLinkcheckerReport();         
 
@@ -133,8 +134,8 @@ public class CurationApp {
          }
          
          try {
-            dumpAsXML(allLinkcheckerReport, CurationEntityType.STATISTICS);
-            dumpAsHTML(allLinkcheckerReport, CurationEntityType.STATISTICS);
+            dumpAsXML(allLinkcheckerReport, CurationEntityType.LINKCHECKER);
+            dumpAsHTML(allLinkcheckerReport, CurationEntityType.LINKCHECKER);
          }
          catch (Exception e) {
 
