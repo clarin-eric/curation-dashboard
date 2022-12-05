@@ -25,6 +25,8 @@ public class WebConfig {
    
    private LocalDateTime startTime = LocalDateTime.now();
    
+   private String docUrl;
+   
    @Data
    public static class Directory {
       

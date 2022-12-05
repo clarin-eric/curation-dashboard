@@ -8,10 +8,14 @@ spring:
       show-sql: true
       hibernate:
          ddl-auto: none
-      database-platform: org.hibernate.dialect.MariaDBDialect 
+      database-platform: org.hibernate.dialect.MariaDBDialect
+   servlet:
+      multipart:
+        enabled: true
+        location: ${java.io.tmpdir}    
 server:
    error:
-      include-stacktrace: always         
+      include-stacktrace: always
 curation:
    pph-service:
       xsd_cache: /tmp/curation/xsd_cache
@@ -19,8 +23,8 @@ curation:
       query: "?registrySpace=published&status=production&status=development&&status=deprecated"
    ccr-service:
       restApi: "https://openskos.meertens.knaw.nl/ccr/api/find-concepts"
-      query: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000" 
-   facets: 
+      query: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000"
+   facets:
       - languageCode
       - collection
       - resourceClass
@@ -40,12 +44,13 @@ curation:
    directory:
       home: /app/curation
       dataRoot: /data/result/cmdi
-      in: 
-        - /home/clarin/git/curation-dashboard/curation-api/src/test/resources/instance/SAW_Leipzig_Repository
-      out: /tmp/public
+      in:
+         -/home/clarin/git/curation-dashboard/curation-api/src/test/resources/instance/SAW_Leipzig_Repository
+      out: /home/clarin/data/curation/public
    max_file_size: 100000
    threadPoolSize: 3
-   mode: collection          
+   mode: collection
+   doc-url: "https://raw.githubusercontent.com/clarin-eric/cereal/main/curation-dashboard/markdown"         
 logging:
    level:
       root: ERROR         
