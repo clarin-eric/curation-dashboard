@@ -38,9 +38,7 @@
             <div class="col-md-6 d-flex justify-content-around">
                <a href="https://www.clarin.eu/"><img th:src="@{/images/clarin-logo-wide.png}"></a>
             </div>
-
          </nav>
-
       </div>
 
       <div class="row">
@@ -54,21 +52,21 @@
                   </a>
                </div>
                <div class="col leftButton">
-                  <a href="/profile/table">
+                  <a href="/profile">
                      <button id="profilesButton" type="button"
                         class="btn leftButton navbar navbar-brand navbar-light bg-light">
                         Profiles</button>
                   </a>
                </div>
                <div class="col leftButton">
-                  <a href="/collection/table">
+                  <a href="/collection">
                      <button id="collectionsButton" type="button"
                         class="btn leftButton navbar navbar-brand navbar-light bg-light">
                         Collections</button>
                   </a>
                </div>
                <div class="col leftButton">
-                  <a href="/statistics">
+                  <a href="/linkchecker">
                      <button id="statisticsButton" type="button"
                         class="btn leftButton navbar navbar-brand navbar-light bg-light">
                         Link checking</button>
@@ -89,14 +87,12 @@
                         FAQ</button>
                   </a>
                </div>
-
             </div>
-
          </div>
          <div class="col-md-2"></div>
          <!--placeholder so that content dont overlap-->
          <div class="col-md-10">
-            <div id="content" class="fullscreen content" th:insert="${insert}">
+            <div id="content" class="fullscreen content" th:replace="${insert}">
                <!--Here comes dynamic content from jsoup-->
             </div>
          </div>
