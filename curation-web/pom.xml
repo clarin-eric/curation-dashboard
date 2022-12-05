@@ -48,18 +48,13 @@
          <optional>true</optional>
       </dependency>
       <dependency>
-         <groupId>org.commonmark</groupId>
-         <artifactId>commonmark-ext-gfm-tables</artifactId>
-         <version>${commonmark.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>eu.clarin.cmdi</groupId>
-         <artifactId>curation-api</artifactId>
-         <version>6.0.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
          <groupId>com.h2database</groupId>
          <artifactId>h2</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>net.sf.saxon</groupId>
+         <artifactId>Saxon-HE</artifactId>
+         <version>10.3</version>
       </dependency>
    </dependencies>
    <build>
