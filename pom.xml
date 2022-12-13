@@ -39,6 +39,12 @@
       </dependency>
    </dependencies>
    <build>
+      <resources>
+         <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+         </resource>
+         </resources>
       <plugins>
       <!-- 
       no spring-boot-maven-plugin here, since we don't want to create an executable of any module
@@ -80,5 +86,6 @@
       <module>curation-cr</module>
       <module>curation-api</module>
       <module>curation-app</module>
+      <module>curation-web</module>
    </modules>
 </project>
