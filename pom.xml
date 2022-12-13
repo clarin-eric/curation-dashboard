@@ -44,7 +44,7 @@
             <directory>src/main/resources</directory>
             <filtering>true</filtering>
          </resource>
-         </resources>
+      </resources>
       <plugins>
       <!-- 
       no spring-boot-maven-plugin here, since we don't want to create an executable of any module
