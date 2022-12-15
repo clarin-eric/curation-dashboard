@@ -2,7 +2,6 @@ package eu.clarin.cmdi.curation.api.report;
 
 import eu.clarin.linkchecker.persistence.utils.Category;
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ import java.util.TreeSet;
  */
 @XmlRootElement(name = "collection-report")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Slf4j
 public class CollectionReport extends Report<CMDInstanceReport> {
    
    @XmlAttribute(name = "score")
