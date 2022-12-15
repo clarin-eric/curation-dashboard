@@ -3,11 +3,9 @@ package eu.clarin.cmdi.curation.api.report;
 import eu.clarin.linkchecker.persistence.model.Status;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport;
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
-import eu.clarin.cmdi.curation.api.xml.XMLMarshaller;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 
 import javax.xml.bind.annotation.*;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -149,13 +147,6 @@ public class CMDInstanceReport extends Report<CMDInstanceReport> {
     @Override
     public void addReport(CMDInstanceReport instanceReport) {
 
-    }
-
-
-    @Override
-    public void toXML(OutputStream os) {
-        XMLMarshaller<CMDInstanceReport> instanceMarshaller = new XMLMarshaller<>(CMDInstanceReport.class);
-        instanceMarshaller.marshal(this, os);
     }
 
     @Override

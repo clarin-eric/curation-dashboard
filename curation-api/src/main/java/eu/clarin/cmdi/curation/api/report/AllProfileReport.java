@@ -1,9 +1,7 @@
 package eu.clarin.cmdi.curation.api.report;
 
 import eu.clarin.cmdi.curation.api.utils.TimeUtils;
-import eu.clarin.cmdi.curation.api.xml.XMLMarshaller;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,12 +37,6 @@ public class AllProfileReport extends Report<CMDProfileReport> {
    @Override
    public void addSegmentScore(Score segmentScore) {
 
-   }
-
-   @Override
-   public void toXML(OutputStream os) {
-      XMLMarshaller<AllProfileReport> instanceMarshaller = new XMLMarshaller<>(AllProfileReport.class);
-      instanceMarshaller.marshal(this, os);
    }
 
    @Override
