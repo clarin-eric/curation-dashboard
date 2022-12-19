@@ -1,6 +1,6 @@
 package eu.clarin.cmdi.curation.api.report;
 
-import java.io.OutputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -10,9 +10,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import eu.clarin.cmdi.curation.api.utils.TimeUtils;
-import eu.clarin.cmdi.curation.api.xml.XMLMarshaller;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 
 
@@ -30,7 +29,8 @@ public class CMDProfileReport extends Report<CMDProfileReport> {
     public double maxScore;
 
     @XmlAttribute(name = "creation-time")
-    public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+    public LocalDateTime creationTime = LocalDateTime.now();
 
     @XmlElement(name = "header-section")
     public ProfileHeader header;

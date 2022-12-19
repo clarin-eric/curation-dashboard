@@ -1,9 +1,11 @@
 package eu.clarin.cmdi.curation.api.report;
 
 import eu.clarin.linkchecker.persistence.utils.Category;
-import eu.clarin.cmdi.curation.api.utils.TimeUtils;
 
 import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,7 +45,8 @@ public class CollectionReport extends Report<CMDInstanceReport> {
    public Double maxPossibleScoreInstance = 0.0;
 
    @XmlAttribute(name = "creation-time")
-   public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
+   @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+   public LocalDateTime creationTime = LocalDateTime.now();
 
    @XmlElement(name = "file-section")
    public FileReport fileReport;

@@ -6,6 +6,9 @@ import eu.clarin.cmdi.curation.api.utils.TimeUtils;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 
 import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -35,7 +38,8 @@ public class CMDInstanceReport extends Report<CMDInstanceReport> {
     public double scorePercentage;
 
     @XmlAttribute(name = "creation-time")
-    public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+    public LocalDateTime creationTime = LocalDateTime.now();
 
     // sub reports **************************************
 

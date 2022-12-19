@@ -2,10 +2,11 @@ package eu.clarin.cmdi.curation.api.report;
 
 import eu.clarin.linkchecker.persistence.utils.Category;
 import eu.clarin.cmdi.curation.api.report.CollectionReport.Statistics;
-import eu.clarin.cmdi.curation.api.utils.TimeUtils;
 
 import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeMap;
@@ -15,7 +16,8 @@ import java.util.TreeSet;
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class AllLinkcheckerReport extends Report<CollectionReport> {
    @XmlAttribute(name = "creation-time")
-   public String creationTime = TimeUtils.humanizeToDate(System.currentTimeMillis());
+   @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+   public LocalDateTime creationTime = LocalDateTime.now();
 
    @XmlElement(name = "overall")
    private Overall overall = new Overall();
