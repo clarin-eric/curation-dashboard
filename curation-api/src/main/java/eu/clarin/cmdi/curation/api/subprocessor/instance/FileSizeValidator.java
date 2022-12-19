@@ -81,7 +81,7 @@ public class FileSizeValidator extends AbstractSubprocessor {
       }
       catch (IOException ex) {
          log.error("couldn't instatiate CMDIDataProcessor - so instance parsing won't work!");
-         throw new NoCMDIDataProcessorException(ex);
+         throw new RuntimeException(ex);
       }
    }
 
