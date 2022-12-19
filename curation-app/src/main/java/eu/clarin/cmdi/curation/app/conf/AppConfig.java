@@ -21,6 +21,8 @@ import lombok.Data;
 @Data
 public class AppConfig {
    
+   private String mode;
+   
    private Directory directory = new Directory();
    
    private LocalDateTime startTime = LocalDateTime.now();
