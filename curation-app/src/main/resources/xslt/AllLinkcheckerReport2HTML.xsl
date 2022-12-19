@@ -29,7 +29,7 @@
 							<tr class="{$category}">
 
 								<td>
-									<a href="/statistics/Overall/{$category}">
+									<a href="/linkchecker/Overall#{$category}">
 										<xsl:value-of select="@category"></xsl:value-of>
 									</a>
 								</td>
@@ -112,7 +112,7 @@
 								</xsl:variable>
 								<tr class="{$category}">
 									<td>
-										<a href="/statistics/{$name}/{$category}">
+										<a href="/linkchecker/{$name}#{$category}">
 											<xsl:value-of select="@category"></xsl:value-of>
 										</a>
 									</td>
