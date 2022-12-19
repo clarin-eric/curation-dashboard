@@ -6,8 +6,13 @@ import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.CollectionReport;
+import eu.clarin.cmdi.curation.api.report.LinkcheckerDetailReport;
+import eu.clarin.cmdi.curation.api.report.LinkcheckerDetailReport.CategoryReport;
+import eu.clarin.cmdi.curation.api.report.LinkcheckerDetailReport.StatusDetailReport;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
+import eu.clarin.linkchecker.persistence.model.StatusDetail;
+import eu.clarin.linkchecker.persistence.repository.StatusDetailRepository;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.io.FileUtils;
@@ -20,6 +25,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.stream.Stream;
+
+import javax.transaction.Transactional;
 
 @Service
 @Slf4j
@@ -29,6 +39,8 @@ public class CurationModuleImpl implements CurationModule {
    private PPHConfig pphConf;
    @Autowired
    private ApplicationContext ctx;
+   @Autowired
+   private StatusDetailRepository sdRep;
 
    @Override
    public CMDProfileReport processCMDProfile(String profileId) {
@@ -121,5 +133,58 @@ public class CurationModuleImpl implements CurationModule {
 
       return ctx.getBean(CMDCollection.class, path).generateReport();
 
+   }
+
+   @Override
+   @Transactional
+   public Collection<LinkcheckerDetailReport> getLinkcheckerDetailReports() {
+      
+      final Collection<LinkcheckerDetailReport> linkcheckerDetailReports = new ArrayList<LinkcheckerDetailReport>();
+      
+      final LinkcheckerDetailReport[] lastLinkcheckerDetailReport = new LinkcheckerDetailReport[1];
+      final CategoryReport[] lastCategoryReport = new CategoryReport[1];
+
+      
+      try(Stream<StatusDetail> stream = sdRep.findByOrderNrLessThanEqual(100l)){
+         
+         stream.forEach(statusDetail -> {
+            
+            if(lastLinkcheckerDetailReport[0] == null || !lastLinkcheckerDetailReport[0].getName().equals(statusDetail.getProvidergroupname())) {
+               
+               lastLinkcheckerDetailReport[0] = new LinkcheckerDetailReport(statusDetail.getProvidergroupname());
+               
+               linkcheckerDetailReports.add(lastLinkcheckerDetailReport[0]);
+            
+            }
+            
+            if(lastCategoryReport[0] == null || lastCategoryReport[0].getCategory() != statusDetail.getCategory()) {
+               
+               lastCategoryReport[0] = new CategoryReport(statusDetail.getCategory());
+               
+               lastLinkcheckerDetailReport[0].getCategoryReports().add(lastCategoryReport[0]);
+               
+            }
+            
+            lastCategoryReport[0].getStatusDetails().add(
+                  new StatusDetailReport(
+                     statusDetail.getUrlname(),
+                     statusDetail.getOrigin(),
+                     statusDetail.getMethod(), 
+                     statusDetail.getStatusCode(),
+                     statusDetail.getMessage(), 
+                     statusDetail.getCheckingDate(), 
+                     statusDetail.getContentType(), 
+                     statusDetail.getExpectedMimeType(),
+                     statusDetail.getContentLength(), 
+                     statusDetail.getDuration(), 
+                     statusDetail.getRedirectCount()
+                  )
+               );
+         });         
+      }
+      
+      
+      return linkcheckerDetailReports;
+   
    }
 }

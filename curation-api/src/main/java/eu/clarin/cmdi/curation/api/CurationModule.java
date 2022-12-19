@@ -3,11 +3,13 @@ package eu.clarin.cmdi.curation.api;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Collection;
 
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.CollectionReport;
+import eu.clarin.cmdi.curation.api.report.LinkcheckerDetailReport;
 
 public interface CurationModule {
 
@@ -25,5 +27,7 @@ public interface CurationModule {
    public CMDInstanceReport processCMDInstance(URL url);
 
    public CollectionReport processCollection(Path path);
+   
+   public Collection<LinkcheckerDetailReport> getLinkcheckerDetailReports();
 
 }
