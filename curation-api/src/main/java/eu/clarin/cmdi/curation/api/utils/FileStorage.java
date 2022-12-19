@@ -89,7 +89,8 @@ public class FileStorage {
       }
       catch (JAXBException e) {
 
-         log.error("can't create JAXBContext for class '{}'", report.getClass());
+         log.error("can't create JAXBContext for class '{}'\n{}", report.getClass(), e);
+         
       }
       
       try {
