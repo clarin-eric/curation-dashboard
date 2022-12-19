@@ -57,8 +57,8 @@ public class ApiConfig {
          }
       }
       catch(IOException ex) {
-         log.error("could create instance of VloConfig");
-         return null;
+         log.error("couldn't create instance of VloConfig");
+         throw new RuntimeException(ex);
       }
       
    }
