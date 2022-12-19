@@ -1,9 +1,9 @@
 spring:
    datasource:
-      url: jdbc:h2:mem:linkcheckerTest;MODE=MYSQL;DATABASE_TO_LOWER=TRUE
-      username: sa
-      password: password
-      driver-class-name: org.h2.Driver
+      url: ${DATABASE_URI}
+      username: ${DATABASE_USER}
+      password: ${DATABASE_PASSWORD}
+      driver-class-name: org.mariadb.jdbc.Driver
    jpa:
       show-sql: true
       hibernate:
@@ -24,7 +24,7 @@ curation:
    ccr-service:
       restApi: "https://openskos.meertens.knaw.nl/ccr/api/find-concepts"
       query: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000"
-   facets:
+   facets: 
       - languageCode
       - collection
       - resourceClass
@@ -39,8 +39,7 @@ curation:
       - description
       - license
       - availability
-   clientUsername: testUser
-   clientPassword: testPassword
+   clientUsername: curation
    directory:
       home: /app/curation
       dataRoot: /data/result/cmdi
