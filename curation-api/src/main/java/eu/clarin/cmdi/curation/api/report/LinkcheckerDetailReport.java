@@ -24,12 +24,12 @@ import lombok.NoArgsConstructor;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LinkcheckerDetailReport extends Report<LinkcheckerDetailReport>{
    
-   @XmlAttribute()
+   @XmlAttribute(name = "provider")
    private String name; 
    @XmlAttribute(name = "creation-time")
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    private LocalDateTime creationTime = LocalDateTime.now();
-   @XmlElement(name = "category")
+   @XmlElement(name = "category-report")
    private final Collection<CategoryReport> categoryReports = new TreeSet<CategoryReport>((report1, report2) -> report1.category.compareTo(report2.category));
 
    public LinkcheckerDetailReport() {
@@ -83,7 +83,7 @@ public class LinkcheckerDetailReport extends Report<LinkcheckerDetailReport>{
    public static class CategoryReport {
       
       
-      @XmlAttribute(name = "name")
+      @XmlAttribute
       private Category category;
       @XmlElement(name = "status")
       private Collection<StatusDetailReport> statusDetails = new ArrayList<StatusDetailReport>();
@@ -122,6 +122,8 @@ public class LinkcheckerDetailReport extends Report<LinkcheckerDetailReport>{
       private LocalDateTime checkingDate;
       @XmlAttribute
       private String contentType;
+      @XmlAttribute
+      private String expectedMimeType;
       @XmlAttribute
       private Long contentLength;
       @XmlAttribute
