@@ -51,7 +51,7 @@ public class CMDInstanceProcessor {
          xmlValidator.process(record, report);
          report.addSegmentScore(xmlValidator.calculateScore(report));
 
-         if ("collection".equalsIgnoreCase(conf.getMode())) {
+         if ("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode())) {
             collectionInstanceFacetProcessor.process(record, report);
             report.addSegmentScore(collectionInstanceFacetProcessor.calculateScore(report));
          }

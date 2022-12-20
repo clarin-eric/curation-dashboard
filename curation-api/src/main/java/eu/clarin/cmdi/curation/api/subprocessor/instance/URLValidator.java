@@ -73,7 +73,7 @@ public class URLValidator extends AbstractSubprocessor {
          urlMap.computeIfAbsent(selfLink, key -> null);
 
 
-      if ("collection".equals(conf.getMode())) {
+      if ("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode())) {
          
          Client client = this.clRepository.findByName(conf.getClientUsername()).get();
 

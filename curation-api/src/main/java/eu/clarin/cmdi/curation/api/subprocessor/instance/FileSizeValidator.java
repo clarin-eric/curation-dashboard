@@ -2,7 +2,6 @@ package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.exception.NoCMDIDataProcessorException;
 import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.instance_parser.InstanceParser;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
@@ -177,7 +176,7 @@ public class FileSizeValidator extends AbstractSubprocessor {
       if (report.fileReport.size > conf.getMaxFileSize()) {
          this.addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + conf.getMaxFileSize()+ "B)");
          // don't assess when assessing collections
-         if ("collection".equalsIgnoreCase(conf.getMode())) {
+         if ("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode())) {
             throw new SubprocessorException();
          }
       }
@@ -203,7 +202,7 @@ public class FileSizeValidator extends AbstractSubprocessor {
       entity.setCmdiData(cmdiData);
 
       // create xpath/value pairs only in instance mode
-      if (!"collection".equalsIgnoreCase(conf.getMode())) {
+      if (!("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode()))) {
 
          InstanceParser transformer = new InstanceParser();
 
