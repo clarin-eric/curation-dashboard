@@ -16,6 +16,7 @@ import eu.clarin.linkchecker.persistence.repository.StatusDetailRepository;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -84,7 +85,7 @@ public class CurationModuleImpl implements CurationModule {
          try {
             return ctx.getBean(CMDInstance.class, path, Files.size(path)).generateReport();
          }
-         catch (IOException e) {
+         catch (IOException|BeansException e) {
 
             throw new RuntimeException(e);
 

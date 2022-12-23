@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport.Coverage;
 import eu.clarin.cmdi.curation.api.report.Score;
@@ -20,7 +19,7 @@ import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
 @Component
-public class CollectionInstanceFacetProcessor extends AbstractSubprocessor {
+public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
    
    @Autowired
    private FacetsMappingCacheFactory fac;
@@ -28,7 +27,9 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor {
    private FacetReportCreator facetReportCreator;
 
    @Override
-   public synchronized void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
+   public void process(CMDInstance entity, CMDInstanceReport report) {
+      
+      Score score = new Score("facet-mapping", 1.0);
 
       Map<String, List<ValueSet>> facetValuesMap = entity.getCmdiData().getDocument();
 
@@ -49,7 +50,7 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor {
       try {
          facetMapping = fac.getFacetsMapping(report.header);
 
-         report.facets = facetReportCreator.createFacetReport(this, report.header, facetMapping);
+         report.facets = facetReportCreator.createFacetReport(score, report.header, facetMapping);
 
          int numOfCoveredByIns = 0;
 
@@ -70,10 +71,10 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor {
          entity.setCmdiData(null);
          entity.setParsedInstance(null);
       }
+      
+      score.setScore(report.facets.instanceCoverage);
+      
+      report.addSegmentScore(score);
 
-   }
-   @Override
-   public synchronized Score calculateScore(CMDInstanceReport report) {
-      return new Score(report.facets.instanceCoverage, 1.0, "facet-mapping", this.getMessages());
    }
 }

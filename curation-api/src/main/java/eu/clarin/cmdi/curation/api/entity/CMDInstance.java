@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.api.processor.CMDInstanceProcessor;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;

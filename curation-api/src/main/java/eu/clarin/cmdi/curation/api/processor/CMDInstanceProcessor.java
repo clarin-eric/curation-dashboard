@@ -2,14 +2,12 @@ package eu.clarin.cmdi.curation.api.processor;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.subprocessor.instance.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
