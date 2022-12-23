@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.api.subprocessor.collection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Component;
 
@@ -17,66 +18,51 @@ import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
 @Component
-public class CollectionInstanceResourceProxyProcessor extends AbstractSubprocessor {
+public class CollectionInstanceResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
 
-	@Override
-	public synchronized void process(CMDInstance entity, CMDInstanceReport report) {
-	    CMDIData<Map<String, List<ValueSet>>> cmdiData = entity.getCmdiData();
-	    
-		report.resProxyReport = new ResProxyReport();
-		
-		report.resProxyReport.numOfResProxies = 0;
-		report.resProxyReport.numOfResourcesWithMime =  0;
-		report.resProxyReport.numOfResProxiesWithReferences = 0;
-		report.resProxyReport.resourceType = null;
-		
-		int numOfTypeResource = cmdiData.getDataResources().size();
-		
-		for(Resource resource : cmdiData.getDataResources()) {
-		    if(resource.getMimeType() != null)
-		        report.resProxyReport.numOfResourcesWithMime++;
-		    if(resource.getResourceName() != null && !resource.getResourceName().isEmpty())
-		        report.resProxyReport.numOfResProxiesWithReferences++;
-		    
-		}
-		
-		
-		addResourceType(cmdiData.getLandingPageResources(), report);
-		addResourceType(cmdiData.getMetadataResources(), report);
-		addResourceType(cmdiData.getSearchPageResources(), report);
-		addResourceType(cmdiData.getSearchResources(), report);
-			
-			report.resProxyReport.percOfResourcesWithMime = numOfTypeResource > 0? 
-					(double) report.resProxyReport.numOfResourcesWithMime / numOfTypeResource : 0;
-			report.resProxyReport.percOfResProxiesWithReferences = report.resProxyReport.numOfResProxies > 0? 
-					(double) report.resProxyReport.numOfResProxiesWithReferences / report.resProxyReport.numOfResProxies : 0;
+   @Override
+   public void process(CMDInstance instance, CMDInstanceReport report) {
+      
+      Score score = new Score("cmd-res-proxy", 2.0);
+      
+      CMDIData<Map<String, List<ValueSet>>> data = instance.getCmdiData();
 
-		
-	}
-	
-	private void addResourceType(List<Resource> resources, CMDInstanceReport report) {
-	    if(resources.isEmpty())
-	        return;
-	    if(report.resProxyReport.resourceType == null)
-            report.resProxyReport.resourceType = new ArrayList<>();
-	    
-	    ResourceType resourceType = new ResourceType();
-	    resourceType.type = resources.get(0).getType();
-	    resourceType.count = resources.size();
-	    
-	    for(Resource resource : resources) {
-	           if(resource.getResourceName() != null && !resource.getResourceName().isEmpty())
-	                report.resProxyReport.numOfResProxiesWithReferences++;
-	    }
-	    
-	    report.resProxyReport.resourceType.add(resourceType);
-	    
-	}
+      Stream<Resource> resourceStream = Stream.of(data.getDataResources().stream(),
+            data.getLandingPageResources().stream(), data.getMetadataResources().stream(),
+            data.getSearchPageResources().stream(), data.getSearchResources().stream()).flatMap(s -> s);
 
-	@Override
-	public synchronized Score calculateScore(CMDInstanceReport report) {
-		double score = report.resProxyReport.percOfResourcesWithMime + report.resProxyReport.percOfResProxiesWithReferences;
-		return new Score(score, 2.0, "cmd-res-proxy", this.getMessages());		
-	}
+      report.resProxyReport = new ResProxyReport();
 
+      report.resProxyReport.numOfResProxies = 0;
+      report.resProxyReport.numOfResourcesWithMime = 0;
+      report.resProxyReport.numOfResProxiesWithReferences = 0;
+      report.resProxyReport.resourceType = new ArrayList<ResourceType>();
+
+      resourceStream.forEach(resource -> {
+
+         report.resProxyReport.numOfResProxies++;
+
+         if (resource.getMimeType() != null)
+            report.resProxyReport.numOfResourcesWithMime++;
+         if (resource.getResourceName() != null && !resource.getResourceName().isEmpty())
+            report.resProxyReport.numOfResProxiesWithReferences++;
+
+      });
+
+      Stream.of(data.getDataResources(), data.getLandingPageResources(), data.getMetadataResources(),
+            data.getSearchPageResources(), data.getSearchResources()).forEach(list -> {
+               if (list.size() > 0) {
+
+                  ResourceType resourceType = new ResourceType();
+                  resourceType.type = list.get(0).getType();
+                  resourceType.count = list.size();
+
+                  report.resProxyReport.resourceType.add(resourceType);
+               }
+            });
+      
+      score.setScore(report.resProxyReport.percOfResourcesWithMime + report.resProxyReport.percOfResProxiesWithReferences);
+      
+      report.addSegmentScore(score);
+   }
 }

@@ -20,8 +20,6 @@ import java.util.Collection;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDInstanceReport extends Report<CMDInstanceReport> {
 
-    public String parentName;
-
     @XmlAttribute
     public Double score = 0.0;
 
@@ -74,7 +72,7 @@ public class CMDInstanceReport extends Report<CMDInstanceReport> {
     //scores
     @XmlElementWrapper(name = "score-section")
     @XmlElement(name = "score")
-    public Collection<Score> segmentScores;
+    public Collection<Score> segmentScores = new ArrayList<Score>();
 
     // URLs
     @XmlElementWrapper(name = "single-url-report")
@@ -155,20 +153,18 @@ public class CMDInstanceReport extends Report<CMDInstanceReport> {
 
     @Override
     public boolean isValid() {
-        return segmentScores.stream().filter(Score::hasFatalMsg).findFirst().orElse(null) == null;
+        return segmentScores.stream().filter(Score::hasFatalMsg).findFirst().isPresent();
     }
 
     @Override
     public void addSegmentScore(Score segmentScore) {
-        if (segmentScores == null)
-            segmentScores = new ArrayList<>();
 
         segmentScores.add(segmentScore);
-        maxScore += segmentScore.maxScore;
-        score += segmentScore.score;
+        maxScore += segmentScore.getMaxScore();
+        score += segmentScore.getScore();
         scorePercentage = maxScore == 0.0 ? 0.0 : score / maxScore;
-        if (!segmentScore.segment.equals("profiles-score"))
-            instanceScore += segmentScore.score;
+        if (!segmentScore.getSegment().equals("profiles-score"))
+            instanceScore += segmentScore.getScore();
 
     }
 

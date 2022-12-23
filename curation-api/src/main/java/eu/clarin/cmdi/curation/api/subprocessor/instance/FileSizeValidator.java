@@ -2,7 +2,6 @@ package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.instance_parser.InstanceParser;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.Score;
@@ -46,7 +45,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 @Component
-public class FileSizeValidator extends AbstractSubprocessor {
+public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
 
    private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
 
@@ -101,11 +100,14 @@ public class FileSizeValidator extends AbstractSubprocessor {
    }
 
    @Override
-   public synchronized void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException{
+   public synchronized void process(CMDInstance instance, CMDInstanceReport report){
+      
+      Score score = new Score("file-size", 1.0);
 
       // convert cmdi 1.1 to 1.2 if necessary
+      
 
-      if (!isLatestVersion(entity.getPath())) {
+      if (!isLatestVersion(instance.getPath())) {
          Path newPath = null;
          
          try {
@@ -115,6 +117,7 @@ public class FileSizeValidator extends AbstractSubprocessor {
             
             log.error("can't create temporary outputfile for CMD1.1 to CMD1.x transformation");
             throw new RuntimeException(e);
+         
          }
 
          TransformerFactory factory = TransformerFactory.newInstance();
@@ -123,7 +126,7 @@ public class FileSizeValidator extends AbstractSubprocessor {
          Transformer transformer;
          try {
             transformer = factory.newTransformer(xslt);
-            transformer.transform(new StreamSource(entity.getPath().toFile()), new StreamResult(newPath.toFile()));
+            transformer.transform(new StreamSource(instance.getPath().toFile()), new StreamResult(newPath.toFile()));
          }
          catch (TransformerConfigurationException e) {
             
@@ -132,35 +135,38 @@ public class FileSizeValidator extends AbstractSubprocessor {
          }
          catch (TransformerException e) {
             
-            log.error("can't transfrom input file '{}'", entity.getPath());
-            throw new SubprocessorException(e);
+            log.debug("can't transfrom input file '{}'", instance.getPath());
+            
+            report.addSegmentScore(score.addMessage(Severity.FATAL, "can't transfrom input file '" + instance.getPath().getFileName() + "'"));
+            
+            return;
             
          }
          
 
-         this.addMessage(Severity.INFO, "tranformed cmdi version 1.1 into version 1.2");
+         score.addMessage(Severity.INFO, "tranformed cmdi version 1.1 into version 1.2");
 
-         entity.setPath(newPath);
+         instance.setPath(newPath);
          try {
-            entity.setSize(Files.size(newPath));
+            instance.setSize(Files.size(newPath));
          }
          catch (IOException e) {
 
             log.error("can't get size from temporary transfromer output file '{}'", newPath);
-            throw new SubprocessorException(e);
+            throw new RuntimeException(e);
             
          }
       }
       
       report.fileReport = new CMDInstanceReport.FileReport();
-      report.fileReport.size = entity.getSize();
+      report.fileReport.size = instance.getSize();
       
       //from instance upload
-      if (entity.getUrl() != null) {
-         report.fileReport.location = FileNameEncoder.encode(entity.getUrl());
+      if (instance.getUrl() != null) {
+         report.fileReport.location = FileNameEncoder.encode(instance.getUrl());
       }
       else {
-         Path filePath = entity.getPath();
+         Path filePath = instance.getPath();
          
          //file in the data directory
          if (filePath.startsWith(conf.getDirectory().getDataRoot())) {
@@ -174,32 +180,31 @@ public class FileSizeValidator extends AbstractSubprocessor {
       }
 
       if (report.fileReport.size > conf.getMaxFileSize()) {
-         this.addMessage(Severity.FATAL, "The file size exceeds the limit allowed (" + conf.getMaxFileSize()+ "B)");
-         // don't assess when assessing collections
-         if ("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode())) {
-            throw new SubprocessorException();
-         }
+         
+         log.debug("file '{}' has a size of {} bytes which exceeds the limit of {}", instance.getPath(), report.fileReport.size, conf.getMaxFileSize());
+         
+         score.addMessage(Severity.FATAL, "the file size exceeds the limit allowed (" + conf.getMaxFileSize()+ "B)");
+         
+         return;
+
       }
 
       CMDIData<Map<String, List<ValueSet>>> cmdiData = null;
 
       try {
-         cmdiData = processor.process(entity.getPath().toFile(), new ResourceStructureGraph());
-      }
-      catch (TransformerException e) {
-
-         log.debug("can't transform file '{}'", entity.getPath());
-         throw new SubprocessorException(e);
-         
+         cmdiData = processor.process(instance.getPath().toFile(), new ResourceStructureGraph());
       }
       catch (Exception e) {
+
+         log.debug("can't create CMDData object from file '{}'", instance.getPath());
+         report.addSegmentScore(score.addMessage(Severity.FATAL, "can't parse file '" + instance.getPath().getFileName() + "'"));
          
-         log.debug("can't create CMDIData object from file '{}'", entity.getPath());
-         throw new SubprocessorException(e);
-      
+         return;
+         
       }
 
-      entity.setCmdiData(cmdiData);
+
+      instance.setCmdiData(cmdiData);
 
       // create xpath/value pairs only in instance mode
       if (!("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode()))) {
@@ -208,28 +213,26 @@ public class FileSizeValidator extends AbstractSubprocessor {
 
          log.debug("parsing instance...");
          try {
-            entity.setParsedInstance(transformer.parseIntance(Files.newInputStream(entity.getPath())));
+            instance.setParsedInstance(transformer.parseIntance(Files.newInputStream(instance.getPath())));
          }
          catch (TransformerException e) {
             
-            log.error("can't transform CMD instance file '{}'", entity.getPath());
-            throw new SubprocessorException(e);
+            log.error("can't transform CMD instance file '{}'", instance.getPath());
+            report.addSegmentScore(score.addMessage(Severity.FATAL, "can't transform CMD instance file '" + instance.getPath().getFileName() ));
+            
+            return;
          
          }
          catch (IOException e) {
             
-            log.error("can't read CMD file '{}'", entity.getPath());
-            throw new SubprocessorException(e);
+            log.error("can't read CMD file '{}'", instance.getPath());
+            throw new RuntimeException(e);
          
          }
+         score.setScore(1.0);
+         report.addSegmentScore(score);
+         
          log.debug("...done");
       }
-   }
-
-   @Override
-   public synchronized Score calculateScore(CMDInstanceReport report) {
-      // in case that size exceeds the limit msgs will be created and it will contain
-      // a single msg
-      return new Score(this.getMessages().size() == 0 ? 1.0 : 0, 1.0, "file-size", this.getMessages());
    }
 }

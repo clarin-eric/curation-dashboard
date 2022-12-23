@@ -9,14 +9,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.ximpleware.*;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance.InstanceNode;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
@@ -40,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class InstanceFacetProcessor extends AbstractSubprocessor {
+public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
 
    @Autowired
    private ApiConfig conf;
@@ -49,25 +47,31 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
    @Autowired
    private FacetsMappingCacheFactory fac;
    @Autowired
-   ApplicationContext ctx;
+   FacetReportCreator facetReportCreator;
 
    @Override
-   public synchronized void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
+   public void process(CMDInstance instance, CMDInstanceReport report) {
+
+      Score score = new Score("facet-mapping", 1.0);
 
       // parse instance
       CMDXPathService xmlService;
       try {
-         xmlService = new CMDXPathService(entity.getPath());
+         xmlService = new CMDXPathService(instance.getPath());
       }
       catch (ParseException e) {
 
-         log.error("can't parse file '{}' for instance facet processing", entity.getPath());
-         throw new SubprocessorException(e);
+         log.error("can't parse file '{}' for instance facet processing", instance.getPath());
+
+         report.addSegmentScore(score.addMessage(Severity.FATAL,
+               "can't parse file '" + instance.getPath().getFileName() + "' for instance facet processing"));
+
+         return;
 
       }
       catch (IOException e) {
 
-         log.error("can't read file '{}' for instance facet processing", entity.getPath());
+         log.error("can't read file '{}' for instance facet processing", instance.getPath());
          throw new RuntimeException(e);
 
       }
@@ -76,84 +80,87 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
 
       Map<Integer, ValueNode> nodesMap;
 
-      nodesMap = getValueNodesMap(entity, report, nav);
-
+      nodesMap = getValueNodesMap(score, instance, report, nav);
 
       log.trace("nodes map: \n{}", nodesMap);
 
-      facetsToNodes(entity, report, nodesMap, nav);
+      facetsToNodes(score, instance, report, nodesMap, nav);
 
       report.facets.values = nodesMap.values();
 
       double numOfCoveredByIns = report.facets.coverage.stream().filter(facet -> facet.coveredByInstance).count();
       report.facets.instanceCoverage = numOfCoveredByIns / report.facets.numOfFacets;
+      score.setScore(report.facets.instanceCoverage);
+
+      report.addSegmentScore(score);
 
    }
 
-   private Map<Integer, ValueNode> getValueNodesMap(CMDInstance entity, CMDInstanceReport report, VTDNav nav) throws SubprocessorException {
+   private Map<Integer, ValueNode> getValueNodesMap(Score score, CMDInstance instance, CMDInstanceReport report,
+         VTDNav nav) {
       Map<Integer, ValueNode> nodesMap = new LinkedHashMap<Integer, ValueNode>();
 
       Map<String, CMDINode> elements;
       try {
          elements = crService.getParsedProfile(report.header).getElements();
+
+         ParsedInstance parsedInstance = instance.getParsedInstance();
+
+         AutoPilot ap = new AutoPilot(nav);
+
+         // create value nodes
+         for (InstanceNode instanceNode : parsedInstance.getNodes()) {
+            if (!instanceNode.getValue().isEmpty()) {
+               ValueNode val = new ValueNode();
+               val.xpath = instanceNode.getXpath();
+               val.value = instanceNode.getValue();
+
+               CMDINode node = elements.get(instanceNode.getXpath().replaceAll("\\[\\d\\]", ""));
+               if (node != null && node.concept != null)
+                  val.concept = new Concept(node.concept.uri, node.concept.prefLabel, node.concept.status);
+
+               // determines the index for each xpath
+               String xpath = instanceNode.getXpath().replaceAll("\\w+:", "");
+               try {
+                  ap.selectXPath(xpath);
+               }
+               catch (XPathParseException e) {
+
+                  log.debug("can't parse xpath '{}'", xpath);
+                  throw new RuntimeException(e);
+               }
+               try {
+                  nodesMap.put(ap.evalXPath(), val);
+               }
+               catch (XPathEvalException e) {
+
+                  log.debug("can't evaluate xpath '{}'", xpath);
+                  throw new RuntimeException(e);
+               }
+               catch (NavException e) {
+
+                  log.debug("can't navigate in document");
+                  score.addMessage(Severity.FATAL, "can't navigate in document");
+               }
+               ap.resetXPath();
+            }
+         }
       }
       catch (NoProfileCacheEntryException e) {
-         
+
          log.debug("no ProfileCacheEntry for profile id '{}'", report.header.getId());
-         
-         throw new SubprocessorException(e);
-      }
-      ParsedInstance parsedInstance = entity.getParsedInstance();
 
-      AutoPilot ap = new AutoPilot(nav);
-
-      // create value nodes
-      for (InstanceNode instanceNode : parsedInstance.getNodes()) {
-         if (!instanceNode.getValue().isEmpty()) {
-            ValueNode val = new ValueNode();
-            val.xpath = instanceNode.getXpath();
-            val.value = instanceNode.getValue();
-
-            CMDINode node = elements.get(instanceNode.getXpath().replaceAll("\\[\\d\\]", ""));
-            if (node != null && node.concept != null)
-               val.concept = new Concept(node.concept.uri, node.concept.prefLabel, node.concept.status);
-
-            // determines the index for each xpath
-            String xpath = instanceNode.getXpath().replaceAll("\\w+:", "");
-            try {
-               ap.selectXPath(xpath);
-            }
-            catch (XPathParseException e) {
-               
-               log.debug("can't parse xpath '{}'", xpath);
-               throw new SubprocessorException(e);
-            }
-            try {
-               nodesMap.put(ap.evalXPath(), val);
-            }
-            catch (XPathEvalException e) {
-               
-               log.debug("can't evaluate xpath '{}'", xpath);
-               throw new SubprocessorException(e);
-            }
-            catch (NavException e) {
-               
-               log.debug("can't navigate in document");
-               throw new SubprocessorException(e);
-            }
-            ap.resetXPath();
-         }
       }
 
       return nodesMap;
    }
 
-   private void facetsToNodes(CMDInstance entity, CMDInstanceReport report, Map<Integer, ValueNode> nodesMap,
-         VTDNav nav) throws SubprocessorException {
+   private void facetsToNodes(Score score, CMDInstance instance, CMDInstanceReport report,
+         Map<Integer, ValueNode> nodesMap, VTDNav nav) {
 
       FacetsMapping facetMapping = fac.getFacetsMapping(report.header);
 
-      Map<String, List<ValueSet>> facetValuesMap = entity.getCmdiData().getDocument();
+      Map<String, List<ValueSet>> facetValuesMap = instance.getCmdiData().getDocument();
 
       /*
        * We need to know if a value is mapped to the origin facet. The facetValuesMap
@@ -166,7 +173,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
       facetValuesMap.values().forEach(
             list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getOriginFacetConfig().getName())));
 
-      report.facets = ctx.getBean(FacetReportCreator.class).createFacetReport(this, report.header, facetMapping);
+      report.facets = facetReportCreator.createFacetReport(score, report.header, facetMapping);
 
       int numOfCoveredByIns = 0;
 
@@ -190,8 +197,6 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
          // in the next step the value(s) have to be mapped to the right node
 
          Map<Integer, List<ValueSet>> facetMap = values.stream().collect(Collectors.groupingBy(ValueSet::getVtdIndex)); // groups
-                                                                                                                        // valueSets
-                                                                                                                        // by
                                                                                                                         // vtdIndex
 
          for (Map.Entry<Integer, List<ValueSet>> entry : facetMap.entrySet()) {
@@ -203,7 +208,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
                if (node.facet == null)
                   node.facet = new ArrayList<FacetValueStruct>();
 
-               node.facet.add(createFacetValueStruct(facetName, node.value,
+               node.facet.add(createFacetValueStruct(score, facetName, node.value,
                      entry.getValue().stream().map(valueSet -> valueSet.getValueLanguagePair().getLeft())
                            .collect(Collectors.joining("; ")),
                      // entry.getValue().get(0).isDerived() //assumes that a facet isn't defined as
@@ -211,9 +216,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
                      entry.getValue().stream().anyMatch(ValueSet::isDerived), // assumes that a facet isn't
                                                                               // defined as origin and derived at
                                                                               // the same time
-                     entry.getValue().stream().anyMatch(ValueSet::isResultOfValueMapping) // assumes that a facet
-                                                                                          // isn't defined as
-                                                                                          // origin and derived
+                     entry.getValue().stream().anyMatch(ValueSet::isResultOfValueMapping) // assumes that a facet                                                                       // origin and derived
                                                                                           // at the same time
                ));
             }
@@ -229,16 +232,11 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
 
    }
 
-   @Override
-   public synchronized Score calculateScore(CMDInstanceReport report) {
-      return new Score(report.facets.instanceCoverage, 1.0, "facet-mapping", this.getMessages());
-   }
-
    /*
     *
     */
 
-   private FacetValueStruct createFacetValueStruct(String facetName, String value, String normalizedValue,
+   private FacetValueStruct createFacetValueStruct(Score score, String facetName, String value, String normalizedValue,
          boolean isDerived, boolean usesValueMapping) {
 
       FacetValueStruct facetNode = new FacetValueStruct();
@@ -249,7 +247,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor {
 
       if (normalizedValue != null && !normalizedValue.trim().isEmpty() && !normalizedValue.equals("--")
             && !value.equals(normalizedValue)) {
-         addMessage(Severity.INFO,
+         score.addMessage(Severity.INFO,
                "Normalised value for facet " + facetName + ": '" + value + "' into '" + normalizedValue + "'");
          facetNode.normalisedValue = normalizedValue;
       }

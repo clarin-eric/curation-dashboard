@@ -13,15 +13,16 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
+import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.Concept;
 import eu.clarin.cmdi.curation.api.report.Score;
+import eu.clarin.cmdi.curation.api.report.Severity;
 //import eu.clarin.cmdi.curation.api.report.CMDProfileReport.Component;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.Components;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.Concepts;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.Elements;
-import eu.clarin.cmdi.curation.api.subprocessor.AbstractMessageCollection;
+import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
@@ -35,12 +36,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class ProfileElementsHandler extends AbstractMessageCollection {
+public class ProfileElementsHandler extends AbstractSubprocessor<CMDProfile, CMDProfileReport> {
 
    @Autowired
    private CRService crService;
 
-   public void process(CMDProfileReport report) throws SubprocessorException {
+   public void process(CMDProfile profile, CMDProfileReport report) {
+      
+      Score score = new Score("cmd-concepts-section", 1.0);
       ParsedProfile parsedProfile = null;
 
       try {
@@ -49,17 +52,16 @@ public class ProfileElementsHandler extends AbstractMessageCollection {
       catch (NoProfileCacheEntryException e) {
 
          log.debug("can't get ParsedProfile for profile id '{}'", report.header.getId());
-         throw new SubprocessorException();
+         score.addMessage(Severity.FATAL, "can't get ParsedProfile for profile id '" + report.header.getId() + "'");
+
       }
 
       report.components = createComponentSegment(parsedProfile);
       report.elements = createElementSegment(parsedProfile);
+      
+      score.setScore(report.elements.percWithConcept);
+      report.addSegmentScore(score);
 
-   }
-
-   public Score calculateScore(CMDProfileReport report) {
-      double score = report.elements.percWithConcept;
-      return new Score(score, 1.0, "cmd-concepts-section", this.getMessages());
    }
 
    private Components createComponentSegment(ParsedProfile parsedProfile) {

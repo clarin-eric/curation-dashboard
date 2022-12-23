@@ -7,7 +7,7 @@ import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.*;
 import eu.clarin.cmdi.curation.api.report.CollectionReport.*;
-import eu.clarin.cmdi.curation.api.subprocessor.AbstractMessageCollection;
+import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Component
-public class CollectionAggregator extends AbstractMessageCollection{
+public class CollectionAggregator extends AbstractSubprocessor<CMDCollection, CollectionReport>{
 
    @Autowired
    private ApiConfig conf;
@@ -42,7 +42,9 @@ public class CollectionAggregator extends AbstractMessageCollection{
    AggregatedStatusRepository aRep;
 
    @Transactional
-   public void process(CMDCollection collection, CollectionReport collectionReport) throws IOException {
+   public void process(CMDCollection collection, CollectionReport collectionReport) {
+      
+      Score score = new Score("invalid-files", 1.0);
       
       for (String facetName : conf.getFacets()) {
          FacetCollectionStruct facet = new FacetCollectionStruct();
@@ -53,55 +55,62 @@ public class CollectionAggregator extends AbstractMessageCollection{
 
       ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadPoolSize());    
 
-      Files.walkFileTree(collection.getPath(), new FileVisitor<Path>() {
+      try {
+         Files.walkFileTree(collection.getPath(), new FileVisitor<Path>() {
 
-         @Override
-         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 
-            return FileVisitResult.CONTINUE;
-         }
+               return FileVisitResult.CONTINUE;
+            }
 
-         @Override
-         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            
-            collectionReport.fileReport.numOfFiles++;
-            
-            if(attrs.size() > collectionReport.fileReport.maxFileSize) {
-               collectionReport.fileReport.maxFileSize = attrs.size();
-            }
-            if(collectionReport.fileReport.minFileSize == 0) {
-               collectionReport.fileReport.minFileSize = attrs.size();
-            }
-            else if(attrs.size() < collectionReport.fileReport.minFileSize) {
-               collectionReport.fileReport.minFileSize = attrs.size();
-            }
-            collectionReport.fileReport.size += attrs.size();               
-            
-            CMDInstance instance = ctx.getBean(CMDInstance.class, file, attrs.size());
-            
-            executor.submit(() -> {
+            @Override
+            public FileVisitResult visitFile(Path filePath, BasicFileAttributes attrs) throws IOException {
                
+               collectionReport.fileReport.numOfFiles++;
+               
+               if(attrs.size() > collectionReport.fileReport.maxFileSize) {
+                  collectionReport.fileReport.maxFileSize = attrs.size();
+               }
+               if(collectionReport.fileReport.minFileSize == 0) {
+                  collectionReport.fileReport.minFileSize = attrs.size();
+               }
+               else if(attrs.size() < collectionReport.fileReport.minFileSize) {
+                  collectionReport.fileReport.minFileSize = attrs.size();
+               }
+               collectionReport.fileReport.size += attrs.size();               
+               
+               CMDInstance instance = ctx.getBean(CMDInstance.class, filePath, attrs.size(), collectionReport.fileReport.provider);
+               
+               executor.submit(() -> {
+ 
+                  CMDInstanceReport cmdInstanceReport = instance.generateReport();
+                  collectionReport.addReport(cmdInstanceReport);
 
-               CMDInstanceReport cmdInstanceReport = instance.generateReport();
-               collectionReport.addReport(cmdInstanceReport);
+               }); // end executor.submit            
+               
+               return FileVisitResult.CONTINUE;
+            }
 
-            }); // end executor.submit            
-            
-            return FileVisitResult.CONTINUE;
-         }
+            @Override
+            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+               log.error("can't access file '{}'", file);
+               return FileVisitResult.CONTINUE;
+            }
 
-         @Override
-         public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-            log.error("can't access file '{}'", file);
-            return FileVisitResult.CONTINUE;
-         }
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 
-         @Override
-         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-
-            return FileVisitResult.CONTINUE;
-         }      
-      });
+               return FileVisitResult.CONTINUE;
+            }      
+         });
+      }
+      catch (IOException e) {
+         
+         log.error("can't walk through path '{}'", collection.getPath());
+         throw new RuntimeException(e);
+      
+      }
 
       executor.shutdown();
 
@@ -156,18 +165,12 @@ public class CollectionAggregator extends AbstractMessageCollection{
       
       CMDInstance.duplicateMDSelfLink.clear();
       CMDInstance.mdSelfLinks.clear();
+      
+      score.setScore((double) collectionReport.file.size()/collectionReport.fileReport.numOfFiles);
+      
+      collectionReport.addSegmentScore(score);
 
    }
 
-   public Score calculateScore(CollectionReport report) {
-      double score = report.fileReport.numOfFiles;
-      if (report.file != null) {
-         report.file
-               .forEach(ir -> addMessage(Severity.ERROR, "Invalid file:" + ir.recordName + ", reason: " + ir.reason));
-         score = (score - report.file.size()) / score;
-      }
-
-      return new Score(score, (double) report.fileReport.numOfFiles, "invalid-files", this.getMessages());
-   }
 
 }

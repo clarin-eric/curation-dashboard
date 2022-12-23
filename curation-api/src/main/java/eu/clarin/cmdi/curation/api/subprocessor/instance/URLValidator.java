@@ -8,7 +8,6 @@ import eu.clarin.linkchecker.persistence.repository.StatusRepository;
 import eu.clarin.linkchecker.persistence.repository.UrlRepository;
 import eu.clarin.linkchecker.persistence.service.LinkService;
 import eu.clarin.linkchecker.persistence.utils.Category;
-import eu.clarin.linkchecker.persistence.utils.UrlValidator;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
@@ -24,10 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Stream;
+
+import eu.clarin.cmdi.vlo.PIDUtils;
 
 @Slf4j
 @Component
-public class URLValidator extends AbstractSubprocessor {
+public class URLValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
 
    @Autowired
    private ApiConfig conf;
@@ -42,64 +44,70 @@ public class URLValidator extends AbstractSubprocessor {
    
 
    @Override
-   public synchronized void process(CMDInstance entity, CMDInstanceReport instanceReport) {
+   public void process(CMDInstance instance, CMDInstanceReport instanceReport) {
+      
+      Score score = new Score("url-validation", 1.0);
       
       instanceReport.urlReport = new CMDInstanceReport.URLReport();
 
-      CMDIData<Map<String, List<ValueSet>>> data = entity.getCmdiData();
+      CMDIData<Map<String, List<ValueSet>>> data = instance.getCmdiData();
 
-      Map<String, Resource> urlMap = new HashMap<>();
-
-      ArrayList<Resource> resources = new ArrayList<>();
-      resources.addAll(data.getDataResources());
-      resources.addAll(data.getLandingPageResources());
-      resources.addAll(data.getMetadataResources());
-      resources.addAll(data.getSearchPageResources());
-      resources.addAll(data.getSearchResources());
-
-      resources.stream().filter(resource -> resource.getResourceName() != null
-            && (resource.getResourceName().startsWith("http://") || resource.getResourceName().startsWith("https://")))
-            .forEach(resource -> {
-               urlMap.computeIfAbsent(resource.getResourceName(), key -> resource);
-               instanceReport.urlReport.numOfLinks++;
-            });
-
-      String selfLink = (data.getDocument().get("_selfLink") != null && !data.getDocument().get("_selfLink").isEmpty())
-            ? data.getDocument().get("_selfLink").get(0).getValue()
-            : "";
-
-      // only add selfLink if url
-      if (selfLink.startsWith("http://") || selfLink.startsWith("https://"))
-         urlMap.computeIfAbsent(selfLink, key -> null);
+      
+      Stream<Resource> resourceStream = Stream.of(
+            data.getDataResources().stream(),
+            data.getLandingPageResources().stream(),
+            data.getMetadataResources().stream(),
+            data.getSearchPageResources().stream(),
+            data.getSearchResources().stream()
+         ).flatMap(s -> s);           
 
 
       if ("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode())) {
          
          Client client = this.clRepository.findByName(conf.getClientUsername()).get();
-
-         for (String url : urlMap.keySet()) {
-
-            String origin = conf.getDirectory().getDataRoot().relativize(entity.getPath()).toString();
-
-            String providergroup = instanceReport.parentName;
-
-            String expectedMimeType = urlMap.get(url).getMimeType();
-            expectedMimeType = expectedMimeType == null ? "Not Specified" : expectedMimeType;
-
-            uService.save(client, url, origin, providergroup, expectedMimeType);
+         
+         
+         final String origin = conf.getDirectory().getDataRoot().relativize(instance.getPath()).toString();
+         
+         
+         resourceStream.forEach(resource -> {
+            
+            instanceReport.urlReport.numOfLinks++;
+            
+            if(PIDUtils.isPid(resource.getResourceName())) {
+            
+               uService.save(
+                     client, 
+                     PIDUtils.getActionableLinkForPid(resource.getResourceName()), 
+                     origin, 
+                     instance.getProvidergroupName(), 
+                     (resource.getMimeType()==null?"Not Specified":resource.getMimeType())
+                  );
+            }
+         });
+         
+         if(data.getDocument().get("_selfLink") != null && !data.getDocument().get("_selfLink").isEmpty() && PIDUtils.isPid(data.getDocument().get("_selfLink").get(0).getValue())) {
+            uService.save(
+                  client, 
+                  PIDUtils.getActionableLinkForPid(data.getDocument().get("_selfLink").get(0).getValue()), 
+                  origin, 
+                  instance.getProvidergroupName(), 
+                  "Not Specified"
+               );
          }
+
       } // end collection mode
       else {// instance mode
-         for (String url : urlMap.keySet()) {
+         resourceStream.forEach(resource -> {
             
             Optional<Url> urlOptional = null;
             Optional<Status> statusOptional = null;
             
-            if(!UrlValidator.validate(url).isValid()) {
-               addMessage(Severity.ERROR, "Url: " + url + " Category:" + Category.Invalid_URL);
+            if(!PIDUtils.isPid(resource.getResourceName())) {
+               score.addMessage(Severity.ERROR, "Url: " + resource.getResourceName() + " Category:" + Category.Invalid_URL);
                instanceReport.urlReport.numOfInvalidLinks++;
             }
-            else if((urlOptional = uRepository.findByName(url)).isPresent()
+            else if((urlOptional = uRepository.findByName(PIDUtils.getActionableLinkForPid(resource.getResourceName()))).isPresent()
                   && (statusOptional = sRepository.findByUrl(urlOptional.get())).isPresent()) {
                
                instanceReport.urlReport.numOfCheckedLinks++;
@@ -109,27 +117,27 @@ public class URLValidator extends AbstractSubprocessor {
                switch (statusOptional.get().getCategory()) {
                   case Ok -> numOfValidLinks++;               
                   case Broken -> {
-                     addMessage(Severity.ERROR, "Url: " + urlOptional.get().getName() + " Category:" + statusOptional.get().getCategory());
+                     score.addMessage(Severity.ERROR, "Url: " + urlOptional.get().getName() + " Category:" + statusOptional.get().getCategory());
                      instanceReport.urlReport.numOfBrokenLinks++;
                   }
                   case Invalid_URL -> {
-                     addMessage(Severity.ERROR, "Url: " + urlOptional.get().getName() + " Category:" + statusOptional.get().getCategory());
+                     score.addMessage(Severity.ERROR, "Url: " + urlOptional.get().getName() + " Category:" + statusOptional.get().getCategory());
                      instanceReport.urlReport.numOfInvalidLinks++;
                   }
                   case Undetermined -> {
-                     addMessage(Severity.WARNING,
+                     score.addMessage(Severity.WARNING,
                            "Url: " + urlOptional.get().getName() + " Category:" + statusOptional.get().getCategory());
                      numOfValidLinks++;
                      instanceReport.urlReport.numOfUndeterminedLinks++;
                   }
                   case Restricted_Access -> {
-                     addMessage(Severity.WARNING,
+                     score.addMessage(Severity.WARNING,
                            "Url: " + urlOptional.get().getName() + " Category:" + statusOptional.get().getCategory());
                      numOfValidLinks++;
                      instanceReport.urlReport.numOfRestrictedAccessLinks++;
                   }
                   case Blocked_By_Robots_txt -> {
-                     addMessage(Severity.WARNING,
+                     score.addMessage(Severity.WARNING,
                            "Url: " + urlOptional.get().getName() + " Category:" + statusOptional.get().getCategory());
                      numOfValidLinks++;
                      instanceReport.urlReport.numOfBlockedByRobotsTxtLinks++;
@@ -143,18 +151,12 @@ public class URLValidator extends AbstractSubprocessor {
                instanceReport.urlReport.percOfValidLinks = instanceReport.urlReport.numOfCheckedLinks == 0 ? 0
                      : (numOfValidLinks / (double) instanceReport.urlReport.numOfCheckedLinks);            
             }
-         }
+         });
       } // end instance mode
+      
+      score.setScore(instanceReport.urlReport.percOfValidLinks);
+      
+      instanceReport.addSegmentScore(score);
 
-   }
-
-   public synchronized Score calculateScore(CMDInstanceReport report) {
-      // it can influence the score, if one collection was done with enabled and the
-      // other without
-
-      double score = report.urlReport.percOfValidLinks != null && !Double.isNaN(report.urlReport.percOfValidLinks)
-            ? report.urlReport.percOfValidLinks
-            : 0;
-      return new Score(score, 1.0, "url-validation", this.getMessages());
    }
 }

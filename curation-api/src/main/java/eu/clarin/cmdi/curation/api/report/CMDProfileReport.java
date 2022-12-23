@@ -160,8 +160,8 @@ public class CMDProfileReport extends Report<CMDProfileReport> {
             segmentScores = new ArrayList<>();
 
         segmentScores.add(segmentScore);
-        maxScore += segmentScore.maxScore;
-        score += segmentScore.score;
+        maxScore += segmentScore.getMaxScore();
+        score += segmentScore.getScore();
     }
 
     @Override

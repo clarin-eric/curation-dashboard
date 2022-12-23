@@ -35,19 +35,28 @@ public class CMDInstance {
    private long size = 0;
    private String url;
    
+   private String providergroupName;
+   
    @Autowired
    private CMDInstanceProcessor processor;
 
    public CMDInstance(Path path) {
+      
       this.path = path;
+
    }
 
-   public CMDInstance(Path path, long size) {
+   public CMDInstance(Path path, long size, String providergroupName) {
+      
       this.path = path;
       this.size = size;
+      this.providergroupName = providergroupName;
+   
    }
 
    public CMDInstanceReport generateReport() {
+      
       return processor.process(this);
+   
    }
 }

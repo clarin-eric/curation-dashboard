@@ -8,11 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport.Coverage;
+import eu.clarin.cmdi.curation.api.report.Score;
 import eu.clarin.cmdi.curation.api.report.Severity;
-import eu.clarin.cmdi.curation.api.subprocessor.AbstractMessageCollection;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
@@ -29,36 +28,36 @@ public class FacetReportCreator {
    @Autowired
    private CRService crService;
 
-   public synchronized FacetReport createFacetReport(AbstractMessageCollection messageCollection, ProfileHeader header, FacetsMapping facetMapping) throws SubprocessorException {
-      Map<String, CMDINode> elements;
+   public FacetReport createFacetReport(Score score, ProfileHeader header, FacetsMapping facetMapping) {
+      FacetReport facetReport = new FacetReport();
+
 
       try {
-         elements = crService.getParsedProfile(header).getElements();
+         final Map<String, CMDINode> elements = crService.getParsedProfile(header).getElements();
+         
+         facetReport.numOfFacets = conf.getFacets().size();
+         facetReport.coverage = new ArrayList<>();
+   
+         for (String facetName : conf.getFacets()) {
+            Coverage facet = new Coverage();
+            facet.name = facetName;
+            facet.coveredByProfile = facetMapping.getFacetDefinition(facetName).getPatterns().stream()
+                  .anyMatch(p -> elements.containsKey(p.getPattern()))
+                  || facetMapping.getFacetDefinition(facetName).getFallbackPatterns().stream()
+                        .anyMatch(p -> elements.containsKey(p.getPattern()));
+            facetReport.coverage.add(facet);
+         }
+   
+         double numOfCoveredByProfile = facetReport.coverage.stream().filter(f -> f.coveredByProfile).count();
+         facetReport.profileCoverage = numOfCoveredByProfile / facetReport.numOfFacets;
       }
       catch (NoProfileCacheEntryException e) {
          
          log.debug("no ParsedProfile for profile id '{}'", header.getId());
-         messageCollection.addMessage(Severity.FATAL, "no ParsedProfile for profile id " + header.getId());
-         throw new SubprocessorException();
-      }
-      FacetReport facetReport = new FacetReport();
-      facetReport.numOfFacets = conf.getFacets().size();
-      facetReport.coverage = new ArrayList<>();
+         score.addMessage(Severity.FATAL, "no ParsedProfile for profile id " + header.getId());
 
-      for (String facetName : conf.getFacets()) {
-         Coverage facet = new Coverage();
-         facet.name = facetName;
-         facet.coveredByProfile = facetMapping.getFacetDefinition(facetName).getPatterns().stream()
-               .anyMatch(p -> elements.containsKey(p.getPattern()))
-               || facetMapping.getFacetDefinition(facetName).getFallbackPatterns().stream()
-                     .anyMatch(p -> elements.containsKey(p.getPattern()));
-         facetReport.coverage.add(facet);
       }
-
-      double numOfCoveredByProfile = facetReport.coverage.stream().filter(f -> f.coveredByProfile).count();
-      facetReport.profileCoverage = numOfCoveredByProfile / facetReport.numOfFacets;
 
       return facetReport;
    }
-
 }

@@ -122,7 +122,15 @@ public class CollectionReport extends Report<CMDInstanceReport> {
    }
    
    @Override
-   public synchronized void addReport(CMDInstanceReport instanceReport) {
+   public void addReport(CMDInstanceReport instanceReport) {
+      
+      if(!instanceReport.isValid()) {
+         InvalidFile invalidFile = new InvalidFile();
+         invalidFile.recordName = instanceReport.fileReport.location;
+   //      invalidFile.reason = instanceReport.segmentScores.stream().flatMap(score -> score.getMessages().stream()).filter(message -> message.lvl == Severity.FATAL).map(message.);
+         
+         return;
+      }
       
       this.score += instanceReport.score;
       if (instanceReport.score > this.insMaxScore)
@@ -264,7 +272,17 @@ public class CollectionReport extends Report<CMDInstanceReport> {
       public Double avgNumOfResourcesWithMime = 0.0;
       public int totNumOfResProxiesWithReferences;
       public Double avgNumOfResProxiesWithReferences = 0.0;
+      @XmlElementWrapper(name = "invalid-references")
+      public Collection<InvalidReference> invalidReferences; 
 
+   }
+   @XmlRootElement
+   @XmlAccessorType(XmlAccessType.FIELD)   
+   public static class InvalidReference{
+      @XmlAttribute
+      public String reference;
+      @XmlAttribute
+      public String origin;      
    }
 
    @XmlRootElement

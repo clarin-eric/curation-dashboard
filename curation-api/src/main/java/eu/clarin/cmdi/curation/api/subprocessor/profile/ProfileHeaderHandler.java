@@ -1,15 +1,13 @@
 package eu.clarin.cmdi.curation.api.subprocessor.profile;
 
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
 import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.Score;
 import eu.clarin.cmdi.curation.api.report.Severity;
-import eu.clarin.cmdi.curation.api.subprocessor.AbstractMessageCollection;
+import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.pph.PPHService;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
-import eu.clarin.cmdi.vlo.config.VloConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class ProfileHeaderHandler extends AbstractMessageCollection{
+public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDProfileReport>{
 
    @Autowired
    private PPHService pphService;
@@ -25,13 +23,15 @@ public class ProfileHeaderHandler extends AbstractMessageCollection{
    private PPHConfig pphConf;
 
 
-   public synchronized void process(CMDProfile entity, CMDProfileReport report) throws SubprocessorException {
+   public void process(CMDProfile entity, CMDProfileReport report) {
 
       boolean isLocalFile = false;
+      Score score = new Score("header-section", 1.0);
 
-      if (entity.getSchemaLocation().startsWith(pphConf.getRestApi()))
+      if (entity.getSchemaLocation().startsWith(pphConf.getRestApi())) {
          report.header = pphService.getProfileHeaders().stream()
                .filter(h -> h.getSchemaLocation().equals(entity.getSchemaLocation())).findFirst().orElse(null);
+      }
 
       if (report.header == null) {
          report.header = new ProfileHeader();
@@ -43,8 +43,9 @@ public class ProfileHeaderHandler extends AbstractMessageCollection{
 
       report.header.setLocalFile(isLocalFile);
 
-      if (!report.header.isPublic())
-         addMessage(Severity.ERROR, "Profile is not public");
+      if (!report.header.isPublic()) {
+         score.addMessage(Severity.WARNING, "Profile is not public");
+      }
 
       //TODO: verify the intention
       /*
@@ -56,10 +57,8 @@ public class ProfileHeaderHandler extends AbstractMessageCollection{
        * addMessage(Severity.WARNING, "The description: " +
        * report.header.getDescription() + " of the profile is not unique");
        */
-   }
-
-   public synchronized Score calculateScore(CMDProfileReport report) {
-      double score = report.header.isPublic() ? 1.0 : 0;
-      return new Score(score, 1.0, "header-section", this.getMessages());
+      score.setScore(1.0);
+      
+      report.addSegmentScore(score);
    }
 }
