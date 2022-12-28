@@ -2,10 +2,12 @@ package eu.clarin.cmdi.curation.cr.profile_parser;
 
 import java.util.Objects;
 
+import eu.clarin.cmdi.curation.ccr.CCRConcept;
+
 public class CMDINode{
 	
 	public boolean isRequired;
-	public Concept concept;
+	public CCRConcept concept;
 	public Component component;
 	
 	@Override
@@ -28,25 +30,6 @@ public class CMDINode{
 		return Objects.hash(isRequired, concept, component);
 	}
 
-	public static class Concept{		
-		
-		public String uri;
-		public String prefLabel;
-		public String status;
-		
-		public Concept(String uri, String prefLabel, String status) {
-			this.uri = uri;
-			this.prefLabel = prefLabel;
-			this.status = status;
-		}
-
-
-		@Override
-		public String toString() {
-			return prefLabel + ": " + uri + "\tstatus: " + status;
-		}
-	}
-	
 	public static class Component{
 		public String name;
 		public String id;

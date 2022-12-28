@@ -11,9 +11,9 @@ import com.ximpleware.VTDNav;
 
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.CCRService;
+import eu.clarin.cmdi.curation.ccr.CCRStatus;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
-import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Concept;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -181,22 +181,22 @@ public abstract class ProfileParser {
       return ind != -1 ? vn.toNormalizedString(ind) : null;
    }
 
-   protected Concept createConcept(String uri){
+   protected CCRConcept createConcept(String uri){
 
       if (uri == null)
          return null;
-      Concept concept;
+      CCRConcept concept;
       if (uri.startsWith("http://purl.org/dc/terms/")) {
-         concept = new Concept(uri, uri.substring("http://purl.org/dc/terms/".length()), "DC");
+         concept = new CCRConcept(uri, uri.substring("http://purl.org/dc/terms/".length()), CCRStatus.DUBLIN_CORE);
       }
       else {
          CCRConcept ccrConcept = ccrService.getConcept(uri);
 
 
          if (ccrConcept != null)
-            concept = new Concept(uri, ccrConcept.getPrefLabel(), ccrConcept.getStatus().toString());
+            concept = ccrConcept;
          else
-            concept = new Concept(uri, "invalid concept", "???");
+            concept = new CCRConcept(uri, "invalid concept", CCRStatus.NaN);
       }
 
       return concept;

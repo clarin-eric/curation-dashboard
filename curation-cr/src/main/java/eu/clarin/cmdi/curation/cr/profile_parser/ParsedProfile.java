@@ -66,13 +66,13 @@ public class ParsedProfile {
 	public Collection<String> getXPathsForConcept(String concept){		
 		return xpaths.entrySet()
 		.stream()
-		.filter(e -> e.getValue().concept != null && e.getValue().concept.uri.equals(concept))
+		.filter(e -> e.getValue().concept != null && e.getValue().concept.getUri().equals(concept))
 		.map(e -> e.getKey())
 		.collect(Collectors.toList());
 	}
 	
 	public String getConcept(String xpath){
-		return xpaths.get(xpath) != null? (xpaths.get(xpath).concept != null? xpaths.get(xpath).concept.uri : null) : null;
+		return xpaths.get(xpath) != null? (xpaths.get(xpath).concept != null? xpaths.get(xpath).concept.getUri() : null) : null;
 	}
 	
 	
