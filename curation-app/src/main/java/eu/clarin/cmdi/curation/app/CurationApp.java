@@ -20,12 +20,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import eu.clarin.cmdi.curation.api.CurationModule;
 import eu.clarin.cmdi.curation.api.entity.CurationEntityType;
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
-import eu.clarin.cmdi.curation.api.report.AllCollectionReport;
-import eu.clarin.cmdi.curation.api.report.AllLinkcheckerReport;
-import eu.clarin.cmdi.curation.api.report.AllProfileReport;
-import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
-import eu.clarin.cmdi.curation.api.report.CollectionReport;
+import eu.clarin.cmdi.curation.api.report.collection.AllCollectionReport;
+import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
+import eu.clarin.cmdi.curation.api.report.linkchecker.AllLinkcheckerReport;
+import eu.clarin.cmdi.curation.api.report.profile.AllProfileReport;
+import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
 import eu.clarin.cmdi.curation.app.conf.AppConfig;
 import eu.clarin.cmdi.curation.pph.PPHService;
@@ -77,10 +76,6 @@ public class CurationApp {
                catch (MalformedURLException e1) {
                   
                   log.error("malformed URL for id '{}' - check the setting for curation.pph-service.restApi");
-               }
-               catch (SubprocessorException e1) {
-   
-                  log.error("can't process public profile with profile id '{}'", header.getId());
                }
             });
             
