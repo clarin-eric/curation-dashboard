@@ -12,7 +12,7 @@ public class ProfileHeader {
 	private String cmdiVersion;
 	private String status;
 	
-	private transient boolean isLocalFile;
-	private transient boolean isPublic = true;
+	private boolean isLocalFile;
+	private boolean isPublic = true;
 	
 }
