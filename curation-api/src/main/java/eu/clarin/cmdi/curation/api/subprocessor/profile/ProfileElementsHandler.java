@@ -3,6 +3,8 @@
  */
 package eu.clarin.cmdi.curation.api.subprocessor.profile;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
-import eu.clarin.cmdi.curation.api.report.Score.Severity;
+import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
-import eu.clarin.cmdi.curation.api.report.profile.ConceptReport;
-import eu.clarin.cmdi.curation.api.report.profile.ComponentReport;
+import eu.clarin.cmdi.curation.api.report.profile.section.ComponentReport;
+import eu.clarin.cmdi.curation.api.report.profile.section.ConceptReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
@@ -35,30 +37,39 @@ public class ProfileElementsHandler extends AbstractSubprocessor<CMDProfile, CMD
 
    public void process(CMDProfile profile, CMDProfileReport report) {
       
+      ComponentReport componentReport = new ComponentReport();
+      report.setComponentReport(componentReport);
+      
       ParsedProfile parsedProfile = null;
 
       try {
-         parsedProfile = crService.getParsedProfile(report.headerReport.getHeader());
+         parsedProfile = crService.getParsedProfile(report.getHeaderReport().getProfileHeader());
       }
       catch (NoProfileCacheEntryException e) {
 
-         log.debug("can't get ParsedProfile for profile id '{}'", report.headerReport.getId());
-         report.componentReport.getScore().addMessage(Severity.FATAL, "can't get ParsedProfile for profile id '" + report.headerReport.getId() + "'");
+         log.debug("can't get ParsedProfile for profile id '{}'", report.getHeaderReport().getId());
+         componentReport.getScore().addMessage(Severity.FATAL, "can't get ParsedProfile for profile id '" + report.getHeaderReport().getId() + "'");
          return;
 
       }
+      
+      final Map<String, ComponentReport.Component> componentMap = new HashMap<String, ComponentReport.Component>();
 
       parsedProfile.getComponents().forEach(crc -> {
-
+         componentReport.incrementTotal();
+         
          if (crc.isRequired) {
-            report.componentReport.required++;
+            componentReport.incrementRequired();
          }
-         report.componentReport.components.stream()
-               .filter(c -> c.getId().equals(crc.component.id))
-               .findFirst()
-               .ifPresentOrElse(ComponentReport.Component::incrementCount, () -> report.componentReport.components.add(new ComponentReport.Component(crc)));
+         
+         componentMap.computeIfAbsent(crc.component.id, k -> new ComponentReport.Component(crc)).incrementCount();
 
       });
+      
+      ConceptReport conceptReport = new ConceptReport();
+      report.setConceptReport(conceptReport);
+      
+      final Map<String, ConceptReport.Concept> conceptMap = new HashMap<String, ConceptReport.Concept>();
       
       parsedProfile
       .getElements()
@@ -67,22 +78,24 @@ public class ProfileElementsHandler extends AbstractSubprocessor<CMDProfile, CMD
       .filter(entrySet -> entrySet.getKey().startsWith("/cmd:CMD/cmd:Components/"))
       .map(Entry::getValue)
       .forEach(n -> {
+         conceptReport.incrementTotal();
+         
          if (n.isRequired)
-            report.conceptReport.required++;
+            conceptReport.incrementRequired();
 
          if (n.concept != null) {
-            report.conceptReport.withConcept++;
+            conceptReport.incrementWithConcept();
 
-            if (n.isRequired)
-               report.conceptReport.required++;
+            if (n.isRequired) {
+               conceptReport.incrementRequired();
+            }
+            
+            conceptMap.computeIfAbsent(n.concept.getUri(), k -> new ConceptReport.Concept(n.concept)).incrementCount();
 
-            report.conceptReport.concepts
-               .stream()
-               .filter(c -> c.getUri().equals(n.concept.getUri())).findFirst()
-               .ifPresentOrElse(ConceptReport.Concept::incrementCount, () -> report.conceptReport.concepts.add(new ConceptReport.Concept(n.concept)));
          }  
       });
       
+      conceptReport.getConcepts().addAll(conceptMap.values());
 
    }
 

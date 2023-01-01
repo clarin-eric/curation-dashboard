@@ -1,8 +1,9 @@
 package eu.clarin.cmdi.curation.api.subprocessor.profile;
 
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
-import eu.clarin.cmdi.curation.api.report.Score.Severity;
+import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
+import eu.clarin.cmdi.curation.api.report.profile.section.ProfileHeaderReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.cr.CRService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +19,15 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
    private CRService crService;
 
 
-   public void process(CMDProfile entity, CMDProfileReport report) { 
+   public void process(CMDProfile profile, CMDProfileReport report) { 
+      
+      ProfileHeaderReport headerReport = new ProfileHeaderReport(crService.createProfileHeader(profile.getSchemaLocation(), "1.x", false));
+      report.setHeaderReport(headerReport);
          
-      report.headerReport.setHeader(crService.createProfileHeader(entity.getSchemaLocation(), "1.x", false));
 
-      if (!report.headerReport.getHeader().isPublic()) {
-         report.headerReport.getScore().addMessage(Severity.WARNING, "Profile is not public");
+      if (!headerReport.getProfileHeader().isPublic()) {
+         log.debug("profile {} not public", profile.getSchemaLocation());
+         headerReport.getScore().addMessage(Severity.WARNING, "Profile is not public");
       }
 
       //TODO: verify the intention

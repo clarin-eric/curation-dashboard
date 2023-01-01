@@ -1,9 +1,6 @@
 package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -20,11 +17,10 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
-import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
-import eu.clarin.cmdi.curation.api.report.Message;
-import eu.clarin.cmdi.curation.api.report.Score;
-import eu.clarin.cmdi.curation.api.report.Severity;
+import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
+import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
+import eu.clarin.cmdi.curation.api.report.instance.section.XmlPopulationReport;
+import eu.clarin.cmdi.curation.api.report.instance.section.XmlValidityReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.xml.CMDErrorHandler;
 import eu.clarin.cmdi.curation.cr.CRService;
@@ -33,31 +29,32 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class XMLValidator extends AbstractSubprocessor {
+public class XMLValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
 
    @Autowired
    private CRService crService;
 
-   int numOfXMLElements = 0;
-   int numOfXMLSimpleElements = 0;
-   int numOfXMLEmptyElement = 0;
    boolean valid = true;
 
    @Override
-   public synchronized void process(CMDInstance entity, CMDInstanceReport report) throws SubprocessorException {
+   public void process(CMDInstance instance, CMDInstanceReport report) {
+      
+      XmlPopulationReport populationReport = new XmlPopulationReport();
+      report.setXmlPopulatedReport(populationReport);
 
       ValidatorHandler schemaValidator;
       try {
-         schemaValidator = crService.getSchema(report.header).newValidatorHandler();
+         schemaValidator = crService.getSchema(report.getHeaderReport().getProfileHeader()).newValidatorHandler();
       }
       catch (NoProfileCacheEntryException e) {
 
-         log.error("no ProfileCacheEntry for profile id '{}'", report.header);
-         throw new SubprocessorException(e);
+         log.error("no ProfileCacheEntry for profile id '{}'", report.getHeaderReport().getId());
+         populationReport.getScore().addMessage(Severity.FATAL, "no ProfileCacheEntry for profile id '" + report.getHeaderReport().getId() + "'");
+         return;
       }
 
-      schemaValidator.setErrorHandler(new CMDErrorHandler(report, this.getMessages()));
-      schemaValidator.setContentHandler(new CMDIInstanceContentHandler(entity, report));
+      schemaValidator.setErrorHandler(new CMDErrorHandler(report));
+      schemaValidator.setContentHandler(new CMDInstanceContentHandler(instance, populationReport));
       // setValidationFeatures(schemaValidator);
       SAXParserFactory parserFactory = SAXParserFactory.newInstance();
       parserFactory.setNamespaceAware(true);
@@ -78,74 +75,47 @@ public class XMLValidator extends AbstractSubprocessor {
 
       reader.setContentHandler(schemaValidator);
       try {
-         reader.parse(new InputSource(entity.getPath().toUri().toString()));
+         reader.parse(new InputSource(instance.getPath().toUri().toString()));
       }
       catch (IOException e) {
 
-         log.error("can't read input file '{}' for XML validation", entity.getPath());
+         log.error("can't read input file '{}' for XML validation", instance.getPath());
          throw new RuntimeException(e);
 
       }
       catch (SAXException e) {
 
-         log.error("can't parse input file '{}' for XML validation", entity.getPath());
-         throw new SubprocessorException(e);
+         log.error("can't parse input file '{}' for XML validation", instance.getPath());
+         populationReport.getScore().addMessage(Severity.FATAL, "can't parse input file '" + instance.getPath().getFileName() + "' ' for XML validation");
+         return;
 
       }
 
-      report.xmlPopulatedReport = new CMDInstanceReport.XMLPopulatedReport();
-      report.xmlPopulatedReport.numOfXMLElements = numOfXMLElements;
-      report.xmlPopulatedReport.numOfXMLSimpleElements = numOfXMLSimpleElements;
-      report.xmlPopulatedReport.numOfXMLEmptyElement = numOfXMLEmptyElement;
-      report.xmlPopulatedReport.percOfPopulatedElements = (numOfXMLSimpleElements - numOfXMLEmptyElement)
-            / (double) numOfXMLSimpleElements;
+      final XmlValidityReport validityReport = new XmlValidityReport();
+      report.setXmlValidityReport(validityReport);
 
-      report.xmlValidityReport = new CMDInstanceReport.XMLValidityReport();
-
-      for (Message m : this.getMessages()) {
-
-         if (m.getLvl().equals(Severity.FATAL) || m.getLvl().equals(Severity.ERROR)) {
-            if (report.xmlValidityReport.issues.size() < 3)
-               report.xmlValidityReport.issues.add(m.getMessage());
-            valid = false;
-         }
-      }
-
-      report.xmlValidityReport.valid = valid;
+      populationReport.getScore().getMessages().stream()
+         .filter(message -> (message.getSeverity() == Severity.FATAL || message.getSeverity() == Severity.ERROR))
+         .forEach(validityReport.getScore().getMessages()::add);
 
    }
 
-   public synchronized Score calculateScore(CMDInstanceReport report) {
-
-      return new Score(report.xmlPopulatedReport.percOfPopulatedElements, 1.0, "xml-populated-validation",
-            new ArrayList<>());
-   }
-
-   // This method is extra because xmlValidator gives two seperate scores.
-   // The architecture was designed for one score per validator apparently. But I
-   // inherited the code and can't deal with the whole architecture. This might
-   // bite me in the ass later but whatever.
-   public Score calculateValidityScore() {
-      List<Message> list = new ArrayList<>(this.getMessages());
-
-      Collections.sort(list, (m1, m2) -> m2.getLvl().getPriority() - m1.getLvl().getPriority());
-      // we don't take into account errors and warnings from xml parser
-      return new Score(valid ? 1.0 : 0.0, 1.0, "xml-validation", list);
-   }
-
-   class CMDIInstanceContentHandler extends DefaultHandler {
+   class CMDInstanceContentHandler extends DefaultHandler {
 
       CMDInstance instance;
-      CMDInstanceReport report;
+      XmlPopulationReport populationReport;
+
 
       String curElem;
       boolean elemWithValue;
 
       Locator locator;
 
-      public CMDIInstanceContentHandler(CMDInstance instance, CMDInstanceReport report) {
+      public CMDInstanceContentHandler(CMDInstance instance, XmlPopulationReport populationReport) {
+         
          this.instance = instance;
-         this.report = report;
+         this.populationReport = populationReport;
+      
       }
 
       @Override
@@ -158,7 +128,7 @@ public class XMLValidator extends AbstractSubprocessor {
        */
       public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-         numOfXMLElements++;
+         this.populationReport.incrementNumOfXMLElements();
          curElem = qName;
 
          // handle attributes
@@ -184,11 +154,11 @@ public class XMLValidator extends AbstractSubprocessor {
        */
       public void endElement(String uri, String localName, String qName) throws SAXException {
          if (curElem.equals(qName)) {// is a simple elem
-            numOfXMLSimpleElements++;
+            this.populationReport.incrementNumOfXMLSimpleElements();
             if (!elemWithValue) {// does it have a value
-               numOfXMLEmptyElement++;
+               this.populationReport.incrementNumOfXMLEmptyElements();
                String msg = "Empty element <" + qName + "> was found on line " + locator.getLineNumber();
-               addMessage(Severity.WARNING, msg);
+               populationReport.getScore().addMessage(Severity.WARNING, msg);
             }
          }
 
@@ -205,5 +175,4 @@ public class XMLValidator extends AbstractSubprocessor {
          // do nothing
       }
    }
-
 }

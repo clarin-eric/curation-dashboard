@@ -2,7 +2,7 @@
  * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
  *
  */
-package eu.clarin.cmdi.curation.api.report;
+package eu.clarin.cmdi.curation.api.report.linkchecker;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +12,8 @@ import java.util.TreeSet;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
+import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.linkchecker.persistence.utils.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +24,7 @@ import lombok.NoArgsConstructor;
  */
 @XmlRootElement(name = "linkchecker-detail-report")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LinkcheckerDetailReport extends Report<LinkcheckerDetailReport>{
+public class LinkcheckerDetailReport implements NamedReport{
    
    @XmlAttribute(name = "provider")
    private String name; 
@@ -47,27 +49,6 @@ public class LinkcheckerDetailReport extends Report<LinkcheckerDetailReport>{
    public String getName() {
       
       return this.name;
-      
-   }
-
-   @Override
-   public boolean isValid() {
-
-      return true;
-   
-   }
-
-   @Override
-   public void addSegmentScore(Score segmentScore) {
-      
-      // do nothing
-      
-   }
-
-   @Override
-   public void addReport(LinkcheckerDetailReport parentReport) {
-      
-      // do nothing
       
    }
    

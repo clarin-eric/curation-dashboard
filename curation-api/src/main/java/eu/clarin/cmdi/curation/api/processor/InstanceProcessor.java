@@ -2,7 +2,7 @@ package eu.clarin.cmdi.curation.api.processor;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
+import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.subprocessor.instance.*;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class CMDInstanceProcessor {
+public class InstanceProcessor {
    
 
    @Autowired
@@ -51,12 +51,12 @@ public class CMDInstanceProcessor {
 
    public CMDInstanceReport process(CMDInstance instance){
 
-      final CMDInstanceReport report = new CMDInstanceReport();
+      final CMDInstanceReport instanceReport = new CMDInstanceReport();
 
 
-      this.subprocessors.forEach(subprocessor -> subprocessor.process(instance, report));
+      this.subprocessors.forEach(subprocessor -> {if(instanceReport.isValid()) subprocessor.process(instance, instanceReport);});
 
 
-      return report;
+      return instanceReport;
    }
 }
