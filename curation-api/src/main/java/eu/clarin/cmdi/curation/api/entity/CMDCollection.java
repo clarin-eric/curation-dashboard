@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.processor.CollectionProcessor;
-import eu.clarin.cmdi.curation.api.report.CollectionReport;
+import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import lombok.Data;
 
 @Component

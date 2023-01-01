@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance;
-import eu.clarin.cmdi.curation.api.processor.CMDInstanceProcessor;
-import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
+import eu.clarin.cmdi.curation.api.processor.InstanceProcessor;
+import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.Data;
@@ -30,14 +30,14 @@ public class CMDInstance {
 
    private CMDIData<Map<String, List<ValueSet>>> cmdiData;
 
-   private Path path = null;
-   private long size = 0;
+   private Path path;
+   private long size;
    private String url;
    
    private String providergroupName;
    
    @Autowired
-   private CMDInstanceProcessor processor;
+   private InstanceProcessor processor;
 
    public CMDInstance(Path path) {
       
