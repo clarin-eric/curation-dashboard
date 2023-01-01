@@ -2,7 +2,7 @@
  * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
  *
  */
-package eu.clarin.cmdi.curation.api.report.profile;
+package eu.clarin.cmdi.curation.api.report.profile.section;
 
 import java.util.ArrayList;
 
@@ -14,9 +14,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import eu.clarin.cmdi.curation.api.report.Score;
+import eu.clarin.cmdi.curation.api.report.Scoring;
 
 
 /**
@@ -24,21 +25,32 @@ import eu.clarin.cmdi.curation.api.report.Score;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
+@Getter
 public class ConceptReport extends ScoreReport {
    
    @XmlAttribute
-   public int total;
+   private int total;
 
    @XmlAttribute
-   public int required; // cardinality > 0
+   private int required; // cardinality > 0
 
    @XmlAttribute
-   public int withConcept;
+   private int withConcept;
    
    @XmlAttribute
    public int getUnique() {
       return this.concepts.size();
    };
+   
+   public void incrementTotal() {
+      this.total++;
+   }
+   public void incrementRequired() {
+      this.required++;
+   }
+   public void incrementWithConcept() {
+      this.withConcept++;
+   }
 
    @XmlAttribute
    public double getPercWithConcept() {
@@ -53,14 +65,14 @@ public class ConceptReport extends ScoreReport {
    
 
    @Override
-   public Score newScore() {
-      return new Score() {
+   public Scoring newScore() {
+      return new Scoring() {
          @Override
-         public double getMax() {
+         public double getMaxScore() {
             return 1;
          }
          @Override
-         public double getCurrent() {
+         public double getScore() {
             return ConceptReport.this.getPercWithConcept();
          }
       };

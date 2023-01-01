@@ -1,7 +1,6 @@
 package eu.clarin.cmdi.curation.api.report;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Vector;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -19,26 +18,30 @@ import lombok.RequiredArgsConstructor;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 @Getter
-public abstract class Score {
+public abstract class Scoring {
    
 	@XmlAttribute 
 	private double score;	
 	@XmlElement(name = "issue")
-	private final Collection<Message> messages = new ArrayList<Message>();
+	private final Vector<Message> messages = new Vector<Message>();
 
 	
 	@XmlAttribute
 	public boolean hasFatalMsg(){
 	   
-		return messages.stream().filter(message -> message.getSeverity() == Severity.FATAL).findAny().isPresent();
+		return (messages.size() > 0 && messages.lastElement().severity == Severity.FATAL);
 	
 	}
 	@XmlAttribute
-	public abstract double getMax();
+	public abstract double getMaxScore();
 	@XmlAttribute
-	public abstract double getCurrent();
+	public abstract double getScore();
+	@XmlAttribute
+	public double getScorePctg() {
+	   return (getScore()!=0.0?getMaxScore()/getScore():0.0);
+	}
 	
-	public Score addMessage(Severity severity, String message) {
+	public Scoring addMessage(Severity severity, String message) {
 	   
 	   messages.add(new Message(severity, message));
 	   return this;

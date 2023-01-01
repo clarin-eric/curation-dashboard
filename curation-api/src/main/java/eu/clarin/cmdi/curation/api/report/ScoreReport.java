@@ -11,13 +11,13 @@ package eu.clarin.cmdi.curation.api.report;
 
 public abstract class ScoreReport {
    
-   private Score score;
+   private Scoring score;
    
    public ScoreReport() {     
       this.score = newScore();     
    }
    
-   public Score getScore() {
+   public Scoring getScore() {
       return this.score;
    }
 	
@@ -25,6 +25,6 @@ public abstract class ScoreReport {
 	   return this.score.hasFatalMsg();	
 	};
 	
-	public abstract Score newScore();
+	public abstract Scoring newScore();
 	
 }

@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -18,7 +17,8 @@ import eu.clarin.cmdi.curation.api.report.AggregationReport;
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.report.ScoreReport;
-import eu.clarin.cmdi.curation.api.report.Score;
+import eu.clarin.cmdi.curation.api.report.Scoring;
+import eu.clarin.cmdi.curation.api.report.profile.section.ProfileFacetReport.Coverage;
 
 
 @XmlRootElement(name = "profiles")
@@ -59,11 +59,11 @@ public class AllProfileReport extends ScoreReport implements AggregationReport<C
 
       @XmlAttribute
       public String getId() {
-         return report.headerReport.getId();
+         return report.getHeaderReport().getId();
       };
       @XmlElement
       public String getName() {
-         return report.headerReport.getName();
+         return report.getHeaderReport().getName();
       };
       @XmlElement
       public String getReportName() {
@@ -71,29 +71,29 @@ public class AllProfileReport extends ScoreReport implements AggregationReport<C
       };
       @XmlElement
       public double getScore() {
-         return report.getScore().getCurrent();
+         return report.getScore().getScore();
       };
       @XmlElement
       public double getFacetCoverage() {
-         return report.facetReport.profileCoverage;
+         return report.getFacetReport().getProfileCoverage();
       };
       @XmlElement
       public double getPercOfElementsWithConcept() {
-         return report.conceptReport.getPercWithConcept();
+         return report.getConceptReport().getPercWithConcept();
       };
 
       @XmlElementWrapper(name = "facets")
       @XmlElement(name = "facet")
-      public Collection<Facet> getFacets(){
-         return report.facetReport.coverage.stream().map(f -> new Facet(f.name, f.coveredByProfile)).collect(Collectors.toList());
+      public Collection<Coverage> getFacets(){
+         return report.getFacetReport().getCoverage();
       }
       @XmlElement
       public double getCollectionUsage() {
-         return report.collectionUsage.size();
+         return report.getCollectionUsage().size();
       };
       @XmlElement
       public double getInstanceUsage() {
-         return report.collectionUsage.stream().mapToDouble(usage -> usage.count).sum();
+         return report.getCollectionUsage().stream().mapToDouble(usage -> usage.count).sum();
       };
 
       public Profile() {
@@ -105,28 +105,8 @@ public class AllProfileReport extends ScoreReport implements AggregationReport<C
       }
    }
 
-   @XmlRootElement
-   @XmlAccessorType(XmlAccessType.FIELD)
-
-   private static class Facet {
-      @XmlAttribute
-      private String name;
-      @XmlAttribute
-      private boolean covered;
-
-      @SuppressWarnings("unused")
-      public Facet() {
-
-      }
-
-      public Facet(String name, boolean covered) {
-         this.name = name;
-         this.covered = covered;
-      }
-   }
-
    @Override
-   public Score newScore() {
+   public Scoring newScore() {
       return null;
    }
 }

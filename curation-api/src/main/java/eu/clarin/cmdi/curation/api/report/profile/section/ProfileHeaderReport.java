@@ -2,7 +2,7 @@
  * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
  *
  */
-package eu.clarin.cmdi.curation.api.report.profile;
+package eu.clarin.cmdi.curation.api.report.profile.section;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,27 +11,28 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
-import eu.clarin.cmdi.curation.api.report.Score;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import eu.clarin.cmdi.curation.api.report.Scoring;
 
 /**
  *
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
-public class HeaderReport extends ScoreReport {
+@NoArgsConstructor(force = true)
+@RequiredArgsConstructor
+public class ProfileHeaderReport extends ScoreReport {
    
-   private ProfileHeader header;  
+   private final ProfileHeader header;  
+   
+   
 
    @XmlTransient
-   public ProfileHeader getHeader() {
+   public ProfileHeader getProfileHeader() {
       return header;
    }
 
-
-   public void setHeader(ProfileHeader header) {
-      this.header = header;
-   }
-   
    public String getId() {
       return header.getId();
    }
@@ -63,17 +64,16 @@ public class HeaderReport extends ScoreReport {
 
 
    @Override
-   public Score newScore() {
+   public Scoring newScore() {
       // TODO Auto-generated method stub
-      return new Score() {
+      return new Scoring() {
          @Override
-         public double getMax() {
+         public double getMaxScore() {
             return 1;
          }
          @Override
-         public double getCurrent() {
-            // TODO Auto-generated method stub
-            return 0;
+         public double getScore() {
+            return ProfileHeaderReport.this.header.isPublic()?1.0:0.1;
          }
       };
    }

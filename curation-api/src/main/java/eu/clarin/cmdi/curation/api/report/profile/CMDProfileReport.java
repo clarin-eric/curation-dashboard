@@ -16,7 +16,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.report.ScoreReport;
-import eu.clarin.cmdi.curation.api.report.Score;
+import eu.clarin.cmdi.curation.api.report.Scoring;
+import eu.clarin.cmdi.curation.api.report.profile.section.ComponentReport;
+import eu.clarin.cmdi.curation.api.report.profile.section.ConceptReport;
+import eu.clarin.cmdi.curation.api.report.profile.section.ProfileFacetReport;
+import eu.clarin.cmdi.curation.api.report.profile.section.ProfileHeaderReport;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * A selection of values from a single CMDProfileReport which will form a line
@@ -24,35 +30,31 @@ import eu.clarin.cmdi.curation.api.report.Score;
  */
 @XmlRootElement(name = "profile-report")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Getter
+@Setter
 public class CMDProfileReport extends ScoreReport implements NamedReport{
-
-   @XmlAttribute(name = "max-score")
-   public double maxScore;
-
-   @XmlAttribute(name = "score")
-   public Double score = 0.0;
 
    @XmlAttribute(name = "creation-time")
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
-   public LocalDateTime creationTime = LocalDateTime.now();
+   private LocalDateTime creationTime = LocalDateTime.now();
 
    @XmlElement(name = "header-section")
-   public HeaderReport headerReport = new HeaderReport();
+   private ProfileHeaderReport headerReport;
 
    @XmlElement(name = "cmd-components-section")
-   public ComponentReport componentReport = new ComponentReport();
+   private ComponentReport componentReport;
 
    @XmlElement(name = "cmd-concepts-section")
-   public ConceptReport conceptReport = new ConceptReport();
+   private ConceptReport conceptReport;
 
    @XmlElement(name = "facets-section")
-   public FacetReport facetReport = new FacetReport();
+   private ProfileFacetReport facetReport;
    
    
 
    @XmlElementWrapper(name = "usage-section")
    @XmlElement(name = "collection")
-   public Collection<CollectionUsage> collectionUsage = new ArrayList<CollectionUsage>();
+   private Collection<CollectionUsage> collectionUsage = new ArrayList<CollectionUsage>();
 
 
    public void addCollectionUsage(String collectionName, long count) {
@@ -61,7 +63,7 @@ public class CMDProfileReport extends ScoreReport implements NamedReport{
 
    @Override
    public String getName() {
-      return headerReport.getId();
+      return (this.headerReport!=null?this.headerReport.getId():"missing header report");
    }
 
 
@@ -91,22 +93,20 @@ public class CMDProfileReport extends ScoreReport implements NamedReport{
    }
 
    @Override
-   public Score newScore() {
-      return new Score() {
+   public Scoring newScore() {
+      return new Scoring() {
          @Override
-         public double getMax() {
-            return getSectionReports().mapToDouble(sectionReport -> sectionReport.getScore().getMax()).sum();
+         public double getMaxScore() {
+            return getSectionReports().mapToDouble(sectionReport -> sectionReport.getScore().getMaxScore()).sum();
          }
          @Override
-         public double getCurrent() {
-            return getSectionReports().mapToDouble(sectionReport -> sectionReport.getScore().getCurrent()).sum();
+         public double getScore() {
+            return getSectionReports().mapToDouble(sectionReport -> sectionReport.getScore().getScore()).sum();
          }
       };
    }
    
    private Stream<ScoreReport> getSectionReports(){
-      return Stream.of(this.headerReport, this.componentReport, this.conceptReport, this.facetReport);
-   }
-   
-   
+      return Stream.of(this.headerReport, this.componentReport, this.conceptReport, this.facetReport).filter(report -> report != null);
+   } 
 }

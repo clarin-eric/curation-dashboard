@@ -2,7 +2,7 @@
  * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
  *
  */
-package eu.clarin.cmdi.curation.api.report.profile;
+package eu.clarin.cmdi.curation.api.report.profile.section;
 
 import java.util.ArrayList;
 
@@ -16,12 +16,15 @@ import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import eu.clarin.cmdi.curation.api.report.Score;
+import eu.clarin.cmdi.curation.api.report.Scoring;
 
 
 /**
  *
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
+@Getter
 public class ComponentReport extends ScoreReport {
    
    @XmlAttribute
@@ -33,10 +36,17 @@ public class ComponentReport extends ScoreReport {
    };
 
    @XmlAttribute
-   public int required; // cardinality > 0
+   private int required; // cardinality > 0
 
    @XmlElement(name = "component")
-   public java.util.Collection<Component> components = new ArrayList<Component>();
+   private java.util.Collection<Component> components = new ArrayList<Component>();
+   
+   public void incrementTotal() {
+      this.total++;
+   }
+   public void incrementRequired() {
+      this.required++;
+   }
    
    @XmlRootElement()
    @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
@@ -56,7 +66,7 @@ public class ComponentReport extends ScoreReport {
        private final String name;
 
        @XmlAttribute
-       private int count =1;
+       private int count;
        
        public void incrementCount() {
           this.count++;
@@ -65,14 +75,14 @@ public class ComponentReport extends ScoreReport {
    }
 
    @Override
-   public Score newScore() {
-      return new Score() {
+   public Scoring newScore() {
+      return new Scoring() {
          @Override
-         public double getMax() {
+         public double getMaxScore() {
             return 1.0;
          }
          @Override
-         public double getCurrent() {
+         public double getScore() {
             // TODO Auto-generated method stub
             return 0;
          }         
