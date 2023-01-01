@@ -1,14 +1,11 @@
 package eu.clarin.cmdi.curation.api.xml;
 
-import java.util.Collection;
-
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
-import eu.clarin.cmdi.curation.api.report.Message;
-import eu.clarin.cmdi.curation.api.report.Severity;
+import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
+import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 
 /**
 
@@ -19,11 +16,9 @@ import eu.clarin.cmdi.curation.api.report.Severity;
 public class CMDErrorHandler implements ErrorHandler {
 
 	CMDInstanceReport report;
-	Collection<Message> msgs;
 
-	public CMDErrorHandler(CMDInstanceReport report, Collection<Message> msgs) {
+	public CMDErrorHandler(CMDInstanceReport report) {
 		this.report = report;
-		this.msgs = msgs;
 	}
 
 	@Override
@@ -43,8 +38,7 @@ public class CMDErrorHandler implements ErrorHandler {
 
 	}
 
-	private void addMessage(Severity lvl, int line, int col, String msg) {
-		msgs.add(new Message(lvl, "line: " + line + ", col: " + col + " - " + msg));
-
+	private void addMessage(Severity lvl, int line, int col, String message) {
+		report.getScore().addMessage(lvl, "line: " + line + ", col: " + col + " - " + message);
 	}
 }
