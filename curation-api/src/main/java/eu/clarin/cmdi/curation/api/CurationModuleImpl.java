@@ -3,12 +3,12 @@ package eu.clarin.cmdi.curation.api;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
-import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
-import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
-import eu.clarin.cmdi.curation.api.report.CollectionReport;
-import eu.clarin.cmdi.curation.api.report.LinkcheckerDetailReport;
-import eu.clarin.cmdi.curation.api.report.LinkcheckerDetailReport.CategoryReport;
-import eu.clarin.cmdi.curation.api.report.LinkcheckerDetailReport.StatusDetailReport;
+import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
+import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
+import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport;
+import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport.CategoryReport;
+import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport.StatusDetailReport;
+import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
 import eu.clarin.linkchecker.persistence.model.StatusDetail;
@@ -118,7 +118,7 @@ public class CurationModuleImpl implements CurationModule {
 
          // Files.delete(path);
 
-         report.fileReport.location = url.toString();
+         report.getFileReport().setLocation(url.toString());
 
          return report;
       }
