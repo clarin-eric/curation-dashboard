@@ -3,7 +3,7 @@ package eu.clarin.cmdi.curation.api.subprocessor.profile;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
-import eu.clarin.cmdi.curation.api.report.profile.section.ProfileHeaderReport;
+import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.cr.CRService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
 
       if (!headerReport.getProfileHeader().isPublic()) {
          log.debug("profile {} not public", profile.getSchemaLocation());
-         headerReport.getScore().addMessage(Severity.WARNING, "Profile is not public");
+         headerReport.getScoring().addMessage(Severity.WARNING, "Profile is not public");
       }
 
       //TODO: verify the intention

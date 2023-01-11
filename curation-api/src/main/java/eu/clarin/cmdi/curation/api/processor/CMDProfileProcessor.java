@@ -13,15 +13,13 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.subprocessor.profile.ProfileElementsHandler;
 import eu.clarin.cmdi.curation.api.subprocessor.profile.ProfileFacetHandler;
 import eu.clarin.cmdi.curation.api.subprocessor.profile.ProfileHeaderHandler;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  */
-@Slf4j
 @Component
 @Scope("prototype")
-public class ProfileProcessor {
+public class CMDProfileProcessor {
    
    @Autowired
    ApplicationContext ctx;

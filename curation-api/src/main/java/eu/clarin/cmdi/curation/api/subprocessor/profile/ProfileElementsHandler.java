@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
-import eu.clarin.cmdi.curation.api.report.profile.section.ComponentReport;
-import eu.clarin.cmdi.curation.api.report.profile.section.ConceptReport;
+import eu.clarin.cmdi.curation.api.report.profile.sec.ComponentReport;
+import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
@@ -48,12 +48,11 @@ public class ProfileElementsHandler extends AbstractSubprocessor<CMDProfile, CMD
       catch (NoProfileCacheEntryException e) {
 
          log.debug("can't get ParsedProfile for profile id '{}'", report.getHeaderReport().getId());
-         componentReport.getScore().addMessage(Severity.FATAL, "can't get ParsedProfile for profile id '" + report.getHeaderReport().getId() + "'");
+         componentReport.getScoring().addMessage(Severity.FATAL, "can't get ParsedProfile for profile id '" + report.getHeaderReport().getId() + "'");
          return;
 
       }
       
-      final Map<String, ComponentReport.Component> componentMap = new HashMap<String, ComponentReport.Component>();
 
       parsedProfile.getComponents().forEach(crc -> {
          componentReport.incrementTotal();
@@ -62,7 +61,7 @@ public class ProfileElementsHandler extends AbstractSubprocessor<CMDProfile, CMD
             componentReport.incrementRequired();
          }
          
-         componentMap.computeIfAbsent(crc.component.id, k -> new ComponentReport.Component(crc)).incrementCount();
+         componentReport.getComponent(crc).incrementCount();
 
       });
       

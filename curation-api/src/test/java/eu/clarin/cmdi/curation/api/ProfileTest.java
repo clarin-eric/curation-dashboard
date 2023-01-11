@@ -18,22 +18,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
-import eu.clarin.cmdi.curation.api.exception.SubprocessorException;
-import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
-import eu.clarin.cmdi.curation.api.report.Report;
+import eu.clarin.cmdi.curation.api.report.ScoreReport;
+import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 
 @SpringBootTest
 @Import(TestConfig.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public class ProfileTest {
    
-   private Report<?> report;
+   private ScoreReport report;
    
    @Autowired
    CurationModule curation;
    
    @BeforeAll
-   public void createReport() throws URISyntaxException, MalformedURLException, SubprocessorException {
+   public void createReport() throws URISyntaxException, MalformedURLException{
       
       URI profileURI = this.getClass().getClassLoader().getResource("profile/LexicalResourceProfile.xsd").toURI();
       Path profilePath = Paths.get(profileURI);
@@ -55,15 +54,13 @@ public class ProfileTest {
         
       CMDProfileReport profileReport = CMDProfileReport.class.cast(report);
       
-      assertNotNull(profileReport.header);
+      assertNotNull(profileReport.getHeaderReport());
       
-      assertNotNull(profileReport.components);
+      assertNotNull(profileReport.getComponentReport());
       
-      assertNotNull(profileReport.elements);
+      assertNotNull(profileReport.getComponentReport());
       
-      assertNotNull(profileReport.facet);
-      
-      report.toXML(System.out);
+      assertNotNull(profileReport.getFacetReport());
       
    };
 }

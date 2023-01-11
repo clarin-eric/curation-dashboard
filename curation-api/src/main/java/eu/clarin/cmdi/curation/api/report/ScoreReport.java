@@ -11,18 +11,18 @@ package eu.clarin.cmdi.curation.api.report;
 
 public abstract class ScoreReport {
    
-   private Scoring score;
+   private Scoring scoring;
    
    public ScoreReport() {     
-      this.score = newScore();     
+      this.scoring = newScore();     
    }
    
-   public Scoring getScore() {
-      return this.score;
+   public Scoring getScoring() {
+      return this.scoring;
    }
 	
 	public boolean isValid() {	   
-	   return this.score.hasFatalMsg();	
+	   return !this.scoring.hasFatalMessage();	
 	};
 	
 	public abstract Scoring newScore();

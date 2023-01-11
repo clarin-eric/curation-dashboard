@@ -1,7 +1,6 @@
 package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,14 +17,12 @@ import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance.InstanceNode;
-import eu.clarin.cmdi.curation.api.report.Scoring;
 import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
-import eu.clarin.cmdi.curation.api.report.instance.section.InstanceFacetReport;
-import eu.clarin.cmdi.curation.api.report.instance.section.InstanceFacetReport.Coverage;
-import eu.clarin.cmdi.curation.api.report.instance.section.InstanceFacetReport.FacetValueStruct;
-import eu.clarin.cmdi.curation.api.report.instance.section.InstanceFacetReport.ValueNode;
-import eu.clarin.cmdi.curation.api.report.profile.section.ConceptReport.Concept;
+import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.Coverage;
+import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.ValueNode;
+import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport.Concept;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.xml.CMDXPathService;
 import eu.clarin.cmdi.curation.cr.CRService;
@@ -52,14 +49,8 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
       final InstanceFacetReport facetReport = new InstanceFacetReport();
       report.setFacetReport(facetReport);
       
-      facetReportCache.getFacetReport(report.getHeaderReport().getProfileHeader()).getCoverage().forEach(profileCoverage -> {
-         
-         Coverage coverage = new Coverage();
-         coverage.setName(profileCoverage.getName());
-         coverage.setCoveredByProfile(profileCoverage.isCoveredByProfile());
-         facetReport.getCoverage().add(coverage);
-         
-      });
+      facetReportCache.getFacetReport(report.getHeaderReport().getProfileHeader()).getCoverage()
+         .forEach(profileCoverage -> facetReport.addCoverage(profileCoverage.getName(), profileCoverage.isCoveredByProfile()));
       
       
 
@@ -72,7 +63,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
          log.error("can't parse file '{}' for instance facet processing", instance.getPath());
 
-         report.getFacetReport().getScore().addMessage(Severity.FATAL,
+         report.getFacetReport().getScoring().addMessage(Severity.FATAL,
                "can't parse file '" + instance.getPath().getFileName() + "' for instance facet processing");
 
          return;
@@ -95,7 +86,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
       facetsToNodes(instance, report, nodesMap, nav);
 
-      facetReport.getValues().addAll(nodesMap.values());
+      facetReport.getValueNodes().addAll(nodesMap.values());
 
    }
 
@@ -114,13 +105,11 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
          // create value nodes
          for (InstanceNode instanceNode : parsedInstance.getNodes()) {
             if (!instanceNode.getValue().isEmpty()) {
-               ValueNode val = new ValueNode();
-               val.xpath = instanceNode.getXpath();
-               val.value = instanceNode.getValue();
+               ValueNode val = report.getFacetReport().getValueNode(instanceNode.getXpath(), instanceNode.getValue());
 
                CMDINode node = elements.get(instanceNode.getXpath().replaceAll("\\[\\d\\]", ""));
                if (node != null && node.concept != null)
-                  val.concept = new Concept(node.concept);
+                  val.setConcept(new Concept(node.concept));
 
                // determines the index for each xpath
                String xpath = instanceNode.getXpath().replaceAll("\\w+:", "");
@@ -143,7 +132,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                catch (NavException e) {
 
                   log.debug("can't navigate in document");
-                  report.getFacetReport().getScore().addMessage(Severity.FATAL, "can't navigate in document");
+                  report.getFacetReport().getScoring().addMessage(Severity.FATAL, "can't navigate in document");
                }
                ap.resetXPath();
             }
@@ -181,7 +170,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
          if (values == null) // no values from instance for this facet
             continue;
 
-         Coverage coverage = report.getFacetReport().getCoverage().stream().filter(c -> c.getName().equals(facetName)).findFirst()
+         Coverage coverage = report.getFacetReport().getCoverages().stream().filter(c -> c.getName().equals(facetName)).findFirst()
                .orElse(null);
 
          if (coverage != null) {
@@ -199,13 +188,20 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
             if (nodesMap.containsKey(entry.getKey())) { // there is a node where the xpath has the same vtdIndex
                ValueNode node = nodesMap.get(entry.getKey());
 
-               // initializing node.facet if not done already:
-               if (node.facet == null)
-                  node.facet = new ArrayList<FacetValueStruct>();
+               String normalizedValue = entry.getValue().stream().map(valueSet -> valueSet.getValueLanguagePair().getLeft())
+                     .collect(Collectors.joining("; "));
+               
+               if(node.getValue().equals(normalizedValue)) {
+                  normalizedValue = null;
+               }
+               if (normalizedValue != null && !normalizedValue.trim().isEmpty() && !normalizedValue.equals("--")) {
+                  report.getFacetReport().getScoring().addMessage(Severity.INFO,
+                        "Normalised value for facet " + facetName + ": '" + node.getValue() + "' into '" + normalizedValue + "'");
+               }
 
-               node.facet.add(createFacetValueStruct(facetName, node.value,
-                     entry.getValue().stream().map(valueSet -> valueSet.getValueLanguagePair().getLeft())
-                           .collect(Collectors.joining("; ")),
+               node.addFacet(
+                     facetName, 
+
                      // entry.getValue().get(0).isDerived() //assumes that a facet isn't defined as
                      // origin and derived at the same time
                      entry.getValue().stream().anyMatch(ValueSet::isDerived), // assumes that a facet isn't
@@ -213,37 +209,13 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                                                                               // the same time
                      entry.getValue().stream().anyMatch(ValueSet::isResultOfValueMapping), // assumes that a facet                                                                       // origin and derived
                                                                                           // at the same time
-                     report.getFacetReport().getScore()
-               ));
+                     normalizedValue
+               );
+               
+               
             }
-
          }
          coverage.setCoveredByInstance(true); // one or more values for the specific facet
-
       }
-   }
-
-   /*
-    *
-    */
-
-   private FacetValueStruct createFacetValueStruct(String facetName, String value, String normalizedValue,
-         boolean isDerived, boolean usesValueMapping, Scoring score) {
-
-      FacetValueStruct facetNode = new FacetValueStruct();
-      facetNode.name = facetName;
-      facetNode.isDerived = isDerived ? true : null;
-      facetNode.usesValueMapping = usesValueMapping ? true : null;
-      facetNode.normalisedValue = value.equals(normalizedValue) ? null : normalizedValue;
-
-      if (normalizedValue != null && !normalizedValue.trim().isEmpty() && !normalizedValue.equals("--")
-            && !value.equals(normalizedValue)) {
-         score.addMessage(Severity.INFO,
-               "Normalised value for facet " + facetName + ": '" + value + "' into '" + normalizedValue + "'");
-         facetNode.normalisedValue = normalizedValue;
-      }
-
-      return facetNode;
-
    }
 }

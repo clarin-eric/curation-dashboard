@@ -17,10 +17,10 @@ import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.api.report.Scoring;
-import eu.clarin.cmdi.curation.api.report.profile.section.ComponentReport;
-import eu.clarin.cmdi.curation.api.report.profile.section.ConceptReport;
-import eu.clarin.cmdi.curation.api.report.profile.section.ProfileFacetReport;
-import eu.clarin.cmdi.curation.api.report.profile.section.ProfileHeaderReport;
+import eu.clarin.cmdi.curation.api.report.profile.sec.ComponentReport;
+import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
+import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport;
+import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -97,11 +97,11 @@ public class CMDProfileReport extends ScoreReport implements NamedReport{
       return new Scoring() {
          @Override
          public double getMaxScore() {
-            return getSectionReports().mapToDouble(sectionReport -> sectionReport.getScore().getMaxScore()).sum();
+            return getSectionReports().mapToDouble(sectionReport -> sectionReport.getScoring().getMaxScore()).sum();
          }
          @Override
          public double getScore() {
-            return getSectionReports().mapToDouble(sectionReport -> sectionReport.getScore().getScore()).sum();
+            return getSectionReports().mapToDouble(sectionReport -> sectionReport.getScoring().getScore()).sum();
          }
       };
    }

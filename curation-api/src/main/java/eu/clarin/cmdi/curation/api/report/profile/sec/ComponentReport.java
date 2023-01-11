@@ -2,9 +2,11 @@
  * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
  *
  */
-package eu.clarin.cmdi.curation.api.report.profile.section;
+package eu.clarin.cmdi.curation.api.report.profile.sec;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -14,7 +16,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import eu.clarin.cmdi.curation.api.report.Scoring;
 
@@ -23,24 +24,35 @@ import eu.clarin.cmdi.curation.api.report.Scoring;
  *
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
-@Getter
+@XmlAccessorType(XmlAccessType.NONE)
 public class ComponentReport extends ScoreReport {
    
-   @XmlAttribute
-   public int total;
 
-   @XmlAttribute
-   public int getUnique() {
-      return components.size();
-   };
+   private int total;
 
-   @XmlAttribute
    private int required; // cardinality > 0
 
+   private Map<String, Component> componentMap = new HashMap<String, Component>();
+
+   @XmlAttribute
+   public int getTotal() {
+      return this.total;
+   }
+   @XmlAttribute
+   public int getUnique() {
+      return componentMap.size();
+   }
+   @XmlAttribute
+   public int getRequired() {
+      return this.required;
+   }
    @XmlElement(name = "component")
-   private java.util.Collection<Component> components = new ArrayList<Component>();
-   
+   public Collection<Component> getComponents(){
+      return this.componentMap.values();
+   }
+   public Component getComponent(CMDINode node) {
+      return this.componentMap.computeIfAbsent(node.component.id, k -> new Component(node));
+   }
    public void incrementTotal() {
       this.total++;
    }
@@ -49,10 +61,9 @@ public class ComponentReport extends ScoreReport {
    }
    
    @XmlRootElement()
-   @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
+   @XmlAccessorType(XmlAccessType.NONE)
    @NoArgsConstructor(force = true)
-   @Getter
-   public static class Component {
+   public class Component {
       
       public Component(CMDINode node) {
          this.id = node.component.id;

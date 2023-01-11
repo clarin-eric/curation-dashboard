@@ -2,7 +2,7 @@
  * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
  *
  */
-package eu.clarin.cmdi.curation.api.report.instance.section;
+package eu.clarin.cmdi.curation.api.report.instance.sec;
 
 import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.api.report.Scoring;
@@ -16,7 +16,7 @@ public class XmlValidityReport extends ScoreReport {
 
    @Override
    public boolean isValid() {
-      return getScore().getMessages().size() < 3;
+      return getScoring().getMessages().size() < 3;
    }
 
    @Override

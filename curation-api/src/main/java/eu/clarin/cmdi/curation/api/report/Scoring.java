@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.api.report;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,7 +11,6 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -19,17 +19,15 @@ import lombok.RequiredArgsConstructor;
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 @Getter
 public abstract class Scoring {
-   
-	@XmlAttribute 
-	private double score;	
-	@XmlElement(name = "issue")
-	private final Vector<Message> messages = new Vector<Message>();
+   	
+	@XmlElement(name = "message")
+	private final Collection<Message> messages = new ArrayList<Message>();
 
 	
 	@XmlAttribute
-	public boolean hasFatalMsg(){
+	public boolean hasFatalMessage(){
 	   
-		return (messages.size() > 0 && messages.lastElement().severity == Severity.FATAL);
+		return messages.stream().anyMatch(message -> message.getSeverity() == Severity.FATAL);
 	
 	}
 	@XmlAttribute
@@ -41,9 +39,9 @@ public abstract class Scoring {
 	   return (getScore()!=0.0?getMaxScore()/getScore():0.0);
 	}
 	
-	public Scoring addMessage(Severity severity, String message) {
+	public Scoring addMessage(Severity severity, String issue) {
 	   
-	   messages.add(new Message(severity, message));
+	   messages.add(new Message(severity, issue));
 	   return this;
 	   
 	}
@@ -61,16 +59,16 @@ public abstract class Scoring {
 	}
 	
 	@XmlRootElement(name = "details")
-	@XmlAccessorType(XmlAccessType.FIELD)
-	@Data
+	@XmlAccessorType(XmlAccessType.NONE)
 	@NoArgsConstructor(force = true)
 	@RequiredArgsConstructor
-	public static class Message {
+	@Getter
+	public class Message {
 	    
 	    @XmlAttribute
 	    private final Severity severity;    
 	    @XmlAttribute
-	    private final String message; 
+	    private final String issue; 
 
 	}
 }

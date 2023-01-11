@@ -1,7 +1,7 @@
 package eu.clarin.cmdi.curation.api.entity;
 
 import eu.clarin.cmdi.curation.api.processor.CMDProfileProcessor;
-import eu.clarin.cmdi.curation.api.report.CMDProfileReport;
+import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import lombok.Data;
 
 import org.springframework.beans.factory.annotation.Autowired;

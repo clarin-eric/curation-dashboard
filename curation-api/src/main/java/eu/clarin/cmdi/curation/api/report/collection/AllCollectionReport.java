@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.api.report;
+package eu.clarin.cmdi.curation.api.report.collection;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,9 +12,13 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import eu.clarin.cmdi.curation.api.report.AggregationReport;
+import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
+import eu.clarin.cmdi.curation.api.report.NamedReport;
+
 @XmlRootElement(name = "collections-report")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AllCollectionReport extends Report<CollectionReport> {
+public class AllCollectionReport implements AggregationReport<CollectionReport>, NamedReport {
 
    @XmlAttribute(name = "creation-time")
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
@@ -29,17 +33,6 @@ public class AllCollectionReport extends Report<CollectionReport> {
 
       return this.getClass().getSimpleName();
       
-   }
-
-   @Override
-   public boolean isValid() {
-
-      return false;
-   }
-
-   @Override
-   public void addSegmentScore(Score segmentScore) {
-
    }
 
 
@@ -64,7 +57,7 @@ public class AllCollectionReport extends Report<CollectionReport> {
       @XmlElement
       private int numOfProfiles;
       @XmlElement
-      private int numOfUniqueLinks;
+      private int numOfLinks;
       @XmlElement
       private int numOfCheckedLinks;
       @XmlElement
@@ -72,7 +65,7 @@ public class AllCollectionReport extends Report<CollectionReport> {
       @XmlElement
       private double avgNumOfResProxies;
       @XmlElement
-      private int numOfResProxies;
+      private long numOfResProxies;
       @XmlElement
       private double ratioOfValidRecords;
       @XmlElement
@@ -91,19 +84,19 @@ public class AllCollectionReport extends Report<CollectionReport> {
       public Collection(CollectionReport report) {
          this.name = report.getName();
          this.reportName = report.getName();
-         this.scorePercentage = report.scorePercentage;
-         this.numOfFiles = report.fileReport.numOfFiles;
-         this.numOfProfiles = report.headerReport.profiles.totNumOfProfiles;
-         this.numOfUniqueLinks = report.urlReport.totNumOfUniqueLinks;
-         this.numOfCheckedLinks = report.urlReport.totNumOfCheckedLinks;
-         this.ratioOfValidLinks = report.urlReport.ratioOfValidLinks;
-         this.avgNumOfResProxies = report.resProxyReport.avgNumOfResProxies;
-         this.numOfResProxies = report.resProxyReport.totNumOfResProxies;
-         this.ratioOfValidRecords = report.xmlValidationReport.ratioOfValidRecords;
-         this.avgNumOfEmptyXMLElements = report.xmlPopulatedReport.avgXMLEmptyElement;
-         this.avgFacetCoverage = report.facetReport.coverage;
+//         this.scorePercentage = report.getscorePercentage();
+         this.numOfFiles = report.getFileReport().getNumOfFiles();
+         this.numOfProfiles = report.getHeaderReport().getTotNumOfProfiles();
+         this.numOfLinks = report.getLinkcheckerReport().getTotNumOfLinks();
+         this.numOfCheckedLinks = report.getLinkcheckerReport().getTotNumOfCheckedLinks();
+         this.ratioOfValidLinks = report.getLinkcheckerReport().getRatioOfValidLinks();
+         this.avgNumOfResProxies = report.getResProxyReport().getAvgNumOfResProxies();
+         this.numOfResProxies = report.getResProxyReport().getTotNumOfResProxies();
+         this.ratioOfValidRecords = report.getXmlValidationReport().getRatioOfValidRecords();
+         this.avgNumOfEmptyXMLElements = report.getXmlPopulationReport().getAvgXMLEmptyElement();
+         this.avgFacetCoverage = report.getFacetReport().getAvgCoverage();
 
-         report.facetReport.facet.forEach(f -> this.facets.add(new Facet(f.name, f.coverage)));
+         report.getFacetReport().getFacets().forEach(f -> this.facets.add(new Facet(f.getName(), f.getCoverage())));
       }
 
    }

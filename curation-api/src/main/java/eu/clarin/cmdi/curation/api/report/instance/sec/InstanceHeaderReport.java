@@ -2,7 +2,7 @@
  * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
  *
  */
-package eu.clarin.cmdi.curation.api.report.instance.section;
+package eu.clarin.cmdi.curation.api.report.instance.sec;
 
 import eu.clarin.cmdi.curation.api.report.Scoring;
 import lombok.Data;
@@ -41,7 +41,7 @@ public class InstanceHeaderReport extends ScoreReport {
 
          @Override
          public double getScore() {
-            return this.hasFatalMsg()?0.0:getMaxScore() - this.getMessages().stream().filter(message -> message.getSeverity() == Severity.ERROR).count();
+            return this.hasFatalMessage()?0.0:getMaxScore() - this.getMessages().stream().filter(message -> message.getSeverity() == Severity.ERROR).count();
          }    
       };
    }

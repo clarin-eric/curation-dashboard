@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CurationEntityType;
-import eu.clarin.cmdi.curation.api.report.Report;
+import eu.clarin.cmdi.curation.api.report.NamedReport;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -42,7 +42,7 @@ public class FileStorage {
    @Autowired
    ApiConfig conf;
    
-   public void saveReport(Report<?> report, CurationEntityType entityType, boolean makeStampedCopy) {
+   public void saveReport(NamedReport report, CurationEntityType entityType, boolean makeStampedCopy) {
       
       Path xmlFilePath = saveReportAsXML(report, entityType);
       
@@ -68,7 +68,7 @@ public class FileStorage {
    }
    
    
-   public Path saveReportAsXML(Report<?> report, CurationEntityType entityType) {
+   public Path saveReportAsXML(NamedReport report, CurationEntityType entityType) {
       
       Path outputPath = getOutputPath(report.getName(), entityType, "xml");
       
@@ -109,7 +109,7 @@ public class FileStorage {
       return outputPath;
    }
    
-   public Path saveReportAsHTML(Report<?> report, CurationEntityType entityType) {
+   public Path saveReportAsHTML(NamedReport report, CurationEntityType entityType) {
       
       Path outputPath = getOutputPath(report.getName(), entityType, "html");
 

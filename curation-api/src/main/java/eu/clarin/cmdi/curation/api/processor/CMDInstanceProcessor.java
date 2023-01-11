@@ -5,7 +5,6 @@ import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.subprocessor.instance.*;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -17,9 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
-public class InstanceProcessor {
+public class CMDInstanceProcessor {
    
 
    @Autowired
@@ -34,7 +32,7 @@ public class InstanceProcessor {
    private void init() {
       
       subprocessors =   
-         Stream.of(FileSizeValidator.class, InstanceHeaderProcessor.class, ResourceProxyProcessor.class, URLValidator.class, XMLValidator.class)
+         Stream.of(FileSizeValidator.class, InstanceHeaderProcessor.class, ResourceProxyProcessor.class, UrlValidator.class, XmlValidator.class)
             .map(abstactSubprocessorClass -> ctx.getBean(abstactSubprocessorClass)).collect(Collectors.toList());
       
       if ("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode())) {

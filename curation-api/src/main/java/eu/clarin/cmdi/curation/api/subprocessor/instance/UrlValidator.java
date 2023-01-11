@@ -24,7 +24,7 @@ import eu.clarin.cmdi.vlo.PIDUtils;
 
 @Slf4j
 @Component
-public class URLValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
+public class UrlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
 
    @Autowired
    private ApiConfig conf;
@@ -43,7 +43,7 @@ public class URLValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       }
       this.clRepository
          .findByName(conf.getClientUsername()).ifPresentOrElse(cl -> this.client=cl, () -> {
-            log.error("the is no client with name '{}' in the client table", conf.getClientUsername());
+            log.error("there is no client with name '{}' in the client table", conf.getClientUsername());
             throw new RuntimeException("make sure property 'curation.clientUsername' is set and client with this name is in database");
          });
    }

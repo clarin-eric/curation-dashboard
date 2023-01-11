@@ -19,8 +19,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
-import eu.clarin.cmdi.curation.api.report.instance.section.XmlPopulationReport;
-import eu.clarin.cmdi.curation.api.report.instance.section.XmlValidityReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.xml.CMDErrorHandler;
 import eu.clarin.cmdi.curation.cr.CRService;
@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class XMLValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
+public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
 
    @Autowired
    private CRService crService;
@@ -40,7 +40,7 @@ public class XMLValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
    public void process(CMDInstance instance, CMDInstanceReport report) {
       
       XmlPopulationReport populationReport = new XmlPopulationReport();
-      report.setXmlPopulatedReport(populationReport);
+      report.setXmlPopulationReport(populationReport);
 
       ValidatorHandler schemaValidator;
       try {
@@ -49,7 +49,7 @@ public class XMLValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       catch (NoProfileCacheEntryException e) {
 
          log.error("no ProfileCacheEntry for profile id '{}'", report.getHeaderReport().getId());
-         populationReport.getScore().addMessage(Severity.FATAL, "no ProfileCacheEntry for profile id '" + report.getHeaderReport().getId() + "'");
+         populationReport.getScoring().addMessage(Severity.FATAL, "no ProfileCacheEntry for profile id '" + report.getHeaderReport().getId() + "'");
          return;
       }
 
@@ -86,7 +86,7 @@ public class XMLValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       catch (SAXException e) {
 
          log.error("can't parse input file '{}' for XML validation", instance.getPath());
-         populationReport.getScore().addMessage(Severity.FATAL, "can't parse input file '" + instance.getPath().getFileName() + "' ' for XML validation");
+         populationReport.getScoring().addMessage(Severity.FATAL, "can't parse input file '" + instance.getPath().getFileName() + "' ' for XML validation");
          return;
 
       }
@@ -94,9 +94,9 @@ public class XMLValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       final XmlValidityReport validityReport = new XmlValidityReport();
       report.setXmlValidityReport(validityReport);
 
-      populationReport.getScore().getMessages().stream()
+      populationReport.getScoring().getMessages().stream()
          .filter(message -> (message.getSeverity() == Severity.FATAL || message.getSeverity() == Severity.ERROR))
-         .forEach(validityReport.getScore().getMessages()::add);
+         .forEach(validityReport.getScoring().getMessages()::add);
 
    }
 
@@ -158,7 +158,7 @@ public class XMLValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
             if (!elemWithValue) {// does it have a value
                this.populationReport.incrementNumOfXMLEmptyElements();
                String msg = "Empty element <" + qName + "> was found on line " + locator.getLineNumber();
-               populationReport.getScore().addMessage(Severity.WARNING, msg);
+               populationReport.getScoring().addMessage(Severity.WARNING, msg);
             }
          }
 

@@ -61,7 +61,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
       Map<String, CMDINode> elements = crService.getParsedProfile(header).getElements();
 
       for (Map.Entry<String, CMDINode> element : elements.entrySet()) {
-         result.computeIfAbsent(element.getValue().concept.uri, k -> new ArrayList<Pattern>())
+         result.computeIfAbsent(element.getValue().concept.getUri(), k -> new ArrayList<Pattern>())
                .add(new Pattern(element.getKey()));
       }
 
@@ -82,7 +82,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
 
                for (Map.Entry<String, CMDINode> element : elements.entrySet()) {
                   if (element.getValue().concept != null)
-                     result.computeIfAbsent(element.getValue().concept.uri, k -> new ArrayList<Pattern>())
+                     result.computeIfAbsent(element.getValue().concept.getUri(), k -> new ArrayList<Pattern>())
                            .add(new Pattern(element.getKey()));
                }
             }

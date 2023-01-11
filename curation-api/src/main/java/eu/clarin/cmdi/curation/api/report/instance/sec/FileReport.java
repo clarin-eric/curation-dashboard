@@ -2,7 +2,7 @@
  * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
  *
  */
-package eu.clarin.cmdi.curation.api.report.instance.section;
+package eu.clarin.cmdi.curation.api.report.instance.sec;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -39,7 +39,7 @@ public class FileReport extends ScoreReport{
          }
          @Override
          public double getScore() {           
-            return this.hasFatalMsg()?0.0:1.0;        
+            return this.hasFatalMessage()?0.0:1.0;        
          }         
       };      
    }

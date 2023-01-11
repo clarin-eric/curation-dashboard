@@ -2,7 +2,7 @@ package eu.clarin.cmdi.curation.web.controller;
 
 import eu.clarin.cmdi.curation.api.CurationModule;
 import eu.clarin.cmdi.curation.api.entity.CurationEntityType;
-import eu.clarin.cmdi.curation.api.report.Report;
+import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
@@ -116,7 +116,7 @@ public class CurateCtl {
 
    private Path curate(Path inFilePath) {
 
-      Report<?> report;
+      NamedReport report;
       
       CurationEntityType entityType;
       

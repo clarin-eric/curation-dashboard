@@ -22,8 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
-import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
-import eu.clarin.cmdi.curation.api.report.Report;
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
+import eu.clarin.cmdi.curation.api.report.ScoreReport;
+import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 
 /**
  *
@@ -33,14 +34,16 @@ import eu.clarin.cmdi.curation.api.report.Report;
 @TestInstance(Lifecycle.PER_CLASS)
 public class InstanceTest {
    
-   private Report<?> report;
+   private ScoreReport report;
    
-   
+   @Autowired
+   ApiConfig config;
    @Autowired
    CurationModule curation;
    
    @BeforeAll
    public void createInstanceReport() throws URISyntaxException {
+      config.setMode(null);
       
       URI instanceURI = this.getClass().getClassLoader().getResource("instance/SAW_Leipzig_Repository/cts_muqtabas_urn_cts_muqtabas_oclc_4770057679_i_29_TEIP5_.xml").toURI();
       Path instancePath = Paths.get(instanceURI);
@@ -63,21 +66,17 @@ public class InstanceTest {
       
       CMDInstanceReport instanceReport = CMDInstanceReport.class.cast(report);
       
-      assertNotNull(instanceReport.header);
+      assertNotNull(instanceReport.getHeaderReport());
       
-      assertNotNull(instanceReport.fileReport);
+      assertNotNull(instanceReport.getFileReport());
       
-      assertNotNull(instanceReport.resProxyReport);
+      assertNotNull(instanceReport.getResProxyReport());
       
-      assertNotNull(instanceReport.xmlPopulatedReport);
+      assertNotNull(instanceReport.getXmlPopulationReport());
       
-      assertNotNull(instanceReport.xmlValidityReport);
+      assertNotNull(instanceReport.getXmlValidityReport());
       
-      assertNotNull(instanceReport.urlReport);
-      
-      assertNotNull(instanceReport.facets);
-      
-      this.report.toXML(System.out);
+      assertNotNull(instanceReport.getFacetReport());
       
    }
    
@@ -87,9 +86,9 @@ public class InstanceTest {
       
       CMDInstanceReport instanceReport = CMDInstanceReport.class.cast(report);
       
-      assertEquals("clarin.eu:cr1:p_1288172614026", instanceReport.header.getId());
+      assertEquals("clarin.eu:cr1:p_1288172614026", instanceReport.getHeaderReport().getId());
       
-      assertEquals("1.2", instanceReport.header.getCmdiVersion());
+      assertEquals("1.2", instanceReport.getHeaderReport().getCmdiVersion());
       
    }
 
@@ -100,9 +99,9 @@ public class InstanceTest {
       
       CMDInstanceReport instanceReport = CMDInstanceReport.class.cast(report);
       
-      assertTrue(instanceReport.fileReport.location.endsWith("SAW_Leipzig_Repository/cts_muqtabas_urn_cts_muqtabas_oclc_4770057679_i_29_TEIP5_.xml"));
+      assertTrue(instanceReport.getFileReport().getLocation().endsWith("SAW_Leipzig_Repository/cts_muqtabas_urn_cts_muqtabas_oclc_4770057679_i_29_TEIP5_.xml"));
       
-      assertEquals(6510, instanceReport.fileReport.size);
+      assertEquals(6510, instanceReport.getFileReport().getSize());
    
    }
 }

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import eu.clarin.cmdi.curation.api.processor.CollectionProcessor;
+import eu.clarin.cmdi.curation.api.processor.CMDCollectionProcessor;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import lombok.Data;
 
@@ -16,7 +16,7 @@ import lombok.Data;
 public class CMDCollection {
 
    @Autowired
-   CollectionProcessor processor;
+   CMDCollectionProcessor processor;
 
    private Path path = null;
 

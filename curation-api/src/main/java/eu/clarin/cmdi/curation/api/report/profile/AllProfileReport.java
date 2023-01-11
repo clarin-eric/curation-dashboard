@@ -18,7 +18,7 @@ import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.api.report.Scoring;
-import eu.clarin.cmdi.curation.api.report.profile.section.ProfileFacetReport.Coverage;
+import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport.Coverage;
 
 
 @XmlRootElement(name = "profiles")
@@ -71,7 +71,7 @@ public class AllProfileReport extends ScoreReport implements AggregationReport<C
       };
       @XmlElement
       public double getScore() {
-         return report.getScore().getScore();
+         return report.getScoring().getScore();
       };
       @XmlElement
       public double getFacetCoverage() {

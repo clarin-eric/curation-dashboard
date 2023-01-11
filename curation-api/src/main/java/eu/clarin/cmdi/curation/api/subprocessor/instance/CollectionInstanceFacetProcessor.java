@@ -8,28 +8,29 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import eu.clarin.cmdi.curation.api.cache.FacetReportCache;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.report.CMDInstanceReport;
-import eu.clarin.cmdi.curation.api.report.CMDProfileReport.FacetReport.Coverage;
-import eu.clarin.cmdi.curation.api.report.Score;
+import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.Coverage;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
-import eu.clarin.cmdi.curation.api.subprocessor.ext.FacetReportCreator;
-import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
-import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 
 @Component
 public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
-   
+
    @Autowired
-   private FacetsMappingCacheFactory fac;
-   @Autowired
-   private FacetReportCreator facetReportCreator;
+   private FacetReportCache facetReportCache;
 
    @Override
    public void process(CMDInstance entity, CMDInstanceReport report) {
-      
-      Score score = new Score("facet-mapping", 1.0);
+
+      InstanceFacetReport facetReport = new InstanceFacetReport();
+      report.setFacetReport(facetReport);
+
+      facetReportCache.getFacetReport(report.getHeaderReport().getProfileHeader()).getCoverage()
+            .forEach(profileCoverage -> facetReport.addCoverage(profileCoverage.getName(), profileCoverage.isCoveredByProfile()));
+
 
       Map<String, List<ValueSet>> facetValuesMap = entity.getCmdiData().getDocument();
 
@@ -44,37 +45,8 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDIn
       facetValuesMap.values().forEach(
             list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getOriginFacetConfig().getName())));
 
-      entity.setParsedInstance(null);
-
-      FacetsMapping facetMapping;
-      try {
-         facetMapping = fac.getFacetsMapping(report.header);
-
-         report.facets = facetReportCreator.createFacetReport(score, report.header, facetMapping);
-
-         int numOfCoveredByIns = 0;
-
-         for (Coverage coverage : report.facets.coverage) {
-            if (!coverage.coveredByProfile)
-               continue; // we have to discuss if this should still be the case
-
-            coverage.coveredByInstance = originFacetsWithValue.contains(coverage.name);
-            if (coverage.coveredByInstance)
-               numOfCoveredByIns++;
-         }
-
-         report.facets.instanceCoverage = report.facets.numOfFacets == 0 ? 0.0
-               : (numOfCoveredByIns / (double) report.facets.numOfFacets); // cast to double to get a double as result
-
-      }
-      finally {
-         entity.setCmdiData(null);
-         entity.setParsedInstance(null);
-      }
-      
-      score.setScore(report.facets.instanceCoverage);
-      
-      report.addSegmentScore(score);
+      facetReport.getCoverages().stream().filter(Coverage::isCoveredByProfile)
+            .forEach(coverage -> coverage.setCoveredByInstance(originFacetsWithValue.contains(coverage.getName())));
 
    }
 }

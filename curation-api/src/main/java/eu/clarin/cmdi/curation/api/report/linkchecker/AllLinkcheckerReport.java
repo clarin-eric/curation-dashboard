@@ -1,7 +1,11 @@
-package eu.clarin.cmdi.curation.api.report;
+package eu.clarin.cmdi.curation.api.report.linkchecker;
 
+import eu.clarin.cmdi.curation.api.report.AggregationReport;
+import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
+import eu.clarin.cmdi.curation.api.report.NamedReport;
+import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
+import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Statistics;
 import eu.clarin.linkchecker.persistence.utils.Category;
-import eu.clarin.cmdi.curation.api.report.CollectionReport.Statistics;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -14,7 +18,7 @@ import java.util.TreeSet;
 
 @XmlRootElement(name = "linkchecker-report")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
-public class AllLinkcheckerReport extends Report<CollectionReport> {
+public class AllLinkcheckerReport implements AggregationReport<CollectionReport>, NamedReport {
    @XmlAttribute(name = "creation-time")
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();
@@ -32,14 +36,6 @@ public class AllLinkcheckerReport extends Report<CollectionReport> {
    
    }
 
-   @Override
-   public boolean isValid() {
-      return false;
-   }
-
-   @Override
-   public void addSegmentScore(Score segmentScore) {
-   }
 
    @Override
    public void addReport(CollectionReport collectionReport) {
@@ -70,22 +66,22 @@ public class AllLinkcheckerReport extends Report<CollectionReport> {
 
       public CMDCollection(CollectionReport collectionReport, AllLinkcheckerReport linkcheckerReport) {
          this.name = collectionReport.getName();
-         this.statistics = collectionReport.urlReport.statistics;
-         this.count = collectionReport.urlReport.totNumOfCheckedLinks;
-         this.avgRespTime = collectionReport.urlReport.avgRespTime;
-         this.maxRespTime = collectionReport.urlReport.maxRespTime;
+         this.statistics = collectionReport.getLinkcheckerReport().getStatistics();
+         this.count = collectionReport.getLinkcheckerReport().getTotNumOfCheckedLinks();
+         this.avgRespTime = collectionReport.getLinkcheckerReport().getAvgRespTime();
+         this.maxRespTime = collectionReport.getLinkcheckerReport().getMaxRespTime();
          
          linkcheckerReport.overall.avgRespTime = (linkcheckerReport.overall.avgRespTime
                * linkcheckerReport.overall.count
-               + collectionReport.urlReport.avgRespTime * collectionReport.urlReport.totNumOfCheckedLinks)
-               / (linkcheckerReport.overall.count + collectionReport.urlReport.totNumOfCheckedLinks);
+               + collectionReport.getLinkcheckerReport().getAvgRespTime() * collectionReport.getLinkcheckerReport().getTotNumOfCheckedLinks())
+               / (linkcheckerReport.overall.count + collectionReport.getLinkcheckerReport().getTotNumOfCheckedLinks());
 
-         linkcheckerReport.overall.count += collectionReport.urlReport.totNumOfCheckedLinks;
-         if (linkcheckerReport.overall.maxRespTime < collectionReport.urlReport.maxRespTime) {
-            linkcheckerReport.overall.maxRespTime = collectionReport.urlReport.maxRespTime;
+         linkcheckerReport.overall.count += collectionReport.getLinkcheckerReport().getTotNumOfCheckedLinks();
+         if (linkcheckerReport.overall.maxRespTime < collectionReport.getLinkcheckerReport().getMaxRespTime()) {
+            linkcheckerReport.overall.maxRespTime = collectionReport.getLinkcheckerReport().getMaxRespTime();
          }
          
-         collectionReport.urlReport.statistics.forEach(linkcheckerReport.overall::addStatistics);
+         collectionReport.getLinkcheckerReport().getStatistics().forEach(linkcheckerReport.overall::addStatistics);
       }
    }
 

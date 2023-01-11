@@ -39,6 +39,6 @@ public class CMDErrorHandler implements ErrorHandler {
 	}
 
 	private void addMessage(Severity lvl, int line, int col, String message) {
-		report.getScore().addMessage(lvl, "line: " + line + ", col: " + col + " - " + message);
+		report.getScoring().addMessage(lvl, "line: " + line + ", col: " + col + " - " + message);
 	}
 }

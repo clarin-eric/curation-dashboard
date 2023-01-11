@@ -1,0 +1,1 @@
+INSERT IGNORE INTO client(name, password, role) VALUES('curation', '*', 'USER');

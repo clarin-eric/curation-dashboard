@@ -1,6 +1,6 @@
 logging:
    level:
-      root: ERROR
+      root: DEBUG
 spring:
    datasource:
       url: ${DATABASE_URI}
@@ -12,6 +12,9 @@ spring:
       hibernate:
          ddl-auto: none
       database-platform: org.hibernate.dialect.MariaDBDialect
+   sql:
+      init:
+         mode: always    
    servlet:
       multipart:
         enabled: true
@@ -27,10 +30,9 @@ curation:
    mode: collection
    directory:
       home: /app/curation
-      dataRoot: /data/report/cmdi
-      in: 
-      out: /tmp/public
-      xsd_cache: ./xsd_cache
+      dataRoot: /data/results/cmdi
+      in: /data/results/cmdi/Language_Archive_Cologne
+      out: /data/curation/public
    facets: 
       - languageCode
       - collection

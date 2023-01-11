@@ -4,13 +4,13 @@ import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.api.report.Scoring;
-import eu.clarin.cmdi.curation.api.report.instance.section.FileReport;
-import eu.clarin.cmdi.curation.api.report.instance.section.InstanceFacetReport;
-import eu.clarin.cmdi.curation.api.report.instance.section.InstanceHeaderReport;
-import eu.clarin.cmdi.curation.api.report.instance.section.ResProxyReport;
-import eu.clarin.cmdi.curation.api.report.instance.section.XmlPopulationReport;
-import eu.clarin.cmdi.curation.api.report.instance.section.XmlValidityReport;
-import eu.clarin.cmdi.curation.api.report.profile.section.ProfileHeaderReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.FileReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport;
+import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.stream.Stream;
 
 
@@ -67,11 +68,11 @@ public class CMDInstanceReport extends ScoreReport implements NamedReport {
 
    // ResProxy
    @XmlElement(name = "resProxy-section")
-   public ResProxyReport resProxyReport;
+   private ResourceProxyReport resProxyReport;
 
    // XMLPopulatedValidator
    @XmlElement(name = "xml-populated-section")
-   private XmlPopulationReport xmlPopulatedReport;
+   private XmlPopulationReport xmlPopulationReport;
 
    // XMLValidityValidator
    @XmlElement(name = "xml-validation-section")
@@ -103,13 +104,18 @@ public class CMDInstanceReport extends ScoreReport implements NamedReport {
       return new Scoring() {
 
          @Override
+         public Collection<Message> getMessages() {
+            return getSegmentReports().flatMap(report -> report.getScoring().getMessages().stream()).toList();
+         }
+
+         @Override
          public double getMaxScore() {
-            return getSegmentReports().mapToDouble(scoreReport -> scoreReport.getScore().getMaxScore()).sum();
+            return getSegmentReports().mapToDouble(scoreReport -> scoreReport.getScoring().getMaxScore()).sum();
          }
 
          @Override
          public double getScore() {
-            return getSegmentReports().mapToDouble(scoreReport -> scoreReport.getScore().getScore()).sum();
+            return getSegmentReports().mapToDouble(scoreReport -> scoreReport.getScoring().getScore()).sum();
          }        
       };
    }
@@ -120,7 +126,7 @@ public class CMDInstanceReport extends ScoreReport implements NamedReport {
             this.instanceHeaderReport, 
             this.fileReport, 
             this.resProxyReport, 
-            this.xmlPopulatedReport, 
+            this.xmlPopulationReport, 
             this.xmlValidityReport, 
             this.facetReport
          ).filter(report -> report != null);

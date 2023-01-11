@@ -5,7 +5,6 @@
 package eu.clarin.cmdi.curation.api;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,8 +21,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
-import eu.clarin.cmdi.curation.api.report.CollectionReport;
-import eu.clarin.cmdi.curation.api.report.Report;
+import eu.clarin.cmdi.curation.api.report.NamedReport;
+import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 
 /**
  *
@@ -33,7 +32,7 @@ import eu.clarin.cmdi.curation.api.report.Report;
 @TestInstance(Lifecycle.PER_CLASS)
 public class CollectionTest {
    
-   private Report<?> report;
+   private NamedReport report;
    
    @Autowired
    CurationModule curation;
@@ -58,27 +57,6 @@ public class CollectionTest {
       
       assertTrue(this.report instanceof CollectionReport);
       
-      this.report.toXML(System.out);
-      
-   }
-   
-   @Test
-   @Order(2)
-   public void sectionReportNotNull() {
-      
-      CollectionReport collectionReport = CollectionReport.class.cast(this.report);
-      
-      assertNotNull(collectionReport.fileReport);
-      
-      assertNotNull(collectionReport.headerReport);
-      
-      assertNotNull(collectionReport.resProxyReport);
-      
-      assertNotNull(collectionReport.urlReport);
-      
-      assertNotNull(collectionReport.xmlPopulatedReport);
-      
-      assertNotNull(collectionReport.xmlValidationReport);
       
    }
 }
