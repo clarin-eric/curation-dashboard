@@ -4,6 +4,7 @@
  */
 package eu.clarin.cmdi.curation.api.report.collection.sec;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -22,10 +23,14 @@ import lombok.Getter;
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 @Getter
 public class XmlValidityReport {
-   
-   private long totNumOfRecords;
-   private int totNumOfValidRecords;
-   private Double ratioOfValidRecords = 0.0;
+   @XmlElement
+   public int totNumOfRecords;
+   @XmlElement
+   public int totNumOfValidRecords;
+   @XmlElement
+   public double ratioOfValidRecords;
+   @XmlElement
+   public Collection<Record> issues = new ArrayList<Record>();
    
    
    @XmlRootElement
@@ -37,5 +42,4 @@ public class XmlValidityReport {
       @XmlElement(name = "issue")
       public Collection<String> issues;
    }
-
 }

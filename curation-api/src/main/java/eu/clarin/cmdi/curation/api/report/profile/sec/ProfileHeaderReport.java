@@ -13,7 +13,6 @@ import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import eu.clarin.cmdi.curation.api.report.Scoring;
 
 /**
  *
@@ -25,8 +24,6 @@ import eu.clarin.cmdi.curation.api.report.Scoring;
 public class ProfileHeaderReport extends ScoreReport {
    
    private final ProfileHeader header;  
-   
-   
 
    @XmlTransient
    public ProfileHeader getProfileHeader() {
@@ -60,21 +57,5 @@ public class ProfileHeaderReport extends ScoreReport {
 
    public String getStatus() {
       return header.getStatus();
-   }
-
-
-   @Override
-   public Scoring newScore() {
-      // TODO Auto-generated method stub
-      return new Scoring() {
-         @Override
-         public double getMaxScore() {
-            return 1;
-         }
-         @Override
-         public double getScore() {
-            return ProfileHeaderReport.this.header.isPublic()?1.0:0.1;
-         }
-      };
    }
 }

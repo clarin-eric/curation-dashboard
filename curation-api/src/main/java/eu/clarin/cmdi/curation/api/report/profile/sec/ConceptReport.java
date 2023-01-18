@@ -14,69 +14,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import eu.clarin.cmdi.curation.api.report.Scoring;
-
 
 /**
  *
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
-@Getter
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ConceptReport extends ScoreReport {
    
    @XmlAttribute
-   private int total;
-
+   public int total;
    @XmlAttribute
-   private int required; // cardinality > 0
-
+   public int unique;
    @XmlAttribute
-   private int withConcept;
-   
+   public int required;
    @XmlAttribute
-   public int getUnique() {
-      return this.concepts.size();
-   };
-   
-   public void incrementTotal() {
-      this.total++;
-   }
-   public void incrementRequired() {
-      this.required++;
-   }
-   public void incrementWithConcept() {
-      this.withConcept++;
-   }
-
+   public int withConcept;
    @XmlAttribute
-   public double getPercWithConcept() {
-      return (total>0?withConcept/total:0.0);
-   };
+   public double percWithConcept;
    
    @XmlElement(name = "concept")
    public java.util.Collection<Concept> concepts = new ArrayList<Concept>();
-
-
-   
-   
-
-   @Override
-   public Scoring newScore() {
-      return new Scoring() {
-         @Override
-         public double getMaxScore() {
-            return 1;
-         }
-         @Override
-         public double getScore() {
-            return ConceptReport.this.getPercWithConcept();
-         }
-      };
-   }
    
    @XmlRootElement
    @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
@@ -85,32 +45,19 @@ public class ConceptReport extends ScoreReport {
    public static class Concept {
 
       private final CCRConcept ccrConcept;
-      private int count = 1;
-
+      @XmlAttribute
+      public int count;
       @XmlAttribute
       public String getUri() {
          return this.ccrConcept.getUri();
       }
-
       @XmlAttribute
       public String getPrefLabel() {
          return this.ccrConcept.getPrefLabel();
       };
-
       @XmlAttribute
       public String getStatus() {
-         return this.getStatus();
+         return this.ccrConcept.getStatus().toString();
       };
-
-      @XmlAttribute
-      public int getCount() {
-         return this.count;
-      }
-      
-      public void incrementCount() {
-         this.count++;
-      }
-
    }
-
 }

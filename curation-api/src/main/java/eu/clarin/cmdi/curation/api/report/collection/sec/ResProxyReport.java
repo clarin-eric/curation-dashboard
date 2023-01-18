@@ -10,47 +10,30 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import lombok.Getter;
 
 /**
  *
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
-@Getter
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ResProxyReport {
-   private long numOfFiles;
-   private long totNumOfResProxies;
-   private long totNumOfResourcesWithMime;
-   private int totNumOfResProxiesWithReferences;
+   @XmlElement
+   public int totNumOfResProxies;
+   @XmlElement
+   public double avgNumOfResProxies;
+   @XmlElement
+   public int totNumOfResProxiesWithMime;
+   @XmlElement
+   public double avgNumOfResProxiesWithMime;
+   @XmlElement
+   public int totNumOfResProxiesWithReference;
+   @XmlElement
+   public double avgNumOfResProxiesWithReference;
    @XmlElementWrapper(name = "invalid-references")
    private Collection<InvalidReference> invalidReferences = new ArrayList<InvalidReference>(); 
-   
-   public void addTotNumOfResProxies(long addition) {
-      this.numOfFiles++;
-      this.totNumOfResProxies+=addition;
-   }
-   public void addTotNumOfResourcesWithMime(long addition) {
-      this.totNumOfResourcesWithMime+=addition;
-   }   
-   public void addTotNumOfResProxiesWithReferences(long addition) {
-      this.totNumOfResProxiesWithReferences+=addition;
-   } 
-   
-   public double getAvgNumOfResProxies() {
-      return this.numOfFiles!=0?this.totNumOfResProxies/this.numOfFiles:0.0;
-   }
-   
-   public double getAvgNumOfResourcesWithMime() {
-      return this.numOfFiles!=0?this.getAvgNumOfResourcesWithMime()/this.numOfFiles:0.0;
-   }
-   public double getAvgNumOfResProxiesWithReferences() {
-      return this.numOfFiles!=0?this.totNumOfResProxiesWithReferences/this.numOfFiles:0.0;
-   }
-   
    
    @XmlRootElement
    @XmlAccessorType(XmlAccessType.FIELD)   

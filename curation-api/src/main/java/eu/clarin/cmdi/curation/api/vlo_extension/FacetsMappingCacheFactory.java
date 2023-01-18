@@ -50,8 +50,8 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
    }
 
    public FacetsMapping getFacetsMapping(ProfileHeader header) {
-      return header.isPublic() ? cache.getPublicFacetMapping(header, createFacetsMapping(header))
-            : cache.getNonPublicFacetMapping(header, createFacetsMapping(header));
+      return header.isPublic() ? cache.getPublicFacetMapping(header, this)
+            : cache.getNonPublicFacetMapping(header, this);
    }
 
    public Map<String, List<Pattern>> createConceptLinkPathMapping(ProfileHeader header)
@@ -68,7 +68,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
       return result;
    }
 
-   private FacetsMapping createFacetsMapping(ProfileHeader header) {
+   public FacetsMapping createFacetsMapping(ProfileHeader header) {
       return new FacetsMappingExt(createMapping(new ConceptLinkPathMapper() {
 
          @Override

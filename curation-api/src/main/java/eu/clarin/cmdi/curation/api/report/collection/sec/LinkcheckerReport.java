@@ -15,34 +15,31 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import eu.clarin.linkchecker.persistence.utils.Category;
-import lombok.Getter;
-import lombok.Setter;
+
 
 /**
  *
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
-@Getter
-@Setter
+@XmlAccessorType(XmlAccessType.FIELD)
 public class LinkcheckerReport {
    
-   private int totNumOfLinks;
-   private Double avgNumOfLinks = 0.0;
-   private int totNumOfUniqueLinks;
-   private int totNumOfCheckedLinks;
-   private Double avgNumOfUniqueLinks = 0.0;
-   private int totNumOfInvalidLinks;
-   private int totNumOfBrokenLinks;
-   private Double avgNumOfBrokenLinks = 0.0;
-   private Double ratioOfValidLinks = 0.0;
-   private int totNumOfUndeterminedLinks;
-   private int totNumOfRestrictedAccessLinks;
-   private int totNumOfBlockedByRobotsTxtLinks;
-   private Double avgRespTime = 0.0;
-   private Long maxRespTime = 0L;
+   public int totNumOfLinks;
+   public double avgNumOfLinks;
+   public int totNumOfUniqueLinks;
+   public int totNumOfCheckedLinks;
+   public double avgNumOfUniqueLinks;
+   public int totNumOfInvalidLinks;
+   public int totNumOfBrokenLinks;
+   public double avgNumOfBrokenLinks;
+   public double ratioOfValidLinks;
+   public int totNumOfUndeterminedLinks;
+   public int totNumOfRestrictedAccessLinks;
+   public int totNumOfBlockedByRobotsTxtLinks;
+   public double avgRespTime;
+   public long maxRespTime;
    @XmlElementWrapper(name = "linkchecker")
-   private Collection<Statistics> statistics = new TreeSet<Statistics>();
+   public Collection<Statistics> statistics = new TreeSet<Statistics>();
    
    @XmlRootElement
    @XmlAccessorType(XmlAccessType.FIELD)

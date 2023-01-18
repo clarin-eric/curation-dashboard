@@ -4,15 +4,17 @@
  */
 package eu.clarin.cmdi.curation.api.report.collection.sec;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 
 
@@ -23,32 +25,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class HeaderReport {
    
+   public int totNumOfProfiles;
+   
    @XmlElementWrapper(name = "duplicatedMDSelfLinks")
    private Collection<String> duplicatedMDSelfLink;
    
-   private Map<String, Profile> profileMap = new HashMap<String, Profile>();
-   
-   public int getTotNumOfProfiles() {
-      return this.profileMap.size();
-   }
-   
-   public Collection<Profile> getProfiles(){
-      return this.profileMap.values();
-   }
+   public Collection<Profile> profiles = new ArrayList<Profile>();  
 
 
    @XmlRootElement(name = "profile")
    @XmlAccessorType(XmlAccessType.FIELD)
+   @RequiredArgsConstructor
+   @NoArgsConstructor(force = true)
    public static class Profile {
-
       @XmlAttribute
-      private String name;
-
+      public final String name;
       @XmlAttribute
-      private int count;
-
+      public final double score;
       @XmlAttribute
-      private double score;
+      public int count;
    }
-
 }

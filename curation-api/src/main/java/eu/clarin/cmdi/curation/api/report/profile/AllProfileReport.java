@@ -16,14 +16,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import eu.clarin.cmdi.curation.api.report.AggregationReport;
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
-import eu.clarin.cmdi.curation.api.report.ScoreReport;
-import eu.clarin.cmdi.curation.api.report.Scoring;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport.Coverage;
 
 
 @XmlRootElement(name = "profiles")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AllProfileReport extends ScoreReport implements AggregationReport<CMDProfileReport>, NamedReport {
+public class AllProfileReport implements AggregationReport<CMDProfileReport>, NamedReport {
    @XmlAttribute(name = "creation-time")
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();
@@ -35,12 +33,6 @@ public class AllProfileReport extends ScoreReport implements AggregationReport<C
 
       return this.getClass().getSimpleName();
    
-   }
-
-   @Override
-   public boolean isValid() {
-
-      return false;
    }
 
 
@@ -59,11 +51,11 @@ public class AllProfileReport extends ScoreReport implements AggregationReport<C
 
       @XmlAttribute
       public String getId() {
-         return report.getHeaderReport().getId();
+         return report.headerReport.getId();
       };
       @XmlElement
       public String getName() {
-         return report.getHeaderReport().getName();
+         return report.headerReport.getName();
       };
       @XmlElement
       public String getReportName() {
@@ -71,29 +63,29 @@ public class AllProfileReport extends ScoreReport implements AggregationReport<C
       };
       @XmlElement
       public double getScore() {
-         return report.getScoring().getScore();
+         return report.scoring.score;
       };
       @XmlElement
       public double getFacetCoverage() {
-         return report.getFacetReport().getProfileCoverage();
+         return report.facetReport.profileCoverage;
       };
       @XmlElement
       public double getPercOfElementsWithConcept() {
-         return report.getConceptReport().getPercWithConcept();
+         return report.conceptReport.percWithConcept;
       };
 
       @XmlElementWrapper(name = "facets")
       @XmlElement(name = "facet")
       public Collection<Coverage> getFacets(){
-         return report.getFacetReport().getCoverage();
+         return report.facetReport.coverages;
       }
       @XmlElement
       public double getCollectionUsage() {
-         return report.getCollectionUsage().size();
+         return report.collectionUsage.size();
       };
       @XmlElement
       public double getInstanceUsage() {
-         return report.getCollectionUsage().stream().mapToDouble(usage -> usage.count).sum();
+         return report.collectionUsage.stream().mapToDouble(usage -> usage.count).sum();
       };
 
       public Profile() {
@@ -103,10 +95,5 @@ public class AllProfileReport extends ScoreReport implements AggregationReport<C
       public Profile(CMDProfileReport report) {
          this.report = report;
       }
-   }
-
-   @Override
-   public Scoring newScore() {
-      return null;
    }
 }

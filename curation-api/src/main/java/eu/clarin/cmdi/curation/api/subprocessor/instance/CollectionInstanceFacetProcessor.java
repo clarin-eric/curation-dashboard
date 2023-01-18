@@ -8,8 +8,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.clarin.cmdi.curation.api.cache.FacetReportCache;
+import eu.clarin.cmdi.curation.api.cache.ProfileReportCache;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
+import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.Coverage;
@@ -20,16 +21,15 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
 
    @Autowired
-   private FacetReportCache facetReportCache;
+   ProfileReportCache profileReportCache;
 
    @Override
    public void process(CMDInstance entity, CMDInstanceReport report) {
 
-      InstanceFacetReport facetReport = new InstanceFacetReport();
-      report.setFacetReport(facetReport);
+      report.facetReport = new InstanceFacetReport();
 
-      facetReportCache.getFacetReport(report.getHeaderReport().getProfileHeader()).getCoverage()
-            .forEach(profileCoverage -> facetReport.addCoverage(profileCoverage.getName(), profileCoverage.isCoveredByProfile()));
+      profileReportCache.getProfileReport(new CMDProfile(report.headerReport.getSchemaLocation(), report.headerReport.getCmdiVersion())).facetReport.coverages
+      .forEach(profileCoverage -> report.facetReport.coverages.add(new Coverage(profileCoverage.name, profileCoverage.coveredByProfile)));
 
 
       Map<String, List<ValueSet>> facetValuesMap = entity.getCmdiData().getDocument();
@@ -45,8 +45,8 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDIn
       facetValuesMap.values().forEach(
             list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getOriginFacetConfig().getName())));
 
-      facetReport.getCoverages().stream().filter(Coverage::isCoveredByProfile)
-            .forEach(coverage -> coverage.setCoveredByInstance(originFacetsWithValue.contains(coverage.getName())));
+      report.facetReport.coverages.stream().filter(coverage -> coverage.coveredByProfile)
+            .forEach(coverage -> coverage.coveredByInstance = originFacetsWithValue.contains(coverage.name));
 
    }
 }

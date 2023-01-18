@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
@@ -15,17 +16,17 @@ public class FacetMappingCache {
    @Autowired
    CRService crService;
    
-   @Cacheable(value = "publicFacetMappingCache")
-   public FacetsMapping getPublicFacetMapping(ProfileHeader header, FacetsMapping mapping) {
+   @Cacheable(value = "publicFacetMappingCache", key = "#header.id")
+   public FacetsMapping getPublicFacetMapping(ProfileHeader header, FacetsMappingCacheFactory fac) {
       
-      return mapping;
+      return fac.createFacetsMapping(header);
       
    }   
    
    @Cacheable(value = "nonPublicFacetMappingCache")
-   public FacetsMapping getNonPublicFacetMapping(ProfileHeader header, FacetsMapping mapping) {
+   public FacetsMapping getNonPublicFacetMapping(ProfileHeader header, FacetsMappingCacheFactory fac) {
       
-      return mapping;
+      return fac.createFacetsMapping(header);
       
-   }   
+   }  
 }

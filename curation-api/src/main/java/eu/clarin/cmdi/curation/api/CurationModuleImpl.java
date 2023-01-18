@@ -118,7 +118,7 @@ public class CurationModuleImpl implements CurationModule {
 
          // Files.delete(path);
 
-         report.getFileReport().setLocation(url.toString());
+         report.fileReport.location = url.toString();
 
          return report;
       }

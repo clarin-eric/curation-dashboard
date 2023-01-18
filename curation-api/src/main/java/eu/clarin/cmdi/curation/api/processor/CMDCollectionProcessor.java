@@ -28,7 +28,7 @@ public class CMDCollectionProcessor {
       
       if(collection.getPath().getNameCount() >= 1) {
           
-         report.getFileReport().setProvider(collection.getPath().getName(collection.getPath().getNameCount() -1).toString());
+         report.fileReport.provider = collection.getPath().getName(collection.getPath().getNameCount() -1).toString();
          collectionAggregator.process(collection, report);
    
          long end = System.currentTimeMillis();

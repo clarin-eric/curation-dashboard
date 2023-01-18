@@ -66,17 +66,17 @@ public class InstanceTest {
       
       CMDInstanceReport instanceReport = CMDInstanceReport.class.cast(report);
       
-      assertNotNull(instanceReport.getHeaderReport());
+      assertNotNull(instanceReport.headerReport);
       
-      assertNotNull(instanceReport.getFileReport());
+      assertNotNull(instanceReport.fileReport);
       
-      assertNotNull(instanceReport.getResProxyReport());
+      assertNotNull(instanceReport.resProxyReport);
       
-      assertNotNull(instanceReport.getXmlPopulationReport());
+      assertNotNull(instanceReport.xmlPopulationReport);
       
-      assertNotNull(instanceReport.getXmlValidityReport());
+      assertNotNull(instanceReport.xmlValidityReport);
       
-      assertNotNull(instanceReport.getFacetReport());
+      assertNotNull(instanceReport.facetReport);
       
    }
    
@@ -86,9 +86,9 @@ public class InstanceTest {
       
       CMDInstanceReport instanceReport = CMDInstanceReport.class.cast(report);
       
-      assertEquals("clarin.eu:cr1:p_1288172614026", instanceReport.getHeaderReport().getId());
+      assertEquals("clarin.eu:cr1:p_1288172614026", instanceReport.headerReport.getId());
       
-      assertEquals("1.2", instanceReport.getHeaderReport().getCmdiVersion());
+      assertEquals("1.2", instanceReport.headerReport.getCmdiVersion());
       
    }
 
@@ -99,9 +99,9 @@ public class InstanceTest {
       
       CMDInstanceReport instanceReport = CMDInstanceReport.class.cast(report);
       
-      assertTrue(instanceReport.getFileReport().getLocation().endsWith("SAW_Leipzig_Repository/cts_muqtabas_urn_cts_muqtabas_oclc_4770057679_i_29_TEIP5_.xml"));
+      assertTrue(instanceReport.fileReport.location.endsWith("SAW_Leipzig_Repository/cts_muqtabas_urn_cts_muqtabas_oclc_4770057679_i_29_TEIP5_.xml"));
       
-      assertEquals(6510, instanceReport.getFileReport().getSize());
+      assertEquals(6510, instanceReport.fileReport.size);
    
    }
 }

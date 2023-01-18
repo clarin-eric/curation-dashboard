@@ -12,15 +12,18 @@ import org.springframework.stereotype.Component;
 
 import com.ximpleware.*;
 
-import eu.clarin.cmdi.curation.api.cache.FacetReportCache;
+import eu.clarin.cmdi.curation.api.cache.ProfileReportCache;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
+import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance.InstanceNode;
+import eu.clarin.cmdi.curation.api.report.Scoring.Message;
 import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.Coverage;
+import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.FacetValueStruct;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.ValueNode;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport.Concept;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
@@ -41,16 +44,15 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
    @Autowired
    private CRService crService;
    @Autowired
-   FacetReportCache facetReportCache;
+   ProfileReportCache profileReportCache;
 
    @Override
    public void process(CMDInstance instance, CMDInstanceReport report) {
       
-      final InstanceFacetReport facetReport = new InstanceFacetReport();
-      report.setFacetReport(facetReport);
+      report.facetReport = new InstanceFacetReport();
       
-      facetReportCache.getFacetReport(report.getHeaderReport().getProfileHeader()).getCoverage()
-         .forEach(profileCoverage -> facetReport.addCoverage(profileCoverage.getName(), profileCoverage.isCoveredByProfile()));
+      profileReportCache.getProfileReport(new CMDProfile(report.headerReport.getSchemaLocation(), report.headerReport.getCmdiVersion())).facetReport.coverages
+         .forEach(profileCoverage -> report.facetReport.coverages.add(new Coverage(profileCoverage.name, profileCoverage.coveredByProfile)));
       
       
 
@@ -63,8 +65,8 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
          log.error("can't parse file '{}' for instance facet processing", instance.getPath());
 
-         report.getFacetReport().getScoring().addMessage(Severity.FATAL,
-               "can't parse file '" + instance.getPath().getFileName() + "' for instance facet processing");
+         report.facetReport.scoring.messages.add(new Message(Severity.FATAL,
+               "can't parse file '" + instance.getPath().getFileName() + "' for instance facet processing"));
 
          return;
 
@@ -86,7 +88,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
       facetsToNodes(instance, report, nodesMap, nav);
 
-      facetReport.getValueNodes().addAll(nodesMap.values());
+      report.facetReport.valueNodes.addAll(nodesMap.values());
 
    }
 
@@ -96,7 +98,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
       Map<String, CMDINode> elements;
       try {
-         elements = crService.getParsedProfile(report.getHeaderReport().getProfileHeader()).getElements();
+         elements = crService.getParsedProfile(report.headerReport.getProfileHeader()).getElements();
 
          ParsedInstance parsedInstance = instance.getParsedInstance();
 
@@ -105,11 +107,12 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
          // create value nodes
          for (InstanceNode instanceNode : parsedInstance.getNodes()) {
             if (!instanceNode.getValue().isEmpty()) {
-               ValueNode val = report.getFacetReport().getValueNode(instanceNode.getXpath(), instanceNode.getValue());
+               ValueNode val = new ValueNode(instanceNode.getXpath(), instanceNode.getValue());
+               report.facetReport.valueNodes.add(val);
 
                CMDINode node = elements.get(instanceNode.getXpath().replaceAll("\\[\\d\\]", ""));
                if (node != null && node.concept != null)
-                  val.setConcept(new Concept(node.concept));
+                  val.concept = new Concept(node.concept);
 
                // determines the index for each xpath
                String xpath = instanceNode.getXpath().replaceAll("\\w+:", "");
@@ -132,7 +135,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                catch (NavException e) {
 
                   log.debug("can't navigate in document");
-                  report.getFacetReport().getScoring().addMessage(Severity.FATAL, "can't navigate in document");
+                  report.facetReport.scoring.messages.add(new Message(Severity.FATAL, "can't navigate in document"));
                }
                ap.resetXPath();
             }
@@ -140,7 +143,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
       }
       catch (NoProfileCacheEntryException e) {
 
-         log.debug("no ProfileCacheEntry for profile id '{}'", report.getHeaderReport().getId());
+         log.debug("no ProfileCacheEntry for profile id '{}'", report.headerReport.getId());
 
       }
 
@@ -170,12 +173,12 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
          if (values == null) // no values from instance for this facet
             continue;
 
-         Coverage coverage = report.getFacetReport().getCoverages().stream().filter(c -> c.getName().equals(facetName)).findFirst()
+         Coverage coverage = report.facetReport.coverages.stream().filter(c -> c.name.equals(facetName)).findFirst()
                .orElse(null);
 
          if (coverage != null) {
             // lambda expression to ignore values set by cross facet mapping
-            coverage.setCoveredByInstance(originFacetsWithValue.contains(facetName));
+            coverage.coveredByInstance = originFacetsWithValue.contains(facetName);
          }
 
          // in the next step the value(s) have to be mapped to the right node
@@ -191,15 +194,15 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                String normalizedValue = entry.getValue().stream().map(valueSet -> valueSet.getValueLanguagePair().getLeft())
                      .collect(Collectors.joining("; "));
                
-               if(node.getValue().equals(normalizedValue)) {
+               if(node.value.equals(normalizedValue)) {
                   normalizedValue = null;
                }
                if (normalizedValue != null && !normalizedValue.trim().isEmpty() && !normalizedValue.equals("--")) {
-                  report.getFacetReport().getScoring().addMessage(Severity.INFO,
-                        "Normalised value for facet " + facetName + ": '" + node.getValue() + "' into '" + normalizedValue + "'");
+                  report.facetReport.scoring.messages.add(new Message(Severity.INFO,
+                        "Normalised value for facet " + facetName + ": '" + node.value + "' into '" + normalizedValue + "'"));
                }
 
-               node.addFacet(
+               node.facets.add(new FacetValueStruct(
                      facetName, 
 
                      // entry.getValue().get(0).isDerived() //assumes that a facet isn't defined as
@@ -210,12 +213,12 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                      entry.getValue().stream().anyMatch(ValueSet::isResultOfValueMapping), // assumes that a facet                                                                       // origin and derived
                                                                                           // at the same time
                      normalizedValue
-               );
+               ));
                
                
             }
          }
-         coverage.setCoveredByInstance(true); // one or more values for the specific facet
+         coverage.coveredByInstance = true; // one or more values for the specific facet
       }
    }
 }

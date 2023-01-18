@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.api.subprocessor.profile;
 
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
+import eu.clarin.cmdi.curation.api.report.Scoring.Message;
 import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
@@ -21,13 +22,15 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
 
    public void process(CMDProfile profile, CMDProfileReport report) { 
       
-      ProfileHeaderReport headerReport = new ProfileHeaderReport(crService.createProfileHeader(profile.getSchemaLocation(), "1.x", false));
-      report.setHeaderReport(headerReport);
-         
-
-      if (!headerReport.getProfileHeader().isPublic()) {
+      report.headerReport = new ProfileHeaderReport(crService.createProfileHeader(profile.getSchemaLocation(), "1.x", false));        
+      report.headerReport.scoring.maxScore = 1;
+      
+      if (!report.headerReport.getProfileHeader().isPublic()) {
          log.debug("profile {} not public", profile.getSchemaLocation());
-         headerReport.getScoring().addMessage(Severity.WARNING, "Profile is not public");
+         report.headerReport.scoring.messages.add((new Message(Severity.WARNING, "Profile is not public")));
+      }
+      else {
+         report.headerReport.scoring.score = 1;
       }
 
       //TODO: verify the intention

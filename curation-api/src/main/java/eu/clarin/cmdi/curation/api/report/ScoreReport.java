@@ -3,28 +3,27 @@
  */
 package eu.clarin.cmdi.curation.api.report;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
 
  *
  */
-
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class ScoreReport {
-   
-   private Scoring scoring;
+   @XmlElement
+   public final Scoring scoring;
    
    public ScoreReport() {     
-      this.scoring = newScore();     
+      this.scoring = new Scoring();     
    }
-   
-   public Scoring getScoring() {
-      return this.scoring;
-   }
+
 	
 	public boolean isValid() {	   
 	   return !this.scoring.hasFatalMessage();	
-	};
-	
-	public abstract Scoring newScore();
-	
+	};	
 }

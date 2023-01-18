@@ -1,6 +1,6 @@
 logging:
    level:
-      root: DEBUG
+      root: ERROR
 spring:
    datasource:
       url: ${DATABASE_URI}

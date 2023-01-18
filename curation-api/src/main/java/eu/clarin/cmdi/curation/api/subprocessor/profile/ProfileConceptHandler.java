@@ -13,7 +13,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
-import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ComponentReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
@@ -30,43 +29,48 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class ProfileElementsHandler extends AbstractSubprocessor<CMDProfile, CMDProfileReport> {
+public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDProfileReport> {
 
    @Autowired
    private CRService crService;
 
    public void process(CMDProfile profile, CMDProfileReport report) {
       
-      ComponentReport componentReport = new ComponentReport();
-      report.setComponentReport(componentReport);
+      report.componentReport = new ComponentReport();
+
       
       ParsedProfile parsedProfile = null;
 
       try {
-         parsedProfile = crService.getParsedProfile(report.getHeaderReport().getProfileHeader());
+         parsedProfile = crService.getParsedProfile(report.headerReport.getProfileHeader());
       }
       catch (NoProfileCacheEntryException e) {
 
-         log.debug("can't get ParsedProfile for profile id '{}'", report.getHeaderReport().getId());
-         componentReport.getScoring().addMessage(Severity.FATAL, "can't get ParsedProfile for profile id '" + report.getHeaderReport().getId() + "'");
+         log.debug("can't get ParsedProfile for profile id '{}'", report.headerReport.getId());
          return;
 
       }
       
+      Map<String, ComponentReport.Component> componentMap = new HashMap<String, ComponentReport.Component>();
 
       parsedProfile.getComponents().forEach(crc -> {
-         componentReport.incrementTotal();
+         report.componentReport.total++;
          
          if (crc.isRequired) {
-            componentReport.incrementRequired();
+            report.componentReport.required++;
          }
          
-         componentReport.getComponent(crc).incrementCount();
+         componentMap
+            .computeIfAbsent(crc.component.id, k -> new ComponentReport.Component(crc.component.id, crc.component.name))
+            .count++;
 
       });
+           
+      report.componentReport.unique = componentMap.size();
       
-      ConceptReport conceptReport = new ConceptReport();
-      report.setConceptReport(conceptReport);
+      report.componentReport.components = componentMap.values();
+      
+      report.conceptReport =  new ConceptReport();
       
       final Map<String, ConceptReport.Concept> conceptMap = new HashMap<String, ConceptReport.Concept>();
       
@@ -77,25 +81,25 @@ public class ProfileElementsHandler extends AbstractSubprocessor<CMDProfile, CMD
       .filter(entrySet -> entrySet.getKey().startsWith("/cmd:CMD/cmd:Components/"))
       .map(Entry::getValue)
       .forEach(n -> {
-         conceptReport.incrementTotal();
+         report.conceptReport.total++;
          
          if (n.isRequired)
-            conceptReport.incrementRequired();
+            report.conceptReport.required++;
 
          if (n.concept != null) {
-            conceptReport.incrementWithConcept();
+            report.conceptReport.withConcept++;
 
-            if (n.isRequired) {
-               conceptReport.incrementRequired();
-            }
-            
-            conceptMap.computeIfAbsent(n.concept.getUri(), k -> new ConceptReport.Concept(n.concept)).incrementCount();
+       
+            conceptMap.computeIfAbsent(n.concept.getUri(), k -> new ConceptReport.Concept(n.concept)).count++;
 
          }  
       });
       
-      conceptReport.getConcepts().addAll(conceptMap.values());
-
+      report.conceptReport.unique = conceptMap.size();
+      report.conceptReport.percWithConcept = (report.conceptReport.total!=0?(double) report.conceptReport.withConcept/report.conceptReport.total:0.0);
+      report.conceptReport.concepts = conceptMap.values();
+      
+      report.conceptReport.scoring.maxScore = 1.0;
+      report.conceptReport.scoring.score = report.conceptReport.percWithConcept;
    }
-
 }

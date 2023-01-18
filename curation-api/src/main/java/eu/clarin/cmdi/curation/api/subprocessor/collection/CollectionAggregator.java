@@ -5,10 +5,12 @@ import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
+import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
+import eu.clarin.cmdi.curation.api.report.collection.CollectionReport.InvalidFile;
+import eu.clarin.cmdi.curation.api.report.collection.sec.FacetReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Statistics;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
-import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Component
-public class CollectionAggregator extends AbstractSubprocessor<CMDCollection, CollectionReport>{
+public class CollectionAggregator {
 
    @Autowired
    private ApiConfig conf;
@@ -46,7 +48,7 @@ public class CollectionAggregator extends AbstractSubprocessor<CMDCollection, Co
    public void process(CMDCollection collection, CollectionReport collectionReport) {
       
       
-      conf.getFacets().forEach(facetName -> collectionReport.getFacetReport().addFacet(facetName));
+      conf.getFacets().forEach(facetName -> collectionReport.facetReport.facets.add(new FacetCollectionStruct(facetName)));
 
 
       ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadPoolSize());    
@@ -63,23 +65,23 @@ public class CollectionAggregator extends AbstractSubprocessor<CMDCollection, Co
             @Override
             public FileVisitResult visitFile(Path filePath, BasicFileAttributes attrs) throws IOException {
                
-               collectionReport.getFileReport().incrementNumOfFiles();
+               collectionReport.fileReport.numOfFiles++;
                
-               if(attrs.size() > collectionReport.getFileReport().getMaxFileSize()) {
-                  collectionReport.getFileReport().setMaxFileSize(attrs.size());
+               if(attrs.size() > collectionReport.fileReport.maxFileSize) {
+                  collectionReport.fileReport.maxFileSize = attrs.size();
                }
-               if(collectionReport.getFileReport().getMinFileSize() == 0 || attrs.size() < collectionReport.getFileReport().getMinFileSize()) {
-                  collectionReport.getFileReport().setMinFileSize(attrs.size());
+               if(collectionReport.fileReport.minFileSize == 0 || attrs.size() < collectionReport.fileReport.minFileSize) {
+                  collectionReport.fileReport.minFileSize = attrs.size();
                }
 
-               collectionReport.getFileReport().addSize(attrs.size());               
+               collectionReport.fileReport.size+=attrs.size();               
                
-               CMDInstance instance = ctx.getBean(CMDInstance.class, filePath, attrs.size(), collectionReport.getFileReport().getProvider());
+               CMDInstance instance = ctx.getBean(CMDInstance.class, filePath, attrs.size(), collectionReport.fileReport.provider);
                
                executor.submit(() -> {
  
-                  CMDInstanceReport cmdInstanceReport = instance.generateReport();
-                  collectionReport.addReport(cmdInstanceReport);
+                  CMDInstanceReport instanceReport = instance.generateReport();
+                  addReport(collectionReport, instanceReport);
 
                }); // end executor.submit            
                
@@ -116,7 +118,6 @@ public class CollectionAggregator extends AbstractSubprocessor<CMDCollection, Co
             log.error("Error occured while waiting for the threadpool to terminate.");
          }
       }
-   
       
       try (Stream<AggregatedStatus> stream = aRep.findAllByProvidergroupName(collectionReport.getName())) {
 
@@ -126,20 +127,20 @@ public class CollectionAggregator extends AbstractSubprocessor<CMDCollection, Co
             xmlStatistics.maxRespTime = categoryStats.getMaxDuration();
             xmlStatistics.category = categoryStats.getCategory();
             xmlStatistics.count = categoryStats.getNumber();
-            collectionReport.getLinkcheckerReport().setTotNumOfCheckedLinks(categoryStats.getNumber().intValue());
+            collectionReport.linkcheckerReport.totNumOfCheckedLinks = categoryStats.getNumber().intValue();
 
             switch (categoryStats.getCategory()) {
-               case Invalid_URL -> collectionReport.getLinkcheckerReport().setTotNumOfInvalidLinks(categoryStats.getNumber().intValue());
-               case Broken -> collectionReport.getLinkcheckerReport().setTotNumOfBrokenLinks(categoryStats.getNumber().intValue());
-               case Undetermined -> collectionReport.getLinkcheckerReport().setTotNumOfUndeterminedLinks(categoryStats.getNumber().intValue());
+               case Invalid_URL -> collectionReport.linkcheckerReport.totNumOfInvalidLinks = categoryStats.getNumber().intValue();
+               case Broken -> collectionReport.linkcheckerReport.totNumOfBrokenLinks = categoryStats.getNumber().intValue();
+               case Undetermined -> collectionReport.linkcheckerReport.totNumOfUndeterminedLinks = categoryStats.getNumber().intValue();
                case Restricted_Access ->
-               collectionReport.getLinkcheckerReport().setTotNumOfRestrictedAccessLinks(categoryStats.getNumber().intValue());
+               collectionReport.linkcheckerReport.totNumOfRestrictedAccessLinks = categoryStats.getNumber().intValue();
                case Blocked_By_Robots_txt ->
-               collectionReport.getLinkcheckerReport().setTotNumOfBlockedByRobotsTxtLinks(categoryStats.getNumber().intValue());
+               collectionReport.linkcheckerReport.totNumOfBlockedByRobotsTxtLinks = categoryStats.getNumber().intValue();
                default -> throw new IllegalArgumentException("Unexpected value: " + categoryStats.getCategory());
             }
 
-            collectionReport.getLinkcheckerReport().getStatistics().add(xmlStatistics);
+            collectionReport.linkcheckerReport.statistics.add(xmlStatistics);
          });
       }
       catch (IllegalArgumentException ex) {
@@ -151,5 +152,56 @@ public class CollectionAggregator extends AbstractSubprocessor<CMDCollection, Co
 
          log.error("couldn't get category statistics for provider group '{}' from database", collectionReport.getName(), ex);
       }
+      
+      collectionReport.avgScore = (collectionReport.fileReport.numOfFiles>0?(double) collectionReport.score/collectionReport.fileReport.numOfFiles:0.0);
    }
+   
+   public synchronized void addReport(CollectionReport collectionReport, CMDInstanceReport instanceReport) {
+      
+      if(!instanceReport.isValid()) {
+         
+         collectionReport.invalidFiles.add(
+               new InvalidFile(instanceReport.fileReport.location, 
+               instanceReport.scoring.messages.stream().filter(message -> message.severity==Severity.FATAL).findFirst().get().issue
+            ));
+
+         return;
+      }
+      
+      collectionReport.score += instanceReport.scoring.score;
+      if (instanceReport.scoring.score > collectionReport.insMaxScore) {
+          collectionReport.insMaxScore = instanceReport.scoring.score;
+      }
+
+      if (instanceReport.scoring.score < collectionReport.insMinScore)
+          collectionReport.insMinScore = instanceReport.scoring.score;
+
+      collectionReport.maxPossibleScoreInstance = instanceReport.scoring.maxScore;
+
+      // ResProxies
+      collectionReport.resProxyReport.totNumOfResProxies+=instanceReport.resProxyReport.numOfResProxies;
+      collectionReport.resProxyReport.totNumOfResProxiesWithMime+=instanceReport.resProxyReport.numOfResourcesWithMime;
+      collectionReport.resProxyReport.totNumOfResProxiesWithReference+=instanceReport.resProxyReport.numOfResProxiesWithReference;
+
+      // XMLPopulatedValidator
+      collectionReport.xmlPopulationReport.totNumOfXMLElements+=instanceReport.xmlPopulationReport.numOfXMLElements;
+      collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements+=instanceReport.xmlPopulationReport.numOfXMLSimpleElements;
+      collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements+=instanceReport.xmlPopulationReport.numOfXMLEmptyElements;
+
+
+
+
+      // Facet
+      instanceReport
+         .facetReport
+         .coverages
+         .stream()
+         .filter(coverage -> coverage.coveredByInstance)
+         .forEach(instanceFacet -> collectionReport.facetReport.facets.stream().filter(collectionFacet -> collectionFacet.name.equals(instanceFacet.name)).findFirst().get().count++);
+
+
+//      collectionReport.handleProfile(instanceReport.header.getId(), instanceReport.profileScore);
+      
+   }
+
 }

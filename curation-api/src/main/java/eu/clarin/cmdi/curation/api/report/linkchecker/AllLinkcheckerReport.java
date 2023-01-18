@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.api.report.linkchecker;
 
-import eu.clarin.cmdi.curation.api.report.AggregationReport;
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
@@ -18,7 +17,7 @@ import java.util.TreeSet;
 
 @XmlRootElement(name = "linkchecker-report")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
-public class AllLinkcheckerReport implements AggregationReport<CollectionReport>, NamedReport {
+public class AllLinkcheckerReport implements NamedReport {
    @XmlAttribute(name = "creation-time")
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();
@@ -36,8 +35,6 @@ public class AllLinkcheckerReport implements AggregationReport<CollectionReport>
    
    }
 
-
-   @Override
    public void addReport(CollectionReport collectionReport) {
 
       this.collections.add(new CMDCollection((CollectionReport) collectionReport, this));
@@ -66,22 +63,22 @@ public class AllLinkcheckerReport implements AggregationReport<CollectionReport>
 
       public CMDCollection(CollectionReport collectionReport, AllLinkcheckerReport linkcheckerReport) {
          this.name = collectionReport.getName();
-         this.statistics = collectionReport.getLinkcheckerReport().getStatistics();
-         this.count = collectionReport.getLinkcheckerReport().getTotNumOfCheckedLinks();
-         this.avgRespTime = collectionReport.getLinkcheckerReport().getAvgRespTime();
-         this.maxRespTime = collectionReport.getLinkcheckerReport().getMaxRespTime();
+         this.statistics = collectionReport.linkcheckerReport.statistics;
+         this.count = collectionReport.linkcheckerReport.totNumOfCheckedLinks;
+         this.avgRespTime = collectionReport.linkcheckerReport.avgRespTime;
+         this.maxRespTime = collectionReport.linkcheckerReport.maxRespTime;
          
          linkcheckerReport.overall.avgRespTime = (linkcheckerReport.overall.avgRespTime
                * linkcheckerReport.overall.count
-               + collectionReport.getLinkcheckerReport().getAvgRespTime() * collectionReport.getLinkcheckerReport().getTotNumOfCheckedLinks())
-               / (linkcheckerReport.overall.count + collectionReport.getLinkcheckerReport().getTotNumOfCheckedLinks());
+               + collectionReport.linkcheckerReport.avgRespTime * collectionReport.linkcheckerReport.totNumOfCheckedLinks)
+               / (linkcheckerReport.overall.count + collectionReport.linkcheckerReport.totNumOfCheckedLinks);
 
-         linkcheckerReport.overall.count += collectionReport.getLinkcheckerReport().getTotNumOfCheckedLinks();
-         if (linkcheckerReport.overall.maxRespTime < collectionReport.getLinkcheckerReport().getMaxRespTime()) {
-            linkcheckerReport.overall.maxRespTime = collectionReport.getLinkcheckerReport().getMaxRespTime();
+         linkcheckerReport.overall.count += collectionReport.linkcheckerReport.totNumOfCheckedLinks;
+         if (linkcheckerReport.overall.maxRespTime < collectionReport.linkcheckerReport.maxRespTime) {
+            linkcheckerReport.overall.maxRespTime = collectionReport.linkcheckerReport.maxRespTime;
          }
          
-         collectionReport.getLinkcheckerReport().getStatistics().forEach(linkcheckerReport.overall::addStatistics);
+         collectionReport.linkcheckerReport.statistics.forEach(linkcheckerReport.overall::addStatistics);
       }
    }
 

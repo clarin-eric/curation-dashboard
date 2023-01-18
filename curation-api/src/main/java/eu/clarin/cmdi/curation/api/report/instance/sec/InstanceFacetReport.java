@@ -15,10 +15,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import eu.clarin.cmdi.curation.api.report.ScoreReport;
-import eu.clarin.cmdi.curation.api.report.Scoring;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport.Concept;
-import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
@@ -26,124 +23,61 @@ import lombok.RequiredArgsConstructor;
  *
  */
 @XmlRootElement(name = "facets")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class InstanceFacetReport extends ScoreReport {
-
-   private Collection<Coverage> coverages = new ArrayList<Coverage>();
-   private Collection<ValueNode> valueNodes = new ArrayList<ValueNode>();
-
    @XmlAttribute
-   public int getNumOfFacets() {
-      return this.coverages.size();
-   }
-
+   public int numOfFacets;
    @XmlAttribute
-   public double getInstanceCoverage() {
-      return this.coverages.size()!=0?this.coverages.stream().filter(Coverage::isCoveredByInstance).count()/this.coverages.size():0.0;
-   };
+   public double instanceCoverage;
 
    @XmlElementWrapper
    @XmlElement(name = "facet")
-   public Collection<Coverage> getCoverages() {
-      return this.coverages;
-   }
-
+   public Collection<Coverage> coverages = new ArrayList<Coverage>();
    @XmlElementWrapper
    @XmlElement(name = "valueNode")
-   public Collection<ValueNode> getValueNodes() {
-      return this.valueNodes;
-   };
-   
-   public void addCoverage(String facetName, boolean coveredByProfile) {
-      this.coverages.add(new Coverage(facetName, coveredByProfile));
-   }
-   public ValueNode getValueNode(String value, String xpath) {
-      ValueNode node = new ValueNode(value, xpath);
-      this.valueNodes.add(node);
-      return node;
-   }
+   public Collection<ValueNode> valueNodes = new ArrayList<ValueNode>();
 
+   @XmlRootElement
    @XmlAccessorType(XmlAccessType.FIELD)
-   @Getter
-   public class ValueNode {
-      
-      public ValueNode(String value, String xpath) {
-         this.xpath = xpath;
-         this.value = value;
-      };
-
+   @RequiredArgsConstructor
+   @NoArgsConstructor(force = true)
+   public static class ValueNode {
       @XmlElement
-      private String value;
-
+      public final String value;
       @XmlElement
-      private String xpath;
-
+      public final String xpath;
       @XmlElement
-      private Concept concept;
+      public Concept concept;
 
-      @XmlElement
-      private Collection<FacetValueStruct> facet = new ArrayList<FacetValueStruct>();
-      
-      public void setConcept(Concept concept) {
-         this.concept = concept;
-      }
-      public void addFacet(String facetName, boolean isDerived, boolean usesValueMapping, String normalisedValue) {
-         
-      }
+      @XmlElement(name = "facet")
+      public Collection<FacetValueStruct> facets = new ArrayList<FacetValueStruct>();
    }
 
    @XmlRootElement
    @XmlAccessorType(XmlAccessType.FIELD)
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public class FacetValueStruct {
-
+   public static class FacetValueStruct {
       @XmlAttribute
-      private final String name;
-
+      public final String name;
       @XmlAttribute
-      private final boolean isDerived;
-
+      public final boolean isDerived;
       @XmlAttribute
-      private final boolean usesValueMapping;
-
+      public final boolean usesValueMapping;
       @XmlAttribute
-      private final String normalisedValue;
-
+      public final String normalisedValue;
    }
 
    @XmlRootElement
    @XmlAccessorType(XmlAccessType.FIELD)
-   @Data
-   public class Coverage {     
-      
-      public Coverage(String name, boolean coveredByProfile) {
-         this.name = name;
-         this.coveredByProfile = coveredByProfile;
-      }
+   @RequiredArgsConstructor
+   @NoArgsConstructor(force = true)
+   public static class Coverage {     
       @XmlAttribute
-      private String name;
-
+      public final String name;
       @XmlAttribute
-      private boolean coveredByProfile;
-
+      public final boolean coveredByProfile;
       @XmlAttribute
-      private boolean coveredByInstance;
-
-   }
-
-   @Override
-   public Scoring newScore() {
-      return new Scoring() {
-         @Override
-         public double getMaxScore() {
-            return 1.0;
-         }
-
-         @Override
-         public double getScore() {
-            return InstanceFacetReport.this.getInstanceCoverage();
-         }
-      };
+      public boolean coveredByInstance;
    }
 }

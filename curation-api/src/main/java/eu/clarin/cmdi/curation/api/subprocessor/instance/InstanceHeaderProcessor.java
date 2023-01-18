@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
+import eu.clarin.cmdi.curation.api.report.Scoring.Message;
 import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport;
@@ -28,91 +29,90 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
    @Override
    public void process(CMDInstance instance, CMDInstanceReport report){
       
-      InstanceHeaderReport instanceHeaderReport = new InstanceHeaderReport();
-      report.setInstanceHeaderReport(instanceHeaderReport);
+      report.instanceHeaderReport  = new InstanceHeaderReport();
       
       Map<String, List<ValueSet>> keyValuesMap = instance.getCmdiData().getDocument();
 
       if(keyValuesMap.containsKey("curation_schemaLocation") && !keyValuesMap.get("curation_schemaLocation").isEmpty()) {
          String[] schemaLocationArray = keyValuesMap.get("curation_schemaLocation").get(0).getValue().split(" ");
-         instanceHeaderReport.setSchemaLocation(schemaLocationArray[schemaLocationArray.length - 1]);
+         report.instanceHeaderReport.schemaLocation = (schemaLocationArray[schemaLocationArray.length - 1]);
       }
       else if(keyValuesMap.containsKey("curation_noNamespaceSchemaLocation") && !keyValuesMap.get("curation_noNamespaceSchemaLocation").isEmpty()) {
-                     instanceHeaderReport.setSchemaLocation(keyValuesMap.get("curation_noNamespaceSchemaLocation").get(0).getValue());
+                     report.instanceHeaderReport.schemaLocation = keyValuesMap.get("curation_noNamespaceSchemaLocation").get(0).getValue();
       }
 
       if(keyValuesMap.containsKey("curation_mdProfile") && !keyValuesMap.get("curation_mdProfile").isEmpty()) {
-         instanceHeaderReport.setMdProfile(keyValuesMap.get("curation_mdProfile").get(0).getValue());
+         report.instanceHeaderReport.mdProfile = keyValuesMap.get("curation_mdProfile").get(0).getValue();
       }
 
       if(keyValuesMap.containsKey("collection") && !keyValuesMap.get("collection").isEmpty()) {
-          instanceHeaderReport.setMdCollectionDisplayName(keyValuesMap.get("collection").get(0).getValue());
+          report.instanceHeaderReport.mdCollectionDisplayName = keyValuesMap.get("collection").get(0).getValue();
       }
 
       if(keyValuesMap.containsKey("_selfLink") && !keyValuesMap.get("_selfLink").isEmpty()) {
-         instanceHeaderReport.setMdSelfLink(keyValuesMap.get("_selfLink").get(0).getValue());
+         report.instanceHeaderReport.mdSelfLink = keyValuesMap.get("_selfLink").get(0).getValue();
       }
 
 
 
       
-      if (instanceHeaderReport.getSchemaLocation() == null) {
+      if (report.instanceHeaderReport.schemaLocation == null) {
          
-         if(instanceHeaderReport.getMdProfile() == null) {
+         if(report.instanceHeaderReport.mdProfile == null) {
             
             log.debug("Unable to process " + instance.getPath() + ", both schema and profile are not specified");
-            report.getInstanceHeaderReport().getScoring().addMessage(Severity.FATAL, "Unable to process " + instance.getPath().getFileName() + ", both schema and profile are not specified");
+            report.instanceHeaderReport.scoring.messages.add(new Message(Severity.FATAL, "Unable to process " + instance.getPath().getFileName() + ", both schema and profile are not specified"));
             return;
             
          }
          else {
             
-            report.getInstanceHeaderReport().getScoring().addMessage(Severity.ERROR, "Attribute schemaLocation is missing. " + instanceHeaderReport.getMdProfile() + " is assumed");
+            report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR, "Attribute schemaLocation is missing. " + report.instanceHeaderReport.mdProfile + " is assumed"));
             
           }
 
       }
       else {
          
-         if(!crService.isSchemaCRResident(instanceHeaderReport.getSchemaLocation())) {
-            report.getInstanceHeaderReport().getScoring().addMessage(Severity.ERROR, "Schema not registered");
+         if(!crService.isSchemaCRResident(report.instanceHeaderReport.schemaLocation)) {
+            report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR, "Schema not registered"));
          }
          
-         if (instanceHeaderReport.getMdProfile() == null) {
+         if (report.instanceHeaderReport.mdProfile == null) {
             
-            report.getInstanceHeaderReport().getScoring().addMessage(Severity.ERROR, "Value for CMD/Header/MdProfile is missing or invalid");
+            report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR, "Value for CMD/Header/MdProfile is missing or invalid"));
          
          }
          else {
             
-            if (instanceHeaderReport.getMdProfile().matches(CRServiceImpl.PROFILE_ID_FORMAT)) {
+            if (report.instanceHeaderReport.mdProfile.matches(CRServiceImpl.PROFILE_ID_FORMAT)) {
                
-               String profileIdFromSchema = extractProfile(instanceHeaderReport.getSchemaLocation());
+               String profileIdFromSchema = extractProfile(report.instanceHeaderReport.schemaLocation);
                
-               if(!instanceHeaderReport.getMdProfile().equals(profileIdFromSchema)) {
+               if(!report.instanceHeaderReport.mdProfile.equals(profileIdFromSchema)) {
 
-                  instanceHeaderReport.getScoring().addMessage(Severity.ERROR, "ProfileId from CMD/Header/MdProfile: " + instanceHeaderReport.getMdProfile()
-                        + " and from schemaLocation: " + profileIdFromSchema + " must match!");
+                  report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR, "ProfileId from CMD/Header/MdProfile: " + report.instanceHeaderReport.mdProfile
+                        + " and from schemaLocation: " + profileIdFromSchema + " must match!"));
 
                }          
             }           
             else {
 
-               report.getInstanceHeaderReport().getScoring().addMessage(Severity.ERROR,
-                     "Format for value in the element /cmd:CMD/cmd:Header/cmd:MdProfile must be: clarin.eu:cr1:p_xxxxxxxxxxxxx!");
+               report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR,
+                     "Format for value in the element /cmd:CMD/cmd:Header/cmd:MdProfile must be: clarin.eu:cr1:p_xxxxxxxxxxxxx!"));
             
             }
 
          }
       }
 
-      if (instanceHeaderReport.getMdCollectionDisplayName() == null) {
-         report.getInstanceHeaderReport().getScoring().addMessage(Severity.ERROR, "Value for CMD/Header/MdCollectionDisplayName is missing");
+      if (report.instanceHeaderReport.mdCollectionDisplayName == null) {
+         report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR, "Value for CMD/Header/MdCollectionDisplayName is missing"));
       }
 
 
-      if (instanceHeaderReport.getMdSelfLink() == null) {
-         report.getInstanceHeaderReport().getScoring().addMessage(Severity.ERROR, "Value for CMD/Header/MdSelfLink is missing");
+      if (report.instanceHeaderReport.mdSelfLink == null) {
+         report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR, "Value for CMD/Header/MdSelfLink is missing"));
       }
       /*
        * else if ("collection".equalsIgnoreCase(conf.getMode()) ||
@@ -123,8 +123,8 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
 
       // at this point profile will be processed and cached
       
-      String schemaLocation = instanceHeaderReport.getSchemaLocation()!=null?instanceHeaderReport.getSchemaLocation():instanceHeaderReport.getMdProfile();
-      report.setHeaderReport(new ProfileHeaderReport(crService.createProfileHeader(schemaLocation, "1.x", false)));
+      String schemaLocation = report.instanceHeaderReport.schemaLocation!=null?report.instanceHeaderReport.schemaLocation:report.instanceHeaderReport.mdProfile;
+      report.headerReport = (new ProfileHeaderReport(crService.createProfileHeader(schemaLocation, "1.x", false)));
 
 
    }

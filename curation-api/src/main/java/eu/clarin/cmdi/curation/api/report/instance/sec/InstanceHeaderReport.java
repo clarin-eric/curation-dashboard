@@ -4,10 +4,6 @@
  */
 package eu.clarin.cmdi.curation.api.report.instance.sec;
 
-import eu.clarin.cmdi.curation.api.report.Scoring;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -17,32 +13,17 @@ import eu.clarin.cmdi.curation.api.report.ScoreReport;
 /**
  *
  */
-@Data
-@EqualsAndHashCode(callSuper = false)
+
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class InstanceHeaderReport extends ScoreReport {
    
-   private String schemaLocation;
+   public String schemaLocation;
    
-   private String mdProfile;
+   public String mdProfile;
    
-   private String mdCollectionDisplayName;
+   public String mdCollectionDisplayName;
    
-   private String mdSelfLink;
+   public String mdSelfLink;
 
-   @Override
-   public Scoring newScore() {
-      return new Scoring() {
-         @Override
-         public double getMaxScore() {
-            return 5;
-         }
-
-         @Override
-         public double getScore() {
-            return this.hasFatalMessage()?0.0:getMaxScore() - this.getMessages().stream().filter(message -> message.getSeverity() == Severity.ERROR).count();
-         }    
-      };
-   }
 }

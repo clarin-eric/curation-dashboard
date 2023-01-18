@@ -54,13 +54,13 @@ public class ProfileTest {
         
       CMDProfileReport profileReport = CMDProfileReport.class.cast(report);
       
-      assertNotNull(profileReport.getHeaderReport());
+      assertNotNull(profileReport.headerReport);
       
-      assertNotNull(profileReport.getComponentReport());
+      assertNotNull(profileReport.componentReport);
       
-      assertNotNull(profileReport.getComponentReport());
+      assertNotNull(profileReport.componentReport);
       
-      assertNotNull(profileReport.getFacetReport());
+      assertNotNull(profileReport.facetReport);
       
    };
 }
