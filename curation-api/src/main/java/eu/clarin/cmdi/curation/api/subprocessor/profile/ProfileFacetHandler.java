@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
-import eu.clarin.cmdi.curation.api.report.Scoring.Message;
-import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
+import eu.clarin.cmdi.curation.api.report.Issue;
+import eu.clarin.cmdi.curation.api.report.Issue.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport.Coverage;
@@ -38,7 +38,6 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
    public void process(CMDProfile profile, CMDProfileReport report) {
       
       report.facetReport = new ProfileFacetReport();
-      report.facetReport.scoring.maxScore = 1.0;
       
       ProfileHeader header = crService.createProfileHeader(profile.getSchemaLocation(), "1.x", false);
       
@@ -46,6 +45,7 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
 
       try {
          final Map<String, CMDINode> elements = crService.getParsedProfile(header).getElements();
+         
    
          for (String facetName : conf.getFacets()) {
             report.facetReport.numOfFacets++;
@@ -58,18 +58,18 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
                   || facetMapping.getFacetDefinition(facetName).getFallbackPatterns().stream()
                         .anyMatch(p -> elements.containsKey(p.getPattern()))){
                coverage.coveredByProfile = true;
-               report.facetReport.profileCoverage++;
+               report.facetReport.numOfFacetsCoveredByProfile++;
             }
          }                  
       }
       catch (NoProfileCacheEntryException e) {
          
          log.debug("no ParsedProfile for profile id '{}'", header.getId());
-         report.facetReport.scoring.messages.add(new Message(Severity.FATAL, "no ParsedProfile for profile id " + header.getId()));
+         report.issues.add(new Issue(Severity.FATAL, "no ParsedProfile for profile id " + header.getId()));
 
       }
-            
-            
-      
+      report.facetReport.percProfileCoverage = (double) report.facetReport.numOfFacetsCoveredByProfile/report.facetReport.numOfFacets;
+      report.facetReport.score = report.facetReport.percProfileCoverage;
+      report.score+=report.facetReport.score;
    }
 }

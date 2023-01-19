@@ -6,9 +6,10 @@ package eu.clarin.cmdi.curation.api.report.instance.sec;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import eu.clarin.cmdi.curation.api.report.ScoreReport;
 
 /**
  *
@@ -16,14 +17,18 @@ import eu.clarin.cmdi.curation.api.report.ScoreReport;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InstanceHeaderReport extends ScoreReport {
-   
+public class InstanceHeaderReport {
+   @XmlAttribute
+   public final double maxScore = 5.0;
+   @XmlAttribute
+   public double score;
+   @XmlElement
    public String schemaLocation;
-   
+   @XmlElement   
    public String mdProfile;
-   
+   @XmlElement   
    public String mdCollectionDisplayName;
-   
+   @XmlElement   
    public String mdSelfLink;
 
 }

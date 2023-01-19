@@ -1,6 +1,6 @@
 package eu.clarin.cmdi.curation.api.entity;
 
-import eu.clarin.cmdi.curation.api.processor.CMDProfileProcessor;
+import eu.clarin.cmdi.curation.api.cache.ProfileReportCache;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import lombok.Data;
 
@@ -22,7 +22,7 @@ public class CMDProfile{
     private String cmdiVersion;
     
     @Autowired
-    CMDProfileProcessor processor;
+    ProfileReportCache profileReportCache;
 
     public CMDProfile(String schemaLocation, String cmdiVersion) {
         this.schemaLocation = schemaLocation;
@@ -30,6 +30,6 @@ public class CMDProfile{
     }
 
     public CMDProfileReport generateReport() {
-        return processor.process(this);
+        return profileReportCache.getProfileReport(this);
     }
 }

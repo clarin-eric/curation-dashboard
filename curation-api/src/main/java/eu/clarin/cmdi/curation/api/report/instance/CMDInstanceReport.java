@@ -1,8 +1,9 @@
 package eu.clarin.cmdi.curation.api.report.instance;
 
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
+import eu.clarin.cmdi.curation.api.report.Issue;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
-import eu.clarin.cmdi.curation.api.report.ScoreReport;
+
 import eu.clarin.cmdi.curation.api.report.instance.sec.FileReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport;
@@ -15,7 +16,8 @@ import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import java.time.LocalDateTime;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Collection;
 
 
 /**
@@ -24,7 +26,7 @@ import java.util.stream.Stream;
 
 @XmlRootElement(name = "instance-report")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
-public class CMDInstanceReport extends ScoreReport implements NamedReport {
+public class CMDInstanceReport implements NamedReport {
    
 
 //   @XmlAttribute
@@ -37,7 +39,7 @@ public class CMDInstanceReport extends ScoreReport implements NamedReport {
    public double profileScore = 0.0;
 
    @XmlAttribute(name = "max-score")
-   public double maxScore;
+   public final double maxScore = 15.0;
 
    @XmlAttribute(name = "score-percentage")
    public double scorePercentage;
@@ -75,6 +77,8 @@ public class CMDInstanceReport extends ScoreReport implements NamedReport {
    // facets
    @XmlElement(name = "facets-section")
    public InstanceFacetReport facetReport;
+   @XmlElement
+   public Collection<Issue> messages = new ArrayList<Issue>();
 
    @Override
    public String getName() {
@@ -86,23 +90,5 @@ public class CMDInstanceReport extends ScoreReport implements NamedReport {
          return fileReport.location;
       }
 
-   }
-
-   @Override
-   public boolean isValid() {
-      return getSegmentReports().filter(segmentReport -> !segmentReport.isValid()).findFirst().isEmpty();
-   }
-
-   
-   private Stream<ScoreReport> getSegmentReports(){
-      return Stream.of(
-            this.headerReport, 
-            this.instanceHeaderReport, 
-            this.fileReport, 
-            this.resProxyReport, 
-            this.xmlPopulationReport, 
-            this.xmlValidityReport, 
-            this.facetReport
-         ).filter(report -> report != null);
    }
 }

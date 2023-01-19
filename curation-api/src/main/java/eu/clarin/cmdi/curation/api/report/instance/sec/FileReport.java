@@ -6,18 +6,25 @@ package eu.clarin.cmdi.curation.api.report.instance.sec;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import eu.clarin.cmdi.curation.api.report.ScoreReport;
 
 /**
  *
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FileReport extends ScoreReport{
-   
+public class FileReport{
+   @XmlAttribute
+   public final double maxScore = 1.0;
+   @XmlAttribute
+   public double score;
+   @XmlElement
    public String location;
+   @XmlElement
    public long size;
+   @XmlElement
    public String collection;
 }

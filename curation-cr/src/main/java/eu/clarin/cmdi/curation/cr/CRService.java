@@ -14,10 +14,6 @@ public interface CRService {
 
 	Schema getSchema(ProfileHeader header) throws NoProfileCacheEntryException;
 
-//	boolean isNameUnique(String name) throws Exception;
-
-//	boolean isDescriptionUnique(String description);
-
 	boolean isSchemaCRResident(String schemaLocation);
 	
 }

@@ -13,6 +13,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
+import eu.clarin.cmdi.curation.api.report.Issue;
+import eu.clarin.cmdi.curation.api.report.Issue.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ComponentReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
@@ -36,39 +38,17 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
 
    public void process(CMDProfile profile, CMDProfileReport report) {
       
-      report.componentReport = new ComponentReport();
-
-      
       ParsedProfile parsedProfile = null;
 
       try {
          parsedProfile = crService.getParsedProfile(report.headerReport.getProfileHeader());
       }
       catch (NoProfileCacheEntryException e) {
-
+         report.issues.add(new Issue(Severity.FATAL, "can't get ParsedProfile for profile id '" + report.headerReport.getId() + "'"));
          log.debug("can't get ParsedProfile for profile id '{}'", report.headerReport.getId());
          return;
 
       }
-      
-      Map<String, ComponentReport.Component> componentMap = new HashMap<String, ComponentReport.Component>();
-
-      parsedProfile.getComponents().forEach(crc -> {
-         report.componentReport.total++;
-         
-         if (crc.isRequired) {
-            report.componentReport.required++;
-         }
-         
-         componentMap
-            .computeIfAbsent(crc.component.id, k -> new ComponentReport.Component(crc.component.id, crc.component.name))
-            .count++;
-
-      });
-           
-      report.componentReport.unique = componentMap.size();
-      
-      report.componentReport.components = componentMap.values();
       
       report.conceptReport =  new ConceptReport();
       
@@ -99,7 +79,30 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
       report.conceptReport.percWithConcept = (report.conceptReport.total!=0?(double) report.conceptReport.withConcept/report.conceptReport.total:0.0);
       report.conceptReport.concepts = conceptMap.values();
       
-      report.conceptReport.scoring.maxScore = 1.0;
-      report.conceptReport.scoring.score = report.conceptReport.percWithConcept;
+      report.conceptReport.score = report.conceptReport.percWithConcept;
+      report.score+=report.conceptReport.score;
+      
+      report.componentReport = new ComponentReport();
+      
+      Map<String, ComponentReport.Component> componentMap = new HashMap<String, ComponentReport.Component>();
+
+      parsedProfile.getComponents().forEach(crc -> {
+         report.componentReport.total++;
+         
+         if (crc.isRequired) {
+            report.componentReport.required++;
+         }
+         
+         componentMap
+            .computeIfAbsent(crc.component.id, k -> new ComponentReport.Component(crc.component.id, crc.component.name))
+            .count++;
+
+      });
+           
+      report.componentReport.unique = componentMap.size();
+      
+      report.componentReport.components = componentMap.values();
+      
+
    }
 }

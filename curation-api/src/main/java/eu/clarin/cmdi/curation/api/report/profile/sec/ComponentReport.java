@@ -27,7 +27,6 @@ public class ComponentReport {
    public int unique;
    @XmlAttribute
    public int required;
-   @XmlAttribute
    @XmlElement(name = "component")
    public Collection<Component> components;
 

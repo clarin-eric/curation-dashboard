@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport.Concept;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,9 @@ import lombok.RequiredArgsConstructor;
  */
 @XmlRootElement(name = "facets")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InstanceFacetReport extends ScoreReport {
+public class InstanceFacetReport {
+   @XmlAttribute
+   public final double maxScore = 1.0;
    @XmlAttribute
    public int numOfFacets;
    @XmlAttribute

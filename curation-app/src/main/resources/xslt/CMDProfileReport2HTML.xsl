@@ -86,66 +86,18 @@
 							</td>
 						</tr>
 					</xsl:if>
+					             <tfoot>
+                  <tr>
+                     <td colspan="2">
+                        <b>
+                           Score: 
+                           <xsl:value-of select="format-number(./header-section/@score,'0.00')" /> / <xsl:value-of select="format-number(./header-section/@max-score,'0.00')" />
+                        </b>
+                     </td>
+                  </tr>
+               </tfoot>
 				</table>
 				<hr />
-				<details>
-					<summary>
-						<h2>Score Section</h2>
-					</summary>
-					<p>
-						The scoring is based on public state of the profile, the
-						percentage of elements (except header and resources) with concept
-						and
-						percentage of defined facets covered by the profile.
-						<br />
-						For details on scoring, have a look at the
-						<a href="/faq">FAQ</a>
-						, please.
-					</p>
-				</details>
-				<table class="reportTable">
-					<thead>
-						<tr>
-							<th scope="col">Segment</th>
-							<th scope="col">Score</th>
-							<th scope="col">Max</th>
-						</tr>
-					</thead>
-					<tfoot>
-						<tr>
-							<td colspan="3">
-								<b>
-									Total:
-									<xsl:value-of
-										select="format-number(./@score,'0.00')" />
-									Max:
-									<xsl:value-of
-										select="format-number(./@max-score,'0.00')" />
-								</b>
-							</td>
-						</tr>
-					</tfoot>
-					<tbody>
-						<xsl:for-each select="./score-section/score">
-							<tr>
-								<td>
-									<xsl:value-of select="./@segment" />
-								</td>
-								<td class="text-right">
-									<xsl:value-of
-										select="format-number(./@score,'0.00')" />
-								</td>
-								<td class="text-right">
-									<xsl:value-of
-										select="format-number(./@maxScore,'0.00')" />
-								</td>
-							</tr>
-						</xsl:for-each>
-					</tbody>
-				</table>
-
-				<hr />
-
 				<details>
 					<summary>
 						<h2>Facets Section</h2>
@@ -155,6 +107,9 @@
 						In other words, if the profile defines an element for the facet.
 					</p>
 				</details>
+				<p>Number of facets: <xsl:value-of select="./facets-section/@numOfFacets" /></p>
+				<p>Number of facets covered by profile: <xsl:value-of select="./facets-section/@numOfFacetsCoveredByProfile" /></p>
+				<p>Percentage of faccets covered by profile: <xsl:value-of select="format-number(./facets-section/@percProfileCoverage,'0.0%')" /></p>
 				<table class="reportTable">
 					<thead>
 						<tr>
@@ -166,15 +121,8 @@
 						<tr>
 							<td colspan="2">
 								<b>
-									Covered:
-									<xsl:value-of
-										select="count(./facets-section/coverage/facet[@coveredByProfile = 'true'])" />
-									/
-									<xsl:value-of
-										select="./facets-section/@numOfFacets" />
-									Coverage:
-									<xsl:value-of
-										select="format-number(./facets-section/@profileCoverage,'0.0%')" />
+								   Score: 
+								   <xsl:value-of select="format-number(./facets-section/@score,'0.00')" /> / <xsl:value-of select="format-number(./facets-section/@max-score,'0.00')" />
 								</b>
 							</td>
 						</tr>
@@ -259,6 +207,10 @@
 						, please.
 					</p>
 				</details>
+				<p>Total number of components: <xsl:value-of select="./cmd-components-section/@total" /></p>
+				<p>Number of unique components: <xsl:value-of select="./cmd-components-section/@unique" /></p>
+				<p>Number of required components: <xsl:value-of select="./cmd-components-section/@required" /></p>
+
 				<table class="reportTable">
 					<thead>
 						<tr>
@@ -267,23 +219,6 @@
 							<th scope="col">Count</th>
 						</tr>
 					</thead>
-					<tfoot>
-						<tr>
-							<td colspan="3">
-								<b>
-									Total:
-									<xsl:value-of
-										select="./cmd-components-section/@total" />
-									Unique:
-									<xsl:value-of
-										select="./cmd-components-section/@unique" />
-									Required:
-									<xsl:value-of
-										select="./cmd-components-section/@required" />
-								</b>
-							</td>
-						</tr>
-					</tfoot>
 					<tbody>
 						<xsl:for-each
 							select="./cmd-components-section/component">
@@ -352,15 +287,8 @@
 						<tr>
 							<td colspan="3">
 								<b>
-									Total:
-									<xsl:value-of
-										select="./cmd-concepts-section/concepts/@total" />
-									Unique:
-									<xsl:value-of
-										select="./cmd-concepts-section/concepts/@unique" />
-									Required:
-									<xsl:value-of
-										select="./cmd-concepts-section/concepts/@required" />
+								   Score: 
+								   <xsl:value-of select="format-number(./cmd-concepts-section/@score,'0.00')" /> / <xsl:value-of select="format-number(./cmd-concepts-section/@max-score,'0.00')" />
 								</b>
 							</td>
 						</tr>

@@ -4,17 +4,17 @@
  */
 package eu.clarin.cmdi.curation.api.report.instance.sec;
 
-import eu.clarin.cmdi.curation.api.report.ScoreReport;
+import javax.xml.bind.annotation.XmlAttribute;
+
 
 
 /**
  *
  */
-public class XmlValidityReport extends ScoreReport {
-   
+public class XmlValidityReport {
+   @XmlAttribute
+   public final double maxScore = 1.0;
+   @XmlAttribute
+   public double score;   
 
-   @Override
-   public boolean isValid() {
-      return scoring.messages.size() < 3;
-   }
 }

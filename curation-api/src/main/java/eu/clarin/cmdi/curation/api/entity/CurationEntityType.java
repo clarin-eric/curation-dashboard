@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public enum CurationEntityType {
 
-   PROFILE("profiles"), 
+   PROFILE("profile"), 
    INSTANCE("instance"), 
    COLLECTION("collection"), 
    LINKCHECKER("linkchecker");

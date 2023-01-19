@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.report.Scoring.Message;
-import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
+import eu.clarin.cmdi.curation.api.report.Issue;
+import eu.clarin.cmdi.curation.api.report.Issue.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
@@ -61,13 +61,13 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          if(report.instanceHeaderReport.mdProfile == null) {
             
             log.debug("Unable to process " + instance.getPath() + ", both schema and profile are not specified");
-            report.instanceHeaderReport.scoring.messages.add(new Message(Severity.FATAL, "Unable to process " + instance.getPath().getFileName() + ", both schema and profile are not specified"));
+            report.messages.add(new Issue(Severity.FATAL, "Unable to process " + instance.getPath().getFileName() + ", both schema and profile are not specified"));
             return;
             
          }
          else {
             
-            report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR, "Attribute schemaLocation is missing. " + report.instanceHeaderReport.mdProfile + " is assumed"));
+            report.messages.add(new Issue(Severity.ERROR, "Attribute schemaLocation is missing. " + report.instanceHeaderReport.mdProfile + " is assumed"));
             
           }
 
@@ -75,12 +75,12 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
       else {
          
          if(!crService.isSchemaCRResident(report.instanceHeaderReport.schemaLocation)) {
-            report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR, "Schema not registered"));
+            report.messages.add(new Issue(Severity.ERROR, "Schema not registered"));
          }
          
          if (report.instanceHeaderReport.mdProfile == null) {
             
-            report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR, "Value for CMD/Header/MdProfile is missing or invalid"));
+            report.messages.add(new Issue(Severity.ERROR, "Value for CMD/Header/MdProfile is missing or invalid"));
          
          }
          else {
@@ -91,14 +91,14 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
                
                if(!report.instanceHeaderReport.mdProfile.equals(profileIdFromSchema)) {
 
-                  report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR, "ProfileId from CMD/Header/MdProfile: " + report.instanceHeaderReport.mdProfile
+                  report.messages.add(new Issue(Severity.ERROR, "ProfileId from CMD/Header/MdProfile: " + report.instanceHeaderReport.mdProfile
                         + " and from schemaLocation: " + profileIdFromSchema + " must match!"));
 
                }          
             }           
             else {
 
-               report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR,
+               report.messages.add(new Issue(Severity.ERROR,
                      "Format for value in the element /cmd:CMD/cmd:Header/cmd:MdProfile must be: clarin.eu:cr1:p_xxxxxxxxxxxxx!"));
             
             }
@@ -107,12 +107,12 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
       }
 
       if (report.instanceHeaderReport.mdCollectionDisplayName == null) {
-         report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR, "Value for CMD/Header/MdCollectionDisplayName is missing"));
+         report.messages.add(new Issue(Severity.ERROR, "Value for CMD/Header/MdCollectionDisplayName is missing"));
       }
 
 
       if (report.instanceHeaderReport.mdSelfLink == null) {
-         report.instanceHeaderReport.scoring.messages.add(new Message(Severity.ERROR, "Value for CMD/Header/MdSelfLink is missing"));
+         report.messages.add(new Issue(Severity.ERROR, "Value for CMD/Header/MdSelfLink is missing"));
       }
       /*
        * else if ("collection".equalsIgnoreCase(conf.getMode()) ||

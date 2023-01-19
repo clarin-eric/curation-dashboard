@@ -5,7 +5,7 @@ import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.report.Scoring.Severity;
+import eu.clarin.cmdi.curation.api.report.Issue;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport.InvalidFile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.FacetReport.FacetCollectionStruct;
@@ -24,6 +24,7 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Stream;
@@ -158,25 +159,27 @@ public class CollectionAggregator {
    
    public synchronized void addReport(CollectionReport collectionReport, CMDInstanceReport instanceReport) {
       
-      if(!instanceReport.isValid()) {
+      Optional<Issue> messageOpt = instanceReport.messages.stream().filter(message -> message.severity == eu.clarin.cmdi.curation.api.report.Issue.Severity.FATAL).findAny();
+      
+      if(messageOpt.isEmpty()) {
          
          collectionReport.invalidFiles.add(
                new InvalidFile(instanceReport.fileReport.location, 
-               instanceReport.scoring.messages.stream().filter(message -> message.severity==Severity.FATAL).findFirst().get().issue
+               messageOpt.get().message
             ));
 
          return;
       }
       
-      collectionReport.score += instanceReport.scoring.score;
-      if (instanceReport.scoring.score > collectionReport.insMaxScore) {
-          collectionReport.insMaxScore = instanceReport.scoring.score;
+      collectionReport.score += instanceReport.instanceScore;
+      if (instanceReport.instanceScore > collectionReport.insMaxScore) {
+          collectionReport.insMaxScore = instanceReport.instanceScore;
       }
 
-      if (instanceReport.scoring.score < collectionReport.insMinScore)
-          collectionReport.insMinScore = instanceReport.scoring.score;
+      if (instanceReport.instanceScore < collectionReport.insMinScore)
+          collectionReport.insMinScore = instanceReport.instanceScore;
 
-      collectionReport.maxPossibleScoreInstance = instanceReport.scoring.maxScore;
+      collectionReport.maxPossibleScoreInstance = instanceReport.maxScore;
 
       // ResProxies
       collectionReport.resProxyReport.totNumOfResProxies+=instanceReport.resProxyReport.numOfResProxies;

@@ -21,7 +21,6 @@ public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CM
    public void process(CMDInstance instance, CMDInstanceReport report) {
       
       report.resProxyReport = new ResourceProxyReport();
-      report.resProxyReport.scoring.maxScore = 2;
       
       CMDIData<Map<String, List<ValueSet>>> data = instance.getCmdiData();
 
@@ -36,7 +35,7 @@ public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CM
          report.resProxyReport.percOfResProxiesWithReference = ((double) report.resProxyReport.numOfResProxiesWithReference/report.resProxyReport.numOfResProxies);
       }
       
-      report.resProxyReport.scoring.score = report.resProxyReport.percOfResourcesWithMime + report.resProxyReport.percOfResProxiesWithReference;
+      report.resProxyReport.score = report.resProxyReport.percOfResourcesWithMime + report.resProxyReport.percOfResProxiesWithReference;
 
    }
 

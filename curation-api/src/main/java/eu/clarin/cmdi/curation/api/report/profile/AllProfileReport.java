@@ -15,8 +15,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import eu.clarin.cmdi.curation.api.report.AggregationReport;
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
+import eu.clarin.cmdi.curation.api.report.Issue.Severity;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport.Coverage;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 
 @XmlRootElement(name = "profiles")
@@ -38,16 +41,19 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
 
    @Override
    public void addReport(CMDProfileReport profileReport) {
-
-      this.profiles.add(new Profile(profileReport));
-
+      
+      if(!profileReport.issues.stream().anyMatch(message -> message.severity == Severity.FATAL)) {
+         this.profiles.add(new Profile(profileReport));
+      }
    }
 
    @XmlRootElement
    @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
+   @RequiredArgsConstructor
+   @NoArgsConstructor(force = true)
    public static class Profile {
       
-      private CMDProfileReport report;
+      public final CMDProfileReport report;
 
       @XmlAttribute
       public String getId() {
@@ -63,11 +69,11 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
       };
       @XmlElement
       public double getScore() {
-         return report.scoring.score;
+         return report.score;
       };
       @XmlElement
       public double getFacetCoverage() {
-         return report.facetReport.profileCoverage;
+         return report.facetReport.percProfileCoverage;
       };
       @XmlElement
       public double getPercOfElementsWithConcept() {
@@ -87,13 +93,5 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
       public double getInstanceUsage() {
          return report.collectionUsage.stream().mapToDouble(usage -> usage.count).sum();
       };
-
-      public Profile() {
-
-      }
-
-      public Profile(CMDProfileReport report) {
-         this.report = report;
-      }
    }
 }

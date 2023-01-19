@@ -10,9 +10,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +22,11 @@ import lombok.RequiredArgsConstructor;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConceptReport extends ScoreReport {
-   
+public class ConceptReport {
+   @XmlAttribute(name = "max-score")
+   public static final double maxScore = 1.0;
+   @XmlAttribute
+   public double score;
    @XmlAttribute
    public int total;
    @XmlAttribute
@@ -35,6 +38,7 @@ public class ConceptReport extends ScoreReport {
    @XmlAttribute
    public double percWithConcept;
    
+   @XmlElementWrapper(name = "concepts")
    @XmlElement(name = "concept")
    public java.util.Collection<Concept> concepts = new ArrayList<Concept>();
    

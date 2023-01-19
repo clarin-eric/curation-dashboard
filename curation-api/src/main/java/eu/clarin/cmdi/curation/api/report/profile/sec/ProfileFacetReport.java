@@ -11,9 +11,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
@@ -22,12 +22,19 @@ import lombok.RequiredArgsConstructor;
  *
  */
 @XmlRootElement(name = "facets")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class ProfileFacetReport extends ScoreReport {
+@XmlAccessorType(XmlAccessType.NONE)
+public class ProfileFacetReport {
+   @XmlAttribute(name = "max-score")
+   public static final double maxScore = 1.0;
    @XmlAttribute
-   public int numOfFacets;  
+   public double score;  
    @XmlAttribute
-   public int profileCoverage;
+   public int numOfFacets;
+   @XmlAttribute
+   public int numOfFacetsCoveredByProfile; 
+   @XmlAttribute
+   public double percProfileCoverage;
+   @XmlElementWrapper(name = "coverage")
    @XmlElement(name = "facet")
    public Collection<Coverage> coverages = new ArrayList<Coverage>();
 

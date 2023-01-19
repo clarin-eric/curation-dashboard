@@ -3,7 +3,6 @@ package eu.clarin.cmdi.curation.api.report.profile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Stream;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -14,34 +13,36 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
+import eu.clarin.cmdi.curation.api.report.Issue;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
-import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ComponentReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 /**
  * A selection of values from a single CMDProfileReport which will form a line
  * in a statistical overview
  */
 @XmlRootElement(name = "profile-report")
-@XmlAccessorType(XmlAccessType.NONE)
-public class CMDProfileReport extends ScoreReport implements NamedReport{
-
+@XmlAccessorType(XmlAccessType.FIELD)
+public class CMDProfileReport implements NamedReport{
    @XmlAttribute(name = "creation-time")
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
-   private final LocalDateTime creationTime = LocalDateTime.now();
+   public final LocalDateTime creationTime = LocalDateTime.now();
+   @XmlAttribute(name = "max-score")
+   public static final double maxScore = 3.0;
+   @XmlAttribute
+   public double score;
 
    @XmlElement(name = "header-section")
    public ProfileHeaderReport headerReport;
-
    @XmlElement(name = "cmd-components-section")
    public ComponentReport componentReport;
-
    @XmlElement(name = "cmd-concepts-section")
    public ConceptReport conceptReport;
-
    @XmlElement(name = "facets-section")
    public ProfileFacetReport facetReport;
    
@@ -49,12 +50,11 @@ public class CMDProfileReport extends ScoreReport implements NamedReport{
 
    @XmlElementWrapper(name = "usage-section")
    @XmlElement(name = "collection")
-   public Collection<CollectionUsage> collectionUsage = new ArrayList<CollectionUsage>();
+   public final Collection<CollectionUsage> collectionUsage = new ArrayList<CollectionUsage>();
+   @XmlElementWrapper(name = "issues")
+   @XmlElement(name = "issue")
+   public final Collection<Issue> issues = new ArrayList<Issue>();
 
-
-   public void addCollectionUsage(String collectionName, long count) {
-      this.collectionUsage.add(new CollectionUsage(collectionName, count));
-   }
 
    @Override
    public String getName() {
@@ -65,31 +65,12 @@ public class CMDProfileReport extends ScoreReport implements NamedReport{
 
    @XmlRootElement
    @XmlAccessorType(XmlAccessType.FIELD)
+   @RequiredArgsConstructor
+   @NoArgsConstructor(force = true)
    public static class CollectionUsage {
-      public CollectionUsage() {
-      }
-
-      public CollectionUsage(String collectionName, long count) {
-         this.collectionName = collectionName;
-         this.count = count;
-      }
-
       @XmlAttribute
-      public String collectionName;
-
+      public final String collectionName;
       @XmlAttribute
       public long count;
-
    }
-
-   @Override
-   public boolean isValid() {
-      return getSectionReports().filter(sectionReport -> !sectionReport.isValid()).findAny().isEmpty();
-   }
-
-
-   
-   private Stream<ScoreReport> getSectionReports(){
-      return Stream.of(this.headerReport, this.conceptReport, this.facetReport).filter(report -> report != null);
-   } 
 }

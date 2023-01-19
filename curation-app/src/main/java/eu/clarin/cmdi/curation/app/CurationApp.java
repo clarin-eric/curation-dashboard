@@ -57,8 +57,22 @@ public class CurationApp {
    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
       return args -> {         
          
+         if("all".equalsIgnoreCase(conf.getMode()) || "collection".equalsIgnoreCase(conf.getMode())) {
+         
+        
+            final AllCollectionReport allCollectionReport = new AllCollectionReport();
+            final AllLinkcheckerReport allLinkcheckerReport = new AllLinkcheckerReport();         
+   
+            conf.getDirectory().getIn().forEach(inPath -> processCollection(inPath, allCollectionReport,allLinkcheckerReport ));   
+
+            storage.saveReport(allCollectionReport, CurationEntityType.COLLECTION, true);
+            storage.saveReport(allLinkcheckerReport, CurationEntityType.LINKCHECKER, true);
+
+         }
+         // it's important to process profiles after collections, to fill the collection usage section of the profiles 
+         // before they're printed out
          if("all".equalsIgnoreCase(conf.getMode()) || "profile".equalsIgnoreCase(conf.getMode())) {
-                 
+            
             final AllProfileReport allProfileReport = new AllProfileReport();
    
    
@@ -80,19 +94,6 @@ public class CurationApp {
             });
             
             storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);
-
-         }
-         
-         if("all".equalsIgnoreCase(conf.getMode()) || "collection".equalsIgnoreCase(conf.getMode())) {
-         
-        
-            final AllCollectionReport allCollectionReport = new AllCollectionReport();
-            final AllLinkcheckerReport allLinkcheckerReport = new AllLinkcheckerReport();         
-   
-            conf.getDirectory().getIn().forEach(inPath -> processCollection(inPath, allCollectionReport,allLinkcheckerReport ));   
-
-            storage.saveReport(allCollectionReport, CurationEntityType.COLLECTION, true);
-            storage.saveReport(allLinkcheckerReport, CurationEntityType.LINKCHECKER, true);
 
          }
          

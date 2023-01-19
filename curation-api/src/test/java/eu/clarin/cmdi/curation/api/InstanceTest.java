@@ -23,7 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
-import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 
 /**
@@ -34,7 +33,7 @@ import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 @TestInstance(Lifecycle.PER_CLASS)
 public class InstanceTest {
    
-   private ScoreReport report;
+   private CMDInstanceReport report;
    
    @Autowired
    ApiConfig config;

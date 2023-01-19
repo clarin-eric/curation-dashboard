@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import eu.clarin.cmdi.curation.api.report.ScoreReport;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +21,11 @@ import lombok.RequiredArgsConstructor;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ResourceProxyReport extends ScoreReport {
+public class ResourceProxyReport {
+   @XmlAttribute
+   public final double maxScore = 2.0;
+   @XmlAttribute
+   public double score;
    @XmlElement
    public int numOfResProxies;
    @XmlElement
