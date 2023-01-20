@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -23,20 +24,35 @@ import eu.clarin.linkchecker.persistence.utils.Category;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LinkcheckerReport {
-   
+   @XmlAttribute
+   public static final double maxScore = 1.0;
+   @XmlAttribute
+   public double score;
+   @XmlElement
    public int totNumOfLinks;
+   @XmlElement
    public double avgNumOfLinks;
-   public int totNumOfUniqueLinks;
+   @XmlElement
    public int totNumOfCheckedLinks;
+   @XmlElement
    public double avgNumOfUniqueLinks;
+   @XmlElement
    public int totNumOfInvalidLinks;
+   @XmlElement
    public int totNumOfBrokenLinks;
+   @XmlElement
    public double avgNumOfBrokenLinks;
+   @XmlElement
    public double ratioOfValidLinks;
+   @XmlElement
    public int totNumOfUndeterminedLinks;
+   @XmlElement
    public int totNumOfRestrictedAccessLinks;
+   @XmlElement
    public int totNumOfBlockedByRobotsTxtLinks;
+   @XmlElement
    public double avgRespTime;
+   @XmlElement
    public long maxRespTime;
    @XmlElementWrapper(name = "linkchecker")
    public Collection<Statistics> statistics = new TreeSet<Statistics>();
@@ -74,5 +90,4 @@ public class LinkcheckerReport {
          return this.category.compareTo(other.category);
       }
    }
-
 }

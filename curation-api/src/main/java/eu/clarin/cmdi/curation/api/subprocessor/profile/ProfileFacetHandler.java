@@ -65,7 +65,7 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
       catch (NoProfileCacheEntryException e) {
          
          log.debug("no ParsedProfile for profile id '{}'", header.getId());
-         report.issues.add(new Issue(Severity.FATAL, "no ParsedProfile for profile id " + header.getId()));
+         report.issues.add(new Issue(Severity.FATAL,"facet" , "no ParsedProfile for profile id " + header.getId()));
 
       }
       report.facetReport.percProfileCoverage = (double) report.facetReport.numOfFacetsCoveredByProfile/report.facetReport.numOfFacets;

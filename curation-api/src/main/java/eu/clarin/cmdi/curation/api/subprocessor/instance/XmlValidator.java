@@ -50,11 +50,13 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       catch (NoProfileCacheEntryException e) {
 
          log.error("no ProfileCacheEntry for profile id '{}'", report.headerReport.getId());
-         report.messages.add(new Issue(Severity.FATAL, "no ProfileCacheEntry for profile id '" + report.headerReport.getId() + "'"));
+         report.issues.add(new Issue(Severity.FATAL, "xml-validation", "no ProfileCacheEntry for profile id '" + report.headerReport.getId() + "'"));
+         report.isValidReport=false;
+         
          return;
       }
       
-      final int messageCount = report.messages.size();
+      final int messageCount = report.issues.size();
 
       schemaValidator.setErrorHandler(new CMDErrorHandler(report));
       schemaValidator.setContentHandler(new CMDInstanceContentHandler(instance, report));
@@ -89,7 +91,9 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       catch (SAXException e) {
 
          log.error("can't parse input file '{}' for XML validation", instance.getPath());
-         report.messages.add(new Issue(Severity.FATAL, "can't parse input file '" + instance.getPath().getFileName() + "' ' for XML validation"));
+         report.issues.add(new Issue(Severity.FATAL, "xml-validation", "can't parse input file '" + instance.getPath().getFileName() + "'"));
+         report.isValidReport=false;
+         
          return;
 
       }
@@ -100,15 +104,17 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       }
       
       report.xmlPopulationReport.score = report.xmlPopulationReport.percOfPopulatedElements;
+      report.instanceScore+=report.xmlPopulationReport.score;
 
       report.xmlValidityReport = new XmlValidityReport();
 
 
-      if(report.messages.stream()
+      if(report.issues.stream()
          .skip(messageCount)
          .filter(message -> (message.severity == Severity.FATAL || message.severity == Severity.ERROR))
-         .count() <=3) {
+         .count() < 3) {
          report.xmlValidityReport.score = 1.0;
+         report.instanceScore+=report.xmlValidityReport.score;
       }
    }
 
@@ -143,22 +149,6 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
          this.instanceReport.xmlPopulationReport.numOfXMLElements++;
          curElem = qName;
 
-         // handle attributes
-         // TypeInfo etype = provider.getElementTypeInfo();
-         // //sb.append(" of type {" + etype.getTypeNamespace() + '}' +
-         // etype.getTypeName());
-         // for (int a=0; a<attributes.getLength(); a++) {
-         // TypeInfo atype = provider.getAttributeTypeInfo(a);
-         // boolean spec = provider.isSpecified(a);
-         // //sb.append("Attribute " + attributes.getQName(a) + (spec ? "
-         // (specified)" : (" (defaulted)")));
-         // if (atype == null) {
-         // //sb.append(" of unknown type");
-         // } else {
-         // //sb.append(" of type {" + atype.getTypeNamespace() + '}' +
-         // atype.getTypeName());
-         // }
-         // }
       }
 
       /**
@@ -170,7 +160,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
             if (!elemWithValue) {// does it have a value
                this.instanceReport.xmlPopulationReport.numOfXMLEmptyElements++;
                String msg = "Empty element <" + qName + "> was found on line " + locator.getLineNumber();
-               this.instanceReport.messages.add(new Issue(Severity.WARNING, msg));
+               this.instanceReport.issues.add(new Issue(Severity.WARNING, "xml-validation", msg));
             }
          }
 

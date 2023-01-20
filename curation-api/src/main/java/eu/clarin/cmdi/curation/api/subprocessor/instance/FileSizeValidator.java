@@ -137,14 +137,15 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
             
             log.debug("can't transfrom input file '{}'", instance.getPath());
             
-            report.messages.add(new Issue(Severity.FATAL, "can't transfrom input file '" + instance.getPath().getFileName() + "'"));
+            report.issues.add(new Issue(Severity.FATAL, "file", "can't transform input file '" + instance.getPath().getFileName() + "'"));
+            report.isValidReport=false;
             
             return;
             
          }
          
 
-         report.messages.add(new Issue(Severity.INFO, "tranformed cmdi version 1.1 into version 1.2"));
+         report.issues.add(new Issue(Severity.INFO, "file", "tranformed cmdi version 1.1 into version 1.2"));
 
          instance.setPath(newPath);
          try {
@@ -183,7 +184,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
          
          log.debug("file '{}' has a size of {} bytes which exceeds the limit of {}", instance.getPath(), report.fileReport.size, conf.getMaxFileSize());
          
-         report.messages.add(new Issue(Severity.FATAL, "the file size exceeds the limit allowed (" + conf.getMaxFileSize()+ "B)"));
+         report.issues.add(new Issue(Severity.FATAL,"file" , "the file size exceeds the limit allowed (" + conf.getMaxFileSize()+ "B)"));
          
          return;
 
@@ -197,7 +198,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
       catch (Exception e) {
 
          log.debug("can't create CMDData object from file '{}'", instance.getPath());
-         report.messages.add(new Issue(Severity.FATAL, "can't parse file '" + instance.getPath().getFileName() + "'"));
+         report.issues.add(new Issue(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
          
          return;
          
@@ -218,7 +219,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
          catch (TransformerException e) {
             
             log.error("can't transform CMD instance file '{}'", instance.getPath());
-            report.messages.add(new Issue(Severity.FATAL, "can't transform CMD instance file '" + instance.getPath().getFileName()));
+            report.issues.add(new Issue(Severity.FATAL, "file", "can't transform CMD instance file '" + instance.getPath().getFileName()));
             
             return;
          
@@ -234,5 +235,6 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
       }
       
       report.fileReport.score = 1.0;
+      report.instanceScore+=report.fileReport.score;
    }
 }

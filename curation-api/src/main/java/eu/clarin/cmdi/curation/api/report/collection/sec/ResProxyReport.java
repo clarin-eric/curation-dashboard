@@ -14,12 +14,19 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
 /**
  *
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResProxyReport {
+   @XmlAttribute
+   public static final double maxScore = 2.0;
+   @XmlAttribute
+   public double avgScore;
    @XmlElement
    public int totNumOfResProxies;
    @XmlElement
@@ -33,14 +40,17 @@ public class ResProxyReport {
    @XmlElement
    public double avgNumOfResProxiesWithReference;
    @XmlElementWrapper(name = "invalid-references")
-   private Collection<InvalidReference> invalidReferences = new ArrayList<InvalidReference>(); 
+   public Collection<InvalidReference> invalidReferences = new ArrayList<InvalidReference>(); 
    
    @XmlRootElement
-   @XmlAccessorType(XmlAccessType.FIELD)   
+   @XmlAccessorType(XmlAccessType.FIELD)  
+   @RequiredArgsConstructor
+   @NoArgsConstructor(force = true)
    public static class InvalidReference{
       @XmlAttribute
-      public String reference;
-      @XmlAttribute
-      public String origin;      
+      public final String origin;
+      @XmlElementWrapper(name = "references")
+      @XmlElement(name = "reference")
+      public final Collection<String> references; 
    }
 }

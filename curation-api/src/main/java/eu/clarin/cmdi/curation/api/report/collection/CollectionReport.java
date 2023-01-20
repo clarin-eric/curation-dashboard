@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.api.report.collection;
 
+import eu.clarin.cmdi.curation.api.report.Issue;
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.FacetReport;
@@ -75,16 +76,17 @@ public class CollectionReport implements NamedReport{
    public final FacetReport facetReport = new FacetReport();
 
    // Invalid Files
-   @XmlElementWrapper(name = "invalid-files")
-   public final Collection<InvalidFile> invalidFiles = new ArrayList<InvalidFile>();
+   @XmlElementWrapper(name = "issues")
+   public final Collection<OriginIssue> issues = new ArrayList<OriginIssue>();
 
    @XmlRootElement
    @RequiredArgsConstructor
-   public static class InvalidFile {
+   public static class OriginIssue {
       @XmlAttribute
       private final String origin;
-      @XmlAttribute
-      private final String reason;
+      @XmlElementWrapper(name = "issues")
+      @XmlElement
+      private final Collection<Issue> issues;
    }
 
 

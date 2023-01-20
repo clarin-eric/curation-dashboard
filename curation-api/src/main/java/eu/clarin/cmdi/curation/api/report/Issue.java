@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor(force = true)
 public class Issue {
    public final Severity severity;
+   public final String segment;
    public final String message;
    
    public static enum Severity {

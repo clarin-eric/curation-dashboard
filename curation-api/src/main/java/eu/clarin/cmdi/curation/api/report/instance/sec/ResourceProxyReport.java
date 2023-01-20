@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import lombok.NoArgsConstructor;
@@ -36,9 +37,12 @@ public class ResourceProxyReport {
    public int numOfResProxiesWithReference;
    @XmlElement
    public double percOfResProxiesWithReference;
-
-   @XmlElement
+   @XmlElementWrapper(name = "resourcetypes")
+   @XmlElement(name = "resourceType")
    public Collection<ResourceType> resourceTypes = new ArrayList<ResourceType>();
+   @XmlElementWrapper(name = "invalidReferences")
+   @XmlElement(name = "invalidReference")   
+   public Collection<String> invalidReferences = new ArrayList<String>();
 
 
 
@@ -47,17 +51,9 @@ public class ResourceProxyReport {
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
    public static class ResourceType {
-
-      private final String type;
-      private final int count;
-
       @XmlAttribute
-      public String getType() {
-         return type;
-      }
+      public final String type;
       @XmlAttribute
-      public int getCount() {
-         return count;
-      }
+      public final int count;
    }
 }

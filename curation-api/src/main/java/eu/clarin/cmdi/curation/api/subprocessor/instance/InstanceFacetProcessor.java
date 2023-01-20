@@ -65,8 +65,9 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
          log.error("can't parse file '{}' for instance facet processing", instance.getPath());
 
-         report.messages.add(new Issue(Severity.FATAL,
+         report.issues.add(new Issue(Severity.FATAL, "facet",
                "can't parse file '" + instance.getPath().getFileName() + "' for instance facet processing"));
+         report.isValidReport=false;
 
          return;
 
@@ -89,6 +90,10 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
       facetsToNodes(instance, report, nodesMap, nav);
 
       report.facetReport.valueNodes.addAll(nodesMap.values());
+      
+      report.facetReport.percCoveragedByInstance = report.facetReport.numOfFacetsCoveredByInstance/report.facetReport.numOfFacets;
+      report.facetReport.score=report.facetReport.percCoveragedByInstance;
+      report.instanceScore+=report.facetReport.score;
 
    }
 
@@ -135,7 +140,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                catch (NavException e) {
 
                   log.debug("can't navigate in document");
-                  report.messages.add(new Issue(Severity.FATAL, "can't navigate in document"));
+                  report.issues.add(new Issue(Severity.FATAL, "facet","can't navigate in document"));
                }
                ap.resetXPath();
             }
@@ -178,7 +183,9 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
          if (coverage != null) {
             // lambda expression to ignore values set by cross facet mapping
-            coverage.coveredByInstance = originFacetsWithValue.contains(facetName);
+            if(coverage.coveredByInstance = originFacetsWithValue.contains(facetName)) {
+               report.facetReport.numOfFacetsCoveredByInstance++;
+            };
          }
 
          // in the next step the value(s) have to be mapped to the right node
@@ -198,7 +205,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                   normalizedValue = null;
                }
                if (normalizedValue != null && !normalizedValue.trim().isEmpty() && !normalizedValue.equals("--")) {
-                  report.messages.add(new Issue(Severity.INFO,
+                  report.issues.add(new Issue(Severity.INFO, "facet",
                         "Normalised value for facet " + facetName + ": '" + node.value + "' into '" + normalizedValue + "'"));
                }
 

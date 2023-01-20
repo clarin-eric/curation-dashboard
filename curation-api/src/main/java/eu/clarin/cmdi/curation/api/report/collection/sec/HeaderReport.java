@@ -10,6 +10,7 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -22,27 +23,32 @@ import lombok.RequiredArgsConstructor;
  *
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class HeaderReport {
-   
+   @XmlAttribute
+   public static double maxScore = 3.0;
+   @XmlAttribute
+   public double avgScore; 
+   @XmlElement
    public int totNumOfProfiles;
    
    @XmlElementWrapper(name = "duplicatedMDSelfLinks")
    private Collection<String> duplicatedMDSelfLink;
-   
+   @XmlElementWrapper(name = "profiles")
+   @XmlElement(name = "profile")
    public Collection<Profile> profiles = new ArrayList<Profile>();  
 
 
-   @XmlRootElement(name = "profile")
+   @XmlRootElement
    @XmlAccessorType(XmlAccessType.FIELD)
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
    public static class Profile {
-      @XmlAttribute
-      public final String name;
-      @XmlAttribute
+      @XmlElement
+      public final String id;
+      @XmlElement
       public final double score;
-      @XmlAttribute
-      public int count;
+      @XmlElement
+      public int count = 1;
    }
 }

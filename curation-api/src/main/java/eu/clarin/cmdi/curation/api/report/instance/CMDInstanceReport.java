@@ -27,10 +27,8 @@ import java.util.Collection;
 @XmlRootElement(name = "instance-report")
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class CMDInstanceReport implements NamedReport {
-   
-
-//   @XmlAttribute
-//   private double score = 0.0;
+   @XmlTransient
+   public boolean isValidReport = true;
 
    @XmlAttribute(name = "ins-score")
    public double instanceScore = 0.0;
@@ -78,7 +76,7 @@ public class CMDInstanceReport implements NamedReport {
    @XmlElement(name = "facets-section")
    public InstanceFacetReport facetReport;
    @XmlElement
-   public Collection<Issue> messages = new ArrayList<Issue>();
+   public Collection<Issue> issues = new ArrayList<Issue>();
 
    @Override
    public String getName() {

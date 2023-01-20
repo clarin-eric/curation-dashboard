@@ -46,7 +46,13 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDIn
             list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getOriginFacetConfig().getName())));
 
       report.facetReport.coverages.stream().filter(coverage -> coverage.coveredByProfile)
-            .forEach(coverage -> coverage.coveredByInstance = originFacetsWithValue.contains(coverage.name));
-
+            .forEach(coverage -> {
+               if(coverage.coveredByInstance = originFacetsWithValue.contains(coverage.name)) {
+                  report.facetReport.numOfFacetsCoveredByInstance++;
+               };
+            });
+      report.facetReport.percCoveragedByInstance = report.facetReport.numOfFacetsCoveredByInstance/report.facetReport.numOfFacets;
+      report.facetReport.score=report.facetReport.percCoveragedByInstance;
+      report.instanceScore+=report.facetReport.score;
    }
 }

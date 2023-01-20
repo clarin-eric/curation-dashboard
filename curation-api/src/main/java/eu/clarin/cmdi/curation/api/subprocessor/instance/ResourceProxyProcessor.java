@@ -10,6 +10,7 @@ import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport.ResourceType;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
+import eu.clarin.cmdi.vlo.PIDUtils;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
@@ -36,7 +37,7 @@ public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CM
       }
       
       report.resProxyReport.score = report.resProxyReport.percOfResourcesWithMime + report.resProxyReport.percOfResProxiesWithReference;
-
+      report.instanceScore+=report.resProxyReport.score;
    }
 
    private void addResourceType(List<Resource> resources, CMDInstanceReport report) {
@@ -46,10 +47,16 @@ public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CM
       report.resProxyReport.resourceTypes.add(new ResourceType(resources.get(0).getType(), resources.size()));
 
       resources.forEach(resource -> {
-         if (resource.getResourceName() != null && !resource.getResourceName().isEmpty())
+         if (resource.getResourceName() != null && !resource.getResourceName().isEmpty()) {
             report.resProxyReport.numOfResProxiesWithReference++;
-         if (resource.getMimeType() != null && !resource.getMimeType().isEmpty())
+            
+            if(PIDUtils.isPid(resource.getResourceName())) {
+               report.resProxyReport.invalidReferences.add(resource.getResourceName());
+            }
+         }
+         if (resource.getMimeType() != null && !resource.getMimeType().isEmpty()) {
             report.resProxyReport.numOfResourcesWithMime++;
+         }
 
          report.resProxyReport.numOfResProxies++;
       });

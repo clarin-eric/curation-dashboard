@@ -5,11 +5,12 @@ import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.report.Issue;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
-import eu.clarin.cmdi.curation.api.report.collection.CollectionReport.InvalidFile;
+import eu.clarin.cmdi.curation.api.report.collection.CollectionReport.OriginIssue;
 import eu.clarin.cmdi.curation.api.report.collection.sec.FacetReport.FacetCollectionStruct;
+import eu.clarin.cmdi.curation.api.report.collection.sec.HeaderReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Statistics;
+import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport.InvalidReference;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +25,6 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Stream;
@@ -120,6 +120,89 @@ public class CollectionAggregator {
          }
       }
       
+      calculateAverages(collectionReport);
+
+   }
+   
+   public synchronized void addReport(CollectionReport collectionReport, CMDInstanceReport instanceReport) {
+      
+     if(instanceReport.issues.size() > 0) {
+        collectionReport.issues.add(new OriginIssue(instanceReport.fileReport.location, instanceReport.issues));
+     }
+      
+      if(instanceReport.isValidReport) {
+         
+         collectionReport.fileReport.numOfValidFiles++;
+      
+         collectionReport.score += instanceReport.instanceScore;
+         if (instanceReport.instanceScore > collectionReport.insMaxScore) {
+             collectionReport.insMaxScore = instanceReport.instanceScore;
+         }
+   
+         if (instanceReport.instanceScore < collectionReport.insMinScore)
+             collectionReport.insMinScore = instanceReport.instanceScore;
+   
+         collectionReport.maxPossibleScoreInstance = instanceReport.maxScore;
+         
+         //header
+         collectionReport.headerReport.profiles.stream()
+            .filter(profile -> profile.id.equals(instanceReport.headerReport.getId()))
+            .findFirst()
+            .ifPresentOrElse(
+                  profile -> profile.count++, 
+                  () -> collectionReport.headerReport.profiles.add(new Profile(instanceReport.headerReport.getId(), instanceReport.headerReport.score))
+               );
+         
+   
+         // ResProxies
+         collectionReport.resProxyReport.totNumOfResProxies+=instanceReport.resProxyReport.numOfResProxies;
+         collectionReport.resProxyReport.totNumOfResProxiesWithMime+=instanceReport.resProxyReport.numOfResourcesWithMime;
+         collectionReport.resProxyReport.totNumOfResProxiesWithReference+=instanceReport.resProxyReport.numOfResProxiesWithReference;
+         
+         if(instanceReport.resProxyReport.invalidReferences.size() > 0) {
+            collectionReport.resProxyReport.invalidReferences.add(new InvalidReference(instanceReport.fileReport.location, instanceReport.resProxyReport.invalidReferences));
+         }
+         
+   
+         // XMLPopulatedValidator
+         collectionReport.xmlPopulationReport.totNumOfXMLElements+=instanceReport.xmlPopulationReport.numOfXMLElements;
+         collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements+=instanceReport.xmlPopulationReport.numOfXMLSimpleElements;
+         collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements+=instanceReport.xmlPopulationReport.numOfXMLEmptyElements;
+   
+   
+   
+   
+         // Facet
+         instanceReport
+            .facetReport
+            .coverages
+            .stream()
+            .filter(coverage -> coverage.coveredByInstance)
+            .forEach(instanceFacet -> collectionReport.facetReport.facets.stream().filter(collectionFacet -> collectionFacet.name.equals(instanceFacet.name)).findFirst().get().count++);
+   
+   
+   //      collectionReport.handleProfile(instanceReport.header.getId(), instanceReport.profileScore);
+      }
+   }
+   
+   private void calculateAverages(CollectionReport collectionReport) {
+      
+      if(collectionReport.fileReport.numOfFiles >0) {
+         //file
+         collectionReport.fileReport.avgFileSize = collectionReport.fileReport.size/collectionReport.fileReport.numOfFiles;
+         collectionReport.fileReport.avgScore = (double) (collectionReport.fileReport.numOfValidFiles/collectionReport.fileReport.numOfFiles);
+         //header
+         collectionReport.headerReport.avgScore = (collectionReport.headerReport.profiles.stream().mapToDouble(profile -> profile.score*profile.count).sum() /collectionReport.fileReport.numOfFiles);
+         //resProxy
+         collectionReport.resProxyReport.avgNumOfResProxies = (double)  (collectionReport.resProxyReport.totNumOfResProxies/collectionReport.fileReport.numOfFiles);
+         collectionReport.resProxyReport.avgNumOfResProxiesWithMime = (double) (collectionReport.resProxyReport.totNumOfResProxiesWithMime/collectionReport.fileReport.numOfFiles);
+         collectionReport.resProxyReport.avgNumOfResProxiesWithReference = (double)  (collectionReport.resProxyReport.avgNumOfResProxiesWithReference/collectionReport.fileReport.numOfFiles);
+      
+      }
+      
+      
+
+
       try (Stream<AggregatedStatus> stream = aRep.findAllByProvidergroupName(collectionReport.getName())) {
 
          stream.forEach(categoryStats -> {
@@ -154,57 +237,6 @@ public class CollectionAggregator {
          log.error("couldn't get category statistics for provider group '{}' from database", collectionReport.getName(), ex);
       }
       
-      collectionReport.avgScore = (collectionReport.fileReport.numOfFiles>0?(double) collectionReport.score/collectionReport.fileReport.numOfFiles:0.0);
+      collectionReport.avgScore = (collectionReport.fileReport.numOfFiles>0?(double) collectionReport.score/collectionReport.fileReport.numOfFiles:0.0);      
    }
-   
-   public synchronized void addReport(CollectionReport collectionReport, CMDInstanceReport instanceReport) {
-      
-      Optional<Issue> messageOpt = instanceReport.messages.stream().filter(message -> message.severity == eu.clarin.cmdi.curation.api.report.Issue.Severity.FATAL).findAny();
-      
-      if(messageOpt.isEmpty()) {
-         
-         collectionReport.invalidFiles.add(
-               new InvalidFile(instanceReport.fileReport.location, 
-               messageOpt.get().message
-            ));
-
-         return;
-      }
-      
-      collectionReport.score += instanceReport.instanceScore;
-      if (instanceReport.instanceScore > collectionReport.insMaxScore) {
-          collectionReport.insMaxScore = instanceReport.instanceScore;
-      }
-
-      if (instanceReport.instanceScore < collectionReport.insMinScore)
-          collectionReport.insMinScore = instanceReport.instanceScore;
-
-      collectionReport.maxPossibleScoreInstance = instanceReport.maxScore;
-
-      // ResProxies
-      collectionReport.resProxyReport.totNumOfResProxies+=instanceReport.resProxyReport.numOfResProxies;
-      collectionReport.resProxyReport.totNumOfResProxiesWithMime+=instanceReport.resProxyReport.numOfResourcesWithMime;
-      collectionReport.resProxyReport.totNumOfResProxiesWithReference+=instanceReport.resProxyReport.numOfResProxiesWithReference;
-
-      // XMLPopulatedValidator
-      collectionReport.xmlPopulationReport.totNumOfXMLElements+=instanceReport.xmlPopulationReport.numOfXMLElements;
-      collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements+=instanceReport.xmlPopulationReport.numOfXMLSimpleElements;
-      collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements+=instanceReport.xmlPopulationReport.numOfXMLEmptyElements;
-
-
-
-
-      // Facet
-      instanceReport
-         .facetReport
-         .coverages
-         .stream()
-         .filter(coverage -> coverage.coveredByInstance)
-         .forEach(instanceFacet -> collectionReport.facetReport.facets.stream().filter(collectionFacet -> collectionFacet.name.equals(instanceFacet.name)).findFirst().get().count++);
-
-
-//      collectionReport.handleProfile(instanceReport.header.getId(), instanceReport.profileScore);
-      
-   }
-
 }

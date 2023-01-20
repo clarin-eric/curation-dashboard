@@ -44,7 +44,7 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
          parsedProfile = crService.getParsedProfile(report.headerReport.getProfileHeader());
       }
       catch (NoProfileCacheEntryException e) {
-         report.issues.add(new Issue(Severity.FATAL, "can't get ParsedProfile for profile id '" + report.headerReport.getId() + "'"));
+         report.issues.add(new Issue(Severity.FATAL,"concept" , "can't get ParsedProfile for profile id '" + report.headerReport.getId() + "'"));
          log.debug("can't get ParsedProfile for profile id '{}'", report.headerReport.getId());
          return;
 

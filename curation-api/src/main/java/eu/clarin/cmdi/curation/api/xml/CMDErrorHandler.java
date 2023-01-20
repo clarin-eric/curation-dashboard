@@ -40,6 +40,6 @@ public class CMDErrorHandler implements ErrorHandler {
 	}
 
 	private void addMessage(Severity lvl, int line, int col, String message) {
-		report.messages.add(new Issue(lvl, "line: " + line + ", col: " + col + " - " + message));
+		report.issues.add(new Issue(lvl, "xml-validation", "line: " + line + ", col: " + col + " - " + message));
 	}
 }
