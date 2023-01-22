@@ -10,6 +10,7 @@ import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.XmlPopulationReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.XmlValidityReport;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import javax.xml.bind.annotation.*;
@@ -81,6 +82,7 @@ public class CollectionReport implements NamedReport{
 
    @XmlRootElement
    @RequiredArgsConstructor
+   @NoArgsConstructor(force = true)
    public static class OriginIssue {
       @XmlAttribute
       private final String origin;

@@ -39,7 +39,8 @@ public class ResProxyReport {
    public int totNumOfResProxiesWithReference;
    @XmlElement
    public double avgNumOfResProxiesWithReference;
-   @XmlElementWrapper(name = "invalid-references")
+   @XmlElementWrapper(name = "invalidReferences")
+   @XmlElement(name = "invalidReference")
    public Collection<InvalidReference> invalidReferences = new ArrayList<InvalidReference>(); 
    
    @XmlRootElement

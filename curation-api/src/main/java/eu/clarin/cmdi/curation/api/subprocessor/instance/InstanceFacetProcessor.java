@@ -51,7 +51,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
       
       report.facetReport = new InstanceFacetReport();
       
-      profileReportCache.getProfileReport(new CMDProfile(report.headerReport.getSchemaLocation(), report.headerReport.getCmdiVersion())).facetReport.coverages
+      profileReportCache.getProfileReport(new CMDProfile(report.profileHeaderReport.getSchemaLocation(), report.profileHeaderReport.getCmdiVersion())).facetReport.coverages
          .forEach(profileCoverage -> report.facetReport.coverages.add(new Coverage(profileCoverage.name, profileCoverage.coveredByProfile)));
       
       
@@ -103,7 +103,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
       Map<String, CMDINode> elements;
       try {
-         elements = crService.getParsedProfile(report.headerReport.getProfileHeader()).getElements();
+         elements = crService.getParsedProfile(report.profileHeaderReport.getProfileHeader()).getElements();
 
          ParsedInstance parsedInstance = instance.getParsedInstance();
 
@@ -148,7 +148,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
       }
       catch (NoProfileCacheEntryException e) {
 
-         log.debug("no ProfileCacheEntry for profile id '{}'", report.headerReport.getId());
+         log.debug("no ProfileCacheEntry for profile id '{}'", report.profileHeaderReport.getId());
 
       }
 

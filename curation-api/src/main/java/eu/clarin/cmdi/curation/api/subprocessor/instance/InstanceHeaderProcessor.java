@@ -1,5 +1,7 @@
 package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -7,11 +9,13 @@ import java.util.regex.Matcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import eu.clarin.cmdi.curation.api.CurationModule;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.Issue;
 import eu.clarin.cmdi.curation.api.report.Issue.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport;
+import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.cr.CRService;
@@ -27,6 +31,8 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
    PPHConfig conf;
    @Autowired
    private CRService crService;   
+   @Autowired
+   private CurationModule curationModule;
 
    @Override
    public void process(CMDInstance instance, CMDInstanceReport report){
@@ -144,7 +150,17 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
       String schemaLocation = report.instanceHeaderReport.schemaLocation!=null?
             report.instanceHeaderReport.schemaLocation:
                conf.getRestApi() + "/" + report.instanceHeaderReport.mdProfile + "/xsd";
-      report.headerReport = (new ProfileHeaderReport(crService.createProfileHeader(schemaLocation, "1.x", false)));
+      
+      try {
+         CMDProfileReport profileReport = curationModule.processCMDProfile(new URL(schemaLocation));
+         report.profileHeaderReport = profileReport.headerReport;
+         
+      }
+      catch (MalformedURLException e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
+      report.profileHeaderReport = (new ProfileHeaderReport(crService.createProfileHeader(schemaLocation, "1.x", false)));
 
       report.instanceScore+=report.instanceHeaderReport.score;
    }

@@ -51,7 +51,7 @@ public class CMDInstanceReport implements NamedReport {
 
    // ProfileHeader
    @XmlElement(name = "profile-section")
-   public ProfileHeaderReport headerReport;
+   public ProfileHeaderReport profileHeaderReport;
    //InstanceHeader
    @XmlElement(name = "instance-header-section")
    public InstanceHeaderReport instanceHeaderReport;

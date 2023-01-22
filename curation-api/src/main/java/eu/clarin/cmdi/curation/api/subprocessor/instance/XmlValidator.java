@@ -45,12 +45,12 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
 
       ValidatorHandler schemaValidator;
       try {
-         schemaValidator = crService.getSchema(report.headerReport.getProfileHeader()).newValidatorHandler();
+         schemaValidator = crService.getSchema(report.profileHeaderReport.getProfileHeader()).newValidatorHandler();
       }
       catch (NoProfileCacheEntryException e) {
 
-         log.error("no ProfileCacheEntry for profile id '{}'", report.headerReport.getId());
-         report.issues.add(new Issue(Severity.FATAL, "xml-validation", "no ProfileCacheEntry for profile id '" + report.headerReport.getId() + "'"));
+         log.error("no ProfileCacheEntry for profile id '{}'", report.profileHeaderReport.getId());
+         report.issues.add(new Issue(Severity.FATAL, "xml-validation", "no ProfileCacheEntry for profile id '" + report.profileHeaderReport.getId() + "'"));
          report.isValidReport=false;
          
          return;

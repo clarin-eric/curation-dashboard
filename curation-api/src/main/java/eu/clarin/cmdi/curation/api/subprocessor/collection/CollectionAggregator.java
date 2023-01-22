@@ -146,11 +146,11 @@ public class CollectionAggregator {
          
          //header
          collectionReport.headerReport.profiles.stream()
-            .filter(profile -> profile.id.equals(instanceReport.headerReport.getId()))
+            .filter(profile -> profile.id.equals(instanceReport.profileHeaderReport.getId()))
             .findFirst()
             .ifPresentOrElse(
                   profile -> profile.count++, 
-                  () -> collectionReport.headerReport.profiles.add(new Profile(instanceReport.headerReport.getId(), instanceReport.headerReport.score))
+                  () -> collectionReport.headerReport.profiles.add(new Profile(instanceReport.profileHeaderReport.getId(), instanceReport.profileHeaderReport.score))
                );
          
    
@@ -161,14 +161,15 @@ public class CollectionAggregator {
          
          if(instanceReport.resProxyReport.invalidReferences.size() > 0) {
             collectionReport.resProxyReport.invalidReferences.add(new InvalidReference(instanceReport.fileReport.location, instanceReport.resProxyReport.invalidReferences));
-         }
-         
+         }         
    
-         // XMLPopulatedValidator
+         // XmlPopulation
          collectionReport.xmlPopulationReport.totNumOfXMLElements+=instanceReport.xmlPopulationReport.numOfXMLElements;
          collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements+=instanceReport.xmlPopulationReport.numOfXMLSimpleElements;
          collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements+=instanceReport.xmlPopulationReport.numOfXMLEmptyElements;
-   
+         
+         // XmlValidation
+         collectionReport.xmlValidationReport.totNumOfValidRecords+=instanceReport.xmlValidityReport.score;
    
    
    
@@ -197,7 +198,18 @@ public class CollectionAggregator {
          collectionReport.resProxyReport.avgNumOfResProxies = (double)  (collectionReport.resProxyReport.totNumOfResProxies/collectionReport.fileReport.numOfFiles);
          collectionReport.resProxyReport.avgNumOfResProxiesWithMime = (double) (collectionReport.resProxyReport.totNumOfResProxiesWithMime/collectionReport.fileReport.numOfFiles);
          collectionReport.resProxyReport.avgNumOfResProxiesWithReference = (double)  (collectionReport.resProxyReport.avgNumOfResProxiesWithReference/collectionReport.fileReport.numOfFiles);
-      
+         collectionReport.resProxyReport.avgScore = (double) ((collectionReport.resProxyReport.avgNumOfResProxiesWithMime+collectionReport.resProxyReport.avgNumOfResProxiesWithReference)/collectionReport.resProxyReport.avgNumOfResProxies);
+         //XmlPopulation
+         
+         //XmlValidation
+         collectionReport.xmlValidationReport.avgScore = (double) (collectionReport.xmlValidationReport.totNumOfValidRecords/collectionReport.fileReport.numOfFiles);
+         
+         //Facet
+         collectionReport.facetReport.facets
+            .forEach(facet -> facet.coverage = facet.count/collectionReport.fileReport.numOfFiles);
+         
+         collectionReport.facetReport.avgScore = collectionReport.facetReport.facets.stream().mapToInt(facet -> facet.count).sum()/collectionReport.facetReport.facets.size()/collectionReport.fileReport.numOfFiles;
+         collectionReport.facetReport.percCoverageNonZero = collectionReport.facetReport.facets.stream().filter(facet -> facet.count > 0).count()/collectionReport.facetReport.facets.size();
       }
       
       

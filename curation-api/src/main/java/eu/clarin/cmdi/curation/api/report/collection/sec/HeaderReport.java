@@ -33,6 +33,7 @@ public class HeaderReport {
    public int totNumOfProfiles;
    
    @XmlElementWrapper(name = "duplicatedMDSelfLinks")
+   @XmlElement(name = "duplicatedMDSelfLink")
    private Collection<String> duplicatedMDSelfLink;
    @XmlElementWrapper(name = "profiles")
    @XmlElement(name = "profile")

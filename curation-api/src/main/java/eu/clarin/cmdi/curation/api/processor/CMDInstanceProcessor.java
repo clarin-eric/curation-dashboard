@@ -52,7 +52,10 @@ public class CMDInstanceProcessor {
       final CMDInstanceReport instanceReport = new CMDInstanceReport();
 
 
-      this.subprocessors.forEach(subprocessor -> subprocessor.process(instance, instanceReport));
+      this.subprocessors
+         .stream()
+         .takeWhile(p -> instanceReport.isValidReport)
+         .forEach(subprocessor -> subprocessor.process(instance, instanceReport));
 
 
       return instanceReport;

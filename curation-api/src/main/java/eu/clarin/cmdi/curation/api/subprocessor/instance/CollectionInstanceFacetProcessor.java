@@ -28,7 +28,7 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDIn
 
       report.facetReport = new InstanceFacetReport();
 
-      profileReportCache.getProfileReport(new CMDProfile(report.headerReport.getSchemaLocation(), report.headerReport.getCmdiVersion())).facetReport.coverages
+      profileReportCache.getProfileReport(new CMDProfile(report.profileHeaderReport.getSchemaLocation(), report.profileHeaderReport.getCmdiVersion())).facetReport.coverages
       .forEach(profileCoverage -> report.facetReport.coverages.add(new Coverage(profileCoverage.name, profileCoverage.coveredByProfile)));
 
 

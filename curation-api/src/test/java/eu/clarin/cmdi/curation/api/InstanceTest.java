@@ -65,7 +65,7 @@ public class InstanceTest {
       
       CMDInstanceReport instanceReport = CMDInstanceReport.class.cast(report);
       
-      assertNotNull(instanceReport.headerReport);
+      assertNotNull(instanceReport.profileHeaderReport);
       
       assertNotNull(instanceReport.fileReport);
       
@@ -85,9 +85,9 @@ public class InstanceTest {
       
       CMDInstanceReport instanceReport = CMDInstanceReport.class.cast(report);
       
-      assertEquals("clarin.eu:cr1:p_1288172614026", instanceReport.headerReport.getId());
+      assertEquals("clarin.eu:cr1:p_1288172614026", instanceReport.profileHeaderReport.getId());
       
-      assertEquals("1.2", instanceReport.headerReport.getCmdiVersion());
+      assertEquals("1.2", instanceReport.profileHeaderReport.getCmdiVersion());
       
    }
 
