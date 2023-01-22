@@ -117,7 +117,7 @@ public class CRServiceImpl implements CRService {
 
    }
 
-   private ProfileCacheEntry getEntry(ProfileHeader header) throws NoProfileCacheEntryException {
+   private synchronized ProfileCacheEntry getEntry(ProfileHeader header) throws NoProfileCacheEntryException {
       
       if(header.getId() == null || header.getId().isEmpty()) {
          header.setId(createProfileHeader(header.getSchemaLocation(), header.getCmdiVersion(), header.isLocalFile()).getId());
