@@ -35,8 +35,6 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
    @Autowired
    private CRService crService;
 
-   boolean valid = true;
-
    @Override
    public void process(CMDInstance instance, CMDInstanceReport report) {
       
