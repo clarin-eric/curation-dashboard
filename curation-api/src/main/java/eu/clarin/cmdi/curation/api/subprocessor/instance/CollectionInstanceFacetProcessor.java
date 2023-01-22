@@ -30,6 +30,8 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDIn
 
       profileReportCache.getProfileReport(new CMDProfile(report.profileHeaderReport.getSchemaLocation(), report.profileHeaderReport.getCmdiVersion())).facetReport.coverages
       .forEach(profileCoverage -> report.facetReport.coverages.add(new Coverage(profileCoverage.name, profileCoverage.coveredByProfile)));
+      
+      report.facetReport.numOfFacets = report.facetReport.coverages.size();
 
 
       Map<String, List<ValueSet>> facetValuesMap = entity.getCmdiData().getDocument();
@@ -51,8 +53,10 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDIn
                   report.facetReport.numOfFacetsCoveredByInstance++;
                };
             });
+      
       report.facetReport.percCoveragedByInstance = report.facetReport.numOfFacetsCoveredByInstance/report.facetReport.numOfFacets;
       report.facetReport.score=report.facetReport.percCoveragedByInstance;
       report.instanceScore+=report.facetReport.score;
+      
    }
 }
