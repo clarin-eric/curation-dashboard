@@ -91,7 +91,7 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
       };
       @XmlElement
       public double getInstanceUsage() {
-         return report.collectionUsage.stream().mapToDouble(usage -> usage.count.get()).sum();
+         return report.collectionUsage.stream().mapToDouble(usage -> usage.count).sum();
       };
    }
 }

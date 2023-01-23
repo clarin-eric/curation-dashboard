@@ -158,10 +158,12 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          report.profileScore = profileReport.score;
          
          if(instance.getProvidergroupName() != null) {
-            profileReport.collectionUsage.stream()
-               .filter(usage -> usage.collectionName.equals(instance.getProvidergroupName()))
-               .findFirst()
-               .ifPresentOrElse(cu -> cu.count.incrementAndGet(), () -> profileReport.collectionUsage.add(new CollectionUsage(instance.getProvidergroupName())));
+            synchronized(this) {
+               profileReport.collectionUsage.stream()
+                  .filter(usage -> usage.collectionName.equals(instance.getProvidergroupName()))
+                  .findFirst()
+                  .ifPresentOrElse(cu -> cu.count++, () -> profileReport.collectionUsage.add(new CollectionUsage(instance.getProvidergroupName())));
+            }
          }        
       }
       catch (MalformedURLException e) {
