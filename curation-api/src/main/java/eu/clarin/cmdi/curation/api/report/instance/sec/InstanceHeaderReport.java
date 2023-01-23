@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InstanceHeaderReport {
    @XmlAttribute
-   public final double maxScore = 5.0;
+   public static final double maxScore = 5.0;
    @XmlAttribute
    public double score;
    @XmlElement

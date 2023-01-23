@@ -26,7 +26,8 @@ import lombok.RequiredArgsConstructor;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HeaderReport {
    @XmlAttribute(name = "max-score")
-   public static double maxScore = 3.0;
+   public static double maxScore = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport.maxScore
+      + eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.maxScore;
    @XmlAttribute(name = "aggregated-score")
    public double aggregatedScore = 0.0;
    @XmlAttribute(name = "avg-score")

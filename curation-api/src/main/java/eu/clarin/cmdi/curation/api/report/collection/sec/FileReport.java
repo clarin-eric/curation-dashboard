@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FileReport {
    @XmlAttribute(name = "max-score")
-   public static final double maxScore = 1.0;
+   public static final double maxScore = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore;
    @XmlAttribute(name = "aggregated-score")
    public double aggregatedScore = 0.0;
    @XmlAttribute(name = "avg-score")

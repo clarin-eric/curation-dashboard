@@ -79,7 +79,7 @@ public class LinkcheckerReport {
       public double avgRespTime;
 
       @XmlAttribute
-      public double maxRespTime;
+      public long maxRespTime;
 
       @XmlAttribute
       public Category category;

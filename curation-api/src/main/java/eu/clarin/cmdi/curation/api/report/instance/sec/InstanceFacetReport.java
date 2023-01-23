@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InstanceFacetReport {
    @XmlAttribute
-   public final double maxScore = 1.0;
+   public static final double maxScore = 1.0;
    @XmlAttribute
    public double score;
    @XmlAttribute
