@@ -16,7 +16,7 @@ import eu.clarin.cmdi.curation.api.report.Issue.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
-import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
+import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.CollectionUsage;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.CRServiceImpl;
@@ -153,14 +153,23 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
       
       try {
          CMDProfileReport profileReport = curationModule.processCMDProfile(new URL(schemaLocation));
-         report.profileHeaderReport = profileReport.headerReport;
          
+         report.profileHeaderReport = profileReport.headerReport;
+         report.profileScore = profileReport.score;
+         
+         if(instance.getProvidergroupName() != null) {
+            profileReport.collectionUsage.stream()
+               .filter(usage -> usage.collectionName.equals(instance.getProvidergroupName()))
+               .findFirst()
+               .ifPresentOrElse(cu -> cu.count.incrementAndGet(), () -> profileReport.collectionUsage.add(new CollectionUsage(instance.getProvidergroupName())));
+         }        
       }
       catch (MalformedURLException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
+         log.error("schemaLocation '{}' not an URL", schemaLocation);
+         report.issues.add(new Issue(Severity.FATAL, "header", "no valid schemaLocation"));
+         report.isValidReport=false;
+         return;
       }
-      report.profileHeaderReport = (new ProfileHeaderReport(crService.createProfileHeader(schemaLocation, "1.x", false)));
 
       report.instanceScore+=report.instanceHeaderReport.score;
    }
