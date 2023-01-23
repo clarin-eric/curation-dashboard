@@ -88,6 +88,5 @@ public class CMDInstanceReport implements NamedReport {
       else {
          return fileReport.location;
       }
-
    }
 }
