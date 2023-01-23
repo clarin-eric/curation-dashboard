@@ -18,11 +18,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlValidityReport {
    @XmlAttribute(name = "max-score")
-   public static final double maxScore = 1.0;
+   public static final double maxScore = eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport.maxScore;
    @XmlAttribute(name = "aggregated-score")
    public double aggregatedScore = 0.0;
    @XmlAttribute(name = "avg-score")
    public double avgScore;
+   @XmlAttribute(name = "avg-score-valid")
+   public double avgScoreValid;  
    @XmlElement
    public int totNumOfValidRecords;
 

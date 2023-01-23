@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlAttribute;
  */
 public class XmlValidityReport {
    @XmlAttribute
-   public final double maxScore = 1.0;
+   public static final double maxScore = 1.0;
    @XmlAttribute
    public double score;   
 
