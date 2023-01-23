@@ -3,6 +3,8 @@ package eu.clarin.cmdi.curation.api.report.profile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -53,7 +55,7 @@ public class CMDProfileReport implements NamedReport{
 
    @XmlElementWrapper(name = "usage-section")
    @XmlElement(name = "collection")
-   public final Collection<CollectionUsage> collectionUsage = new ArrayList<CollectionUsage>();
+   public final Collection<CollectionUsage> collectionUsage = new ConcurrentLinkedQueue<CollectionUsage>();
    @XmlElementWrapper(name = "issues")
    @XmlElement(name = "issue")
    public final Collection<Issue> issues = new ArrayList<Issue>();
@@ -74,6 +76,6 @@ public class CMDProfileReport implements NamedReport{
       @XmlAttribute
       public final String collectionName;
       @XmlAttribute
-      public long count;
+      public AtomicInteger count = new AtomicInteger(1);
    }
 }
