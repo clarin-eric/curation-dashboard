@@ -156,7 +156,7 @@ public class CollectionAggregator {
          //header
          synchronized(this) {
             collectionReport.headerReport.profiles.stream()
-               .filter(profile -> profile.id.equals(instanceReport.profileHeaderReport.getId()))
+               .filter(profile -> profile.profileId.equals(instanceReport.profileHeaderReport.getId()))
                .findFirst()
                .ifPresentOrElse(
                      profile -> profile.count++, 
@@ -257,7 +257,7 @@ public class CollectionAggregator {
          collectionReport.linkcheckerReport.statistics.stream()
                .filter(statistics -> statistics.category == Category.Ok)
                .findFirst()
-               .ifPresent(statistics -> collectionReport.linkcheckerReport.ratioOfValidLinks = (double) (statistics.count/collectionReport.linkcheckerReport.totNumOfLinks));
+               .ifPresent(statistics -> collectionReport.linkcheckerReport.ratioOfValidLinks = (collectionReport.linkcheckerReport.totNumOfLinks>0?(double) (statistics.count/collectionReport.linkcheckerReport.totNumOfLinks):1.0));
       }
       
       if(collectionReport.fileReport.numOfFiles >0) {

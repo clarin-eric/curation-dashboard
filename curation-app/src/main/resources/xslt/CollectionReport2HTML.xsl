@@ -137,13 +137,13 @@
 					</tfoot>
 					<tbody>
 						<xsl:for-each
-							select="./header-section/profiles/profiles">
+							select="./header-section/profiles/profile">
 							<xsl:sort select="./@score" data-type="number"
 								order="descending" />
 							<xsl:sort select="./@count" data-type="number"
 								order="descending" />
 							<xsl:variable name="profileID">
-								<xsl:value-of select="./@name" />
+								<xsl:value-of select="./@profileId" />
 							</xsl:variable>
 							<tr>
 								<td>
@@ -151,10 +151,10 @@
 										<xsl:attribute name="href">
 							<xsl:text>/profile/</xsl:text>
 	                    	<xsl:value-of
-											select="translate(@name,'.:','__')"></xsl:value-of>
+											select="translate(./@profileId,'.:','__')"></xsl:value-of>
 	                    	<xsl:text>.html</xsl:text>
 	                    </xsl:attribute>
-										<xsl:value-of select="@name"></xsl:value-of>
+										<xsl:value-of select="./@profileId"></xsl:value-of>
 									</a>
 								</td>
 								<td class='text-right'>
@@ -192,7 +192,7 @@
 								<b>
 									facet-coverage:
 									<xsl:value-of
-										select="format-number(./facet-section/coverage,'0.0%')" />
+										select="format-number(./facet-section/avg-score,'0.0%')" />
 								</b>
 							</td>
 						</tr>
