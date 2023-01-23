@@ -30,5 +30,4 @@ public class InstanceHeaderReport {
    public String mdCollectionDisplayName;
    @XmlElement   
    public String mdSelfLink;
-
 }
