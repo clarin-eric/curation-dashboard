@@ -54,7 +54,7 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDIn
                };
             });
       
-      report.facetReport.percCoveragedByInstance = report.facetReport.numOfFacetsCoveredByInstance/report.facetReport.numOfFacets;
+      report.facetReport.percCoveragedByInstance = (double) report.facetReport.numOfFacetsCoveredByInstance/report.facetReport.numOfFacets;
       report.facetReport.score=report.facetReport.percCoveragedByInstance;
       report.instanceScore+=report.facetReport.score;
       
