@@ -50,7 +50,7 @@ public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CM
          if (resource.getResourceName() != null && !resource.getResourceName().isEmpty()) {
             report.resProxyReport.numOfResProxiesWithReference++;
             
-            if(PIDUtils.isPid(resource.getResourceName())) {
+            if(!PIDUtils.isPid(resource.getResourceName())) {
                report.resProxyReport.invalidReferences.add(resource.getResourceName());
             }
          }
