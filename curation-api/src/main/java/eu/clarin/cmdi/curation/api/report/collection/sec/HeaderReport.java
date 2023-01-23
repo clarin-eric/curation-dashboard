@@ -50,11 +50,11 @@ public class HeaderReport {
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
    public static class Profile {
-      @XmlElement
-      public final String id;
-      @XmlElement
+      @XmlAttribute
+      public final String profileId;
+      @XmlAttribute
       public final double score;
-      @XmlElement
+      @XmlAttribute
       public int count = 1;
    }
 }
