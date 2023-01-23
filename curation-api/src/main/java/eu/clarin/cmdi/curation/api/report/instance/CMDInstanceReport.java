@@ -29,15 +29,16 @@ import java.util.Collection;
 public class CMDInstanceReport implements NamedReport {
    @XmlTransient
    public boolean isValidReport = true;
+   
+
+   @XmlAttribute(name = "max-score")
+   public final double maxScore = 14.0;
 
    @XmlAttribute(name = "ins-score")
    public double instanceScore = 0.0;
 
    @XmlAttribute(name = "pfl-score")
    public double profileScore = 0.0;
-
-   @XmlAttribute(name = "max-score")
-   public final double maxScore = 15.0;
 
    @XmlAttribute(name = "score-percentage")
    public double scorePercentage;
