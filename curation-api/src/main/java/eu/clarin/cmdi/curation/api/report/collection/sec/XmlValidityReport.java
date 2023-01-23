@@ -17,9 +17,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlValidityReport {
-   @XmlAttribute
+   @XmlAttribute(name = "max-score")
    public static final double maxScore = 1.0;
-   @XmlAttribute
+   @XmlAttribute(name = "aggregated-score")
+   public double aggregatedScore = 0.0;
+   @XmlAttribute(name = "avg-score")
    public double avgScore;
    @XmlElement
    public int totNumOfValidRecords;

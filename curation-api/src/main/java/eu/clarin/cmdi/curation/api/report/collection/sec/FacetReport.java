@@ -24,10 +24,14 @@ import lombok.RequiredArgsConstructor;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FacetReport {
-   @XmlAttribute
+   @XmlAttribute(name = "max-score")
    public static final double maxScore = 1.0;
-   @XmlAttribute
+   @XmlAttribute(name = "aggregated-score")
+   public double aggregatedScore = 0.0;
+   @XmlAttribute(name = "avg-score")
    public double avgScore;
+   @XmlAttribute(name = "avg-score-valid")
+   public double avgScoreValid;  
    @XmlElement
    public double percCoverageNonZero;
    @XmlElementWrapper(name = "facets")

@@ -32,10 +32,12 @@ import java.util.Collection;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionReport implements NamedReport{
    
-   @XmlAttribute(name = "score")
-   public double score = 0.0;
+   @XmlAttribute(name = "aggregated-score")
+   public double aggregatedScore = 0.0;
    @XmlAttribute(name = "avg-score")
    public double avgScore;
+   @XmlAttribute(name = "avg-score-valid")
+   public double avgScoreValid;   
    @XmlAttribute(name = "min-score")
    public double insMinScore = Double.MAX_VALUE;
    @XmlAttribute(name = "max-score")
@@ -45,7 +47,7 @@ public class CollectionReport implements NamedReport{
    @XmlAttribute(name = "score-percentage")
    public double scorePercentage;
    @XmlAttribute(name = "ins-max-score")
-   public Double maxPossibleScoreInstance = 0.0;
+   public final double maxPossibleScoreInstance = 15.0;
    @XmlAttribute(name = "creation-time")
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();

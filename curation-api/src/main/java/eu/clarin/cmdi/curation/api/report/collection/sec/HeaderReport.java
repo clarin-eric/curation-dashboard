@@ -25,16 +25,20 @@ import lombok.RequiredArgsConstructor;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HeaderReport {
-   @XmlAttribute
+   @XmlAttribute(name = "max-score")
    public static double maxScore = 3.0;
-   @XmlAttribute
-   public double avgScore; 
+   @XmlAttribute(name = "aggregated-score")
+   public double aggregatedScore = 0.0;
+   @XmlAttribute(name = "avg-score")
+   public double avgScore;
+   @XmlAttribute(name = "avg-score-valid")
+   public double avgScoreValid;  
    @XmlElement
    public int totNumOfProfiles;
    
    @XmlElementWrapper(name = "duplicatedMDSelfLinks")
    @XmlElement(name = "duplicatedMDSelfLink")
-   private Collection<String> duplicatedMDSelfLink;
+   public Collection<String> duplicatedMDSelfLink;
    @XmlElementWrapper(name = "profiles")
    @XmlElement(name = "profile")
    public Collection<Profile> profiles = new ArrayList<Profile>();  
