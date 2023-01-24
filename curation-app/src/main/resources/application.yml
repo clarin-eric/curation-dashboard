@@ -1,6 +1,7 @@
 logging:
    level:
       root: ERROR
+      eu.clarin.cmdi.curation.cr.cache: DEBUG
 spring:
    datasource:
       url: ${DATABASE_URI}
@@ -8,7 +9,7 @@ spring:
       password: ${DATABASE_PASSWORD}
       driver-class-name: org.mariadb.jdbc.Driver
    jpa:
-      show-sql: true
+      show-sql: false
       hibernate:
          ddl-auto: none
       database-platform: org.hibernate.dialect.MariaDBDialect
@@ -21,7 +22,7 @@ spring:
         location: ${java.io.tmpdir}  
 curation:
    pph-service:
-      xsd_cache: /tmp/curation/xsd_cache
+      xsd_cache: ${CURATION_DIRECTORY}/xsd_cache
       restApi: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
       query: "?registrySpace=published&status=production&status=development&&status=deprecated"
    ccr-service:
@@ -29,10 +30,11 @@ curation:
       query: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000"   
    mode: collection
    directory:
-      home: /app/curation
-      dataRoot: /data/results/cmdi
-      in: /data/results/cmdi/Language_Archive_Cologne
-      out: /data/curation/public
+      home: ${CURATION_DIRECTORY}
+      dataRoot: ${CURATION_DIRECTORY}/data
+      in: 
+      - /data/results/testSet
+      out: ${CURATION_DIRECTORY}/public
    facets: 
       - languageCode
       - collection
@@ -48,7 +50,7 @@ curation:
       - description
       - license
       - availability
-   thread_pool_size: 10
+   thread_pool_size: ${THREAD_POOL_SIZE:10}
    max_file_size: 100000
    base_url:
    doc_url:
