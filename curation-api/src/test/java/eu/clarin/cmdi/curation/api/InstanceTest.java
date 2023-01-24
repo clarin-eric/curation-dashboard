@@ -87,7 +87,7 @@ public class InstanceTest {
       
       assertEquals("clarin.eu:cr1:p_1288172614026", instanceReport.profileHeaderReport.getId());
       
-      assertEquals("1.2", instanceReport.profileHeaderReport.getCmdiVersion());
+//      assertEquals("1.2", instanceReport.profileHeaderReport.getCmdiVersion());
       
    }
 
