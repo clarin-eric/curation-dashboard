@@ -119,9 +119,13 @@ public class CurationApp {
          
       }
       else {
-         
-         processCollection(path, allCollectionReport, allLinkcheckerReport);
-      
+         try {
+            Files.newDirectoryStream(path).forEach(dir -> processCollection(dir, allCollectionReport, allLinkcheckerReport));
+         }
+         catch (IOException e) {
+            log.error("can't create directory stream for path '{}'", path);
+            throw new RuntimeException(e);
+         }
       }
    }
    
