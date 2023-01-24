@@ -69,7 +69,7 @@ public class CRCache {
       String fileName = header.getSchemaLocation().replaceAll("[/.:]", "_");
       
       Path xsd = props.getXsdCache()
-                  .resolve(isPublicCache(header)?"":"private_profiles")
+                  .resolve(isPublicCache(header)?"":"private_profile")
                   .resolve(fileName + ".xsd");
       
 

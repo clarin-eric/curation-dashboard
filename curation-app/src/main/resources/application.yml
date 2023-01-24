@@ -33,7 +33,7 @@ curation:
       home: ${CURATION_DIRECTORY}
       dataRoot: ${CURATION_DIRECTORY}/data
       in: 
-      - /data/results/testSet
+      - ${CURATION_DIRECTORY}/data/clarin/results/cmdi
       out: ${CURATION_DIRECTORY}/public
    facets: 
       - languageCode
