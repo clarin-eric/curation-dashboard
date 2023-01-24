@@ -54,7 +54,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
       profileReportCache.getProfileReport(new CMDProfile(report.profileHeaderReport.getSchemaLocation(), report.profileHeaderReport.getCmdiVersion())).facetReport.coverages
          .forEach(profileCoverage -> report.facetReport.coverages.add(new Coverage(profileCoverage.name, profileCoverage.coveredByProfile)));
       
-      
+      report.facetReport.numOfFacets = report.facetReport.coverages.size();
 
       // parse instance
       CMDXPathService xmlService;
