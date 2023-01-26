@@ -77,7 +77,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          }
          else {
             report.instanceHeaderReport.score+=2; // Availability if mdProfile and CRResidence
-            report.details.add(new Detail(Severity.ERROR, "header", "Attribute schemaLocation is missing. " + report.instanceHeaderReport.mdProfile + " is assumed"));
+            report.details.add(new Detail(Severity.WARNING, "header", "Attribute schemaLocation is missing. " + report.instanceHeaderReport.mdProfile + " is assumed"));
           
          }
       }
@@ -89,12 +89,12 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
             report.instanceHeaderReport.score++; // CRResidence
          }
          else {
-            report.details.add(new Detail(Severity.ERROR, "header", "Schema not registered"));
+            report.details.add(new Detail(Severity.WARNING, "header", "Schema not registered"));
          }
          
          if (report.instanceHeaderReport.mdProfile == null) {
             
-            report.details.add(new Detail(Severity.ERROR, "header", "Value for CMD/Header/MdProfile is missing or invalid"));
+            report.details.add(new Detail(Severity.WARNING, "header", "Value for CMD/Header/MdProfile is missing or invalid"));
          
          }
          else {
@@ -128,7 +128,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          report.instanceHeaderReport.score++;
       }
       else {
-         report.details.add(new Detail(Severity.ERROR, "header", "Value for CMD/Header/MdCollectionDisplayName is missing"));
+         report.details.add(new Detail(Severity.WARNING, "header", "Value for CMD/Header/MdCollectionDisplayName is missing"));
       }
 
 
@@ -136,7 +136,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          report.instanceHeaderReport.score++;
       }
       else {
-         report.details.add(new Detail(Severity.ERROR, "header", "Value for CMD/Header/MdSelfLink is missing"));
+         report.details.add(new Detail(Severity.WARNING, "header", "Value for CMD/Header/MdSelfLink is missing"));
       }
       /*
        * else if ("collection".equalsIgnoreCase(conf.getMode()) ||
