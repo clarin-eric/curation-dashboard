@@ -73,7 +73,7 @@ public class UrlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
          
          resourceStream.forEach(resource -> {
             
-            if(PIDUtils.isPid(resource.getResourceName())) {
+            if(PIDUtils.isActionableLink(resource.getResourceName()) || PIDUtils.isPid(resource.getResourceName())) {
             
                uService.save(
                      client, 
