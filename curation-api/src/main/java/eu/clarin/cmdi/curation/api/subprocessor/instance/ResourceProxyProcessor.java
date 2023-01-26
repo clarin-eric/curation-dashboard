@@ -48,16 +48,18 @@ public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CM
 
       resources.forEach(resource -> {
          if (resource.getResourceName() != null && !resource.getResourceName().isEmpty()) {
-            report.resProxyReport.numOfResProxiesWithReference++;
             
             if(!PIDUtils.isActionableLink(resource.getResourceName()) && !PIDUtils.isPid(resource.getResourceName())) {
                report.resProxyReport.invalidReferences.add(resource.getResourceName());
             }
+            else {
+               report.resProxyReport.numOfResProxiesWithReference++;
+               
+               if (resource.getMimeType() != null && !resource.getMimeType().isEmpty()) {
+                  report.resProxyReport.numOfResourcesWithMime++;
+               }               
+            }
          }
-         if (resource.getMimeType() != null && !resource.getMimeType().isEmpty()) {
-            report.resProxyReport.numOfResourcesWithMime++;
-         }
-
          report.resProxyReport.numOfResProxies++;
       });
    }
