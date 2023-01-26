@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import eu.clarin.cmdi.curation.api.report.AggregationReport;
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
-import eu.clarin.cmdi.curation.api.report.Issue.Severity;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport.Coverage;
 import lombok.NoArgsConstructor;
