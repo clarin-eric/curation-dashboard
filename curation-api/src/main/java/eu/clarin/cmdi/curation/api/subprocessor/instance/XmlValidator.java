@@ -157,8 +157,9 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
             this.instanceReport.xmlPopulationReport.numOfXMLSimpleElements++;
             if (!elemWithValue) {// does it have a value
                this.instanceReport.xmlPopulationReport.numOfXMLEmptyElements++;
-               String msg = "Empty element <" + qName + "> was found on line " + locator.getLineNumber();
-               this.instanceReport.details.add(new Detail(Severity.WARNING, "xml-validation", msg));
+               // deactivating warning until we made a decision on the subject
+               //String msg = "Empty element <" + qName + "> was found on line " + locator.getLineNumber();
+               //this.instanceReport.details.add(new Detail(Severity.WARNING, "xml-validation", msg));
             }
          }
 
