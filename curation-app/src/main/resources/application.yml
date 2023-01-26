@@ -21,7 +21,7 @@ spring:
         location: ${java.io.tmpdir}  
 curation:
    pph-service:
-      xsd_cache: ${java.io.tmp}/curation/xsd_cache
+      xsd_cache: ${java.io.tmpdir}/curation/xsd_cache
       restApi: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
       query: "?registrySpace=published&status=production&status=development&&status=deprecated"
    ccr-service:
