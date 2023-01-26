@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
-import eu.clarin.cmdi.curation.api.report.Issue;
-import eu.clarin.cmdi.curation.api.report.Issue.Severity;
+import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport.Coverage;
@@ -65,7 +65,7 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
       catch (NoProfileCacheEntryException e) {
          
          log.debug("no ParsedProfile for profile id '{}'", header.getId());
-         report.issues.add(new Issue(Severity.FATAL,"facet" , "no ParsedProfile for profile id " + header.getId()));
+         report.issues.add(new Detail(Severity.FATAL,"facet" , "no ParsedProfile for profile id " + header.getId()));
 
       }
       report.facetReport.percProfileCoverage = (double) report.facetReport.numOfFacetsCoveredByProfile/report.facetReport.numOfFacets;

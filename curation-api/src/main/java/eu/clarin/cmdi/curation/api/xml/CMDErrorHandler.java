@@ -4,8 +4,8 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import eu.clarin.cmdi.curation.api.report.Issue;
-import eu.clarin.cmdi.curation.api.report.Issue.Severity;
+import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 
 /**
@@ -40,6 +40,6 @@ public class CMDErrorHandler implements ErrorHandler {
 	}
 
 	private void addMessage(Severity lvl, int line, int col, String message) {
-		report.issues.add(new Issue(lvl, "xml-validation", "line: " + line + ", col: " + col + " - " + message));
+		report.details.add(new Detail(lvl, "xml-validation", "line: " + line + ", col: " + col + " - " + message));
 	}
 }

@@ -8,7 +8,7 @@ import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
-import eu.clarin.cmdi.curation.api.report.collection.CollectionReport.OriginIssue;
+import eu.clarin.cmdi.curation.api.report.collection.CollectionReport.RecordDetail;
 import eu.clarin.cmdi.curation.api.report.collection.sec.FacetReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.api.report.collection.sec.HeaderReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Statistics;
@@ -134,8 +134,8 @@ public class CollectionAggregator {
    
    public void addReport(CollectionReport collectionReport, CMDInstanceReport instanceReport) {
       
-     if(instanceReport.issues.size() > 0) {
-        collectionReport.issues.add(new OriginIssue(instanceReport.fileReport.location, instanceReport.issues));
+     if(instanceReport.details.size() > 0) {
+        collectionReport.recordDetails.add(new RecordDetail(instanceReport.fileReport.location, instanceReport.details));
      }
       
       if(instanceReport.isValidReport) {
@@ -294,8 +294,8 @@ public class CollectionAggregator {
          collectionReport.linkcheckerReport.avgNumOfLinks = (double) collectionReport.linkcheckerReport.totNumOfLinks/collectionReport.fileReport.numOfFiles;
          collectionReport.linkcheckerReport.avgNumOfUniqueLinks = (double) collectionReport.linkcheckerReport.totNumOfUniqueLinks/collectionReport.fileReport.numOfFiles;
          collectionReport.linkcheckerReport.avgNumOfBrokenLinks = (double) collectionReport.linkcheckerReport.avgNumOfBrokenLinks/collectionReport.fileReport.numOfFiles;
-         collectionReport.linkcheckerReport.maxRespTime = collectionReport.linkcheckerReport.statistics.stream().mapToLong(statistics -> statistics.maxRespTime).max().orElse(0);
-         collectionReport.linkcheckerReport.avgRespTime = collectionReport.linkcheckerReport.statistics.stream().mapToDouble(statistics -> statistics.avgRespTime*statistics.nonNullCount).average().orElse(0.0);
+         collectionReport.linkcheckerReport.maxRespTime = collectionReport.linkcheckerReport.statistics.stream().filter(statistics -> statistics.maxRespTime!=null).mapToLong(statistics -> statistics.maxRespTime).max().orElse(0);
+         collectionReport.linkcheckerReport.avgRespTime = collectionReport.linkcheckerReport.statistics.stream().filter(statistics -> statistics.avgRespTime != null).mapToDouble(statistics -> statistics.avgRespTime*statistics.nonNullCount).average().orElse(0.0);
       }
       
       if(collectionReport.fileReport.numOfValidFiles >0) {

@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
-import eu.clarin.cmdi.curation.api.report.Issue;
+import eu.clarin.cmdi.curation.api.report.Detail;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ComponentReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
@@ -56,7 +56,7 @@ public class CMDProfileReport implements NamedReport{
    public final Collection<CollectionUsage> collectionUsage = new ArrayList<CollectionUsage>();
    @XmlElementWrapper(name = "issues")
    @XmlElement(name = "issue")
-   public final Collection<Issue> issues = new ArrayList<Issue>();
+   public final Collection<Detail> issues = new ArrayList<Detail>();
 
 
    @Override

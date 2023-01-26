@@ -1,7 +1,7 @@
 package eu.clarin.cmdi.curation.api.report.instance;
 
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
-import eu.clarin.cmdi.curation.api.report.Issue;
+import eu.clarin.cmdi.curation.api.report.Detail;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 
 import eu.clarin.cmdi.curation.api.report.instance.sec.FileReport;
@@ -77,7 +77,7 @@ public class CMDInstanceReport implements NamedReport {
    @XmlElement(name = "facets-section")
    public InstanceFacetReport facetReport;
    @XmlElement
-   public Collection<Issue> issues = new ArrayList<Issue>();
+   public Collection<Detail> details = new ArrayList<Detail>();
 
    @Override
    public String getName() {

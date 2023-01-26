@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.CurationModule;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.report.Issue;
-import eu.clarin.cmdi.curation.api.report.Issue.Severity;
+import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
@@ -69,7 +69,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          if(report.instanceHeaderReport.mdProfile == null || !report.instanceHeaderReport.mdProfile.matches(CRServiceImpl.PROFILE_ID_FORMAT)) {
             
             log.debug("Unable to process " + instance.getPath() + ", both schema and profile are not specified or invalid");
-            report.issues.add(new Issue(Severity.FATAL, "header", "Unable to process " + instance.getPath().getFileName() + ", both schema and profile are not specified"));
+            report.details.add(new Detail(Severity.FATAL, "header", "Unable to process " + instance.getPath().getFileName() + ", both schema and profile are not specified"));
             report.isValidReport=false;
             
             return;
@@ -77,7 +77,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          }
          else {
             report.instanceHeaderReport.score+=2; // Availability if mdProfile and CRResidence
-            report.issues.add(new Issue(Severity.ERROR, "header", "Attribute schemaLocation is missing. " + report.instanceHeaderReport.mdProfile + " is assumed"));
+            report.details.add(new Detail(Severity.ERROR, "header", "Attribute schemaLocation is missing. " + report.instanceHeaderReport.mdProfile + " is assumed"));
           
          }
       }
@@ -89,12 +89,12 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
             report.instanceHeaderReport.score++; // CRResidence
          }
          else {
-            report.issues.add(new Issue(Severity.ERROR, "header", "Schema not registered"));
+            report.details.add(new Detail(Severity.ERROR, "header", "Schema not registered"));
          }
          
          if (report.instanceHeaderReport.mdProfile == null) {
             
-            report.issues.add(new Issue(Severity.ERROR, "header", "Value for CMD/Header/MdProfile is missing or invalid"));
+            report.details.add(new Detail(Severity.ERROR, "header", "Value for CMD/Header/MdProfile is missing or invalid"));
          
          }
          else {
@@ -107,14 +107,14 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
                
                if(!report.instanceHeaderReport.mdProfile.equals(profileIdFromSchema)) {
 
-                  report.issues.add(new Issue(Severity.ERROR, "header", "ProfileId from CMD/Header/MdProfile: " + report.instanceHeaderReport.mdProfile
+                  report.details.add(new Detail(Severity.ERROR, "header", "ProfileId from CMD/Header/MdProfile: " + report.instanceHeaderReport.mdProfile
                         + " and from schemaLocation: " + profileIdFromSchema + " must match!"));
 
                }          
             }           
             else {
 
-               report.issues.add(new Issue(Severity.ERROR, "header",
+               report.details.add(new Detail(Severity.ERROR, "header",
                      "Format for value in the element /cmd:CMD/cmd:Header/cmd:MdProfile must be: clarin.eu:cr1:p_xxxxxxxxxxxxx!"));
             
             }
@@ -128,7 +128,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          report.instanceHeaderReport.score++;
       }
       else {
-         report.issues.add(new Issue(Severity.ERROR, "header", "Value for CMD/Header/MdCollectionDisplayName is missing"));
+         report.details.add(new Detail(Severity.ERROR, "header", "Value for CMD/Header/MdCollectionDisplayName is missing"));
       }
 
 
@@ -136,7 +136,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          report.instanceHeaderReport.score++;
       }
       else {
-         report.issues.add(new Issue(Severity.ERROR, "header", "Value for CMD/Header/MdSelfLink is missing"));
+         report.details.add(new Detail(Severity.ERROR, "header", "Value for CMD/Header/MdSelfLink is missing"));
       }
       /*
        * else if ("collection".equalsIgnoreCase(conf.getMode()) ||
@@ -168,7 +168,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
       }
       catch (MalformedURLException e) {
          log.error("schemaLocation '{}' not an URL", schemaLocation);
-         report.issues.add(new Issue(Severity.FATAL, "header", "no valid schemaLocation"));
+         report.details.add(new Detail(Severity.FATAL, "header", "no valid schemaLocation"));
          report.isValidReport=false;
          return;
       }

@@ -1,8 +1,8 @@
 package eu.clarin.cmdi.curation.api.subprocessor.profile;
 
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
-import eu.clarin.cmdi.curation.api.report.Issue;
-import eu.clarin.cmdi.curation.api.report.Issue.Severity;
+import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
@@ -29,7 +29,7 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
 
       if (!report.headerReport.getProfileHeader().isPublic()) {
          log.debug("profile {} not public", profile.getSchemaLocation());
-         report.issues.add((new Issue(Severity.WARNING,"header" , "Profile is not public")));
+         report.issues.add((new Detail(Severity.WARNING,"header" , "Profile is not public")));
       }
       else {
          report.headerReport.score = 1;
@@ -39,13 +39,13 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
       pphService.getProfileHeaders().stream()
             .filter(profileHeader -> profileHeader.getName().equals(report.headerReport.getName())
                   && !profileHeader.getId().equals(report.headerReport.getId()))
-            .findAny().ifPresent(profileReport -> report.issues.add(new Issue(Severity.WARNING,"header",
+            .findAny().ifPresent(profileReport -> report.issues.add(new Detail(Severity.WARNING,"header",
                   "The name: " + report.headerReport.getName() + " of the profile is not unique")));
 
       pphService.getProfileHeaders().stream()
             .filter(profileHeader -> profileHeader.getDescription().equals(report.headerReport.getDescription())
                   && !profileHeader.getId().equals(report.headerReport.getId()))
-            .findAny().ifPresent(profileReport -> report.issues.add(new Issue(Severity.WARNING,"header",
+            .findAny().ifPresent(profileReport -> report.issues.add(new Detail(Severity.WARNING,"header",
                   "The description: " + report.headerReport.getDescription() + " of the profile is not unique")));
 
    }

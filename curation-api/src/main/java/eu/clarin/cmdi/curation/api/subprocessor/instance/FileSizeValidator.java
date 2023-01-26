@@ -3,8 +3,8 @@ package eu.clarin.cmdi.curation.api.subprocessor.instance;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.instance_parser.InstanceParser;
-import eu.clarin.cmdi.curation.api.report.Issue;
-import eu.clarin.cmdi.curation.api.report.Issue.Severity;
+import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.FileReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
@@ -137,7 +137,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
             
             log.debug("can't transfrom input file '{}'", instance.getPath());
             
-            report.issues.add(new Issue(Severity.FATAL, "file", "can't transform input file '" + instance.getPath().getFileName() + "'"));
+            report.details.add(new Detail(Severity.FATAL, "file", "can't transform input file '" + instance.getPath().getFileName() + "'"));
             report.isValidReport=false;
             
             return;
@@ -145,7 +145,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
          }
          
 
-         report.issues.add(new Issue(Severity.INFO, "file", "tranformed cmdi version 1.1 into version 1.2"));
+         report.details.add(new Detail(Severity.INFO, "file", "tranformed cmdi version 1.1 into version 1.2"));
 
          instance.setPath(newPath);
          try {
@@ -184,7 +184,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
          
          log.debug("file '{}' has a size of {} bytes which exceeds the limit of {}", instance.getPath(), report.fileReport.size, conf.getMaxFileSize());
          
-         report.issues.add(new Issue(Severity.FATAL,"file" , "the file size exceeds the limit allowed (" + conf.getMaxFileSize()+ "B)"));
+         report.details.add(new Detail(Severity.FATAL,"file" , "the file size exceeds the limit allowed (" + conf.getMaxFileSize()+ "B)"));
          
          return;
 
@@ -198,7 +198,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
       catch (Exception e) {
 
          log.debug("can't create CMDData object from file '{}'", instance.getPath());
-         report.issues.add(new Issue(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
+         report.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
          
          return;
          
@@ -219,7 +219,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
          catch (TransformerException e) {
             
             log.error("can't transform CMD instance file '{}'", instance.getPath());
-            report.issues.add(new Issue(Severity.FATAL, "file", "can't transform CMD instance file '" + instance.getPath().getFileName()));
+            report.details.add(new Detail(Severity.FATAL, "file", "can't transform CMD instance file '" + instance.getPath().getFileName()));
             
             return;
          

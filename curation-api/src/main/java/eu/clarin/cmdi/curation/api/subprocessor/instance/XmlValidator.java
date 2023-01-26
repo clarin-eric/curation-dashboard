@@ -17,8 +17,8 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.report.Issue;
-import eu.clarin.cmdi.curation.api.report.Issue.Severity;
+import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport;
@@ -48,13 +48,13 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       catch (NoProfileCacheEntryException e) {
 
          log.error("no ProfileCacheEntry for profile id '{}'", report.profileHeaderReport.getId());
-         report.issues.add(new Issue(Severity.FATAL, "xml-validation", "no ProfileCacheEntry for profile id '" + report.profileHeaderReport.getId() + "'"));
+         report.details.add(new Detail(Severity.FATAL, "xml-validation", "no ProfileCacheEntry for profile id '" + report.profileHeaderReport.getId() + "'"));
          report.isValidReport=false;
          
          return;
       }
       
-      final int messageCount = report.issues.size();
+      final int messageCount = report.details.size();
 
       schemaValidator.setErrorHandler(new CMDErrorHandler(report));
       schemaValidator.setContentHandler(new CMDInstanceContentHandler(instance, report));
@@ -89,7 +89,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       catch (SAXException e) {
 
          log.error("can't parse input file '{}' for XML validation", instance.getPath());
-         report.issues.add(new Issue(Severity.FATAL, "xml-validation", "can't parse input file '" + instance.getPath().getFileName() + "'"));
+         report.details.add(new Detail(Severity.FATAL, "xml-validation", "can't parse input file '" + instance.getPath().getFileName() + "'"));
          report.isValidReport=false;
          
          return;
@@ -107,7 +107,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       report.xmlValidityReport = new XmlValidityReport();
 
 
-      if(report.issues.stream()
+      if(report.details.stream()
          .skip(messageCount)
          .filter(message -> (message.severity == Severity.FATAL || message.severity == Severity.ERROR))
          .count() < 3) {
@@ -158,7 +158,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
             if (!elemWithValue) {// does it have a value
                this.instanceReport.xmlPopulationReport.numOfXMLEmptyElements++;
                String msg = "Empty element <" + qName + "> was found on line " + locator.getLineNumber();
-               this.instanceReport.issues.add(new Issue(Severity.WARNING, "xml-validation", msg));
+               this.instanceReport.details.add(new Detail(Severity.WARNING, "xml-validation", msg));
             }
          }
 

@@ -59,9 +59,9 @@ public class LinkcheckerReport {
    @XmlElement
    public int totNumOfBlockedByRobotsTxtLinks;
    @XmlElement
-   public double avgRespTime;
+   public Double avgRespTime;
    @XmlElement
-   public long maxRespTime;
+   public Long maxRespTime;
    @XmlElementWrapper(name = "linkchecker")
    public Collection<Statistics> statistics = new TreeSet<Statistics>();
    
@@ -76,10 +76,10 @@ public class LinkcheckerReport {
       public long nonNullCount;
 
       @XmlAttribute
-      public double avgRespTime;
+      public Double avgRespTime;
 
       @XmlAttribute
-      public long maxRespTime;
+      public Long maxRespTime;
 
       @XmlAttribute
       public Category category;

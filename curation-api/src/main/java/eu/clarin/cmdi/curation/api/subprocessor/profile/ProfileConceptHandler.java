@@ -13,8 +13,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
-import eu.clarin.cmdi.curation.api.report.Issue;
-import eu.clarin.cmdi.curation.api.report.Issue.Severity;
+import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ComponentReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
@@ -44,7 +44,7 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
          parsedProfile = crService.getParsedProfile(report.headerReport.getProfileHeader());
       }
       catch (NoProfileCacheEntryException e) {
-         report.issues.add(new Issue(Severity.FATAL,"concept" , "can't get ParsedProfile for profile id '" + report.headerReport.getId() + "'"));
+         report.issues.add(new Detail(Severity.FATAL,"concept" , "can't get ParsedProfile for profile id '" + report.headerReport.getId() + "'"));
          log.debug("can't get ParsedProfile for profile id '{}'", report.headerReport.getId());
          return;
 

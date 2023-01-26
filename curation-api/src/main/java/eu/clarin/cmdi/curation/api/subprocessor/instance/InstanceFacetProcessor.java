@@ -18,8 +18,8 @@ import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance.InstanceNode;
-import eu.clarin.cmdi.curation.api.report.Issue;
-import eu.clarin.cmdi.curation.api.report.Issue.Severity;
+import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.Coverage;
@@ -65,7 +65,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
          log.error("can't parse file '{}' for instance facet processing", instance.getPath());
 
-         report.issues.add(new Issue(Severity.FATAL, "facet",
+         report.details.add(new Detail(Severity.FATAL, "facet",
                "can't parse file '" + instance.getPath().getFileName() + "' for instance facet processing"));
          report.isValidReport=false;
 
@@ -140,7 +140,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                catch (NavException e) {
 
                   log.debug("can't navigate in document");
-                  report.issues.add(new Issue(Severity.FATAL, "facet","can't navigate in document"));
+                  report.details.add(new Detail(Severity.FATAL, "facet","can't navigate in document"));
                }
                ap.resetXPath();
             }
@@ -205,7 +205,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                   normalizedValue = null;
                }
                if (normalizedValue != null && !normalizedValue.trim().isEmpty() && !normalizedValue.equals("--")) {
-                  report.issues.add(new Issue(Severity.INFO, "facet",
+                  report.details.add(new Detail(Severity.INFO, "facet",
                         "Normalised value for facet " + facetName + ": '" + node.value + "' into '" + normalizedValue + "'"));
                }
 

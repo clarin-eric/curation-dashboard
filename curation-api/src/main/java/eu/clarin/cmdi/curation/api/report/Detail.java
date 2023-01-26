@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @XmlAccessorType(XmlAccessType.FIELD)
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
-public class Issue {
+public class Detail {
    public final Severity severity;
    public final String segment;
    public final String message;
