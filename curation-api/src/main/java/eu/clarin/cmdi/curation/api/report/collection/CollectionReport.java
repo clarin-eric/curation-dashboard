@@ -33,7 +33,11 @@ import java.util.Collection;
 public class CollectionReport implements NamedReport{
    
    @XmlAttribute
-   public double aggregatedScore = 0.0;
+   public double aggregatedScore;
+   @XmlAttribute
+   public double aggregatedMaxScore;
+   @XmlAttribute
+   public double scorePercentage;
    @XmlAttribute
    public double avgScore;
    @XmlAttribute
@@ -42,8 +46,7 @@ public class CollectionReport implements NamedReport{
    public double insMinScore = Double.MAX_VALUE;
    @XmlAttribute
    public double insMaxScore = 15.0;
-   @XmlAttribute(name = "score-percentage")
-   public double scorePercentage;
+
    @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();
