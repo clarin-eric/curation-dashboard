@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:template match="/profile-report">
+	<xsl:template match="/cmdProfileReport">
 		<xsl:variable name="schemaLoc">
-			<xsl:value-of select="./header-section/schemaLocation" />
+			<xsl:value-of select="./headerReport/schemaLocation" />
 		</xsl:variable>
 		<html>
 			<head>
 			</head>
 			<body>
-				<div class="creation-time">
+				<div class="creationTime">
 					created at
-					<xsl:value-of select="./@creation-time" />
+					<xsl:value-of select="./@creationTime" />
 				</div>
 				<div class="download">
 					download as
@@ -19,7 +19,7 @@
 						<xsl:attribute name="href">
                    <xsl:text>/download/xml/profiles/</xsl:text>
                    <xsl:value-of
-							select="translate(./header-section/id,'.:','__')" />
+							select="translate(./headerReport/id,'.:','__')" />
                 </xsl:attribute>
 						<xsl:text>xml</xsl:text>
 					</a>
@@ -28,30 +28,39 @@
 						<xsl:attribute name="href">
                    <xsl:text>/download/json/profiles/</xsl:text>
                    <xsl:value-of
-							select="translate(./header-section/id,'.:','__')" />
+							select="translate(./headerReport/id,'.:','__')" />
                 </xsl:attribute>
 						<xsl:text>json</xsl:text>
 					</a>
 				</div>
 				<div class="clear" />
 				<h1>CMD Profile Report</h1>
+           <b>
+               Score: 
+               <xsl:value-of select="format-number(./@score,'0.00')" /> / <xsl:value-of select="format-number(./@maxScore,'0.00')" />
+            </b>
+				<h2>Header Section</h2>
+           <b>
+               Score: 
+               <xsl:value-of select="format-number(./headerReport/@score,'0.00')" /> / <xsl:value-of select="format-number(./headerReport/@maxScore,'0.00')" />
+            </b>
 				<table class="reportTable">
 					<tr>
 						<th>Name</th>
 						<td>
-							<xsl:value-of select="./header-section/name" />
+							<xsl:value-of select="./headerReport/name" />
 						</td>
 					</tr>
 					<tr>
 						<th>ID</th>
 						<td>
-							<xsl:value-of select="./header-section/id" />
+							<xsl:value-of select="./headerReport/id" />
 						</td>
 					</tr>
 					<tr>
 						<th>Description</th>
 						<td>
-							<xsl:value-of select="./header-section/description" />
+							<xsl:value-of select="./headerReport/description" />
 						</td>
 					</tr>
 					<tr>
@@ -75,27 +84,17 @@
 					<tr>
 						<th>CMDI Version</th>
 						<td>
-							<xsl:value-of select="./header-section/cmdiVersion" />
+							<xsl:value-of select="./headerReport/cmdiVersion" />
 						</td>
 					</tr>
-					<xsl:if test="./header-section/status">
+					<xsl:if test="./headerReport/status">
 						<tr>
 							<th>Status</th>
 							<td>
-								<xsl:value-of select="./header-section/status" />
+								<xsl:value-of select="./headerReport/status" />
 							</td>
 						</tr>
 					</xsl:if>
-					             <tfoot>
-                  <tr>
-                     <td colspan="2">
-                        <b>
-                           Score: 
-                           <xsl:value-of select="format-number(./header-section/@score,'0.00')" /> / <xsl:value-of select="format-number(./header-section/@max-score,'0.00')" />
-                        </b>
-                     </td>
-                  </tr>
-               </tfoot>
 				</table>
 				<hr />
 				<details>
@@ -107,9 +106,13 @@
 						In other words, if the profile defines an element for the facet.
 					</p>
 				</details>
-				<p>Number of facets: <xsl:value-of select="./facets-section/@numOfFacets" /></p>
-				<p>Number of facets covered by profile: <xsl:value-of select="./facets-section/@numOfFacetsCoveredByProfile" /></p>
-				<p>Percentage of faccets covered by profile: <xsl:value-of select="format-number(./facets-section/@percProfileCoverage,'0.0%')" /></p>
+            <b>
+               Score: 
+               <xsl:value-of select="format-number(./facetReport/@score,'0.00')" /> / <xsl:value-of select="format-number(./facetReport/@maxScore,'0.00')" />
+            </b>
+				<p>Number of facets: <xsl:value-of select="./facetReport/@numOfFacets" /></p>
+				<p>Number of facets covered by profile: <xsl:value-of select="./facetReport/@numOfFacetsCoveredByProfile" /></p>
+				<p>Percentage of faccets covered by profile: <xsl:value-of select="format-number(./facetReport/@percProfileCoverage,'0.0%')" /></p>
 				<table class="reportTable">
 					<thead>
 						<tr>
@@ -117,19 +120,9 @@
 							<th scope="col">Covered</th>
 						</tr>
 					</thead>
-					<tfoot>
-						<tr>
-							<td colspan="2">
-								<b>
-								   Score: 
-								   <xsl:value-of select="format-number(./facets-section/@score,'0.00')" /> / <xsl:value-of select="format-number(./facets-section/@max-score,'0.00')" />
-								</b>
-							</td>
-						</tr>
-					</tfoot>
 					<tbody>
 						<xsl:for-each
-							select="./facets-section/coverage/facet">
+							select="./facetReport/coverage/facet">
 							<xsl:sort select="./@coveredByProfile"
 								order="descending" />
 							<tr>
@@ -175,12 +168,12 @@
 						</tr>
 					</thead>
 					<tbody>
-						<xsl:if test="count(./usage-section/collection)=0">
+						<xsl:if test="count(./collectionUsage/collection)=0">
 							<tr>
 								<td colspan="2">profile not used</td>
 							</tr>
 						</xsl:if>
-						<xsl:for-each select="./usage-section/collection">
+						<xsl:for-each select="./collectionUsage/collection">
 							<tr>
 								<td>
 									<xsl:value-of select="./@collectionName" />
@@ -207,9 +200,9 @@
 						, please.
 					</p>
 				</details>
-				<p>Total number of components: <xsl:value-of select="./cmd-components-section/@total" /></p>
-				<p>Number of unique components: <xsl:value-of select="./cmd-components-section/@unique" /></p>
-				<p>Number of required components: <xsl:value-of select="./cmd-components-section/@required" /></p>
+				<p>Total number of components: <xsl:value-of select="./componentReport/@total" /></p>
+				<p>Number of unique components: <xsl:value-of select="./componentReport/@unique" /></p>
+				<p>Number of required components: <xsl:value-of select="./componentReport/@required" /></p>
 
 				<table class="reportTable">
 					<thead>
@@ -221,7 +214,7 @@
 					</thead>
 					<tbody>
 						<xsl:for-each
-							select="./cmd-components-section/component">
+							select="./componentReport/component">
 							<tr>
 								<xsl:variable name="href">
 									http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/components/
@@ -256,24 +249,28 @@
 						, please.
 					</p>
 				</details>
+				<b>
+               Score: 
+               <xsl:value-of select="format-number(./conceptReport/@score,'0.00')" /> / <xsl:value-of select="format-number(./conceptReport/@maxScore,'0.00')" />
+            </b>
 				<p>
 					Total number of elements:
-					<xsl:value-of select="./cmd-concepts-section/@total" />
+					<xsl:value-of select="./conceptReport/@total" />
 				</p>
 				<p>
 					Number of required elements:
 					<xsl:value-of
-						select="./cmd-concepts-section/@required" />
+						select="./conceptReport/@required" />
 				</p>
 				<p>
 					Number of elements with specified concept:
 					<xsl:value-of
-						select="./cmd-concepts-section/@withConcept" />
+						select="./conceptReport/@withConcept" />
 				</p>
 				<p>
 					Percentage of elements with specified concept:
 					<xsl:value-of
-						select="format-number(./cmd-concepts-section/@percWithConcept,'0.0%')" />
+						select="format-number(./conceptReport/@percWithConcept,'0.0%')" />
 				</p>
 				<table class="reportTable">
 					<thead>
@@ -284,18 +281,26 @@
 						</tr>
 					</thead>
 					<tfoot>
-						<tr>
-							<td colspan="3">
-								<b>
-								   Score: 
-								   <xsl:value-of select="format-number(./cmd-concepts-section/@score,'0.00')" /> / <xsl:value-of select="format-number(./cmd-concepts-section/@max-score,'0.00')" />
-								</b>
-							</td>
-						</tr>
-					</tfoot>
+                  <tr>
+                     <td colspan="3">
+                        <b>
+                           Total:
+                           <xsl:value-of
+                              select="./conceptReport/@total" />
+                           Unique:
+                           <xsl:value-of
+                              select="./conceptReport/@unique" />
+                           Required:
+                           <xsl:value-of
+                              select="./conceptReport/@required" />
+                        </b>
+                     </td>
+                  </tr>
+               </tfoot>
+
 					<tbody>
 						<xsl:for-each
-							select="./cmd-concepts-section/concepts/concept">
+							select="./conceptReport/concepts/concept">
 							<tr>
 								<xsl:variable name="href">
 									<xsl:value-of select="./@uri" />
@@ -317,14 +322,14 @@
 				</table>
 
 
-				<xsl:if test="./score-section//issue">
+				<xsl:if test="./details//detail">
 
 					<hr />
 					<details>
 						<summary>
-							<h2>Issues</h2>
+							<h2>Details</h2>
 						</summary>
-						<p>The issues section shows the number and the kind of issues,
+						<p>The details section shows the number and the kind of details,
 							which might have an impact on the processing of the profile.</p>
 					</details>
 					<table class="reportTable">
@@ -336,65 +341,63 @@
 							</tr>
 						</thead>
 						<tbody>
-							<xsl:for-each select="./score-section/score">
+							<xsl:for-each select="./details/detail">
 								<xsl:variable name="seg">
-									<xsl:value-of select="./@segment" />
+									<xsl:value-of select="./segment" />
 								</xsl:variable>
-								<xsl:for-each select="./issue">
-									<xsl:choose>
-										<xsl:when test="@lvl = 'ERROR'">
-											<tr>
-												<td>
-													<font color="#d33d3d">
-														<xsl:copy-of select="$seg" />
-													</font>
-												</td>
-												<td>
-													<font color="#d33d3d">
-														<xsl:value-of select="./@lvl" />
-													</font>
-												</td>
-												<td>
-													<font color="#d33d3d">
-														<xsl:value-of select="./@message" />
-													</font>
-												</td>
-											</tr>
-										</xsl:when>
-										<xsl:when test="@lvl = 'WARNING'">
-											<tr>
-												<td>
-													<font color="#dbd839">
-														<xsl:copy-of select="$seg" />
-													</font>
-												</td>
-												<td>
-													<font color="#dbd839">
-														<xsl:value-of select="./@lvl" />
-													</font>
-												</td>
-												<td>
-													<font color="#dbd839">
-														<xsl:value-of select="./@message" />
-													</font>
-												</td>
-											</tr>
-										</xsl:when>
-										<xsl:otherwise>
-											<tr>
-												<td>
+								<xsl:choose>
+									<xsl:when test="./severity = 'ERROR'">
+										<tr>
+											<td>
+												<font color="#d33d3d">
 													<xsl:copy-of select="$seg" />
-												</td>
-												<td>
-													<xsl:value-of select="./@lvl" />
-												</td>
-												<td>
-													<xsl:value-of select="./@message" />
-												</td>
-											</tr>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:for-each>
+												</font>
+											</td>
+											<td>
+												<font color="#d33d3d">
+													<xsl:value-of select="./severity" />
+												</font>
+											</td>
+											<td>
+												<font color="#d33d3d">
+													<xsl:value-of select="./message" />
+												</font>
+											</td>
+										</tr>
+									</xsl:when>
+									<xsl:when test="./severity = 'WARNING'">
+										<tr>
+											<td>
+												<font color="#dbd839">
+													<xsl:copy-of select="$seg" />
+												</font>
+											</td>
+											<td>
+												<font color="#dbd839">
+													<xsl:value-of select="./severity" />
+												</font>
+											</td>
+											<td>
+												<font color="#dbd839">
+													<xsl:value-of select="./message" />
+												</font>
+											</td>
+										</tr>
+									</xsl:when>
+									<xsl:otherwise>
+										<tr>
+											<td>
+												<xsl:copy-of select="$seg" />
+											</td>
+											<td>
+												<xsl:value-of select="./severity" />
+											</td>
+											<td>
+												<xsl:value-of select="./message" />
+											</td>
+										</tr>
+									</xsl:otherwise>
+								</xsl:choose>
 							</xsl:for-each>
 						</tbody>
 					</table>
