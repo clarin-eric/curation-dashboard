@@ -54,9 +54,9 @@ public class CMDProfileReport implements NamedReport{
    @XmlElementWrapper(name = "collectionUsage")
    @XmlElement(name = "collection")
    public final Collection<CollectionUsage> collectionUsage = new ArrayList<CollectionUsage>();
-   @XmlElementWrapper(name = "issues")
-   @XmlElement(name = "issue")
-   public final Collection<Detail> issues = new ArrayList<Detail>();
+   @XmlElementWrapper(name = "details")
+   @XmlElement(name = "detail")
+   public final Collection<Detail> details = new ArrayList<Detail>();
 
 
    @Override

@@ -29,7 +29,7 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
 
       if (!report.headerReport.getProfileHeader().isPublic()) {
          log.debug("profile {} not public", profile.getSchemaLocation());
-         report.issues.add((new Detail(Severity.WARNING,"header" , "Profile is not public")));
+         report.details.add((new Detail(Severity.WARNING,"header" , "Profile is not public")));
       }
       else {
          report.headerReport.score = 1;
@@ -39,13 +39,13 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
       pphService.getProfileHeaders().stream()
             .filter(profileHeader -> profileHeader.getName().equals(report.headerReport.getName())
                   && !profileHeader.getId().equals(report.headerReport.getId()))
-            .findAny().ifPresent(profileReport -> report.issues.add(new Detail(Severity.WARNING,"header",
+            .findAny().ifPresent(profileReport -> report.details.add(new Detail(Severity.WARNING,"header",
                   "The name: " + report.headerReport.getName() + " of the profile is not unique")));
 
       pphService.getProfileHeaders().stream()
             .filter(profileHeader -> profileHeader.getDescription().equals(report.headerReport.getDescription())
                   && !profileHeader.getId().equals(report.headerReport.getId()))
-            .findAny().ifPresent(profileReport -> report.issues.add(new Detail(Severity.WARNING,"header",
+            .findAny().ifPresent(profileReport -> report.details.add(new Detail(Severity.WARNING,"header",
                   "The description: " + report.headerReport.getDescription() + " of the profile is not unique")));
 
    }
