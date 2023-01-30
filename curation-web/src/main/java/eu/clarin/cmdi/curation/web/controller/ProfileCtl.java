@@ -34,7 +34,7 @@ public class ProfileCtl {
       }
       else {
          
-         reportPath = reportPath.resolve("AllPublicProfileReport.html");
+         reportPath = reportPath.resolve("AllProfileReport.html");
       
       }
       
