@@ -42,7 +42,7 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
    @Override
    public void addReport(CMDProfileReport profileReport) {
       
-      if(!profileReport.issues.stream().anyMatch(message -> message.severity == Severity.FATAL)) {
+      if(!profileReport.details.stream().anyMatch(message -> message.severity == Severity.FATAL)) {
          this.profiles.add(new Profile(profileReport));
       }
    }
