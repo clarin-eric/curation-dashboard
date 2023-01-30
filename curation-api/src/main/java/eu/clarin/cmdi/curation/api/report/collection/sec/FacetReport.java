@@ -25,9 +25,11 @@ import lombok.RequiredArgsConstructor;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FacetReport {
    @XmlAttribute
-   public static final double maxScore = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.maxScore;
+   public double aggregatedScore;
    @XmlAttribute
-   public double aggregatedScore = 0.0;
+   public double aggregatedMaxScore;
+   @XmlAttribute
+   public double aggregatedMaxScoreValid;
    @XmlAttribute
    public double avgScore;
    @XmlAttribute

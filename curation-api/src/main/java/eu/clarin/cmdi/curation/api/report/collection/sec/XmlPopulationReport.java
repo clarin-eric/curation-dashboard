@@ -17,9 +17,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlPopulationReport {
    @XmlAttribute
-   public static final double maxScore = eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport.maxScore;
+   public double aggregatedScore;
    @XmlAttribute
-   public double aggregatedScore = 0.0;
+   public double aggregatedMaxScore;
+   @XmlAttribute
+   public double aggregatedMaxScoreValid;
    @XmlAttribute
    public double avgScore;
    @XmlAttribute

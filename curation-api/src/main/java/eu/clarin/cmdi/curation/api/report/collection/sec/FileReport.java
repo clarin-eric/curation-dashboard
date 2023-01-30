@@ -18,13 +18,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FileReport {
    @XmlAttribute
-   public static final double maxScore = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore;
+   public double aggregatedScore;
    @XmlAttribute
-   public double aggregatedScore = 0.0;
+   public double aggregatedMaxScore;
+   @XmlAttribute
+   public double aggregatedMaxScoreValid;
    @XmlAttribute
    public double avgScore;
    @XmlAttribute
-   public double avgScoreValid;
+   public double avgScoreValid; 
    @XmlElement
    public String provider;
    @XmlElement

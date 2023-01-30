@@ -25,39 +25,27 @@ import eu.clarin.linkchecker.persistence.utils.Category;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LinkcheckerReport {
    @XmlAttribute
-   public static final double maxScore = 1.0;
+   public double aggregatedScore;
    @XmlAttribute
-   public double aggregatedScore = 0.0;
+   public double aggregatedMaxScore;
+   @XmlAttribute
+   public double aggregatedMaxScoreValid;
    @XmlAttribute
    public double avgScore;
    @XmlAttribute
-   public double avgScoreValid;  
-   @XmlAttribute
-   public double score;
+   public double avgScoreValid; 
    @XmlElement
    public int totNumOfLinks;
    @XmlElement
-   public int totNumOfUniqueLinks;
-   @XmlElement
    public double avgNumOfLinks;
    @XmlElement
-   public int totNumOfCheckedLinks;
+   public int totNumOfUniqueLinks;
    @XmlElement
    public double avgNumOfUniqueLinks;
    @XmlElement
-   public int totNumOfInvalidLinks;
-   @XmlElement
-   public int totNumOfBrokenLinks;
-   @XmlElement
-   public double avgNumOfBrokenLinks;
+   public int totNumOfCheckedLinks;
    @XmlElement
    public double ratioOfValidLinks;
-   @XmlElement
-   public int totNumOfUndeterminedLinks;
-   @XmlElement
-   public int totNumOfRestrictedAccessLinks;
-   @XmlElement
-   public int totNumOfBlockedByRobotsTxtLinks;
    @XmlElement
    public Double avgRespTime;
    @XmlElement
