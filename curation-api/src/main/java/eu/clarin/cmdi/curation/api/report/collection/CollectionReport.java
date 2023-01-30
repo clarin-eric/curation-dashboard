@@ -28,34 +28,30 @@ import java.util.Collection;
  * report for one single collection
  *
  */
-@XmlRootElement(name = "collection-report")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CollectionReport implements NamedReport{
    
-   @XmlAttribute(name = "aggregated-score")
+   @XmlAttribute
    public double aggregatedScore = 0.0;
-   @XmlAttribute(name = "avg-score")
+   @XmlAttribute
    public double avgScore;
-   @XmlAttribute(name = "avg-score-valid")
+   @XmlAttribute
    public double avgScoreValid;   
-   @XmlAttribute(name = "min-score")
+   @XmlAttribute
    public double insMinScore = Double.MAX_VALUE;
-   @XmlAttribute(name = "max-score")
-   public double insMaxScore;
-   @XmlAttribute(name = "col-max-score")
-   public double maxScore;
+   @XmlAttribute
+   public double insMaxScore = 15.0;
    @XmlAttribute(name = "score-percentage")
    public double scorePercentage;
-   @XmlAttribute(name = "ins-max-score")
-   public final double maxPossibleScoreInstance = 15.0;
-   @XmlAttribute(name = "creation-time")
+   @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();
 
-   @XmlElement(name = "file-section")
+   @XmlElement
    public final FileReport fileReport = new FileReport();
 
-   @XmlElement(name = "header-section")
+   @XmlElement
    public final HeaderReport headerReport = new HeaderReport();
 
    // ResProxies
@@ -63,19 +59,19 @@ public class CollectionReport implements NamedReport{
    public final ResProxyReport resProxyReport = new ResProxyReport();
 
    // XMLPopulatedValidator
-   @XmlElement(name = "xml-populated-section")
+   @XmlElement
    public final XmlPopulationReport xmlPopulationReport = new XmlPopulationReport();;
 
    // XMLValidator
-   @XmlElement(name = "xml-validation-section")
+   @XmlElement
    public final XmlValidityReport xmlValidationReport = new XmlValidityReport();
 
    // URL
-   @XmlElement(name = "url-validation-section")
+   @XmlElement
    public final LinkcheckerReport linkcheckerReport = new LinkcheckerReport();
 
    // Facets
-   @XmlElement(name = "facet-section")
+   @XmlElement
    public final FacetReport facetReport = new FacetReport();
 
    // Invalid Files

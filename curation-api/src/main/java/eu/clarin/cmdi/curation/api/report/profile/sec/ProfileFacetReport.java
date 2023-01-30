@@ -21,10 +21,10 @@ import lombok.RequiredArgsConstructor;
 /**
  *
  */
-@XmlRootElement(name = "facets")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
 public class ProfileFacetReport {
-   @XmlAttribute(name = "max-score")
+   @XmlAttribute
    public static final double maxScore = 1.0;
    @XmlAttribute
    public double score;  

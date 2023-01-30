@@ -27,31 +27,31 @@ import lombok.RequiredArgsConstructor;
  * A selection of values from a single CMDProfileReport which will form a line
  * in a statistical overview
  */
-@XmlRootElement(name = "profile-report")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CMDProfileReport implements NamedReport{
    @XmlTransient
    public boolean isValidReport = true;
-   @XmlAttribute(name = "creation-time")
+   @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public final LocalDateTime creationTime = LocalDateTime.now();
-   @XmlAttribute(name = "max-score")
+   @XmlAttribute
    public static final double maxScore = 3.0;
    @XmlAttribute
    public double score;
 
-   @XmlElement(name = "header-section")
+   @XmlElement
    public ProfileHeaderReport headerReport;
-   @XmlElement(name = "cmd-components-section")
+   @XmlElement
    public ComponentReport componentReport;
-   @XmlElement(name = "cmd-concepts-section")
+   @XmlElement
    public ConceptReport conceptReport;
-   @XmlElement(name = "facets-section")
+   @XmlElement
    public ProfileFacetReport facetReport;
    
    
 
-   @XmlElementWrapper(name = "usage-section")
+   @XmlElementWrapper(name = "collectionUsage")
    @XmlElement(name = "collection")
    public final Collection<CollectionUsage> collectionUsage = new ArrayList<CollectionUsage>();
    @XmlElementWrapper(name = "issues")

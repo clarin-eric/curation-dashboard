@@ -26,11 +26,11 @@ import eu.clarin.linkchecker.persistence.utils.Category;
 public class LinkcheckerReport {
    @XmlAttribute
    public static final double maxScore = 1.0;
-   @XmlAttribute(name = "aggregated-score")
+   @XmlAttribute
    public double aggregatedScore = 0.0;
-   @XmlAttribute(name = "avg-score")
+   @XmlAttribute
    public double avgScore;
-   @XmlAttribute(name = "avg-score-valid")
+   @XmlAttribute
    public double avgScoreValid;  
    @XmlAttribute
    public double score;

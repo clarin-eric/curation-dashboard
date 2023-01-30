@@ -15,10 +15,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-@XmlRootElement(name = "linkchecker-report")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class AllLinkcheckerReport implements NamedReport {
-   @XmlAttribute(name = "creation-time")
+   @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();
 

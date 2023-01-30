@@ -22,10 +22,10 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 
-@XmlRootElement(name = "profiles")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AllProfileReport implements AggregationReport<CMDProfileReport>, NamedReport {
-   @XmlAttribute(name = "creation-time")
+   @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();
    @XmlElement(name = "profile")

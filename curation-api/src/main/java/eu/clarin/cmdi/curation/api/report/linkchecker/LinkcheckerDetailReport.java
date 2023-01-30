@@ -22,16 +22,16 @@ import lombok.NoArgsConstructor;
 /**
  *
  */
-@XmlRootElement(name = "linkchecker-detail-report")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LinkcheckerDetailReport implements NamedReport{
    
    @XmlAttribute(name = "provider")
    private String name; 
-   @XmlAttribute(name = "creation-time")
+   @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    private LocalDateTime creationTime = LocalDateTime.now();
-   @XmlElement(name = "category-report")
+   @XmlElement(name = "categoryReport")
    private final Collection<CategoryReport> categoryReports = new TreeSet<CategoryReport>((report1, report2) -> report1.category.compareTo(report2.category));
 
    public LinkcheckerDetailReport() {

@@ -24,57 +24,57 @@ import java.util.Collection;
  *
  */
 
-@XmlRootElement(name = "instance-report")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class CMDInstanceReport implements NamedReport {
    @XmlTransient
    public boolean isValidReport = true;
    
 
-   @XmlAttribute(name = "max-score")
+   @XmlAttribute
    public final double maxScore = 14.0;
 
-   @XmlAttribute(name = "ins-score")
+   @XmlAttribute
    public double instanceScore = 0.0;
 
-   @XmlAttribute(name = "pfl-score")
+   @XmlAttribute
    public double profileScore = 0.0;
 
-   @XmlAttribute(name = "score-percentage")
+   @XmlAttribute
    public double scorePercentage;
 
-   @XmlAttribute(name = "creation-time")
+   @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public final LocalDateTime creationTime = LocalDateTime.now();
 
    // sub reports **************************************
 
    // ProfileHeader
-   @XmlElement(name = "profile-section")
+   @XmlElement
    public ProfileHeaderReport profileHeaderReport;
    
    //InstanceHeader
-   @XmlElement(name = "instance-header-section")
+   @XmlElement
    public InstanceHeaderReport instanceHeaderReport;
 
    // file
-   @XmlElement(name = "file-section")
+   @XmlElement
    public FileReport fileReport;
 
    // ResProxy
-   @XmlElement(name = "resProxy-section")
+   @XmlElement
    public ResourceProxyReport resProxyReport;
 
    // XMLPopulatedValidator
-   @XmlElement(name = "xml-populated-section")
+   @XmlElement
    public XmlPopulationReport xmlPopulationReport;
 
    // XMLValidityValidator
-   @XmlElement(name = "xml-validation-section")
+   @XmlElement
    public XmlValidityReport xmlValidityReport;
 
    // facets
-   @XmlElement(name = "facets-section")
+   @XmlElement
    public InstanceFacetReport facetReport;
    @XmlElement
    public Collection<Detail> details = new ArrayList<Detail>();

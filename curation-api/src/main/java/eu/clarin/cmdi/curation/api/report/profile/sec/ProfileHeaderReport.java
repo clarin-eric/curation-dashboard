@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class ProfileHeaderReport {
-   @XmlAttribute(name = "max-score")
+   @XmlAttribute
    public static final double maxScore = 1.0;
    @XmlAttribute
    public double score;
