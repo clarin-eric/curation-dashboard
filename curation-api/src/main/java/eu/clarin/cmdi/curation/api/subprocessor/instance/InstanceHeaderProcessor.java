@@ -60,10 +60,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
       if(keyValuesMap.containsKey("_selfLink") && !keyValuesMap.get("_selfLink").isEmpty()) {
          report.instanceHeaderReport.mdSelfLink = keyValuesMap.get("_selfLink").get(0).getValue();
       }
-
-
-
-      
+     
       if (report.instanceHeaderReport.schemaLocation == null) { // no schemaLocation
          
          if(report.instanceHeaderReport.mdProfile == null || !report.instanceHeaderReport.mdProfile.matches(CRServiceImpl.PROFILE_ID_FORMAT)) {
@@ -121,8 +118,6 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
 
          }
       }
-      
-
 
       if (report.instanceHeaderReport.mdCollectionDisplayName != null) {
          report.instanceHeaderReport.score++;
