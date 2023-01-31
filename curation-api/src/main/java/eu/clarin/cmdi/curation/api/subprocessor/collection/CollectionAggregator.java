@@ -142,16 +142,16 @@ public class CollectionAggregator {
          
 
          
-         if (instanceReport.instanceScore > collectionReport.insMaxScore) {
-             collectionReport.insMaxScore = instanceReport.instanceScore;
+         if (instanceReport.instanceScore > collectionReport.maxScore) {
+             collectionReport.maxScore = instanceReport.instanceScore;
          }
    
-         if (instanceReport.instanceScore < collectionReport.insMinScore)
-             collectionReport.insMinScore = instanceReport.instanceScore;
+         if (instanceReport.instanceScore < collectionReport.minScore)
+             collectionReport.minScore = instanceReport.instanceScore;
    
          //file
          collectionReport.fileReport.numOfValidFiles++;
-         collectionReport.aggregatedScore+=instanceReport.fileReport.score;
+         collectionReport.fileReport.aggregatedScore+=instanceReport.fileReport.score;
          
          //header
          synchronized(this) {
@@ -164,6 +164,8 @@ public class CollectionAggregator {
                   );
          }
          
+
+         
          if(instanceReport.instanceHeaderReport.mdSelfLink != null && !instanceReport.instanceHeaderReport.mdSelfLink.isEmpty()) {
             synchronized(this) {
                if(this.mdSelfLinks.contains(instanceReport.instanceHeaderReport.mdSelfLink)) {
@@ -175,7 +177,8 @@ public class CollectionAggregator {
             }
          }
          
-         collectionReport.headerReport.aggregatedScore+= (instanceReport.profileHeaderReport.score + instanceReport.profileScore);
+         collectionReport.headerReport.aggregatedScore+=instanceReport.instanceHeaderReport.score;         
+         collectionReport.headerReport.aggregatedScore+=instanceReport.profileHeaderReport.score;
          
    
          // ResProxies
@@ -196,8 +199,8 @@ public class CollectionAggregator {
          collectionReport.xmlPopulationReport.aggregatedScore+=instanceReport.xmlPopulationReport.score;
          
          // XmlValidation
-         collectionReport.xmlValidationReport.totNumOfValidRecords+=instanceReport.xmlValidityReport.score;
-         collectionReport.xmlValidationReport.aggregatedScore+=instanceReport.xmlValidityReport.score;
+         collectionReport.xmlValidityReport.totNumOfValidRecords+=instanceReport.xmlValidityReport.score;
+         collectionReport.xmlValidityReport.aggregatedScore+=instanceReport.xmlValidityReport.score;
    
    
          // Facet
@@ -217,6 +220,8 @@ public class CollectionAggregator {
    
    private void calculateAverages(CollectionReport collectionReport) {
       //lincheckerReport
+
+      
       try (Stream<AggregatedStatus> stream = aRep.findAllByProvidergroupName(collectionReport.getName())) {
 
          stream.forEach(categoryStats -> {
@@ -226,17 +231,6 @@ public class CollectionAggregator {
             xmlStatistics.category = categoryStats.getCategory();
             xmlStatistics.count = categoryStats.getNumber();
             collectionReport.linkcheckerReport.totNumOfCheckedLinks = categoryStats.getNumber().intValue();
-
-            switch (categoryStats.getCategory()) {
-               case Invalid_URL -> collectionReport.linkcheckerReport.totNumOfInvalidLinks = categoryStats.getNumber().intValue();
-               case Broken -> collectionReport.linkcheckerReport.totNumOfBrokenLinks = categoryStats.getNumber().intValue();
-               case Undetermined -> collectionReport.linkcheckerReport.totNumOfUndeterminedLinks = categoryStats.getNumber().intValue();
-               case Restricted_Access ->
-               collectionReport.linkcheckerReport.totNumOfRestrictedAccessLinks = categoryStats.getNumber().intValue();
-               case Blocked_By_Robots_txt ->
-               collectionReport.linkcheckerReport.totNumOfBlockedByRobotsTxtLinks = categoryStats.getNumber().intValue();
-               default -> throw new IllegalArgumentException("Unexpected value: " + categoryStats.getCategory());
-            }
 
             collectionReport.linkcheckerReport.statistics.add(xmlStatistics);
          });
@@ -253,12 +247,36 @@ public class CollectionAggregator {
       
       collectionReport.linkcheckerReport.totNumOfLinks = (int) uRep.countByProvidergroupName(collectionReport.getName());
       collectionReport.linkcheckerReport.totNumOfUniqueLinks = (int) uRep.countDistinctByProvidergroupName(collectionReport.getName());
+      
       if(collectionReport.linkcheckerReport.totNumOfLinks>0) {
          collectionReport.linkcheckerReport.statistics.stream()
                .filter(statistics -> statistics.category == Category.Ok)
                .findFirst()
-               .ifPresent(statistics -> collectionReport.linkcheckerReport.ratioOfValidLinks = (collectionReport.linkcheckerReport.totNumOfLinks>0?(double) (statistics.count/collectionReport.linkcheckerReport.totNumOfLinks):1.0));
+               .ifPresent(statistics -> collectionReport.linkcheckerReport.ratioOfValidLinks = (collectionReport.linkcheckerReport.totNumOfLinks>0?(double) (statistics.count/collectionReport.linkcheckerReport.totNumOfLinks):0.0));
       }
+      
+      collectionReport.linkcheckerReport.aggregatedScore = (double) collectionReport.linkcheckerReport.ratioOfValidLinks*collectionReport.fileReport.numOfValidFiles;
+      collectionReport.linkcheckerReport.aggregatedMaxScore = (double) collectionReport.fileReport.numOfFiles;
+      collectionReport.linkcheckerReport.aggregatedMaxScoreValid = collectionReport.fileReport.numOfValidFiles;
+      collectionReport.linkcheckerReport.avgScoreValid = collectionReport.linkcheckerReport.ratioOfValidLinks;
+      
+      collectionReport.fileReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore*collectionReport.fileReport.numOfFiles;
+      collectionReport.fileReport.aggregatedMaxScoreValid = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore*collectionReport.fileReport.numOfValidFiles;
+
+      collectionReport.headerReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport.maxScore*collectionReport.fileReport.numOfFiles;
+      collectionReport.headerReport.aggregatedMaxScoreValid = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport.maxScore*collectionReport.fileReport.numOfValidFiles;      
+      
+      collectionReport.resProxyReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport.maxScore*collectionReport.fileReport.numOfFiles;
+      collectionReport.resProxyReport.aggregatedMaxScoreValid = eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport.maxScore*collectionReport.fileReport.numOfValidFiles;
+
+      collectionReport.xmlPopulationReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport.maxScore*collectionReport.fileReport.numOfFiles;
+      collectionReport.xmlPopulationReport.aggregatedMaxScoreValid = eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport.maxScore*collectionReport.fileReport.numOfValidFiles;
+
+      collectionReport.xmlValidityReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport.maxScore*collectionReport.fileReport.numOfFiles;
+      collectionReport.xmlValidityReport.aggregatedMaxScoreValid = eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport.maxScore*collectionReport.fileReport.numOfValidFiles;
+      
+      collectionReport.aggregatedMaxScore = (eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport.maxScore +1)*collectionReport.fileReport.numOfFiles;
+      collectionReport.aggregatedMaxScoreValid = (eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport.maxScore +1)*collectionReport.fileReport.numOfValidFiles;
       
       if(collectionReport.fileReport.numOfFiles >0) {
          //file
@@ -280,22 +298,23 @@ public class CollectionAggregator {
             collectionReport.xmlPopulationReport.avgRateOfPopulatedElement = (1.0 - collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements/collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements);
          }
          //XmlValidation
-         collectionReport.xmlValidationReport.avgScore = (double) (collectionReport.xmlValidationReport.aggregatedScore/collectionReport.fileReport.numOfFiles);
+         collectionReport.xmlValidityReport.avgScore = (double) (collectionReport.xmlValidityReport.aggregatedScore/collectionReport.fileReport.numOfFiles);
          
          //Facet
          collectionReport.facetReport.facets
             .forEach(facet -> facet.coverage = facet.count/collectionReport.fileReport.numOfFiles);
          
          collectionReport.facetReport.avgScore = (double) (collectionReport.facetReport.aggregatedScore/collectionReport.fileReport.numOfFiles);
-         collectionReport.facetReport.percCoverageNonZero = (double) collectionReport.facetReport.facets.stream().filter(facet -> facet.count > 0).count()/collectionReport.facetReport.facets.size();
-         
-         collectionReport.avgScore = collectionReport.aggregatedScore/collectionReport.fileReport.numOfFiles;
+         collectionReport.facetReport.percCoverageNonZero = (double) collectionReport.facetReport.facets.stream().filter(facet -> facet.count > 0).count()/collectionReport.facetReport.facets.size();         
+
          //linkchecker
          collectionReport.linkcheckerReport.avgNumOfLinks = (double) collectionReport.linkcheckerReport.totNumOfLinks/collectionReport.fileReport.numOfFiles;
          collectionReport.linkcheckerReport.avgNumOfUniqueLinks = (double) collectionReport.linkcheckerReport.totNumOfUniqueLinks/collectionReport.fileReport.numOfFiles;
-         collectionReport.linkcheckerReport.avgNumOfBrokenLinks = (double) collectionReport.linkcheckerReport.avgNumOfBrokenLinks/collectionReport.fileReport.numOfFiles;
          collectionReport.linkcheckerReport.maxRespTime = collectionReport.linkcheckerReport.statistics.stream().filter(statistics -> statistics.maxRespTime!=null).mapToLong(statistics -> statistics.maxRespTime).max().orElse(0);
          collectionReport.linkcheckerReport.avgRespTime = collectionReport.linkcheckerReport.statistics.stream().filter(statistics -> statistics.avgRespTime != null).mapToDouble(statistics -> statistics.avgRespTime*statistics.nonNullCount).average().orElse(0.0);
+      
+         collectionReport.avgScore = collectionReport.aggregatedScore/collectionReport.fileReport.numOfFiles;
+         collectionReport.scorePercentage = collectionReport.aggregatedScore / collectionReport.aggregatedMaxScore;
       }
       
       if(collectionReport.fileReport.numOfValidFiles >0) {
@@ -308,7 +327,7 @@ public class CollectionAggregator {
          //xmlpopulation
          collectionReport.xmlPopulationReport.avgScoreValid = (double) (collectionReport.xmlPopulationReport.aggregatedScore/collectionReport.fileReport.numOfValidFiles);
          //xmlvalidation
-         collectionReport.xmlValidationReport.avgScoreValid = (double) (collectionReport.xmlValidationReport.aggregatedScore/collectionReport.fileReport.numOfValidFiles);
+         collectionReport.xmlValidityReport.avgScoreValid = (double) (collectionReport.xmlValidityReport.aggregatedScore/collectionReport.fileReport.numOfValidFiles);
          //facet
          collectionReport.facetReport.avgScoreValid = (double) (collectionReport.facetReport.aggregatedScore/collectionReport.fileReport.numOfValidFiles);
          
