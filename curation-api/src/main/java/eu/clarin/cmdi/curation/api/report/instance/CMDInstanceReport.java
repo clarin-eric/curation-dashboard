@@ -10,6 +10,7 @@ import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport;
+import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
 
 import javax.xml.bind.annotation.*;
@@ -32,7 +33,13 @@ public class CMDInstanceReport implements NamedReport {
    
 
    @XmlAttribute
-   public final double maxScore = 14.0;
+   public static final double maxScore = 
+      CMDProfileReport.maxScore
+      + FileReport.maxScore 
+      + InstanceHeaderReport.maxScore 
+      + ResourceProxyReport.maxScore 
+      + XmlPopulationReport.maxScore 
+      + XmlValidityReport.maxScore;
 
    @XmlAttribute
    public double instanceScore = 0.0;
