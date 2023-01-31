@@ -15,14 +15,14 @@
 
 	</xsl:function>
 	<xsl:output method="html" indent="yes"></xsl:output>
-	<xsl:template match="/profiles">
+	<xsl:template match="/allProfileReport">
 		<html>
 			<body>
 				<div class="creation-time">
 					created at
-					<xsl:value-of select="./@creation-time" />
+					<xsl:value-of select="./@creationTime" />
 				</div>
-				<div class="download">download as <a href="/download/xml/profiles/ProfilesReport">xml</a><xsl:text> </xsl:text><a href="/download/json/profiles/ProfilesReport">json</a><xsl:text> </xsl:text><a href="/download/tsv/profiles/ProfilesReport">tsv</a></div>
+				<div class="download">download as <a href="/download/profile/AllProfileReport">xml</a><xsl:text> </xsl:text><a href="/download/profile/AllProfileReport?format=json">json</a><xsl:text> </xsl:text><a href="/download/profile/AllProfileReport?format=tsv">tsv</a></div>
 				<div class="clear" />
 				<table id="profiles" class="display text-nowrap" width="100%">
 					<thead>
@@ -76,16 +76,16 @@
 										select="format-number(facetCoverage,'0.00%')"></xsl:value-of>
 								</td>
 
-								<xsl:for-each select="facets/facet">
+								<xsl:for-each select="./facets/facet">
 									<xsl:choose>
-										<xsl:when test="@covered = 'true'">
+										<xsl:when test="@coveredByProfile = 'true'">
 											<td class="facetCovered">
-												<xsl:value-of select="@covered"></xsl:value-of>
+												<xsl:value-of select="@coveredByProfile"></xsl:value-of>
 											</td>
 										</xsl:when>
 										<xsl:otherwise>
 											<td class="facetNotCovered">
-												<xsl:value-of select="@covered"></xsl:value-of>
+												<xsl:value-of select="@coveredByProfile"></xsl:value-of>
 											</td>
 										</xsl:otherwise>
 									</xsl:choose>
