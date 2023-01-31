@@ -37,15 +37,19 @@ public class CollectionReport implements NamedReport{
    @XmlAttribute
    public double aggregatedMaxScore;
    @XmlAttribute
+   public double aggregatedMaxScoreValid;
+   @XmlAttribute
    public double scorePercentage;
    @XmlAttribute
    public double avgScore;
    @XmlAttribute
    public double avgScoreValid;   
    @XmlAttribute
-   public double insMinScore = Double.MAX_VALUE;
+   public double minScore = Double.MAX_VALUE;
    @XmlAttribute
-   public double insMaxScore = 15.0;
+   public double maxScore = Double.MAX_VALUE;
+   @XmlAttribute
+   public double insMaxScore = eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport.maxScore +1;
 
    @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
@@ -58,7 +62,6 @@ public class CollectionReport implements NamedReport{
    public final HeaderReport headerReport = new HeaderReport();
 
    // ResProxies
-   @XmlElement(name = "resProxy-section")
    public final ResProxyReport resProxyReport = new ResProxyReport();
 
    // XMLPopulatedValidator
@@ -67,7 +70,7 @@ public class CollectionReport implements NamedReport{
 
    // XMLValidator
    @XmlElement
-   public final XmlValidityReport xmlValidationReport = new XmlValidityReport();
+   public final XmlValidityReport xmlValidityReport = new XmlValidityReport();
 
    // URL
    @XmlElement
