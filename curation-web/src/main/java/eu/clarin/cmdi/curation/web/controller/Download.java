@@ -35,10 +35,10 @@ public class Download {
    @Autowired
    StatusRepository sRep;
 
-   @GetMapping("/{curationEntityType: profile|collection|linkchecker}/{reportName}")
+   @GetMapping("/{curationEntityType}/{reportName}")
    public ResponseEntity<StreamingResponseBody> getFile(@PathVariable("curationEntityType") String curationEntityType,
          @PathVariable("reportName") String reportName,
-         @RequestParam(value = "contentType", required = false) String contentType) {
+         @RequestParam(value = "format", required = false) String format) {
 
       java.nio.file.Path xmlPath = conf.getDirectory().getOut().resolve("xml").resolve(curationEntityType)
             .resolve(reportName + ".xml");
@@ -51,10 +51,10 @@ public class Download {
 
       StreamingResponseBody stream = outputStream -> {
 
-         if ("tsv".equalsIgnoreCase(contentType) || "json".equalsIgnoreCase(contentType)) {
+         if ("tsv".equalsIgnoreCase(format) || "json".equalsIgnoreCase(format)) {
 
-            String xslFileName = "tsv".equalsIgnoreCase(contentType)
-                  ? "/xslt/" + reportName + "2" + contentType.toUpperCase() + ".xsl"
+            String xslFileName = "tsv".equalsIgnoreCase(format)
+                  ? "/xslt/" + reportName + "2" + format.toUpperCase() + ".xsl"
                   : "/xslt/XML2JSON.xsl";
             TransformerFactory factory = TransformerFactory.newInstance();
 
@@ -67,7 +67,7 @@ public class Download {
             catch (TransformerException e) {
 
                throw new RuntimeException(
-                     "can't create output in format '" + contentType + "' - please download as xml", e);
+                     "can't create output in format '" + format + "' - please download as xml", e);
 
             }
          }
@@ -88,7 +88,6 @@ public class Download {
                throw new RuntimeException("internal error - please contact Clarin");
             
             }
-
          }
       };
       
