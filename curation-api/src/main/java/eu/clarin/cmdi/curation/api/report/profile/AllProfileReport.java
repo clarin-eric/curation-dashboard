@@ -52,8 +52,8 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
    public static class Profile {
-      
-      public final CMDProfileReport report;
+
+      private final CMDProfileReport report;
 
       @XmlAttribute
       public String getId() {
