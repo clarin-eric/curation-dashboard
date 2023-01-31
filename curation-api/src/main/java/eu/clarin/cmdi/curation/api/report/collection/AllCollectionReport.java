@@ -91,7 +91,7 @@ public class AllCollectionReport implements NamedReport {
          this.ratioOfValidLinks = report.linkcheckerReport.ratioOfValidLinks;
          this.avgNumOfResProxies = report.resProxyReport.avgNumOfResProxies;
          this.numOfResProxies = report.resProxyReport.totNumOfResProxies;
-         this.ratioOfValidRecords = report.xmlValidationReport.avgScore;
+         this.ratioOfValidRecords = report.xmlValidityReport.avgScore;
          this.avgNumOfEmptyXMLElements = report.xmlPopulationReport.avgNumOfXMLEmptyElements;
          this.avgFacetCoverage = report.facetReport.avgScore;
 
