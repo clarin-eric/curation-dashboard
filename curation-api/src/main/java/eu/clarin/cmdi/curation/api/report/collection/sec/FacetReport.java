@@ -52,7 +52,7 @@ public class FacetReport {
       @XmlAttribute
       public int count; // num of records covering it
       @XmlAttribute
-      public double coverage;
+      public double avgCoverage;
 
    }
 }
