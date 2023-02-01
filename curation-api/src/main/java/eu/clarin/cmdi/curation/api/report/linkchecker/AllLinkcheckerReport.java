@@ -16,7 +16,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class AllLinkcheckerReport implements NamedReport {
    @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
@@ -102,29 +102,27 @@ public class AllLinkcheckerReport implements NamedReport {
          this.statistics = new TreeMap<Category, Statistics>();
       }
       
-      public void addStatistics(Statistics statisticsObj) {
-         if(this.statistics.containsKey(statisticsObj.category)) {
-            Statistics s = this.statistics.get(statisticsObj.category);
+      public void addStatistics(Statistics additionalStatistics) {
+         
+         Statistics statistics = this.statistics
+            .computeIfAbsent(additionalStatistics.category, k -> new Statistics(k));
+
             
-            if(statisticsObj.avgRespTime > 0) {
-               s.avgRespTime =
-                     (s.avgRespTime * s.nonNullCount + statisticsObj.avgRespTime * statisticsObj.count)
-                     / (s.nonNullCount + statisticsObj.count);
-               s.nonNullCount += statisticsObj.count;
+         if(additionalStatistics.avgRespTime != null) {
+            if(statistics.avgRespTime != null) {
+               statistics.avgRespTime =
+                     (statistics.avgRespTime * statistics.nonNullCount + additionalStatistics.avgRespTime * additionalStatistics.count)
+                     / (statistics.nonNullCount + additionalStatistics.count);
             }
-            s.count += statisticsObj.count;
-            
-            if(s.maxRespTime < statisticsObj.maxRespTime) {
-               s.maxRespTime = statisticsObj.maxRespTime;
+            else {
+               statistics.avgRespTime = additionalStatistics.avgRespTime;
             }
+            statistics.nonNullCount += additionalStatistics.count;
          }
-         else {
-            this.statistics.put(statisticsObj.category, new Statistics() {{
-                  this.category = statisticsObj.category;
-                  this.count = statisticsObj.count;
-                  this.avgRespTime = statisticsObj.avgRespTime;
-                  this.maxRespTime = statisticsObj.maxRespTime;
-               }});
+         statistics.count += additionalStatistics.count;
+         
+         if(statistics.maxRespTime != null && additionalStatistics.maxRespTime != null && statistics.maxRespTime < additionalStatistics.maxRespTime) {
+            statistics.maxRespTime = additionalStatistics.maxRespTime;
          }
       }
    }
