@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import eu.clarin.linkchecker.persistence.utils.Category;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 
 /**
@@ -55,6 +57,8 @@ public class LinkcheckerReport {
    
    @XmlRootElement
    @XmlAccessorType(XmlAccessType.FIELD)
+   @RequiredArgsConstructor
+   @NoArgsConstructor(force = true)
    public static class Statistics implements Comparable<Statistics> {      
       
       @XmlAttribute
@@ -70,15 +74,8 @@ public class LinkcheckerReport {
       public Long maxRespTime;
 
       @XmlAttribute
-      public Category category;
+      public final Category category;
 
-      public Statistics() {
-
-      }
-
-      public Statistics(Category category) {
-         this.category = category;
-      }
 
       @Override
       public int compareTo(Statistics other) {
