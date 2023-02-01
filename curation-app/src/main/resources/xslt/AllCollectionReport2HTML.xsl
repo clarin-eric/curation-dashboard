@@ -12,10 +12,10 @@
 
     </xsl:function>
 
-    <xsl:template match="/collections-report">
+    <xsl:template match="/allCollectionReport">
         <html>
             <body>
-               <div class="creation-time">created at <xsl:value-of select="./@creation-time" /></div>
+               <div class="creation-time">created at <xsl:value-of select="./@creationTime" /></div>
                <div class="download">download as <a href="/download/xml/collections/CollectionsReport">xml</a><xsl:text> </xsl:text><a href="/download/json/collections/CollectionsReport">json</a><xsl:text> </xsl:text><a href="/download/tsv/collections/CollectionsReport">tsv</a></div>
                <div class="clear" /> 
                 <table id="collections" class="display text-nowrap" width="100%">
@@ -32,7 +32,7 @@
                             <th data-sortable="true">Avg Num Of Res Proxies</th>
                             <th data-sortable="true">Ratio Of Valid Records</th>
                             <th data-sortable="true">Avg Num Of Empty XML Elements</th>
-                            <th data-sortable="true">Ratio Facets Non Zero</th>
+                            <th data-sortable="true">Avg Facet Coverage</th>
 
                             <xsl:for-each select="./collection[1]/facets/facet">
                                 <th data-sortable="true">
@@ -92,7 +92,7 @@
 
                                 <xsl:for-each select="facets/facet">
                                     <td>
-                                        <xsl:value-of select="format-number(.,'0.00%')"></xsl:value-of>
+                                        <xsl:value-of select="format-number(./@avgCoverage,'0.00%')"></xsl:value-of>
                                     </td>
                                 </xsl:for-each>
                             </tr>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:template match="/linkchecker-detail-report">
+	<xsl:template match="/linkcheckerDetailReport">
       <html>
          <head>
          </head>
          <body>
             <div class="creation-time">
                created at
-               <xsl:value-of select="./@creation-time" />
+               <xsl:value-of select="./@creationTime" />
             </div>
             <div class="clear" />
             <h1>Linkchecker Detail Report</h1>
@@ -16,13 +16,13 @@
                <xsl:value-of
                   select="replace(@provider,'_',' ')" />
             </h2>
-            <xsl:apply-templates select="category-report" />
+            <xsl:apply-templates select="categoryReport" />
            </body>
         </html>	
 	  
 		
 	</xsl:template>
-	<xsl:template match="category-report">
+	<xsl:template match="categoryReport">
 	<h3>
 	<xsl:attribute name="id"><xsl:value-of select="./@category" /></xsl:attribute>
 	Category: <xsl:value-of select="./@category" />
@@ -54,7 +54,12 @@
              </xsl:attribute>
              <xsl:value-of select="./@url" />        
           </a></td>
-          <td><xsl:value-of select="./@statusCode" /></td>
+          <td>
+          <xsl:choose>
+            <xsl:when test="./@statusCode  &gt; 0"><xsl:value-of select="./@statusCode" /></xsl:when>
+            <xsl:otherwise>N/A</xsl:otherwise>
+          </xsl:choose>
+          </td>
           <td><button class="showUrlInfo btn btn-info">Show</button></td>
          </tr>
          <tr hidden="hidden">

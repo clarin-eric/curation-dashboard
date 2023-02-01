@@ -41,9 +41,9 @@
 				</h3>
 				<p>
 					Total Score:
-					<xsl:value-of select="./@aggregatedScore" />
+					<xsl:value-of select="format-number(./@aggregatedScore,'0.00')" />
 					out of
-					<xsl:value-of select="./@aggregatedMaxScore" />
+					<xsl:value-of select="format-number(./@aggregatedMaxScore,'0.00')" />
 				</p>
 				<p>
 					Score percentage:
@@ -87,7 +87,7 @@
 				</p>
 				<p>
 					Average size:
-					<xsl:value-of select="./fileReport/avgSize" />
+					<xsl:value-of select="./fileReport/avgFileSize" />
 					B
 				</p>
 				<p>
@@ -119,7 +119,6 @@
 					</p>
 				</details>
 				<table class="reportTable">
-					<caption>Profiles in Collection</caption>
 					<thead>
 						<tr>
 							<th>ID</th>
@@ -206,7 +205,7 @@
 								</td>
 								<td class="text-right">
 									<xsl:value-of
-										select="format-number(./@coverage,'0.0%')" />
+										select="format-number(./@avgCoverage,'0.0%')" />
 								</td>
 							</tr>
 						</xsl:for-each>
@@ -368,49 +367,50 @@
 						select="format-number(./linkcheckerReport/ratioOfValidLinks,'0.0%')" />
 				</p>
 
-
-				<h3>Link Checking Results</h3>
-
-				<table class="reportTable">
-					<thead>
-						<tr>
-							<th scope="col">Category</th>
-							<th scope="col">Count</th>
-							<th scope="col">Average Response Duration(ms)</th>
-							<th scope="col">Max Response Duration(ms)</th>
-						</tr>
-					</thead>
-					<tbody>
-						<xsl:for-each
-							select="./linkcheckerReport/linkchecker/statistics">
-							<xsl:variable name="category">
-								<xsl:value-of select="./@category" />
-							</xsl:variable>
-
-							<tr class="{$category}">
-								<td align="right">
-									<a href="/statistics/{$collectionName}/{$category}">
-										<xsl:copy-of select="$category" />
-									</a>
-								</td>
-
-								<td align="right">
-									<xsl:value-of select="./@count" />
-								</td>
-								<td align="right">
-									<xsl:value-of
-										select="format-number(./@avgRespTime, '###,##0.##')" />
-								</td>
-								<td align="right">
-									<xsl:value-of
-										select="format-number(./@maxRespTime, '###,##0.##')" />
-								</td>
+            <xsl:if test="./linkcheckerReport/linkchecker/statistics">
+					<h3>Link Checking Results</h3>
+	
+					<table class="reportTable">
+						<thead>
+							<tr>
+								<th scope="col">Category</th>
+								<th scope="col">Count</th>
+								<th scope="col">Average Response Duration(ms)</th>
+								<th scope="col">Max Response Duration(ms)</th>
 							</tr>
-
-						</xsl:for-each>
-					</tbody>
-				</table>
-
+						</thead>
+						<tbody>
+							<xsl:for-each
+								select="./linkcheckerReport/linkchecker/statistics">
+								<xsl:variable name="category">
+									<xsl:value-of select="./@category" />
+								</xsl:variable>
+	
+								<tr class="{$category}">
+									<td align="right">
+										<a href="/statistics/{$collectionName}/{$category}">
+											<xsl:copy-of select="$category" />
+										</a>
+									</td>
+	
+									<td align="right">
+										<xsl:value-of select="./@count" />
+									</td>
+									<td align="right">
+										<xsl:value-of
+											select="format-number(./@avgRespTime, '###,##0.##')" />
+									</td>
+									<td align="right">
+										<xsl:value-of
+											select="format-number(./@maxRespTime, '###,##0.##')" />
+									</td>
+								</tr>
+	
+							</xsl:for-each>
+						</tbody>
+	
+					</table>
+           </xsl:if>
 				
            <xsl:if test="./recordDetails/record">
             <hr />

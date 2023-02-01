@@ -4,7 +4,7 @@
 	<xsl:output method="html"></xsl:output>
 
 
-	<xsl:template match="/linkchecker-report">
+	<xsl:template match="/allLinkcheckerReport">
 		<html>
 			<head></head>
 			<body>
