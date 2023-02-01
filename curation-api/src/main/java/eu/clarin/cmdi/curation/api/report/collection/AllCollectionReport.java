@@ -2,7 +2,7 @@ package eu.clarin.cmdi.curation.api.report.collection;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -17,16 +17,16 @@ import eu.clarin.cmdi.curation.api.report.NamedReport;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
-@XmlRootElement(name = "collections-report")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AllCollectionReport implements NamedReport {
 
-   @XmlAttribute(name = "creation-time")
+   @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();
 
    @XmlElement(name = "collection")
-   private List<Collection> collections = new ArrayList<Collection>();
+   private Collection<CollectionReportWrapper> collectionReports = new ArrayList<CollectionReportWrapper>();
 
 
    @Override
@@ -38,77 +38,74 @@ public class AllCollectionReport implements NamedReport {
 
    public void addReport(CollectionReport report) {
       
-      this.collections.add(new Collection((CollectionReport) report));
+      this.collectionReports.add(new CollectionReportWrapper((CollectionReport) report));
    
    }
 
    @XmlRootElement
-   @XmlAccessorType(XmlAccessType.FIELD)
-   public static class Collection {
+   @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
+   @RequiredArgsConstructor
+   @NoArgsConstructor(force = true)
+   public static class CollectionReportWrapper {
+      
+      private final CollectionReport collectionReport;
       @XmlAttribute
-      private String name;
+      public String getName() {
+         return collectionReport.getName();
+      }
       @XmlElement
-      private String reportName;
+      public String getReportName() {
+         return collectionReport.getName();
+      }
       @XmlElement
-      private double scorePercentage;
+      public double getScorePercentage() {
+         return collectionReport.scorePercentage;
+      };
       @XmlElement
-      private long numOfFiles;
+      public long getNumOfFiles() {
+         return collectionReport.fileReport.numOfFiles;
+      }
       @XmlElement
-      private int numOfProfiles;
+      public int getNumOfProfiles() {
+         return collectionReport.headerReport.totNumOfProfiles;
+      }
       @XmlElement
-      private int numOfLinks;
+      public int getNumOfLinks() {
+         return collectionReport.linkcheckerReport.totNumOfLinks;
+      }
       @XmlElement
-      private int numOfCheckedLinks;
+      public int getNumOfCheckedLinks() {
+         return collectionReport.linkcheckerReport.totNumOfCheckedLinks;
+      }
       @XmlElement
-      private double ratioOfValidLinks;
+      public double getRatioOfValidLinks() {
+         return collectionReport.linkcheckerReport.ratioOfValidLinks;
+      }
       @XmlElement
-      private double avgNumOfResProxies;
+      public double getAvgNumOfResProxies() {
+         return collectionReport.resProxyReport.avgNumOfResProxies;
+      }
       @XmlElement
-      private long numOfResProxies;
+      public long getNumOfResProxies() {
+         return collectionReport.resProxyReport.totNumOfResProxies;
+      }
       @XmlElement
-      private double ratioOfValidRecords;
+      public double getRatioOfValidRecords() {
+         return collectionReport.xmlValidityReport.avgScore;
+      }
       @XmlElement
-      private double avgNumOfEmptyXMLElements;
+      public double getAvgNumOfEmptyXMLElements() {
+         return collectionReport.xmlPopulationReport.avgNumOfXMLEmptyElements;
+      }
       @XmlElement
-      private double avgFacetCoverage;
+      private double getAvgFacetCoverage() {
+         return collectionReport.facetReport.avgScore;
+      }
 
       @XmlElementWrapper(name = "facets")
       @XmlElement(name = "facet")
-      private List<Facet> facets = new ArrayList<Facet>();
-
-      public Collection() {
-
+      public Collection<eu.clarin.cmdi.curation.api.report.collection.sec.FacetReport.FacetCollectionStruct> getFacets(){
+         return collectionReport.facetReport.facets;
       }
-
-      public Collection(CollectionReport report) {
-         this.name = report.getName();
-         this.reportName = report.getName();
-//         this.scorePercentage = report.getscorePercentage();
-         this.numOfFiles = report.fileReport.numOfFiles;
-         this.numOfProfiles = report.headerReport.totNumOfProfiles;
-         this.numOfLinks = report.linkcheckerReport.totNumOfLinks;
-         this.numOfCheckedLinks = report.linkcheckerReport.totNumOfCheckedLinks;
-         this.ratioOfValidLinks = report.linkcheckerReport.ratioOfValidLinks;
-         this.avgNumOfResProxies = report.resProxyReport.avgNumOfResProxies;
-         this.numOfResProxies = report.resProxyReport.totNumOfResProxies;
-         this.ratioOfValidRecords = report.xmlValidityReport.avgScore;
-         this.avgNumOfEmptyXMLElements = report.xmlPopulationReport.avgNumOfXMLEmptyElements;
-         this.avgFacetCoverage = report.facetReport.avgScore;
-
-         report.facetReport.facets.forEach(f -> this.facets.add(new Facet(f.name, f.coverage)));
-      }
-
-   }
-
-   @XmlRootElement
-   @XmlAccessorType(XmlAccessType.FIELD)
-   @RequiredArgsConstructor
-   @NoArgsConstructor(force = true)
-   public static class Facet {
-      @XmlAttribute
-      private final String name;
-      @XmlElement
-      private final double avgCoverage;
-
    }
 }
