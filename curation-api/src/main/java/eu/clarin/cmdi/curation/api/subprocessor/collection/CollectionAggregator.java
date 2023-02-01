@@ -225,10 +225,9 @@ public class CollectionAggregator {
       try (Stream<AggregatedStatus> stream = aRep.findAllByProvidergroupName(collectionReport.getName())) {
 
          stream.forEach(categoryStats -> {
-            Statistics xmlStatistics = new Statistics();
+            Statistics xmlStatistics = new Statistics(categoryStats.getCategory());
             xmlStatistics.avgRespTime = categoryStats.getAvgDuration();
             xmlStatistics.maxRespTime = categoryStats.getMaxDuration();
-            xmlStatistics.category = categoryStats.getCategory();
             xmlStatistics.count = categoryStats.getNumber();
             collectionReport.linkcheckerReport.totNumOfCheckedLinks = categoryStats.getNumber().intValue();
 
@@ -302,7 +301,7 @@ public class CollectionAggregator {
          
          //Facet
          collectionReport.facetReport.facets
-            .forEach(facet -> facet.coverage = facet.count/collectionReport.fileReport.numOfFiles);
+            .forEach(facet -> facet.avgCoverage = (double) facet.count/collectionReport.fileReport.numOfFiles);
          
          collectionReport.facetReport.avgScore = (double) (collectionReport.facetReport.aggregatedScore/collectionReport.fileReport.numOfFiles);
          collectionReport.facetReport.percCoverageNonZero = (double) collectionReport.facetReport.facets.stream().filter(facet -> facet.count > 0).count()/collectionReport.facetReport.facets.size();         
@@ -311,7 +310,7 @@ public class CollectionAggregator {
          collectionReport.linkcheckerReport.avgNumOfLinks = (double) collectionReport.linkcheckerReport.totNumOfLinks/collectionReport.fileReport.numOfFiles;
          collectionReport.linkcheckerReport.avgNumOfUniqueLinks = (double) collectionReport.linkcheckerReport.totNumOfUniqueLinks/collectionReport.fileReport.numOfFiles;
          collectionReport.linkcheckerReport.maxRespTime = collectionReport.linkcheckerReport.statistics.stream().filter(statistics -> statistics.maxRespTime!=null).mapToLong(statistics -> statistics.maxRespTime).max().orElse(0);
-         collectionReport.linkcheckerReport.avgRespTime = collectionReport.linkcheckerReport.statistics.stream().filter(statistics -> statistics.avgRespTime != null).mapToDouble(statistics -> statistics.avgRespTime*statistics.nonNullCount).average().orElse(0.0);
+         collectionReport.linkcheckerReport.avgRespTime = collectionReport.linkcheckerReport.statistics.stream().filter(statistics -> statistics.avgRespTime != null).mapToDouble(statistics -> statistics.avgRespTime*statistics.count).average().orElse(0.0);
       
          collectionReport.avgScore = collectionReport.aggregatedScore/collectionReport.fileReport.numOfFiles;
          collectionReport.scorePercentage = collectionReport.aggregatedScore / collectionReport.aggregatedMaxScore;
