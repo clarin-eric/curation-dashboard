@@ -153,6 +153,7 @@ public class CurationModuleImpl implements CurationModule {
             if(lastLinkcheckerDetailReport[0] == null || !lastLinkcheckerDetailReport[0].getName().equals(statusDetail.getProvidergroupname())) {
                
                lastLinkcheckerDetailReport[0] = new LinkcheckerDetailReport(statusDetail.getProvidergroupname());
+               lastCategoryReport[0] = null;
                
                linkcheckerDetailReports.add(lastLinkcheckerDetailReport[0]);
             
