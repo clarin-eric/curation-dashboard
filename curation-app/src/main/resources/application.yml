@@ -1,7 +1,6 @@
 logging:
    file: 
-      path: ${CURATION_DIRECTORY}/logs
-      name: curation-app.log
+      name: ${CURATION_DIRECTORY}/logs/curation-app.log
       logback:
          rollingpolicy:
             max-file-size: 10MB

@@ -1,7 +1,6 @@
 logging:
    file: 
-      path: ${CURATION_DIRECTORY}/logs
-      name: curtion-web.log
+      name: ${CURATION_DIRECTORY}/logs/curtion-web.log
       logback:
          rollingpolicy:
             max-file-size: 10MB
