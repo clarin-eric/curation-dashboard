@@ -27,7 +27,7 @@ public class AppConfig {
    
    private LocalDateTime startTime = LocalDateTime.now();
    
-   private int linkDeaktivationAfter;
+   private int linkDeactivationAfter;
    
    private int linkDeletionAfter;
    
