@@ -71,8 +71,12 @@ public class CurationApp {
             storage.saveReport(allCollectionReport, CurationEntityType.COLLECTION, true);
             storage.saveReport(allLinkcheckerReport, CurationEntityType.LINKCHECKER, true);
             
-            linkService.deactivateLinksOlderThan(conf.getLinkDeaktivationAfter());
+            log.info("start deactivating links older than {} days", conf.getLinkDeactivationAfter());
+            linkService.deactivateLinksOlderThan(conf.getLinkDeactivationAfter());
+            log.info("done deactivating links older than {} days", conf.getLinkDeactivationAfter());
+            log.info("start deleting links older than {} days", conf.getLinkDeletionAfter());
             linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
+            log.info("done deleting links older than {} days", conf.getLinkDeletionAfter());
 
          }
          // it's important to process profiles after collections, to fill the collection usage section of the profiles 
@@ -84,6 +88,7 @@ public class CurationApp {
    
             pphService.getProfileHeaders().forEach(header -> {
                
+               log.info("start processing profile '{}'", header.getId());               
    
                try {
                   CMDProfileReport profileReport = curation.processCMDProfile(header.getId());
@@ -97,6 +102,8 @@ public class CurationApp {
                   
                   log.error("malformed URL for id '{}' - check the setting for curation.pph-service.restApi");
                }
+               
+               log.info("done processing profile '{}'", header.getId());
             });
             
             storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);
@@ -105,7 +112,9 @@ public class CurationApp {
          
          if("all".equalsIgnoreCase(conf.getMode()) || "linkchecker".equalsIgnoreCase(conf.getMode())) {
             
+            log.info("start writing linkchecker detail reports");
             curation.getLinkcheckerDetailReports().forEach(report -> storage.saveReport(report, CurationEntityType.LINKCHECKER, false));
+            log.info("start writing linkchecker detail reports");
  
          }
       };
@@ -116,12 +125,16 @@ public class CurationApp {
 
       if(isCollectionRoot(path)) {
          
+         log.info("start processing collection from path '{}'", path);
+         
          CollectionReport colectionReport = curation.processCollection(path);
          
          allCollectionReport.addReport(colectionReport);
          allLinkcheckerReport.addReport(colectionReport);
          
          storage.saveReport(colectionReport, CurationEntityType.COLLECTION, true);
+         
+         log.info("done processing collection from path '{}'", path);
          
       }
       else {

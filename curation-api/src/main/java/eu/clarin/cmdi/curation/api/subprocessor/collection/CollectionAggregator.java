@@ -54,13 +54,9 @@ public class CollectionAggregator {
    private Collection<String> mdSelfLinks = new ArrayList<String>();
 
    @Transactional
-   public void process(CMDCollection collection, CollectionReport collectionReport) {
-      
-      log.info("start processing collection '{}'", collection);
-      
+   public void process(CMDCollection collection, CollectionReport collectionReport) {      
       
       conf.getFacets().forEach(facetName -> collectionReport.facetReport.facets.add(new FacetCollectionStruct(facetName)));
-
 
       ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadPoolSize());    
 
@@ -131,8 +127,6 @@ public class CollectionAggregator {
       }
       
       calculateAverages(collectionReport);
-      
-      log.info("processing collection '{}' done", collection);
 
    }
    
