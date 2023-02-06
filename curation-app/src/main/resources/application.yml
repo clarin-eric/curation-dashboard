@@ -61,3 +61,5 @@ curation:
    base_url:
    doc_url:
    clientUsername: curation 
+   link_deactivation_after: ${LINK_DEACTIVATION_AFTER:365}
+   link_deletion_after: ${LINK_DELETION_AFTER:365}

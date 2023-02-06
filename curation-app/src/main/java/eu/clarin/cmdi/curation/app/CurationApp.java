@@ -28,6 +28,7 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
 import eu.clarin.cmdi.curation.app.conf.AppConfig;
 import eu.clarin.cmdi.curation.pph.PPHService;
+import eu.clarin.linkchecker.persistence.service.LinkService;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootApplication
@@ -48,6 +49,8 @@ public class CurationApp {
    private PPHService pphService;
    @Autowired
    FileStorage storage;
+   @Autowired
+   LinkService linkService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CurationApp.class, args);
@@ -67,6 +70,9 @@ public class CurationApp {
 
             storage.saveReport(allCollectionReport, CurationEntityType.COLLECTION, true);
             storage.saveReport(allLinkcheckerReport, CurationEntityType.LINKCHECKER, true);
+            
+            linkService.deactivateLinksOlderThan(conf.getLinkDeaktivationAfter());
+            linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
 
          }
          // it's important to process profiles after collections, to fill the collection usage section of the profiles 
