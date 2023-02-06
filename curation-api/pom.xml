@@ -6,9 +6,6 @@
    </parent>
    <modelVersion>4.0.0</modelVersion>
    <artifactId>curation-api</artifactId>
-   <properties>
-      <lpa.version>0.0.1-SNAPSHOT</lpa.version>
-   </properties>
    <dependencies>
       <dependency>
          <groupId>org.springframework.boot</groupId>
@@ -88,7 +85,7 @@
       <dependency>
          <groupId>eu.clarin</groupId>
          <artifactId>linkchecker-persistence</artifactId>
-         <version>${lpa.version}</version>
+         <version>${linkchecker-persistence.version}</version>
       </dependency>
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
