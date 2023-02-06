@@ -70,13 +70,6 @@ public class CurationApp {
 
             storage.saveReport(allCollectionReport, CurationEntityType.COLLECTION, true);
             storage.saveReport(allLinkcheckerReport, CurationEntityType.LINKCHECKER, true);
-            
-            log.info("start deactivating links older than {} days", conf.getLinkDeactivationAfter());
-            linkService.deactivateLinksOlderThan(conf.getLinkDeactivationAfter());
-            log.info("done deactivating links older than {} days", conf.getLinkDeactivationAfter());
-            log.info("start deleting links older than {} days", conf.getLinkDeletionAfter());
-            linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
-            log.info("done deleting links older than {} days", conf.getLinkDeletionAfter());
 
          }
          // it's important to process profiles after collections, to fill the collection usage section of the profiles 
@@ -117,11 +110,19 @@ public class CurationApp {
             log.info("start writing linkchecker detail reports");
  
          }
+         
+         if("all".equalsIgnoreCase(conf.getMode())) {
+            log.info("start deactivating links older than {} days", conf.getLinkDeactivationAfter());
+            linkService.deactivateLinksOlderThan(conf.getLinkDeactivationAfter());
+            log.info("done deactivating links older than {} days", conf.getLinkDeactivationAfter());
+            log.info("start deleting links older than {} days", conf.getLinkDeletionAfter());
+            linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
+            log.info("done deleting links older than {} days", conf.getLinkDeletionAfter());
+         }
       };
    }
    
-   private void processCollection(Path path, AllCollectionReport allCollectionReport, AllLinkcheckerReport allLinkcheckerReport) {
-      
+   private void processCollection(Path path, AllCollectionReport allCollectionReport, AllLinkcheckerReport allLinkcheckerReport) {      
 
       if(isCollectionRoot(path)) {
          
