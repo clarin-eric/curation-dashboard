@@ -56,6 +56,8 @@ public class CollectionAggregator {
    @Transactional
    public void process(CMDCollection collection, CollectionReport collectionReport) {
       
+      log.info("start processing collection '{}'", collection);
+      
       
       conf.getFacets().forEach(facetName -> collectionReport.facetReport.facets.add(new FacetCollectionStruct(facetName)));
 
@@ -129,6 +131,8 @@ public class CollectionAggregator {
       }
       
       calculateAverages(collectionReport);
+      
+      log.info("processing collection '{}' done", collection);
 
    }
    

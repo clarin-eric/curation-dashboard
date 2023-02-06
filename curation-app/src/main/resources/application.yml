@@ -1,6 +1,13 @@
 logging:
+   file: 
+      path: ${CURATION_DIRECTORY}/logs
+      name: curtion-app.log
+      logback:
+         rollingpolicy:
+            max-file-size: 10MB
    level:
       root: ERROR
+      eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionAggregator: INFO
 spring:
    datasource:
       url: ${DATABASE_URI}
