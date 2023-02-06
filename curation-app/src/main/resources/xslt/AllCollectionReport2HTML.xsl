@@ -16,7 +16,7 @@
         <html>
             <body>
                <div class="creation-time">created at <xsl:value-of select="./@creationTime" /></div>
-               <div class="download">download as <a href="/download/xml/collections/CollectionsReport">xml</a><xsl:text> </xsl:text><a href="/download/json/collections/CollectionsReport">json</a><xsl:text> </xsl:text><a href="/download/tsv/collections/CollectionsReport">tsv</a></div>
+               <div class="download">download as <a href="/download/collection/AllCollectionReport">xml</a><xsl:text> </xsl:text><a href="/download/collection/AllCollectionReport?format=json">json</a><xsl:text> </xsl:text><a href="/download/collection/AllCollectionReport?format=tsv">tsv</a></div>
                <div class="clear" /> 
                 <table id="collections" class="display text-nowrap" width="100%">
                     <thead>
