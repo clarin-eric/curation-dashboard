@@ -3,7 +3,7 @@
    <parent>
       <groupId>eu.clarin.cmdi</groupId>
       <artifactId>curation-dashboard</artifactId>
-      <version>6.0.0-SNAPSHOT</version>
+      <version>${global.version}</version>
    </parent>
    <artifactId>curation-cr</artifactId>
    <properties>
@@ -35,12 +35,12 @@
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
          <artifactId>curation-ccr</artifactId>
-         <version>${revision}</version>
+         <version>${global.version}</version>
       </dependency>
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
          <artifactId>curation-pph</artifactId>
-         <version>${revision}</version>
+         <version>${global.version}</version>
       </dependency>
       <dependency>
          <groupId>org.springframework.boot</groupId>

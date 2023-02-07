@@ -10,17 +10,17 @@
    <artifactId>curation-dashboard</artifactId>
    <name>Curation Dashboard</name>
    <packaging>pom</packaging>
-   <version>6.0.0-SNAPSHOT</version>
+   <version>${global.version}</version>
    <organization>
       <name>CLARIN</name>
       <url>http://www.clarin.eu</url>
    </organization>
    <properties>
-      <revision>6.0.0-SNAPSHOT</revision>
       <maven.compiler.source>17</maven.compiler.source>
       <maven.compiler.target>17</maven.compiler.target>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <linkchecker-persistence.version>0.0.1</linkchecker-persistence.version>
+      <global.version>6.0.0-alpha1</global.version>
    </properties>
    <dependencies>
       <dependency>
