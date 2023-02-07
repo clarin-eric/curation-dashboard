@@ -1,6 +1,6 @@
 logging:
    file: 
-      name: ${CURATION_DIRECTORY}/logs/curtion-web.log
+      name: ${CURATION_DIRECTORY}/logs/curation-web.log
       logback:
          rollingpolicy:
             max-file-size: 10MB
@@ -44,7 +44,7 @@ curation:
       dataRoot: ${CURATION_DIRECTORY}/data
       in:
          - ${CURATION_DIRECTORY}/data/clarin/results/cmdi
-   out: ${CURATION_DIRECTORY}/public
+      out: ${CURATION_DIRECTORY}/public
    facets:
       - languageCode
       - collection
