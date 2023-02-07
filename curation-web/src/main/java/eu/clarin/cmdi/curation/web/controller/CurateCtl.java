@@ -43,7 +43,7 @@ public class CurateCtl {
    public String getInstanceQueryParam(@RequestParam(name="url-input", required=false) String urlStr, Model model) {      
 
       if (urlStr == null || urlStr.isEmpty()) {
-         model.addAttribute("insert", "/fragments/validator.html");
+         model.addAttribute("insert", "fragments/validator.html");
       }
       else {
          
