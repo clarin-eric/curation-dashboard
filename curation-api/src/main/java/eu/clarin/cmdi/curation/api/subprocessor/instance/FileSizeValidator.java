@@ -138,7 +138,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
             log.debug("can't transfrom input file '{}'", instance.getPath());
             
             report.details.add(new Detail(Severity.FATAL, "file", "can't transform input file '" + instance.getPath().getFileName() + "'"));
-            report.isValidReport=false;
+            report.isProcessable=false;
             
             return;
             

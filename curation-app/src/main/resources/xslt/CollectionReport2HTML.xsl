@@ -265,9 +265,9 @@
 						validation of each CMD file against its profile. </p>
 				</details>
 				<p>
-					Number of valid Records:
+					Number of processable Records:
 					<xsl:value-of
-						select="./fileReport/totNumOfValidFiles" />
+						select="./fileReport/totNumOfFilesProcessable" />
 				</p>
 				<p>
 					Number of XML valid Records:

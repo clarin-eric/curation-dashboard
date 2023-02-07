@@ -49,7 +49,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
 
          log.error("no ProfileCacheEntry for profile id '{}'", report.profileHeaderReport.getId());
          report.details.add(new Detail(Severity.FATAL, "xml-validation", "no ProfileCacheEntry for profile id '" + report.profileHeaderReport.getId() + "'"));
-         report.isValidReport=false;
+         report.isProcessable=false;
          
          return;
       }
@@ -90,7 +90,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
 
          log.error("can't parse input file '{}' for XML validation", instance.getPath());
          report.details.add(new Detail(Severity.FATAL, "xml-validation", "can't parse input file '" + instance.getPath().getFileName() + "'"));
-         report.isValidReport=false;
+         report.isProcessable=false;
          
          return;
 

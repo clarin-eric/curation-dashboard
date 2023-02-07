@@ -29,7 +29,7 @@ import java.util.Collection;
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class CMDInstanceReport implements NamedReport {
    @XmlTransient
-   public boolean isValidReport = true;
+   public boolean isProcessable = true;
    
 
    @XmlAttribute

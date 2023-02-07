@@ -37,13 +37,13 @@ public class CollectionReport implements NamedReport{
    @XmlAttribute
    public double aggregatedMaxScore;
    @XmlAttribute
-   public double aggregatedMaxScoreValid;
+   public double aggregatedMaxScoreProcessable;
    @XmlAttribute
    public double scorePercentage;
    @XmlAttribute
    public double avgScore;
    @XmlAttribute
-   public double avgScoreValid;   
+   public double avgScoreProcessable;   
    @XmlAttribute
    public double minScore = Double.MAX_VALUE;
    @XmlAttribute

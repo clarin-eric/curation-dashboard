@@ -22,17 +22,17 @@ public class FileReport {
    @XmlAttribute
    public double aggregatedMaxScore;
    @XmlAttribute
-   public double aggregatedMaxScoreValid;
+   public double aggregatedMaxScoreProcessable;
    @XmlAttribute
    public double avgScore;
    @XmlAttribute
-   public double avgScoreValid; 
+   public double avgScoreProcessable; 
    @XmlElement
    public String provider;
    @XmlElement
    public long numOfFiles;
    @XmlElement
-   public long numOfValidFiles;
+   public long numOfFilesProcessable;
    @XmlElement
    public long size;
    @XmlElement

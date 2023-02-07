@@ -67,7 +67,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
          report.details.add(new Detail(Severity.FATAL, "facet",
                "can't parse file '" + instance.getPath().getFileName() + "' for instance facet processing"));
-         report.isValidReport=false;
+         report.isProcessable=false;
 
          return;
 

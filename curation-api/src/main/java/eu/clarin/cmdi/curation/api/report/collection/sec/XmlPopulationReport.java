@@ -21,11 +21,11 @@ public class XmlPopulationReport {
    @XmlAttribute
    public double aggregatedMaxScore;
    @XmlAttribute
-   public double aggregatedMaxScoreValid;
+   public double aggregatedMaxScoreProcessable;
    @XmlAttribute
    public double avgScore;
    @XmlAttribute
-   public double avgScoreValid;  
+   public double avgScoreProcessable;  
    @XmlElement
    public int totNumOfXMLElements;
    @XmlElement
