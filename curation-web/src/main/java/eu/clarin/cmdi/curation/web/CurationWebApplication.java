@@ -29,6 +29,7 @@ public class CurationWebApplication {
    public void init() {
       FileTemplateResolver ftr = new FileTemplateResolver();
       ftr.setCheckExistence(true); //just to be sure in case the ftr is used first
+      ftr.setCacheable(false);
       
       templateEngine.addTemplateResolver(ftr);
    }
