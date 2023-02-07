@@ -27,7 +27,10 @@ public class CurationWebApplication {
 	
    @PostConstruct
    public void init() {
-      templateEngine.addTemplateResolver(new FileTemplateResolver());
+      FileTemplateResolver ftr = new FileTemplateResolver();
+      ftr.setCheckExistence(true); //just to be sure in case the ftr is used first
+      
+      templateEngine.addTemplateResolver(ftr);
    }
 
 }
