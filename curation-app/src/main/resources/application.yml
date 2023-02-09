@@ -1,6 +1,6 @@
 logging:
    file: 
-      name: ${CURATION_DIRECTORY}/logs/curation-app.log
+      name: ${APPLICATION_HOME_DIRECTORY}/logs/curation-app.log
       logback:
          rollingpolicy:
             max-file-size: 10MB
@@ -35,11 +35,11 @@ curation:
       query: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000"   
    mode: all
    directory:
-      home: ${CURATION_DIRECTORY}
-      dataRoot: ${CURATION_DIRECTORY}/data
+      home: ${APPLICATION_HOME_DIRECTORY}
+      dataRoot: ${APPLICATION_HOME_DIRECTORY}/data
       in: 
-      - ${CURATION_DIRECTORY}/data/clarin/results/cmdi
-      out: ${CURATION_DIRECTORY}/public
+      - ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
+      out: ${APPLICATION_HOME_DIRECTORY}/public
    facets: 
       - languageCode
       - collection
