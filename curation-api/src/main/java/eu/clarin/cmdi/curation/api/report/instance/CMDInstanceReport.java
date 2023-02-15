@@ -39,7 +39,8 @@ public class CMDInstanceReport implements NamedReport {
       + InstanceHeaderReport.maxScore 
       + ResourceProxyReport.maxScore 
       + XmlPopulationReport.maxScore 
-      + XmlValidityReport.maxScore;
+      + XmlValidityReport.maxScore
+      + InstanceFacetReport.maxScore;
 
    @XmlAttribute
    public double instanceScore = 0.0;
