@@ -47,7 +47,7 @@ public class CollectionReport implements NamedReport{
    @XmlAttribute
    public double minScore = Double.MAX_VALUE;
    @XmlAttribute
-   public double maxScore = Double.MAX_VALUE;
+   public double maxScore;
    @XmlAttribute
    public double insMaxScore = eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport.maxScore +1;
 
