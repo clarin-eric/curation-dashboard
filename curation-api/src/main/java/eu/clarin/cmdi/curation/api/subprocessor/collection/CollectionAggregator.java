@@ -57,7 +57,7 @@ public class CollectionAggregator {
       conf.getFacets()
             .forEach(facetName -> collectionReport.facetReport.facets.add(new FacetCollectionStruct(facetName)));
 
-      ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadPoolSize());
+      ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadpoolSize());
 
       try {
          Files.walkFileTree(collection.getPath(), new FileVisitor<Path>() {

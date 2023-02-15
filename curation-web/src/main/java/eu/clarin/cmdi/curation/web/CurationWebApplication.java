@@ -13,7 +13,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 
 @SpringBootApplication
-@EnableAutoConfiguration@ComponentScan({"eu.clarin.cmdi.curation", "eu.clarin.linkchecker.persistence"})
+@EnableAutoConfiguration
+@ComponentScan({"eu.clarin.cmdi.curation", "eu.clarin.linkchecker.persistence"})
 @EnableJpaRepositories(basePackages = "eu.clarin.linkchecker.persistence.repository")
 @EntityScan(basePackages = "eu.clarin.linkchecker.persistence.model")
 public class CurationWebApplication {
