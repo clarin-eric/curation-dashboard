@@ -29,11 +29,11 @@ public class LinkcheckerReport {
    @XmlAttribute
    public double aggregatedScore;
    @XmlAttribute
-   public double aggregatedMaxScore;
+   public double aggregatedMaxScoreAll;
    @XmlAttribute
    public double aggregatedMaxScoreProcessable;
    @XmlAttribute
-   public double avgScore;
+   public double avgScoreAll;
    @XmlAttribute
    public double avgScoreProcessable; 
    @XmlElement

@@ -43,17 +43,18 @@
 					Total Score:
 					<xsl:value-of select="format-number(./@aggregatedScore,'0.00')" />
 					out of
-					<xsl:value-of select="format-number(./@aggregatedMaxScore,'0.00')" />
+					<xsl:value-of select="format-number(./@aggregatedMaxScoreAll,'0.00')" />
+					(processable: <xsl:value-of select="format-number(./@aggregatedMaxScoreProcessable,'0.00')" />)
 				</p>
 				<p>
 					Score percentage:
-					<xsl:value-of
-						select="format-number(./@scorePercentage,'0.0%')" />
+					<xsl:value-of select="format-number(./@scorePercentage,'0.0%')" />
 				</p>
 				<p>
 					Average Score:
-					<xsl:value-of
-						select="format-number(./@avgScore,'0.00')" />
+					<xsl:value-of select="format-number(./@avgScoreAll,'0.00')" />
+					(<xsl:value-of select="format-number(./@avgScoreProcessable,'0.00')" />)
+						
 					out of
 					<xsl:value-of
 						select="format-number(./@insMaxScore,'0.00')" />
@@ -76,6 +77,12 @@
 					</summary>
 					<p>General information on the number of files and the file size.</p>
 				</details>
+				<p>
+					Score: <xsl:value-of select="format-number(./fileReport/@aggregatedScore, '0.00')" />
+					out of <xsl:value-of select="format-number(./fileReport/@aggregatedMaxScoreAll, '0.00')" />
+					(<xsl:value-of select="format-number(./fileReport/@aggregatedMaxScoreProcessable, '0.00')" />)
+				</p>
+				<xsl:value-of select="./fileReport/numOfFiles" />
 				<p>
 					Number of files:
 					<xsl:value-of select="./fileReport/numOfFiles" />
@@ -118,6 +125,11 @@
 						, please.
 					</p>
 				</details>
+	           <p>
+               Score: <xsl:value-of select="format-number(./headerReport/@aggregatedScore, '0.00')" />
+               out of <xsl:value-of select="format-number(./headerReport/@aggregatedMaxScoreAll, '0.00')" />
+               (<xsl:value-of select="format-number(./headerReport/@aggregatedMaxScoreProcessable, '0.00')" />)
+            </p>
 				<table class="reportTable">
 					<thead>
 						<tr>
@@ -179,6 +191,11 @@
 						based on.
 					</p>
 				</details>
+           <p>
+               Score: <xsl:value-of select="format-number(./facetReport/@aggregatedScore, '0.00')" />
+               out of <xsl:value-of select="format-number(./facetReport/@aggregatedMaxScoreAll, '0.00')" />
+               (<xsl:value-of select="format-number(./facetReport/@aggregatedMaxScoreProcessable, '0.00')" />)
+            </p>
 				<table class="reportTable">
 					<thead>
 						<tr>
@@ -192,7 +209,7 @@
 								<b>
 									facet-coverage:
 									<xsl:value-of
-										select="format-number(./facetReport/@avgScore,'0.0%')" />
+										select="format-number(./facetReport/@avgScoreProcessable,'0.0%')" />
 								</b>
 							</td>
 						</tr>
@@ -224,6 +241,11 @@
 						the CMD file.
 					</p>
 				</details>
+           <p>
+               Score: <xsl:value-of select="format-number(./resProxyReport/@aggregatedScore, '0.00')" />
+               out of <xsl:value-of select="format-number(./resProxyReport/@aggregatedMaxScoreAll, '0.00')" />
+               (<xsl:value-of select="format-number(./resProxyReport/@aggregatedMaxScoreProcessable, '0.00')" />)
+            </p>
 				<p>
 					Total number of resource proxies:
 					<xsl:value-of
@@ -237,12 +259,12 @@
 				<p>
 					Total number of resource proxies with MIME:
 					<xsl:value-of
-						select="./resProxyReport/totNumOfResourcesWithMime" />
+						select="./resProxyReport/totNumOfResProxiesWithMime" />
 				</p>
 				<p>
 					Average number of resource proxies with MIME:
 					<xsl:value-of
-						select="format-number(./resProxyReport/avgNumOfResourcesWithMime,'0.00')" />
+						select="format-number(./resProxyReport/avgNumOfResProxiesWithMime,'0.00')" />
 				</p>
 				<p>
 					Total number of resource proxies with reference:
@@ -264,6 +286,11 @@
 					<p>The XML validation section shows the result of a simple
 						validation of each CMD file against its profile. </p>
 				</details>
+           <p>
+               Score: <xsl:value-of select="format-number(./xmlValidityReport/@aggregatedScore, '0.00')" />
+               out of <xsl:value-of select="format-number(./xmlValidityReport/@aggregatedMaxScoreAll, '0.00')" />
+               (<xsl:value-of select="format-number(./xmlValidityReport/@aggregatedMaxScoreProcessable, '0.00')" />)
+            </p>
 				<p>
 					Number of processable Records:
 					<xsl:value-of
@@ -277,7 +304,7 @@
 				<p>
 					Ratio XML valid Records:
 					<xsl:value-of
-						select="format-number(./xmlValidityReport/@avgScoreValid,'0.0%')" />
+						select="format-number(./xmlValidityReport/@avgScoreProcessable,'0.0%')" />
 				</p>
 
 				<hr />
@@ -289,6 +316,11 @@
 					<p>The XML populated section shows information on the number of xml
 						elements and the fact if these elements are conatining data. </p>
 				</details>
+           <p>
+               Score: <xsl:value-of select="format-number(./xmlPopulationReport/@aggregatedScore, '0.00')" />
+               out of <xsl:value-of select="format-number(./xmlPopulationReport/@aggregatedMaxScoreAll, '0.00')" />
+               (<xsl:value-of select="format-number(./xmlPopulationReport/@aggregatedMaxScoreProcessable, '0.00')" />)
+            </p>
 				<p>
 					Total number of XML elements:
 					<xsl:value-of
@@ -336,6 +368,11 @@
 						have been checked so far.
 					</p>
 				</details>
+           <p>
+               Score: <xsl:value-of select="format-number(./linkcheckerReport/@aggregatedScore, '0.00')" />
+               out of <xsl:value-of select="format-number(./linkcheckerReport/@aggregatedMaxScoreAll, '0.00')" />
+               (<xsl:value-of select="format-number(./linkcheckerReport/@aggregatedMaxScoreProcessable, '0.00')" />)
+            </p>
 				<p>
 					Total number of links:
 					<xsl:value-of

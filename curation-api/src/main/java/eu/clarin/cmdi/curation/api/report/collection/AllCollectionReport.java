@@ -91,7 +91,7 @@ public class AllCollectionReport implements NamedReport {
       }
       @XmlElement
       public double getRatioOfValidRecords() {
-         return collectionReport.xmlValidityReport.avgScore;
+         return collectionReport.xmlValidityReport.avgScoreProcessable;
       }
       @XmlElement
       public double getAvgNumOfEmptyXMLElements() {
@@ -99,7 +99,7 @@ public class AllCollectionReport implements NamedReport {
       }
       @XmlElement
       private double getAvgFacetCoverage() {
-         return collectionReport.facetReport.avgScore;
+         return collectionReport.facetReport.avgScoreProcessable;
       }
 
       @XmlElementWrapper(name = "facets")
