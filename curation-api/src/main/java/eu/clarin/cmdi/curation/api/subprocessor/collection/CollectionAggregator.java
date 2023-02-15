@@ -310,6 +310,8 @@ public class CollectionAggregator {
          // XmlPopulation
          collectionReport.xmlPopulationReport.avgNumOfXMLElements = collectionReport.xmlPopulationReport.totNumOfXMLElements
                / (double) collectionReport.fileReport.numOfFiles;
+         collectionReport.xmlPopulationReport.avgNumOfXMLSimpleElements = collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements
+               / (double) collectionReport.fileReport.numOfFiles;
          collectionReport.xmlPopulationReport.avgNumOfXMLEmptyElements = collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
                / collectionReport.fileReport.numOfFiles;
          collectionReport.xmlPopulationReport.avgScoreAll = (double) (collectionReport.xmlPopulationReport.aggregatedScore
