@@ -107,7 +107,7 @@ public class CurationApp {
             
             log.info("start writing linkchecker detail reports");
             curation.getLinkcheckerDetailReports().forEach(report -> storage.saveReport(report, CurationEntityType.LINKCHECKER, false));
-            log.info("start writing linkchecker detail reports");
+            log.info("done writing linkchecker detail reports");
  
          }
          
