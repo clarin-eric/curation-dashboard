@@ -344,12 +344,12 @@
 				<p>
 					Total number of empty XML elements:
 					<xsl:value-of
-						select="./xmlPopulationReport/totNumOfXMLEmptyElement" />
+						select="./xmlPopulationReport/totNumOfXMLEmptyElements" />
 				</p>
 				<p>
 					Average number of empty XML elements:
 					<xsl:value-of
-						select="format-number(./xmlPopulationReport/avgXMLEmptyElement,'0.00')" />
+						select="format-number(./xmlPopulationReport/avgXMLEmptyElements,'0.00')" />
 				</p>
 				<p>
 					Average rate of populated elements:

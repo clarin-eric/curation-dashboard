@@ -317,7 +317,7 @@ public class CollectionAggregator {
          collectionReport.xmlPopulationReport.avgScoreAll = (double) (collectionReport.xmlPopulationReport.aggregatedScore
                / collectionReport.fileReport.numOfFiles);
          if (collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements > 0) {
-            collectionReport.xmlPopulationReport.avgRateOfPopulatedElement = (1.0
+            collectionReport.xmlPopulationReport.avgRateOfPopulatedElements = (1.0
                   - collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
                         / (double) collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements);
          }

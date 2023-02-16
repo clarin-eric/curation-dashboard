@@ -39,5 +39,5 @@ public class XmlPopulationReport {
    @XmlElement
    public double avgNumOfXMLEmptyElements;
    @XmlElement
-   public double avgRateOfPopulatedElement;
+   public double avgRateOfPopulatedElements;
 }
