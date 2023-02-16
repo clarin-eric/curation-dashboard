@@ -141,6 +141,8 @@ public class CurationModuleImpl implements CurationModule {
    public Collection<LinkcheckerDetailReport> getLinkcheckerDetailReports() {
       
       final Collection<LinkcheckerDetailReport> linkcheckerDetailReports = new ArrayList<LinkcheckerDetailReport>();
+      final LinkcheckerDetailReport overallReport = new LinkcheckerDetailReport("Overall");
+      linkcheckerDetailReports.add(overallReport);
       
       final LinkcheckerDetailReport[] lastLinkcheckerDetailReport = new LinkcheckerDetailReport[1];
       final CategoryReport[] lastCategoryReport = new CategoryReport[1];
@@ -165,6 +167,9 @@ public class CurationModuleImpl implements CurationModule {
                
                lastLinkcheckerDetailReport[0].getCategoryReports().add(lastCategoryReport[0]);
                
+               if(!overallReport.getCategoryReports().stream().anyMatch(report -> report.getCategory() == statusDetail.getCategory())) {
+                  overallReport.getCategoryReports().add(lastCategoryReport[0]);
+               }               
             }
             
             lastCategoryReport[0].getStatusDetails().add(
@@ -181,10 +186,9 @@ public class CurationModuleImpl implements CurationModule {
                      statusDetail.getDuration(), 
                      statusDetail.getRedirectCount()
                   )
-               );
+               );      
          });         
-      }
-      
+      }      
       
       return linkcheckerDetailReports;
    
