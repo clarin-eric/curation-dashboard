@@ -17,7 +17,7 @@
 					download as
 					<a>
 						<xsl:attribute name="href">
-                   <xsl:text>/download/xml/profiles/</xsl:text>
+                   <xsl:text>/download/profile/</xsl:text>
                    <xsl:value-of
 							select="translate(./headerReport/id,'.:','__')" />
                 </xsl:attribute>
@@ -26,19 +26,20 @@
 					<xsl:text> </xsl:text>
 					<a>
 						<xsl:attribute name="href">
-                   <xsl:text>/download/json/profiles/</xsl:text>
+                   <xsl:text>/download/profile/</xsl:text>
                    <xsl:value-of
 							select="translate(./headerReport/id,'.:','__')" />
+						<xsl:text>?json</xsl:text>	
                 </xsl:attribute>
 						<xsl:text>json</xsl:text>
 					</a>
 				</div>
 				<div class="clear" />
 				<h1>CMD Profile Report</h1>
-           <b>
+           <p>
                Score: 
                <xsl:value-of select="format-number(./@score,'0.00')" /> / <xsl:value-of select="format-number(./@maxScore,'0.00')" />
-            </b>
+            </p>
 				<h2>Header Section</h2>
            <b>
                Score: 
@@ -106,10 +107,10 @@
 						In other words, if the profile defines an element for the facet.
 					</p>
 				</details>
-            <b>
+            <p>
                Score: 
                <xsl:value-of select="format-number(./facetReport/@score,'0.00')" /> / <xsl:value-of select="format-number(./facetReport/@maxScore,'0.00')" />
-            </b>
+            </p>
 				<p>Number of facets: <xsl:value-of select="./facetReport/@numOfFacets" /></p>
 				<p>Number of facets covered by profile: <xsl:value-of select="./facetReport/@numOfFacetsCoveredByProfile" /></p>
 				<p>Percentage of faccets covered by profile: <xsl:value-of select="format-number(./facetReport/@percProfileCoverage,'0.0%')" /></p>
@@ -216,16 +217,16 @@
 						<xsl:for-each
 							select="./componentReport/component">
 							<tr>
-								<xsl:variable name="href">
-									http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/components/
-									<xsl:value-of select="./@id" />
-								</xsl:variable>
 								<td>
 									<xsl:value-of select="./@name" />
 								</td>
 								<td>
-									<a href="{$href}" target="_blank">
-										<xsl:value-of select="./@id" />
+									<a target="_blank">
+									   <xsl:attribute name="href">
+									      <xsl:text>http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/components/</xsl:text>
+									      <xsl:value-of select="./@id" />
+									   </xsl:attribute>
+									   <xsl:value-of select="./@id" />
 									</a>
 								</td>
 								<td class="text-right">
@@ -249,10 +250,10 @@
 						, please.
 					</p>
 				</details>
-				<b>
+				<p>
                Score: 
                <xsl:value-of select="format-number(./conceptReport/@score,'0.00')" /> / <xsl:value-of select="format-number(./conceptReport/@maxScore,'0.00')" />
-            </b>
+            </p>
 				<p>
 					Total number of elements:
 					<xsl:value-of select="./conceptReport/@total" />
