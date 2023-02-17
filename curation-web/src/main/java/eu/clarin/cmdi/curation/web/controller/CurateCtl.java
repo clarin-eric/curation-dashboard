@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,9 +24,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Slf4j
 @Controller
@@ -95,15 +98,20 @@ public class CurateCtl {
    }
    
    // this is for drag and drop instance form
-   @PostMapping(path = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
    public String postInstance(@RequestParam("file") MultipartFile file, Model model) {
 
-      Path inFilePath;
+      Path inFilePath = Paths.get(System.getProperty("java.io.tmpdir"), System.currentTimeMillis() + "_curation.tmp");
+      
       try {
-         inFilePath = file.getResource().getFile().toPath();
-         Path htmlFilePath = curate(inFilePath);
+         file.transferTo(inFilePath);
          
-         model.addAttribute("include", htmlFilePath.toString());
+         Path reportPath = curate(inFilePath);
+         
+         log.debug("reportPath: {}", reportPath);
+         
+         model.addAttribute("insert", reportPath.toString());
+
       }
       catch (IOException e) {
          
