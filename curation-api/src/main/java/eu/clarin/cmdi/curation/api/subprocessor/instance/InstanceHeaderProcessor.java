@@ -150,8 +150,10 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          CMDProfileReport profileReport = curationModule.processCMDProfile(new URL(schemaLocation));
          
          report.profileHeaderReport = profileReport.headerReport;
+
          report.profileScore = profileReport.score;
-         
+         report.instanceScore += profileReport.score;
+          
          if(instance.getProvidergroupName() != null) {
             synchronized(this) {
                profileReport.collectionUsage.stream()
