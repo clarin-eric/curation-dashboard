@@ -14,9 +14,9 @@
            <p>
                Profile Score: 
                <xsl:value-of select="format-number(./@profileScore,'0.00')" />
-               Instance Score:
+               Score:
                <xsl:value-of select="format-number(./@instanceScore,'0.00')" />
-               Maximal Score (profile + instance): 
+               out of 
                <xsl:value-of select="format-number(./@maxScore,'0.00')" />
             </p>
 
@@ -38,7 +38,7 @@
 					</xsl:choose>
 				</p>
 
-				<p>Url: selfURLPlaceHolder</p>
+				<p>Url: /download/xml/instance/</p>
 
 				<p>
 					ProfileID:
@@ -124,7 +124,7 @@
 						<tbody>
 
 							<xsl:for-each
-								select="./facetReport/values/valueNode">
+								select="./facetReport/valueNodes/valueNode">
 								<xsl:choose>
 									<xsl:when test="./facet">
 										<xsl:for-each select="./facet">
@@ -305,7 +305,7 @@
 				</details>
 				<p>
 					Validity according to profile:
-					<xsl:value-of select="./xmlValidityReport/score" />
+					<xsl:value-of select="boolean(./xmlValidityReport/@score)" />
 				</p>
 
 				<hr />
