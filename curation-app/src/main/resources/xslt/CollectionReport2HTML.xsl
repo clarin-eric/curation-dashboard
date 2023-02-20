@@ -499,7 +499,6 @@
                                           Severity: <xsl:value-of select="./severity"></xsl:value-of>, 
                                           Segment: <xsl:value-of select="./segment"></xsl:value-of>, 
                                           Message:  <xsl:value-of select="./message"></xsl:value-of>
-                                          <xsl:value-of select="."></xsl:value-of>
                                        </li>
                                     </xsl:for-each>
                                  </ul>
