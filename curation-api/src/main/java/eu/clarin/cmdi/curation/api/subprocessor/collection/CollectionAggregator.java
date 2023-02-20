@@ -218,7 +218,7 @@ public class CollectionAggregator {
             xmlStatistics.avgRespTime = categoryStats.getAvgDuration();
             xmlStatistics.maxRespTime = categoryStats.getMaxDuration();
             xmlStatistics.count = categoryStats.getNumber();
-            collectionReport.linkcheckerReport.totNumOfCheckedLinks = categoryStats.getNumber().intValue();
+            collectionReport.linkcheckerReport.totNumOfCheckedLinks += categoryStats.getNumber().intValue();
 
             collectionReport.linkcheckerReport.statistics.add(xmlStatistics);
          });
@@ -243,7 +243,7 @@ public class CollectionAggregator {
          collectionReport.linkcheckerReport.statistics.stream().filter(statistics -> statistics.category == Category.Ok)
                .findFirst().ifPresent(
                      statistics -> collectionReport.linkcheckerReport.ratioOfValidLinks = (collectionReport.linkcheckerReport.totNumOfLinks > 0
-                           ? (double) (statistics.count / collectionReport.linkcheckerReport.totNumOfLinks)
+                           ? (statistics.count /(double) collectionReport.linkcheckerReport.totNumOfLinks)
                            : 0.0));
       }
 
