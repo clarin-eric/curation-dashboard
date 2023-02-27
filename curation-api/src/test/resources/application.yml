@@ -1,6 +1,6 @@
 spring:
    datasource:
-      url: jdbc:h2:mem:linkcheckerTest;MODE=MYSQL;DATABASE_TO_LOWER=TRUE
+      url: jdbc:h2:mem:linkcheckerTest;MODE=MariaDB;DATABASE_TO_LOWER=TRUE
       username: sa
       password: password
       driver-class-name: org.h2.Driver
