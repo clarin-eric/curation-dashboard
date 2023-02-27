@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -58,7 +59,10 @@ public class CurationApp {
 	
    @Bean
    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-      return args -> {         
+      
+      return args -> {   
+         
+         log.info("start time: {}", LocalDateTime.now());
          
          if("all".equalsIgnoreCase(conf.getMode()) || "collection".equalsIgnoreCase(conf.getMode())) {
          
@@ -119,6 +123,8 @@ public class CurationApp {
             linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
             log.info("done deleting links older than {} days", conf.getLinkDeletionAfter());
          }
+         
+         log.info("end time: {}", LocalDateTime.now());
       };
    }
    
