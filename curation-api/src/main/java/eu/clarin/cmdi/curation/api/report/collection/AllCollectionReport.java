@@ -58,8 +58,12 @@ public class AllCollectionReport implements NamedReport {
          return collectionReport.getName();
       }
       @XmlElement
-      public double getScorePercentage() {
-         return collectionReport.scorePercentage;
+      public double getScorePercentageProcessable() {
+         return collectionReport.scorePercentageProcessable;
+      };
+      @XmlElement
+      public double getScorePercentageAll() {
+         return collectionReport.scorePercentageAll;
       };
       @XmlElement
       public long getNumOfFiles() {
