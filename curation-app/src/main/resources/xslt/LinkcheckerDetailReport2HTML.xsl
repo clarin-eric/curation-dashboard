@@ -29,8 +29,8 @@
 			Category:
 			<xsl:value-of select="./@category" />
 		</h3>
-		<div class="download">
-			download full list as zipped
+		<div>
+			Download full category <xsl:value-of select="./@category" /> list as zipped
 			<a>
 				<xsl:attribute name="href">
 	  <xsl:text>/download/linkchecker/</xsl:text>
