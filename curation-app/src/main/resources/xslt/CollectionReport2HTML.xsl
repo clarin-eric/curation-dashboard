@@ -41,6 +41,8 @@
 				<hr />
             <xsl:apply-templates select="fileReport" />
 				<hr />
+				<xsl:apply-templates select="profileReport" />
+            <hr />
             <xsl:apply-templates select="headerReport" />
             <hr />
             <xsl:apply-templates select="facetReport" />
@@ -132,8 +134,17 @@
                </summary>
                <p>General information on the number of files and the file size.</p>
             </details>
+            
             <xsl:call-template name="scoreTable" />
-            <xsl:value-of select="./numOfFiles" />
+            
+            <p>
+               Number of files:
+               <xsl:value-of select="./numOfFiles" />
+            </p>
+            <p>
+               Number of processable files:
+               <xsl:value-of select="./numOfFilesProcessable" />
+            </p>
             <p>
                Number of files:
                <xsl:value-of select="./numOfFiles" />
@@ -160,35 +171,30 @@
             </p>
    </xsl:template>
    
-   <!-- headerReport -->
-   <xsl:template match="headerReport">
-            <details>
+   <!-- profileReport -->
+   <xsl:template match="profileReport">
+               <details>
                <summary>
-                  <h2>Header Section</h2>
+                  <h2>Profile Usage Section</h2>
                </summary>
                <p>
-                  The header section shows information on the profile usage in the
+                  The profile usage section shows information shows which profiles are used how oftenly in a collection. 
                   collection.
-                  <br />
-                  Important note: the score of this section differs from the score
-                  of the underlying profile. For more information
-                  on scoring have a look at the
-                  <a href="/faq">FAQ</a>
-                  , please.
-               </p>
+               </p>   
             </details>
-            <xsl:call-template name="scoreTable" /> 
+            <xsl:call-template name="scoreTable" />
             <table class="reportTable">
                <thead>
                   <tr>
                      <th>ID</th>
+                     <th>Is public</th>
                      <th>Score</th>
                      <th>Count</th>
                   </tr>
                </thead>
                <tfoot>
                   <tr>
-                     <td colspan="3">
+                     <td colspan="4">
                         Total number of profiles:
                         <xsl:value-of
                            select="./totNumOfProfiles" />
@@ -211,11 +217,14 @@
                               <xsl:attribute name="href">
                      <xsl:text>/profile/</xsl:text>
                         <xsl:value-of
-                                 select="translate(./@profileId,'.:','__')"></xsl:value-of>
+                                 select="translate(./@profileId,'.:','__')" />
                         <xsl:text>.html</xsl:text>
                        </xsl:attribute>
-                              <xsl:value-of select="./@profileId"></xsl:value-of>
+                              <xsl:value-of select="./@profileId" />
                            </a>
+                        </td>
+                        <td>
+                        <xsl:value-of select="./@isPublic" />
                         </td>
                         <td class='text-right'>
                            <xsl:value-of
@@ -228,6 +237,24 @@
                   </xsl:for-each>
                </tbody>
             </table>   
+   
+   </xsl:template>
+   
+   <!-- headerReport -->
+   <xsl:template match="headerReport">
+            <details>
+               <summary>
+                  <h2>Header Section</h2>
+               </summary>
+               <p>
+                  The header section shows information on the availibilty of attribute schemaLocation as well as the elements 
+                  MdSelfLink, MdProfile and MdCollectionDisplayName.
+                  </p>
+            </details>
+            
+            <xsl:call-template name="scoreTable" /> 
+            
+ 
    </xsl:template>
    
    <!-- facetReport -->
@@ -242,7 +269,11 @@
                   based on.
                </p>
             </details>
+            
             <xsl:call-template name="scoreTable" />
+            
+
+            
             <table class="reportTable">
                <thead>
                   <tr>
@@ -254,7 +285,7 @@
                   <tr>
                      <td colspan="2">
                         <b>
-                           facet-coverage:
+                           average facet-coverage:
                            <xsl:value-of
                               select="format-number(./@avgScoreProcessable,'0.0%')" />
                         </b>
@@ -289,7 +320,9 @@
                   the CMD file.
                </p>
             </details>
+            
             <xsl:call-template name="scoreTable" />
+            
             <p>
                Total number of resource proxies:
                <xsl:value-of
@@ -331,12 +364,9 @@
                <p>The XML validation section shows the result of a simple
                   validation of each CMD file against its profile. </p>
             </details>
+            
             <xsl:call-template name="scoreTable" />
-            <p>
-               Number of XML processable Records:
-               <xsl:value-of
-                  select="//fileReport/totNumOfFilesProcessable" />
-            </p>
+            
             <p>
                Number of XML valid Records:
                <xsl:value-of
@@ -358,7 +388,9 @@
                <p>The XML populated section shows information on the number of xml
                   elements and the fact if these elements are conatining data. </p>
             </details>
+            
             <xsl:call-template name="scoreTable" />
+            
             <p>
                Total number of XML elements:
                <xsl:value-of
@@ -407,7 +439,9 @@
                   have been checked so far.
                </p>
             </details>
+            
             <xsl:call-template name="scoreTable" />
+            
             <p>
                Total number of links:
                <xsl:value-of
@@ -467,7 +501,7 @@
                               <xsl:text>#</xsl:text>
                               <xsl:value-of select="./@category" />
                               </xsl:attribute>
-                              <xsl:value-of select="//fileReport/provider" />
+                              <xsl:value-of select="./@category" />
                               </a>
                            </td>
    
@@ -492,12 +526,12 @@
    
    <!-- scoreTable -->
 	<xsl:template name="scoreTable">
-	<table class="scoreTable">
+	<table class="reportTable">
 	  <thead>
 	     <tr>
-	        <td></td>
-           <td>Processable</td>
-	        <td>All</td>
+	        <th></th>
+           <th>Processable</th>
+	        <th>All</th>
 	     </tr>
 	  </thead>
 	  <tbody>
@@ -523,5 +557,6 @@
         </tr>
 	  </tbody>	  
 	</table>	
+	<br />
 	</xsl:template>
 </xsl:stylesheet>
