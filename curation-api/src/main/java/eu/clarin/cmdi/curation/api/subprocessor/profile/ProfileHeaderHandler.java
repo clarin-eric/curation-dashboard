@@ -40,13 +40,13 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
             .filter(profileHeader -> profileHeader.getName().equals(report.headerReport.getName())
                   && !profileHeader.getId().equals(report.headerReport.getId()))
             .findAny().ifPresent(profileReport -> report.details.add(new Detail(Severity.WARNING,"header",
-                  "The name: " + report.headerReport.getName() + " of the profile is not unique")));
+                  "The name '" + report.headerReport.getName() + "' of the profile is not unique")));
 
       pphService.getProfileHeaders().stream()
             .filter(profileHeader -> profileHeader.getDescription().equals(report.headerReport.getDescription())
                   && !profileHeader.getId().equals(report.headerReport.getId()))
             .findAny().ifPresent(profileReport -> report.details.add(new Detail(Severity.WARNING,"header",
-                  "The description: " + report.headerReport.getDescription() + " of the profile is not unique")));
+                  "The description '" + report.headerReport.getDescription() + "' of the profile is not unique")));
 
    }
 }
