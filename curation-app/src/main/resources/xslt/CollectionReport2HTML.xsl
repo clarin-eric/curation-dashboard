@@ -36,9 +36,43 @@
 					<xsl:value-of
 						select="replace(//fileReport/provider,'_',' ')" />
 				</h3>
-            <xsl:call-template name="scoreTable" />
+				
+				     <!-- scoreTable -->
 
-				<hr />
+			   <table class="reportTable">
+			     <thead>
+			        <tr>
+			           <th>Section</th>
+			           <th>Score</th>
+			           <th>Maximum Score</th>
+			           <th>Score Percentage</th>
+			        </tr>
+			     </thead>
+			     <tfoot>
+                  <tr>
+	                  <td>total</td>
+	                  <td><xsl:value-of select="@aggregatedScore" /></td>
+	                  <td><xsl:value-of select="@aggregatedMaxScore" /></td>
+	                  <td><xsl:value-of select="@scorePercentage" /></td>
+                  </tr>
+              </tfoot>
+			     <tbody>
+			         <xsl:for-each select="*">
+			            <xsl:if test="@aggregatedScore">
+			               <tr>
+			                  <td><xsl:value-of select="name(.)" /></td>
+			                  <td><xsl:value-of select="@aggregatedScore" /></td>
+			                  <td><xsl:value-of select="@aggregatedMaxScore" /></td>
+			                  <td><xsl:value-of select="@scorePercentage" /></td>
+			               </tr>			            
+			            </xsl:if>
+			         </xsl:for-each>
+			     </tbody>    
+			   </table> 
+			   <br />
+
+
+				<br />
             <xsl:apply-templates select="fileReport" />
 				<hr />
 				<xsl:apply-templates select="profileReport" />
@@ -81,7 +115,7 @@
                               <td>
                                  <a>
                                     <xsl:attribute name="href">/record/<xsl:value-of
-                                       select="replace(./@origin, '/', '#')" /></xsl:attribute>
+                                       select="./origin" /></xsl:attribute>
                                     <xsl:value-of select="./@origin" />
                                  </a>
 
@@ -126,6 +160,8 @@
 		</html>
 	</xsl:template>
 	
+
+	
 	<!-- fileReport -->
    <xsl:template match="fileReport">
             <details>
@@ -134,8 +170,6 @@
                </summary>
                <p>General information on the number of files and the file size.</p>
             </details>
-            
-            <xsl:call-template name="scoreTable" />
             
             <p>
                Number of files:
@@ -182,7 +216,6 @@
                   collection.
                </p>   
             </details>
-            <xsl:call-template name="scoreTable" />
             <table class="reportTable">
                <thead>
                   <tr>
@@ -251,10 +284,6 @@
                   MdSelfLink, MdProfile and MdCollectionDisplayName.
                   </p>
             </details>
-            
-            <xsl:call-template name="scoreTable" /> 
-            
- 
    </xsl:template>
    
    <!-- facetReport -->
@@ -270,10 +299,6 @@
                </p>
             </details>
             
-            <xsl:call-template name="scoreTable" />
-            
-
-            
             <table class="reportTable">
                <thead>
                   <tr>
@@ -287,7 +312,7 @@
                         <b>
                            average facet-coverage:
                            <xsl:value-of
-                              select="format-number(./@avgScoreProcessable,'0.0%')" />
+                              select="format-number(./@avgScore,'0.0%')" />
                         </b>
                      </td>
                   </tr>
@@ -320,8 +345,6 @@
                   the CMD file.
                </p>
             </details>
-            
-            <xsl:call-template name="scoreTable" />
             
             <p>
                Total number of resource proxies:
@@ -365,8 +388,6 @@
                   validation of each CMD file against its profile. </p>
             </details>
             
-            <xsl:call-template name="scoreTable" />
-            
             <p>
                Number of XML valid Records:
                <xsl:value-of
@@ -375,7 +396,7 @@
             <p>
                Ratio XML valid Records:
                <xsl:value-of
-                  select="format-number(./@avgScoreProcessable,'0.0%')" />
+                  select="format-number(./@avgScore,'0.0%')" />
             </p>   
    </xsl:template>
    
@@ -388,8 +409,6 @@
                <p>The XML populated section shows information on the number of xml
                   elements and the fact if these elements are conatining data. </p>
             </details>
-            
-            <xsl:call-template name="scoreTable" />
             
             <p>
                Total number of XML elements:
@@ -439,8 +458,6 @@
                   have been checked so far.
                </p>
             </details>
-            
-            <xsl:call-template name="scoreTable" />
             
             <p>
                Total number of links:
@@ -519,44 +536,7 @@
                         </tr>   
                      </xsl:for-each>
                   </tbody>
-   
                </table>
            </xsl:if>   
    </xsl:template>
-   
-   <!-- scoreTable -->
-	<xsl:template name="scoreTable">
-	<table class="reportTable">
-	  <thead>
-	     <tr>
-	        <th></th>
-           <th>Processable</th>
-	        <th>All</th>
-	     </tr>
-	  </thead>
-	  <tbody>
-	     <tr>
-	        <td>Aggregated score</td>
-	        <td><xsl:value-of select="format-number(./@aggregatedScore, '0.00')" /></td>
-	        <td><xsl:value-of select="format-number(./@aggregatedScore, '0.00')" /></td>
-	     </tr>
-	     <tr>
-	        <td>Aggregated maximal score</td>
-	        <td><xsl:value-of select="format-number(./@aggregatedMaxScoreProcessable, '0.00')" /></td>
-	        <td><xsl:value-of select="format-number(./@aggregatedMaxScoreAll, '0.00')" /></td>
-	     </tr>
-        <tr>
-           <td>Score percentage</td>
-           <td><xsl:value-of select="format-number(./@scorePercentageProcessable, '0.0%')" /></td>
-           <td><xsl:value-of select="format-number(./@scorePercentageAll, '0.0%')" /></td>
-        </tr>
-        <tr>
-           <td>Average score</td>
-           <td><xsl:value-of select="format-number(./@avgScoreProcessable, '0.00')" /></td>
-           <td><xsl:value-of select="format-number(./@avgScoreAll, '0.00')" /></td>
-        </tr>
-	  </tbody>	  
-	</table>	
-	<br />
-	</xsl:template>
 </xsl:stylesheet>
