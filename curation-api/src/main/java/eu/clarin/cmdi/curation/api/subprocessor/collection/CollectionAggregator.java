@@ -10,8 +10,8 @@ import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport.RecordDetail;
 import eu.clarin.cmdi.curation.api.report.collection.sec.FacetReport.FacetCollectionStruct;
-import eu.clarin.cmdi.curation.api.report.collection.sec.HeaderReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Statistics;
+import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport.InvalidReference;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import lombok.extern.slf4j.Slf4j;
@@ -150,15 +150,15 @@ public class CollectionAggregator {
          // file
          collectionReport.fileReport.numOfFilesProcessable++;
          collectionReport.fileReport.aggregatedScore += instanceReport.fileReport.score;
-
+         
+         //profile         
+         collectionReport.profileReport.profiles.stream()
+         .filter(profile -> profile.profileId.equals(instanceReport.profileHeaderReport.getId())).findFirst()
+         .ifPresentOrElse(profile -> profile.count++, () -> collectionReport.profileReport.profiles
+               .add(new Profile(instanceReport.profileHeaderReport.getId(),instanceReport.profileHeaderReport.getProfileHeader().isPublic(), instanceReport.profileScore)));
+         collectionReport.profileReport.aggregatedScore += instanceReport.profileScore;
+         
          // header
-
-         collectionReport.headerReport.profiles.stream()
-               .filter(profile -> profile.profileId.equals(instanceReport.profileHeaderReport.getId())).findFirst()
-               .ifPresentOrElse(profile -> profile.count++, () -> collectionReport.headerReport.profiles
-                     .add(new Profile(instanceReport.profileHeaderReport.getId(), instanceReport.profileScore)));
-
-
          if (instanceReport.instanceHeaderReport.mdSelfLink != null
                && !instanceReport.instanceHeaderReport.mdSelfLink.isEmpty()) {
 
@@ -172,7 +172,6 @@ public class CollectionAggregator {
          }
 
          collectionReport.headerReport.aggregatedScore += instanceReport.instanceHeaderReport.score;
-         collectionReport.headerReport.aggregatedScore += instanceReport.profileHeaderReport.score;
 
          // ResProxies
          collectionReport.resProxyReport.totNumOfResProxies += instanceReport.resProxyReport.numOfResProxies;
@@ -257,6 +256,11 @@ public class CollectionAggregator {
             * collectionReport.fileReport.numOfFiles;
       collectionReport.fileReport.aggregatedMaxScoreProcessable = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore
             * collectionReport.fileReport.numOfFilesProcessable;
+      
+      collectionReport.profileReport.aggregatedMaxScoreAll = eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.maxScore
+            * collectionReport.fileReport.numOfFiles;
+      collectionReport.profileReport.aggregatedMaxScoreProcessable = eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.maxScore
+            * collectionReport.fileReport.numOfFilesProcessable;
 
       collectionReport.headerReport.aggregatedMaxScoreAll = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport.maxScore
             * collectionReport.fileReport.numOfFiles;
@@ -297,8 +301,14 @@ public class CollectionAggregator {
          collectionReport.fileReport.scorePercentageAll = collectionReport.fileReport.aggregatedScore
                / (double) collectionReport.fileReport.aggregatedMaxScoreAll;
          
+         //profile
+         collectionReport.profileReport.totNumOfProfiles = collectionReport.profileReport.profiles.size();
+         collectionReport.profileReport.avgScoreAll = collectionReport.profileReport.aggregatedScore
+               / (double) collectionReport.fileReport.numOfFiles;
+         collectionReport.profileReport.scorePercentageAll = collectionReport.profileReport.aggregatedScore
+               / (double) collectionReport.profileReport.aggregatedMaxScoreAll;
          // header
-         collectionReport.headerReport.totNumOfProfiles = collectionReport.headerReport.profiles.size();
+         
          collectionReport.headerReport.avgScoreAll = (collectionReport.headerReport.aggregatedScore
                / collectionReport.fileReport.numOfFiles);
          collectionReport.headerReport.scorePercentageAll = collectionReport.headerReport.aggregatedScore
@@ -368,6 +378,12 @@ public class CollectionAggregator {
                / (double) collectionReport.fileReport.aggregatedMaxScoreProcessable;
          collectionReport.fileReport.avgScoreProcessable = (collectionReport.fileReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
+         //profile
+         collectionReport.profileReport.avgScoreProcessable = collectionReport.profileReport.aggregatedScore
+               / (double) collectionReport.fileReport.numOfFilesProcessable;
+         collectionReport.profileReport.scorePercentageProcessable = collectionReport.profileReport.aggregatedScore
+               / (double) collectionReport.profileReport.aggregatedMaxScoreProcessable;
+         
          // header
          collectionReport.headerReport.scorePercentageProcessable = collectionReport.headerReport.aggregatedScore
                / (double) collectionReport.headerReport.aggregatedMaxScoreProcessable;

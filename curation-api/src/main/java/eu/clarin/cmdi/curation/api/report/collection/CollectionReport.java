@@ -7,6 +7,7 @@ import eu.clarin.cmdi.curation.api.report.collection.sec.FacetReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.FileReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.HeaderReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport;
+import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.XmlPopulationReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.XmlValidityReport;
@@ -59,6 +60,9 @@ public class CollectionReport implements NamedReport{
 
    @XmlElement
    public final FileReport fileReport = new FileReport();
+   
+   @XmlElement
+   public final ProfileReport profileReport = new ProfileReport();
 
    @XmlElement
    public final HeaderReport headerReport = new HeaderReport();
