@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = {"id", "schemaLocation", "name", "description", "cmdiVersion", "status"})
+@XmlType(propOrder = {"id", "schemaLocation", "name", "description", "cmdiVersion", "status", "public"})
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class ProfileHeaderReport {
