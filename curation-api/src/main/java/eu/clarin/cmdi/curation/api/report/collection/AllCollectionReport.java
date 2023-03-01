@@ -58,12 +58,8 @@ public class AllCollectionReport implements NamedReport {
          return collectionReport.getName();
       }
       @XmlElement
-      public double getScorePercentageProcessable() {
-         return collectionReport.scorePercentageProcessable;
-      };
-      @XmlElement
-      public double getScorePercentageAll() {
-         return collectionReport.scorePercentageAll;
+      public double getScorePercentage() {
+         return collectionReport.scorePercentage;
       };
       @XmlElement
       public long getNumOfFiles() {
@@ -95,7 +91,7 @@ public class AllCollectionReport implements NamedReport {
       }
       @XmlElement
       public double getRatioOfValidRecords() {
-         return collectionReport.xmlValidityReport.avgScoreProcessable;
+         return collectionReport.xmlValidityReport.avgScore;
       }
       @XmlElement
       public double getAvgNumOfEmptyXMLElements() {
@@ -103,7 +99,7 @@ public class AllCollectionReport implements NamedReport {
       }
       @XmlElement
       private double getAvgFacetCoverage() {
-         return collectionReport.facetReport.avgScoreProcessable;
+         return collectionReport.facetReport.avgScore;
       }
 
       @XmlElementWrapper(name = "facets")

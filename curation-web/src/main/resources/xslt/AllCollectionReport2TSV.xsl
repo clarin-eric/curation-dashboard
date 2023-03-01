@@ -16,9 +16,7 @@
 	<xsl:template match="/collections-report">
 		<xsl:text>Name</xsl:text>
 		<xsl:text>&#9;</xsl:text>
-		<xsl:text>Score processable</xsl:text>
-		<xsl:text>&#9;</xsl:text>
-		<xsl:text>Score all</xsl:text>
+		<xsl:text>Score</xsl:text>
       <xsl:text>&#9;</xsl:text>
 		<xsl:text>Num Of Records</xsl:text>
 		<xsl:text>&#9;</xsl:text>
@@ -50,9 +48,7 @@
          <xsl:value-of select="@name">
          </xsl:value-of>
          <xsl:text>&#9;</xsl:text>
-         <xsl:value-of select="scorePercentageProcessable"></xsl:value-of>
-         <xsl:text>&#9;</xsl:text>
-         <xsl:value-of select="scorePercentageAll"></xsl:value-of>
+         <xsl:value-of select="scorePercentage"></xsl:value-of>
          <xsl:text>&#9;</xsl:text>
          <xsl:value-of select="numOfFiles"></xsl:value-of>
          <xsl:text>&#9;</xsl:text>

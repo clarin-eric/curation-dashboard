@@ -22,8 +22,7 @@
                     <thead>
                         <tr>
                             <th data-sortable="true">Name</th>
-                            <th data-sortable="true">Score processable</th>
-                            <th data-sortable="true">Score all</th>
+                            <th data-sortable="true">Score</th>
                             <th data-sortable="true">Num Of Records</th>
                             <th data-sortable="true">Num Of Profiles</th>
                             <th data-sortable="true">Num Of Unique Links</th>
@@ -57,10 +56,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="format-number(scorePercentageProcessable,'0.00%')"></xsl:value-of>
-                                </td>
-                                <td>
-                                    <xsl:value-of select="format-number(scorePercentageAll,'0.00%')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(scorePercentage,'0.00%')"></xsl:value-of>
                                 </td>
                                 <td>
                                     <xsl:value-of select="numOfFiles"></xsl:value-of>
