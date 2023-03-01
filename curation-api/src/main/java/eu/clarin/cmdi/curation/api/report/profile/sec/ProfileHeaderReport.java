@@ -59,4 +59,8 @@ public class ProfileHeaderReport {
    public String getStatus() {
       return header.getStatus();
    }
+   @XmlElement
+   public boolean isPublic() {
+      return header.isPublic();
+   }
 }
