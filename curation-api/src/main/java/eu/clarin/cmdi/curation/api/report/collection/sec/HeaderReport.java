@@ -23,18 +23,11 @@ public class HeaderReport {
    @XmlAttribute
    public double aggregatedScore;
    @XmlAttribute
-   public double aggregatedMaxScoreAll;
+   public double aggregatedMaxScore;
    @XmlAttribute
-   public double aggregatedMaxScoreProcessable;
+   public double scorePercentage;
    @XmlAttribute
-   public double scorePercentageAll;
-   @XmlAttribute
-   public double scorePercentageProcessable;
-   @XmlAttribute
-   public double avgScoreAll;
-   @XmlAttribute
-   public double avgScoreProcessable;
-
+   public double avgScore;
    
    @XmlElementWrapper(name = "duplicatedMDSelfLinks")
    @XmlElement(name = "duplicatedMDSelfLink")

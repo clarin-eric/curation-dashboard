@@ -202,6 +202,10 @@ public class CollectionAggregator {
                         .get().count++);
          }
       }
+      else {
+         collectionReport.fileReport.numOfFilesNonProcessable++;
+      }
+      
       collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
 
       collectionReport.aggregatedScore += instanceReport.instanceScore;
@@ -248,71 +252,45 @@ public class CollectionAggregator {
 
       collectionReport.linkcheckerReport.aggregatedScore = (double) collectionReport.linkcheckerReport.ratioOfValidLinks
             * collectionReport.fileReport.numOfFilesProcessable;
-      collectionReport.linkcheckerReport.aggregatedMaxScoreAll = (double) collectionReport.fileReport.numOfFiles;
-      collectionReport.linkcheckerReport.aggregatedMaxScoreProcessable = collectionReport.fileReport.numOfFilesProcessable;
-      collectionReport.linkcheckerReport.avgScoreProcessable = collectionReport.linkcheckerReport.ratioOfValidLinks;
 
-      collectionReport.fileReport.aggregatedMaxScoreAll = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore
+      collectionReport.linkcheckerReport.aggregatedMaxScore = collectionReport.fileReport.numOfFilesProcessable;
+
+      collectionReport.fileReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore
             * collectionReport.fileReport.numOfFiles;
-      collectionReport.fileReport.aggregatedMaxScoreProcessable = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore
-            * collectionReport.fileReport.numOfFilesProcessable;
       
-      collectionReport.profileReport.aggregatedMaxScoreAll = eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.maxScore
-            * collectionReport.fileReport.numOfFiles;
-      collectionReport.profileReport.aggregatedMaxScoreProcessable = eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.maxScore
+      collectionReport.profileReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.maxScore
             * collectionReport.fileReport.numOfFilesProcessable;
 
-      collectionReport.headerReport.aggregatedMaxScoreAll = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport.maxScore
-            * collectionReport.fileReport.numOfFiles;
-      collectionReport.headerReport.aggregatedMaxScoreProcessable = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport.maxScore
+      collectionReport.headerReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport.maxScore
             * collectionReport.fileReport.numOfFilesProcessable;
 
-      collectionReport.resProxyReport.aggregatedMaxScoreAll = eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport.maxScore
-            * collectionReport.fileReport.numOfFiles;
-      collectionReport.resProxyReport.aggregatedMaxScoreProcessable = eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport.maxScore
+      collectionReport.resProxyReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport.maxScore
             * collectionReport.fileReport.numOfFilesProcessable;
 
-      collectionReport.xmlPopulationReport.aggregatedMaxScoreAll = eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport.maxScore
-            * collectionReport.fileReport.numOfFiles;
-      collectionReport.xmlPopulationReport.aggregatedMaxScoreProcessable = eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport.maxScore
+      collectionReport.xmlPopulationReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport.maxScore
             * collectionReport.fileReport.numOfFilesProcessable;
 
-      collectionReport.xmlValidityReport.aggregatedMaxScoreAll = eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport.maxScore
-            * collectionReport.fileReport.numOfFiles;
-      collectionReport.xmlValidityReport.aggregatedMaxScoreProcessable = eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport.maxScore
+      collectionReport.xmlValidityReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport.maxScore
             * collectionReport.fileReport.numOfFilesProcessable;
-      
-      collectionReport.facetReport.aggregatedMaxScoreAll = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.maxScore
-            * collectionReport.fileReport.numOfFiles;     
-      collectionReport.facetReport.aggregatedMaxScoreProcessable = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.maxScore
+          
+      collectionReport.facetReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.maxScore
             * collectionReport.fileReport.numOfFilesProcessable;      
 
-      collectionReport.aggregatedMaxScoreAll = (eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport.maxScore + 1)
-            * collectionReport.fileReport.numOfFiles;
-      collectionReport.aggregatedMaxScoreProcessable = (eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport.maxScore
-            + 1) * collectionReport.fileReport.numOfFilesProcessable;
+      collectionReport.aggregatedMaxScore = (eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport.maxScore
+            + 1) * collectionReport.fileReport.numOfFilesProcessable + collectionReport.fileReport.numOfFilesNonProcessable;
 
       if (collectionReport.fileReport.numOfFiles > 0) {
          // file
          collectionReport.fileReport.avgFileSize = collectionReport.fileReport.size
                / collectionReport.fileReport.numOfFiles;
-         collectionReport.fileReport.avgScoreAll = (double) (collectionReport.fileReport.aggregatedScore
+         collectionReport.fileReport.scorePercentage = collectionReport.fileReport.aggregatedScore 
+               / (double) collectionReport.fileReport.numOfFiles;
+         collectionReport.fileReport.avgScore = (double) (collectionReport.fileReport.aggregatedScore
                / collectionReport.fileReport.numOfFiles);
-         collectionReport.fileReport.scorePercentageAll = collectionReport.fileReport.aggregatedScore
-               / (double) collectionReport.fileReport.aggregatedMaxScoreAll;
          
          //profile
          collectionReport.profileReport.totNumOfProfiles = collectionReport.profileReport.profiles.size();
-         collectionReport.profileReport.avgScoreAll = collectionReport.profileReport.aggregatedScore
-               / (double) collectionReport.fileReport.numOfFiles;
-         collectionReport.profileReport.scorePercentageAll = collectionReport.profileReport.aggregatedScore
-               / (double) collectionReport.profileReport.aggregatedMaxScoreAll;
-         // header
-         
-         collectionReport.headerReport.avgScoreAll = (collectionReport.headerReport.aggregatedScore
-               / collectionReport.fileReport.numOfFiles);
-         collectionReport.headerReport.scorePercentageAll = collectionReport.headerReport.aggregatedScore
-               / (double) collectionReport.headerReport.aggregatedMaxScoreAll;
+
          // resProxy
          collectionReport.resProxyReport.avgNumOfResProxies = (collectionReport.resProxyReport.totNumOfResProxies
                / (double) collectionReport.fileReport.numOfFiles);
@@ -320,10 +298,6 @@ public class CollectionAggregator {
                / (double) collectionReport.fileReport.numOfFiles);
          collectionReport.resProxyReport.avgNumOfResProxiesWithReference = (collectionReport.resProxyReport.totNumOfResProxiesWithReference
                / (double) collectionReport.fileReport.numOfFiles);
-         collectionReport.resProxyReport.avgScoreAll = collectionReport.resProxyReport.aggregatedScore
-               / (double) collectionReport.fileReport.numOfFiles;
-         collectionReport.resProxyReport.scorePercentageAll = collectionReport.resProxyReport.aggregatedScore
-               / (double) collectionReport.resProxyReport.aggregatedMaxScoreAll;
          // XmlPopulation
          collectionReport.xmlPopulationReport.avgNumOfXMLElements = collectionReport.xmlPopulationReport.totNumOfXMLElements
                / (double) collectionReport.fileReport.numOfFiles;
@@ -331,25 +305,16 @@ public class CollectionAggregator {
                / (double) collectionReport.fileReport.numOfFiles;
          collectionReport.xmlPopulationReport.avgNumOfXMLEmptyElements = collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
                / collectionReport.fileReport.numOfFiles;
-         collectionReport.xmlPopulationReport.avgScoreAll = (double) (collectionReport.xmlPopulationReport.aggregatedScore
-               / collectionReport.fileReport.numOfFiles);
+
          if (collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements > 0) {
             collectionReport.xmlPopulationReport.avgRateOfPopulatedElements = (1.0
                   - collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
                         / (double) collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements);
          }
-         collectionReport.xmlPopulationReport.scorePercentageAll = collectionReport.xmlPopulationReport.aggregatedScore
-               / (double) collectionReport.xmlPopulationReport.aggregatedMaxScoreAll;
-         // XmlValidation
-         collectionReport.xmlValidityReport.avgScoreAll = (collectionReport.xmlValidityReport.aggregatedScore
-               / (double) collectionReport.fileReport.numOfFiles);
 
          // Facet
          collectionReport.facetReport.facets
                .forEach(facet -> facet.avgCoverage = facet.count / (double) collectionReport.fileReport.numOfFiles);
-
-         collectionReport.facetReport.avgScoreAll = (double) (collectionReport.facetReport.aggregatedScore
-               / collectionReport.fileReport.numOfFiles);
          collectionReport.facetReport.percCoverageNonZero = (double) collectionReport.facetReport.facets.stream()
                .filter(facet -> facet.count > 0).count() / collectionReport.facetReport.facets.size();
 
@@ -364,63 +329,52 @@ public class CollectionAggregator {
          collectionReport.linkcheckerReport.avgRespTime = collectionReport.linkcheckerReport.statistics.stream()
                .filter(statistics -> statistics.avgRespTime != null)
                .mapToDouble(statistics -> statistics.avgRespTime * statistics.count).average().orElse(0.0);
-         collectionReport.linkcheckerReport.scorePercentageAll = collectionReport.linkcheckerReport.aggregatedScore
-               / (double) collectionReport.linkcheckerReport.aggregatedMaxScoreAll;
+
          //collection
-         collectionReport.avgScoreAll = collectionReport.aggregatedScore / collectionReport.fileReport.numOfFiles;
-         collectionReport.scorePercentageAll = collectionReport.aggregatedScore / collectionReport.aggregatedMaxScoreAll;
+         collectionReport.scorePercentage = collectionReport.aggregatedScore / collectionReport.aggregatedMaxScore;
 
       }
 
       if (collectionReport.fileReport.numOfFilesProcessable > 0) {
          // file
-         collectionReport.fileReport.scorePercentageProcessable = collectionReport.fileReport.aggregatedScore 
-               / (double) collectionReport.fileReport.aggregatedMaxScoreProcessable;
-         collectionReport.fileReport.avgScoreProcessable = (collectionReport.fileReport.aggregatedScore
-               / (double) collectionReport.fileReport.numOfFilesProcessable);
+
          //profile
-         collectionReport.profileReport.avgScoreProcessable = collectionReport.profileReport.aggregatedScore
+         collectionReport.profileReport.avgScore = collectionReport.profileReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable;
-         collectionReport.profileReport.scorePercentageProcessable = collectionReport.profileReport.aggregatedScore
-               / (double) collectionReport.profileReport.aggregatedMaxScoreProcessable;
+         collectionReport.profileReport.scorePercentage = collectionReport.profileReport.aggregatedScore
+               / (double) collectionReport.profileReport.aggregatedMaxScore;
          
          // header
-         collectionReport.headerReport.scorePercentageProcessable = collectionReport.headerReport.aggregatedScore
-               / (double) collectionReport.headerReport.aggregatedMaxScoreProcessable;
-         collectionReport.headerReport.avgScoreProcessable = (collectionReport.headerReport.aggregatedScore
+         collectionReport.headerReport.scorePercentage = collectionReport.headerReport.aggregatedScore
+               / (double) collectionReport.headerReport.aggregatedMaxScore;
+         collectionReport.headerReport.avgScore = (collectionReport.headerReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          // resProxy
-         collectionReport.resProxyReport.scorePercentageProcessable = collectionReport.resProxyReport.aggregatedScore
-               / collectionReport.resProxyReport.aggregatedMaxScoreProcessable;
-         collectionReport.resProxyReport.avgScoreProcessable = (collectionReport.resProxyReport.aggregatedScore
+         collectionReport.resProxyReport.scorePercentage = collectionReport.resProxyReport.aggregatedScore
+               / collectionReport.resProxyReport.aggregatedMaxScore;
+         collectionReport.resProxyReport.avgScore = (collectionReport.resProxyReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          // xmlpopulation
-         collectionReport.xmlPopulationReport.scorePercentageProcessable = collectionReport.xmlPopulationReport.aggregatedScore
-               / (double) collectionReport.xmlPopulationReport.aggregatedMaxScoreProcessable;
-         collectionReport.xmlPopulationReport.avgScoreProcessable = (collectionReport.xmlPopulationReport.aggregatedScore
+         collectionReport.xmlPopulationReport.scorePercentage = collectionReport.xmlPopulationReport.aggregatedScore
+               / (double) collectionReport.xmlPopulationReport.aggregatedMaxScore;
+         collectionReport.xmlPopulationReport.avgScore = (collectionReport.xmlPopulationReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          // xmlvalidity
-         collectionReport.xmlValidityReport.scorePercentageProcessable = collectionReport.xmlValidityReport.aggregatedScore
-               / (double) collectionReport.xmlValidityReport.aggregatedMaxScoreProcessable;
-         collectionReport.xmlValidityReport.avgScoreProcessable = (collectionReport.xmlValidityReport.aggregatedScore
+         collectionReport.xmlValidityReport.scorePercentage = collectionReport.xmlValidityReport.aggregatedScore
+               / (double) collectionReport.xmlValidityReport.aggregatedMaxScore;
+         collectionReport.xmlValidityReport.avgScore = (collectionReport.xmlValidityReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
-         collectionReport.xmlValidityReport.scorePercentageAll = collectionReport.xmlValidityReport.aggregatedScore
-               / (double) collectionReport.xmlValidityReport.aggregatedMaxScoreAll;
          // facet
-         collectionReport.facetReport.scorePercentageProcessable = collectionReport.facetReport.aggregatedScore
-               / (double) collectionReport.facetReport.aggregatedMaxScoreProcessable;
-         collectionReport.facetReport.avgScoreProcessable = (collectionReport.facetReport.aggregatedScore
+         collectionReport.facetReport.scorePercentage = collectionReport.facetReport.aggregatedScore
+               / (double) collectionReport.facetReport.aggregatedMaxScore;
+         collectionReport.facetReport.avgScore = (collectionReport.facetReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
-         collectionReport.facetReport.scorePercentageAll = collectionReport.facetReport.aggregatedScore
-               / (double) collectionReport.facetReport.aggregatedMaxScoreAll; 
          //linkchecker
-         collectionReport.linkcheckerReport.scorePercentageProcessable = collectionReport.linkcheckerReport.aggregatedScore
-               / (double) collectionReport.linkcheckerReport.aggregatedMaxScoreProcessable;
+         collectionReport.linkcheckerReport.scorePercentage = collectionReport.linkcheckerReport.aggregatedScore
+               / (double) collectionReport.linkcheckerReport.aggregatedMaxScore;
          //collection
-         collectionReport.avgScoreProcessable = collectionReport.aggregatedScore
+         collectionReport.avgScore = collectionReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable;         
-         collectionReport.scorePercentageProcessable = collectionReport.aggregatedScore 
-               / (double) collectionReport.aggregatedMaxScoreProcessable;
 
       }      
 
