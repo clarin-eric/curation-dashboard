@@ -60,7 +60,7 @@
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
          <artifactId>vlo-importer</artifactId>
-         <version>4.11.2</version>
+         <version>${vlo.version}</version>
          <exclusions>
             <exclusion>
                <groupId>net.sf.saxon</groupId>
