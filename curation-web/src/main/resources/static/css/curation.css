@@ -81,15 +81,6 @@
     background-color: #999999;
 }
 
-.scoreTable td {
-    border: 1px solid #000;
-
-}
-
-.scoreTable th, .reportTable tfoot tr{
-    border: 1px solid #000;
-    background-color: #999999;
-}
 
 /*these are necessary to replace fundament values*/
  /* unvisited link */
