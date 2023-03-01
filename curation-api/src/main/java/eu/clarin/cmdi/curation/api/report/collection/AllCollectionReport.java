@@ -71,7 +71,7 @@ public class AllCollectionReport implements NamedReport {
       }
       @XmlElement
       public int getNumOfProfiles() {
-         return collectionReport.headerReport.totNumOfProfiles;
+         return collectionReport.profileReport.totNumOfProfiles;
       }
       @XmlElement
       public int getNumOfLinks() {
