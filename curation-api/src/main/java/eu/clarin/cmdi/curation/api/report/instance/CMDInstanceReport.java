@@ -12,6 +12,7 @@ import eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
+import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -91,7 +92,7 @@ public class CMDInstanceReport implements NamedReport {
    public String getName() {
       if (fileReport.location != null && fileReport.location.contains(".xml")) {
          String normalisedPath = fileReport.location.replace('\\', '/');
-         return normalisedPath.substring(normalisedPath.lastIndexOf('/') + 1, normalisedPath.lastIndexOf('.'));
+         return FileNameEncoder.encode(normalisedPath);
       }
       else {
          return fileReport.location;
