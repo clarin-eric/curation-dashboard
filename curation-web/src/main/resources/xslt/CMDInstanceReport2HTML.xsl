@@ -10,6 +10,26 @@
                created at
                <xsl:value-of select="./@creationTime" />
             </div>
+            <div class="download">
+               download as
+               <a>
+                  <xsl:attribute name="href">
+                   <xsl:text>/download/instance/</xsl:text>
+                   <xsl:value-of select="replace(//fileReport/location,'[/.:]','_')" />
+                </xsl:attribute>
+                  <xsl:text>xml</xsl:text>
+               </a>
+               <xsl:text> </xsl:text>
+               <a>
+                  <xsl:attribute name="href">
+                   <xsl:text>/download/instance/</xsl:text>
+                   <xsl:value-of select="replace(//fileReport/location,'[/.:]','_')" />
+                   <xsl:text>?format=json</xsl:text>
+                </xsl:attribute>
+                  <xsl:text>json</xsl:text>
+               </a>
+            </div>
+            <div class="clear" />
 				<h1>CMD Record Report</h1>
            <p>
                Profile Score: 
