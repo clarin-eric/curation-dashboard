@@ -82,7 +82,8 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          
          report.instanceHeaderReport.score++; // availability of schemaLocation
          
-         if(crService.isSchemaCRResident(report.instanceHeaderReport.schemaLocation)) {
+         if(report.instanceHeaderReport.isCRResident = crService.isSchemaCRResident(report.instanceHeaderReport.schemaLocation)) {
+            
             report.instanceHeaderReport.score++; // CRResidence
          }
          else {
