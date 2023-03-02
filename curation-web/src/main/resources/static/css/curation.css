@@ -73,12 +73,13 @@
 
 .reportTable td {
     border: 1px solid #000;
-
+    padding: 3px;
 }
 
 .reportTable th, .reportTable tfoot tr{
     border: 1px solid #000;
     background-color: #999999;
+    padding: 3px;
 }
 
 
