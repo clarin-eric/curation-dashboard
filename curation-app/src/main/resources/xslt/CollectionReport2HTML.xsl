@@ -51,9 +51,9 @@
 			     <tfoot>
                   <tr>
 	                  <td>total</td>
-	                  <td><xsl:value-of select="format-number(@aggregatedScore,'0.00')" /></td>
-	                  <td><xsl:value-of select="format-number(@aggregatedMaxScore,'0.00')" /></td>
-	                  <td><xsl:value-of select="format-number(@scorePercentage, '0.0%')" /></td>
+	                  <td align="right"><xsl:value-of select="format-number(@aggregatedScore,'0.0')" /></td>
+	                  <td align="right"><xsl:value-of select="format-number(@aggregatedMaxScore,'0.0')" /></td>
+	                  <td align="right"><xsl:value-of select="format-number(@scorePercentage, '0.0%')" /></td>
                   </tr>
               </tfoot>
 			     <tbody>
@@ -61,23 +61,20 @@
 			            <xsl:if test="@aggregatedScore">
 			               <tr>
 			                  <td><xsl:value-of select="name(.)" /></td>
-			                  <td><xsl:value-of select="format-number(@aggregatedScore,'0.00')" /></td>
-			                  <td><xsl:value-of select="format-number(@aggregatedMaxScore,'0.00')" /></td>
-			                  <td><xsl:value-of select="format-number(@scorePercentage,'0.0%')" /></td>
+			                  <td align="right"><xsl:value-of select="format-number(@aggregatedScore,'0.0')" /></td>
+			                  <td align="right"><xsl:value-of select="format-number(@aggregatedMaxScore,'0.0')" /></td>
+			                  <td align="right"><xsl:value-of select="format-number(@scorePercentage,'0.0%')" /></td>
 			               </tr>			            
 			            </xsl:if>
 			         </xsl:for-each>
 			     </tbody>    
 			   </table> 
 			   <br />
-
-
-				<br />
             <xsl:apply-templates select="fileReport" />
 				<hr />
-				<xsl:apply-templates select="profileReport" />
-            <hr />
             <xsl:apply-templates select="headerReport" />
+            <hr />
+            <xsl:apply-templates select="profileReport" />
             <hr />
             <xsl:apply-templates select="facetReport" />
             <hr />
@@ -114,8 +111,8 @@
                            <tr>
                               <td>
                                  <a>
-                                    <xsl:attribute name="href">/download/record/<xsl:value-of
-                                       select="./origin" /></xsl:attribute>
+                                    <xsl:attribute name="href">/record/<xsl:value-of
+                                       select="./@origin" /></xsl:attribute>
                                     <xsl:value-of select="./@origin" />
                                  </a>
 
@@ -204,7 +201,35 @@
                B
             </p>
    </xsl:template>
-   
+    
+   <!-- headerReport -->
+   <xsl:template match="headerReport">
+            <details>
+               <summary>
+                  <h2>Header Section</h2>
+               </summary>
+               <p>
+                  The header section shows information on the availibilty of attribute schemaLocation as well as the elements 
+                  MdSelfLink, MdProfile and MdCollectionDisplayName.
+                  </p>
+            </details>
+            <p>
+            Number of files with schemaLocation:<xsl:value-of select="numWithSchemaLocation" />
+            </p>
+            <p>
+            Number of files where schemaLocation is not CR resident: <xsl:value-of select="numSchemaCRResident" />
+            </p>
+            <p>
+            Number of files with MdProfile: <xsl:value-of select="numWithMdProfile" />
+            </p>
+            <p>
+            Number of files with MdSelfLink: <xsl:value-of select="numWithMdSelflink" />
+            </p>
+            <p>
+            Number of files with MdCollectionDisplayName: <xsl:value-of select="numWithMdCollectionDisplayName" />
+            </p>
+   </xsl:template>
+     
    <!-- profileReport -->
    <xsl:template match="profileReport">
                <details>
@@ -272,19 +297,7 @@
             </table>   
    
    </xsl:template>
-   
-   <!-- headerReport -->
-   <xsl:template match="headerReport">
-            <details>
-               <summary>
-                  <h2>Header Section</h2>
-               </summary>
-               <p>
-                  The header section shows information on the availibilty of attribute schemaLocation as well as the elements 
-                  MdSelfLink, MdProfile and MdCollectionDisplayName.
-                  </p>
-            </details>
-   </xsl:template>
+
    
    <!-- facetReport -->
    <xsl:template match="facetReport" >
