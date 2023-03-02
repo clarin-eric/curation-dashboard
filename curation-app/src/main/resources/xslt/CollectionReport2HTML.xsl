@@ -49,7 +49,7 @@
 			        </tr>
 			     </thead>
 			     <tfoot>
-                  <tr>format-number(./@score,'0.00')
+                  <tr>
 	                  <td>total</td>
 	                  <td><xsl:value-of select="format-number(@aggregatedScore,'0.00')" /></td>
 	                  <td><xsl:value-of select="format-number(@aggregatedMaxScore,'0.00')" /></td>
@@ -61,9 +61,9 @@
 			            <xsl:if test="@aggregatedScore">
 			               <tr>
 			                  <td><xsl:value-of select="name(.)" /></td>
-			                  <td><xsl:value-of select="@aggregatedScore" /></td>
-			                  <td><xsl:value-of select="@aggregatedMaxScore" /></td>
-			                  <td><xsl:value-of select="@scorePercentage" /></td>
+			                  <td><xsl:value-of select="format-number(@aggregatedScore,'0.00')" /></td>
+			                  <td><xsl:value-of select="format-number(@aggregatedMaxScore,'0.00')" /></td>
+			                  <td><xsl:value-of select="format-number(@scorePercentage,'0.0%')" /></td>
 			               </tr>			            
 			            </xsl:if>
 			         </xsl:for-each>
