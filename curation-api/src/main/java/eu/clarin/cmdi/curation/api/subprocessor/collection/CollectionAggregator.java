@@ -208,7 +208,6 @@ public class CollectionAggregator {
       
       collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
 
-      collectionReport.aggregatedScore += instanceReport.instanceScore;
    }
 
    private void calculateAverages(CollectionReport collectionReport) {
@@ -242,18 +241,21 @@ public class CollectionAggregator {
       collectionReport.linkcheckerReport.totNumOfUniqueLinks = (int) uRep
             .countDistinctByProvidergroupName(collectionReport.getName());
 
-      if (collectionReport.linkcheckerReport.totNumOfLinks > 0) {
+      if (collectionReport.linkcheckerReport.totNumOfCheckedLinks > 0) {
          collectionReport.linkcheckerReport.statistics.stream().filter(statistics -> statistics.category == Category.Ok)
                .findFirst().ifPresent(
-                     statistics -> collectionReport.linkcheckerReport.ratioOfValidLinks = (collectionReport.linkcheckerReport.totNumOfLinks > 0
-                           ? (statistics.count /(double) collectionReport.linkcheckerReport.totNumOfLinks)
-                           : 0.0));
+                     statistics -> collectionReport.linkcheckerReport.ratioOfValidLinks = statistics.count
+                           / (double) collectionReport.linkcheckerReport.totNumOfCheckedLinks
+                     );
+
+      }
+      if (collectionReport.linkcheckerReport.totNumOfLinks > 0) {
+         collectionReport.linkcheckerReport.aggregatedMaxScore = collectionReport.fileReport.numOfFilesProcessable 
+               * collectionReport.linkcheckerReport.totNumOfCheckedLinks / collectionReport.linkcheckerReport.totNumOfLinks;        
       }
 
       collectionReport.linkcheckerReport.aggregatedScore = (double) collectionReport.linkcheckerReport.ratioOfValidLinks
             * collectionReport.fileReport.numOfFilesProcessable;
-
-      collectionReport.linkcheckerReport.aggregatedMaxScore = collectionReport.fileReport.numOfFilesProcessable;
 
       collectionReport.fileReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore
             * collectionReport.fileReport.numOfFiles;
@@ -276,8 +278,7 @@ public class CollectionAggregator {
       collectionReport.facetReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.maxScore
             * collectionReport.fileReport.numOfFilesProcessable;      
 
-      collectionReport.aggregatedMaxScore = (eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport.maxScore
-            + 1) * collectionReport.fileReport.numOfFilesProcessable + collectionReport.fileReport.numOfFilesNonProcessable;
+
 
       if (collectionReport.fileReport.numOfFiles > 0) {
          // file
@@ -331,6 +332,16 @@ public class CollectionAggregator {
                .mapToDouble(statistics -> statistics.avgRespTime * statistics.count).average().orElse(0.0);
 
          //collection
+         collectionReport.aggregatedScore = collectionReport.fileReport.aggregatedScore + collectionReport.profileReport.aggregatedScore
+               + collectionReport.headerReport.aggregatedScore + collectionReport.resProxyReport.aggregatedScore
+               + collectionReport.xmlPopulationReport.aggregatedScore + collectionReport.xmlValidityReport.aggregatedScore
+               + collectionReport.linkcheckerReport.aggregatedScore;
+         
+         collectionReport.aggregatedMaxScore = collectionReport.fileReport.aggregatedMaxScore + collectionReport.profileReport.aggregatedMaxScore
+               + collectionReport.headerReport.aggregatedMaxScore + collectionReport.resProxyReport.aggregatedMaxScore
+               + collectionReport.xmlPopulationReport.aggregatedMaxScore + collectionReport.xmlValidityReport.aggregatedMaxScore
+               + collectionReport.linkcheckerReport.aggregatedMaxScore;
+               
          collectionReport.scorePercentage = collectionReport.aggregatedScore / collectionReport.aggregatedMaxScore;
 
       }
@@ -377,9 +388,5 @@ public class CollectionAggregator {
                / (double) collectionReport.fileReport.numOfFilesProcessable;         
 
       }      
-
-
-
-
    }
 }
