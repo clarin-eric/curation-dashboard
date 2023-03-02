@@ -159,8 +159,22 @@ public class CollectionAggregator {
          collectionReport.profileReport.aggregatedScore += instanceReport.profileScore;
          
          // header
-         if (instanceReport.instanceHeaderReport.mdSelfLink != null
-               && !instanceReport.instanceHeaderReport.mdSelfLink.isEmpty()) {
+         if(instanceReport.instanceHeaderReport.schemaLocation != null) {
+            collectionReport.headerReport.numWithSchemaLocation++;
+         }
+         if(instanceReport.instanceHeaderReport.isCRResident) {
+            collectionReport.headerReport.numSchemaCRResident++;
+         }
+         if(instanceReport.instanceHeaderReport.mdProfile != null) {
+            collectionReport.headerReport.numWithMdProfile++;
+         }
+         if(instanceReport.instanceHeaderReport.mdCollectionDisplayName != null) {
+            collectionReport.headerReport.numWithMdCollectionDisplayName++;
+         }
+         if(instanceReport.instanceHeaderReport.mdSelfLink != null) {
+            collectionReport.headerReport.numWithMdSelflink++;
+         }
+         else{
 
             if (this.mdSelfLinks.contains(instanceReport.instanceHeaderReport.mdSelfLink)) {
                collectionReport.headerReport.duplicatedMDSelfLink
@@ -335,12 +349,12 @@ public class CollectionAggregator {
          collectionReport.aggregatedScore = collectionReport.fileReport.aggregatedScore + collectionReport.profileReport.aggregatedScore
                + collectionReport.headerReport.aggregatedScore + collectionReport.resProxyReport.aggregatedScore
                + collectionReport.xmlPopulationReport.aggregatedScore + collectionReport.xmlValidityReport.aggregatedScore
-               + collectionReport.linkcheckerReport.aggregatedScore;
+               + collectionReport.linkcheckerReport.aggregatedScore + collectionReport.facetReport.aggregatedScore;
          
          collectionReport.aggregatedMaxScore = collectionReport.fileReport.aggregatedMaxScore + collectionReport.profileReport.aggregatedMaxScore
                + collectionReport.headerReport.aggregatedMaxScore + collectionReport.resProxyReport.aggregatedMaxScore
                + collectionReport.xmlPopulationReport.aggregatedMaxScore + collectionReport.xmlValidityReport.aggregatedMaxScore
-               + collectionReport.linkcheckerReport.aggregatedMaxScore;
+               + collectionReport.linkcheckerReport.aggregatedMaxScore + collectionReport.facetReport.aggregatedMaxScore;
                
          collectionReport.scorePercentage = collectionReport.aggregatedScore / collectionReport.aggregatedMaxScore;
 
