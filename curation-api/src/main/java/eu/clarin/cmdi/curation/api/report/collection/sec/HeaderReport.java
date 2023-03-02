@@ -29,6 +29,17 @@ public class HeaderReport {
    @XmlAttribute
    public double avgScore;
    
+   @XmlElement
+   public long numWithSchemaLocation;
+   @XmlElement
+   public long numSchemaCRResident;
+   @XmlElement
+   public long numWithMdProfile;
+   @XmlElement
+   public long numWithMdSelflink;
+   @XmlElement   
+   public long numWithMdCollectionDisplayName;
+   
    @XmlElementWrapper(name = "duplicatedMDSelfLinks")
    @XmlElement(name = "duplicatedMDSelfLink")
    public Collection<String> duplicatedMDSelfLink;
