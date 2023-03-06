@@ -130,7 +130,11 @@
 				<xsl:value-of select="./@checkingDate" />
 				<br />
 				<b>Origin: </b>
-				<xsl:value-of select="./@origin" />
+				<a>
+               <xsl:attribute name="href">/record/<xsl:value-of
+                  select="./@origin" /></xsl:attribute>
+               <xsl:value-of select="./@origin" />
+				</a>
 			</td>
 		</tr>
 
