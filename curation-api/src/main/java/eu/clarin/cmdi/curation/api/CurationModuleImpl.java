@@ -148,9 +148,23 @@ public class CurationModuleImpl implements CurationModule {
       final CategoryReport[] lastCategoryReport = new CategoryReport[1];
 
       
-      try(Stream<StatusDetail> stream = sdRep.findByOrderNrLessThanEqual(100l)){
+      try(Stream<StatusDetail> stream = sdRep.findByOrderNrLessThanEqual(50l)){
          
          stream.forEach(statusDetail -> {
+            
+            StatusDetailReport statusDetailReport =  new StatusDetailReport(
+                  statusDetail.getUrlname(),
+                  statusDetail.getOrigin(),
+                  statusDetail.getMethod(), 
+                  statusDetail.getStatusCode(),
+                  statusDetail.getMessage(), 
+                  statusDetail.getCheckingDate(), 
+                  statusDetail.getContentType(), 
+                  statusDetail.getExpectedMimeType(),
+                  statusDetail.getContentLength(), 
+                  statusDetail.getDuration(), 
+                  statusDetail.getRedirectCount()
+               );
             
             if(lastLinkcheckerDetailReport[0] == null || !lastLinkcheckerDetailReport[0].getName().equals(statusDetail.getProvidergroupname())) {
                
@@ -167,26 +181,23 @@ public class CurationModuleImpl implements CurationModule {
                
                lastLinkcheckerDetailReport[0].getCategoryReports().add(lastCategoryReport[0]);
                
-               if(!overallReport.getCategoryReports().stream().anyMatch(report -> report.getCategory() == statusDetail.getCategory())) {
-                  overallReport.getCategoryReports().add(lastCategoryReport[0]);
-               }               
+               overallReport.getCategoryReports()
+                  .stream()
+                  .filter(report -> report.getCategory() == statusDetail.getCategory())
+                  .findFirst()
+                  .orElseGet(() -> {
+                     CategoryReport categoryReport = new CategoryReport(statusDetail.getCategory());
+                     overallReport.getCategoryReports().add(categoryReport);
+                     
+                     return categoryReport;
+                  })
+                  .getStatusDetails()
+                  .add(statusDetailReport);
+
+              
             }
             
-            lastCategoryReport[0].getStatusDetails().add(
-                  new StatusDetailReport(
-                     statusDetail.getUrlname(),
-                     statusDetail.getOrigin(),
-                     statusDetail.getMethod(), 
-                     statusDetail.getStatusCode(),
-                     statusDetail.getMessage(), 
-                     statusDetail.getCheckingDate(), 
-                     statusDetail.getContentType(), 
-                     statusDetail.getExpectedMimeType(),
-                     statusDetail.getContentLength(), 
-                     statusDetail.getDuration(), 
-                     statusDetail.getRedirectCount()
-                  )
-               );      
+            lastCategoryReport[0].getStatusDetails().add(statusDetailReport);      
          });         
       }      
       
