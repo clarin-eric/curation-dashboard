@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0"
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:functx="http://www.functx.com">
+    <xsl:function name="functx:capitalize-first" as="xs:string?"
+                  xmlns:functx="http://www.functx.com">
+        <xsl:param name="arg" as="xs:string?"/>
+
+        <xsl:sequence select="
+   concat(upper-case(substring($arg,1,1)),
+             substring($arg,2))
+ "/>
+
+    </xsl:function>
 	<xsl:template match="/collectionReport">
 		<html>
 			<head>
@@ -44,15 +54,14 @@
 			        <tr>
 			           <th>Section</th>
 			           <th>Score</th>
-			           <th>Maximum Score</th>
 			           <th>Score Percentage</th>
 			        </tr>
 			     </thead>
 			     <tfoot>
                   <tr>
 	                  <td>total</td>
-	                  <td align="right"><xsl:value-of select="format-number(@aggregatedScore,'0.0')" /></td>
-	                  <td align="right"><xsl:value-of select="format-number(@aggregatedMaxScore,'0.0')" /></td>
+	                  <td align="right"><xsl:value-of select="format-number(@aggregatedScore,'###,##0.0')" />
+	                  / <xsl:value-of select="format-number(@aggregatedMaxScore,'###,##0.0')" /></td>
 	                  <td align="right"><xsl:value-of select="format-number(@scorePercentage, '0.0%')" /></td>
                   </tr>
               </tfoot>
@@ -60,10 +69,18 @@
 			         <xsl:for-each select="*">
 			            <xsl:if test="@aggregatedScore">
 			               <tr>
-			                  <td><xsl:value-of select="name(.)" /></td>
-			                  <td align="right"><xsl:value-of select="format-number(@aggregatedScore,'0.0')" /></td>
-			                  <td align="right"><xsl:value-of select="format-number(@aggregatedMaxScore,'0.0')" /></td>
-			                  <td align="right"><xsl:value-of select="format-number(@scorePercentage,'0.0%')" /></td>
+			                  <td>
+			                  <a>
+			                  <xsl:attribute name="href">
+			                  <xsl:text>#</xsl:text>
+			                  <xsl:value-of select="name(.)" />
+			                  </xsl:attribute>
+			                  <xsl:value-of select="functx:capitalize-first(name(.))" />
+			                  </a>
+			                  </td>			                  
+			                  <td align="right"><xsl:value-of select="format-number(@aggregatedScore,'###,##0.0')" />
+			                  / <xsl:value-of select="format-number(@aggregatedMaxScore,'###,##0.0')" /></td>
+			                  <td><xsl:value-of select="format-number(@scorePercentage,'0.0%')" /></td>
 			               </tr>			            
 			            </xsl:if>
 			         </xsl:for-each>
@@ -163,7 +180,12 @@
    <xsl:template match="fileReport">
             <details>
                <summary>
-                  <h2>File Section</h2>
+                  <h2>
+                  <xsl:attribute name="id">
+                  <xsl:value-of select="name(.)" />
+                  </xsl:attribute>
+                  File Section
+                  </h2>
                </summary>
                <p>General information on the number of files and the file size.</p>
             </details>
@@ -206,7 +228,12 @@
    <xsl:template match="headerReport">
             <details>
                <summary>
-                  <h2>Header Section</h2>
+                  <h2>
+                  <xsl:attribute name="id">
+                  <xsl:value-of select="name(.)" />
+                  </xsl:attribute>
+                  Header Section
+                  </h2>
                </summary>
                <p>
                   The header section shows information on the availibilty of attribute schemaLocation as well as the elements 
@@ -234,7 +261,12 @@
    <xsl:template match="profileReport">
                <details>
                <summary>
-                  <h2>Profile Usage Section</h2>
+                  <h2>
+                  <xsl:attribute name="id">
+                  <xsl:value-of select="name(.)" />
+                  </xsl:attribute>
+                  Profile Usage Section
+                  </h2>
                </summary>
                <p>
                   The profile usage section shows information shows which profiles are used how oftenly in a collection. 
@@ -294,8 +326,7 @@
                      </tr>
                   </xsl:for-each>
                </tbody>
-            </table>   
-   
+            </table>      
    </xsl:template>
 
    
@@ -303,7 +334,12 @@
    <xsl:template match="facetReport" >
             <details>
                <summary>
-                  <h2>Facet Section</h2>
+                  <h2>
+                  <xsl:attribute name="id">
+                  <xsl:value-of select="name(.)" />
+                  </xsl:attribute>
+                  Facet Section
+                  </h2>
                </summary>
                <p>The facet section shows the facet coverage within the
                   collection. It's quite evident that the facet coverage of a
@@ -350,7 +386,12 @@
    <xsl:template match="resProxyReport">
             <details>
                <summary>
-                  <h2>ResourceProxy Section</h2>
+                  <h2>
+                  <xsl:attribute name="id">
+                  <xsl:value-of select="name(.)" />
+                  </xsl:attribute>
+                  ResourceProxy Section
+                  </h2>
                </summary>
                <p>The resource proxy section shows information on the number of
                   resource proxies on the kind (the mime type) of resources.
@@ -395,7 +436,12 @@
    <xsl:template match="xmlValidityReport">
             <details>
                <summary>
-                  <h2>XML Validation Section</h2>
+                  <h2>
+                  <xsl:attribute name="id">
+                  <xsl:value-of select="name(.)" />
+                  </xsl:attribute>
+                  XML Validation Section
+                  </h2>
                </summary>
                <p>The XML validation section shows the result of a simple
                   validation of each CMD file against its profile. </p>
@@ -417,7 +463,12 @@
    <xsl:template match="xmlPopulationReport">
             <details>
                <summary>
-                  <h2>XML Populated Section</h2>
+                  <h2>
+                  <xsl:attribute name="id">
+                  <xsl:value-of select="name(.)" />
+                  </xsl:attribute>
+                  XML Populated Section
+                  </h2>
                </summary>
                <p>The XML populated section shows information on the number of xml
                   elements and the fact if these elements are conatining data. </p>
@@ -464,7 +515,12 @@
    <xsl:template match="linkcheckerReport">
             <details>
                <summary>
-                  <h2>URL Validation Section</h2>
+                  <h2>
+                  <xsl:attribute name="id">
+                  <xsl:value-of select="name(.)" />
+                  </xsl:attribute>
+                  URL Validation Section
+                  </h2>
                </summary>
                <p>The URL validation section shows information on the number of
                   links and the results of link checking for the links which
