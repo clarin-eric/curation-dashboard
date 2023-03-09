@@ -233,9 +233,10 @@ public class CollectionAggregator {
             Statistics xmlStatistics = new Statistics(categoryStats.getCategory());
             xmlStatistics.avgRespTime = categoryStats.getAvgDuration();
             xmlStatistics.maxRespTime = categoryStats.getMaxDuration();
-            xmlStatistics.count = categoryStats.getNumber();
-            collectionReport.linkcheckerReport.totNumOfCheckedLinks += categoryStats.getNumber().intValue();
-
+            xmlStatistics.count = categoryStats.getNumberId();
+            collectionReport.linkcheckerReport.totNumOfCheckedLinks += categoryStats.getNumberId().intValue();
+            collectionReport.linkcheckerReport.totNumOfLinksWithDuration += categoryStats.getNumberDuration().intValue();
+            
             collectionReport.linkcheckerReport.statistics.add(xmlStatistics);
          });
       }
@@ -265,11 +266,12 @@ public class CollectionAggregator {
       }
       if (collectionReport.linkcheckerReport.totNumOfLinks > 0) {
          collectionReport.linkcheckerReport.aggregatedMaxScore = collectionReport.fileReport.numOfFilesProcessable 
-               * collectionReport.linkcheckerReport.totNumOfCheckedLinks / collectionReport.linkcheckerReport.totNumOfLinks;        
+               * collectionReport.linkcheckerReport.totNumOfCheckedLinks / (double) collectionReport.linkcheckerReport.totNumOfLinks;        
       }
 
       collectionReport.linkcheckerReport.aggregatedScore = (double) collectionReport.linkcheckerReport.ratioOfValidLinks
-            * collectionReport.fileReport.numOfFilesProcessable;
+            * collectionReport.fileReport.numOfFilesProcessable
+            * collectionReport.linkcheckerReport.totNumOfCheckedLinks / (double) collectionReport.linkcheckerReport.totNumOfLinks; 
 
       collectionReport.fileReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore
             * collectionReport.fileReport.numOfFiles;
@@ -341,9 +343,12 @@ public class CollectionAggregator {
          collectionReport.linkcheckerReport.maxRespTime = collectionReport.linkcheckerReport.statistics.stream()
                .filter(statistics -> statistics.maxRespTime != null).mapToLong(statistics -> statistics.maxRespTime)
                .max().orElse(0);
-         collectionReport.linkcheckerReport.avgRespTime = collectionReport.linkcheckerReport.statistics.stream()
-               .filter(statistics -> statistics.avgRespTime != null)
-               .mapToDouble(statistics -> statistics.avgRespTime * statistics.count).average().orElse(0.0);
+         if(collectionReport.linkcheckerReport.totNumOfLinksWithDuration > 0) {
+            collectionReport.linkcheckerReport.avgRespTime = collectionReport.linkcheckerReport.statistics.stream()
+                  .filter(statistics -> statistics.avgRespTime != null)
+                  .mapToDouble(statistics -> statistics.avgRespTime * statistics.count).sum()
+                  / (double) collectionReport.linkcheckerReport.totNumOfLinksWithDuration;
+         }
 
          //collection
          collectionReport.aggregatedScore = collectionReport.fileReport.aggregatedScore + collectionReport.profileReport.aggregatedScore
