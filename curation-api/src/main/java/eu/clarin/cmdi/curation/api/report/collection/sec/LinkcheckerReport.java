@@ -45,6 +45,8 @@ public class LinkcheckerReport {
    @XmlElement
    public int totNumOfCheckedLinks;
    @XmlElement
+   public int totNumOfLinksWithDuration;
+   @XmlElement
    public double ratioOfValidLinks;
    @XmlElement
    public Double avgRespTime;
