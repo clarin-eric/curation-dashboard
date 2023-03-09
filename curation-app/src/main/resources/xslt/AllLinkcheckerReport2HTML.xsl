@@ -40,7 +40,7 @@
 									<xsl:choose>
 										<xsl:when test="@avgRespTime &gt; 0">
 											<xsl:value-of
-												select="format-number(@avgRespTime, '0.0')"></xsl:value-of>
+												select="format-number(@avgRespTime, '###,##0.0')"></xsl:value-of>
 										</xsl:when>
 										<xsl:otherwise>N/A</xsl:otherwise>
 									</xsl:choose>
@@ -49,7 +49,7 @@
 									<xsl:choose>
 										<xsl:when test="@maxRespTime &gt; 0">
 											<xsl:value-of
-												select="format-number(@maxRespTime, '0.0')"></xsl:value-of>
+												select="format-number(@maxRespTime, '###,##0.0')"></xsl:value-of>
 										</xsl:when>
 										<xsl:otherwise>N/A</xsl:otherwise>
 									</xsl:choose>
@@ -61,14 +61,14 @@
 					<tfoot>
 						<tr>
 							<td colspan="5">
-								Total Count:
-								<xsl:value-of select="overall/@count"></xsl:value-of>
+								Total number with response:
+								<xsl:value-of select="overall/@totNumOfLinksWithDuration"></xsl:value-of>
 								&#0183;
 								Average Response Duration(ms):
 								<xsl:choose>
 									<xsl:when test="overall/@avgRespTime &gt; 0">
 										<xsl:value-of
-											select="format-number(overall/@avgRespTime,'0.0')"></xsl:value-of>
+											select="format-number(overall/@avgRespTime,'###,##0.0')"></xsl:value-of>
 										&#0183;
 									</xsl:when>
 									<xsl:otherwise>N/A &#0183;</xsl:otherwise>
@@ -77,7 +77,7 @@
 								<xsl:choose>
 									<xsl:when test="overall/@maxRespTime &gt; 0">
 										<xsl:value-of
-											select="format-number(overall/@maxRespTime,'0.0')"></xsl:value-of>
+											select="format-number(overall/@maxRespTime,'###,##0.0')"></xsl:value-of>
 									</xsl:when>
 									<xsl:otherwise>N/A</xsl:otherwise>
 								</xsl:choose>
@@ -123,7 +123,7 @@
 										<xsl:choose>
 											<xsl:when test="@avgRespTime &gt; 0">
 												<xsl:value-of
-													select="format-number(@avgRespTime, '0.0')"></xsl:value-of>
+													select="format-number(@avgRespTime, '###,##0.0')"></xsl:value-of>
 											</xsl:when>
 											<xsl:otherwise>
 												N/A
@@ -134,7 +134,7 @@
 										<xsl:choose>
 											<xsl:when test="@maxRespTime &gt; 0">
 												<xsl:value-of
-													select="format-number(@maxRespTime, '0.0')"></xsl:value-of>
+													select="format-number(@maxRespTime, '###,##0.0')"></xsl:value-of>
 											</xsl:when>
 											<xsl:otherwise>
 												N/A
@@ -147,14 +147,14 @@
 						<tfoot>
 							<tr>
 								<td colspan="5">
-									Total Count:
-									<xsl:value-of select="@count"></xsl:value-of>
+									Total number with response:
+									<xsl:value-of select="@totNumOfLinksWithDuration"></xsl:value-of>
 									&#0183;
 									Average Response Duration(ms):
 									<xsl:choose>
 										<xsl:when test="@avgRespTime &gt; 0">
 											<xsl:value-of
-												select="format-number(@avgRespTime,'0.0')"></xsl:value-of>
+												select="format-number(@avgRespTime,'###,##0.0')"></xsl:value-of>
 											&#0183;
 										</xsl:when>
 										<xsl:otherwise>
@@ -165,7 +165,7 @@
 									<xsl:choose>
 										<xsl:when test="@maxRespTime &gt; 0">
 											<xsl:value-of
-												select="format-number(@maxRespTime,'0.0')"></xsl:value-of>
+												select="format-number(@maxRespTime,'###,##0.0')"></xsl:value-of>
 										</xsl:when>
 										<xsl:otherwise>
 											N/A
