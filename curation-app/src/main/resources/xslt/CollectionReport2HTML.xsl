@@ -80,7 +80,7 @@
 			                  </td>			                  
 			                  <td align="right"><xsl:value-of select="format-number(@aggregatedScore,'###,##0.0')" />
 			                  / <xsl:value-of select="format-number(@aggregatedMaxScore,'###,##0.0')" /></td>
-			                  <td><xsl:value-of select="format-number(@scorePercentage,'0.0%')" /></td>
+			                  <td align="right"><xsl:value-of select="format-number(@scorePercentage,'0.0%')" /></td>
 			               </tr>			            
 			            </xsl:if>
 			         </xsl:for-each>
@@ -596,11 +596,11 @@
                            </td>
                            <td align="right">
                               <xsl:value-of
-                                 select="format-number(./@avgRespTime, '###,##0.##')" />
+                                 select="format-number(./@avgRespTime, '###,##0.0')" />
                            </td>
                            <td align="right">
                               <xsl:value-of
-                                 select="format-number(./@maxRespTime, '###,##0.##')" />
+                                 select="format-number(./@maxRespTime, '###,##0.0')" />
                            </td>
                         </tr>   
                      </xsl:for-each>
