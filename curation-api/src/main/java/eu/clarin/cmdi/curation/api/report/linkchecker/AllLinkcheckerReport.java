@@ -49,10 +49,10 @@ public class AllLinkcheckerReport implements NamedReport {
       private int totNumOfLinksWithDuration;
 
       @XmlAttribute
-      private double avgRespTime;
+      private Double avgRespTime;
 
       @XmlAttribute
-      private double maxRespTime;
+      private Long maxRespTime;
 
       @XmlElement
       private Collection<Statistics> statistics;
@@ -68,13 +68,23 @@ public class AllLinkcheckerReport implements NamedReport {
          this.avgRespTime = collectionReport.linkcheckerReport.avgRespTime;
          this.maxRespTime = collectionReport.linkcheckerReport.maxRespTime;
          
-         linkcheckerReport.overall.avgRespTime = (linkcheckerReport.overall.avgRespTime
-               * linkcheckerReport.overall.totNumOfLinksWithDuration
-               + collectionReport.linkcheckerReport.avgRespTime * collectionReport.linkcheckerReport.totNumOfLinksWithDuration)
-               / (linkcheckerReport.overall.totNumOfLinksWithDuration + collectionReport.linkcheckerReport.totNumOfLinksWithDuration);
+         if(linkcheckerReport.overall.avgRespTime == null) {
+            
+            linkcheckerReport.overall.avgRespTime = collectionReport.linkcheckerReport.avgRespTime;
+         }
+         else if(collectionReport.linkcheckerReport.avgRespTime != null) {
+            linkcheckerReport.overall.avgRespTime = (linkcheckerReport.overall.avgRespTime
+                  * linkcheckerReport.overall.totNumOfLinksWithDuration
+                  + collectionReport.linkcheckerReport.avgRespTime * collectionReport.linkcheckerReport.totNumOfLinksWithDuration)
+                  / (linkcheckerReport.overall.totNumOfLinksWithDuration + collectionReport.linkcheckerReport.totNumOfLinksWithDuration);
+         }
 
          linkcheckerReport.overall.totNumOfLinksWithDuration += collectionReport.linkcheckerReport.totNumOfLinksWithDuration;
-         if (linkcheckerReport.overall.maxRespTime < collectionReport.linkcheckerReport.maxRespTime) {
+         if (
+               linkcheckerReport.overall.maxRespTime == null || 
+               (collectionReport.linkcheckerReport.maxRespTime != null && linkcheckerReport.overall.maxRespTime < collectionReport.linkcheckerReport.maxRespTime)
+            ) 
+         {
             linkcheckerReport.overall.maxRespTime = collectionReport.linkcheckerReport.maxRespTime;
          }
          
@@ -88,10 +98,10 @@ public class AllLinkcheckerReport implements NamedReport {
       private int totNumOfLinksWithDuration;
 
       @XmlAttribute
-      private double avgRespTime;
+      private Double avgRespTime;
 
       @XmlAttribute
-      private long maxRespTime;
+      private Long maxRespTime;
 
       @XmlElement(name = "statistics")
       public Collection<Statistics> getStatistics() {
