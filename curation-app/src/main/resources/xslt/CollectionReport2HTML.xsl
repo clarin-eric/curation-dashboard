@@ -87,6 +87,13 @@
 			     </tbody>    
 			   </table> 
 			   <br />
+			   The above table is based on <xsl:value-of select="//fileReport/numOfFilesProcessable" /> processable files.
+			   <xsl:if test="//fileReport/numOfFilesNonProcessable>0">
+            There are also <xsl:value-of select="//fileReport/numOfFilesNonProcessable" /> files in the collection that could not be processed. 
+            See <a href="#recordDetails">record details</a> table for more information.
+            </xsl:if>
+			   <br />
+            <br />
             <xsl:apply-templates select="fileReport" />
 				<hr />
             <xsl:apply-templates select="headerReport" />
@@ -108,7 +115,7 @@
             <hr />
             <details>
                <summary>
-                  <h2>Record details:</h2>
+                  <h2 id="recordDetails">Record details:</h2>
                   </summary>
                   <p>The record details section shows the particalarities of each record as far as they're of importance for the data provider.</p>
                </details>                  
