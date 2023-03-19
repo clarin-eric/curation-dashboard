@@ -1,3 +1,10 @@
+# 6.0.0
+- converting the project to Spring boot project
+- using Spring data JPA for persistence (see [linkchecker-persistence](https://github.com/clarin-eric/linkchecker-persistence), Spring caching and processor Beans)
+- modularization of the project (app, web, shared api and services)
+- reorganization of processors, sub-processors and reports 
+- separation of business-logic (in processors and sub-processors) and presentation layer (report instances)   
+
 # 5.4.x
 - adding deactivation and deletion of non confirmed links
 - externalising help and faq page as markdown
