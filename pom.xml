@@ -19,8 +19,8 @@
       <maven.compiler.source>17</maven.compiler.source>
       <maven.compiler.target>17</maven.compiler.target>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <linkchecker-persistence.version>0.0.2-SNAPSHOT</linkchecker-persistence.version>
-      <global.version>6.0.0-alpha6</global.version>
+      <linkchecker-persistence.version>0.0.2</linkchecker-persistence.version>
+      <global.version>6.0.0</global.version>
       <vlo.version>4.11.3-alpha5</vlo.version>
    </properties>
    <dependencies>
