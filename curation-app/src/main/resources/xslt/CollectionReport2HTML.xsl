@@ -251,7 +251,7 @@
             Number of files with schemaLocation:<xsl:value-of select="numWithSchemaLocation" />
             </p>
             <p>
-            Number of files where schemaLocation is not CR resident: <xsl:value-of select="numSchemaCRResident" />
+            Number of files where schemaLocation is CR resident: <xsl:value-of select="numSchemaCRResident" />
             </p>
             <p>
             Number of files with MdProfile: <xsl:value-of select="numWithMdProfile" />
