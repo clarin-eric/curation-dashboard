@@ -199,34 +199,30 @@
             
             <p>
                Number of files:
-               <xsl:value-of select="./numOfFiles" />
+               <xsl:value-of select="format-number(./numOfFiles, '###,##0')" />
             </p>
             <p>
                Number of processable files:
-               <xsl:value-of select="./numOfFilesProcessable" />
-            </p>
-            <p>
-               Number of files:
-               <xsl:value-of select="./numOfFiles" />
+               <xsl:value-of select="format-number(./numOfFilesProcessable, '###,##0')" />
             </p>
             <p>
                Total size:
-               <xsl:value-of select="./size" />
+               <xsl:value-of select="format-number(./size, '###,##0')" />
                B
             </p>
             <p>
                Average size:
-               <xsl:value-of select="./avgFileSize" />
+               <xsl:value-of select="format-number(./avgFileSize, '###,##0')" />
                B
             </p>
             <p>
                Minimal file size:
-               <xsl:value-of select="./minFileSize" />
+               <xsl:value-of select="format-number(./minFileSize, '###,##0')" />
                B
             </p>
             <p>
                Maximal file size:
-               <xsl:value-of select="./maxFileSize" />
+               <xsl:value-of select="format-number(./maxFileSize, '###,##0')" />
                B
             </p>
    </xsl:template>
@@ -248,19 +244,19 @@
                   </p>
             </details>
             <p>
-            Number of files with schemaLocation:<xsl:value-of select="numWithSchemaLocation" />
+            Number of files with schemaLocation:<xsl:value-of select="format-number(numWithSchemaLocation, '###,##0')" />
             </p>
             <p>
-            Number of files where schemaLocation is CR resident: <xsl:value-of select="numSchemaCRResident" />
+            Number of files where schemaLocation is CR resident: <xsl:value-of select="format-number(numSchemaCRResident, '###,##0')" />
             </p>
             <p>
-            Number of files with MdProfile: <xsl:value-of select="numWithMdProfile" />
+            Number of files with MdProfile: <xsl:value-of select="format-number(numWithMdProfile, '###,##0')" />
             </p>
             <p>
-            Number of files with MdSelfLink: <xsl:value-of select="numWithMdSelflink" />
+            Number of files with MdSelfLink: <xsl:value-of select="format-number(numWithMdSelflink, '###,##0')" />
             </p>
             <p>
-            Number of files with MdCollectionDisplayName: <xsl:value-of select="numWithMdCollectionDisplayName" />
+            Number of files with MdCollectionDisplayName: <xsl:value-of select="format-number(numWithMdCollectionDisplayName, '###,##0')" />
             </p>
    </xsl:template>
      
@@ -410,32 +406,32 @@
             <p>
                Total number of resource proxies:
                <xsl:value-of
-                  select="./totNumOfResProxies" />
+                  select="format-number(./totNumOfResProxies, '###,##0')" />
             </p>
             <p>
                Average number of resource proxies:
                <xsl:value-of
-                  select="format-number(./avgNumOfResProxies,'0.00')" />
+                  select="format-number(./avgNumOfResProxies,'###,##0.00')" />
             </p>
             <p>
                Total number of resource proxies with MIME:
                <xsl:value-of
-                  select="./totNumOfResProxiesWithMime" />
+                  select="format-number(./totNumOfResProxiesWithMime, '###,##0')" />
             </p>
             <p>
                Average number of resource proxies with MIME:
                <xsl:value-of
-                  select="format-number(./avgNumOfResProxiesWithMime,'0.00')" />
+                  select="format-number(./avgNumOfResProxiesWithMime,'###,##0.00')" />
             </p>
             <p>
                Total number of resource proxies with reference:
                <xsl:value-of
-                  select="./totNumOfResProxiesWithReference" />
+                  select="format-number(./totNumOfResProxiesWithReference, '###,##0')" />
             </p>
             <p>
                Average number of resource proxies with references:
                <xsl:value-of
-                  select="format-number(./avgNumOfResProxiesWithReference,'0.00')" />
+                  select="format-number(./avgNumOfResProxiesWithReference,'###,##0.00')" />
             </p>   
    </xsl:template>
    
@@ -457,7 +453,7 @@
             <p>
                Number of XML valid Records:
                <xsl:value-of
-                  select="./totNumOfValidRecords" />
+                  select="format-number(./totNumOfValidRecords, '###,##0')" />
             </p>
             <p>
                Ratio XML valid Records:
@@ -484,37 +480,37 @@
             <p>
                Total number of XML elements:
                <xsl:value-of
-                  select="./totNumOfXMLElements" />
+                  select="format-number(./totNumOfXMLElements, '###,##0')" />
             </p>
             <p>
                Average number of XML elements:
                <xsl:value-of
-                  select="format-number(./avgNumOfXMLElements,'0.00')" />
+                  select="format-number(./avgNumOfXMLElements,'###,##0.00')" />
             </p>
             <p>
                Total number of simple XML elements:
                <xsl:value-of
-                  select="./totNumOfXMLSimpleElements" />
+                  select="format-number(./totNumOfXMLSimpleElements, '###,##0')" />
             </p>
             <p>
                Average number of simple XML elements:
                <xsl:value-of
-                  select="format-number(./avgNumOfXMLSimpleElements,'0.00')" />
+                  select="format-number(./avgNumOfXMLSimpleElements,'###,##0.00')" />
             </p>
             <p>
                Total number of empty XML elements:
                <xsl:value-of
-                  select="./totNumOfXMLEmptyElements" />
+                  select="format-number(./totNumOfXMLEmptyElements, '###,##0')" />
             </p>
             <p>
                Average number of empty XML elements:
                <xsl:value-of
-                  select="format-number(./avgXMLEmptyElements,'0.00')" />
+                  select="format-number(./avgXMLEmptyElements,'###,##0.00')" />
             </p>
             <p>
                Average rate of populated elements:
                <xsl:value-of
-                  select="format-number(./avgRateOfPopulatedElements,'0.0%')" />
+                  select="format-number(./avgRateOfPopulatedElements,'###,##0.0%')" />
             </p>   
    </xsl:template>
    
@@ -538,22 +534,22 @@
             <p>
                Total number of links:
                <xsl:value-of
-                  select="./totNumOfLinks" />
+                  select="format-number(./totNumOfLinks, '###,##0')" />
             </p>
             <p>
                Average number of links:
                <xsl:value-of
-                  select="format-number(./avgNumOfLinks,'0.00')" />
+                  select="format-number(./avgNumOfLinks,'###,##0.00')" />
             </p>
             <p>
                Total number of unique links:
                <xsl:value-of
-                  select="./totNumOfUniqueLinks" />
+                  select="format-number(./totNumOfUniqueLinks, '###,##0')" />
             </p>
            <p>
                Average number of unique links:
                <xsl:value-of
-                  select="format-number(./avgNumOfUniqueLinks,'0.00')" />
+                  select="format-number(./avgNumOfUniqueLinks,'###,##0.00')" />
             </p>
             <p>
                Total number of checked links:
