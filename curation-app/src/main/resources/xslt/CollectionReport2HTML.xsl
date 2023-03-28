@@ -324,7 +324,7 @@
                               select="format-number(./@score,'0.00')" />
                         </td>
                         <td class='text-right'>
-                           <xsl:value-of select="./@count" />
+                           <xsl:value-of select="format-number(./@count, '###,##0')" />
                         </td>
                      </tr>
                   </xsl:for-each>
@@ -554,7 +554,7 @@
             <p>
                Total number of checked links:
                <xsl:value-of
-                  select="./totNumOfCheckedLinks" />
+                  select="format-number(./totNumOfCheckedLinks, '###,##0')" />
             </p>
             <p>
                Ratio of valid links:
