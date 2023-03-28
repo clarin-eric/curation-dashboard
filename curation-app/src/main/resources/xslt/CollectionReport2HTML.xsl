@@ -87,9 +87,9 @@
 			     </tbody>    
 			   </table> 
 			   <br />
-			   The above table is based on <xsl:value-of select="//fileReport/numOfFilesProcessable" /> processable files.
+			   The above table is based on <xsl:value-of select="format-number(//fileReport/numOfFilesProcessable, '###,##0')" /> processable files.
 			   <xsl:if test="//fileReport/numOfFilesNonProcessable>0">
-            There are also <xsl:value-of select="//fileReport/numOfFilesNonProcessable" /> files in the collection that could not be processed. 
+            There are also <xsl:value-of select="format-number(//fileReport/numOfFilesNonProcessable, '###,##0')" /> files in the collection that could not be processed. 
             See <a href="#recordDetails">record details</a> table for more information.
             </xsl:if>
 			   <br />
