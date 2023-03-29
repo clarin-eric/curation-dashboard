@@ -34,7 +34,7 @@
 									</a>
 								</td>
 								<td class='text-right'>
-									<xsl:value-of select="@count"></xsl:value-of>
+									<xsl:value-of select="format-number(@count, '###,##0')"></xsl:value-of>
 								</td>
 								<td class='text-right'>
 									<xsl:choose>
@@ -62,7 +62,7 @@
 						<tr>
 							<td colspan="5">
 								Total number with response:
-								<xsl:value-of select="overall/@totNumOfLinksWithDuration"></xsl:value-of>
+								<xsl:value-of select="format-number(overall/@totNumOfLinksWithDuration, '###,##0')"></xsl:value-of>
 								&#0183;
 								Average Response Duration(ms):
 								<xsl:choose>
@@ -117,7 +117,7 @@
 										</a>
 									</td>
 									<td class='text-right'>
-										<xsl:value-of select="@count"></xsl:value-of>
+										<xsl:value-of select="format-number(@count, '###,##0')"></xsl:value-of>
 									</td>
 									<td class='text-right'>
 										<xsl:choose>
@@ -148,7 +148,7 @@
 							<tr>
 								<td colspan="5">
 									Total number with response:
-									<xsl:value-of select="@totNumOfLinksWithDuration"></xsl:value-of>
+									<xsl:value-of select="format-number(@totNumOfLinksWithDuration, '###,##0')"></xsl:value-of>
 									&#0183;
 									Average Response Duration(ms):
 									<xsl:choose>
