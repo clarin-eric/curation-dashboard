@@ -595,7 +595,7 @@
                            </td>
    
                            <td align="right">
-                              <xsl:value-of select="./@count" />
+                              <xsl:value-of select="format-number(./@count, '###,##0')" />
                            </td>
                            <td align="right">
                               <xsl:value-of
