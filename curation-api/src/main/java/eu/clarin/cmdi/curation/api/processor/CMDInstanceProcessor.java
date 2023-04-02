@@ -54,7 +54,7 @@ public class CMDInstanceProcessor {
 
       this.subprocessors
          .stream()
-         .takeWhile(p -> instanceReport.isValidReport)
+         .takeWhile(p -> instanceReport.isProcessable)
          .forEach(subprocessor -> subprocessor.process(instance, instanceReport));
 
 

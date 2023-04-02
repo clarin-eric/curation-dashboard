@@ -138,7 +138,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
             log.debug("can't transfrom input file '{}'", instance.getPath());
             
             report.details.add(new Detail(Severity.FATAL, "file", "can't transform input file '" + instance.getPath().getFileName() + "'"));
-            report.isValidReport=false;
+            report.isProcessable=false;
             
             return;
             
@@ -185,6 +185,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
          log.debug("file '{}' has a size of {} bytes which exceeds the limit of {}", instance.getPath(), report.fileReport.size, conf.getMaxFileSize());
          
          report.details.add(new Detail(Severity.FATAL,"file" , "the file size exceeds the limit allowed (" + conf.getMaxFileSize()+ "B)"));
+         report.isProcessable=false;
          
          return;
 
@@ -199,6 +200,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
          log.debug("can't create CMDData object from file '{}'", instance.getPath());
          report.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
+         report.isProcessable=false;
          
          return;
          
@@ -220,6 +222,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
             
             log.error("can't transform CMD instance file '{}'", instance.getPath());
             report.details.add(new Detail(Severity.FATAL, "file", "can't transform CMD instance file '" + instance.getPath().getFileName()));
+            report.isProcessable=false;
             
             return;
          

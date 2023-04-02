@@ -24,6 +24,8 @@ public class InstanceHeaderReport {
    public double score;
    @XmlElement
    public String schemaLocation;
+   @XmlElement
+   public boolean isCRResident;
    @XmlElement   
    public String mdProfile;
    @XmlElement   

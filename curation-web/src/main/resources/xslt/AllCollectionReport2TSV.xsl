@@ -17,7 +17,7 @@
 		<xsl:text>Name</xsl:text>
 		<xsl:text>&#9;</xsl:text>
 		<xsl:text>Score</xsl:text>
-		<xsl:text>&#9;</xsl:text>
+      <xsl:text>&#9;</xsl:text>
 		<xsl:text>Num Of Records</xsl:text>
 		<xsl:text>&#9;</xsl:text>
 		<xsl:text>Num Of Profiles</xsl:text>

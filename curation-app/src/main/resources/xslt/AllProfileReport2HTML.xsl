@@ -65,11 +65,11 @@
 								</td>
 								<td>
 									<xsl:value-of
-										select="format-number(collectionUsage, '0')"></xsl:value-of>
+										select="format-number(collectionUsage, '###,##0')"></xsl:value-of>
 								</td>
 								<td>
 									<xsl:value-of
-										select="format-number(instanceUsage, '0')"></xsl:value-of>
+										select="format-number(instanceUsage, '###,##0')"></xsl:value-of>
 								</td>
 								<td>
 									<xsl:value-of

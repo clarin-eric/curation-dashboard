@@ -31,11 +31,9 @@ public class LinkcheckerReport {
    @XmlAttribute
    public double aggregatedMaxScore;
    @XmlAttribute
-   public double aggregatedMaxScoreValid;
+   public double scorePercentage;
    @XmlAttribute
    public double avgScore;
-   @XmlAttribute
-   public double avgScoreValid; 
    @XmlElement
    public int totNumOfLinks;
    @XmlElement
@@ -46,6 +44,8 @@ public class LinkcheckerReport {
    public double avgNumOfUniqueLinks;
    @XmlElement
    public int totNumOfCheckedLinks;
+   @XmlElement
+   public int totNumOfLinksWithDuration;
    @XmlElement
    public double ratioOfValidLinks;
    @XmlElement

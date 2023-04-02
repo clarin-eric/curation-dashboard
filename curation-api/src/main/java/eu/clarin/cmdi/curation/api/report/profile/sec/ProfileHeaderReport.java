@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = {"id", "schemaLocation", "name", "description", "cmdiVersion", "status"})
+@XmlType(propOrder = {"id", "schemaLocation", "name", "description", "cmdiVersion", "status", "public"})
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class ProfileHeaderReport {
@@ -58,5 +58,9 @@ public class ProfileHeaderReport {
    @XmlElement
    public String getStatus() {
       return header.getStatus();
+   }
+   @XmlElement
+   public boolean isPublic() {
+      return header.isPublic();
    }
 }

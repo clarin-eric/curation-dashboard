@@ -22,11 +22,9 @@ public class XmlValidityReport {
    @XmlAttribute
    public double aggregatedMaxScore;
    @XmlAttribute
-   public double aggregatedMaxScoreValid;
+   public double scorePercentage;
    @XmlAttribute
    public double avgScore;
-   @XmlAttribute
-   public double avgScoreValid; 
    @XmlElement
    public int totNumOfValidRecords;
 

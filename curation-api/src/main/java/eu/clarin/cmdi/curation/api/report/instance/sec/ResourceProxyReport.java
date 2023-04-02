@@ -37,7 +37,7 @@ public class ResourceProxyReport {
    public int numOfResProxiesWithReference;
    @XmlElement
    public double percOfResProxiesWithReference;
-   @XmlElementWrapper(name = "resourcetypes")
+   @XmlElementWrapper(name = "resourceTypes")
    @XmlElement(name = "resourceType")
    public Collection<ResourceType> resourceTypes = new ArrayList<ResourceType>();
    @XmlElementWrapper(name = "invalidReferences")

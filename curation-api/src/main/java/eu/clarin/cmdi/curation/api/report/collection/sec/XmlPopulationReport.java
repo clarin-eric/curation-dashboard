@@ -21,11 +21,9 @@ public class XmlPopulationReport {
    @XmlAttribute
    public double aggregatedMaxScore;
    @XmlAttribute
-   public double aggregatedMaxScoreValid;
+   public double scorePercentage;
    @XmlAttribute
    public double avgScore;
-   @XmlAttribute
-   public double avgScoreValid;  
    @XmlElement
    public int totNumOfXMLElements;
    @XmlElement
@@ -33,9 +31,11 @@ public class XmlPopulationReport {
    @XmlElement
    public int totNumOfXMLSimpleElements;
    @XmlElement
+   public double avgNumOfXMLSimpleElements;
+   @XmlElement
    public int totNumOfXMLEmptyElements;
    @XmlElement
    public double avgNumOfXMLEmptyElements;
    @XmlElement
-   public double avgRateOfPopulatedElement;
+   public double avgRateOfPopulatedElements;
 }

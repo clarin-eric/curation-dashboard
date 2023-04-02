@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
@@ -57,7 +56,7 @@ public class FaqCtl {
          
          document = parser.parseReader(in);
          
-         model.addAttribute("insert", "/fragments/markdown.html");
+         model.addAttribute("insert", "fragments/markdown.html");
          model.addAttribute("renderedMarkdown", renderer.render(document));
       }
       catch(MalformedURLException e) {

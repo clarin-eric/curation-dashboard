@@ -28,11 +28,9 @@ public class ResProxyReport {
    @XmlAttribute
    public double aggregatedMaxScore;
    @XmlAttribute
-   public double aggregatedMaxScoreValid;
+   public double scorePercentage;
    @XmlAttribute
-   public double avgScore;
-   @XmlAttribute
-   public double avgScoreValid;  
+   public double avgScore;  
    @XmlElement
    public int totNumOfResProxies;
    @XmlElement

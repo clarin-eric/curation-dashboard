@@ -29,11 +29,9 @@ public class FacetReport {
    @XmlAttribute
    public double aggregatedMaxScore;
    @XmlAttribute
-   public double aggregatedMaxScoreValid;
+   public double scorePercentage;
    @XmlAttribute
    public double avgScore;
-   @XmlAttribute
-   public double avgScoreValid;  
    @XmlElement
    public double percCoverageNonZero;
    @XmlElementWrapper(name = "facets")

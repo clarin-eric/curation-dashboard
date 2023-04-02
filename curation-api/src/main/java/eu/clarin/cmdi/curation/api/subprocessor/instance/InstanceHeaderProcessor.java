@@ -67,7 +67,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
             
             log.debug("Unable to process " + instance.getPath() + ", both schema and profile are not specified or invalid");
             report.details.add(new Detail(Severity.FATAL, "header", "Unable to process " + instance.getPath().getFileName() + ", both schema and profile are not specified"));
-            report.isValidReport=false;
+            report.isProcessable=false;
             
             return;
             
@@ -82,7 +82,8 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          
          report.instanceHeaderReport.score++; // availability of schemaLocation
          
-         if(crService.isSchemaCRResident(report.instanceHeaderReport.schemaLocation)) {
+         if(report.instanceHeaderReport.isCRResident = crService.isSchemaCRResident(report.instanceHeaderReport.schemaLocation)) {
+            
             report.instanceHeaderReport.score++; // CRResidence
          }
          else {
@@ -150,8 +151,10 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          CMDProfileReport profileReport = curationModule.processCMDProfile(new URL(schemaLocation));
          
          report.profileHeaderReport = profileReport.headerReport;
+
          report.profileScore = profileReport.score;
-         
+         report.instanceScore += profileReport.score;
+          
          if(instance.getProvidergroupName() != null) {
             synchronized(this) {
                profileReport.collectionUsage.stream()
@@ -164,7 +167,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
       catch (MalformedURLException e) {
          log.error("schemaLocation '{}' not an URL", schemaLocation);
          report.details.add(new Detail(Severity.FATAL, "header", "no valid schemaLocation"));
-         report.isValidReport=false;
+         report.isProcessable=false;
          return;
       }
 

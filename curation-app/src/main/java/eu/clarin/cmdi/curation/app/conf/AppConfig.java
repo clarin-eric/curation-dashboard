@@ -27,6 +27,10 @@ public class AppConfig {
    
    private LocalDateTime startTime = LocalDateTime.now();
    
+   private int linkDeactivationAfter;
+   
+   private int linkDeletionAfter;
+   
    @Data
    public static class Directory {
       

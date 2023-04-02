@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -28,6 +29,7 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
 import eu.clarin.cmdi.curation.app.conf.AppConfig;
 import eu.clarin.cmdi.curation.pph.PPHService;
+import eu.clarin.linkchecker.persistence.service.LinkService;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootApplication
@@ -48,6 +50,8 @@ public class CurationApp {
    private PPHService pphService;
    @Autowired
    FileStorage storage;
+   @Autowired
+   LinkService linkService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CurationApp.class, args);
@@ -55,7 +59,10 @@ public class CurationApp {
 	
    @Bean
    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-      return args -> {         
+      
+      return args -> {   
+         
+         log.info("start time: {}", LocalDateTime.now());
          
          if("all".equalsIgnoreCase(conf.getMode()) || "collection".equalsIgnoreCase(conf.getMode())) {
          
@@ -78,6 +85,7 @@ public class CurationApp {
    
             pphService.getProfileHeaders().forEach(header -> {
                
+               log.info("start processing profile '{}'", header.getId());               
    
                try {
                   CMDProfileReport profileReport = curation.processCMDProfile(header.getId());
@@ -91,6 +99,8 @@ public class CurationApp {
                   
                   log.error("malformed URL for id '{}' - check the setting for curation.pph-service.restApi");
                }
+               
+               log.info("done processing profile '{}'", header.getId());
             });
             
             storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);
@@ -99,16 +109,30 @@ public class CurationApp {
          
          if("all".equalsIgnoreCase(conf.getMode()) || "linkchecker".equalsIgnoreCase(conf.getMode())) {
             
+            log.info("start writing linkchecker detail reports");
             curation.getLinkcheckerDetailReports().forEach(report -> storage.saveReport(report, CurationEntityType.LINKCHECKER, false));
+            log.info("done writing linkchecker detail reports");
  
          }
+         
+         if("all".equalsIgnoreCase(conf.getMode())) {
+            log.info("start deactivating links older than {} days", conf.getLinkDeactivationAfter());
+            linkService.deactivateLinksOlderThan(conf.getLinkDeactivationAfter());
+            log.info("done deactivating links older than {} days", conf.getLinkDeactivationAfter());
+            log.info("start deleting links older than {} days", conf.getLinkDeletionAfter());
+            linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
+            log.info("done deleting links older than {} days", conf.getLinkDeletionAfter());
+         }
+         
+         log.info("end time: {}", LocalDateTime.now());
       };
    }
    
-   private void processCollection(Path path, AllCollectionReport allCollectionReport, AllLinkcheckerReport allLinkcheckerReport) {
-      
+   private void processCollection(Path path, AllCollectionReport allCollectionReport, AllLinkcheckerReport allLinkcheckerReport) {      
 
       if(isCollectionRoot(path)) {
+         
+         log.info("start processing collection from path '{}'", path);
          
          CollectionReport colectionReport = curation.processCollection(path);
          
@@ -116,6 +140,8 @@ public class CurationApp {
          allLinkcheckerReport.addReport(colectionReport);
          
          storage.saveReport(colectionReport, CurationEntityType.COLLECTION, true);
+         
+         log.info("done processing collection from path '{}'", path);
          
       }
       else {

@@ -2,7 +2,7 @@
    <parent>
       <groupId>eu.clarin.cmdi</groupId>
       <artifactId>curation-dashboard</artifactId>
-      <version>6.0.0-SNAPSHOT</version>
+      <version>${global.version}</version>
    </parent>
    <modelVersion>4.0.0</modelVersion>
    <artifactId>curation-api</artifactId>
@@ -60,7 +60,7 @@
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
          <artifactId>vlo-importer</artifactId>
-         <version>4.11.2</version>
+         <version>${vlo.version}</version>
          <exclusions>
             <exclusion>
                <groupId>net.sf.saxon</groupId>
@@ -90,7 +90,7 @@
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
          <artifactId>curation-cr</artifactId>
-         <version>${revision}</version>
+         <version>${global.version}</version>
       </dependency>
       <dependency>
          <groupId>com.h2database</groupId>

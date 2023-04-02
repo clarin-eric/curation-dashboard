@@ -7,6 +7,7 @@ import eu.clarin.cmdi.curation.api.report.collection.sec.FacetReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.FileReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.HeaderReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport;
+import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.XmlPopulationReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.XmlValidityReport;
@@ -37,17 +38,13 @@ public class CollectionReport implements NamedReport{
    @XmlAttribute
    public double aggregatedMaxScore;
    @XmlAttribute
-   public double aggregatedMaxScoreValid;
-   @XmlAttribute
    public double scorePercentage;
    @XmlAttribute
-   public double avgScore;
-   @XmlAttribute
-   public double avgScoreValid;   
+   public double avgScore; 
    @XmlAttribute
    public double minScore = Double.MAX_VALUE;
    @XmlAttribute
-   public double maxScore = Double.MAX_VALUE;
+   public double maxScore;
    @XmlAttribute
    public double insMaxScore = eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport.maxScore +1;
 
@@ -57,6 +54,9 @@ public class CollectionReport implements NamedReport{
 
    @XmlElement
    public final FileReport fileReport = new FileReport();
+   
+   @XmlElement
+   public final ProfileReport profileReport = new ProfileReport();
 
    @XmlElement
    public final HeaderReport headerReport = new HeaderReport();

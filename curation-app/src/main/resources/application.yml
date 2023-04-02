@@ -1,13 +1,12 @@
 logging:
    file: 
-      path: ${CURATION_DIRECTORY}/logs
-      name: curtion-app.log
+      name: ${APPLICATION_HOME_DIRECTORY}/logs/curation-app.log
       logback:
          rollingpolicy:
             max-file-size: 10MB
    level:
       root: ERROR
-      eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionAggregator: INFO
+      eu.clarin.cmdi.curation.app.CurationApp: INFO
 spring:
    datasource:
       url: ${DATABASE_URI}
@@ -36,28 +35,30 @@ curation:
       query: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000"   
    mode: all
    directory:
-      home: ${CURATION_DIRECTORY}
-      dataRoot: ${CURATION_DIRECTORY}/data
-      in: 
-      - ${CURATION_DIRECTORY}/data/clarin/results/cmdi
-      out: ${CURATION_DIRECTORY}/public
-   facets: 
-      - languageCode
-      - collection
-      - resourceClass
-      - modality
-      - format
-      - keywords
-      - genre
-      - subject
-      - country
-      - organisation
-      - name
-      - description
-      - license
-      - availability
-   thread_pool_size: ${THREAD_POOL_SIZE:10}
+      home: ${APPLICATION_HOME_DIRECTORY}
+      dataRoot: ${APPLICATION_HOME_DIRECTORY}/data
+      in: >
+         ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
+      out: ${APPLICATION_HOME_DIRECTORY}/public
+   facets: >
+      languageCode,
+      collection,
+      resourceClass,
+      modality,
+      format,
+      keywords,
+      genre,
+      subject,
+      country,
+      organisation,
+      name,
+      description,
+      license,
+      availability
+   threadpool_size: ${THREADPOOL_SIZE:10}
    max_file_size: 100000
    base_url:
    doc_url:
    clientUsername: curation 
+   link_deactivation_after: ${LINK_DEACTIVATION_AFTER:365}
+   link_deletion_after: ${LINK_DELETION_AFTER:365}

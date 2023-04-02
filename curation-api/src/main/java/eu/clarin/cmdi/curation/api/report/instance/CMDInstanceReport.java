@@ -12,6 +12,7 @@ import eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
+import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -29,7 +30,7 @@ import java.util.Collection;
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 public class CMDInstanceReport implements NamedReport {
    @XmlTransient
-   public boolean isValidReport = true;
+   public boolean isProcessable = true;
    
 
    @XmlAttribute
@@ -39,7 +40,8 @@ public class CMDInstanceReport implements NamedReport {
       + InstanceHeaderReport.maxScore 
       + ResourceProxyReport.maxScore 
       + XmlPopulationReport.maxScore 
-      + XmlValidityReport.maxScore;
+      + XmlValidityReport.maxScore
+      + InstanceFacetReport.maxScore;
 
    @XmlAttribute
    public double instanceScore = 0.0;
@@ -90,7 +92,7 @@ public class CMDInstanceReport implements NamedReport {
    public String getName() {
       if (fileReport.location != null && fileReport.location.contains(".xml")) {
          String normalisedPath = fileReport.location.replace('\\', '/');
-         return normalisedPath.substring(normalisedPath.lastIndexOf('/') + 1, normalisedPath.lastIndexOf('.'));
+         return FileNameEncoder.encode(normalisedPath);
       }
       else {
          return fileReport.location;

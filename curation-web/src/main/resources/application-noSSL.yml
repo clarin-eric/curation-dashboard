@@ -18,37 +18,37 @@ server:
       include-stacktrace: always
 curation:
    pph-service:
-      xsd_cache: ${CURATION_DIRECTORY}/xsd_cache
+      xsd_cache: ${APPLICATION_HOME_DIRECTORY}/xsd_cache
       restApi: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
       query: "?registrySpace=published&status=production&status=development&&status=deprecated"
    ccr-service:
       restApi: "https://openskos.meertens.knaw.nl/ccr/api/find-concepts"
       query: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000"
-   facets: 
-      - languageCode
-      - collection
-      - resourceClass
-      - modality
-      - format
-      - keywords
-      - genre
-      - subject
-      - country
-      - organisation
-      - name
-      - description
-      - license
-      - availability
+   facets: >
+      languageCode,
+      collection,
+      resourceClass,
+      modality,
+      format,
+      keywords,
+      genre,
+      subject,
+      country,
+      organisation,
+      name,
+      description,
+      license,
+      availability
    clientUsername: curation
    directory:
-      home: ${CURATION_DIRECTORY}
-      dataRoot: ${CURATION_DIRECTORY}/data
-      in: 
-      - ${CURATION_DIRECTORY}/data/clarin/results/cmdi
-      out: ${CURATION_DIRECTORY}/public
+      home: ${APPLICATION_HOME_DIRECTORY}
+      dataRoot: ${APPLICATION_HOME_DIRECTORY}/data
+      in: >
+         ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
+      out: ${APPLICATION_HOME_DIRECTORY}/public
    max_file_size: 100000
-   threadPoolSize: ${THREAD_POOL_SIZE:10}
-   mode: collection
+   threadpoolSize: ${THREADPOOL_SIZE:10}
+   mode: instance
    doc-url: "https://raw.githubusercontent.com/clarin-eric/cereal/main/curation-dashboard/markdown"         
 logging:
    level:

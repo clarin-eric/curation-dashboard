@@ -4,6 +4,7 @@
  */
 package eu.clarin.cmdi.curation.api.report.collection.sec;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,13 +14,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 /**
  *
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HeaderReport {
+public class ProfileReport {
    @XmlAttribute
    public double aggregatedScore;
    @XmlAttribute
@@ -30,18 +33,26 @@ public class HeaderReport {
    public double avgScore;
    
    @XmlElement
-   public long numWithSchemaLocation;
-   @XmlElement
-   public long numSchemaCRResident;
-   @XmlElement
-   public long numWithMdProfile;
-   @XmlElement
-   public long numWithMdSelflink;
-   @XmlElement   
-   public long numWithMdCollectionDisplayName;
+   public int totNumOfProfiles;
    
-   @XmlElementWrapper(name = "duplicatedMDSelfLinks")
-   @XmlElement(name = "duplicatedMDSelfLink")
-   public Collection<String> duplicatedMDSelfLink;
+   
+   @XmlElementWrapper(name = "profiles")
+   @XmlElement(name = "profile")
+   public Collection<Profile> profiles = new ArrayList<Profile>();  
 
+
+   @XmlRootElement
+   @XmlAccessorType(XmlAccessType.FIELD)
+   @RequiredArgsConstructor
+   @NoArgsConstructor(force = true)
+   public static class Profile {
+      @XmlAttribute
+      public final String profileId;
+      @XmlAttribute
+      public final boolean isPublic;
+      @XmlAttribute
+      public final double score;
+      @XmlAttribute
+      public int count = 1;
+   }
 }

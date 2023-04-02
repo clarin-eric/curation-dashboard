@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.data.util.Pair;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -29,7 +30,7 @@ public class UrlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
    @Autowired
    private ApiConfig conf;
    @Autowired
-   private LinkService uService;
+   private LinkService lService;
    @Autowired
    private ClientRepository clRepository;
    
@@ -70,30 +71,32 @@ public class UrlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
          
          final String origin = conf.getDirectory().getDataRoot().relativize(instance.getPath()).toString();
          
+         final Collection<Pair<String,String>> urlMimes = new ArrayList<Pair<String,String>>();
          
          resourceStream.forEach(resource -> {
             
             if(PIDUtils.isActionableLink(resource.getResourceName()) || PIDUtils.isPid(resource.getResourceName())) {
             
-               uService.save(
-                     client, 
+               urlMimes.add(
+                  Pair.of(
                      PIDUtils.getActionableLinkForPid(resource.getResourceName()), 
-                     origin, 
-                     instance.getProvidergroupName(), 
-                     (resource.getMimeType()==null?"Not Specified":resource.getMimeType())
-                  );
+                     resource.getMimeType()==null?"Not Specified":resource.getMimeType()
+                  )
+               );
             }
          });
          
+         
          if(data.getDocument().get("_selfLink") != null && !data.getDocument().get("_selfLink").isEmpty()) {
-            uService.save(
-                  client, 
+            urlMimes.add(
+               Pair.of( 
                   PIDUtils.getActionableLinkForPid(data.getDocument().get("_selfLink").get(0).getValue()), 
-                  origin, 
-                  instance.getProvidergroupName(), 
                   "Not Specified"
-               );
+               )
+            );
          }
+         
+         lService.savePerOrigin(client, instance.getProvidergroupName(), origin, urlMimes);
       }
    }
 }

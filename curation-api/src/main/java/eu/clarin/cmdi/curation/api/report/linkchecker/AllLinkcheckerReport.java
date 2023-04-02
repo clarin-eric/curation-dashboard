@@ -46,13 +46,13 @@ public class AllLinkcheckerReport implements NamedReport {
       private String name;
 
       @XmlAttribute
-      private int count;
+      private int totNumOfLinksWithDuration;
 
       @XmlAttribute
-      private double avgRespTime;
+      private Double avgRespTime;
 
       @XmlAttribute
-      private double maxRespTime;
+      private Long maxRespTime;
 
       @XmlElement
       private Collection<Statistics> statistics;
@@ -64,17 +64,27 @@ public class AllLinkcheckerReport implements NamedReport {
       public CMDCollection(CollectionReport collectionReport, AllLinkcheckerReport linkcheckerReport) {
          this.name = collectionReport.getName();
          this.statistics = collectionReport.linkcheckerReport.statistics;
-         this.count = collectionReport.linkcheckerReport.totNumOfCheckedLinks;
+         this.totNumOfLinksWithDuration = collectionReport.linkcheckerReport.totNumOfLinksWithDuration;
          this.avgRespTime = collectionReport.linkcheckerReport.avgRespTime;
          this.maxRespTime = collectionReport.linkcheckerReport.maxRespTime;
          
-         linkcheckerReport.overall.avgRespTime = (linkcheckerReport.overall.avgRespTime
-               * linkcheckerReport.overall.count
-               + collectionReport.linkcheckerReport.avgRespTime * collectionReport.linkcheckerReport.totNumOfCheckedLinks)
-               / (linkcheckerReport.overall.count + collectionReport.linkcheckerReport.totNumOfCheckedLinks);
+         if(linkcheckerReport.overall.avgRespTime == null) {
+            
+            linkcheckerReport.overall.avgRespTime = collectionReport.linkcheckerReport.avgRespTime;
+         }
+         else if(collectionReport.linkcheckerReport.avgRespTime != null) {
+            linkcheckerReport.overall.avgRespTime = (linkcheckerReport.overall.avgRespTime
+                  * linkcheckerReport.overall.totNumOfLinksWithDuration
+                  + collectionReport.linkcheckerReport.avgRespTime * collectionReport.linkcheckerReport.totNumOfLinksWithDuration)
+                  / (linkcheckerReport.overall.totNumOfLinksWithDuration + collectionReport.linkcheckerReport.totNumOfLinksWithDuration);
+         }
 
-         linkcheckerReport.overall.count += collectionReport.linkcheckerReport.totNumOfCheckedLinks;
-         if (linkcheckerReport.overall.maxRespTime < collectionReport.linkcheckerReport.maxRespTime) {
+         linkcheckerReport.overall.totNumOfLinksWithDuration += collectionReport.linkcheckerReport.totNumOfLinksWithDuration;
+         if (
+               linkcheckerReport.overall.maxRespTime == null || 
+               (collectionReport.linkcheckerReport.maxRespTime != null && linkcheckerReport.overall.maxRespTime < collectionReport.linkcheckerReport.maxRespTime)
+            ) 
+         {
             linkcheckerReport.overall.maxRespTime = collectionReport.linkcheckerReport.maxRespTime;
          }
          
@@ -85,13 +95,13 @@ public class AllLinkcheckerReport implements NamedReport {
    public static class Overall {
       private TreeMap<Category, Statistics> statistics;
       @XmlAttribute
-      private int count;
+      private int totNumOfLinksWithDuration;
 
       @XmlAttribute
-      private double avgRespTime;
+      private Double avgRespTime;
 
       @XmlAttribute
-      private long maxRespTime;
+      private Long maxRespTime;
 
       @XmlElement(name = "statistics")
       public Collection<Statistics> getStatistics() {
@@ -121,7 +131,7 @@ public class AllLinkcheckerReport implements NamedReport {
          }
          statistics.count += additionalStatistics.count;
          
-         if(statistics.maxRespTime != null && additionalStatistics.maxRespTime != null && statistics.maxRespTime < additionalStatistics.maxRespTime) {
+         if(statistics.maxRespTime == null || (additionalStatistics.maxRespTime != null && statistics.maxRespTime < additionalStatistics.maxRespTime)) {
             statistics.maxRespTime = additionalStatistics.maxRespTime;
          }
       }
