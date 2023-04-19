@@ -1,3 +1,6 @@
+# 6.0.1
+- dependency upgrade of linkchecker-persitence to version 0.0.5 
+
 # 6.0.0
 - converting the project to Spring boot project
 - using Spring data JPA for persistence (see [linkchecker-persistence](https://github.com/clarin-eric/linkchecker-persistence), Spring caching and processor Beans)
