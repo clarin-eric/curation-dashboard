@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-parent</artifactId>
-      <version>2.7.7</version>
+      <version>2.7.10</version>
       <relativePath /> <!-- lookup parent from repository -->
    </parent>
    <groupId>eu.clarin.cmdi</groupId>
@@ -21,7 +21,7 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <linkchecker-persistence.version>0.0.5</linkchecker-persistence.version>
       <global.version>6.0.1</global.version>
-      <vlo.version>4.11.3-alpha5</vlo.version>
+      <vlo.version>4.11.3</vlo.version>
    </properties>
    <dependencies>
       <dependency>
