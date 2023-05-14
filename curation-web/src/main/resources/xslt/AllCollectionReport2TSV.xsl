@@ -13,7 +13,7 @@
 
    <xsl:output method="text" encoding="UTF-8" indent="no" />
 	<xsl:strip-space elements="*" />
-	<xsl:template match="/collections-report">
+	<xsl:template match="allCollectionReport">
 		<xsl:text>Name</xsl:text>
 		<xsl:text>&#9;</xsl:text>
 		<xsl:text>Score</xsl:text>
@@ -68,11 +68,10 @@
          <xsl:text>&#9;</xsl:text>
          <xsl:value-of select="avgNumOfEmptyXMLElements"></xsl:value-of>
          <xsl:text>&#9;</xsl:text>
-         <xsl:value-of select="avgFacetCoverage"></xsl:value-of>
          <xsl:apply-templates select="facets/facet" mode="value" />	
 	</xsl:template>
 	<xsl:template match="facets/facet" mode="value">
       <xsl:text>&#9;</xsl:text>
-      <xsl:value-of select="."></xsl:value-of>	
+      <xsl:value-of select="@avgCoverage"></xsl:value-of>	
 	</xsl:template>
 </xsl:stylesheet>

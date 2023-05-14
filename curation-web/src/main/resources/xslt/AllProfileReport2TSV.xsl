@@ -12,7 +12,7 @@
 </xsl:function>
 <xsl:output method="text" encoding="UTF-8" indent="no"/>
 <xsl:strip-space elements="*"/>
-	<xsl:template match="/profiles">
+	<xsl:template match="/allProfileReport">
 			<xsl:text>Id</xsl:text>
 <xsl:text>&#9;</xsl:text>
 <xsl:text>Name</xsl:text>
@@ -45,7 +45,7 @@
 <xsl:value-of select="facetCoverage"></xsl:value-of>
 <xsl:for-each select="facets/facet">
     <xsl:text>&#9;</xsl:text>
-    <xsl:value-of select="@covered"></xsl:value-of>
+    <xsl:value-of select="@coveredByProfile"></xsl:value-of>
 </xsl:for-each>
 <xsl:text>&#9;</xsl:text>
 <xsl:value-of select="percOfElementsWithConcept"></xsl:value-of>
