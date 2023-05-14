@@ -1,3 +1,6 @@
+# 6.0.2
+- bug fix for issue #160 and #162
+
 # 6.0.1
 - dependency upgrade of linkchecker-persitence to version 0.0.5 
 
