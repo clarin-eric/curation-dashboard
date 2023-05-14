@@ -74,6 +74,10 @@ public class AllCollectionReport implements NamedReport {
          return collectionReport.linkcheckerReport.totNumOfLinks;
       }
       @XmlElement
+      public int getNumOfUniqueLinks() {
+         return collectionReport.linkcheckerReport.totNumOfUniqueLinks;
+      }
+      @XmlElement
       public int getNumOfCheckedLinks() {
          return collectionReport.linkcheckerReport.totNumOfCheckedLinks;
       }
