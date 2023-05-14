@@ -40,7 +40,7 @@
 <xsl:text>&#9;</xsl:text>
 <xsl:value-of select="collectionUsage"></xsl:value-of>
 <xsl:text>&#9;</xsl:text>
-<xsl:value-of select="InstanceUsage"></xsl:value-of>
+<xsl:value-of select="instanceUsage"></xsl:value-of>
 <xsl:text>&#9;</xsl:text>
 <xsl:value-of select="facetCoverage"></xsl:value-of>
 <xsl:for-each select="facets/facet">
