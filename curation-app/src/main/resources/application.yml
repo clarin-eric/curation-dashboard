@@ -62,3 +62,5 @@ curation:
    clientUsername: curation 
    link_deactivation_after: ${LINK_DEACTIVATION_AFTER:365}
    link_deletion_after: ${LINK_DELETION_AFTER:365}
+   purge_history_after: ${PURGE_HISTORY_AFTER:365}
+   purge_obsolete_after: ${PURGE_OBSOLETE_AFTER:100}

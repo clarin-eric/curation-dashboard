@@ -31,6 +31,10 @@ public class AppConfig {
    
    private int linkDeletionAfter;
    
+   private int purgeHistoryAfter;
+   
+   private int purgeObsoleteAfter;
+   
    @Data
    public static class Directory {
       
