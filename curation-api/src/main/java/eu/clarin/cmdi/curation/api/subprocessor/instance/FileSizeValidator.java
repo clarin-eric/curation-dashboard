@@ -192,18 +192,21 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
       }
 
       CMDIData<Map<String, List<ValueSet>>> cmdiData = null;
-
-      try {
-         cmdiData = processor.process(instance.getPath().toFile(), new ResourceStructureGraph());
-      }
-      catch (Exception e) {
-
-         log.debug("can't create CMDData object from file '{}'", instance.getPath());
-         report.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
-         report.isProcessable=false;
+      
+      synchronized(this) { // the use of the process method has to be synchronized since it's not thread-safe
          
-         return;
-         
+         try {
+            
+            cmdiData = processor.process(instance.getPath().toFile(), new ResourceStructureGraph());
+         }
+         catch (Exception e) {
+   
+            log.debug("can't create CMDData object from file '{}'", instance.getPath());
+            report.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
+            report.isProcessable=false;
+            
+            return;            
+         }
       }
 
 
