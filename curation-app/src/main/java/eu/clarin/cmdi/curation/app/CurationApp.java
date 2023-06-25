@@ -118,10 +118,17 @@ public class CurationApp {
          if("all".equalsIgnoreCase(conf.getMode())) {
             log.info("start deactivating links older than {} days", conf.getLinkDeactivationAfter());
             linkService.deactivateLinksOlderThan(conf.getLinkDeactivationAfter());
-            log.info("done deactivating links older than {} days", conf.getLinkDeactivationAfter());
+            log.info("done deactivating links");
             log.info("start deleting links older than {} days", conf.getLinkDeletionAfter());
             linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
-            log.info("done deleting links older than {} days", conf.getLinkDeletionAfter());
+            log.info("done deleting links");
+            log.info("start purging history table from records checked before {} days", conf.getPurgeHistoryAfter());
+            linkService.purgeHistory(conf.getPurgeHistoryAfter());
+            log.info("done purging history");
+            log.info("start purging obsolete table from records checked before {} days", conf.getPurgeObsoleteAfter());
+            linkService.purgeObsolete(conf.getPurgeObsoleteAfter());
+            log.info("done purging obsolete");
+            
          }
          
          log.info("end time: {}", LocalDateTime.now());

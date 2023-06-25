@@ -209,12 +209,10 @@ public class CollectionAggregator {
          collectionReport.xmlValidityReport.aggregatedScore += instanceReport.xmlValidityReport.score;
 
          // Facet
-         synchronized (this) {
-            instanceReport.facetReport.coverages.stream().filter(coverage -> coverage.coveredByInstance)
-                  .forEach(instanceFacet -> collectionReport.facetReport.facets.stream()
-                        .filter(collectionFacet -> collectionFacet.name.equals(instanceFacet.name)).findFirst()
-                        .get().count++);
-         }
+         instanceReport.facetReport.coverages.stream().filter(coverage -> coverage.coveredByInstance)
+               .forEach(instanceFacet -> collectionReport.facetReport.facets.stream()
+                     .filter(collectionFacet -> collectionFacet.name.equals(instanceFacet.name)).findFirst()
+                     .get().count++);
       }
       else {
          collectionReport.fileReport.numOfFilesNonProcessable++;
