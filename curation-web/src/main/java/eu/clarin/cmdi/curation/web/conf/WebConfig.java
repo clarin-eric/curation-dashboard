@@ -38,5 +38,7 @@ public class WebConfig {
       
       private Path out;
       
+      private Path share;
+      
    }
 }

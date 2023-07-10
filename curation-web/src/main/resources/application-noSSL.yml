@@ -46,6 +46,7 @@ curation:
       in: >
          ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
       out: ${APPLICATION_HOME_DIRECTORY}/public
+      share: /tmp
    max_file_size: 100000
    threadpoolSize: ${THREADPOOL_SIZE:10}
    mode: instance

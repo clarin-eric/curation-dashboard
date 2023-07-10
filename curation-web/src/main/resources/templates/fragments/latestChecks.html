@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<table class="reportTable">
+<thead>
+<tr>
+   <th>Url</th>
+   <th>Status</th>
+   <th>Info</th>
+</tr>
+</thead>
+<tbody>
+<th:block th:each="map: ${stack}">
+<tr>
+<td th:text="${map.get('originalUrl')} !=null? ${map.get('originalUrl')[0]}:''"></td>
+<td th:text="${map.get('fetch.statusCode')} !=null? ${map.get('fetch.statusCode')[0]}:'n/a'"></td>
+<td><button class="showUrlInfo btn btn-info">Show</button></td>
+</tr>
+<tr hidden=true>
+<td colspan="3">
+<b>Message: </b><span th:text="${map.get('fetch.message')} !=null? ${map.get('fetch.message')[0]}:'n/a'" ></span><br>
+<b>Content length: </b><span th:text="${map.get('fetch.byteLength')} !=null? ${map.get('fetch.byteLength')[0]}:'n/a'" ></span><br>
+<b>Content type: </b><span th:text="${map.get('fetch.contentType')} !=null? ${map.get('fetch.contentType')[0]}:'n/a'" ></span><br>
+<b>Request duration(ms): </b><span th:text="${map.get('fetch.duration')} !=null? ${map.get('fetch.duration')[0]}:'n/a'" ></span><br>
+<b>Method: </b><span th:text="${map.get('http.method.head')} !=null? (${map.get('http.method.head')[0]} == 'true'?'HEAD':'GET'):'n/a'" ></span><br>
+</td>
+</tr>
+</th:block>
+</tbody>
+
+</table>
+
+</body>
+</html>

@@ -45,6 +45,7 @@ curation:
       in: >
          ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
       out: ${APPLICATION_HOME_DIRECTORY}/public
+      share: /share
    facets: >
       languageCode,
       collection,
