@@ -75,7 +75,17 @@
 			                  <xsl:text>#</xsl:text>
 			                  <xsl:value-of select="name(.)" />
 			                  </xsl:attribute>
-			                  <xsl:value-of select="functx:capitalize-first(name(.))" />
+			                  <xsl:choose>
+			                     <xsl:when test="name(.) = 'fileReport'">Files</xsl:when>
+			                     <xsl:when test="name(.) = 'profileReport'">Profile usage</xsl:when>
+			                     <xsl:when test="name(.) = 'headerReport'">Header</xsl:when>
+			                     <xsl:when test="name(.) = 'resProxyReport'">Resource proxy</xsl:when>
+			                     <xsl:when test="name(.) = 'xmlPopulationReport'">XML population</xsl:when>
+			                     <xsl:when test="name(.) = 'xmlValidityReport'">XML validation</xsl:when>
+			                     <xsl:when test="name(.) = 'linkcheckerReport'">Link validation</xsl:when>
+			                     <xsl:when test="name(.) = 'facetReport'">Facets</xsl:when>
+			                     <xsl:otherwise>xxxxxxxxx</xsl:otherwise>
+			                  </xsl:choose>
 			                  </a>
 			                  </td>			                  
 			                  <td align="right"><xsl:value-of select="format-number(@aggregatedScore,'###,##0.0')" />
@@ -191,7 +201,7 @@
                   <xsl:attribute name="id">
                   <xsl:value-of select="name(.)" />
                   </xsl:attribute>
-                  File Section
+                  Files
                   </h2>
                </summary>
                <p>General information on the number of files and the file size.</p>
@@ -235,7 +245,7 @@
                   <xsl:attribute name="id">
                   <xsl:value-of select="name(.)" />
                   </xsl:attribute>
-                  Header Section
+                  Header
                   </h2>
                </summary>
                <p>
@@ -268,7 +278,7 @@
                   <xsl:attribute name="id">
                   <xsl:value-of select="name(.)" />
                   </xsl:attribute>
-                  Profile Usage Section
+                  Profile usage
                   </h2>
                </summary>
                <p>
@@ -341,7 +351,7 @@
                   <xsl:attribute name="id">
                   <xsl:value-of select="name(.)" />
                   </xsl:attribute>
-                  Facet Section
+                  Facets
                   </h2>
                </summary>
                <p>The facet section shows the facet coverage within the
@@ -393,7 +403,7 @@
                   <xsl:attribute name="id">
                   <xsl:value-of select="name(.)" />
                   </xsl:attribute>
-                  ResourceProxy Section
+                  Resource proxy
                   </h2>
                </summary>
                <p>The resource proxy section shows information on the number of
@@ -443,7 +453,7 @@
                   <xsl:attribute name="id">
                   <xsl:value-of select="name(.)" />
                   </xsl:attribute>
-                  XML Validation Section
+                  XML validation
                   </h2>
                </summary>
                <p>The XML validation section shows the result of a simple
@@ -470,10 +480,10 @@
                   <xsl:attribute name="id">
                   <xsl:value-of select="name(.)" />
                   </xsl:attribute>
-                  XML Populated Section
+                  XML population
                   </h2>
                </summary>
-               <p>The XML populated section shows information on the number of xml
+               <p>The XML population section shows information on the number of xml
                   elements and the fact if these elements are conatining data. </p>
             </details>
             
@@ -522,10 +532,10 @@
                   <xsl:attribute name="id">
                   <xsl:value-of select="name(.)" />
                   </xsl:attribute>
-                  URL Validation Section
+                  Link validation
                   </h2>
                </summary>
-               <p>The URL validation section shows information on the number of
+               <p>The link validation section shows information on the number of
                   links and the results of link checking for the links which
                   have been checked so far.
                </p>
