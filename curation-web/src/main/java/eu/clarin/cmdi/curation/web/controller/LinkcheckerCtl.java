@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Stack;
 
@@ -74,9 +75,9 @@ public class LinkcheckerCtl {
          ObjectInputStream ois = new ObjectInputStream(is);
 
          @SuppressWarnings("unchecked")
-         Stack<Map<String, String[]>> stack = (Stack<Map<String, String[]>>) ois.readObject();
+         ArrayDeque<Map<String, String[]>> queue = (ArrayDeque<Map<String, String[]>>) ois.readObject();
 
-         model.addAttribute("stack", stack);
+         model.addAttribute("queue", queue);
 
       }
       catch (IOException ex) {
