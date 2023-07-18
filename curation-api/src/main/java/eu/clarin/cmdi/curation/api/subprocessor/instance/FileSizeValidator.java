@@ -184,9 +184,9 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
       CMDIData<Map<String, List<ValueSet>>> cmdiData = null;
       
-//      synchronized(this) { // the use of the process method has to be synchronized since it's not thread-safe
+      synchronized(this) { // the use of the process method has to be synchronized since it's not thread-safe
          
-         try {
+         try {            
             
             cmdiData = processor.process(instance.getPath().toFile(), new ResourceStructureGraph());
          }
@@ -198,7 +198,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
             
             return;            
          }
-//      }
+      }
 
 
       instance.setCmdiData(cmdiData);
