@@ -102,6 +102,7 @@
             There are also <xsl:value-of select="format-number(//fileReport/numOfFilesNonProcessable, '###,##0')" /> files in the collection that could not be processed. 
             See <a href="#recordDetails">record details</a> table for more information.
             </xsl:if>
+            <br>All per file averages (except in the Files section) are based on the number of processable files</br>
 			   <br />
             <br />
             <xsl:apply-templates select="fileReport" />
@@ -355,7 +356,7 @@
                   </h2>
                </summary>
                <p>The facet section shows the facet coverage within the
-                  collection. A facet can be couvered by the instance 
+                  collection. A facet can be covered by the instance 
                   even when it is not covered by the profile when cross facet mapping is used.
                </p>
             </details>
