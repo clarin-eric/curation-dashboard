@@ -39,7 +39,6 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
       this.vloConfig = vloConfig;
       this.crService = crService;
       this.cache = cache;
-
    }
 
    public FacetsMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
@@ -49,13 +48,15 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
 
    }
 
-   public FacetsMapping getFacetsMapping(ProfileHeader header) {
+   public synchronized FacetsMapping getFacetsMapping(ProfileHeader header) {
+      
       return header.isPublic() ? cache.getPublicFacetMapping(header, this)
             : cache.getNonPublicFacetMapping(header, this);
    }
 
    public Map<String, List<Pattern>> createConceptLinkPathMapping(ProfileHeader header)
          throws NoProfileCacheEntryException {
+      
       Map<String, List<Pattern>> result = new HashMap<>();
 
       Map<String, CMDINode> elements = crService.getParsedProfile(header).getElements();
@@ -103,7 +104,6 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
          public Boolean useLocalXSDCache() {
             return true;
          }
-
       }));
    }
 }
