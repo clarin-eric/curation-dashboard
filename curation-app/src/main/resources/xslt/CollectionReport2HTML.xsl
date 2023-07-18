@@ -102,7 +102,8 @@
             There are also <xsl:value-of select="format-number(//fileReport/numOfFilesNonProcessable, '###,##0')" /> files in the collection that could not be processed. 
             See <a href="#recordDetails">record details</a> table for more information.
             </xsl:if>
-            <br>All per file averages (except in the Files section) are based on the number of processable files</br>
+            <br />
+            <b>All per file averages (except in the Files section) are based on the number of processable files</b>
 			   <br />
             <br />
             <xsl:apply-templates select="fileReport" />
