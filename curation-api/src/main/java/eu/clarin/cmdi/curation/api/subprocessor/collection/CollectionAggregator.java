@@ -307,38 +307,9 @@ public class CollectionAggregator {
          collectionReport.fileReport.scorePercentage = collectionReport.fileReport.aggregatedScore 
                / (double) collectionReport.fileReport.numOfFiles;
          collectionReport.fileReport.avgScore = (double) (collectionReport.fileReport.aggregatedScore
-               / collectionReport.fileReport.numOfFiles);
-         
+               / collectionReport.fileReport.numOfFiles);         
          //profile
          collectionReport.profileReport.totNumOfProfiles = collectionReport.profileReport.profiles.size();
-
-         // resProxy
-         collectionReport.resProxyReport.avgNumOfResProxies = (collectionReport.resProxyReport.totNumOfResProxies
-               / (double) collectionReport.fileReport.numOfFiles);
-         collectionReport.resProxyReport.avgNumOfResProxiesWithMime = (collectionReport.resProxyReport.totNumOfResProxiesWithMime
-               / (double) collectionReport.fileReport.numOfFiles);
-         collectionReport.resProxyReport.avgNumOfResProxiesWithReference = (collectionReport.resProxyReport.totNumOfResProxiesWithReference
-               / (double) collectionReport.fileReport.numOfFiles);
-         // XmlPopulation
-         collectionReport.xmlPopulationReport.avgNumOfXMLElements = collectionReport.xmlPopulationReport.totNumOfXMLElements
-               / (double) collectionReport.fileReport.numOfFiles;
-         collectionReport.xmlPopulationReport.avgNumOfXMLSimpleElements = collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements
-               / (double) collectionReport.fileReport.numOfFiles;
-         collectionReport.xmlPopulationReport.avgNumOfXMLEmptyElements = collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
-               / collectionReport.fileReport.numOfFiles;
-
-         if (collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements > 0) {
-            collectionReport.xmlPopulationReport.avgRateOfPopulatedElements = (1.0
-                  - collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
-                        / (double) collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements);
-         }
-
-         // Facet
-         collectionReport.facetReport.facets
-               .forEach(facet -> facet.avgCoverage = facet.count / (double) collectionReport.fileReport.numOfFiles);
-         collectionReport.facetReport.percCoverageNonZero = (double) collectionReport.facetReport.facets.stream()
-               .filter(facet -> facet.count > 0).count() / collectionReport.facetReport.facets.size();
-
          // linkchecker
          collectionReport.linkcheckerReport.avgNumOfLinks = collectionReport.linkcheckerReport.totNumOfLinks
                / (double) collectionReport.fileReport.numOfFiles;
@@ -353,7 +324,6 @@ public class CollectionAggregator {
                   .mapToDouble(statistics -> statistics.avgRespTime * statistics.count).sum()
                   / (double) collectionReport.linkcheckerReport.totNumOfLinksWithDuration;
          }
-
          //collection
          collectionReport.aggregatedScore = collectionReport.fileReport.aggregatedScore + collectionReport.profileReport.aggregatedScore
                + collectionReport.headerReport.aggregatedScore + collectionReport.resProxyReport.aggregatedScore
@@ -368,7 +338,6 @@ public class CollectionAggregator {
          collectionReport.scorePercentage = collectionReport.aggregatedScore / collectionReport.aggregatedMaxScore;
 
       }
-
       if (collectionReport.fileReport.numOfFilesProcessable > 0) {
          // file
 
@@ -384,11 +353,29 @@ public class CollectionAggregator {
          collectionReport.headerReport.avgScore = (collectionReport.headerReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          // resProxy
+         collectionReport.resProxyReport.avgNumOfResProxies = (collectionReport.resProxyReport.totNumOfResProxies
+               / (double) collectionReport.fileReport.numOfFilesProcessable);
+         collectionReport.resProxyReport.avgNumOfResProxiesWithMime = (collectionReport.resProxyReport.totNumOfResProxiesWithMime
+               / (double) collectionReport.fileReport.numOfFilesProcessable);
+         collectionReport.resProxyReport.avgNumOfResProxiesWithReference = (collectionReport.resProxyReport.totNumOfResProxiesWithReference
+               / (double) collectionReport.fileReport.numOfFilesProcessable);
          collectionReport.resProxyReport.scorePercentage = collectionReport.resProxyReport.aggregatedScore
                / collectionReport.resProxyReport.aggregatedMaxScore;
          collectionReport.resProxyReport.avgScore = (collectionReport.resProxyReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
-         // xmlpopulation
+         // XmlPopulation
+         collectionReport.xmlPopulationReport.avgNumOfXMLElements = collectionReport.xmlPopulationReport.totNumOfXMLElements
+               / (double) collectionReport.fileReport.numOfFilesProcessable;
+         collectionReport.xmlPopulationReport.avgNumOfXMLSimpleElements = collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements
+               / (double) collectionReport.fileReport.numOfFilesProcessable;
+         collectionReport.xmlPopulationReport.avgNumOfXMLEmptyElements = collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
+               / collectionReport.fileReport.numOfFilesProcessable;
+
+         if (collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements > 0) {
+            collectionReport.xmlPopulationReport.avgRateOfPopulatedElements = (1.0
+                  - collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
+                        / (double) collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements);
+         }
          collectionReport.xmlPopulationReport.scorePercentage = collectionReport.xmlPopulationReport.aggregatedScore
                / (double) collectionReport.xmlPopulationReport.aggregatedMaxScore;
          collectionReport.xmlPopulationReport.avgScore = (collectionReport.xmlPopulationReport.aggregatedScore
@@ -399,6 +386,10 @@ public class CollectionAggregator {
          collectionReport.xmlValidityReport.avgScore = (collectionReport.xmlValidityReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          // facet
+         collectionReport.facetReport.facets
+            .forEach(facet -> facet.avgCoverage = facet.count / (double) collectionReport.fileReport.numOfFilesProcessable);
+         collectionReport.facetReport.percCoverageNonZero = (double) collectionReport.facetReport.facets.stream()
+               .filter(facet -> facet.count > 0).count() / collectionReport.facetReport.facets.size();
          collectionReport.facetReport.scorePercentage = collectionReport.facetReport.aggregatedScore
                / (double) collectionReport.facetReport.aggregatedMaxScore;
          collectionReport.facetReport.avgScore = (collectionReport.facetReport.aggregatedScore
