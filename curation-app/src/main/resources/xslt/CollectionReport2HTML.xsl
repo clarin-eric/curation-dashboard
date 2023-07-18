@@ -199,12 +199,7 @@
    <xsl:template match="fileReport">
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  Files
-                  </h2>
+                  <h2 class="anchor" id="fileReport">Files</h2>
                </summary>
                <p>General information on the number of files and the file size.</p>
             </details>
@@ -243,12 +238,7 @@
    <xsl:template match="headerReport">
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  Header
-                  </h2>
+                  <h2 class="anchor" id="headerReport">Header</h2>
                </summary>
                <p>
                   The header section shows information on the availibilty of attribute schemaLocation as well as the elements 
@@ -276,12 +266,7 @@
    <xsl:template match="profileReport">
                <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  Profile usage
-                  </h2>
+                  <h2 class="anchor" id="profileReport">Profile usage</h2>
                </summary>
                <p>
                   The profile usage section shows information shows which profiles are used how oftenly in a collection. 
@@ -349,12 +334,7 @@
    <xsl:template match="facetReport" >
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  Facets
-                  </h2>
+                  <h2 class="anchor" id="facetReport">Facets</h2>
                </summary>
                <p>The facet section shows the facet coverage within the
                   collection. A facet can be covered by the instance 
@@ -400,12 +380,7 @@
    <xsl:template match="resProxyReport">
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  Resource proxy
-                  </h2>
+                  <h2 class="anchor" id="resProxyReport">Resource proxy</h2>
                </summary>
                <p>The resource proxy section shows information on the number of
                   resource proxies on the kind (the mime type) of resources.
@@ -450,12 +425,7 @@
    <xsl:template match="xmlValidityReport">
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  XML validation
-                  </h2>
+                  <h2 class="anchor" id="xmlValidityReport">XML validation</h2>
                </summary>
                <p>The XML validation section shows the result of a simple
                   validation of each CMD file against its profile. </p>
@@ -477,12 +447,7 @@
    <xsl:template match="xmlPopulationReport">
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  XML population
-                  </h2>
+                  <h2 class="anchor" id="xmlPopulationReport">XML population</h2>
                </summary>
                <p>The XML population section shows information on the number of xml
                   elements and the fact if these elements are conatining data. </p>
@@ -529,12 +494,7 @@
    <xsl:template match="linkcheckerReport">
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  Link validation
-                  </h2>
+                  <h2 class="anchor" id="linkcheckerReport">Link validation</h2>
                </summary>
                <p>The link validation section shows information on the number of
                   links and the results of link checking for the links which

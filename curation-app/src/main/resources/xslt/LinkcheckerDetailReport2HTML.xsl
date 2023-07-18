@@ -23,7 +23,7 @@
 
 	</xsl:template>
 	<xsl:template match="categoryReport">
-		<h3>
+		<h3 class="anchor">
 			<xsl:attribute name="id"><xsl:value-of
 				select="./@category" /></xsl:attribute>
 			Category:

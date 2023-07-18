@@ -156,6 +156,14 @@ summary:focus {
 details[open] h2:after{
    content: url(/images/info_open-14.png);
 }
+.anchor:before {
+	content: ''; 
+	display: block; 
+	position: relative; 
+	width: 0; 
+	height: 10vh; 
+	margin-top: -10vh
+}
 /*
 .Ok{
 	background-color: #00FF80;
