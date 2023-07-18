@@ -32,7 +32,7 @@ public class CMDInstanceProcessor {
    private void init() {
       
       subprocessors =   
-         Stream.of(FileSizeValidator.class, InstanceHeaderProcessor.class, ResourceProxyProcessor.class, UrlValidator.class, XmlValidator.class)
+         Stream.of(FileSizeValidator.class, InstanceHeaderProcessor.class, ResourceProxyProcessor.class, XmlValidator.class, UrlValidator.class)
             .map(abstactSubprocessorClass -> ctx.getBean(abstactSubprocessorClass)).collect(Collectors.toList());
       
       if ("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode())) {
