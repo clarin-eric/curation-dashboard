@@ -355,9 +355,8 @@
                   </h2>
                </summary>
                <p>The facet section shows the facet coverage within the
-                  collection. It's quite evident that the facet coverage of a
-                  certain CMD file can't be higher than those of the profile it is
-                  based on.
+                  collection. A facet can be couvered by the instance 
+                  even when it is not covered by the profile when cross facet mapping is used.
                </p>
             </details>
             
