@@ -33,7 +33,7 @@ public class ProfileTest {
    @BeforeAll
    public void createReport() throws URISyntaxException, MalformedURLException{
       
-      URI profileURI = this.getClass().getClassLoader().getResource("profile/LexicalResourceProfile.xsd").toURI();
+      URI profileURI = this.getClass().getClassLoader().getResource("profile/media-corpus-profile.xsd").toURI();
       Path profilePath = Paths.get(profileURI);
       
       this.report = curation.processCMDProfile(profilePath);
