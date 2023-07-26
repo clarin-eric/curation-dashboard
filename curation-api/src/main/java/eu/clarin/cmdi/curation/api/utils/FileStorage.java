@@ -172,7 +172,7 @@ public class FileStorage {
       }
       catch (IOException e) {
          
-         log.error("can't copy file '{}' to stmped file '{}'", path, stampedPath);
+         log.error("can't copy file '{}' to stamped file '{}'", path, stampedPath);
          throw new RuntimeException(e);
       }
    }
