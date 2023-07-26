@@ -167,6 +167,6 @@ public class CRCache {
 
    
    public boolean isPublicCache(ProfileHeader header) {
-      return header.isPublic() && header.getCmdiVersion().equals("1.x") || header.getCmdiVersion().equals("1.2");
+      return header.isPublic() && header.isReliable() && (header.getCmdiVersion().equals("1.x") || header.getCmdiVersion().equals("1.2"));
    }  
 }
