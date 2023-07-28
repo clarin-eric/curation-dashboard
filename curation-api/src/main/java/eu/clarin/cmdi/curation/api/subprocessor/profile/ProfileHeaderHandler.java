@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.api.subprocessor.profile;
 
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.report.Detail;
 import eu.clarin.cmdi.curation.api.report.Detail.Severity;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Component;
 public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDProfileReport> {
 
    @Autowired
+   private ApiConfig conf;
+   @Autowired
    private CRService crService;
    @Autowired
    private PPHService pphService;
@@ -26,6 +29,12 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
 
       report.headerReport = new ProfileHeaderReport(
             crService.createProfileHeader(profile.getSchemaLocation(), "1.x", false));
+      
+      // instance mode is only used by web app for user upload
+      // user uploads are not reliable and must therefore be cached separately
+      if("instance".equals(this.conf.getMode())){
+         report.headerReport.getProfileHeader().setReliable(false);
+      }
 
       if (!report.headerReport.getProfileHeader().isPublic()) {
          log.debug("profile {} not public", profile.getSchemaLocation());
