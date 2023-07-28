@@ -154,6 +154,7 @@
 					</tbody>
 				</table>
 				<hr />
+<!-- we don't have any usage information for user uploads
 
 				<details>
 					<summary>
@@ -187,6 +188,7 @@
 					</tbody>
 				</table>
 				<hr />
+ -->				
 				<details>
 					<summary>
 						<h2>Cmd Component Section</h2>
