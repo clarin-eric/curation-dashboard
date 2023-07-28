@@ -2,23 +2,16 @@ package eu.clarin.cmdi.curation.api;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.File;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
@@ -128,6 +121,56 @@ public class ProfileTest {
       } 
       
       
+   }
+   
+   @Test
+   void cacheTest() {
+      
+      try {
+         
+         // a public profile processed in collection mode should be added to the public cache 
+         this.cacheManager.getCache("privateProfileCache").clear(); 
+         this.cacheManager.getCache("publicProfileCache").clear(); 
+         
+         conf.setMode("collection");
+         
+         URL schemaURL = new URL("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd");
+         
+         curation.processCMDProfile(schemaURL); 
+         
+         assertNotNull(this.cacheManager.getCache("publicProfileCache").get("clarin.eu:cr1:p_1403526079380"));
+         assertNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
+         
+         // same public file not loaded via registry URL but by file
+         // hence the profile not public, since it doesn't come from the registry, and should be stored in the private cache
+         this.cacheManager.getCache("privateProfileCache").clear(); 
+         this.cacheManager.getCache("publicProfileCache").clear(); 
+         
+         Path tmpFilePath = Files.createTempFile(null, null);
+         
+         FileUtils.copyURLToFile(schemaURL, tmpFilePath.toFile());         
+         
+         curation.processCMDProfile(tmpFilePath); 
+         
+         assertNull(this.cacheManager.getCache("publicProfileCache").get("clarin.eu:cr1:p_1403526079380"));
+         assertNotNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
+         
+         // now we take it from the registry but in instance mode which is usually triggered by a user in the web interface
+         // we treat user actions as not reliable and the profile should be stored in private cache
+         this.cacheManager.getCache("privateProfileCache").clear(); 
+         this.cacheManager.getCache("publicProfileCache").clear(); 
+         
+         conf.setMode("instance");                
+         curation.processCMDProfile(schemaURL); 
+         
+         assertNull(this.cacheManager.getCache("publicProfileCache").get("clarin.eu:cr1:p_1403526079380"));
+         assertNotNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
+         
+      }
+      catch(Exception ex) {
+         
+         log.error("", ex);
+      }       
    }
    
    
