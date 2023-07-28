@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.processor.CMDProfileProcessor;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
-import eu.clarin.cmdi.curation.cr.CRService;
 
 
 /**
@@ -21,10 +20,8 @@ import eu.clarin.cmdi.curation.cr.CRService;
 public class ProfileReportCache {
    @Autowired
    CMDProfileProcessor processor;
-   @Autowired
-   CRService crService;
    
-   @Cacheable(value = "publicProfileReportCache", key = "#profile.schemaLocation", condition = "#crService.isCRResident(profile.getSchemaLocation())")
+   @Cacheable(value = "publicProfileReportCache", key = "#profile.schemaLocation", condition = "'instance'.equals(@apiConfig.getMode())")
    public CMDProfileReport getProfileReport(CMDProfile profile) {
       
       return processor.process(profile);
