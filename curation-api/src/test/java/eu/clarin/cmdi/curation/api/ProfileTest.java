@@ -156,7 +156,7 @@ public class ProfileTest {
          assertNotNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
          
          // now we take it from the registry but in instance mode which is usually triggered by a user in the web interface
-         // we treat user actions as not reliable and the profile should be stored in private cache
+         // we treat user actions as not reliable and the profile should be stored neither in public nor in private cache
          this.cacheManager.getCache("privateProfileCache").clear(); 
          this.cacheManager.getCache("publicProfileCache").clear(); 
          
@@ -164,7 +164,7 @@ public class ProfileTest {
          curation.processCMDProfile(schemaURL); 
          
          assertNull(this.cacheManager.getCache("publicProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         assertNotNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
+         assertNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
          
       }
       catch(Exception ex) {
