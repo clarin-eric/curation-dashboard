@@ -51,6 +51,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
       
       report.facetReport = new InstanceFacetReport();
       
+      // we add the facet name and the profile coverage to the facet report
       profileReportCache.getProfileReport(new CMDProfile(report.profileHeaderReport.getSchemaLocation(), report.profileHeaderReport.getCmdiVersion())).facetReport.coverages
          .forEach(profileCoverage -> report.facetReport.coverages.add(new Coverage(profileCoverage.name, profileCoverage.coveredByProfile)));
       
@@ -91,7 +92,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
       report.facetReport.valueNodes.addAll(nodesMap.values());
       
-      report.facetReport.percCoveragedByInstance = report.facetReport.numOfFacetsCoveredByInstance/report.facetReport.numOfFacets;
+      report.facetReport.percCoveragedByInstance = (double) report.facetReport.numOfFacetsCoveredByInstance/report.facetReport.numOfFacets;
       report.facetReport.score=report.facetReport.percCoveragedByInstance;
       report.instanceScore+=report.facetReport.score;
 
