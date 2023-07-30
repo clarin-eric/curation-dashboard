@@ -48,9 +48,9 @@ public class InstanceFacetReport {
    @NoArgsConstructor(force = true)
    public static class ValueNode {
       @XmlElement
-      public final String value;
-      @XmlElement
       public final String xpath;
+      @XmlElement
+      public final String value;
       @XmlElement
       public Concept concept;
 
