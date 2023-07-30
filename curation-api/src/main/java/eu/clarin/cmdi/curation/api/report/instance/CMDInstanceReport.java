@@ -85,7 +85,8 @@ public class CMDInstanceReport implements NamedReport {
    // facets
    @XmlElement
    public InstanceFacetReport facetReport;
-   @XmlElement
+   @XmlElementWrapper(name = "details")
+   @XmlElement(name = "detail")
    public Collection<Detail> details = new ArrayList<Detail>();
 
    @Override
