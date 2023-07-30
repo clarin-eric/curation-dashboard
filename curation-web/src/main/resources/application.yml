@@ -46,21 +46,22 @@ curation:
          ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
       out: ${APPLICATION_HOME_DIRECTORY}/public
       share: /share
-   facets: >
-      languageCode,
-      collection,
-      resourceClass,
-      modality,
-      format,
-      keywords,
-      genre,
-      subject,
-      country,
-      organisation,
-      name,
-      description,
-      license,
-      availability
+   facets: 
+      - languageCode
+      - collection
+      - resourceClass
+      - modality
+      - format
+      - keywords
+      - genre
+      - subject
+      - country
+      - organisation
+      - name
+      - description
+      - license
+      - availability
+      - temporalCoverage
    clientUsername: curation   
    max_file_size: 100000
    threadpoolSize: ${THREADPOOL_SIZE:10}

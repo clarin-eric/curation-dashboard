@@ -35,6 +35,7 @@ curation:
       - description
       - license
       - availability
+      - temporalCoverage
    clientUsername: testUser
    clientPassword: testPassword
    directory:

@@ -5,7 +5,7 @@ logging:
          rollingpolicy:
             max-file-size: 10MB
    level:
-      root: ERROR
+      root: WARN
       eu.clarin.cmdi.curation.app.CurationApp: INFO
 spring:
    datasource:
@@ -40,21 +40,22 @@ curation:
       in: >
          ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
       out: ${APPLICATION_HOME_DIRECTORY}/public
-   facets: >
-      languageCode,
-      collection,
-      resourceClass,
-      modality,
-      format,
-      keywords,
-      genre,
-      subject,
-      country,
-      organisation,
-      name,
-      description,
-      license,
-      availability
+   facets: 
+      - languageCode
+      - collection
+      - resourceClass
+      - modality
+      - format
+      - keywords
+      - genre
+      - subject
+      - country
+      - organisation
+      - name
+      - description
+      - license
+      - availability
+      - temporalCoverage
    threadpool_size: ${THREADPOOL_SIZE:10}
    max_file_size: 100000
    base_url:
