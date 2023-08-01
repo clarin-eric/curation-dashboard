@@ -1,7 +1,5 @@
 package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
-import java.util.HashSet;
-
 import java.util.List;
 import java.util.Map;
 
@@ -33,23 +31,12 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDIn
       
       report.facetReport.numOfFacets = report.facetReport.coverages.size();
 
-      entity.getCmdiData().getDocField("format").forEach(System.out::println);
       Map<String, List<ValueSet>> facetValuesMap = entity.getCmdiData().getDocument();
 
-      /*
-       * We need to know if a value is mapped to the origin facet. The facetValuesMap
-       * has the name of the target facet key. When using cross facet mapping the
-       * target facet is not the same as the origin facet. Therefore we extract the
-       * origin facet from each the ValueSet and we can assume that for each origin
-       * facet a value was mapped to this origin facet
-       */
-      HashSet<String> originFacetsWithValue = new HashSet<String>();
-      facetValuesMap.values().forEach(
-            list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getTargetFacetName())));
-
+      //the key of the facetValuesMap is the target facet name
       report.facetReport.coverages.stream()
             .forEach(coverage -> {
-               if(coverage.coveredByInstance = originFacetsWithValue.contains(coverage.name)) { //initialization and test!
+               if(coverage.coveredByInstance = facetValuesMap.keySet().contains(coverage.name)) { //initialization and test!
                   report.facetReport.numOfFacetsCoveredByInstance++;
                };
             });
