@@ -12,12 +12,11 @@ import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.vlo_extension.CMDIDataImplFactory;
 import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.vlo.LanguageCodeUtils;
-import eu.clarin.cmdi.vlo.config.FieldNameService;
 import eu.clarin.cmdi.vlo.config.FieldNameServiceImpl;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
+import eu.clarin.cmdi.vlo.importer.CMDIRecordProcessor;
 import eu.clarin.cmdi.vlo.importer.MetadataImporter;
-import eu.clarin.cmdi.vlo.importer.ResourceStructureGraph;
 import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
 import eu.clarin.cmdi.vlo.importer.processor.CMDIDataProcessor;
 import eu.clarin.cmdi.vlo.importer.processor.CMDIParserVTDXML;
@@ -49,7 +48,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
    private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
 
-   private CMDIDataProcessor<Map<String, List<ValueSet>>> processor;
+   private CMDIRecordProcessor<Map<String, List<ValueSet>>> recordProcessor;
    
    private ApiConfig conf;
 
@@ -61,17 +60,35 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
       final LanguageCodeUtils languageCodeUtils = new LanguageCodeUtils(vloConfig);
 
-      final FieldNameService fieldNameService = new FieldNameServiceImpl(vloConfig);
+      final FieldNameServiceImpl fieldNameServiceImpl = new FieldNameServiceImpl(vloConfig);
 
-      final CMDIDataImplFactory cmdiDataFactory = new CMDIDataImplFactory(fieldNameService);
+      final CMDIDataImplFactory cmdiDataFactory = new CMDIDataImplFactory(fieldNameServiceImpl);
 
       final VLOMarshaller marshaller = new VLOMarshaller();
 
 
-      this.processor = new CMDIParserVTDXML<>(
-            MetadataImporter.registerPostProcessors(vloConfig, fieldNameService, languageCodeUtils),
-            MetadataImporter.registerPostMappingFilters(fieldNameService), vloConfig, fac,
-            marshaller, cmdiDataFactory, fieldNameService, false);
+      CMDIDataProcessor<Map<String, List<ValueSet>>> dataProcessor = new CMDIParserVTDXML<>(
+            MetadataImporter.registerPostProcessors(vloConfig, fieldNameServiceImpl, languageCodeUtils),
+            MetadataImporter.registerPostMappingFilters(fieldNameServiceImpl), vloConfig, fac,
+            marshaller, cmdiDataFactory, fieldNameServiceImpl, false);
+      
+      this.recordProcessor = new CMDIRecordProcessor<Map<String, List<ValueSet>>>(dataProcessor, fieldNameServiceImpl) {
+
+         @Override
+         protected boolean skipOnDuplicateId() {
+
+            return false;
+         }
+
+         @Override
+         protected boolean skipOnNoResources() {
+
+            return false;
+         }         
+      };
+      
+      
+      
 
    }
 
@@ -188,7 +205,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
          
          try {            
             
-            cmdiData = processor.process(instance.getPath().toFile(), new ResourceStructureGraph());
+            cmdiData = recordProcessor.processRecord(instance.getPath().toFile()).get();
          }
          catch (Exception e) {
    
