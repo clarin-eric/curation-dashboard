@@ -49,7 +49,7 @@ public class CMDIDataImpl extends CMDIDataBaseImpl<Map<String,List<ValueSet>>> {
                    -1, 
                    new FacetDefinition(null, "unknown"),
                    new TargetFacet(new FacetDefinition(null, fieldName), value.toString()),
-                   Pair.of(DEFAULT_LANGUAGE, value.toString()),
+                   Pair.of(value.toString(), DEFAULT_LANGUAGE),
                    false,
                    false
                 )
