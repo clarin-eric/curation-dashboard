@@ -392,32 +392,32 @@
             <p>
                Total number of resource proxies:
                <xsl:value-of
-                  select="format-number(./totNumOfResProxies, '###,##0')" />
+                  select="format-number(./totNumOfResources, '###,##0')" />
             </p>
             <p>
                Average number of resource proxies:
                <xsl:value-of
-                  select="format-number(./avgNumOfResProxies,'###,##0.00')" />
+                  select="format-number(./avgNumOfResources,'###,##0.00')" />
             </p>
             <p>
                Total number of resource proxies with MIME:
                <xsl:value-of
-                  select="format-number(./totNumOfResProxiesWithMime, '###,##0')" />
+                  select="format-number(./totNumOfResourcesWithMime, '###,##0')" />
             </p>
             <p>
                Average number of resource proxies with MIME:
                <xsl:value-of
-                  select="format-number(./avgNumOfResProxiesWithMime,'###,##0.00')" />
+                  select="format-number(./avgNumOfResourcesWithMime,'###,##0.00')" />
             </p>
             <p>
                Total number of resource proxies with reference:
                <xsl:value-of
-                  select="format-number(./totNumOfResProxiesWithReference, '###,##0')" />
+                  select="format-number(./totNumOfResourcesWithReference, '###,##0')" />
             </p>
             <p>
                Average number of resource proxies with references:
                <xsl:value-of
-                  select="format-number(./avgNumOfResProxiesWithReference,'###,##0.00')" />
+                  select="format-number(./avgNumOfResourcesWithReference,'###,##0.00')" />
             </p>   
    </xsl:template>
    

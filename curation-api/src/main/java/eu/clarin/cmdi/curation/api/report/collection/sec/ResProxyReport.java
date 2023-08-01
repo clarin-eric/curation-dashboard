@@ -32,17 +32,17 @@ public class ResProxyReport {
    @XmlAttribute
    public double avgScore;  
    @XmlElement
-   public int totNumOfResProxies;
+   public int totNumOfResources;
    @XmlElement
-   public double avgNumOfResProxies;
+   public double avgNumOfResources;
    @XmlElement
-   public int totNumOfResProxiesWithMime;
+   public int totNumOfResourcesWithMime;
    @XmlElement
-   public double avgNumOfResProxiesWithMime;
+   public double avgNumOfResourcesWithMime;
    @XmlElement
-   public int totNumOfResProxiesWithReference;
+   public int totNumOfResourcesWithReference;
    @XmlElement
-   public double avgNumOfResProxiesWithReference;
+   public double avgNumOfResourcesWithReference;
    @XmlElementWrapper(name = "invalidReferences")
    @XmlElement(name = "invalidReference")
    public Collection<InvalidReference> invalidReferences = new ArrayList<InvalidReference>(); 

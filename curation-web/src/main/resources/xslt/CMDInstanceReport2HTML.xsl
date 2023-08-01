@@ -343,7 +343,7 @@
 		</details>
 		<p>
 			Total number ResourceProxies:
-			<xsl:value-of select="./numOfResProxies" />
+			<xsl:value-of select="./numOfResources" />
 		</p>
 		<p>
 			Number of ResourceProxies having specified MIME type:
@@ -356,12 +356,12 @@
 		</p>
 		<p>
 			Number of ResourceProxies having reference:
-			<xsl:value-of select="./numOfResProxiesWithReference" />
+			<xsl:value-of select="./numOfResourcesWithReference" />
 		</p>
 		<p>
 			Percent of ResourceProxies having reference:
 			<xsl:value-of
-				select="format-number(./percOfResProxiesWithReference,'0.0%')" />
+				select="format-number(./percOfResourcesWithReference,'0.0%')" />
 		</p>
 		<table class="reportTable">
 			<thead>

@@ -28,15 +28,15 @@ public class ResourceProxyReport {
    @XmlAttribute
    public double score;
    @XmlElement
-   public int numOfResProxies;
+   public int numOfResources;
    @XmlElement
    public int numOfResourcesWithMime;
    @XmlElement
    public double percOfResourcesWithMime;
    @XmlElement
-   public int numOfResProxiesWithReference;
+   public int numOfResourcesWithReference;
    @XmlElement
-   public double percOfResProxiesWithReference;
+   public double percOfResourcesWithReference;
    @XmlElementWrapper(name = "resourceTypes")
    @XmlElement(name = "resourceType")
    public Collection<ResourceType> resourceTypes = new ArrayList<ResourceType>();

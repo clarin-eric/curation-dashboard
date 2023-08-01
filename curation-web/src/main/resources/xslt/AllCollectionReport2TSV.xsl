@@ -60,9 +60,9 @@
          <xsl:text>&#9;</xsl:text>
          <xsl:value-of select="ratioOfValidLinks"></xsl:value-of>
          <xsl:text>&#9;</xsl:text>
-         <xsl:value-of select="avgNumOfResProxies"></xsl:value-of>
+         <xsl:value-of select="avgNumOfResources"></xsl:value-of>
          <xsl:text>&#9;</xsl:text>
-         <xsl:value-of select="numOfResProxies"></xsl:value-of>
+         <xsl:value-of select="numOfResources"></xsl:value-of>
          <xsl:text>&#9;</xsl:text>
          <xsl:value-of select="ratioOfValidRecords"></xsl:value-of>
          <xsl:text>&#9;</xsl:text>

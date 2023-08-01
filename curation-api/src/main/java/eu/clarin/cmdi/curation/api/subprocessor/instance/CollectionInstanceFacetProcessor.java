@@ -33,7 +33,7 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDIn
       
       report.facetReport.numOfFacets = report.facetReport.coverages.size();
 
-
+      entity.getCmdiData().getDocField("format").forEach(System.out::println);
       Map<String, List<ValueSet>> facetValuesMap = entity.getCmdiData().getDocument();
 
       /*
@@ -45,11 +45,11 @@ public class CollectionInstanceFacetProcessor extends AbstractSubprocessor<CMDIn
        */
       HashSet<String> originFacetsWithValue = new HashSet<String>();
       facetValuesMap.values().forEach(
-            list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getOriginFacetConfig().getName())));
+            list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getTargetFacetName())));
 
-      report.facetReport.coverages.stream().filter(coverage -> coverage.coveredByProfile)
+      report.facetReport.coverages.stream()
             .forEach(coverage -> {
-               if(coverage.coveredByInstance = originFacetsWithValue.contains(coverage.name)) {
+               if(coverage.coveredByInstance = originFacetsWithValue.contains(coverage.name)) { //initialization and test!
                   report.facetReport.numOfFacetsCoveredByInstance++;
                };
             });

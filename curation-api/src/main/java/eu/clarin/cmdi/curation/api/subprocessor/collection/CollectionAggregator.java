@@ -188,9 +188,9 @@ public class CollectionAggregator {
          collectionReport.headerReport.aggregatedScore += instanceReport.instanceHeaderReport.score;
 
          // ResProxies
-         collectionReport.resProxyReport.totNumOfResProxies += instanceReport.resProxyReport.numOfResProxies;
-         collectionReport.resProxyReport.totNumOfResProxiesWithMime += instanceReport.resProxyReport.numOfResourcesWithMime;
-         collectionReport.resProxyReport.totNumOfResProxiesWithReference += instanceReport.resProxyReport.numOfResProxiesWithReference;
+         collectionReport.resProxyReport.totNumOfResources += instanceReport.resProxyReport.numOfResources;
+         collectionReport.resProxyReport.totNumOfResourcesWithMime += instanceReport.resProxyReport.numOfResourcesWithMime;
+         collectionReport.resProxyReport.totNumOfResourcesWithReference += instanceReport.resProxyReport.numOfResourcesWithReference;
 
          if (instanceReport.resProxyReport.invalidReferences.size() > 0) {
             collectionReport.resProxyReport.invalidReferences.add(new InvalidReference(
@@ -327,11 +327,11 @@ public class CollectionAggregator {
          collectionReport.headerReport.avgScore = (collectionReport.headerReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          // resProxy
-         collectionReport.resProxyReport.avgNumOfResProxies = (collectionReport.resProxyReport.totNumOfResProxies
+         collectionReport.resProxyReport.avgNumOfResources = (collectionReport.resProxyReport.totNumOfResources
                / (double) collectionReport.fileReport.numOfFilesProcessable);
-         collectionReport.resProxyReport.avgNumOfResProxiesWithMime = (collectionReport.resProxyReport.totNumOfResProxiesWithMime
+         collectionReport.resProxyReport.avgNumOfResourcesWithMime = (collectionReport.resProxyReport.totNumOfResourcesWithMime
                / (double) collectionReport.fileReport.numOfFilesProcessable);
-         collectionReport.resProxyReport.avgNumOfResProxiesWithReference = (collectionReport.resProxyReport.totNumOfResProxiesWithReference
+         collectionReport.resProxyReport.avgNumOfResourcesWithReference = (collectionReport.resProxyReport.totNumOfResourcesWithReference
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          collectionReport.resProxyReport.scorePercentage = collectionReport.resProxyReport.aggregatedScore
                / collectionReport.resProxyReport.aggregatedMaxScore;
