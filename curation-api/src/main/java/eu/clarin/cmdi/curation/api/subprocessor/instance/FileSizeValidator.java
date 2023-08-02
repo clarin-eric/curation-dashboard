@@ -2,7 +2,6 @@ package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.instance_parser.InstanceParser;
 import eu.clarin.cmdi.curation.api.report.Detail;
 import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
@@ -129,7 +128,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
          }
 
          TransformerFactory factory = TransformerFactory.newInstance();
-         Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/xslt/cmd-record-1_1-to-1_2.xsl"));
+         Source xslt = new StreamSource(this.getClass().getResourceAsStream("xslt/cmd-record-1_1-to-1_2.xsl"));
 
          Transformer transformer;
          try {
@@ -219,34 +218,8 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
 
       instance.setCmdiData(cmdiData);
-
-      // create xpath/value pairs only in instance mode
-      if (!("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode()))) {
-
-         InstanceParser transformer = new InstanceParser();
-
-         log.debug("parsing instance...");
-         try {
-            instance.setParsedInstance(transformer.parseIntance(Files.newInputStream(instance.getPath())));
-         }
-         catch (TransformerException e) {
-            
-            log.error("can't transform CMD instance file '{}'", instance.getPath());
-            report.details.add(new Detail(Severity.FATAL, "file", "can't transform CMD instance file '" + instance.getPath().getFileName()));
-            report.isProcessable=false;
-            
-            return;
          
-         }
-         catch (IOException e) {
-            
-            log.error("can't read CMD file '{}'", instance.getPath());
-            throw new RuntimeException(e);
-         
-         }
-         
-         log.debug("...done");
-      }
+      log.debug("...done");
       
       report.fileReport.score = 1.0;
       report.instanceScore+=report.fileReport.score;

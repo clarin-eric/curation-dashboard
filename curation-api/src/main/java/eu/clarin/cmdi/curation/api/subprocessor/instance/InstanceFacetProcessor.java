@@ -23,6 +23,7 @@ import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.Facet
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.ValueNode;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
+import eu.clarin.cmdi.curation.api.xml.XPathValueService;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
@@ -39,6 +40,8 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
    private CRService crService;
    @Autowired
    ProfileReportCache profileReportCache;
+   @Autowired
+   XPathValueService xpathValueService;
 
    @Override
    public void process(CMDInstance instance, CMDInstanceReport report) {
@@ -86,20 +89,21 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
             VTDNav nav = vtdGen.getNav();
             AutoPilot ap = new AutoPilot(nav);
 
-            instance.getParsedInstance().getNodes().stream().filter(node -> StringUtils.isNotBlank(node.getValue()))
+            this.xpathValueService.getXpathValueMap(instance.getPath()).entrySet()
+               .stream().filter(node -> StringUtils.isNotBlank(node.getValue()))
                   .forEach(node -> {
 
-                     ValueNode valueNode = new ValueNode(node.getXpath(), node.getValue());
+                     ValueNode valueNode = new ValueNode(node.getKey(), node.getValue());
 
                      CMDINode cmdiNode;
 
-                     if ((cmdiNode = cmdiNodeMap.get(node.getXpath().replaceAll("\\[\\d\\]", ""))) != null && cmdiNode.concept != null) {
+                     if ((cmdiNode = cmdiNodeMap.get(node.getKey().replaceAll("\\[\\d\\]", ""))) != null && cmdiNode.concept != null) {
 
                         valueNode.concept = new ConceptReport.Concept(cmdiNode.concept);
                      }
 
                      try {
-                        ap.selectXPath(node.getXpath().replaceAll("\\w+:", ""));
+                        ap.selectXPath(node.getKey().replaceAll("\\w+:", ""));
 
                         List<ValueSet> valueSetList;
 
@@ -119,7 +123,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                      }
                      catch (XPathParseException e) {
 
-                        log.error(node.getXpath());
+                        log.error(node.getKey());
                      }
                      catch (XPathEvalException e) {
 // TODO Auto-generated catch block
