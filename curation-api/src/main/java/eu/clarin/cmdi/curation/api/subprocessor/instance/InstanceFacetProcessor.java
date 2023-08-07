@@ -16,6 +16,8 @@ import eu.clarin.cmdi.curation.api.cache.ProfileReportCache;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
+import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.Coverage;
@@ -123,15 +125,16 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                      }
                      catch (XPathParseException e) {
 
-                        log.error(node.getKey());
+                        log.error("can't parse xpath '{}'", node.getKey());
                      }
                      catch (XPathEvalException e) {
-// TODO Auto-generated catch block
-                        e.printStackTrace();
+
+                        log.error("can't evalute xpath '{}'", node.getKey());
                      }
+                     
                      catch (NavException e) {
-// TODO Auto-generated catch block
-                        e.printStackTrace();
+
+                        log.error("", e);
                      }
 
                      report.facetReport.valueNodes.add(valueNode);
@@ -139,29 +142,23 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
          }
          catch (NoProfileCacheEntryException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            
+            log.error("no parsable profile '{}'", report.instanceHeaderReport.schemaLocation);
+            report.details.add(new Detail(Severity.FATAL, "facets", "can't parse profile '" + report.instanceHeaderReport.schemaLocation + "'"));
+            report.isProcessable = false;
 
          }
          catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-         }
-         catch (EncodingException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-         }
-         catch (EOFException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-         }
-         catch (EntityException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+
+            log.error("can't read file '{}'", instance.getPath());
+            report.details.add(new Detail(Severity.FATAL, "file", "can't read file '" + instance.getPath().getFileName() + "'"));
+            report.isProcessable = false;
          }
          catch (ParseException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            
+            log.error("can't parse file '{}'", instance.getPath());
+            report.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
+            report.isProcessable = false;
          }
       }
    }
