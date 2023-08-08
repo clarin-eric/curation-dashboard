@@ -91,6 +91,8 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
             VTDNav nav = vtdGen.getNav();
             AutoPilot ap = new AutoPilot(nav);
 
+            // attention: we assume that the the xpath in the stream are in document order
+            // if this is not the case a call of ap.resetXPath() is mandatory
             this.xpathValueService.getXpathValueMap(instance.getPath()).entrySet()
                .stream().filter(node -> StringUtils.isNotBlank(node.getValue()))
                   .forEach(node -> {
@@ -108,8 +110,10 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                         ap.selectXPath(node.getKey().replaceAll("\\w+:", ""));
 
                         List<ValueSet> valueSetList;
+                        
+                        int vtdIndex = ap.evalXPath(); 
 
-                        if ((valueSetList = indexValueSetMap.get(ap.evalXPath())) != null) {
+                        if (vtdIndex != -1 && (valueSetList = indexValueSetMap.get(vtdIndex)) != null) {
                            
                            valueSetList.forEach(valueSet -> {
                               valueNode.facets.add(
@@ -121,7 +125,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                                     )
                                  );                              
                               });
-                        }  
+                        }
                      }
                      catch (XPathParseException e) {
 
