@@ -124,6 +124,12 @@ div.creationTime{
    font-family: "Lucida Console", "Courier New", monospace;
    font-size: 0.8em;
 }
+div.latestChecks{
+   float: left;
+   margin-left: 4em;
+   font-family: "Lucida Console", "Courier New", monospace;
+   font-size: 0.8em;	
+}
 div.download {
    float: right;
    font-family: "Lucida Console", "Courier New", monospace;
