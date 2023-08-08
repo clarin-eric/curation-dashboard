@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -34,7 +35,7 @@ public class XPathValueService {
    
    public Map<String, String> getXpathValueMap(Path xmlFilePath){
       
-      Map<String, String> xpathValueMap = new HashMap<String, String>();
+      Map<String, String> xpathValueMap = new LinkedHashMap<String, String>();
       
       try {
          SAXParserFactory fac = SAXParserFactory.newInstance(); 
