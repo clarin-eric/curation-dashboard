@@ -5,7 +5,7 @@ logging:
          rollingpolicy:
             max-file-size: 10MB
    level:
-      root: WARN
+      root: ERROR
       eu.clarin.cmdi.curation.app.CurationApp: INFO
 spring:
    datasource:
