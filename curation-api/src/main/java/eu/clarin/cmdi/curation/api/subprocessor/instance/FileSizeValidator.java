@@ -110,7 +110,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
 
       // convert cmdi 1.1 to 1.2 if necessary
-      if (!isLatestVersion(instance.getPath())) {
+      if ("instance".equalsIgnoreCase(conf.getMode()) && !isLatestVersion(instance.getPath())) {
          Path newPath = null;
          
          try {
