@@ -93,7 +93,7 @@ public class XPathValueService {
       @Override
       public void endElement(String uri, String localName, String qName) throws SAXException {
          
-         if(this.elementValue.toString() != null && StringUtils.isNotBlank(this.elementValue.toString())) {
+         if(this.elementValue != null && StringUtils.isNotBlank(this.elementValue.toString())) {
             
             if(this.elementCount.containsKey(this.xpath)) {
                
