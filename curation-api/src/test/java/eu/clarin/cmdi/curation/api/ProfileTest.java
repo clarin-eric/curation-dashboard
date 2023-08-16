@@ -37,7 +37,7 @@ public class ProfileTest {
    
    public ProfileTest() {
       
-      try(InputStream in = this.getClass().getClassLoader().getResourceAsStream("profile/media-corpus-profile.xsd")){
+      try(InputStream in = this.getClass().getResourceAsStream("/profile/media-corpus-profile.xsd")){
          
          this.xsdString = new String(in.readAllBytes());
       }

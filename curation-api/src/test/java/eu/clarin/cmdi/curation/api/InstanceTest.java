@@ -48,11 +48,11 @@ public class InstanceTest {
       
       this.curation = curation;
       
-      try(InputStream in = this.getClass().getClassLoader().getResourceAsStream("instance/DE_2009_BergerEtAl_PolitikEntdecken_31_eng.xml")){
+      try(InputStream in = this.getClass().getResourceAsStream("/instance/DE_2009_BergerEtAl_PolitikEntdecken_31_eng.xml")){
          
          this.cmdString = new String(in.readAllBytes());
          
-         this.referenceReport = curation.processCMDInstance(Paths.get(this.getClass().getClassLoader().getResource("instance/DE_2009_BergerEtAl_PolitikEntdecken_31_eng.xml").toURI()));
+         this.referenceReport = curation.processCMDInstance(Paths.get(this.getClass().getResource("/instance/DE_2009_BergerEtAl_PolitikEntdecken_31_eng.xml").toURI()));
          
       }
       
