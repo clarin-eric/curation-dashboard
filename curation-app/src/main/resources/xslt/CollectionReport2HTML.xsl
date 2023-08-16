@@ -246,7 +246,7 @@
                   </p>
             </details>
             <p>
-            Number of files with schemaLocation:<xsl:value-of select="format-number(numWithSchemaLocation, '###,##0')" />
+            Number of files with schemaLocation: <xsl:value-of select="format-number(numWithSchemaLocation, '###,##0')" />
             </p>
             <p>
             Number of files where schemaLocation is CR resident: <xsl:value-of select="format-number(numSchemaCRResident, '###,##0')" />
