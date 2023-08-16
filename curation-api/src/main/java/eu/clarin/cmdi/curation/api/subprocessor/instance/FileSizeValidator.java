@@ -85,10 +85,6 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
             return false;
          }         
       };
-      
-      
-      
-
    }
 
    private boolean isLatestVersion(Path path){
@@ -128,7 +124,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
          }
 
          TransformerFactory factory = TransformerFactory.newInstance();
-         Source xslt = new StreamSource(this.getClass().getResourceAsStream("xslt/cmd-record-1_1-to-1_2.xsl"));
+         Source xslt = new StreamSource(this.getClass().getResourceAsStream("/xslt/cmd-record-1_1-to-1_2.xsl"));
 
          Transformer transformer;
          try {
