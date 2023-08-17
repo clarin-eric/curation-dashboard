@@ -21,7 +21,7 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <linkchecker-persistence.version>0.0.7-SNAPSHOT</linkchecker-persistence.version>
       <global.version>6.1.0-SNAPSHOT</global.version>
-      <vlo.version>4.11.5-alpha1</vlo.version>
+      <vlo.version>4.11.5</vlo.version>
    </properties>
    <dependencies>
       <dependency>
