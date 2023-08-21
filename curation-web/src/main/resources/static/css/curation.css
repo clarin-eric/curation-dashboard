@@ -124,6 +124,12 @@ div.creationTime{
    font-family: "Lucida Console", "Courier New", monospace;
    font-size: 0.8em;
 }
+div.latestChecks{
+   float: left;
+   margin-left: 4em;
+   font-family: "Lucida Console", "Courier New", monospace;
+   font-size: 0.8em;	
+}
 div.download {
    float: right;
    font-family: "Lucida Console", "Courier New", monospace;
@@ -155,6 +161,14 @@ summary:focus {
 
 details[open] h2:after{
    content: url(/images/info_open-14.png);
+}
+.anchor:before {
+	content: ''; 
+	display: block; 
+	position: relative; 
+	width: 0; 
+	height: 10vh; 
+	margin-top: -10vh
 }
 /*
 .Ok{

@@ -5,6 +5,7 @@ import eu.clarin.cmdi.curation.api.entity.CurationEntityType;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,8 @@ public class CurateCtl {
    CurationModule curation;
    @Autowired
    FileStorage storage;
+   @Autowired
+   CRService crService;
 
    @GetMapping()
    public String getInstanceQueryParam(@RequestParam(name="url-input", required=false) String urlStr, Model model) {  
@@ -46,11 +49,13 @@ public class CurateCtl {
       log.debug("urlStr: {}", urlStr);
 
       if (urlStr == null || urlStr.isEmpty()) {
+         
          model.addAttribute("insert", "fragments/validator.html");
       }
       else {
          
-         Path inFilePath = null;
+         Path htmlFilePath = null;
+         
          
          // just to make it more user friendly ignore leading and trailing spaces
          urlStr = urlStr.trim();
@@ -59,42 +64,65 @@ public class CurateCtl {
             urlStr = "http://" + urlStr;
          }         
          
-         if (urlStr.matches("http(s)?://.+")) {
-  
-
-            try {
-               inFilePath = Files.createTempFile(FileNameEncoder.encode(urlStr.toString()), "xml");
-
-               FileUtils.copyURLToFile(new URL(urlStr), inFilePath.toFile());
-            }
-            catch (MalformedURLException e) {
-               
-               throw new RuntimeException("the URL '" + urlStr + "' is not valid");
-               
-            }
-            catch (IOException e) {              
-               
-               log.error("couldn't download URL '{}' to file '{}'", urlStr, inFilePath);
-               throw new RuntimeException("internal error - please inform Clarin-Eric");
+         if (urlStr.matches("http(s)?://.+")) { //the string is a URL
             
+            URL schemaURL;
+            
+            try {
+               
+               schemaURL = new URL(urlStr);
+            }
+            catch(MalformedURLException ex) {
+               
+               throw new RuntimeException("the URL '" + urlStr + "' is not valid");                  
+            }   
+               
+            
+            if(crService.isSchemaCRResident(urlStr)) { // is a public schema URL
+                  
+               NamedReport report = curation.processCMDProfile(schemaURL);
+               
+               // we're saving any user upload as instance to prevent 
+               // overriding public profiles by user intervention
+               storage.saveReportAsXML(report, CurationEntityType.INSTANCE);
+
+               htmlFilePath = storage.saveReportAsHTML(report, CurationEntityType.INSTANCE);
+            }
+            else {  
+
+               Path inFilePath = null;
+               
+               try {
+                  inFilePath = Files.createTempFile(FileNameEncoder.encode(urlStr.toString()), "xml");
+   
+                  FileUtils.copyURLToFile(schemaURL, inFilePath.toFile());
+               }
+               catch (IOException e) {              
+                  
+                  log.error("couldn't download URL '{}' to file '{}'", urlStr, inFilePath);
+                  throw new RuntimeException("internal error - please inform Clarin-Eric");
+               
+               }
+               
+               htmlFilePath = curate(inFilePath);
             }
          }
-         else {
+         else {//the string is a relative path
 
-            inFilePath = conf.getDirectory().getDataRoot().resolve(urlStr).normalize();// here it is regarded as a path instead of url.
+            Path inFilePath = conf.getDirectory().getDataRoot().resolve(urlStr).normalize();
             log.debug("inFilePath: {}", inFilePath);
             if (Files.notExists(inFilePath) || !inFilePath.startsWith(conf.getDirectory().getDataRoot())) {
                
                log.error("no valid input file with path '{}'", inFilePath);
                throw new RuntimeException("Given URL is invalid");
             } // else go down and curate the file
+            
+            htmlFilePath = curate(inFilePath);
          }
          
-         Path htmlFilePath = curate(inFilePath);
-         
-         model.addAttribute("insert", htmlFilePath.toString());       
-         
+         model.addAttribute("insert", htmlFilePath.toString());               
       }
+      
       return "generic";
    }
    
@@ -125,10 +153,7 @@ public class CurateCtl {
 
    private Path curate(Path inFilePath) {
 
-      NamedReport report = null;
-      
-      CurationEntityType entityType;
-      
+      NamedReport report = null;     
       
       byte[] buffer = new byte[200];
       
@@ -144,7 +169,6 @@ public class CurateCtl {
             }
             else {
                
-               entityType = CurationEntityType.PROFILE;
                try {
                   report = curation.processCMDProfile(inFilePath.toUri().toURL());
                }
@@ -155,13 +179,15 @@ public class CurateCtl {
             }
          }
          else { // no profile - so processed as CMD instance
-            entityType = CurationEntityType.INSTANCE;
+            
             report = curation.processCMDInstance(inFilePath);
          }
 
-         storage.saveReportAsXML(report, entityType);
+         // we're saving any user upload as instance to prevent 
+         // overriding public profiles by user intervention
+         storage.saveReportAsXML(report, CurationEntityType.INSTANCE);
 
-         return storage.saveReportAsHTML(report, entityType);
+         return storage.saveReportAsHTML(report, CurationEntityType.INSTANCE);
 
       }
       catch (IOException e) {

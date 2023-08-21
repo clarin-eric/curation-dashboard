@@ -1,12 +1,12 @@
 package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +16,6 @@ import eu.clarin.cmdi.curation.api.cache.ProfileReportCache;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
-import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance;
-import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance.InstanceNode;
 import eu.clarin.cmdi.curation.api.report.Detail;
 import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
@@ -25,13 +23,12 @@ import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.Coverage;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.FacetValueStruct;
 import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.ValueNode;
-import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport.Concept;
+import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
-import eu.clarin.cmdi.curation.api.xml.CMDXPathService;
+import eu.clarin.cmdi.curation.api.xml.XPathValueService;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
-
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,187 +42,128 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
    private CRService crService;
    @Autowired
    ProfileReportCache profileReportCache;
+   @Autowired
+   XPathValueService xpathValueService;
 
    @Override
    public void process(CMDInstance instance, CMDInstanceReport report) {
-      
+
       report.facetReport = new InstanceFacetReport();
-      
-      profileReportCache.getProfileReport(new CMDProfile(report.profileHeaderReport.getSchemaLocation(), report.profileHeaderReport.getCmdiVersion())).facetReport.coverages
-         .forEach(profileCoverage -> report.facetReport.coverages.add(new Coverage(profileCoverage.name, profileCoverage.coveredByProfile)));
-      
+
+      profileReportCache
+            .getProfileReport(new CMDProfile(report.profileHeaderReport.getSchemaLocation(),
+                  report.profileHeaderReport.getCmdiVersion())).facetReport.coverages
+            .forEach(profileCoverage -> report.facetReport.coverages
+                  .add(new Coverage(profileCoverage.name, profileCoverage.coveredByProfile)));
+
       report.facetReport.numOfFacets = report.facetReport.coverages.size();
-
-      // parse instance
-      CMDXPathService xmlService;
-      try {
-         xmlService = new CMDXPathService(instance.getPath());
-      }
-      catch (ParseException e) {
-
-         log.error("can't parse file '{}' for instance facet processing", instance.getPath());
-
-         report.details.add(new Detail(Severity.FATAL, "facet",
-               "can't parse file '" + instance.getPath().getFileName() + "' for instance facet processing"));
-         report.isProcessable=false;
-
-         return;
-
-      }
-      catch (IOException e) {
-
-         log.error("can't read file '{}' for instance facet processing", instance.getPath());
-         throw new RuntimeException(e);
-
-      }
-
-      VTDNav nav = xmlService.getNavigator();
-
-      Map<Integer, ValueNode> nodesMap;
-
-      nodesMap = getValueNodesMap(instance, report, nav);
-
-      log.trace("nodes map: \n{}", nodesMap);
-
-      facetsToNodes(instance, report, nodesMap, nav);
-
-      report.facetReport.valueNodes.addAll(nodesMap.values());
-      
-      report.facetReport.percCoveragedByInstance = report.facetReport.numOfFacetsCoveredByInstance/report.facetReport.numOfFacets;
-      report.facetReport.score=report.facetReport.percCoveragedByInstance;
-      report.instanceScore+=report.facetReport.score;
-
-   }
-
-   private Map<Integer, ValueNode> getValueNodesMap(CMDInstance instance, CMDInstanceReport report,
-         VTDNav nav) {
-      Map<Integer, ValueNode> nodesMap = new LinkedHashMap<Integer, ValueNode>();
-
-      Map<String, CMDINode> elements;
-      try {
-         elements = crService.getParsedProfile(report.profileHeaderReport.getProfileHeader()).getElements();
-
-         ParsedInstance parsedInstance = instance.getParsedInstance();
-
-         AutoPilot ap = new AutoPilot(nav);
-
-         // create value nodes
-         for (InstanceNode instanceNode : parsedInstance.getNodes()) {
-            if (!instanceNode.getValue().isEmpty()) {
-               ValueNode val = new ValueNode(instanceNode.getXpath(), instanceNode.getValue());
-               report.facetReport.valueNodes.add(val);
-
-               CMDINode node = elements.get(instanceNode.getXpath().replaceAll("\\[\\d\\]", ""));
-               if (node != null && node.concept != null)
-                  val.concept = new Concept(node.concept);
-
-               // determines the index for each xpath
-               String xpath = instanceNode.getXpath().replaceAll("\\w+:", "");
-               try {
-                  ap.selectXPath(xpath);
-               }
-               catch (XPathParseException e) {
-
-                  log.debug("can't parse xpath '{}'", xpath);
-                  throw new RuntimeException(e);
-               }
-               try {
-                  nodesMap.put(ap.evalXPath(), val);
-               }
-               catch (XPathEvalException e) {
-
-                  log.debug("can't evaluate xpath '{}'", xpath);
-                  throw new RuntimeException(e);
-               }
-               catch (NavException e) {
-
-                  log.debug("can't navigate in document");
-                  report.details.add(new Detail(Severity.FATAL, "facet","can't navigate in document"));
-               }
-               ap.resetXPath();
-            }
-         }
-      }
-      catch (NoProfileCacheEntryException e) {
-
-         log.debug("no ProfileCacheEntry for profile id '{}'", report.profileHeaderReport.getId());
-
-      }
-
-      return nodesMap;
-   }
-
-   private void facetsToNodes(CMDInstance instance, CMDInstanceReport report,
-         Map<Integer, ValueNode> nodesMap, VTDNav nav) {
 
       Map<String, List<ValueSet>> facetValuesMap = instance.getCmdiData().getDocument();
 
-      /*
-       * We need to know if a value is mapped to the origin facet. The facetValuesMap
-       * has the name of the target facet key. When using cross facet mapping the
-       * target facet is not the same as the origin facet. Therefore we extract the
-       * origin facet from each the ValueSet and we can assume that for each origin
-       * facet a vlaue was mapped to this origin facet
-       */
-      HashSet<String> originFacetsWithValue = new HashSet<String>();
-      facetValuesMap.values().forEach(
-            list -> list.forEach(valueSet -> originFacetsWithValue.add(valueSet.getOriginFacetConfig().getName())));
-
-
-      for (String facetName : conf.getFacets()) {
-         List<ValueSet> values = facetValuesMap.get(facetName);
-
-         if (values == null) // no values from instance for this facet
-            continue;
-
-         Coverage coverage = report.facetReport.coverages.stream().filter(c -> c.name.equals(facetName)).findFirst()
-               .orElse(null);
-
-         if (coverage != null) {
-            // lambda expression to ignore values set by cross facet mapping
-            if(coverage.coveredByInstance = originFacetsWithValue.contains(facetName)) {
-               report.facetReport.numOfFacetsCoveredByInstance++;
-            };
+      // the key of the facetValuesMap is the target facet name
+      report.facetReport.coverages.stream().forEach(coverage -> {
+         if (coverage.coveredByInstance = facetValuesMap.keySet().contains(coverage.name)) { // initialization and test!
+            report.facetReport.numOfFacetsCoveredByInstance++;
          }
+         ;
+      });
 
-         // in the next step the value(s) have to be mapped to the right node
+      report.facetReport.percCoveragedByInstance = (double) report.facetReport.numOfFacetsCoveredByInstance
+            / report.facetReport.numOfFacets;
+      report.facetReport.score = report.facetReport.percCoveragedByInstance;
+      report.instanceScore += report.facetReport.score;
 
-         Map<Integer, List<ValueSet>> facetMap = values.stream().collect(Collectors.groupingBy(ValueSet::getVtdIndex)); // groups
-                                                                                                                        // vtdIndex
+      // in case of a single instance analysis we want to know for each node with a
+      // value to which facet it is mapped
+      if ("instance".equals(conf.getMode())) {
 
-         for (Map.Entry<Integer, List<ValueSet>> entry : facetMap.entrySet()) {
+         try {
+            Map<String, CMDINode> cmdiNodeMap = crService
+                  .getParsedProfile(report.profileHeaderReport.getProfileHeader()).getElements();
 
-            if (nodesMap.containsKey(entry.getKey())) { // there is a node where the xpath has the same vtdIndex
-               ValueNode node = nodesMap.get(entry.getKey());
+            final Map<Integer, List<ValueSet>> indexValueSetMap = facetValuesMap.values() // a List of ValueSet
+                  .stream().flatMap(List::stream).collect(Collectors.groupingBy(ValueSet::getVtdIndex));
 
-               String normalizedValue = entry.getValue().stream().map(valueSet -> valueSet.getValueLanguagePair().getLeft())
-                     .collect(Collectors.joining("; "));
-               
-               if(node.value.equals(normalizedValue)) {
-                  normalizedValue = null;
-               }
-               if (normalizedValue != null && !normalizedValue.trim().isEmpty() && !normalizedValue.equals("--")) {
-                  report.details.add(new Detail(Severity.INFO, "facet",
-                        "Normalised value for facet " + facetName + ": '" + node.value + "' into '" + normalizedValue + "'"));
-               }
+            VTDGen vtdGen = new VTDGen();
+            vtdGen.setDoc(Files.readAllBytes(instance.getPath()));
+            vtdGen.parse(false);
 
-               node.facets.add(new FacetValueStruct(
-                     facetName, 
+            VTDNav nav = vtdGen.getNav();
+            AutoPilot ap = new AutoPilot(nav);
 
-                     // entry.getValue().get(0).isDerived() //assumes that a facet isn't defined as
-                     // origin and derived at the same time
-                     entry.getValue().stream().anyMatch(ValueSet::isDerived), // assumes that a facet isn't
-                                                                              // defined as origin and derived at
-                                                                              // the same time
-                     entry.getValue().stream().anyMatch(ValueSet::isResultOfValueMapping), // assumes that a facet                                                                       // origin and derived
-                                                                                          // at the same time
-                     normalizedValue
-               ));
-               
-               
-            }
+            // attention: we assume that the the xpath in the stream are in document order
+            // if this is not the case a call of ap.resetXPath() is mandatory
+            this.xpathValueService.getXpathValueMap(instance.getPath()).entrySet()
+               .stream().filter(node -> StringUtils.isNotBlank(node.getValue()))
+                  .forEach(node -> {
+
+                     ValueNode valueNode = new ValueNode(node.getKey(), node.getValue());
+
+                     CMDINode cmdiNode;
+
+                     if ((cmdiNode = cmdiNodeMap.get(node.getKey().replaceAll("\\[\\d\\]", ""))) != null && cmdiNode.concept != null) {
+
+                        valueNode.concept = new ConceptReport.Concept(cmdiNode.concept);
+                     }
+
+                     try {
+                        ap.selectXPath(node.getKey().replaceAll("\\w+:", ""));
+
+                        List<ValueSet> valueSetList;
+                        
+                        int vtdIndex = ap.evalXPath(); 
+
+                        if (vtdIndex != -1 && (valueSetList = indexValueSetMap.get(vtdIndex)) != null) {
+                           
+                           valueSetList.forEach(valueSet -> {
+                              valueNode.facets.add(
+                                    new FacetValueStruct(
+                                       valueSet.getTargetFacetName(),
+                                       valueSet.isDerived(), 
+                                       valueSet.isResultOfValueMapping(),
+                                       valueSet.getValueLanguagePair().getLeft()
+                                    )
+                                 );                              
+                              });
+                        }
+                     }
+                     catch (XPathParseException e) {
+
+                        log.error("can't parse xpath '{}'", node.getKey());
+                     }
+                     catch (XPathEvalException e) {
+
+                        log.error("can't evalute xpath '{}'", node.getKey());
+                     }
+                     
+                     catch (NavException e) {
+
+                        log.error("", e);
+                     }
+
+                     report.facetReport.valueNodes.add(valueNode);
+                  });
+
          }
-         coverage.coveredByInstance = true; // one or more values for the specific facet
+         catch (NoProfileCacheEntryException e1) {
+            
+            log.error("no parsable profile '{}'", report.instanceHeaderReport.schemaLocation);
+            report.details.add(new Detail(Severity.FATAL, "facets", "can't parse profile '" + report.instanceHeaderReport.schemaLocation + "'"));
+            report.isProcessable = false;
+
+         }
+         catch (IOException e1) {
+
+            log.error("can't read file '{}'", instance.getPath());
+            report.details.add(new Detail(Severity.FATAL, "file", "can't read file '" + instance.getPath().getFileName() + "'"));
+            report.isProcessable = false;
+         }
+         catch (ParseException e1) {
+            
+            log.error("can't parse file '{}'", instance.getPath());
+            report.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
+            report.isProcessable = false;
+         }
       }
    }
 }

@@ -23,7 +23,7 @@
 
 	</xsl:template>
 	<xsl:template match="categoryReport">
-		<h3>
+		<h3 class="anchor">
 			<xsl:attribute name="id"><xsl:value-of
 				select="./@category" /></xsl:attribute>
 			Category:
@@ -72,12 +72,22 @@
 					<th>Info</th>
 				</tr>
 			</thead>
-
-			<xsl:apply-templates select="status" />
+			
+			<xsl:for-each select="status">
+			<xsl:if test="not(position() > 30)">
+			<xsl:call-template name="status" />
+			</xsl:if>
+			</xsl:for-each>
+         <xsl:if
+               test="count(status) > 30">
+               <tr>
+                  <td colspan="3">[...] complete list in downloadable report</td>
+               </tr>
+            </xsl:if>			
 		</table>
 
 	</xsl:template>
-	<xsl:template match="status">
+	<xsl:template name="status">
 		<tr>
 			<td>
 				<xsl:attribute name="class">
@@ -114,9 +124,6 @@
 				<b>Content length: </b>
 				<xsl:value-of select="./@contentLength" />
 				<br />
-				<b>Expected mime-type: </b>
-				<xsl:value-of select="./@expectedMimeType" />
-				<br />
 				<b>Content type: </b>
 				<xsl:value-of select="./@contentType" />
 				<br />
@@ -129,14 +136,23 @@
 				<b>Checking date: </b>
 				<xsl:value-of select="./@checkingDate" />
 				<br />
-				<b>Origin: </b>
-				<a>
-               <xsl:attribute name="href">/record/<xsl:value-of
-                  select="./@origin" /></xsl:attribute>
-               <xsl:value-of select="./@origin" />
-				</a>
+            context(s):
+            <br />
+				<xsl:apply-templates select="*" />
 			</td>
 		</tr>
 
+	</xsl:template>
+	<xsl:template match="context">
+            <b>Origin: </b>
+            <a>
+               <xsl:attribute name="href">/record/<xsl:value-of
+                  select="./@origin" /></xsl:attribute>
+               <xsl:value-of select="./@origin" />
+            </a>
+            <br />
+            <b>Expected mime-type: </b>
+            <xsl:value-of select="./@expectedMimeType" />
+            <br />	
 	</xsl:template>
 </xsl:stylesheet>

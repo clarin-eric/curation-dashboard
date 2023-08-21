@@ -59,7 +59,7 @@ public class CRCache {
       return getProfileCacheEntry(header);
    }
    
-   @Cacheable(value = "privateProfileCache", key = "#header.id")
+   @Cacheable(value = "privateProfileCache", key = "#header.id", condition = "#header.reliable")
    public ProfileCacheEntry getPrivateEntry(ProfileHeader header) throws NoProfileCacheEntryException {
       return getProfileCacheEntry(header);
    }
@@ -167,6 +167,6 @@ public class CRCache {
 
    
    public boolean isPublicCache(ProfileHeader header) {
-      return header.isPublic() && header.getCmdiVersion().equals("1.x") || header.getCmdiVersion().equals("1.2");
+      return header.isPublic() && header.isReliable() && (header.getCmdiVersion().equals("1.x") || header.getCmdiVersion().equals("1.2"));
    }  
 }

@@ -29,7 +29,7 @@
                    <xsl:text>/download/profile/</xsl:text>
                    <xsl:value-of
 							select="translate(./headerReport/id,'.:','__')" />
-						<xsl:text>?json</xsl:text>	
+						<xsl:text>?format=json</xsl:text>	
                 </xsl:attribute>
 						<xsl:text>json</xsl:text>
 					</a>

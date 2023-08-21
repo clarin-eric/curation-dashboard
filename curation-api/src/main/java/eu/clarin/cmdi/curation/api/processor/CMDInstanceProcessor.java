@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.api.processor;
 
-import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
@@ -19,9 +18,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CMDInstanceProcessor {
    
-
-   @Autowired
-   private ApiConfig conf;
    @Autowired
    private ApplicationContext ctx;
    
@@ -32,19 +28,8 @@ public class CMDInstanceProcessor {
    private void init() {
       
       subprocessors =   
-         Stream.of(FileSizeValidator.class, InstanceHeaderProcessor.class, ResourceProxyProcessor.class, UrlValidator.class, XmlValidator.class)
-            .map(abstactSubprocessorClass -> ctx.getBean(abstactSubprocessorClass)).collect(Collectors.toList());
-      
-      if ("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode())) {
-         
-         subprocessors.add(ctx.getBean(CollectionInstanceFacetProcessor.class));
-      
-      }
-      else {
-         
-         subprocessors.add(ctx.getBean(InstanceFacetProcessor.class));
-         
-      }        
+         Stream.of(FileSizeValidator.class, InstanceHeaderProcessor.class, ResourceProxyProcessor.class, XmlValidator.class, UrlValidator.class, InstanceFacetProcessor.class)
+            .map(abstactSubprocessorClass -> ctx.getBean(abstactSubprocessorClass)).collect(Collectors.toList());       
    }
 
    public CMDInstanceReport process(CMDInstance instance){

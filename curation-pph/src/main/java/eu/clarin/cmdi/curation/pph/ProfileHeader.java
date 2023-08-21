@@ -13,6 +13,6 @@ public class ProfileHeader {
 	private String status;
 	
 	private boolean isLocalFile;
-	private boolean isPublic = true;
-	
+	private boolean isPublic = true;	
+	private boolean isReliable = true;	
 }

@@ -9,6 +9,7 @@
 			<head></head>
 			<body>
 			   <div class="creationTime">created at <xsl:value-of select="./@creationTime" /></div>
+			   <div class="latestChecks"><a href="/linkchecker/latestChecks">latest checks</a></div>
 			   <div class="download">download as <a href="/download/linkchecker/AllLinkcheckerReport">xml</a><xsl:text> </xsl:text><a href="/download/linkchecker/AllLinkcheckerReport?format=json">json</a></div>
 				<div class="clear" />
 				<h3>Overall</h3>

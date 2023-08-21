@@ -17,7 +17,7 @@
 					download as
 					<a>
 						<xsl:attribute name="href">
-                   <xsl:text>/download/profile/</xsl:text>
+                   <xsl:text>/download/instance/</xsl:text>
                    <xsl:value-of
 							select="translate(./headerReport/id,'.:','__')" />
                 </xsl:attribute>
@@ -26,10 +26,10 @@
 					<xsl:text> </xsl:text>
 					<a>
 						<xsl:attribute name="href">
-                   <xsl:text>/download/profile/</xsl:text>
+                   <xsl:text>/download/instance/</xsl:text>
                    <xsl:value-of
 							select="translate(./headerReport/id,'.:','__')" />
-						<xsl:text>?json</xsl:text>	
+						<xsl:text>?format=json</xsl:text>	
                 </xsl:attribute>
 						<xsl:text>json</xsl:text>
 					</a>
@@ -154,6 +154,7 @@
 					</tbody>
 				</table>
 				<hr />
+<!-- we don't have any usage information for user uploads
 
 				<details>
 					<summary>
@@ -187,6 +188,7 @@
 					</tbody>
 				</table>
 				<hr />
+ -->				
 				<details>
 					<summary>
 						<h2>Cmd Component Section</h2>

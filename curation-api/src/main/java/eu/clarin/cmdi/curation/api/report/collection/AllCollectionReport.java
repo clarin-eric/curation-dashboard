@@ -86,12 +86,12 @@ public class AllCollectionReport implements NamedReport {
          return collectionReport.linkcheckerReport.ratioOfValidLinks;
       }
       @XmlElement
-      public double getAvgNumOfResProxies() {
-         return collectionReport.resProxyReport.avgNumOfResProxies;
+      public double getAvgNumOfResources() {
+         return collectionReport.resProxyReport.avgNumOfResources;
       }
       @XmlElement
-      public long getNumOfResProxies() {
-         return collectionReport.resProxyReport.totNumOfResProxies;
+      public long getNumOfResources() {
+         return collectionReport.resProxyReport.totNumOfResources;
       }
       @XmlElement
       public double getRatioOfValidRecords() {

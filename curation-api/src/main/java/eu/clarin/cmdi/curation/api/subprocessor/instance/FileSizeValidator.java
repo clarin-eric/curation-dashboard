@@ -2,7 +2,6 @@ package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
-import eu.clarin.cmdi.curation.api.instance_parser.InstanceParser;
 import eu.clarin.cmdi.curation.api.report.Detail;
 import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
@@ -12,13 +11,11 @@ import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.vlo_extension.CMDIDataImplFactory;
 import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.vlo.LanguageCodeUtils;
-import eu.clarin.cmdi.vlo.config.DefaultVloConfigFactory;
-import eu.clarin.cmdi.vlo.config.FieldNameService;
 import eu.clarin.cmdi.vlo.config.FieldNameServiceImpl;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
+import eu.clarin.cmdi.vlo.importer.CMDIRecordProcessor;
 import eu.clarin.cmdi.vlo.importer.MetadataImporter;
-import eu.clarin.cmdi.vlo.importer.ResourceStructureGraph;
 import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
 import eu.clarin.cmdi.vlo.importer.processor.CMDIDataProcessor;
 import eu.clarin.cmdi.vlo.importer.processor.CMDIParserVTDXML;
@@ -50,38 +47,44 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
    private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
 
-   private CMDIDataProcessor<Map<String, List<ValueSet>>> processor;
+   private CMDIRecordProcessor<Map<String, List<ValueSet>>> recordProcessor;
    
    private ApiConfig conf;
 
 
    @Autowired
-   public FileSizeValidator(ApiConfig conf, FacetsMappingCacheFactory fac) {
+   public FileSizeValidator(ApiConfig conf, FacetsMappingCacheFactory fac, VloConfig vloConfig) {
       
       this.conf = conf;
+
+      final LanguageCodeUtils languageCodeUtils = new LanguageCodeUtils(vloConfig);
+
+      final FieldNameServiceImpl fieldNameServiceImpl = new FieldNameServiceImpl(vloConfig);
+
+      final CMDIDataImplFactory cmdiDataFactory = new CMDIDataImplFactory(fieldNameServiceImpl);
+
+      final VLOMarshaller marshaller = new VLOMarshaller();
+
+
+      CMDIDataProcessor<Map<String, List<ValueSet>>> dataProcessor = new CMDIParserVTDXML<>(
+            MetadataImporter.registerPostProcessors(vloConfig, fieldNameServiceImpl, languageCodeUtils),
+            MetadataImporter.registerPostMappingFilters(fieldNameServiceImpl), vloConfig, fac,
+            marshaller, cmdiDataFactory, fieldNameServiceImpl, false);
       
-      try {
-         final VloConfig vloConfig = new DefaultVloConfigFactory().newConfig();
+      this.recordProcessor = new CMDIRecordProcessor<Map<String, List<ValueSet>>>(dataProcessor, fieldNameServiceImpl) {
 
-         final LanguageCodeUtils languageCodeUtils = new LanguageCodeUtils(vloConfig);
+         @Override
+         protected boolean skipOnDuplicateId() {
 
-         final FieldNameService fieldNameService = new FieldNameServiceImpl(vloConfig);
+            return false;
+         }
 
-         final CMDIDataImplFactory cmdiDataFactory = new CMDIDataImplFactory(fieldNameService);
+         @Override
+         protected boolean skipOnNoResources() {
 
-         final VLOMarshaller marshaller = new VLOMarshaller();
-
-
-         this.processor = new CMDIParserVTDXML<>(
-               MetadataImporter.registerPostProcessors(vloConfig, fieldNameService, languageCodeUtils),
-               MetadataImporter.registerPostMappingFilters(fieldNameService), vloConfig, fac,
-               marshaller, cmdiDataFactory, fieldNameService, false);
-
-      }
-      catch (IOException ex) {
-         log.error("couldn't instatiate CMDIDataProcessor - so instance parsing won't work!");
-         throw new RuntimeException(ex);
-      }
+            return false;
+         }         
+      };
    }
 
    private boolean isLatestVersion(Path path){
@@ -107,7 +110,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
 
       // convert cmdi 1.1 to 1.2 if necessary
-      if (!isLatestVersion(instance.getPath())) {
+      if ("instance".equalsIgnoreCase(conf.getMode()) && !isLatestVersion(instance.getPath())) {
          Path newPath = null;
          
          try {
@@ -121,7 +124,7 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
          }
 
          TransformerFactory factory = TransformerFactory.newInstance();
-         Source xslt = new StreamSource(InstanceParser.class.getResourceAsStream("/xslt/cmd-record-1_1-to-1_2.xsl"));
+         Source xslt = new StreamSource(this.getClass().getResourceAsStream("/xslt/cmd-record-1_1-to-1_2.xsl"));
 
          Transformer transformer;
          try {
@@ -195,9 +198,9 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
       
       synchronized(this) { // the use of the process method has to be synchronized since it's not thread-safe
          
-         try {
+         try {            
             
-            cmdiData = processor.process(instance.getPath().toFile(), new ResourceStructureGraph());
+            cmdiData = recordProcessor.processRecord(instance.getPath().toFile()).get();
          }
          catch (Exception e) {
    
@@ -211,34 +214,8 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
 
       instance.setCmdiData(cmdiData);
-
-      // create xpath/value pairs only in instance mode
-      if (!("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode()))) {
-
-         InstanceParser transformer = new InstanceParser();
-
-         log.debug("parsing instance...");
-         try {
-            instance.setParsedInstance(transformer.parseIntance(Files.newInputStream(instance.getPath())));
-         }
-         catch (TransformerException e) {
-            
-            log.error("can't transform CMD instance file '{}'", instance.getPath());
-            report.details.add(new Detail(Severity.FATAL, "file", "can't transform CMD instance file '" + instance.getPath().getFileName()));
-            report.isProcessable=false;
-            
-            return;
          
-         }
-         catch (IOException e) {
-            
-            log.error("can't read CMD file '{}'", instance.getPath());
-            throw new RuntimeException(e);
-         
-         }
-         
-         log.debug("...done");
-      }
+      log.debug("...done");
       
       report.fileReport.score = 1.0;
       report.instanceScore+=report.fileReport.score;

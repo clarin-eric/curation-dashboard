@@ -35,6 +35,7 @@ curation:
       - description
       - license
       - availability
+      - temporalCoverage
    clientUsername: testUser
    clientPassword: testPassword
    directory:
@@ -43,6 +44,7 @@ curation:
       in: 
         - /home/clarin/git/curation-dashboard/curation-api/src/test/resources/instance/SAW_Leipzig_Repository
       out: /tmp/public
+      share: /tmp
    max_file_size: 100000
    threadPoolSize: 3
    mode: collection          

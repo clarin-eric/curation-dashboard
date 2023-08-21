@@ -8,9 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import eu.clarin.cmdi.vlo.config.FieldNameService;
 import eu.clarin.cmdi.vlo.importer.CMDIDataBaseImpl;
+import eu.clarin.cmdi.vlo.importer.mapping.FacetDefinition;
+import eu.clarin.cmdi.vlo.importer.mapping.TargetFacet;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
+
+import static eu.clarin.cmdi.vlo.importer.processor.LanguageDefaults.DEFAULT_LANGUAGE;
 
 /*
  * Generally the CMDIData object contains all the data read by VTD from a certain CMDI file which will stored in the solr database. 
@@ -30,19 +36,30 @@ public class CMDIDataImpl extends CMDIDataBaseImpl<Map<String,List<ValueSet>>> {
 
     @Override
     public void addDocField(ValueSet valueSet, boolean caseInsensitive) {
+       
         this.facetValuesMap.computeIfAbsent(valueSet.getTargetFacetName(), list -> new ArrayList<ValueSet>()).add(valueSet);         
     }
 
     @Override
     public void addDocField(String fieldName, Object value, boolean caseInsensitive) {
 
-        
+       this.facetValuesMap.computeIfAbsent(fieldName, list -> new ArrayList<ValueSet>()).add(
+             
+             new ValueSet(
+                   -1, 
+                   new FacetDefinition(null, "unknown"),
+                   new TargetFacet(new FacetDefinition(null, fieldName), value.toString()),
+                   Pair.of(value.toString(), DEFAULT_LANGUAGE),
+                   false,
+                   false
+                )
+          );  
     }
 
     @Override
     public void addDocFieldIfNull(ValueSet valueSet, boolean caseInsensitive) {
-
-        
+       
+       this.facetValuesMap.putIfAbsent(valueSet.getTargetFacetName(), List.of(valueSet));
     }
 
     @Override

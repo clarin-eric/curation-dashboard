@@ -16,7 +16,10 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -113,8 +116,21 @@ public class Download {
          @PathVariable("category") Category category,
          @RequestParam(value = "format", required = false, defaultValue = "xml") String format) {
       
+      HttpHeaders headers = new HttpHeaders();
       
-      return ResponseEntity.ok().contentType(new MediaType("application", "zip"))
+      
+      headers.setContentType(new MediaType("application", "zip"));
+      
+      headers.setContentDisposition(
+            ContentDisposition
+               .inline()
+               .filename(providergroupName + "-" + category + ".zip")
+               .build()
+            );
+      
+      
+      
+      return ResponseEntity.ok().headers(headers)
             .body(outputStream -> {
          
                ZipOutputStream zipOutStream = new ZipOutputStream(outputStream);

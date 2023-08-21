@@ -24,21 +24,22 @@ curation:
    ccr-service:
       restApi: "https://openskos.meertens.knaw.nl/ccr/api/find-concepts"
       query: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000"
-   facets: >
-      languageCode,
-      collection,
-      resourceClass,
-      modality,
-      format,
-      keywords,
-      genre,
-      subject,
-      country,
-      organisation,
-      name,
-      description,
-      license,
-      availability
+   facets: 
+      - languageCode
+      - collection
+      - resourceClass
+      - modality
+      - format
+      - keywords
+      - genre
+      - subject
+      - country
+      - organisation
+      - name
+      - description
+      - license
+      - availability
+      - temporalCoverage
    clientUsername: curation
    directory:
       home: ${APPLICATION_HOME_DIRECTORY}
@@ -46,6 +47,7 @@ curation:
       in: >
          ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
       out: ${APPLICATION_HOME_DIRECTORY}/public
+      share: /data
    max_file_size: 100000
    threadpoolSize: ${THREADPOOL_SIZE:10}
    mode: instance

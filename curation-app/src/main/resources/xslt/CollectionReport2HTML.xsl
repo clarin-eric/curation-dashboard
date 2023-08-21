@@ -75,7 +75,17 @@
 			                  <xsl:text>#</xsl:text>
 			                  <xsl:value-of select="name(.)" />
 			                  </xsl:attribute>
-			                  <xsl:value-of select="functx:capitalize-first(name(.))" />
+			                  <xsl:choose>
+			                     <xsl:when test="name(.) = 'fileReport'">Files</xsl:when>
+			                     <xsl:when test="name(.) = 'profileReport'">Profile usage</xsl:when>
+			                     <xsl:when test="name(.) = 'headerReport'">Header</xsl:when>
+			                     <xsl:when test="name(.) = 'resProxyReport'">Resource proxy</xsl:when>
+			                     <xsl:when test="name(.) = 'xmlPopulationReport'">XML population</xsl:when>
+			                     <xsl:when test="name(.) = 'xmlValidityReport'">XML validation</xsl:when>
+			                     <xsl:when test="name(.) = 'linkcheckerReport'">Link validation</xsl:when>
+			                     <xsl:when test="name(.) = 'facetReport'">Facets</xsl:when>
+			                     <xsl:otherwise>xxxxxxxxx</xsl:otherwise>
+			                  </xsl:choose>
 			                  </a>
 			                  </td>			                  
 			                  <td align="right"><xsl:value-of select="format-number(@aggregatedScore,'###,##0.0')" />
@@ -92,6 +102,8 @@
             There are also <xsl:value-of select="format-number(//fileReport/numOfFilesNonProcessable, '###,##0')" /> files in the collection that could not be processed. 
             See <a href="#recordDetails">record details</a> table for more information.
             </xsl:if>
+            <br />
+            <b>All per file averages (except in the Files section) are based on the number of processable files</b>
 			   <br />
             <br />
             <xsl:apply-templates select="fileReport" />
@@ -187,12 +199,7 @@
    <xsl:template match="fileReport">
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  File Section
-                  </h2>
+                  <h2 class="anchor" id="fileReport">Files</h2>
                </summary>
                <p>General information on the number of files and the file size.</p>
             </details>
@@ -231,12 +238,7 @@
    <xsl:template match="headerReport">
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  Header Section
-                  </h2>
+                  <h2 class="anchor" id="headerReport">Header</h2>
                </summary>
                <p>
                   The header section shows information on the availibilty of attribute schemaLocation as well as the elements 
@@ -244,7 +246,7 @@
                   </p>
             </details>
             <p>
-            Number of files with schemaLocation:<xsl:value-of select="format-number(numWithSchemaLocation, '###,##0')" />
+            Number of files with schemaLocation: <xsl:value-of select="format-number(numWithSchemaLocation, '###,##0')" />
             </p>
             <p>
             Number of files where schemaLocation is CR resident: <xsl:value-of select="format-number(numSchemaCRResident, '###,##0')" />
@@ -264,12 +266,7 @@
    <xsl:template match="profileReport">
                <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  Profile Usage Section
-                  </h2>
+                  <h2 class="anchor" id="profileReport">Profile usage</h2>
                </summary>
                <p>
                   The profile usage section shows information shows which profiles are used how oftenly in a collection. 
@@ -337,17 +334,11 @@
    <xsl:template match="facetReport" >
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  Facet Section
-                  </h2>
+                  <h2 class="anchor" id="facetReport">Facets</h2>
                </summary>
                <p>The facet section shows the facet coverage within the
-                  collection. It's quite evident that the facet coverage of a
-                  certain CMD file can't be higher than those of the profile it is
-                  based on.
+                  collection. A facet can be covered by the instance 
+                  even when it is not covered by the profile when cross facet mapping is used.
                </p>
             </details>
             
@@ -389,12 +380,7 @@
    <xsl:template match="resProxyReport">
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  ResourceProxy Section
-                  </h2>
+                  <h2 class="anchor" id="resProxyReport">Resource proxy</h2>
                </summary>
                <p>The resource proxy section shows information on the number of
                   resource proxies on the kind (the mime type) of resources.
@@ -406,32 +392,32 @@
             <p>
                Total number of resource proxies:
                <xsl:value-of
-                  select="format-number(./totNumOfResProxies, '###,##0')" />
+                  select="format-number(./totNumOfResources, '###,##0')" />
             </p>
             <p>
                Average number of resource proxies:
                <xsl:value-of
-                  select="format-number(./avgNumOfResProxies,'###,##0.00')" />
+                  select="format-number(./avgNumOfResources,'###,##0.00')" />
             </p>
             <p>
                Total number of resource proxies with MIME:
                <xsl:value-of
-                  select="format-number(./totNumOfResProxiesWithMime, '###,##0')" />
+                  select="format-number(./totNumOfResourcesWithMime, '###,##0')" />
             </p>
             <p>
                Average number of resource proxies with MIME:
                <xsl:value-of
-                  select="format-number(./avgNumOfResProxiesWithMime,'###,##0.00')" />
+                  select="format-number(./avgNumOfResourcesWithMime,'###,##0.00')" />
             </p>
             <p>
                Total number of resource proxies with reference:
                <xsl:value-of
-                  select="format-number(./totNumOfResProxiesWithReference, '###,##0')" />
+                  select="format-number(./totNumOfResourcesWithReference, '###,##0')" />
             </p>
             <p>
                Average number of resource proxies with references:
                <xsl:value-of
-                  select="format-number(./avgNumOfResProxiesWithReference,'###,##0.00')" />
+                  select="format-number(./avgNumOfResourcesWithReference,'###,##0.00')" />
             </p>   
    </xsl:template>
    
@@ -439,12 +425,7 @@
    <xsl:template match="xmlValidityReport">
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  XML Validation Section
-                  </h2>
+                  <h2 class="anchor" id="xmlValidityReport">XML validation</h2>
                </summary>
                <p>The XML validation section shows the result of a simple
                   validation of each CMD file against its profile. </p>
@@ -466,14 +447,9 @@
    <xsl:template match="xmlPopulationReport">
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  XML Populated Section
-                  </h2>
+                  <h2 class="anchor" id="xmlPopulationReport">XML population</h2>
                </summary>
-               <p>The XML populated section shows information on the number of xml
+               <p>The XML population section shows information on the number of xml
                   elements and the fact if these elements are conatining data. </p>
             </details>
             
@@ -518,14 +494,9 @@
    <xsl:template match="linkcheckerReport">
             <details>
                <summary>
-                  <h2>
-                  <xsl:attribute name="id">
-                  <xsl:value-of select="name(.)" />
-                  </xsl:attribute>
-                  URL Validation Section
-                  </h2>
+                  <h2 class="anchor" id="linkcheckerReport">Link validation</h2>
                </summary>
-               <p>The URL validation section shows information on the number of
+               <p>The link validation section shows information on the number of
                   links and the results of link checking for the links which
                   have been checked so far.
                </p>

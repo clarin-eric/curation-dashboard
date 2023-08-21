@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import eu.clarin.cmdi.curation.api.instance_parser.ParsedInstance;
 import eu.clarin.cmdi.curation.api.processor.CMDInstanceProcessor;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
@@ -19,8 +18,6 @@ import lombok.Data;
 @Scope(value="prototype")
 @Data
 public class CMDInstance {
-
-   private ParsedInstance parsedInstance = null;
 
    private CMDIData<Map<String, List<ValueSet>>> cmdiData;
 

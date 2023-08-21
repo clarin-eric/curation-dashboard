@@ -6,6 +6,8 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
+import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport.ResourceType;
@@ -31,12 +33,18 @@ public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CM
       addResourceType(data.getSearchPageResources(), report);
       addResourceType(data.getSearchResources(), report);
       
-      if(report.resProxyReport.numOfResProxies > 0) {
-         report.resProxyReport.percOfResourcesWithMime = ((double) report.resProxyReport.numOfResourcesWithMime/report.resProxyReport.numOfResProxies);
-         report.resProxyReport.percOfResProxiesWithReference = ((double) report.resProxyReport.numOfResProxiesWithReference/report.resProxyReport.numOfResProxies);
+      if(report.resProxyReport.numOfResources == 0) {
+         
+         report.details.add(new Detail(Severity.FATAL, "resource proxy", "no resources in file '" + instance.getPath().getFileName() + "'"));
+         report.isProcessable = false;
+      }
+      else {
+         
+         report.resProxyReport.percOfResourcesWithMime = ((double) report.resProxyReport.numOfResourcesWithMime/report.resProxyReport.numOfResources);
+         report.resProxyReport.percOfResourcesWithReference = ((double) report.resProxyReport.numOfResourcesWithReference/report.resProxyReport.numOfResources);
       }
       
-      report.resProxyReport.score = report.resProxyReport.percOfResourcesWithMime + report.resProxyReport.percOfResProxiesWithReference;
+      report.resProxyReport.score = report.resProxyReport.percOfResourcesWithMime + report.resProxyReport.percOfResourcesWithReference;
       report.instanceScore+=report.resProxyReport.score;
    }
 
@@ -53,14 +61,14 @@ public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CM
                report.resProxyReport.invalidReferences.add(resource.getResourceName());
             }
             else {
-               report.resProxyReport.numOfResProxiesWithReference++;
+               report.resProxyReport.numOfResourcesWithReference++;
                
                if (resource.getMimeType() != null && !resource.getMimeType().isEmpty()) {
                   report.resProxyReport.numOfResourcesWithMime++;
                }               
             }
          }
-         report.resProxyReport.numOfResProxies++;
+         report.resProxyReport.numOfResources++;
       });
    }
 }

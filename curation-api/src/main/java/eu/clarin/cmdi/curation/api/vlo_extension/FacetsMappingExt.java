@@ -28,7 +28,7 @@ public class FacetsMappingExt extends FacetsMapping {
     private static final long serialVersionUID = 1L;
     private static final LinkedHashMap<String, FacetDefinition> _facetsMapExt = new LinkedHashMap<String, FacetDefinition>();
     
-    FacetsMapping facetsMapping;
+    private FacetsMapping facetsMapping;
     
 
     static {
