@@ -1,8 +1,17 @@
+# 6.1.0
+- Refactoring of InstanceParser (issue #186) and InstanceFacetProcessor (issue #184)
+- adding facet temporalCoverage in configuration (issue #180)
+- adding functionality and view to see the latest link checker status results (issue #97)
+- grouping link checking status details by URL (issue #162)
+- adding unit tests for profile (issue #166) and CMD record (issue #167)
+- dependency upgrades
+- bug fixes
+
 # 6.0.2
 - bug fix for issue #160 and #162
 
 # 6.0.1
-- dependency upgrade of linkchecker-persitence to version 0.0.5 
+- dependency upgrade of linkchecker-persistence to version 0.0.5 
 
 # 6.0.0
 - converting the project to Spring boot project
