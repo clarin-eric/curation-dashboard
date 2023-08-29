@@ -11,7 +11,6 @@ import eu.clarin.cmdi.curation.api.cache.FacetMappingCache;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
-import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.Pattern;
 import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
@@ -57,14 +56,14 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
    public Map<String, List<Pattern>> createConceptLinkPathMapping(ProfileHeader header)
          throws NoProfileCacheEntryException {
       
-      Map<String, List<Pattern>> result = new HashMap<>();
+      final Map<String, List<Pattern>> result = new HashMap<>();
 
-      Map<String, CMDINode> elements = crService.getParsedProfile(header).getElements();
-
-      for (Map.Entry<String, CMDINode> element : elements.entrySet()) {
-         result.computeIfAbsent(element.getValue().concept.getUri(), k -> new ArrayList<Pattern>())
-               .add(new Pattern(element.getKey()));
-      }
+      crService.getParsedProfile(header).getElementNodes().entrySet()
+         .stream()
+         .forEach(element -> {
+            result.computeIfAbsent(element.getValue().concept.getUri(), k -> new ArrayList<Pattern>())
+            .add(new Pattern(element.getKey()));            
+         });
 
       return result;
    }
@@ -74,18 +73,17 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
 
          @Override
          public Map<String, List<Pattern>> createConceptLinkPathMapping() throws NavException {
-            Map<String, List<Pattern>> result = new HashMap<>();
-
-            Map<String, CMDINode> elements;
+            
+            final Map<String, List<Pattern>> result = new HashMap<>();
 
             try {
-               elements = crService.getParsedProfile(header).getElements();
-
-               for (Map.Entry<String, CMDINode> element : elements.entrySet()) {
-                  if (element.getValue().concept != null)
+               crService.getParsedProfile(header).getElementNodes().entrySet()
+                  .stream()
+                  .filter(element -> (element.getValue().concept != null))
+                  .forEach(element -> {
                      result.computeIfAbsent(element.getValue().concept.getUri(), k -> new ArrayList<Pattern>())
-                           .add(new Pattern(element.getKey()));
-               }
+                     .add(new Pattern(element.getKey()));
+                  });
             }
             catch (NoProfileCacheEntryException e) {
 

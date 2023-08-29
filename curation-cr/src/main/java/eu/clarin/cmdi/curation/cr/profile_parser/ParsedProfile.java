@@ -44,7 +44,7 @@ public class ParsedProfile {
 	}
 	
 	
-	public Collection<CMDINode> getComponents(){
+	public Collection<CMDINode> getComponentNodes(){
 		return xpaths.entrySet()
 		.stream()
 		.filter(e -> e.getValue().component != null)
@@ -52,7 +52,7 @@ public class ParsedProfile {
 		.collect(Collectors.toList());
 	}
 	
-	public Map<String, CMDINode> getElements(){
+	public Map<String, CMDINode> getElementNodes(){
 		return xpaths.entrySet()
 		.stream()
 		.filter(e -> e.getValue().component == null)
