@@ -55,7 +55,7 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
       final Map<String, ConceptReport.Concept> conceptMap = new HashMap<String, ConceptReport.Concept>();
       
       parsedProfile
-      .getElements()
+      .getElementNodes()
       .entrySet()
       .stream()
       .filter(entrySet -> entrySet.getKey().startsWith("/cmd:CMD/cmd:Components/"))
@@ -86,7 +86,7 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
       
       Map<String, ComponentReport.Component> componentMap = new HashMap<String, ComponentReport.Component>();
 
-      parsedProfile.getComponents().forEach(crc -> {
+      parsedProfile.getComponentNodes().forEach(crc -> {
          report.componentReport.total++;
          
          if (crc.isRequired) {
