@@ -16,59 +16,71 @@ import eu.clarin.cmdi.vlo.PIDUtils;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {  
 
    @Override
-   public void process(CMDInstance instance, CMDInstanceReport report) {
+   public void process(CMDInstance instance, CMDInstanceReport instanceReport) {
       
-      report.resProxyReport = new ResourceProxyReport();
+      instanceReport.resProxyReport = new ResourceProxyReport();
       
       CMDIData<Map<String, List<ValueSet>>> data = instance.getCmdiData();
-
-      addResourceType(data.getDataResources(), report);
-      addResourceType(data.getLandingPageResources(), report);
-      addResourceType(data.getMetadataResources(), report);
-      addResourceType(data.getSearchPageResources(), report);
-      addResourceType(data.getSearchResources(), report);
       
-      if(report.resProxyReport.numOfResources == 0) {
+      if(data == null) {
          
-         report.details.add(new Detail(Severity.FATAL, "resource proxy", "no resources in file '" + instance.getPath().getFileName() + "'"));
-         report.isProcessable = false;
+         log.debug("can't create CMDData object from file '{}'", instance.getPath());
+         instanceReport.details
+               .add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
+         instanceReport.isProcessable = false;
+         
+         return;
+      }
+
+      addResourceType(data.getDataResources(), instanceReport);
+      addResourceType(data.getLandingPageResources(), instanceReport);
+      addResourceType(data.getMetadataResources(), instanceReport);
+      addResourceType(data.getSearchPageResources(), instanceReport);
+      addResourceType(data.getSearchResources(), instanceReport);
+      
+      if(instanceReport.resProxyReport.numOfResources == 0) {
+         
+         instanceReport.details.add(new Detail(Severity.FATAL, "resource proxy", "no resources in file '" + instance.getPath().getFileName() + "'"));
+         instanceReport.isProcessable = false;
       }
       else {
          
-         report.resProxyReport.percOfResourcesWithMime = ((double) report.resProxyReport.numOfResourcesWithMime/report.resProxyReport.numOfResources);
-         report.resProxyReport.percOfResourcesWithReference = ((double) report.resProxyReport.numOfResourcesWithReference/report.resProxyReport.numOfResources);
+         instanceReport.resProxyReport.percOfResourcesWithMime = ((double) instanceReport.resProxyReport.numOfResourcesWithMime/instanceReport.resProxyReport.numOfResources);
+         instanceReport.resProxyReport.percOfResourcesWithReference = ((double) instanceReport.resProxyReport.numOfResourcesWithReference/instanceReport.resProxyReport.numOfResources);
       }
       
-      report.resProxyReport.score = report.resProxyReport.percOfResourcesWithMime + report.resProxyReport.percOfResourcesWithReference;
-      report.instanceScore+=report.resProxyReport.score;
+      instanceReport.resProxyReport.score = instanceReport.resProxyReport.percOfResourcesWithMime + instanceReport.resProxyReport.percOfResourcesWithReference;
+      instanceReport.instanceScore+=instanceReport.resProxyReport.score;
    }
 
-   private void addResourceType(List<Resource> resources, CMDInstanceReport report) {
+   private void addResourceType(List<Resource> resources, CMDInstanceReport instanceReport) {
       if (resources.isEmpty())
          return;
       
-      report.resProxyReport.resourceTypes.add(new ResourceType(resources.get(0).getType(), resources.size()));
+      instanceReport.resProxyReport.resourceTypes.add(new ResourceType(resources.get(0).getType(), resources.size()));
 
       resources.forEach(resource -> {
          if (resource.getResourceName() != null && !resource.getResourceName().isEmpty()) {
             
             if(!PIDUtils.isActionableLink(resource.getResourceName()) && !PIDUtils.isPid(resource.getResourceName())) {
-               report.resProxyReport.invalidReferences.add(resource.getResourceName());
+               instanceReport.resProxyReport.invalidReferences.add(resource.getResourceName());
             }
             else {
-               report.resProxyReport.numOfResourcesWithReference++;
+               instanceReport.resProxyReport.numOfResourcesWithReference++;
                
                if (resource.getMimeType() != null && !resource.getMimeType().isEmpty()) {
-                  report.resProxyReport.numOfResourcesWithMime++;
+                  instanceReport.resProxyReport.numOfResourcesWithMime++;
                }               
             }
          }
-         report.resProxyReport.numOfResources++;
+         instanceReport.resProxyReport.numOfResources++;
       });
    }
 }

@@ -8,18 +8,7 @@ import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.FileReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
-import eu.clarin.cmdi.curation.api.vlo_extension.CMDIDataImplFactory;
-import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
-import eu.clarin.cmdi.vlo.LanguageCodeUtils;
-import eu.clarin.cmdi.vlo.config.FieldNameServiceImpl;
-import eu.clarin.cmdi.vlo.config.VloConfig;
-import eu.clarin.cmdi.vlo.importer.CMDIData;
-import eu.clarin.cmdi.vlo.importer.CMDIRecordProcessor;
-import eu.clarin.cmdi.vlo.importer.MetadataImporter;
-import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
-import eu.clarin.cmdi.vlo.importer.processor.CMDIDataProcessor;
-import eu.clarin.cmdi.vlo.importer.processor.CMDIParserVTDXML;
-import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +25,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,42 +34,12 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
    private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
 
-   private CMDIRecordProcessor<Map<String, List<ValueSet>>> recordProcessor;
-
    private ApiConfig conf;
 
    @Autowired
-   public FileSizeValidator(ApiConfig conf, FacetsMappingCacheFactory fac, VloConfig vloConfig) {
+   public FileSizeValidator(ApiConfig conf) {
 
       this.conf = conf;
-
-      final LanguageCodeUtils languageCodeUtils = new LanguageCodeUtils(vloConfig);
-
-      final FieldNameServiceImpl fieldNameServiceImpl = new FieldNameServiceImpl(vloConfig);
-
-      final CMDIDataImplFactory cmdiDataFactory = new CMDIDataImplFactory(fieldNameServiceImpl);
-
-      final VLOMarshaller marshaller = new VLOMarshaller();
-
-      CMDIDataProcessor<Map<String, List<ValueSet>>> dataProcessor = new CMDIParserVTDXML<>(
-            MetadataImporter.registerPostProcessors(vloConfig, fieldNameServiceImpl, languageCodeUtils),
-            MetadataImporter.registerPostMappingFilters(fieldNameServiceImpl), vloConfig, fac, marshaller,
-            cmdiDataFactory, fieldNameServiceImpl, false);
-
-      this.recordProcessor = new CMDIRecordProcessor<Map<String, List<ValueSet>>>(dataProcessor, fieldNameServiceImpl) {
-
-         @Override
-         protected boolean skipOnDuplicateId() {
-
-            return false;
-         }
-
-         @Override
-         protected boolean skipOnNoResources() {
-
-            return false;
-         }
-      };
    }
 
    private boolean isLatestVersion(Path path) {
@@ -192,24 +149,6 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
          return;
 
       }
-
-      CMDIData<Map<String, List<ValueSet>>> cmdiData = null;
-
-      try {
-
-         cmdiData = recordProcessor.processRecord(instance.getPath().toFile()).get();
-      }
-      catch (Exception e) {
-
-         log.debug("can't create CMDData object from file '{}'", instance.getPath());
-         report.details
-               .add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
-         report.isProcessable = false;
-
-         return;
-      }
-
-      instance.setCmdiData(cmdiData);
 
       log.debug("...done");
 

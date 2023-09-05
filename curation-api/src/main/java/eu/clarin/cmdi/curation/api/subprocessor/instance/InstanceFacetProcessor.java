@@ -46,32 +46,41 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
    XPathValueService xpathValueService;
 
    @Override
-   public void process(CMDInstance instance, CMDInstanceReport report) {
+   public void process(CMDInstance instance, CMDInstanceReport instanceReport) {
 
-      report.facetReport = new InstanceFacetReport();
+      instanceReport.facetReport = new InstanceFacetReport();
 
       profileReportCache
-            .getProfileReport(new CMDProfile(report.profileHeaderReport.getSchemaLocation(),
-                  report.profileHeaderReport.getCmdiVersion())).facetReport.coverages
-            .forEach(profileCoverage -> report.facetReport.coverages
+            .getProfileReport(new CMDProfile(instanceReport.profileHeaderReport.getSchemaLocation(),
+                  instanceReport.profileHeaderReport.getCmdiVersion())).facetReport.coverages
+            .forEach(profileCoverage -> instanceReport.facetReport.coverages
                   .add(new Coverage(profileCoverage.name, profileCoverage.coveredByProfile)));
 
-      report.facetReport.numOfFacets = report.facetReport.coverages.size();
+      instanceReport.facetReport.numOfFacets = instanceReport.facetReport.coverages.size();
 
-      Map<String, List<ValueSet>> facetValuesMap = instance.getCmdiData().getDocument();
+      Map<String, List<ValueSet>> data = instance.getCmdiData().getDocument();
+      
+      if(data == null) {
+         
+         log.debug("can't create CMDData object from file '{}'", instance.getPath());
+         instanceReport.details
+               .add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
+         instanceReport.isProcessable = false;
+         
+         return;
+      }
 
       // the key of the facetValuesMap is the target facet name
-      report.facetReport.coverages.stream().forEach(coverage -> {
-         if (coverage.coveredByInstance = facetValuesMap.keySet().contains(coverage.name)) { // initialization and test!
-            report.facetReport.numOfFacetsCoveredByInstance++;
+      instanceReport.facetReport.coverages.stream().forEach(coverage -> {
+         if (coverage.coveredByInstance = data.keySet().contains(coverage.name)) { // initialization and test!
+            instanceReport.facetReport.numOfFacetsCoveredByInstance++;
          }
-         ;
       });
 
-      report.facetReport.percCoveragedByInstance = (double) report.facetReport.numOfFacetsCoveredByInstance
-            / report.facetReport.numOfFacets;
-      report.facetReport.score = report.facetReport.percCoveragedByInstance;
-      report.instanceScore += report.facetReport.score;
+      instanceReport.facetReport.percCoveragedByInstance = (double) instanceReport.facetReport.numOfFacetsCoveredByInstance
+            / instanceReport.facetReport.numOfFacets;
+      instanceReport.facetReport.score = instanceReport.facetReport.percCoveragedByInstance;
+      instanceReport.instanceScore += instanceReport.facetReport.score;
 
       // in case of a single instance analysis we want to know for each node with a
       // value to which facet it is mapped
@@ -79,9 +88,9 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
          try {
             Map<String, CMDINode> cmdiNodeMap = crService
-                  .getParsedProfile(report.profileHeaderReport.getProfileHeader()).getElementNodes();
+                  .getParsedProfile(instanceReport.profileHeaderReport.getProfileHeader()).getXpathElementNode();
 
-            final Map<Integer, List<ValueSet>> indexValueSetMap = facetValuesMap.values() // a List of ValueSet
+            final Map<Integer, List<ValueSet>> indexValueSetMap = data.values() // a List of ValueSet
                   .stream().flatMap(List::stream).collect(Collectors.groupingBy(ValueSet::getVtdIndex));
 
             VTDGen vtdGen = new VTDGen();
@@ -141,28 +150,28 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                         log.error("", e);
                      }
 
-                     report.facetReport.valueNodes.add(valueNode);
+                     instanceReport.facetReport.valueNodes.add(valueNode);
                   });
 
          }
          catch (NoProfileCacheEntryException e1) {
             
-            log.error("no parsable profile '{}'", report.instanceHeaderReport.schemaLocation);
-            report.details.add(new Detail(Severity.FATAL, "facets", "can't parse profile '" + report.instanceHeaderReport.schemaLocation + "'"));
-            report.isProcessable = false;
+            log.error("no parsable profile '{}'", instanceReport.instanceHeaderReport.schemaLocation);
+            instanceReport.details.add(new Detail(Severity.FATAL, "facets", "can't parse profile '" + instanceReport.instanceHeaderReport.schemaLocation + "'"));
+            instanceReport.isProcessable = false;
 
          }
          catch (IOException e1) {
 
             log.error("can't read file '{}'", instance.getPath());
-            report.details.add(new Detail(Severity.FATAL, "file", "can't read file '" + instance.getPath().getFileName() + "'"));
-            report.isProcessable = false;
+            instanceReport.details.add(new Detail(Severity.FATAL, "file", "can't read file '" + instance.getPath().getFileName() + "'"));
+            instanceReport.isProcessable = false;
          }
          catch (ParseException e1) {
             
             log.error("can't parse file '{}'", instance.getPath());
-            report.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
-            report.isProcessable = false;
+            instanceReport.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
+            instanceReport.isProcessable = false;
          }
       }
    }
