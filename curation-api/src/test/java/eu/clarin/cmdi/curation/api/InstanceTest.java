@@ -111,10 +111,10 @@ public class InstanceTest {
          
          assertEquals(5.0, referenceReport.instanceHeaderReport.score);
          
-//         CMDInstanceReport report = curation.processCMDInstance(getTmpFile("clarin.eu:cr1:p_1380106710826","clarin.eu:cr1:p1380106710826"));
-//         assertFalse(report.isProcessable);
+         CMDInstanceReport report = curation.processCMDInstance(getTmpFile("clarin.eu:cr1:p_1380106710826","clarin.eu:cr1:p1380106710826"));
+         assertFalse(report.isProcessable);
          
-         CMDInstanceReport report = curation.processCMDInstance(getTmpFile("<cmd:MdProfile>clarin.eu:cr1:p_1380106710826</cmd:MdProfile>","<cmd:MdProfile>eu:cr1:p_1380106710826</cmd:MdProfile>"));
+         report = curation.processCMDInstance(getTmpFile("<cmd:MdProfile>clarin.eu:cr1:p_1380106710826</cmd:MdProfile>","<cmd:MdProfile>eu:cr1:p_1380106710826</cmd:MdProfile>"));
          assertEquals(4.0, report.instanceHeaderReport.score);
          
          report = curation.processCMDInstance(getTmpFile("<cmd:MdCollectionDisplayName>WorldViews</cmd:MdCollectionDisplayName>",""));

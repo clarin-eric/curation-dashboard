@@ -25,11 +25,7 @@ public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CM
    @Override
    public void process(CMDInstance instance, CMDInstanceReport instanceReport) {
       
-      instanceReport.resProxyReport = new ResourceProxyReport();
-      
-      CMDIData<Map<String, List<ValueSet>>> data = instance.getCmdiData();
-      
-      if(data == null) {
+      if(instance.getCmdiData().isEmpty()) {
          
          log.debug("can't create CMDData object from file '{}'", instance.getPath());
          instanceReport.details
@@ -38,6 +34,12 @@ public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CM
          
          return;
       }
+      
+      instanceReport.resProxyReport = new ResourceProxyReport();
+      
+      CMDIData<Map<String, List<ValueSet>>> data = instance.getCmdiData().get();
+      
+
 
       addResourceType(data.getDataResources(), instanceReport);
       addResourceType(data.getLandingPageResources(), instanceReport);

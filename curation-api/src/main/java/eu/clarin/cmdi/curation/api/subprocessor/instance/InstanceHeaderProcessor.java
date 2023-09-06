@@ -37,11 +37,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
    @Override
    public void process(CMDInstance instance, CMDInstanceReport instanceReport){
       
-      instanceReport.instanceHeaderReport  = new InstanceHeaderReport();
-      
-      Map<String, List<ValueSet>> data = instance.getCmdiData().getDocument();
-      
-      if(data == null) {
+      if(instance.getCmdiData().isEmpty()) {
          
          log.debug("can't create CMDData object from file '{}'", instance.getPath());
          instanceReport.details
@@ -50,25 +46,31 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
          
          return;
       }
+      
+      instanceReport.instanceHeaderReport  = new InstanceHeaderReport();
+      
+      Map<String, List<ValueSet>> facetValuesMap = instance.getCmdiData().get().getDocument();
+      
 
-      if(data.containsKey("curation_schemaLocation") && !data.get("curation_schemaLocation").isEmpty()) {
-         String[] schemaLocationArray = data.get("curation_schemaLocation").get(0).getValue().split(" ");
+
+      if(facetValuesMap.containsKey("curation_schemaLocation") && !facetValuesMap.get("curation_schemaLocation").isEmpty()) {
+         String[] schemaLocationArray = facetValuesMap.get("curation_schemaLocation").get(0).getValue().split(" ");
          instanceReport.instanceHeaderReport.schemaLocation = (schemaLocationArray[schemaLocationArray.length - 1]);
       }
-      else if(data.containsKey("curation_noNamespaceSchemaLocation") && !data.get("curation_noNamespaceSchemaLocation").isEmpty()) {
-                     instanceReport.instanceHeaderReport.schemaLocation = data.get("curation_noNamespaceSchemaLocation").get(0).getValue();
+      else if(facetValuesMap.containsKey("curation_noNamespaceSchemaLocation") && !facetValuesMap.get("curation_noNamespaceSchemaLocation").isEmpty()) {
+                     instanceReport.instanceHeaderReport.schemaLocation = facetValuesMap.get("curation_noNamespaceSchemaLocation").get(0).getValue();
       }
 
-      if(data.containsKey("curation_mdProfile") && !data.get("curation_mdProfile").isEmpty()) {
-         instanceReport.instanceHeaderReport.mdProfile = data.get("curation_mdProfile").get(0).getValue();
+      if(facetValuesMap.containsKey("curation_mdProfile") && !facetValuesMap.get("curation_mdProfile").isEmpty()) {
+         instanceReport.instanceHeaderReport.mdProfile = facetValuesMap.get("curation_mdProfile").get(0).getValue();
       }
 
-      if(data.containsKey("collection") && !data.get("collection").isEmpty()) {
-          instanceReport.instanceHeaderReport.mdCollectionDisplayName = data.get("collection").get(0).getValue();
+      if(facetValuesMap.containsKey("collection") && !facetValuesMap.get("collection").isEmpty()) {
+          instanceReport.instanceHeaderReport.mdCollectionDisplayName = facetValuesMap.get("collection").get(0).getValue();
       }
 
-      if(data.containsKey("_selfLink") && !data.get("_selfLink").isEmpty()) {
-         instanceReport.instanceHeaderReport.mdSelfLink = data.get("_selfLink").get(0).getValue();
+      if(facetValuesMap.containsKey("_selfLink") && !facetValuesMap.get("_selfLink").isEmpty()) {
+         instanceReport.instanceHeaderReport.mdSelfLink = facetValuesMap.get("_selfLink").get(0).getValue();
       }
      
       if (instanceReport.instanceHeaderReport.schemaLocation == null) { // no schemaLocation

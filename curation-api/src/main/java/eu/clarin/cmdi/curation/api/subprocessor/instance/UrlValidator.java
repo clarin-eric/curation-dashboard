@@ -54,20 +54,22 @@ public class UrlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
 
    @Override
    public void process(CMDInstance instance, CMDInstanceReport instanceReport) {
+      
+      if(instance.getCmdiData().isEmpty()) {
+         
+         log.debug("can't create CMDData object from file '{}'", instance.getPath());
+         instanceReport.details
+               .add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
+         instanceReport.isProcessable = false;
+         
+         return;
+      }
 
       if ("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode())) {
          
-         CMDIData<Map<String, List<ValueSet>>> data = instance.getCmdiData();
+         CMDIData<Map<String, List<ValueSet>>> data = instance.getCmdiData().get();
          
-         if(data == null) {
-            
-            log.debug("can't create CMDData object from file '{}'", instance.getPath());
-            instanceReport.details
-                  .add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
-            instanceReport.isProcessable = false;
-            
-            return;
-         }
+
 
          
          Stream<Resource> resourceStream = Stream.of(

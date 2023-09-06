@@ -47,6 +47,16 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
    @Override
    public void process(CMDInstance instance, CMDInstanceReport instanceReport) {
+      
+      if(instance.getCmdiData().isEmpty()) {
+         
+         log.debug("can't create CMDData object from file '{}'", instance.getPath());
+         instanceReport.details
+               .add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
+         instanceReport.isProcessable = false;
+         
+         return;
+      }
 
       instanceReport.facetReport = new InstanceFacetReport();
 
@@ -58,21 +68,13 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
       instanceReport.facetReport.numOfFacets = instanceReport.facetReport.coverages.size();
 
-      Map<String, List<ValueSet>> data = instance.getCmdiData().getDocument();
+      Map<String, List<ValueSet>> facetValuesMap = instance.getCmdiData().get().getDocument();
       
-      if(data == null) {
-         
-         log.debug("can't create CMDData object from file '{}'", instance.getPath());
-         instanceReport.details
-               .add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
-         instanceReport.isProcessable = false;
-         
-         return;
-      }
+
 
       // the key of the facetValuesMap is the target facet name
       instanceReport.facetReport.coverages.stream().forEach(coverage -> {
-         if (coverage.coveredByInstance = data.keySet().contains(coverage.name)) { // initialization and test!
+         if (coverage.coveredByInstance = facetValuesMap.keySet().contains(coverage.name)) { // initialization and test!
             instanceReport.facetReport.numOfFacetsCoveredByInstance++;
          }
       });
@@ -90,7 +92,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
             Map<String, CMDINode> cmdiNodeMap = crService
                   .getParsedProfile(instanceReport.profileHeaderReport.getProfileHeader()).getXpathElementNode();
 
-            final Map<Integer, List<ValueSet>> indexValueSetMap = data.values() // a List of ValueSet
+            final Map<Integer, List<ValueSet>> indexValueSetMap = facetValuesMap.values() // a List of ValueSet
                   .stream().flatMap(List::stream).collect(Collectors.groupingBy(ValueSet::getVtdIndex));
 
             VTDGen vtdGen = new VTDGen();
