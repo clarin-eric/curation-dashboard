@@ -9,6 +9,7 @@ import com.ximpleware.VTDException;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
+import eu.clarin.cmdi.curation.pph.ProfileHeader;
 
 class CMDI1_1_ProfileParser extends ProfileParser{
 	
@@ -57,8 +58,13 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 	}
 	
 	@Override
-	protected Map<String, CMDINode> createMap(Collection<CRElement> nodes) throws VTDException {
-		Map<String, CMDINode> xpaths = new LinkedHashMap<>();
+	protected ParsedProfile createParsedProfile(ProfileHeader header, Collection<CRElement> nodes) throws VTDException {
+		
+      Map<String, CMDINode> xpathNode = new LinkedHashMap<>();
+
+      Map<String, CMDINode> xpathElementNode = new LinkedHashMap<>();
+
+      Map<String, CMDINode> xpathComponentNode = new LinkedHashMap<>();
 		
 		nodes.stream()
 		.filter(n -> n.isLeaf || n.type == NodeType.COMPONENT)
@@ -75,16 +81,27 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 			CMDINode cmdiNode = new CMDINode();
 			cmdiNode.isRequired = node.isRequired;
 			
-			if(node.type == NodeType.COMPONENT)
-				cmdiNode.component = new Component(node.name, node.ref);				
-			else
+			if(node.type == NodeType.COMPONENT) {
+				cmdiNode.component = new Component(node.name, node.ref);
+				
+				xpathComponentNode.put(xpath, cmdiNode);
+			}
+			else {
+			   
 				cmdiNode.concept = createConcept(node.ref);
+				
+				xpathElementNode.put(xpath, cmdiNode);
+			}
 
-			xpaths.put(xpath, cmdiNode);
+			xpathNode.put(xpath, cmdiNode);
 
 		});
 
-		return xpaths;
+      return new ParsedProfile(
+            header, 
+            xpathNode, 
+            xpathElementNode, 
+            xpathComponentNode
+         );
 	}
-
 }

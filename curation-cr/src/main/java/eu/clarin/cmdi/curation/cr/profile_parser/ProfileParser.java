@@ -2,7 +2,6 @@ package eu.clarin.cmdi.curation.cr.profile_parser;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
@@ -21,22 +20,22 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class ProfileParser {
 
    protected CCRService ccrService;
+
+   protected VTDNav vn;
+
+   private CRElement _cur;
    
    public ProfileParser(CCRService ccrService) {
       
       this.ccrService = ccrService;
    }
 
-   protected VTDNav vn;
-
-   private CRElement _cur;
-
    public ParsedProfile parse(VTDNav navigator, ProfileHeader header) throws NoProfileCacheEntryException{
       vn = navigator;
       try {
          fillInHeader(vn, header);
          Collection<CRElement> nodes = processElements();
-         return new ParsedProfile(header, createMap(nodes));
+         return createParsedProfile(header, nodes);
       }
       catch (VTDException e) {
          
@@ -52,7 +51,7 @@ public abstract class ProfileParser {
 
    protected abstract CRElement processNameAttributeNode() throws VTDException;
 
-   protected abstract Map<String, CMDINode> createMap(Collection<CRElement> nodes) throws VTDException, NoProfileCacheEntryException;
+   protected abstract ParsedProfile createParsedProfile(ProfileHeader header, Collection<CRElement> nodes) throws VTDException, NoProfileCacheEntryException;
 
    protected ProfileHeader fillInHeader(VTDNav vn, ProfileHeader header) throws VTDException {
       AutoPilot ap = new AutoPilot(vn);
