@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import eu.clarin.cmdi.curation.api.vlo_extension.CMDIDataImplFactory;
@@ -27,6 +28,7 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
  *
  */
 @Component
+@Lazy
 public class ApiBeans {
    @Autowired
    private FacetsMappingCacheFactory fac;
