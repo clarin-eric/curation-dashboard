@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.web.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.stream.Stream;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -114,90 +114,101 @@ public class Download {
    @GetMapping("/linkchecker/{providergroupName}/{category}")
    public ResponseEntity<StreamingResponseBody> getFile(@PathVariable("providergroupName") String providergroupName,
          @PathVariable("category") Category category,
-         @RequestParam(value = "format", required = false, defaultValue = "xml") String format) {
+         @RequestParam(value = "format", required = false, defaultValue = "xml") String format,
+         @RequestParam(value = "zipped", required = false, defaultValue = "false") boolean zipped) {
       
       HttpHeaders headers = new HttpHeaders();
       
       
-      headers.setContentType(new MediaType("application", "zip"));
+      headers.setContentType(new MediaType("application", zipped?"zip":format));
       
       headers.setContentDisposition(
             ContentDisposition
                .inline()
-               .filename(providergroupName + "-" + category + ".zip")
+               .filename(providergroupName + "-" + category + (zipped?".zip":"." + format))
                .build()
             );
       
-      
-      
       return ResponseEntity.ok().headers(headers)
             .body(outputStream -> {
+               
+               ZipOutputStream zipOutStream = null;
          
-               ZipOutputStream zipOutStream = new ZipOutputStream(outputStream);
-      
-               zipOutStream.putNextEntry(new ZipEntry(providergroupName + "." + format));
-               
-               String[] formatedString = {
-                     switch(format) {
-                        case "json" -> "{\n   \"creationDate\": \"%1$tF %1$tT\",\n   \"collection\": \"%2$s\",\n   \"category\": \"%3$s\",\n   \"link\": [";
-                        case "tsv" -> "checkedLinks createdionDate: %1$tF %1$tT, collection: %2$s, category: %3$s\n"
-                              + "url\tcheckingDate\tmethod\tstatusCode\tbyteSize\tduration\tredirects\tmessage\tcollection\torigin\texpected-mime-type\n";
-                        default ->  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<checkedLinks creationDate=\"%1$tF %1$tT\" collection=\"%2$s\" category=\"%3$s\">\n";
-                     }
-                  };
-               
-               zipOutStream.write(String.format(formatedString[0], Calendar.getInstance(), providergroupName, category).getBytes());
-               
-               formatedString[0] = switch(format) {
-                  case "json" -> "\n      { \"url\": \"%1$s\", \"checkingDate\": \"%2$tF %2$tT\", \"method\": \"%3$s\", \"statusCode\": %4$s, \"byteSize\": %5$s, \"duration\": %6$s, \"redirects\": %7$s, \"message\": \"%8$s\", \"collection\": \"%9$s\", \"origin\": \"%10$s\", \"expected-mime-type\": \"%11$s\" }";
-                  case "tsv" -> "%1$s\t%2$tF %2$tT\t%3$s\t%4$s\t%5$s\t%6$s\t%7$s\t%8$s\t%9$s\t%10$s\t%11$s\n";
-                  default -> "   <link url=\"%1$s\" checkingDate=\"%2$tF %2$tT\" method=\"%3$s\" statusCode=\"%4$s\" byteSize=\"%5$s\" duration=\"%6$s\" redirects=\"%7$s\" message=\"%8$s\" collection=\"%9$s\" origin=\"%10$s\" expected-mime-type=\"%11$s\" />\n";
-               };
-               
-               
-               try(
-                     Stream<StatusDetail> sdStream = ("overall".equalsIgnoreCase(providergroupName)? sService.findAllDetail(category):sService.findAllDetail(providergroupName, category));
-                     )
-               {
+               if(zipped) {
+                  zipOutStream = new ZipOutputStream(outputStream);
+                  zipOutStream.putNextEntry(new ZipEntry(providergroupName + "." + format));
+
+                  writeDetails(outputStream, providergroupName, category, format);
                   
-                  sdStream.forEach(detail -> {
-                     try {
-                        zipOutStream.write(
-                              String.format(
-                                 formatedString[0],
-                                 detail.getUrlname(), 
-                                 detail.getCheckingDate(), 
-                                 detail.getMethod(),
-                                 detail.getStatusCode(), 
-                                 detail.getContentLength(),
-                                 detail.getDuration(),
-                                 detail.getRedirectCount(),
-                                 detail.getMessage(),
-                                 detail.getProvidergroupname(),
-                                 detail.getOrigin(),
-                                 detail.getExpectedMimeType()                              
-                              )
-                              .getBytes()
-                           );
-                     }
-                     catch (IOException e) {
-                        
-                        log.error("can't write checkedLink: %1 to zip output", detail.toString());
-                     }
-                  });// end stream 
-               }// end try-catch
-               
-               formatedString[0] = switch(format) {
-                  case "json" -> "\n   ]\n}";
-                  case "tsv" -> "";
-                  default -> "</checkedLinks>";
-               };
-               
-               zipOutStream.write(formatedString[0].getBytes());
-               
-               zipOutStream.closeEntry();
-               zipOutStream.close();
-            });
+                  
+                  zipOutStream.closeEntry();
+                  zipOutStream.close();               
+               }
+               else {
+                  
+                  writeDetails(outputStream, providergroupName, category, format);
+               }
+            });      
+   }
+   
+   private void writeDetails(OutputStream outputStream, String providergroupName, Category category, String format) throws IOException {
+      String[] formatedString = {
+            switch(format) {
+               case "json" -> "{\n   \"creationDate\": \"%1$tF %1$tT\",\n   \"collection\": \"%2$s\",\n   \"category\": \"%3$s\",\n   \"link\": [";
+               case "tsv" -> "checkedLinks createdionDate: %1$tF %1$tT, collection: %2$s, category: %3$s\n"
+                     + "url\tcheckingDate\tmethod\tstatusCode\tbyteSize\tduration\tredirects\tmessage\tcollection\torigin\texpected-mime-type\n";
+               default ->  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<checkedLinks creationDate=\"%1$tF %1$tT\" collection=\"%2$s\" category=\"%3$s\">\n";
+            }
+         };
+
+         outputStream.write(String.format(formatedString[0], Calendar.getInstance(), providergroupName, category).getBytes());
+
       
+      formatedString[0] = switch(format) {
+         case "json" -> "\n      { \"url\": \"%1$s\", \"checkingDate\": \"%2$tF %2$tT\", \"method\": \"%3$s\", \"statusCode\": %4$s, \"byteSize\": %5$s, \"duration\": %6$s, \"redirects\": %7$s, \"message\": \"%8$s\", \"collection\": \"%9$s\", \"origin\": \"%10$s\", \"expected-mime-type\": \"%11$s\" }";
+         case "tsv" -> "%1$s\t%2$tF %2$tT\t%3$s\t%4$s\t%5$s\t%6$s\t%7$s\t%8$s\t%9$s\t%10$s\t%11$s\n";
+         default -> "   <link url=\"%1$s\" checkingDate=\"%2$tF %2$tT\" method=\"%3$s\" statusCode=\"%4$s\" byteSize=\"%5$s\" duration=\"%6$s\" redirects=\"%7$s\" message=\"%8$s\" collection=\"%9$s\" origin=\"%10$s\" expected-mime-type=\"%11$s\" />\n";
+      };
+      
+      
+      try(
+            Stream<StatusDetail> sdStream = ("overall".equalsIgnoreCase(providergroupName)? sService.findAllDetail(category):sService.findAllDetail(providergroupName, category));
+            )
+      {
+         
+         sdStream.forEach(detail -> {
+            try {
+               outputStream.write(
+                     String.format(
+                        formatedString[0],
+                        detail.getUrlname(), 
+                        detail.getCheckingDate(), 
+                        detail.getMethod(),
+                        detail.getStatusCode(), 
+                        detail.getContentLength(),
+                        detail.getDuration(),
+                        detail.getRedirectCount(),
+                        detail.getMessage(),
+                        detail.getProvidergroupname(),
+                        detail.getOrigin(),
+                        detail.getExpectedMimeType()                              
+                     )
+                     .getBytes()
+                  );
+            }
+            catch (IOException e) {
+               
+               log.error("can't write checkedLink: %1 to zip output", detail.toString());
+            }
+         });// end stream 
+      }// end try-catch
+      
+      formatedString[0] = switch(format) {
+         case "json" -> "\n   ]\n}";
+         case "tsv" -> "";
+         default -> "</checkedLinks>";
+      };
+      
+      outputStream.write(formatedString[0].getBytes());
    }
 }
