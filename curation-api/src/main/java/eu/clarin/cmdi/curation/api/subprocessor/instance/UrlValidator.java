@@ -101,7 +101,7 @@ public class UrlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
          });
          
          
-         if(data.getDocument().get("_selfLink") != null && !data.getDocument().get("_selfLink").isEmpty()) {
+         if(data.getDocument().get("_selfLink") != null && !data.getDocument().get("_selfLink").isEmpty() && PIDUtils.isActionableLink(data.getDocument().get("_selfLink").get(0).getValue())) {
             urlMimes.add(
                Pair.of( 
                   PIDUtils.getActionableLinkForPid(data.getDocument().get("_selfLink").get(0).getValue()), 
