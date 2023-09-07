@@ -170,6 +170,12 @@ details[open] h2:after{
 	height: 10vh; 
 	margin-top: -10vh
 }
+div.markdown table {
+	width: 100%;
+}
+div.markdown table, th, td {
+  border: 1px solid;
+}
 /*
 .Ok{
 	background-color: #00FF80;
