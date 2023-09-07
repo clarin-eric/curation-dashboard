@@ -39,7 +39,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
       this.crService = crService;
       this.cache = cache;
    }
-
+   @Override
    public FacetsMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
 
       return getFacetsMapping(
@@ -53,22 +53,9 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
             : cache.getNonPublicFacetMapping(header, this);
    }
 
-   public Map<String, List<Pattern>> createConceptLinkPathMapping(ProfileHeader header)
-         throws NoProfileCacheEntryException {
-      
-      final Map<String, List<Pattern>> result = new HashMap<>();
-
-      crService.getParsedProfile(header).getElementNodes().entrySet()
-         .stream()
-         .forEach(element -> {
-            result.computeIfAbsent(element.getValue().concept.getUri(), k -> new ArrayList<Pattern>())
-            .add(new Pattern(element.getKey()));            
-         });
-
-      return result;
-   }
 
    public FacetsMapping createFacetsMapping(ProfileHeader header) {
+
       return new FacetsMappingExt(createMapping(new ConceptLinkPathMapper() {
 
          @Override
@@ -77,7 +64,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
             final Map<String, List<Pattern>> result = new HashMap<>();
 
             try {
-               crService.getParsedProfile(header).getElementNodes().entrySet()
+               crService.getParsedProfile(header).getXpathElementNode().entrySet()
                   .stream()
                   .filter(element -> (element.getValue().concept != null))
                   .forEach(element -> {
@@ -90,6 +77,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
                log.error("no ProfileCacheEntry object for profile id '{}'", header.getId());
 
             }
+            
             return result;
          }
 
