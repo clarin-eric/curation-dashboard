@@ -1,3 +1,7 @@
+# 6.1.1
+- allowing unzipped download for linkchecker details
+- excluding non resolvable URN selflinks from link checking
+
 # 6.1.0
 - Refactoring of InstanceParser (issue #186) and InstanceFacetProcessor (issue #184)
 - adding facet temporalCoverage in configuration (issue #180)
