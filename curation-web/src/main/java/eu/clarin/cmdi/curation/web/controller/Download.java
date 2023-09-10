@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.Calendar;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -152,6 +153,7 @@ public class Download {
    }
    
    private void writeDetails(OutputStream outputStream, String providergroupName, Category category, String format) throws IOException {
+      
       String[] formatedString = {
             switch(format) {
                case "json" -> "{\n   \"creationDate\": \"%1$tF %1$tT\",\n   \"collection\": \"%2$s\",\n   \"category\": \"%3$s\",\n   \"link\": [";
@@ -161,8 +163,9 @@ public class Download {
             }
          };
 
-         outputStream.write(String.format(formatedString[0], Calendar.getInstance(), providergroupName, category).getBytes());
+      outputStream.write(String.format(formatedString[0], Calendar.getInstance(), providergroupName, category).getBytes());
 
+      AtomicInteger lineNr = new AtomicInteger();   
       
       formatedString[0] = switch(format) {
          case "json" -> "\n      { \"url\": \"%1$s\", \"checkingDate\": \"%2$tF %2$tT\", \"method\": \"%3$s\", \"statusCode\": %4$s, \"byteSize\": %5$s, \"duration\": %6$s, \"redirects\": %7$s, \"message\": \"%8$s\", \"collection\": \"%9$s\", \"origin\": \"%10$s\", \"expected-mime-type\": \"%11$s\" }";
@@ -178,6 +181,10 @@ public class Download {
          
          sdStream.forEach(detail -> {
             try {
+               
+               if("json".equals(format) && lineNr.incrementAndGet() > 1) {
+                  outputStream.write(',');
+               }
                outputStream.write(
                      String.format(
                         formatedString[0],
