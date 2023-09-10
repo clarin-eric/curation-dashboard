@@ -63,7 +63,7 @@
             </xsl:attribute>
             <xsl:text>tsv</xsl:text>  			
 			</a>
-			<xsl:text> (zipped</xsl:text>
+			<xsl:text> (zipped </xsl:text>
          <a>
             <xsl:attribute name="href">
                  <xsl:text>/download/linkchecker/</xsl:text>
@@ -82,7 +82,7 @@
                <xsl:value-of select="/linkcheckerDetailReport/@provider" />
                <xsl:text>/</xsl:text>
                <xsl:value-of select="@category" />
-               <xsl:text>?format=json&zipped=true</xsl:text>
+               <xsl:text>?format=json&amp;zipped=true</xsl:text>
             </xsl:attribute>
             <xsl:text>json</xsl:text>        
          </a>
@@ -93,7 +93,7 @@
                <xsl:value-of select="/linkcheckerDetailReport/@provider" />
                <xsl:text>/</xsl:text>
                <xsl:value-of select="@category" />
-               <xsl:text>?format=tsv&zipped=true</xsl:text>
+               <xsl:text>?format=tsv&amp;zipped=true</xsl:text>
             </xsl:attribute>
             <xsl:text>tsv</xsl:text>         
          </a>			
