@@ -173,7 +173,7 @@ details[open] h2:after{
 div.markdown table {
 	width: 100%;
 }
-div.markdown table, th, td {
+div.markdown table, div.markdown th, div.markdown td {
   border: 1px solid;
 }
 /*
