@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.api.vlo_extension;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
@@ -45,8 +46,6 @@ public class FacetsMappingExt extends FacetsMapping {
         facetConfig = new FacetDefinition(null, "curation_mdProfile");
         facetConfig.setPattern(new Pattern("/cmd:CMD/cmd:Header/cmd:MdProfile/text()"));
         _facetsMapExt.put("curation_mdProfile", facetConfig);       
-        
-        
     }
     
     public FacetsMappingExt(FacetsMapping facetsMapping) {
@@ -60,7 +59,6 @@ public class FacetsMappingExt extends FacetsMapping {
     public Collection<FacetDefinition> getFacetDefinitions() {
 
         return CollectionUtils.union(this.facetsMapping.getFacetDefinitions(), _facetsMapExt.values());
-
     }
 
     @SuppressWarnings("unchecked")
@@ -73,5 +71,4 @@ public class FacetsMappingExt extends FacetsMapping {
     public FacetDefinition getFacetDefinition(String facetName) {
         return _facetsMapExt.containsKey(facetName)? _facetsMapExt.get(facetName):this.facetsMapping.getFacetDefinition(facetName);
     }
-
 }

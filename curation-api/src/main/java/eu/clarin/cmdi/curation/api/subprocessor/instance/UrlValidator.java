@@ -5,6 +5,8 @@ import eu.clarin.linkchecker.persistence.repository.ClientRepository;
 import eu.clarin.linkchecker.persistence.service.LinkService;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
+import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
@@ -52,10 +54,22 @@ public class UrlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
 
    @Override
    public void process(CMDInstance instance, CMDInstanceReport instanceReport) {
+      
+      if(instance.getCmdiData().isEmpty()) {
+         
+         log.debug("can't create CMDData object from file '{}'", instance.getPath());
+         instanceReport.details
+               .add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
+         instanceReport.isProcessable = false;
+         
+         return;
+      }
 
       if ("collection".equalsIgnoreCase(conf.getMode()) || "all".equalsIgnoreCase(conf.getMode())) {
          
-         CMDIData<Map<String, List<ValueSet>>> data = instance.getCmdiData();
+         CMDIData<Map<String, List<ValueSet>>> data = instance.getCmdiData().get();
+         
+
 
          
          Stream<Resource> resourceStream = Stream.of(
@@ -87,7 +101,7 @@ public class UrlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
          });
          
          
-         if(data.getDocument().get("_selfLink") != null && !data.getDocument().get("_selfLink").isEmpty()) {
+         if(data.getDocument().get("_selfLink") != null && !data.getDocument().get("_selfLink").isEmpty() && PIDUtils.isActionableLink(data.getDocument().get("_selfLink").get(0).getValue())) {
             urlMimes.add(
                Pair.of( 
                   PIDUtils.getActionableLinkForPid(data.getDocument().get("_selfLink").get(0).getValue()), 

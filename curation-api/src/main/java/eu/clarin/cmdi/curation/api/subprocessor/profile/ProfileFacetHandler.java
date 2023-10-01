@@ -44,7 +44,7 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
       FacetsMapping facetMapping = fac.getFacetsMapping(header);
 
       try {
-         final Map<String, CMDINode> elements = crService.getParsedProfile(header).getElements();
+         final Map<String, CMDINode> elements = crService.getParsedProfile(header).getXpathElementNode();
          
    
          for (String facetName : conf.getFacets()) {

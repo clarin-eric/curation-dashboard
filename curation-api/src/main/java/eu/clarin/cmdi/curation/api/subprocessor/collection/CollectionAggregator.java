@@ -34,7 +34,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Stream;
 
 /**
- *
+ * The type Collection aggregator.
  */
 @Slf4j
 @Component
@@ -51,6 +51,12 @@ public class CollectionAggregator {
 
    private Collection<String> mdSelfLinks = new ArrayList<String>();
 
+   /**
+    * Process.
+    *
+    * @param collection       the CMD collection which has the root path (directory) which contains the CMD instances of a collection
+    * @param collectionReport the collection report the aggregated CMD instance reports are written to
+    */
    @Transactional
    public void process(CMDCollection collection, CollectionReport collectionReport) {
 
@@ -131,6 +137,12 @@ public class CollectionAggregator {
 
    }
 
+   /**
+    * Add report.
+    *
+    * @param collectionReport the collection report
+    * @param instanceReport   the instance report
+    */
    public synchronized void addReport(CollectionReport collectionReport, CMDInstanceReport instanceReport) {
       
       if(instanceReport.details.size() > 0) {//only add a record if there're details to report
