@@ -1,3 +1,6 @@
+# 6.1.2
+- fix for issue #201
+
 # 6.1.1
 - allowing unzipped download for linkchecker details
 - excluding non resolvable URN selflinks from link checking
