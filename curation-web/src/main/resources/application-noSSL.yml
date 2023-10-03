@@ -12,7 +12,10 @@ spring:
    servlet:
       multipart:
         enabled: true
-        location: ${java.io.tmpdir}    
+        location: ${java.io.tmpdir}   
+   mvc:
+      async:
+         request-timeout: 3600000
 server:
    error:
       include-stacktrace: always
