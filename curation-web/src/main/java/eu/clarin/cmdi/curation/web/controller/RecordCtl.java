@@ -58,17 +58,20 @@ public class RecordCtl {
             int b = -1;
 
             while ((b = in.read()) != -1) {
+               
                outputStream.write(b);
             }
-
          }
          catch (IOException e) {
             
             log.error("can't read CMD instance '{}'", cmdiPath);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);              
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);         
          }      
       };
       
-      return ResponseEntity.ok().contentType(MediaType.TEXT_XML).body(stream);
+      return ResponseEntity
+               .ok()
+               .contentType(MediaType.TEXT_XML)
+               .body(stream);
    }
 }
