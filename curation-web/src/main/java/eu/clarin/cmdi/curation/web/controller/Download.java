@@ -18,8 +18,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -141,7 +139,7 @@ public class Download {
                   zipOutStream = new ZipOutputStream(outputStream);
                   zipOutStream.putNextEntry(new ZipEntry(providergroupName + "." + format));
 
-                  writeDetails(outputStream, providergroupName, category, format);
+                  writeDetails(zipOutStream, providergroupName, category, format);
                   
                   
                   zipOutStream.closeEntry();
@@ -166,7 +164,6 @@ public class Download {
          };
 
       outputStream.write(String.format(formatedString[0], Calendar.getInstance(), providergroupName, category).getBytes());
-      outputStream.flush();
 
       AtomicInteger lineNr = new AtomicInteger();   
       
@@ -177,14 +174,12 @@ public class Download {
       };
       
       
-      PageRequest pageRequest = PageRequest.ofSize(100000);
-      Page<StatusDetail> page = null;
-      
-      do {
+      try(
+            Stream<StatusDetail> sdStream = ("overall".equalsIgnoreCase(providergroupName)? sService.findAllDetail(category):sService.findAllDetail(providergroupName, category));
+            )
+      {
          
-         page = ("overall".equalsIgnoreCase(providergroupName)? sService.findAllDetail(category, pageRequest):sService.findAllDetail(providergroupName, category, pageRequest));
-
-         page.forEach(detail -> {
+         sdStream.forEach(detail -> {
             try {
                
                if("json".equals(format) && lineNr.incrementAndGet() > 1) {
@@ -207,18 +202,13 @@ public class Download {
                      )
                      .getBytes()
                   );
-               outputStream.flush();
             }
             catch (IOException e) {
                
-               log.error("can't write checkedLink: %1 to zip output", detail.toString());
+               log.error("can't write checkedLink: {}", detail.toString());
             }
-         });// end forEach 
-         
-         pageRequest = pageRequest.next();
-      }
-      while(page.hasNext());
-
+         });// end stream 
+      }// end try-catch
       
       formatedString[0] = switch(format) {
          case "json" -> "\n   ]\n}";
@@ -227,6 +217,5 @@ public class Download {
       };
       
       outputStream.write(formatedString[0].getBytes());
-      outputStream.flush();
    }
 }
