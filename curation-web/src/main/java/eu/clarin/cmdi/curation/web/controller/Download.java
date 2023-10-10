@@ -10,6 +10,9 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -17,6 +20,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.hibernate.jpa.QueryHints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -38,7 +42,6 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.web.dto.StatusDetailDto;
 import eu.clarin.linkchecker.persistence.model.StatusDetail;
-import eu.clarin.linkchecker.persistence.service.StatusService;
 import eu.clarin.linkchecker.persistence.utils.Category;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,8 +52,8 @@ public class Download {
 
    @Autowired
    ApiConfig conf;
-   @Autowired
-   StatusService sService;
+   @PersistenceContext
+   EntityManager em;
 
    @GetMapping("/{curationEntityType}/{reportName}")
    public ResponseEntity<StreamingResponseBody> getFile(@PathVariable("curationEntityType") String curationEntityType,
@@ -144,8 +147,7 @@ public class Download {
                   ZipOutputStream zipOutStream = new ZipOutputStream(outputStream);
                   zipOutStream.putNextEntry(new ZipEntry(providergroupName + "." + format));
 
-                  writeDetails(zipOutStream, providergroupName, category, format);
-                  
+                  writeDetails(zipOutStream, providergroupName, category, format);                  
                   
                   zipOutStream.closeEntry();
                   zipOutStream.close();               
@@ -168,10 +170,12 @@ public class Download {
             }
          };
 
+      // writing xml root open element, embracing json object or tsv table header 
       outputStream.write(String.format(formatedString[0], Calendar.getInstance(), providergroupName, category).getBytes());
 
       AtomicInteger lineNr = new AtomicInteger();   
       
+      // preparing object serializer for xml, json or tsv
       final ObjectWriter writer = switch(format) {
       
          case "json" -> new ObjectMapper().writer();
@@ -183,10 +187,43 @@ public class Download {
          default -> new XmlMapper().writer();
       };
       
-      
+      // we have to use the EntityManger directly to make streaming work
+      Query query = !"overall".equalsIgnoreCase(providergroupName)?
+         em.createNativeQuery(              
+               """
+               SELECT NULL AS order_nr, s.*, u.name AS urlname, p.name AS providergroupname, c.origin, uc.expected_mime_type
+                  FROM status s 
+                  INNER JOIN url u ON s.url_id = u.id 
+                  INNER JOIN url_context uc ON uc.url_id = u.id
+                  INNER JOIN context c ON c.id = uc.context_id
+                  INNER JOIN providergroup p ON p.id = c.providergroup_id
+                  WHERE s.category = ?1
+                  AND p.name = ?2
+                  AND uc.active = true       
+                  """, 
+                  StatusDetail.class)
+               .setParameter(2, providergroupName):
+         em.createNativeQuery(
+               """
+               SELECT NULL AS order_nr, s.*, u.name AS urlname, p.name AS providergroupname, c.origin, uc.expected_mime_type
+                  FROM status s 
+                  INNER JOIN url u ON s.url_id = u.id 
+                  INNER JOIN url_context uc ON uc.url_id = u.id
+                  INNER JOIN context c ON c.id = uc.context_id
+                  INNER JOIN providergroup p ON p.id = c.providergroup_id
+                  WHERE s.category = ?1
+                  AND uc.active = true       
+                  """, StatusDetail.class);
       
       try(
-            Stream<StatusDetail> sdStream = ("overall".equalsIgnoreCase(providergroupName)? sService.findAllDetail(category):sService.findAllDetail(providergroupName, category));
+            // the hints are necessary for streaming
+            @SuppressWarnings("unchecked")
+            Stream<StatusDetail> sdStream = query
+                  .setParameter(1, category.name())
+                  .setHint(QueryHints.HINT_FETCH_SIZE, "1")
+                  .setHint(QueryHints.HINT_CACHEABLE, "false")
+                  .setHint(QueryHints.HINT_READONLY, "true")
+                  .getResultStream();  
             )
       {
          
@@ -198,10 +235,11 @@ public class Download {
                }
                
                outputStream.write(writer.writeValueAsBytes(detail));
+               outputStream.flush();
             }
             catch (IOException e) {
-               
-               log.error("can't write checkedLink: {}\n{}", detail.toString(), e.getStackTrace());
+               // outputStream is closed and we want to get out of the lambda loop without need to log
+               throw new RuntimeException(e);
             }
          });// end stream 
       }// end try-catch
