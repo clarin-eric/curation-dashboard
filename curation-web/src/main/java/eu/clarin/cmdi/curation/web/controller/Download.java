@@ -29,7 +29,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
+import eu.clarin.cmdi.curation.web.dto.StatusDetailDto;
 import eu.clarin.linkchecker.persistence.model.StatusDetail;
 import eu.clarin.linkchecker.persistence.service.StatusService;
 import eu.clarin.linkchecker.persistence.utils.Category;
@@ -132,11 +139,9 @@ public class Download {
       
       return ResponseEntity.ok().headers(headers)
             .body(outputStream -> {
-               
-               ZipOutputStream zipOutStream = null;
-         
+        
                if(zipped) {
-                  zipOutStream = new ZipOutputStream(outputStream);
+                  ZipOutputStream zipOutStream = new ZipOutputStream(outputStream);
                   zipOutStream.putNextEntry(new ZipEntry(providergroupName + "." + format));
 
                   writeDetails(zipOutStream, providergroupName, category, format);
@@ -167,11 +172,17 @@ public class Download {
 
       AtomicInteger lineNr = new AtomicInteger();   
       
-      formatedString[0] = switch(format) {
-         case "json" -> "\n      { \"url\": \"%1$s\", \"checkingDate\": \"%2$tF %2$tT\", \"method\": \"%3$s\", \"statusCode\": %4$s, \"byteSize\": %5$s, \"duration\": %6$s, \"redirects\": %7$s, \"message\": \"%8$s\", \"collection\": \"%9$s\", \"origin\": \"%10$s\", \"expected-mime-type\": \"%11$s\" }";
-         case "tsv" -> "%1$s\t%2$tF %2$tT\t%3$s\t%4$s\t%5$s\t%6$s\t%7$s\t%8$s\t%9$s\t%10$s\t%11$s\n";
-         default -> "   <link url=\"%1$s\" checkingDate=\"%2$tF %2$tT\" method=\"%3$s\" statusCode=\"%4$s\" byteSize=\"%5$s\" duration=\"%6$s\" redirects=\"%7$s\" message=\"%8$s\" collection=\"%9$s\" origin=\"%10$s\" expected-mime-type=\"%11$s\" />\n";
+      final ObjectWriter writer = switch(format) {
+      
+         case "json" -> new ObjectMapper().writer();
+         case "tsv" -> {            
+            CsvMapper mapper = new CsvMapper();
+            CsvSchema schema = mapper.schemaFor(StatusDetailDto.class).withColumnSeparator('\t');
+            yield mapper.writer(schema);
+         }
+         default -> new XmlMapper().writer();
       };
+      
       
       
       try(
@@ -179,33 +190,18 @@ public class Download {
             )
       {
          
-         sdStream.forEach(detail -> {
+         sdStream.map(StatusDetailDto::new).forEach(detail -> {
             try {
                
                if("json".equals(format) && lineNr.incrementAndGet() > 1) {
                   outputStream.write(',');
                }
-               outputStream.write(
-                     String.format(
-                        formatedString[0],
-                        detail.getUrlname(), 
-                        detail.getCheckingDate(), 
-                        detail.getMethod(),
-                        detail.getStatusCode(), 
-                        detail.getContentLength(),
-                        detail.getDuration(),
-                        detail.getRedirectCount(),
-                        detail.getMessage(),
-                        detail.getProvidergroupname(),
-                        detail.getOrigin(),
-                        detail.getExpectedMimeType()                              
-                     )
-                     .getBytes()
-                  );
+               
+               outputStream.write(writer.writeValueAsBytes(detail));
             }
             catch (IOException e) {
                
-               log.error("can't write checkedLink: {}", detail.toString());
+               log.error("can't write checkedLink: {}\n{}", detail.toString(), e.getStackTrace());
             }
          });// end stream 
       }// end try-catch
