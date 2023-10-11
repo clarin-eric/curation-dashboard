@@ -21,7 +21,7 @@ import org.springframework.data.util.Pair;
 import java.util.*;
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import eu.clarin.cmdi.vlo.PIDUtils;
 

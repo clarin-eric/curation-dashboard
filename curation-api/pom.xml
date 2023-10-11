@@ -8,6 +8,10 @@
    <artifactId>curation-api</artifactId>
    <dependencies>
       <dependency>
+         <groupId>eu.clarin</groupId>
+         <artifactId>linkchecker-persistence</artifactId>
+      </dependency>
+      <dependency>
          <groupId>org.springframework.boot</groupId>
          <artifactId>spring-boot-starter-data-jpa</artifactId>
       </dependency>
@@ -56,6 +60,7 @@
       <dependency>
          <groupId>org.apache.httpcomponents</groupId>
          <artifactId>httpclient</artifactId>
+         <version>4.5.14</version>
       </dependency>
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
@@ -67,12 +72,16 @@
                <artifactId>Saxon-HE</artifactId>
             </exclusion>
             <exclusion>
-            	<groupId>org.apache.logging.log4j</groupId>
-            	<artifactId>log4j-slf4j-impl</artifactId>
-            </exclusion>
-            <exclusion>
             	<groupId>org.mariadb.jdbc</groupId>
             	<artifactId>mariadb-java-client</artifactId>
+            </exclusion>
+            <exclusion>
+            	<groupId>eu.clarin</groupId>
+            	<artifactId>linkchecker-persistence</artifactId>
+            </exclusion>
+            <exclusion>
+            	<groupId>org.apache.logging.log4j</groupId>
+            	<artifactId>log4j-slf4j2-impl</artifactId>
             </exclusion>
          </exclusions>
       </dependency>
@@ -85,11 +94,6 @@
          <groupId>org.springframework.boot</groupId>
          <artifactId>spring-boot-configuration-processor</artifactId>
          <optional>true</optional>
-      </dependency>
-      <dependency>
-         <groupId>eu.clarin</groupId>
-         <artifactId>linkchecker-persistence</artifactId>
-         <version>${linkchecker-persistence.version}</version>
       </dependency>
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>

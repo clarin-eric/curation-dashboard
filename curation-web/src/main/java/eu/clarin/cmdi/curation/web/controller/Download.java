@@ -10,9 +10,9 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -20,7 +20,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.hibernate.jpa.QueryHints;
+import org.hibernate.jpa.AvailableHints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -220,9 +220,9 @@ public class Download {
             @SuppressWarnings("unchecked")
             Stream<StatusDetail> sdStream = query
                   .setParameter(1, category.name())
-                  .setHint(QueryHints.HINT_FETCH_SIZE, "1")
-                  .setHint(QueryHints.HINT_CACHEABLE, "false")
-                  .setHint(QueryHints.HINT_READONLY, "true")
+                  .setHint(AvailableHints.HINT_FETCH_SIZE, "1")
+                  .setHint(AvailableHints.HINT_CACHEABLE, "false")
+                  .setHint(AvailableHints.HINT_READ_ONLY, "true")
                   .getResultStream();  
             )
       {
