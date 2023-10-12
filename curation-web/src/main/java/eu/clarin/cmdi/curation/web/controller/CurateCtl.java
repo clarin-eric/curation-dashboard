@@ -201,10 +201,13 @@ public class CurateCtl {
    @RequestMapping("/robots.txt")
    @ResponseBody
    public String getRobotsTxt() {     
-      return """      
+      return """
                User-agent: *
                Disallow: /download
                Disallow: /record
+               
+               User-agent: CLARIN Linkchecker: https://www.clarin.eu/linkchecker
+               Allow: /
                """;
    }
 }
