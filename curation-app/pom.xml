@@ -3,7 +3,7 @@
    <parent>
       <groupId>eu.clarin.cmdi</groupId>
       <artifactId>curation-dashboard</artifactId>
-      <version>${global.version}</version>
+      <version>${revision}</version>
    </parent>
    <artifactId>curation-app</artifactId>
    <name>curation-app</name>
@@ -33,7 +33,7 @@
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
          <artifactId>curation-api</artifactId>
-         <version>${global.version}</version>
+         <version>${project.version}</version>
          <scope>compile</scope>
       </dependency>
       <dependency>
