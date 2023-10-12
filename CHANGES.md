@@ -1,5 +1,6 @@
 # 6.1.2
 - fix for issue #201
+- adding robots.txt in curation-web (CurationCtl)
 
 # 6.1.1
 - allowing unzipped download for linkchecker details
