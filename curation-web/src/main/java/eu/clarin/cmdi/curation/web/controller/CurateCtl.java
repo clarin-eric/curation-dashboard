@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -195,5 +196,15 @@ public class CurateCtl {
          log.error("can't read file '{}'", inFilePath);
          throw new RuntimeException("internal error - please inform Clarin-Eric");     
       }
+   }
+   
+   @RequestMapping("/robots.txt")
+   @ResponseBody
+   public String getRobotsTxt() {     
+      return """      
+               User-agent: *
+               Disallow: /download
+               Disallow: /record
+               """;
    }
 }
