@@ -6,8 +6,18 @@ import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 
+/**
+ * The type Concept type adapter.
+ */
 public class ConceptTypeAdapter extends TypeAdapter<CCRConcept> {
 
+	/**
+	 * Read ccr concept.
+	 *
+	 * @param in the Json reader with all ccr concepts
+	 * @return the ccr concept
+	 * @throws IOException the io exception
+	 */
 	@Override
 	public CCRConcept read(final JsonReader in) throws IOException {
 		in.beginObject();
@@ -41,6 +51,13 @@ public class ConceptTypeAdapter extends TypeAdapter<CCRConcept> {
 		return new CCRConcept(uri, prefLabel, status);
 	}
 
+	/**
+	 * Write.
+	 *
+	 * @param arg0 the arg 0
+	 * @param arg1 the arg 1
+	 * @throws IOException the io exception
+	 */
 	@Override
 	public void write(JsonWriter arg0, CCRConcept arg1) throws IOException {
 		throw new IOException("I don't know what this is? But it was throwing not implemented exception before.");

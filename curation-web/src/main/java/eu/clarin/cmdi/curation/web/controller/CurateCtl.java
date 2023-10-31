@@ -32,7 +32,7 @@ import java.nio.file.Paths;
 
 @Slf4j
 @Controller
-@RequestMapping(value = {"", "/curate"})
+@RequestMapping(value = {"/", "/curate"})
 public class CurateCtl {
    
    @Autowired
@@ -198,7 +198,7 @@ public class CurateCtl {
       }
    }
    
-   @RequestMapping("/robots.txt")
+   @GetMapping("/robots.txt")
    @ResponseBody
    public String getRobotsTxt() {     
       return """

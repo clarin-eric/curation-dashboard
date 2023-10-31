@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.api.vlo_extension;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 

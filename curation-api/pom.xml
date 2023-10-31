@@ -8,30 +8,17 @@
    <artifactId>curation-api</artifactId>
    <dependencies>
       <dependency>
-         <groupId>eu.clarin</groupId>
-         <artifactId>linkchecker-persistence</artifactId>
-      </dependency>
-      <dependency>
          <groupId>org.springframework.boot</groupId>
          <artifactId>spring-boot-starter-data-jpa</artifactId>
       </dependency>
       <!--java 11 needed dependencies -->
       <dependency>
-         <groupId>javax.xml.bind</groupId>
-         <artifactId>jaxb-api</artifactId>
+          <groupId>jakarta.xml.bind</groupId>
+          <artifactId>jakarta.xml.bind-api</artifactId>
       </dependency>
       <dependency>
          <groupId>org.glassfish.jaxb</groupId>
          <artifactId>jaxb-runtime</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>com.sun.xml.bind</groupId>
-         <artifactId>jaxb-impl</artifactId>
-         <version>2.4.0-b180830.0438</version>
-      </dependency>
-      <dependency>
-         <groupId>org.glassfish.jaxb</groupId>
-         <artifactId>jaxb-core</artifactId>
       </dependency>
       <dependency>
          <groupId>org.apache.commons</groupId>
@@ -66,33 +53,23 @@
          <artifactId>vlo-importer</artifactId>
          <version>${vlo.version}</version>
          <exclusions>
-            <exclusion>
-               <groupId>net.sf.saxon</groupId>
-               <artifactId>Saxon-HE</artifactId>
-            </exclusion>
-            <exclusion>
-            	<groupId>org.mariadb.jdbc</groupId>
-            	<artifactId>mariadb-java-client</artifactId>
-            </exclusion>
-            <exclusion>
-            	<groupId>eu.clarin</groupId>
-            	<artifactId>linkchecker-persistence</artifactId>
-            </exclusion>
-            <exclusion>
-            	<groupId>org.apache.logging.log4j</groupId>
-            	<artifactId>log4j-slf4j2-impl</artifactId>
-            </exclusion>
+         	<exclusion>
+         		<groupId>eu.clarin</groupId>
+         		<artifactId>linkchecker-persistence</artifactId>
+         	</exclusion>
+         	<exclusion>
+         		<groupId>net.sf.saxon</groupId>
+         		<artifactId>Saxon-HE</artifactId>
+         	</exclusion>
+         	<exclusion>
+         		<groupId>org.mariadb.jdbc</groupId>
+         		<artifactId>mariadb-java-client</artifactId>
+         	</exclusion>
+         	<exclusion>
+         		<groupId>org.apache.logging.log4j</groupId>
+         		<artifactId>log4j-slf4j2-impl</artifactId>
+         	</exclusion>
          </exclusions>
-      </dependency>
-      <dependency>
-         <groupId>net.sf.saxon</groupId>
-         <artifactId>Saxon-HE</artifactId>
-         <version>10.3</version>
-      </dependency>
-      <dependency>
-         <groupId>org.springframework.boot</groupId>
-         <artifactId>spring-boot-configuration-processor</artifactId>
-         <optional>true</optional>
       </dependency>
       <dependency>
          <groupId>eu.clarin.cmdi</groupId>
@@ -105,9 +82,13 @@
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.mariadb.jdbc</groupId>
-         <artifactId>mariadb-java-client</artifactId>
-         <scope>runtime</scope>
+      	<groupId>org.springframework.boot</groupId>
+      	<artifactId>spring-boot-configuration-processor</artifactId>
+      	<optional>true</optional>
+      </dependency>
+      <dependency>
+      	<groupId>eu.clarin</groupId>
+      	<artifactId>linkchecker-persistence</artifactId>
       </dependency>
    </dependencies>
    <build>

@@ -21,10 +21,20 @@ import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The type Pph cache.
+ */
 @Component
 @Slf4j
 public class PPHCache {
-   
+
+   /**
+    * Gets profile headers map.
+    *
+    * @param restUrl the rest url
+    * @param query   the query part added to the rest url
+    * @return the profile headers map with profile id as key
+    */
    @Cacheable(value = "pphCache", key = "#query")
    public Map<String, ProfileHeader> getProfileHeadersMap(String restUrl, String query) {
 
@@ -125,6 +135,4 @@ public class PPHCache {
 
       return profileHeaders;
    }
-
-
 }

@@ -2,6 +2,9 @@ package eu.clarin.cmdi.curation.ccr;
 
 import lombok.Data;
 
+/**
+ * The type Ccr concept.
+ */
 @Data
 public class CCRConcept{
 

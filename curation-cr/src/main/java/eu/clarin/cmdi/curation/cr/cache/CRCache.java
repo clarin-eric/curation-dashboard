@@ -36,6 +36,9 @@ import eu.clarin.cmdi.curation.pph.PPHService;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The type Cr cache.
+ */
 @Component
 @Slf4j
 public class CRCache {
@@ -44,63 +47,86 @@ public class CRCache {
    
    @Autowired
    private CRConfig props;
+   /**
+    * The Ccr service.
+    */
    @Autowired
    CCRService ccrService;
+   /**
+    * The Pph service.
+    */
    @Autowired
    PPHService pphService;
-   
+
+   /**
+    * Instantiates a new Cr cache.
+    */
    public CRCache() {
       
       schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
    }
-   
-   @Cacheable(value = "publicProfileCache", key = "#header.id")
-   public ProfileCacheEntry getPublicEntry(ProfileHeader header) throws NoProfileCacheEntryException {
-      return getProfileCacheEntry(header);
+
+   /**
+    * Gets public entry.
+    *
+    * @param profileHeader the profile header
+    * @return the public entry
+    * @throws NoProfileCacheEntryException the no profile cache entry exception
+    */
+   @Cacheable(value = "publicProfileCache", key = "#profileHeader.id")
+   public ProfileCacheEntry getPublicEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException {
+      return getProfileCacheEntry(profileHeader);
+   }
+
+   /**
+    * Gets private entry.
+    *
+    * @param profileHeader the profile header
+    * @return the private entry
+    * @throws NoProfileCacheEntryException the no profile cache entry exception
+    */
+   @Cacheable(value = "privateProfileCache", key = "#profileHeader.id", condition = "#profileHeader.reliable")
+   public ProfileCacheEntry getPrivateEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException {
+      return getProfileCacheEntry(profileHeader);
    }
    
-   @Cacheable(value = "privateProfileCache", key = "#header.id", condition = "#header.reliable")
-   public ProfileCacheEntry getPrivateEntry(ProfileHeader header) throws NoProfileCacheEntryException {
-      return getProfileCacheEntry(header);
-   }
-   
-   private ProfileCacheEntry getProfileCacheEntry(ProfileHeader header) throws NoProfileCacheEntryException {
+   private ProfileCacheEntry getProfileCacheEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException {
       
-      String fileName = header.getSchemaLocation().replaceAll("[/.:]", "_");
+      String fileName = profileHeader.getSchemaLocation().replaceAll("[/.:]", "_");
       
       Path xsd = props.getXsdCache()
-                  .resolve(isPublicCache(header)?"":"private_profile")
+                  .resolve(isPublicCache(profileHeader)?"":"private_profile")
                   .resolve(fileName + ".xsd");
       
 
       // try to load it from the disk
 
-      log.info("profile {} is public. Loading schema from {}", header.getId(), xsd);
+      log.info("profile {} is public. Loading schema from {}", profileHeader.getId(), xsd);
 
       
          // if not download it
 
       try {
-         if (Files.notExists(xsd) || Files.size(xsd) == 0 || !isPublicCache(header)) {// keep public profiles on disk
+         if (Files.notExists(xsd) || Files.size(xsd) == 0 || !isPublicCache(profileHeader)) {// keep public profiles on disk
             // create directories if they don't exist
             if(Files.notExists(xsd.getParent())) {
                Files.createDirectories(xsd.getParent());
             }
             
 //            Files.createFile(xsd);
-            log.debug("XSD for the {} is not in the local cache, it will be downloaded", header.getSchemaLocation());
+            log.debug("XSD for the {} is not in the local cache, it will be downloaded", profileHeader.getSchemaLocation());
 
-            if (header.getSchemaLocation().startsWith("file:")) {
-               Files.copy(Paths.get(new URI(header.getSchemaLocation())), xsd, StandardCopyOption.REPLACE_EXISTING);
+            if (profileHeader.getSchemaLocation().startsWith("file:")) {
+               Files.copy(Paths.get(new URI(profileHeader.getSchemaLocation())), xsd, StandardCopyOption.REPLACE_EXISTING);
             }
             else {
-               FileUtils.copyURLToFile(new URL(header.getSchemaLocation()), xsd.toFile());
+               FileUtils.copyURLToFile(new URL(profileHeader.getSchemaLocation()), xsd.toFile());
             }
          }
       }
       catch (MalformedURLException e) {
          
-         log.debug("the schema location URL '{}' is malformed", header.getSchemaLocation());
+         log.debug("the schema location URL '{}' is malformed", profileHeader.getSchemaLocation());
          throw new NoProfileCacheEntryException();
          
       }
@@ -111,7 +137,7 @@ public class CRCache {
       }
       catch (URISyntaxException e) {
          
-         log.debug("can't copy URI '{}' is malformed", header.getSchemaLocation());
+         log.debug("can't copy URI '{}' is malformed", profileHeader.getSchemaLocation());
          throw new NoProfileCacheEntryException();
       }
 
@@ -143,9 +169,9 @@ public class CRCache {
 
 
 
-      ProfileParser parser = ProfileParserFactory.createParser(header.getCmdiVersion(), ccrService);
+      ProfileParser parser = ProfileParserFactory.createParser(profileHeader.getCmdiVersion(), ccrService);
 
-      ParsedProfile parsedProfile = parser.parse(vg.getNav(), header);
+      ParsedProfile parsedProfile = parser.parse(vg.getNav(), profileHeader);
       Schema schema = null;
       
       schemaFactory.setResourceResolver(new SchemaResourceResolver());
@@ -163,10 +189,16 @@ public class CRCache {
 
       return new ProfileCacheEntry(parsedProfile, schema);
       
-   }   
+   }
 
-   
-   public boolean isPublicCache(ProfileHeader header) {
-      return header.isPublic() && header.isReliable() && (header.getCmdiVersion().equals("1.x") || header.getCmdiVersion().equals("1.2"));
+
+   /**
+    * Is public cache boolean.
+    *
+    * @param profileHeader the header
+    * @return the boolean
+    */
+   public boolean isPublicCache(ProfileHeader profileHeader) {
+      return profileHeader.isPublic() && profileHeader.isReliable() && (profileHeader.getCmdiVersion().equals("1.x") || profileHeader.getCmdiVersion().equals("1.2"));
    }  
 }

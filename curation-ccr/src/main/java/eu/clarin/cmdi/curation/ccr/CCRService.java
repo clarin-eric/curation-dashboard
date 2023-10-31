@@ -24,7 +24,7 @@ public interface CCRService {
 	 * or null if concept doesn't exist
 	 *
 	 * 
-	 * @param uri The URI of a concept
+	 * @param uri the uri of a concept
 	 * @return	single concept or null
 	 * @throws CCRServiceNotAvailableException 
 	 * @see CCRConcept

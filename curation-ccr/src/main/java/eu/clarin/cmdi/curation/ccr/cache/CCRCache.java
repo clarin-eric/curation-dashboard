@@ -31,13 +31,21 @@ import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The type Ccr cache.
+ */
 @Component
 @Slf4j
 public class CCRCache {
    
    @Autowired
    private CCRConfig ccrProps;
-   
+
+   /**
+    * Gets ccr concept map.
+    *
+    * @return the ccr concept map with uri as key
+    */
    @Cacheable(value = "ccrCache", key = "#root.methodName")
    public Map<String, CCRConcept> getCCRConceptMap() {
       
@@ -139,5 +147,4 @@ public class CCRCache {
       
       return concepts;
    }
-
 }

@@ -22,6 +22,12 @@
          <groupId>eu.clarin.cmdi</groupId>
          <artifactId>curation-api</artifactId>
          <version>${project.version}</version>
+         <exclusions>
+         	<exclusion>
+         		<groupId>commons-logging</groupId>
+         		<artifactId>commons-logging</artifactId>
+         	</exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.springframework.boot</groupId>
@@ -72,15 +78,6 @@
       <dependency>
       	<groupId>com.fasterxml.jackson.datatype</groupId>
       	<artifactId>jackson-datatype-jsr310</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>javax.xml.bind</groupId>
-         <artifactId>jaxb-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>com.sun.xml.bind</groupId>
-         <artifactId>jaxb-impl</artifactId>
-         <version>2.4.0-b180830.0438</version>
       </dependency>
    </dependencies>
    <build>

@@ -4,7 +4,7 @@
  */
 package eu.clarin.cmdi.curation.api.report.instance.sec;
 
-import javax.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 
 

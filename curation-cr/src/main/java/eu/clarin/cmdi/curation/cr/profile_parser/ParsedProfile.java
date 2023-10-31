@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class ParsedProfile {
 
+   @Getter
    private final ProfileHeader header;
 
    private final Map<String, CMDINode> xpathNode;
@@ -19,11 +20,6 @@ public class ParsedProfile {
 
    private final Map<String, CMDINode> xpathComponentNode;
 
-
-   public ProfileHeader getHeader() {
-      
-      return header;
-   }
 
    public String getId() {
       
