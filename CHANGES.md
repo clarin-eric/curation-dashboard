@@ -1,3 +1,7 @@
+# 6.2.0
+- upgrade to Spring Boot 3.1.4
+- adding robots.txt to CurateCtl to block bot access to /download and /record
+
 # 6.1.2
 - fix for issue #201
 - adding robots.txt in curation-web (CurationCtl)
