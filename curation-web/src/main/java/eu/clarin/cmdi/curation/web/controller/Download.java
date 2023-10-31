@@ -44,6 +44,7 @@ import eu.clarin.cmdi.curation.web.dto.StatusDetailDto;
 import eu.clarin.linkchecker.persistence.model.StatusDetail;
 import eu.clarin.linkchecker.persistence.utils.Category;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.saxon.BasicTransformerFactory;
 
 @Slf4j
 @Controller
@@ -83,7 +84,7 @@ public class Download {
             String xslFileName = "tsv".equalsIgnoreCase(format)
                   ? "/xslt/" + reportName + "2" + format.toUpperCase() + ".xsl"
                   : "/xslt/XML2JSON.xsl";
-            TransformerFactory factory = TransformerFactory.newInstance();
+            TransformerFactory factory = BasicTransformerFactory.newInstance();
 
             Source xslt = new StreamSource(this.getClass().getResourceAsStream(xslFileName));
 

@@ -90,6 +90,10 @@
       	<groupId>eu.clarin</groupId>
       	<artifactId>linkchecker-persistence</artifactId>
       </dependency>
+      <dependency>
+         <groupId>net.sf.saxon</groupId>
+         <artifactId>Saxon-HE</artifactId>
+      </dependency>
    </dependencies>
    <build>
       <plugins></plugins>

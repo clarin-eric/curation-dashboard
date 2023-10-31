@@ -20,9 +20,10 @@
       <maven.compiler.target>17</maven.compiler.target>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <linkchecker-persistence.version>1.0.0-SNAPSHOT</linkchecker-persistence.version>
-      <revision>7.0.0-SNAPSHOT</revision>
+      <revision>6.2.0-SNAPSHOT</revision>
       <vlo.version>4.11.6-alpha1</vlo.version>
       <vtd.version>2.11</vtd.version>
+      <saxon.version>12.3</saxon.version>
    </properties>
    <dependencies>
       <dependency>
@@ -93,15 +94,15 @@
    <dependencyManagement>
    	<dependencies>
    		<dependency>
-   			<groupId>javax.xml.bind</groupId>
-   			<artifactId>jaxb-api</artifactId>
-   			<version>2.3.1</version>
-   		</dependency>
-   		<dependency>
    			<groupId>eu.clarin</groupId>
    			<artifactId>linkchecker-persistence</artifactId>
    			<version>${linkchecker-persistence.version}</version>
    		</dependency>
+   		<dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+         <version>${saxon.version}</version>
+      </dependency>
    	</dependencies>
    </dependencyManagement>
 </project>

@@ -18,6 +18,8 @@ import jakarta.xml.bind.PropertyException;
 import jakarta.xml.bind.util.JAXBSource;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+
+import net.sf.saxon.BasicTransformerFactory;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -113,7 +115,7 @@ public class FileStorage {
       
       Path outputPath = getOutputPath(report.getName(), entityType, "html");
 
-      TransformerFactory factory = TransformerFactory.newInstance();
+      TransformerFactory factory = BasicTransformerFactory.newInstance();
       
       String resourceName = "/xslt/" + report.getClass().getSimpleName() + "2HTML.xsl";
 
