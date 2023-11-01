@@ -13,6 +13,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 
+/**
+ * The type Curation web application.
+ */
 @SpringBootApplication
 @EnableAutoConfiguration
 @ComponentScan({"eu.clarin.cmdi.curation", "eu.clarin.linkchecker.persistence"})
@@ -20,15 +23,26 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
 @EntityScan(basePackages = "eu.clarin.linkchecker.persistence.model")
 @EnableCaching
 public class CurationWebApplication {
-   
-   @Autowired
+
+    /**
+     * The Template engine.
+     */
+    @Autowired
    TemplateEngine templateEngine;
 
-	public static void main(String[] args) {
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
+    public static void main(String[] args) {
 		SpringApplication.run(CurationWebApplication.class, args);
 	}
-	
-   @PostConstruct
+
+    /**
+     * Init.
+     */
+    @PostConstruct
    public void init() {
       FileTemplateResolver ftr = new FileTemplateResolver();
       ftr.setCheckExistence(true); //just to be sure in case the ftr is used first

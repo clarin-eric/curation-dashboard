@@ -13,28 +13,52 @@ import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 
+/**
+ * The type Cmdi 1 2 profile parser.
+ */
 class CMDI1_2_ProfileParser extends ProfileParser {
    
    private static final String ENVELOPE_URL = "https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd";
 
    private static ParsedProfile envelope;
 
+   /**
+    * Instantiates a new Cmdi 1 2 profile parser.
+    *
+    * @param ccrService the ccr service
+    */
    public CMDI1_2_ProfileParser(CCRService ccrService) {
 
       super(ccrService);
 
    }
 
+   /**
+    * Gets cmd version.
+    *
+    * @return the cmd version
+    */
    @Override
    protected String getCMDVersion() {
       return "1.2";
    }
 
+   /**
+    * Concept attribute name string.
+    *
+    * @return the string
+    */
    @Override
    protected String conceptAttributeName() {
       return "cmd:ConceptLink";
    }
 
+   /**
+    * Process name attribute node cr element.
+    *
+    * @return the cr element
+    * @throws VTDException the vtd exception
+    */
    @Override
    protected CRElement processNameAttributeNode() throws VTDException {
       // ref attribute
@@ -69,8 +93,17 @@ class CMDI1_2_ProfileParser extends ProfileParser {
       return null;
    }
 
+   /**
+    * Create parsed profile parsed profile.
+    *
+    * @param profileHeader the profile header
+    * @param nodes  the nodes
+    * @return the parsed profile
+    * @throws VTDException                 the vtd exception
+    * @throws NoProfileCacheEntryException the no profile cache entry exception
+    */
    @Override
-   protected ParsedProfile createParsedProfile(ProfileHeader header, Collection<CRElement> nodes)
+   protected ParsedProfile createParsedProfile(ProfileHeader profileHeader, Collection<CRElement> nodes)
          throws VTDException, NoProfileCacheEntryException {
 
       Map<String, CMDINode> xpathNode = new LinkedHashMap<>();
@@ -126,7 +159,7 @@ class CMDI1_2_ProfileParser extends ProfileParser {
       });
 
       return new ParsedProfile(
-            header, 
+            profileHeader,
             xpathNode, 
             xpathElementNode, 
             xpathComponentNode

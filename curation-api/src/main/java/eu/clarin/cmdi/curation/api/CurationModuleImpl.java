@@ -36,6 +36,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
+/**
+ * The type Curation module.
+ */
 @Service
 @Slf4j
 public class CurationModuleImpl implements CurationModule {
@@ -49,6 +52,12 @@ public class CurationModuleImpl implements CurationModule {
    @Autowired
    private StatusRepository sRep;
 
+   /**
+    * Process cmd profile cmd profile report.
+    *
+    * @param profileId the profile id
+    * @return the cmd profile report
+    */
    @Override
    public CMDProfileReport processCMDProfile(String profileId) {
       
@@ -64,11 +73,23 @@ public class CurationModuleImpl implements CurationModule {
    
    }
 
+   /**
+    * Process cmd profile cmd profile report.
+    *
+    * @param schemaLocation the schema location
+    * @return the cmd profile report
+    */
    @Override
    public CMDProfileReport processCMDProfile(URL schemaLocation) {
       return ctx.getBean(CMDProfile.class, schemaLocation.toString(), "1.x").generateReport();
    }
 
+   /**
+    * Process cmd profile cmd profile report.
+    *
+    * @param path the path
+    * @return the cmd profile report
+    */
    @Override
    public CMDProfileReport processCMDProfile(Path path) {
 
@@ -85,6 +106,12 @@ public class CurationModuleImpl implements CurationModule {
       }
    }
 
+   /**
+    * Process cmd instance cmd instance report.
+    *
+    * @param path the path
+    * @return the cmd instance report
+    */
    @Override
    public CMDInstanceReport processCMDInstance(Path path) {
       if (Files.exists(path)) {
@@ -106,6 +133,12 @@ public class CurationModuleImpl implements CurationModule {
       }
    }
 
+   /**
+    * Process cmd instance cmd instance report.
+    *
+    * @param url the url
+    * @return the cmd instance report
+    */
    @Override
    public CMDInstanceReport processCMDInstance(URL url) {
 
@@ -135,6 +168,12 @@ public class CurationModuleImpl implements CurationModule {
       }
    }
 
+   /**
+    * Process collection collection report.
+    *
+    * @param path the path
+    * @return the collection report
+    */
    @Override
    public CollectionReport processCollection(Path path) {
 
@@ -142,6 +181,11 @@ public class CurationModuleImpl implements CurationModule {
 
    }
 
+   /**
+    * Gets linkchecker detail reports.
+    *
+    * @return the linkchecker detail reports
+    */
    @Override
    @Transactional
    public Collection<LinkcheckerDetailReport> getLinkcheckerDetailReports() {

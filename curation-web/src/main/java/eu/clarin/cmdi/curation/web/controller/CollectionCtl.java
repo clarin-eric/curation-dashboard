@@ -14,14 +14,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The type Collection ctl.
+ */
 @Controller
 @RequestMapping("/collection")
 @Slf4j
 public class CollectionCtl {
 
+   /**
+    * The Conf.
+    */
    @Autowired
    WebConfig conf;
 
+   /**
+    * Gets collection.
+    *
+    * @param collectionReportName the collection report name
+    * @param model                the model
+    * @return the collection
+    */
    @GetMapping(value = {"", "/{collectionReportName}"})
    public String getCollection(@PathVariable(value = "collectionReportName", required = false) Optional<String> collectionReportName, Model model) {
 

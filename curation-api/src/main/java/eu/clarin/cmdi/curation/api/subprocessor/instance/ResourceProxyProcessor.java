@@ -18,10 +18,19 @@ import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The type Resource proxy processor.
+ */
 @Component
 @Slf4j
-public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {  
+public class ResourceProxyProcessor extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
 
+   /**
+    * Process.
+    *
+    * @param instance       the instance
+    * @param instanceReport the instance report
+    */
    @Override
    public void process(CMDInstance instance, CMDInstanceReport instanceReport) {
       

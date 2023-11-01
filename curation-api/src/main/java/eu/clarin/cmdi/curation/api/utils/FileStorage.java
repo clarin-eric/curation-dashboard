@@ -35,15 +35,25 @@ import eu.clarin.cmdi.curation.api.report.NamedReport;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
+ * The type File storage.
  */
 @Slf4j
 @Component
 public class FileStorage {
-   
+
+   /**
+    * The Conf.
+    */
    @Autowired
    ApiConfig conf;
-   
+
+   /**
+    * Save report.
+    *
+    * @param report          the report
+    * @param entityType      the entity type
+    * @param makeStampedCopy the make stamped copy
+    */
    public void saveReport(NamedReport report, CurationEntityType entityType, boolean makeStampedCopy) {
       
       Path xmlFilePath = saveReportAsXML(report, entityType);
@@ -57,7 +67,10 @@ public class FileStorage {
       }
 
    }
-   
+
+   /**
+    * Check output path.
+    */
    @PostConstruct
    public void checkOutputPath() {
       
@@ -68,8 +81,15 @@ public class FileStorage {
          
       }
    }
-   
-   
+
+
+   /**
+    * Save report as xml path.
+    *
+    * @param report     the report
+    * @param entityType the entity type
+    * @return the path
+    */
    public Path saveReportAsXML(NamedReport report, CurationEntityType entityType) {
       
       Path outputPath = getOutputPath(report.getName(), entityType, "xml");
@@ -110,7 +130,14 @@ public class FileStorage {
       
       return outputPath;
    }
-   
+
+   /**
+    * Save report as html path.
+    *
+    * @param report     the report
+    * @param entityType the entity type
+    * @return the path
+    */
    public Path saveReportAsHTML(NamedReport report, CurationEntityType entityType) {
       
       Path outputPath = getOutputPath(report.getName(), entityType, "html");

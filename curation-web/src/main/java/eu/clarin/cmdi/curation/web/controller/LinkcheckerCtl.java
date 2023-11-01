@@ -23,16 +23,25 @@ import eu.clarin.cmdi.curation.web.conf.WebConfig;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
+ * The type Linkchecker ctl.
  */
 @Controller
 @RequestMapping("/linkchecker")
 @Slf4j
 public class LinkcheckerCtl {
 
+   /**
+    * The Conf.
+    */
    @Autowired
    WebConfig conf;
 
+   /**
+    * Gets report.
+    *
+    * @param model the model
+    * @return the report
+    */
    @GetMapping()
    public String getReport(Model model) {
 
@@ -47,6 +56,13 @@ public class LinkcheckerCtl {
 
    }
 
+   /**
+    * Gets report.
+    *
+    * @param providergroupName the providergroup name
+    * @param model             the model
+    * @return the report
+    */
    @GetMapping("/{providergroupName}")
    public String getReport(@PathVariable(value = "providergroupName") String providergroupName, Model model) {
 
@@ -58,6 +74,12 @@ public class LinkcheckerCtl {
       return "generic";
    }
 
+   /**
+    * Gets latest checks.
+    *
+    * @param model the model
+    * @return the latest checks
+    */
    @GetMapping("/latestChecks")
    public String getLatestChecks(Model model) {
 

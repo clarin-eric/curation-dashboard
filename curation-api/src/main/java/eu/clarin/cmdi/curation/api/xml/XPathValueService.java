@@ -27,12 +27,18 @@ import org.xml.sax.helpers.DefaultHandler;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
+ * The type X path value service.
  */
 @Service
 @Slf4j
 public class XPathValueService {
-   
+
+   /**
+    * Get xpath value map map.
+    *
+    * @param xmlFilePath the xml file path
+    * @return the map
+    */
    public Map<String, String> getXpathValueMap(Path xmlFilePath){
       
       Map<String, String> xpathValueMap = new LinkedHashMap<String, String>();
@@ -72,13 +78,27 @@ public class XPathValueService {
       private Path xpath = Paths.get("/");
       
       private StringBuilder elementValue;
-      
+
+      /**
+       * Instantiates a new Service handler.
+       *
+       * @param xpathValueMap the xpath value map
+       */
       public ServiceHandler(Map<String, String> xpathValueMap) {
          
          this.xpathValueMap = xpathValueMap;
       }
-      
 
+
+      /**
+       * Start element.
+       *
+       * @param uri        the uri
+       * @param localName  the local name
+       * @param qName      the q name
+       * @param attributes the attributes
+       * @throws SAXException the sax exception
+       */
       @Override
       public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
@@ -90,6 +110,14 @@ public class XPathValueService {
             .forEach(i ->  xpathValueMap.put(this.xpath.resolve("@" + attributes.getQName(i)).toString(), attributes.getValue(i)));
       }
 
+      /**
+       * End element.
+       *
+       * @param uri       the uri
+       * @param localName the local name
+       * @param qName     the q name
+       * @throws SAXException the sax exception
+       */
       @Override
       public void endElement(String uri, String localName, String qName) throws SAXException {
          
@@ -111,6 +139,14 @@ public class XPathValueService {
          this.xpath = this.xpath.getParent();
       }
 
+      /**
+       * Characters.
+       *
+       * @param ch     the ch
+       * @param start  the start
+       * @param length the length
+       * @throws SAXException the sax exception
+       */
       @Override
       public void characters(char[] ch, int start, int length) throws SAXException {
          

@@ -32,6 +32,9 @@ import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The type Instance facet processor.
+ */
 @Slf4j
 @Component
 public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
@@ -40,11 +43,23 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
    private ApiConfig conf;
    @Autowired
    private CRService crService;
+   /**
+    * The Profile report cache.
+    */
    @Autowired
    ProfileReportCache profileReportCache;
+   /**
+    * The Xpath value service.
+    */
    @Autowired
    XPathValueService xpathValueService;
 
+   /**
+    * Process.
+    *
+    * @param instance       the instance
+    * @param instanceReport the instance report
+    */
    @Override
    public void process(CMDInstance instance, CMDInstanceReport instanceReport) {
       

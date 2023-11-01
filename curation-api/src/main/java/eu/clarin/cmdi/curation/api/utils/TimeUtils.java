@@ -9,10 +9,16 @@ import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
+ * The type Time utils.
  */
 public class TimeUtils {
 
+    /**
+     * Humanize to time string.
+     *
+     * @param millis the millis
+     * @return the string
+     */
     public static String humanizeToTime(long millis) {
         if (millis < 1000)
             return millis + " ms";
@@ -29,6 +35,12 @@ public class TimeUtils {
             );
     }
 
+    /**
+     * Humanize to date string.
+     *
+     * @param millis the millis
+     * @return the string
+     */
     public static String humanizeToDate(long millis) {
         Instant instant = Instant.ofEpochMilli(millis);
         ZoneId zoneId = ZoneId.systemDefault();

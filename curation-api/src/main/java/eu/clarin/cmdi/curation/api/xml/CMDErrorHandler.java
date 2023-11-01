@@ -9,30 +9,51 @@ import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 
 /**
-
- * 
- *         A custom SAX error handler
+ * A custom SAX error handler
  */
-
 public class CMDErrorHandler implements ErrorHandler {
 
+	/**
+	 * The Report.
+	 */
 	CMDInstanceReport report;
 
+	/**
+	 * Instantiates a new Cmd error handler.
+	 *
+	 * @param report the report
+	 */
 	public CMDErrorHandler(CMDInstanceReport report) {
 		this.report = report;
 	}
 
+	/**
+	 * Fatal error.
+	 *
+	 * @param exception the exception
+	 * @throws SAXException the sax exception
+	 */
 	@Override
 	public void fatalError(SAXParseException exception) throws SAXException {
 		addMessage(Severity.FATAL, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage());
 		throw exception;
 	}
 
+	/**
+	 * Error.
+	 *
+	 * @param exception the exception
+	 */
 	@Override
 	public void error(SAXParseException exception){
 		addMessage(Severity.ERROR, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage());
 	}
 
+	/**
+	 * Warning.
+	 *
+	 * @param exception the exception
+	 */
 	@Override
 	public void warning(SAXParseException exception) {
 		addMessage(Severity.WARNING, exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage());

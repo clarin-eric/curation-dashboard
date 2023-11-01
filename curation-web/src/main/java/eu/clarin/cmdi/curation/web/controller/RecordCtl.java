@@ -25,16 +25,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
+ * The type Record ctl.
  */
 @Slf4j
 @Controller
 @RequestMapping("/record")
 public class RecordCtl {
-   
+
+   /**
+    * The Conf.
+    */
    @Autowired
    ApiConfig conf;
-   
+
+   /**
+    * Gets file.
+    *
+    * @param request the request
+    * @return the file
+    */
    @GetMapping("/**")
    public ResponseEntity<StreamingResponseBody> getFile(HttpServletRequest request) {
       

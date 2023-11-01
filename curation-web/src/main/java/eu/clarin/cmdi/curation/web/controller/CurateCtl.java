@@ -30,20 +30,42 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * The type Curate ctl.
+ */
 @Slf4j
 @Controller
 @RequestMapping(value = {"/", "/curate"})
 public class CurateCtl {
-   
+
+   /**
+    * The Conf.
+    */
    @Autowired
    WebConfig conf;
+   /**
+    * The Curation.
+    */
    @Autowired
    CurationModule curation;
+   /**
+    * The Storage.
+    */
    @Autowired
    FileStorage storage;
+   /**
+    * The Cr service.
+    */
    @Autowired
    CRService crService;
 
+   /**
+    * Gets instance query param.
+    *
+    * @param urlStr the url str
+    * @param model  the model
+    * @return the instance query param
+    */
    @GetMapping()
    public String getInstanceQueryParam(@RequestParam(name="url-input", required=false) String urlStr, Model model) {  
       
@@ -126,8 +148,15 @@ public class CurateCtl {
       
       return "generic";
    }
-   
-   // this is for drag and drop instance form
+
+   /**
+    * Post instance string.
+    *
+    * @param file  the file
+    * @param model the model
+    * @return the string
+    */
+// this is for drag and drop instance form
    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
    public String postInstance(@RequestParam("file") MultipartFile file, Model model) {
 
@@ -197,7 +226,12 @@ public class CurateCtl {
          throw new RuntimeException("internal error - please inform Clarin-Eric");     
       }
    }
-   
+
+   /**
+    * Gets robots txt.
+    *
+    * @return the robots txt
+    */
    @GetMapping("/robots.txt")
    @ResponseBody
    public String getRobotsTxt() {     

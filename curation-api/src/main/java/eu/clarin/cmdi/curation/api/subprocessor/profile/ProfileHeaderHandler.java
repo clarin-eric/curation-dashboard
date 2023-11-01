@@ -14,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * The type Profile header handler.
+ */
 @Slf4j
 @Component
 public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDProfileReport> {
@@ -25,6 +28,12 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
    @Autowired
    private PPHService pphService;
 
+   /**
+    * Process.
+    *
+    * @param profile the profile
+    * @param report  the report
+    */
    public void process(CMDProfile profile, CMDProfileReport report) {
 
       report.headerReport = new ProfileHeaderReport(

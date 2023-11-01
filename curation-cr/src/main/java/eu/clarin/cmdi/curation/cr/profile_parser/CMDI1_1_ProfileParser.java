@@ -11,24 +11,48 @@ import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 
+/**
+ * The type Cmdi 1 1 profile parser.
+ */
 class CMDI1_1_ProfileParser extends ProfileParser{
-	
+
+	/**
+	 * Instantiates a new Cmdi 1 1 profile parser.
+	 *
+	 * @param ccrService the ccr service
+	 */
 	public CMDI1_1_ProfileParser(CCRService ccrService) {
       
 	   super(ccrService);
       
    }
 
-   @Override
+	/**
+	 * Gets cmd version.
+	 *
+	 * @return the cmd version
+	 */
+	@Override
 	protected String getCMDVersion() {
 		return "1.1";
 	}
-	
+
+	/**
+	 * Concept attribute name string.
+	 *
+	 * @return the string
+	 */
 	@Override
 	protected String conceptAttributeName(){
 		return "datcat";
-	}		
+	}
 
+	/**
+	 * Process name attribute node cr element.
+	 *
+	 * @return the cr element
+	 * @throws VTDException the vtd exception
+	 */
 	@Override
 	protected CRElement processNameAttributeNode() throws VTDException {
 		String name = extractAttributeValue("name");
@@ -56,9 +80,17 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 		
 		return elem;
 	}
-	
+
+	/**
+	 * Create parsed profile
+	 *
+	 * @param profileHeader the profile header
+	 * @param nodes  the nodes
+	 * @return the parsed profile
+	 * @throws VTDException the vtd exception
+	 */
 	@Override
-	protected ParsedProfile createParsedProfile(ProfileHeader header, Collection<CRElement> nodes) throws VTDException {
+	protected ParsedProfile createParsedProfile(ProfileHeader profileHeader, Collection<CRElement> nodes) throws VTDException {
 		
       Map<String, CMDINode> xpathNode = new LinkedHashMap<>();
 
@@ -98,7 +130,7 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 		});
 
       return new ParsedProfile(
-            header, 
+            profileHeader,
             xpathNode, 
             xpathElementNode, 
             xpathComponentNode

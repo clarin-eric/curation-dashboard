@@ -28,6 +28,9 @@ import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The type File size validator.
+ */
 @Slf4j
 @Component
 public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
@@ -36,6 +39,11 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
    private ApiConfig conf;
 
+   /**
+    * Instantiates a new File size validator.
+    *
+    * @param conf the conf
+    */
    @Autowired
    public FileSizeValidator(ApiConfig conf) {
 
@@ -58,6 +66,12 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
       return false;
    }
 
+   /**
+    * Process.
+    *
+    * @param instance the instance
+    * @param report   the report
+    */
    @Override
    public void process(CMDInstance instance, CMDInstanceReport report) {
 

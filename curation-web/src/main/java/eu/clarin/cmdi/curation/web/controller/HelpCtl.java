@@ -26,16 +26,25 @@ import eu.clarin.cmdi.curation.web.conf.WebConfig;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
+ * The type Help ctl.
  */
 @Controller
 @RequestMapping("/help")
 @Slf4j
 public class HelpCtl {
-   
+
+   /**
+    * The Conf.
+    */
    @Autowired
    WebConfig conf;
-   
+
+   /**
+    * Gets renderd markdown.
+    *
+    * @param model the model
+    * @return the renderd markdown
+    */
    @GetMapping()
    public String getRenderdMarkdown(Model model) {
       

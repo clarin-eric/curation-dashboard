@@ -18,6 +18,7 @@ import eu.clarin.cmdi.vlo.importer.mapping.*;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * The type Facets mapping cache factory.
  *
  * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
  */
@@ -31,6 +32,13 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
 
    private FacetMappingCache cache;
 
+   /**
+    * Instantiates a new Facets mapping cache factory.
+    *
+    * @param vloConfig the vlo config
+    * @param crService the cr service
+    * @param cache     the cache
+    */
    @Autowired
    public FacetsMappingCacheFactory(VloConfig vloConfig, CRService crService, FacetMappingCache cache) {
 
@@ -39,6 +47,14 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
       this.crService = crService;
       this.cache = cache;
    }
+
+   /**
+    * Gets facet mapping.
+    *
+    * @param profileId        the profile id
+    * @param useLocalXSDCache the use local xsd cache
+    * @return the facet mapping
+    */
    @Override
    public FacetsMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
 
@@ -47,6 +63,12 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
 
    }
 
+   /**
+    * Gets facets mapping.
+    *
+    * @param header the header
+    * @return the facets mapping
+    */
    public synchronized FacetsMapping getFacetsMapping(ProfileHeader header) {
       
       return header.isPublic() ? cache.getPublicFacetMapping(header, this)
@@ -54,6 +76,12 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
    }
 
 
+   /**
+    * Create facets mapping facets mapping.
+    *
+    * @param header the header
+    * @return the facets mapping
+    */
    public FacetsMapping createFacetsMapping(ProfileHeader header) {
 
       return new FacetsMappingExt(createMapping(new ConceptLinkPathMapper() {

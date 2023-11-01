@@ -25,6 +25,9 @@ import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import lombok.extern.slf4j.Slf4j;
 
 
+/**
+ * The type Profile facet handler.
+ */
 @Component
 @Slf4j
 public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDProfileReport> {
@@ -32,9 +35,18 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
    private ApiConfig conf;
    @Autowired
    private CRService crService;
+   /**
+    * The Fac.
+    */
    @Autowired
    FacetsMappingCacheFactory fac;
 
+   /**
+    * Process.
+    *
+    * @param profile the profile
+    * @param report  the report
+    */
    public void process(CMDProfile profile, CMDProfileReport report) {
       
       report.facetReport = new ProfileFacetReport();

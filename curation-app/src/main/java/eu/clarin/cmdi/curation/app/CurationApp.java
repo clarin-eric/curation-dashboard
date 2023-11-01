@@ -32,6 +32,9 @@ import eu.clarin.cmdi.curation.pph.PPHService;
 import eu.clarin.linkchecker.persistence.service.LinkService;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The type Curation app.
+ */
 @SpringBootApplication
 @ComponentScan({"eu.clarin.cmdi.curation", "eu.clarin.linkchecker.persistence"})
 @EnableJpaRepositories(basePackages = "eu.clarin.linkchecker.persistence.repository")
@@ -48,15 +51,32 @@ public class CurationApp {
    private CurationModule curation;
    @Autowired
    private PPHService pphService;
+   /**
+    * The Storage.
+    */
    @Autowired
    FileStorage storage;
+   /**
+    * The Link service.
+    */
    @Autowired
    LinkService linkService;
 
-	public static void main(String[] args) {
+   /**
+    * The entry point of application.
+    *
+    * @param args the input arguments
+    */
+   public static void main(String[] args) {
 		SpringApplication.run(CurationApp.class, args);
 	}
-	
+
+   /**
+    * Command line runner command line runner.
+    *
+    * @param ctx the ctx
+    * @return the command line runner
+    */
    @Bean
    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
       

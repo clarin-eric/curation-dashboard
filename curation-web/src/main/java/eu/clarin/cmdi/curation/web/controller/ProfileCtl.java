@@ -14,14 +14,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The type Profile ctl.
+ */
 @Controller
 @RequestMapping("/profile")
 @Slf4j
 public class ProfileCtl {
 
+   /**
+    * The Conf.
+    */
    @Autowired
    WebConfig conf;
 
+   /**
+    * Gets profile.
+    *
+    * @param profileReportName the profile report name
+    * @param model             the model
+    * @return the profile
+    */
    @GetMapping(value = {"", "/{profileReportName}"})
    public String getProfile(@PathVariable(value = "profileReportName") Optional<String> profileReportName, Model model) {
       

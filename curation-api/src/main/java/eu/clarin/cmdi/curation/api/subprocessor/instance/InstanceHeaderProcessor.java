@@ -24,9 +24,15 @@ import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The type Instance header processor.
+ */
 @Slf4j
 @Component
 public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
+   /**
+    * The Conf.
+    */
    @Autowired
    PPHConfig conf;
    @Autowired
@@ -34,6 +40,12 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
    @Autowired
    private CurationModule curationModule;
 
+   /**
+    * Process.
+    *
+    * @param instance       the instance
+    * @param instanceReport the instance report
+    */
    @Override
    public void process(CMDInstance instance, CMDInstanceReport instanceReport){
       

@@ -25,8 +25,7 @@ import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-
- *
+ * The type Profile concept handler.
  */
 @Slf4j
 @Component
@@ -36,6 +35,12 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
    @Autowired
    private CRService crService;
 
+   /**
+    * Process.
+    *
+    * @param profile the profile
+    * @param report  the report
+    */
    public void process(CMDProfile profile, CMDProfileReport report) {
       
       ParsedProfile parsedProfile = null;

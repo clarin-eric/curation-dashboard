@@ -28,6 +28,9 @@ import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The type Xml validator.
+ */
 @Slf4j
 @Component
 public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
@@ -35,6 +38,12 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
    @Autowired
    private CRService crService;
 
+   /**
+    * Process.
+    *
+    * @param instance the instance
+    * @param report   the report
+    */
    @Override
    public void process(CMDInstance instance, CMDInstanceReport report) {
       
@@ -116,17 +125,41 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       }
    }
 
+   /**
+    * The type Cmd instance content handler.
+    */
    class CMDInstanceContentHandler extends DefaultHandler {
 
+      /**
+       * The Instance.
+       */
       CMDInstance instance;
+      /**
+       * The Instance report.
+       */
       CMDInstanceReport instanceReport;
 
 
+      /**
+       * The Cur elem.
+       */
       String curElem;
+      /**
+       * The Elem with value.
+       */
       boolean elemWithValue;
 
+      /**
+       * The Locator.
+       */
       Locator locator;
 
+      /**
+       * Instantiates a new Cmd instance content handler.
+       *
+       * @param instance       the instance
+       * @param instanceReport the instance report
+       */
       public CMDInstanceContentHandler(CMDInstance instance, CMDInstanceReport instanceReport) {
          
          this.instance = instance;
@@ -134,6 +167,11 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       
       }
 
+      /**
+       * Sets document locator.
+       *
+       * @param locator the locator
+       */
       @Override
       public void setDocumentLocator(Locator locator) {
          this.locator = locator;
@@ -141,6 +179,12 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
 
       /**
        * Receive notification of the start of an element.
+       *
+       * @param uri        the uri
+       * @param localName  the local name
+       * @param qName      the q name
+       * @param attributes the attributes
+       * @throws SAXException the sax exception
        */
       public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
@@ -151,6 +195,11 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
 
       /**
        * Receive notification of the end of an element.
+       *
+       * @param uri       the uri
+       * @param localName the local name
+       * @param qName     the q name
+       * @throws SAXException the sax exception
        */
       public void endElement(String uri, String localName, String qName) throws SAXException {
          if (curElem.equals(qName)) {// is a simple elem
@@ -166,11 +215,24 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
          elemWithValue = false;
       }
 
+      /**
+       * Characters.
+       *
+       * @param ch     the ch
+       * @param start  the start
+       * @param length the length
+       * @throws SAXException the sax exception
+       */
       @Override
       public void characters(char[] ch, int start, int length) throws SAXException {
          elemWithValue = true;
       }
 
+      /**
+       * End document.
+       *
+       * @throws SAXException the sax exception
+       */
       @Override
       public void endDocument() throws SAXException {
          // do nothing

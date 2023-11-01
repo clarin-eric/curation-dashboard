@@ -12,7 +12,7 @@ public interface CCRService {
 	 * Returns all existing concepts in CCR prefetched and cached during initialization
 	 *
 	 * 
-	 * @return	all concepts from the CCR
+	 * @return	the ccr concepts
 	 * @throws CCRServiceNotAvailableException 
 	 * @see CCRConcept
 	 */

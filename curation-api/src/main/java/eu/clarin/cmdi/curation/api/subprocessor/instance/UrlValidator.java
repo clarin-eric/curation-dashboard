@@ -25,6 +25,9 @@ import jakarta.annotation.PostConstruct;
 
 import eu.clarin.cmdi.vlo.PIDUtils;
 
+/**
+ * The type Url validator.
+ */
 @Slf4j
 @Component
 public class UrlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
@@ -50,8 +53,14 @@ public class UrlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
             throw new RuntimeException("make sure property 'curation.clientUsername' is set and client with this name is in database");
          });
    }
-   
 
+
+   /**
+    * Process.
+    *
+    * @param instance       the instance
+    * @param instanceReport the instance report
+    */
    @Override
    public void process(CMDInstance instance, CMDInstanceReport instanceReport) {
       

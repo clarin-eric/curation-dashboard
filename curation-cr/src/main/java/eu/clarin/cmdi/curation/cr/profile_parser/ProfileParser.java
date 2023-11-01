@@ -16,26 +16,48 @@ import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The type Profile parser.
+ */
 @Slf4j
 public abstract class ProfileParser {
 
+   /**
+    * The Ccr service.
+    */
    protected CCRService ccrService;
 
+   /**
+    * The Vn.
+    */
    protected VTDNav vn;
 
    private CRElement _cur;
-   
+
+   /**
+    * Instantiates a new Profile parser.
+    *
+    * @param ccrService the ccr service
+    */
    public ProfileParser(CCRService ccrService) {
       
       this.ccrService = ccrService;
    }
 
-   public ParsedProfile parse(VTDNav navigator, ProfileHeader header) throws NoProfileCacheEntryException{
+   /**
+    * Parse parsed profile.
+    *
+    * @param navigator the navigator
+    * @param profileHeader the profile header
+    * @return the parsed profile
+    * @throws NoProfileCacheEntryException the no profile cache entry exception
+    */
+   public ParsedProfile parse(VTDNav navigator, ProfileHeader profileHeader) throws NoProfileCacheEntryException{
       vn = navigator;
       try {
-         fillInHeader(vn, header);
+         fillInHeader(vn, profileHeader);
          Collection<CRElement> nodes = processElements();
-         return createParsedProfile(header, nodes);
+         return createParsedProfile(profileHeader, nodes);
       }
       catch (VTDException e) {
          
@@ -45,25 +67,58 @@ public abstract class ProfileParser {
       }
    }
 
+   /**
+    * Gets cmd version.
+    *
+    * @return the cmd version
+    */
    protected abstract String getCMDVersion();
 
+   /**
+    * Concept attribute name string.
+    *
+    * @return the string
+    */
    protected abstract String conceptAttributeName();
 
+   /**
+    * Process name attribute node cr element.
+    *
+    * @return the cr element
+    * @throws VTDException the vtd exception
+    */
    protected abstract CRElement processNameAttributeNode() throws VTDException;
 
-   protected abstract ParsedProfile createParsedProfile(ProfileHeader header, Collection<CRElement> nodes) throws VTDException, NoProfileCacheEntryException;
+   /**
+    * Create parsed profile parsed profile.
+    *
+    * @param profileHeader the profile header
+    * @param nodes  the nodes
+    * @return the parsed profile
+    * @throws VTDException                 the vtd exception
+    * @throws NoProfileCacheEntryException the no profile cache entry exception
+    */
+   protected abstract ParsedProfile createParsedProfile(ProfileHeader profileHeader, Collection<CRElement> nodes) throws VTDException, NoProfileCacheEntryException;
 
-   protected ProfileHeader fillInHeader(VTDNav vn, ProfileHeader header) throws VTDException {
+   /**
+    * Fill in header profile header.
+    *
+    * @param vn     the vn
+    * @param profileHeader the profile header
+    * @return the profile header
+    * @throws VTDException the vtd exception
+    */
+   protected ProfileHeader fillInHeader(VTDNav vn, ProfileHeader profileHeader) throws VTDException {
       AutoPilot ap = new AutoPilot(vn);
       ap.declareXPathNameSpace("cmd", "http://www.clarin.eu/cmd/1");
       ap.declareXPathNameSpace("xs", "http://www.w3.org/2001/XMLSchema");
 
-      header.setId(evaluateXPath("//cmd:Header/cmd:ID/text()", ap));
-      header.setName(evaluateXPath("//cmd:Header/cmd:Name/text()", ap));
-      header.setDescription(evaluateXPath("//cmd:Header/cmd:Description/text()", ap));
-      header.setStatus(evaluateXPath("//cmd:Header/cmd:Status/text()", ap));
-      header.setCmdiVersion(getCMDVersion());
-      return header;
+      profileHeader.setId(evaluateXPath("//cmd:Header/cmd:ID/text()", ap));
+      profileHeader.setName(evaluateXPath("//cmd:Header/cmd:Name/text()", ap));
+      profileHeader.setDescription(evaluateXPath("//cmd:Header/cmd:Description/text()", ap));
+      profileHeader.setStatus(evaluateXPath("//cmd:Header/cmd:Status/text()", ap));
+      profileHeader.setCmdiVersion(getCMDVersion());
+      return profileHeader;
 
    }
 
@@ -168,18 +223,39 @@ public abstract class ProfileParser {
       return attributes;
    }
 
-   // utils
+   /**
+    * Evaluate x path string.
+    *
+    * @param xpath the xpath
+    * @param ap    the ap
+    * @return the string
+    * @throws VTDException the vtd exception
+    */
+// utils
    protected String evaluateXPath(String xpath, AutoPilot ap) throws VTDException {
       ap.selectXPath(xpath);
       int index = ap.evalXPath();
       return index != -1 ? vn.toString(index).trim() : null;
    }
 
+   /**
+    * Extract attribute value string.
+    *
+    * @param attrName the attr name
+    * @return the string
+    * @throws NavException the nav exception
+    */
    protected String extractAttributeValue(String attrName) throws NavException {
       int ind = vn.getAttrVal(attrName);
       return ind != -1 ? vn.toNormalizedString(ind) : null;
    }
 
+   /**
+    * Create concept ccr concept.
+    *
+    * @param uri the uri
+    * @return the ccr concept
+    */
    protected CCRConcept createConcept(String uri){
 
       if (uri == null)

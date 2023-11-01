@@ -18,7 +18,7 @@ import lombok.ToString;
 
 
 /**
- *
+ * The type Status detail dto.
  */
 @ToString
 @JsonRootName(value = "link")
@@ -26,64 +26,124 @@ import lombok.ToString;
 public class StatusDetailDto {
    
    private StatusDetail statusDetail;
-   
+
+   /**
+    * Instantiates a new Status detail dto.
+    *
+    * @param statusDetail the status detail
+    */
    public StatusDetailDto(StatusDetail statusDetail) {
       
       this.statusDetail = statusDetail;
    }
-   
+
+   /**
+    * Gets url.
+    *
+    * @return the url
+    */
    public String getUrl() {
       
       return this.statusDetail.getUrlname();
    }
-   
+
+   /**
+    * Gets checking date.
+    *
+    * @return the checking date
+    */
    @JsonSerialize(using = LocalDateTimeSerializer.class)
    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
    public LocalDateTime getCheckingDate() {
       
       return this.statusDetail.getCheckingDate();
    }
-   
+
+   /**
+    * Gets method.
+    *
+    * @return the method
+    */
    public String getMethod() {
       
       return this.statusDetail.getMethod();
    }
-   
+
+   /**
+    * Gets status code.
+    *
+    * @return the status code
+    */
    public Integer getStatusCode() {
       
       return this.statusDetail.getStatusCode();
    }
-   
+
+   /**
+    * Gets content length.
+    *
+    * @return the content length
+    */
    public Long getContentLength() {
       
       return this.statusDetail.getContentLength();
    }
-   
+
+   /**
+    * Gets duration.
+    *
+    * @return the duration
+    */
    public Integer getDuration() {
       
       return this.statusDetail.getDuration();
    }
-   
+
+   /**
+    * Gets redirects.
+    *
+    * @return the redirects
+    */
    public Integer getRedirects() {
       
       return this.statusDetail.getRedirectCount();
    }
-   
+
+   /**
+    * Gets message.
+    *
+    * @return the message
+    */
    public String getMessage() {
       
       return this.statusDetail.getMessage();
    }
-   
+
+   /**
+    * Gets collection.
+    *
+    * @return the collection
+    */
    public String getCollection() {
       
       return this.statusDetail.getProvidergroupname();
    }
-   
+
+   /**
+    * Gets origin.
+    *
+    * @return the origin
+    */
    public String getOrigin() {
       
       return this.statusDetail.getOrigin();
    }
-   
+
+   /**
+    * Gets expected mime type.
+    *
+    * @return the expected mime type
+    */
    public String getExpectedMimeType() {
       
       return this.statusDetail.getExpectedMimeType();

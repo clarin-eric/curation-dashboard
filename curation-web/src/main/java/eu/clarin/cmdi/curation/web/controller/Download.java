@@ -46,16 +46,33 @@ import eu.clarin.linkchecker.persistence.utils.Category;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.saxon.BasicTransformerFactory;
 
+/**
+ * The type Download.
+ */
 @Slf4j
 @Controller
 @RequestMapping("/download")
 public class Download {
 
+   /**
+    * The Conf.
+    */
    @Autowired
    ApiConfig conf;
+   /**
+    * The Em.
+    */
    @PersistenceContext
    EntityManager em;
 
+   /**
+    * Gets file.
+    *
+    * @param curationEntityType the curation entity type
+    * @param reportName         the report name
+    * @param format             the format
+    * @return the file
+    */
    @GetMapping("/{curationEntityType}/{reportName}")
    public ResponseEntity<StreamingResponseBody> getFile(@PathVariable("curationEntityType") String curationEntityType,
          @PathVariable("reportName") String reportName,
@@ -122,7 +139,16 @@ public class Download {
       return ResponseEntity.ok().contentType(new MediaType(mediaType)).body(stream);
    
    }
-   
+
+   /**
+    * Gets file.
+    *
+    * @param providergroupName the providergroup name
+    * @param category          the category
+    * @param format            the format
+    * @param zipped            the zipped
+    * @return the file
+    */
    @GetMapping("/linkchecker/{providergroupName}/{category}")
    public ResponseEntity<StreamingResponseBody> getFile(@PathVariable("providergroupName") String providergroupName,
          @PathVariable("category") Category category,
