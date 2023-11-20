@@ -280,15 +280,16 @@ public class CollectionAggregator {
                      );
 
       }
+      
       if (collectionReport.linkcheckerReport.totNumOfLinks > 0) {
          collectionReport.linkcheckerReport.aggregatedMaxScore = collectionReport.fileReport.numOfFilesProcessable 
                * collectionReport.linkcheckerReport.totNumOfCheckedLinks / (double) collectionReport.linkcheckerReport.totNumOfLinks;        
+
+         collectionReport.linkcheckerReport.aggregatedScore = (double) collectionReport.linkcheckerReport.ratioOfValidLinks
+               * collectionReport.fileReport.numOfFilesProcessable
+               * collectionReport.linkcheckerReport.totNumOfCheckedLinks / (double) collectionReport.linkcheckerReport.totNumOfLinks; 
       }
-
-      collectionReport.linkcheckerReport.aggregatedScore = (double) collectionReport.linkcheckerReport.ratioOfValidLinks
-            * collectionReport.fileReport.numOfFilesProcessable
-            * collectionReport.linkcheckerReport.totNumOfCheckedLinks / (double) collectionReport.linkcheckerReport.totNumOfLinks; 
-
+      
       collectionReport.fileReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore
             * collectionReport.fileReport.numOfFiles;
       
@@ -308,7 +309,8 @@ public class CollectionAggregator {
             * collectionReport.fileReport.numOfFilesProcessable;
           
       collectionReport.facetReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.maxScore
-            * collectionReport.fileReport.numOfFilesProcessable;      
+            * collectionReport.fileReport.numOfFilesProcessable;    
+      
 
 
 
@@ -322,6 +324,19 @@ public class CollectionAggregator {
                / collectionReport.fileReport.numOfFiles);         
          //profile
          collectionReport.profileReport.totNumOfProfiles = collectionReport.profileReport.profiles.size();
+         
+         //collection
+         collectionReport.aggregatedScore = collectionReport.fileReport.aggregatedScore + collectionReport.profileReport.aggregatedScore
+               + collectionReport.headerReport.aggregatedScore + collectionReport.resProxyReport.aggregatedScore
+               + collectionReport.xmlPopulationReport.aggregatedScore + collectionReport.xmlValidityReport.aggregatedScore
+               + collectionReport.linkcheckerReport.aggregatedScore + collectionReport.facetReport.aggregatedScore;
+         
+         collectionReport.aggregatedMaxScore = collectionReport.fileReport.aggregatedMaxScore + collectionReport.profileReport.aggregatedMaxScore
+               + collectionReport.headerReport.aggregatedMaxScore + collectionReport.resProxyReport.aggregatedMaxScore
+               + collectionReport.xmlPopulationReport.aggregatedMaxScore + collectionReport.xmlValidityReport.aggregatedMaxScore
+               + collectionReport.linkcheckerReport.aggregatedMaxScore + collectionReport.facetReport.aggregatedMaxScore;
+               
+         collectionReport.scorePercentage = collectionReport.aggregatedScore / collectionReport.aggregatedMaxScore;
 
       }
       if (collectionReport.fileReport.numOfFilesProcessable > 0) {
@@ -401,17 +416,5 @@ public class CollectionAggregator {
                / (double) collectionReport.fileReport.numOfFilesProcessable;         
 
       }  
-      //collection
-      collectionReport.aggregatedScore = collectionReport.fileReport.aggregatedScore + collectionReport.profileReport.aggregatedScore
-            + collectionReport.headerReport.aggregatedScore + collectionReport.resProxyReport.aggregatedScore
-            + collectionReport.xmlPopulationReport.aggregatedScore + collectionReport.xmlValidityReport.aggregatedScore
-            + collectionReport.linkcheckerReport.aggregatedScore + collectionReport.facetReport.aggregatedScore;
-      
-      collectionReport.aggregatedMaxScore = collectionReport.fileReport.aggregatedMaxScore + collectionReport.profileReport.aggregatedMaxScore
-            + collectionReport.headerReport.aggregatedMaxScore + collectionReport.resProxyReport.aggregatedMaxScore
-            + collectionReport.xmlPopulationReport.aggregatedMaxScore + collectionReport.xmlValidityReport.aggregatedMaxScore
-            + collectionReport.linkcheckerReport.aggregatedMaxScore + collectionReport.facetReport.aggregatedMaxScore;
-            
-      collectionReport.scorePercentage = collectionReport.aggregatedScore / collectionReport.aggregatedMaxScore;
    }
 }
