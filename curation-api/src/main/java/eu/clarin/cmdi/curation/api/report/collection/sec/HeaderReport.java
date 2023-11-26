@@ -4,6 +4,7 @@
  */
 package eu.clarin.cmdi.curation.api.report.collection.sec;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -42,6 +43,6 @@ public class HeaderReport {
    
    @XmlElementWrapper(name = "duplicatedMDSelfLinks")
    @XmlElement(name = "duplicatedMDSelfLink")
-   public Collection<String> duplicatedMDSelfLink;
+   public Collection<String> duplicatedMDSelfLink = new ArrayList<String>();
 
 }

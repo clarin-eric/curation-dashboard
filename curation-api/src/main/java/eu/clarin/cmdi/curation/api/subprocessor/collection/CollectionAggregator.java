@@ -184,9 +184,8 @@ public class CollectionAggregator {
             collectionReport.headerReport.numWithMdCollectionDisplayName++;
          }
          if(instanceReport.instanceHeaderReport.mdSelfLink != null) {
+            
             collectionReport.headerReport.numWithMdSelflink++;
-         }
-         else{
 
             if (this.mdSelfLinks.contains(instanceReport.instanceHeaderReport.mdSelfLink)) {
                collectionReport.headerReport.duplicatedMDSelfLink
