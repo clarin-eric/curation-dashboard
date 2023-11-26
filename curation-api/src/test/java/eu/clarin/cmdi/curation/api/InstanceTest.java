@@ -89,7 +89,7 @@ public class InstanceTest {
             }
          });
          
-         writer.write(" -- >");
+         writer.write(" -->");
          
       }
       catch(Exception ex) {
