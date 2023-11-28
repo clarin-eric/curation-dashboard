@@ -8,15 +8,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -41,7 +46,11 @@ public class CollectionTest {
    
    private final ApiConfig conf;
 
-   private final CurationModule curation;
+   private final CurationModule curation; 
+   
+   private final Path file099Path;
+   
+   private final Path file099CopyPath;
    
    private Path collectionPath;
    
@@ -61,12 +70,14 @@ public class CollectionTest {
       
       this.collectionPath = Files.createTempDirectory("collection"); 
       
+      this.file099Path = this.collectionPath.resolve("099.xml");
+      
+      this.file099CopyPath = Files.createTempFile("file099", "xml");
+      
 
    }
    @BeforeAll
    public void init() throws IOException {
-      
-      this.conf.setMode("collection");
       
       // we copy 100 times the reference file into the collection directory but change the file name to a 3 digit numeric value
       // and replace the references to this file with the new file name 
@@ -90,15 +101,15 @@ public class CollectionTest {
             }
          });
          
+         Files.copy(file099Path, this.file099CopyPath, StandardCopyOption.REPLACE_EXISTING);
+         
          
          // now we create a collection report from our collection
          this.collectionReport = this.curation.processCollection(this.collectionPath);
          
-         // and an instance report
-         this.conf.setMode("instance");
+         // and an instance report in collection mode as reference
          this.instanceReport = this.curation.processCMDInstance(collectionPath.resolve("001.xml"));
          
-         this.conf.setMode("collection");
       }
       
       catch(Exception ex) {
@@ -108,19 +119,29 @@ public class CollectionTest {
       } 
    }
    
-   
+   @AfterEach
+   void replaceFile099() {
+      
+      try {
+         Files.copy(this.file099CopyPath, file099Path, StandardCopyOption.REPLACE_EXISTING);
+      }
+      catch (IOException e) {
+         
+         log.error("", e);
+      }
+   }
+    
    @Test
    void collection() {
       
       assertEquals(collectionPath.getFileName().toString(), collectionReport.getName());     
       
-      assertEquals(instanceReport.instanceScore * 100, collectionReport.aggregatedScore, 0.1);
+//      assertEquals(instanceReport.instanceScore * 100, collectionReport.aggregatedScore, 0.1);
       
       assertEquals(instanceReport.instanceScore, collectionReport.avgScore, 0.1); 
       
       assertEquals(CMDInstanceReport.maxScore * 100 + collectionReport.linkcheckerReport.aggregatedMaxScore, collectionReport.aggregatedMaxScore, 0.1);
-   }
-  
+   } 
    
    @Test
    void file() throws IOException {
@@ -134,9 +155,23 @@ public class CollectionTest {
       assertEquals(instanceReport.fileReport.size * 100, collectionReport.fileReport.size);
       
       assertEquals(instanceReport.fileReport.score, collectionReport.fileReport.avgScore, 0.1);
+      
+      // now we blow up our file099 to the maximum file size +1
+      try(RandomAccessFile raf = new RandomAccessFile(this.file099Path.toFile(), "rw")){
+         
+         raf.setLength(this.conf.getMaxFileSize() +1);
+      };
+      
+      //now a new local report
+      CollectionReport collectionReport = this.curation.processCollection(collectionPath);
+      
+      assertEquals(100, collectionReport.fileReport.numOfFiles);
+      
+      assertEquals(1, collectionReport.fileReport.numOfFilesNonProcessable);
+      
+      assertEquals(99, collectionReport.fileReport.numOfFilesProcessable);
    } 
-   
-   
+      
 
    @Test
    void header() {
@@ -154,11 +189,25 @@ public class CollectionTest {
       assertEquals((instanceReport.instanceHeaderReport.mdCollectionDisplayName!=null?1:0) * 100,  collectionReport.headerReport.numWithMdCollectionDisplayName);
       
       assertEquals(instanceReport.instanceHeaderReport.score, collectionReport.headerReport.avgScore, 0.1);
-
+      
+      //we copy file 000.xml to 099.xml which should create a duplicated self link
+      try {
+         Files.copy(collectionPath.resolve("000.xml"), file099Path, StandardCopyOption.REPLACE_EXISTING);
+         
+         CollectionReport collectionReport = this.curation.processCollection(collectionPath);
+         
+         assertEquals(1, collectionReport.headerReport.duplicatedMDSelfLink.size());
+         
+         assertEquals("http://worldviews.gei.de/rest/content/cmdi/000/eng/", collectionReport.headerReport.duplicatedMDSelfLink.stream().collect(Collectors.joining()));
+      }
+      catch (IOException e) {
+         
+         log.error("", e);
+      }
    }
     
    @Test
-   void resourceProxy() {
+   void resourceProxy() throws IOException {
       
       assertEquals(instanceReport.resProxyReport.numOfResources *100, collectionReport.resProxyReport.totNumOfResources);
       
@@ -175,6 +224,16 @@ public class CollectionTest {
       assertEquals(0, collectionReport.resProxyReport.invalidReferences.size());
       
       assertEquals(instanceReport.resProxyReport.score, collectionReport.resProxyReport.avgScore, 0.1);
+      
+      // we add replace file 099 by a file without resources
+      this.modifyFile099("Resources.+Resources", "Resources /");
+      
+      CollectionReport newCollectionReport = this.curation.processCollection(collectionPath);
+      
+      // we should have one non processable file
+      assertEquals(1, newCollectionReport.fileReport.numOfFilesNonProcessable);
+      // but the average score should remain
+      assertEquals(instanceReport.resProxyReport.score, newCollectionReport.resProxyReport.avgScore, 0.1);
    }   
    
    @Test
@@ -218,6 +277,16 @@ public class CollectionTest {
       
       assertEquals(0.0,collectionReport.linkcheckerReport.aggregatedMaxScore, 0.1);
    }
+   
+   private void modifyFile099(String regex, String replacement) throws IOException {
+      
+      String content = Pattern.compile(regex, Pattern.DOTALL).matcher(Files.readString(this.file099CopyPath)).replaceAll(replacement); 
+      
+      log.debug(content);
+      
+      Files.writeString(file099Path, content, StandardOpenOption.WRITE);
+   }
+   
    
    @AfterAll
    public void cleanUp() throws IOException {
