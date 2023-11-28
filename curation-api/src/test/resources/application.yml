@@ -10,6 +10,7 @@ spring:
          ddl-auto: none
       database-platform: org.hibernate.dialect.MariaDBDialect    
 curation:
+   mode: all
    pph-service:
       xsd_cache: ${java.io.tmpdir}/curation/xsd_cache
       restApi: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
@@ -42,7 +43,8 @@ curation:
       out: >
          /tmp/public
    max_file_size: 100000
-   threadpoolSize: 3           
+   threadpoolSize: 10          
 logging:
    level:
-      root: ERROR         
+      root: ERROR 
+      eu.clarin.cmdi.curation.api.CollectionTest: DEBUG        
