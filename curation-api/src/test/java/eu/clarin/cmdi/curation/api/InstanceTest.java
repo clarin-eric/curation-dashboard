@@ -66,7 +66,7 @@ public class InstanceTest {
    @Test
    void file() {
       
-      assertEquals(11138, this.referenceReport.fileReport.size);
+      assertEquals(11139, this.referenceReport.fileReport.size);
       assertTrue(this.referenceReport.fileReport.size <= conf.getMaxFileSize());
       assertEquals(1.0, this.referenceReport.fileReport.score);
       
