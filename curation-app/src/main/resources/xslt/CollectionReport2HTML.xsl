@@ -260,6 +260,62 @@
             <p>
             Number of files with MdCollectionDisplayName: <xsl:value-of select="format-number(numWithMdCollectionDisplayName, '###,##0')" />
             </p>
+            
+           <xsl:if test="./duplicatedMDSelfLinks/duplicatedMDSelfLink">
+            <hr />
+            <details>
+               <summary>
+                  <h2 id="recordDetails">Record details:</h2>
+                  </summary>
+                  <p>The record details section shows the particalarities of each record as far as they're of importance for the data provider.</p>
+               </details>                  
+               <table class="reportTable">
+                  <thead>
+                     <tr>
+                        <th>mdSelfLink</th>
+                        <th>Origins</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <xsl:for-each
+                        select="./duplicatedMDSelfLinks/duplicatedMDSelfLink">
+
+                        <xsl:if test="not(position() > 100)">
+                           <tr>
+                              <td>
+                                 <xsl:value-of select="./mdSelfLink" />
+                              </td>
+                              <td>
+                                 <button type="button" class="showUrlInfo btn btn-info"
+                                    onClick="toggleInfo(this)">Show</button>
+                              </td>
+                           </tr>
+                           <tr hidden="true">
+                              <td colspan="2">
+                                 <ul>
+                                    <xsl:for-each select="./origins/origin">
+                                       <li>                                                                       
+                                          <a>
+                                             <xsl:attribute name="href">/record/<xsl:value-of
+			                                       select="." /></xsl:attribute>
+			                                    <xsl:value-of select="." />
+			                                 </a>
+                                       </li>
+                                    </xsl:for-each>
+                                 </ul>
+                              </td>
+                           </tr>
+                        </xsl:if>
+                     </xsl:for-each>
+                     <xsl:if
+                        test="count(./duplicatedMDSelfLinks/duplicatedMDSelfLink) > 100">
+                        <tr>
+                           <td colspan="2">[...] complete list in downloadable report</td>
+                        </tr>
+                     </xsl:if>
+                  </tbody>
+               </table>
+            </xsl:if>                      
    </xsl:template>
      
    <!-- profileReport -->

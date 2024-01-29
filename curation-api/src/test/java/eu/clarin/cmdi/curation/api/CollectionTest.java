@@ -17,7 +17,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.AfterAll;
@@ -198,7 +197,11 @@ public class CollectionTest {
          
          assertEquals(1, collectionReport.headerReport.duplicatedMDSelfLink.size());
          
-         assertEquals("http://worldviews.gei.de/rest/content/cmdi/000/eng/", collectionReport.headerReport.duplicatedMDSelfLink.stream().collect(Collectors.joining()));
+         assertEquals(
+               "http://worldviews.gei.de/rest/content/cmdi/000/eng/", 
+               collectionReport.headerReport.duplicatedMDSelfLink
+                  .stream().map(link -> link.mdSelfLink).findFirst().get()
+            );
       }
       catch (IOException e) {
          

@@ -10,6 +10,7 @@ import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport.RecordDetail;
 import eu.clarin.cmdi.curation.api.report.collection.sec.FacetReport.FacetCollectionStruct;
+import eu.clarin.cmdi.curation.api.report.collection.sec.HeaderReport.MDSelfLink;
 import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Statistics;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport.InvalidReference;
@@ -30,6 +31,8 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Stream;
@@ -51,7 +54,7 @@ public class CollectionAggregator {
    @Autowired
    private UrlRepository uRep;
 
-   private Collection<String> mdSelfLinks = new ArrayList<String>();
+   private Map<String, Collection<String>> mdSelfLinks = new HashMap<String, Collection<String>>();
 
    /**
     * Process.
@@ -188,14 +191,11 @@ public class CollectionAggregator {
          if(instanceReport.instanceHeaderReport.mdSelfLink != null) {
             
             collectionReport.headerReport.numWithMdSelflink++;
+            
+            this.mdSelfLinks
+               .computeIfAbsent(instanceReport.instanceHeaderReport.mdSelfLink, k -> new ArrayList<String>())
+               .add(instanceReport.fileReport.location);
 
-            if (this.mdSelfLinks.contains(instanceReport.instanceHeaderReport.mdSelfLink)) {
-               collectionReport.headerReport.duplicatedMDSelfLink
-                     .add(instanceReport.instanceHeaderReport.mdSelfLink);
-            }
-            else {
-               this.mdSelfLinks.add(instanceReport.instanceHeaderReport.mdSelfLink);
-            }
          }
 
          collectionReport.headerReport.aggregatedScore += instanceReport.instanceHeaderReport.score;
@@ -242,6 +242,13 @@ public class CollectionAggregator {
    }
 
    private void calculateAverages(CollectionReport collectionReport) {
+      // find all mdSelfLinks which appear in more than origin
+      
+      this.mdSelfLinks.entrySet()
+         .stream()
+         .filter(entrySet -> entrySet.getValue().size() > 1)
+         .forEach(entrySet -> collectionReport.headerReport.duplicatedMDSelfLink.add(new MDSelfLink(entrySet.getKey(), entrySet.getValue())));
+      
       // lincheckerReport
 
       try (Stream<AggregatedStatus> stream = aRep.findAllByProvidergroupName(collectionReport.getName())) {
