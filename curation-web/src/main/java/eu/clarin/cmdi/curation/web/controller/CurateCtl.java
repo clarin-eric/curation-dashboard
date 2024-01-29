@@ -243,7 +243,7 @@ public class CurateCtl {
                   Disallow: /download
                   Disallow: /record
                   
-                  User-agent: CLARIN Linkchecker: https://www.clarin.eu/linkchecker
+                  User-agent: CLARIN-Linkchecker
                   Allow: /
                   """
                );
