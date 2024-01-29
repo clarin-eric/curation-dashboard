@@ -67,6 +67,8 @@ public class CollectionAggregator {
 
       conf.getFacets()
             .forEach(facetName -> collectionReport.facetReport.facets.add(new FacetCollectionStruct(facetName)));
+      
+      collectionReport.fileReport.collectionRoot = conf.getDirectory().getDataRoot().relativize(collection.getPath()).toString();
 
       ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadpoolSize());
 

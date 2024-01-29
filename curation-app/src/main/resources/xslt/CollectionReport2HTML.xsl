@@ -46,6 +46,14 @@
 					<xsl:value-of
 						select="replace(//fileReport/provider,'_',' ')" />
 				</h3>
+				<a>
+                 <xsl:attribute name="href">
+                   <xsl:text>https://vlo.clarin.eu/search?q=_fileName:*</xsl:text>
+                   <xsl:value-of select="//fileReport/collectionRoot" />
+                   <xsl:text>*</xsl:text>	
+                 </xsl:attribute>			
+				     <xsl:text>search for collection in VLO</xsl:text>
+				</a>
 				
 				     <!-- scoreTable -->
 
@@ -121,7 +129,6 @@
             <xsl:apply-templates select="xmlPopulationReport" />
             <hr />
             <xsl:apply-templates select="linkcheckerReport" />
-				<hr />
 				
            <xsl:if test="./recordDetails/record">
             <hr />
@@ -262,18 +269,14 @@
             </p>
             
            <xsl:if test="./duplicatedMDSelfLinks/duplicatedMDSelfLink">
-            <hr />
-            <details>
-               <summary>
-                  <h2 id="recordDetails">Record details:</h2>
-                  </summary>
-                  <p>The record details section shows the particalarities of each record as far as they're of importance for the data provider.</p>
-               </details>                  
+
+               <h2 id="dublicatedMDSelfLinks">Dublicated MDSelfLinks:</h2>
+                
                <table class="reportTable">
                   <thead>
                      <tr>
-                        <th>mdSelfLink</th>
-                        <th>Origins</th>
+                        <th>MDSelfLink</th>
+                        <th>Info</th>
                      </tr>
                   </thead>
                   <tbody>
