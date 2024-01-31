@@ -297,14 +297,19 @@
                               <td colspan="2">
                                  <ul>
                                     <xsl:for-each select="./origins/origin">
-                                       <li>                                                                       
-                                          <a>
-                                             <xsl:attribute name="href">/record/<xsl:value-of
-			                                       select="." /></xsl:attribute>
-			                                    <xsl:value-of select="." />
-			                                 </a>
-                                       </li>
+                                       <xsl:if test="not(position() > 100)">
+	                                       <li>                                                                       
+	                                          <a>
+	                                             <xsl:attribute name="href">/record/<xsl:value-of
+				                                       select="." /></xsl:attribute>
+				                                    <xsl:value-of select="." />
+				                                 </a>
+	                                       </li>
+                                       </xsl:if>
                                     </xsl:for-each>
+                                    <xsl:if test="count(./origins/origin) > 100">
+                                       <li>[...] complete list in downloadable report</li>
+                                    </xsl:if>
                                  </ul>
                               </td>
                            </tr>
