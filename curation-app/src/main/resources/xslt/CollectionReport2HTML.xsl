@@ -54,7 +54,7 @@
                  </xsl:attribute>			
 				     <xsl:text>search for collection in VLO</xsl:text>
 				</a>
-				
+				<br />
 				     <!-- scoreTable -->
 
 			   <table class="reportTable">
@@ -270,7 +270,7 @@
             
            <xsl:if test="./duplicatedMDSelfLinks/duplicatedMDSelfLink">
 
-               <h2 id="dublicatedMDSelfLinks">Dublicated MDSelfLinks:</h2>
+               <h2 id="duplicatedMDSelfLinks">Duplicated MDSelfLinks:</h2>
                 
                <table class="reportTable">
                   <thead>
