@@ -46,7 +46,15 @@
 					<xsl:value-of
 						select="replace(//fileReport/provider,'_',' ')" />
 				</h3>
-				
+				<a>
+                 <xsl:attribute name="href">
+                   <xsl:text>https://vlo.clarin.eu/search?q=_fileName:*</xsl:text>
+                   <xsl:value-of select="//fileReport/collectionRoot" />
+                   <xsl:text>*</xsl:text>	
+                 </xsl:attribute>			
+				     <xsl:text>search for collection in VLO</xsl:text>
+				</a>
+				<br />
 				     <!-- scoreTable -->
 
 			   <table class="reportTable">
@@ -121,7 +129,6 @@
             <xsl:apply-templates select="xmlPopulationReport" />
             <hr />
             <xsl:apply-templates select="linkcheckerReport" />
-				<hr />
 				
            <xsl:if test="./recordDetails/record">
             <hr />
@@ -260,6 +267,63 @@
             <p>
             Number of files with MdCollectionDisplayName: <xsl:value-of select="format-number(numWithMdCollectionDisplayName, '###,##0')" />
             </p>
+            
+           <xsl:if test="./duplicatedMDSelfLinks/duplicatedMDSelfLink">
+
+               <h2 id="duplicatedMDSelfLinks">Duplicated MDSelfLinks:</h2>
+                
+               <table class="reportTable">
+                  <thead>
+                     <tr>
+                        <th>MDSelfLink</th>
+                        <th>Info</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <xsl:for-each
+                        select="./duplicatedMDSelfLinks/duplicatedMDSelfLink">
+
+                        <xsl:if test="not(position() > 100)">
+                           <tr>
+                              <td>
+                                 <xsl:value-of select="./mdSelfLink" />
+                              </td>
+                              <td>
+                                 <button type="button" class="showUrlInfo btn btn-info"
+                                    onClick="toggleInfo(this)">Show</button>
+                              </td>
+                           </tr>
+                           <tr hidden="true">
+                              <td colspan="2">
+                                 <ul>
+                                    <xsl:for-each select="./origins/origin">
+                                       <xsl:if test="not(position() > 100)">
+	                                       <li>                                                                       
+	                                          <a>
+	                                             <xsl:attribute name="href">/record/<xsl:value-of
+				                                       select="." /></xsl:attribute>
+				                                    <xsl:value-of select="." />
+				                                 </a>
+	                                       </li>
+                                       </xsl:if>
+                                    </xsl:for-each>
+                                    <xsl:if test="count(./origins/origin) > 100">
+                                       <li>[...] complete list in downloadable report</li>
+                                    </xsl:if>
+                                 </ul>
+                              </td>
+                           </tr>
+                        </xsl:if>
+                     </xsl:for-each>
+                     <xsl:if
+                        test="count(./duplicatedMDSelfLinks/duplicatedMDSelfLink) > 100">
+                        <tr>
+                           <td colspan="2">[...] complete list in downloadable report</td>
+                        </tr>
+                     </xsl:if>
+                  </tbody>
+               </table>
+            </xsl:if>                      
    </xsl:template>
      
    <!-- profileReport -->

@@ -1,3 +1,8 @@
+# 6.3.0
+- upgrade to Spring Boot 3.2.2
+- adding origin to duplicated mdSelflinks and rendering list in HTML view (issue #213)
+- linking collection to VLO (issue #13)
+
 # 6.2.0
 - upgrade to Spring Boot 3.1.4
 - adding robots.txt to CurateCtl to block bot access to /download and /record

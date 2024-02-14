@@ -48,7 +48,7 @@ public class ApiConfig {
             log.warn(
                   "loading default VloConfig.xml from vlo-commons.jar - PROGRAM WILL WORK BUT WILL PROBABABLY DELIVER UNATTENDED RESULTS!!!");
             log.warn("make sure to define a valid curation:vlo_config_location in the file application.yml");
-            return new DefaultVloConfigFactory().newConfig();
+            return DefaultVloConfigFactory.configureDefaultMappingLocations(new DefaultVloConfigFactory().newConfig());
          }
          else {
             log.info("loading VloConfig.xml from location {}", vloConfigLocation);

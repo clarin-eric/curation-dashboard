@@ -26,6 +26,8 @@ public class FileReport {
    @XmlAttribute
    public double avgScore;
    @XmlElement
+   public String collectionRoot;
+   @XmlElement
    public String provider;
    @XmlElement
    public long numOfFiles;

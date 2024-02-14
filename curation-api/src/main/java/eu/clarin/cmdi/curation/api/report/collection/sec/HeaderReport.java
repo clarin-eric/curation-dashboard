@@ -13,6 +13,8 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 
 /**
@@ -42,7 +44,19 @@ public class HeaderReport {
    public long numWithMdCollectionDisplayName;
    
    @XmlElementWrapper(name = "duplicatedMDSelfLinks")
-   @XmlElement(name = "duplicatedMDSelfLink")
-   public Collection<String> duplicatedMDSelfLink = new ArrayList<String>();
+   public Collection<MDSelfLink> duplicatedMDSelfLink = new ArrayList<MDSelfLink>();
+   
+   @XmlRootElement
+   @RequiredArgsConstructor
+   @NoArgsConstructor(force = true)
+   public static class MDSelfLink {
+      
+      @XmlElement
+      public final String mdSelfLink;
+      
+      @XmlElementWrapper(name = "origins")
+      @XmlElement(name = "origin")
+      public final Collection<String> origin;
+   }
 
 }
