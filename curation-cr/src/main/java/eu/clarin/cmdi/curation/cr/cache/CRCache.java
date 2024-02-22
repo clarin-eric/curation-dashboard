@@ -74,7 +74,7 @@ public class CRCache {
     * @throws NoProfileCacheEntryException the no profile cache entry exception
     */
    @Cacheable(value = "publicProfileCache", key = "#profileHeader.id")
-   public ProfileCacheEntry getPublicEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException {
+   public ProfileCacheEntry getPublicEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException, CRServiceStorageException {
       return getProfileCacheEntry(profileHeader);
    }
 
@@ -86,11 +86,11 @@ public class CRCache {
     * @throws NoProfileCacheEntryException the no profile cache entry exception
     */
    @Cacheable(value = "privateProfileCache", key = "#profileHeader.id", condition = "#profileHeader.reliable")
-   public ProfileCacheEntry getPrivateEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException {
+   public ProfileCacheEntry getPrivateEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException, CRServiceStorageException {
       return getProfileCacheEntry(profileHeader);
    }
    
-   private ProfileCacheEntry getProfileCacheEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException {
+   private ProfileCacheEntry getProfileCacheEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException, CRServiceStorageException {
       
       String fileName = profileHeader.getSchemaLocation().replaceAll("[/.:]", "_");
       

@@ -2,14 +2,16 @@ package eu.clarin.cmdi.curation.app;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.stream.Stream;
 
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,7 +43,6 @@ import lombok.extern.slf4j.Slf4j;
 @EntityScan(basePackages = "eu.clarin.linkchecker.persistence.model")
 @EnableCaching
 @EnableConfigurationProperties
-@EnableAutoConfiguration
 @Slf4j
 public class CurationApp {
    
@@ -101,29 +102,34 @@ public class CurationApp {
          if("all".equalsIgnoreCase(conf.getMode()) || "profile".equalsIgnoreCase(conf.getMode())) {
             
             final AllProfileReport allProfileReport = new AllProfileReport();
-   
-   
-            pphService.getProfileHeaders().forEach(header -> {
-               
-               log.info("start processing profile '{}'", header.getId());               
-   
-               try {
-                  CMDProfileReport profileReport = curation.processCMDProfile(header.getId());
-                  
-                  allProfileReport.addReport(profileReport);
-                     
-                  storage.saveReport(profileReport, CurationEntityType.PROFILE, false);
-         
-               }
-               catch (MalformedURLException e1) {
-                  
-                  log.error("malformed URL for id '{}' - check the setting for curation.pph-service.restApi");
-               }
-               
-               log.info("done processing profile '{}'", header.getId());
-            });
-            
-            storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);
+
+
+            try {
+               pphService.getProfileHeaders().forEach(header -> {
+
+                  log.info("start processing profile '{}'", header.getId());
+
+                  try {
+                     CMDProfileReport profileReport = curation.processCMDProfile(header.getId());
+
+                     allProfileReport.addReport(profileReport);
+
+                     storage.saveReport(profileReport, CurationEntityType.PROFILE, false);
+
+                  }
+                  catch (MalformedURLException e1) {
+
+                     log.error("malformed URL for id '{}' - check the setting for curation.pph-service.restApi", header.getId());
+                  }
+
+                  log.info("done processing profile '{}'", header.getId());
+               });
+
+               storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);
+            }
+            catch (PPHServiceNotAvailableException e) {
+               throw new RuntimeException(e);
+            }
 
          }
          
@@ -161,19 +167,19 @@ public class CurationApp {
          
          log.info("start processing collection from path '{}'", path);
          
-         CollectionReport colectionReport = curation.processCollection(path);
+         CollectionReport collectionReport = curation.processCollection(path);
          
-         allCollectionReport.addReport(colectionReport);
-         allLinkcheckerReport.addReport(colectionReport);
+         allCollectionReport.addReport(collectionReport);
+         allLinkcheckerReport.addReport(collectionReport);
          
-         storage.saveReport(colectionReport, CurationEntityType.COLLECTION, true);
+         storage.saveReport(collectionReport, CurationEntityType.COLLECTION, true);
          
          log.info("done processing collection from path '{}'", path);
          
       }
       else {
-         try {
-            Files.newDirectoryStream(path).forEach(dir -> processCollection(dir, allCollectionReport, allLinkcheckerReport));
+         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path)){
+            directoryStream.forEach(dir -> processCollection(dir, allCollectionReport, allLinkcheckerReport));
          }
          catch (IOException e) {
             log.error("can't create directory stream for path '{}'", path);
@@ -184,8 +190,8 @@ public class CurationApp {
    
    private boolean isCollectionRoot(Path path) {
       
-      try {
-         return Files.walk(path, 1).anyMatch(fileOrDirectory -> Files.isRegularFile(fileOrDirectory));
+      try (Stream<Path> stream = Files.walk(path, 1)){
+         return stream.anyMatch(Files::isRegularFile);
       }
       catch (IOException e) {
          

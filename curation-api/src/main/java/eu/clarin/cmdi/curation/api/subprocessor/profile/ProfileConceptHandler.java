@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -54,8 +55,11 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
          return;
 
       }
-      
-      report.conceptReport =  new ConceptReport();
+      catch (CRServiceStorageException e) {
+          throw new RuntimeException(e);
+      }
+
+       report.conceptReport =  new ConceptReport();
       
       final Map<String, ConceptReport.Concept> conceptMap = new HashMap<String, ConceptReport.Concept>();
       

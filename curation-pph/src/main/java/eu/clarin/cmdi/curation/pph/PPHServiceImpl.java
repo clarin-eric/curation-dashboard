@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.pph;
 
 import java.util.Collection;
 
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class PPHServiceImpl implements PPHService {
     * @return the profile headers
     */
    @Override
-   public Collection<ProfileHeader> getProfileHeaders() {
+   public Collection<ProfileHeader> getProfileHeaders() throws PPHServiceNotAvailableException {
 
       return pphCache.getProfileHeadersMap(props.getRestApi(), props.getQuery()).values();
 
@@ -46,7 +47,7 @@ public class PPHServiceImpl implements PPHService {
     * @return the profile header identified by the given profile id
     */
    @Override
-   public ProfileHeader getProfileHeader(String profileId) {
+   public ProfileHeader getProfileHeader(String profileId) throws PPHServiceNotAvailableException {
       
       return pphCache.getProfileHeadersMap(props.getRestApi(), props.getQuery()).get(profileId);
    

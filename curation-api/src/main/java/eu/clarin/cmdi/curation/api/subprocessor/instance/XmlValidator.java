@@ -7,6 +7,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.ValidatorHandler;
 
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.xml.sax.Attributes;
@@ -62,8 +63,12 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
          
          return;
       }
-      
-      final int messageCount = report.details.size();
+      catch (CRServiceStorageException e) {
+
+          throw new RuntimeException(e);
+      }
+
+       final int messageCount = report.details.size();
 
       schemaValidator.setErrorHandler(new CMDErrorHandler(report));
       schemaValidator.setContentHandler(new CMDInstanceContentHandler(instance, report));

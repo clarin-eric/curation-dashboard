@@ -1,5 +1,7 @@
 package eu.clarin.cmdi.curation.pph;
 
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
+
 import java.util.Collection;
 
 /**
@@ -13,13 +15,13 @@ public interface PPHService {
     * @param profileId the profile id
     * @return the profile header
     */
-   public ProfileHeader getProfileHeader(String profileId);
+   public ProfileHeader getProfileHeader(String profileId) throws PPHServiceNotAvailableException;
 
    /**
     * Gets profile headers.
     *
     * @return the profile headers
     */
-   public Collection<ProfileHeader> getProfileHeaders();
+   public Collection<ProfileHeader> getProfileHeaders() throws PPHServiceNotAvailableException;
 
 }

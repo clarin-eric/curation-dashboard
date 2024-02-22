@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.ph;
 
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
@@ -34,7 +35,7 @@ class ProfileHeadersTests {
    CacheManager cacheManager;
 
    @Test
-   void createPublicProfiles() {
+   void createPublicProfiles() throws PPHServiceNotAvailableException {
 
       assertEquals(
             service.getProfileHeaders().stream()
@@ -48,7 +49,7 @@ class ProfileHeadersTests {
 
    }
    @Test
-   void useCache() {
+   void useCache() throws PPHServiceNotAvailableException {
       service.getProfileHeaders();
       
       assertNotNull(cacheManager.getCache("pphCache").get(crProps.getQuery()));

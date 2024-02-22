@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 import javax.xml.validation.Schema;
 
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -70,8 +72,14 @@ public class CRServiceImpl implements CRService {
    @Override
    public ProfileHeader createProfileHeader(String schemaLocation, String cmdiVersion, boolean isLocalFile) {
       ProfileHeader header = null;
-      if (!isLocalFile && schemaLocation.startsWith(props.getRestApi()))
-         header = pphService.getProfileHeader(getIdFromSchemaLocation(schemaLocation));
+      if (!isLocalFile && schemaLocation.startsWith(props.getRestApi())) {
+         try {
+            header = pphService.getProfileHeader(getIdFromSchemaLocation(schemaLocation));
+         }
+         catch (PPHServiceNotAvailableException e) {
+            throw new RuntimeException(e);
+         }
+      }
 
       if (header == null) {
          header = new ProfileHeader();
@@ -111,13 +119,13 @@ public class CRServiceImpl implements CRService {
    }
 
    @Override
-   public ParsedProfile getParsedProfile(ProfileHeader header) throws NoProfileCacheEntryException {
+   public ParsedProfile getParsedProfile(ProfileHeader header) throws NoProfileCacheEntryException, CRServiceStorageException {
 
       return getEntry(header).getParsedProfile();
 
    }
 
-   private synchronized ProfileCacheEntry getEntry(ProfileHeader header) throws NoProfileCacheEntryException {
+   private synchronized ProfileCacheEntry getEntry(ProfileHeader header) throws NoProfileCacheEntryException, CRServiceStorageException {
       
       if(header.getId() == null || header.getId().isEmpty()) {
          header.setId(createProfileHeader(header.getSchemaLocation(), header.getCmdiVersion(), header.isLocalFile()).getId());
@@ -128,7 +136,7 @@ public class CRServiceImpl implements CRService {
    }
 
    @Override
-   public Schema getSchema(ProfileHeader header) throws NoProfileCacheEntryException {
+   public Schema getSchema(ProfileHeader header) throws NoProfileCacheEntryException, CRServiceStorageException {
 
       return getEntry(header).getSchema();
 

@@ -36,7 +36,7 @@ public class PPHCache {
     * @return the profile headers map with profile id as key
     */
    @Cacheable(value = "pphCache", key = "#query")
-   public Map<String, ProfileHeader> getProfileHeadersMap(String restUrl, String query) {
+   public Map<String, ProfileHeader> getProfileHeadersMap(String restUrl, String query) throws PPHServiceNotAvailableException {
 
       Map<String, ProfileHeader> profileHeaders = new ConcurrentHashMap<String, ProfileHeader>();
 
@@ -57,43 +57,29 @@ public class PPHCache {
             @Override
             public void startElement(String uri, String localName, String qName, Attributes attributes)
                   throws SAXException {
+
                switch(qName) {
-                  case "profileDescription":
+                  case "profileDescription" -> {
                      header = new ProfileHeader();
                      header.setCmdiVersion("1.x");
                      header.setPublic(true);
-                     break;
-                     
-                  case "id":
-                  case "name":
-                  case "description":
-                  case "status":
-                     elementValue = new StringBuilder();
-                     break;
-                  default:
-                     break;
+                  }
+                  case "id", "name", "description", "status" -> elementValue = new StringBuilder();
                }
             }
 
             @Override
             public void endElement(String uri, String localName, String qName) throws SAXException {
+
                switch (qName) {
-                  case "id":
+                  case "id" -> {
                      header.setId(elementValue.toString());
                      profileHeaders.put(header.getId(), header);
                      header.setSchemaLocation(restUrl + "/" + elementValue.toString() + "/xsd");
-                     break;
-                  case "name":
-                     header.setName(elementValue.toString());
-                     break;
-                  case "description":
-                     header.setDescription(elementValue.toString());
-                     break;
-                  case "status":
-                     header.setStatus(elementValue.toString().toLowerCase());
-                     break;
-                   default:
-                      break;
+                  }
+                  case "name" -> header.setName(elementValue.toString());
+                  case "description" -> header.setDescription(elementValue.toString());
+                  case "status" -> header.setStatus(elementValue.toString().toLowerCase());
                }
             }
 

@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.api.vlo_extension;
 
 import java.util.*;
 
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -105,8 +106,11 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
                log.error("no ProfileCacheEntry object for profile id '{}'", header.getId());
 
             }
-            
-            return result;
+            catch (CRServiceStorageException e) {
+                throw new RuntimeException(e);
+            }
+
+             return result;
          }
 
          @Override
