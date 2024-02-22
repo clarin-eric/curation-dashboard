@@ -31,8 +31,8 @@ curation:
       restApi: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
       query: "?registrySpace=published&status=production&status=development&&status=deprecated"
    ccr-service:
-      restApi: "https://openskos.meertens.knaw.nl/ccr/api/find-concepts"
-      query: "?q=status:[*%20TO%20*]&fl=status,uri,prefLabel@en&format=json&rows=5000"   
+      restApi: "https://vocabularies.clarin.eu/clavas/rest/v1/data"
+      query: "?uri=${conceptURI}"
    mode: all
    directory:
       home: ${APPLICATION_HOME_DIRECTORY}
