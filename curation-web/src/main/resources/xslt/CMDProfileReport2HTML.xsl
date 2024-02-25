@@ -306,8 +306,7 @@
 							select="./conceptReport/concepts/concept">
 							<tr>
 								<xsl:variable name="href">
-									<xsl:text>https://vocabularies.clarin.eu/clavas/ccr/en/page/?uri=</xsl:text>
-									<xsl:value-of select="encode-for-uri(./@uri)" />
+									<xsl:value-of select="./@uri" />
 								</xsl:variable>
 								<td>
 									<a href="{$href}" title="{$href}" target="_blank">
