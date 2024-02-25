@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.ccr;
 
 import java.util.Collection;
 
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,18 +25,8 @@ class CCRServiceImpl implements CCRService {
     * @return the concept
     */
    @Override
-   public CCRConcept getConcept(String uri) {
-      return cache.getCCRConceptMap().get(uri);
-   }
+   public synchronized CCRConcept getConcept(String uri) throws CCRServiceNotAvailableException {
 
-   /**
-    * Gets all.
-    *
-    * @return the all
-    */
-   @Override
-   public Collection<CCRConcept> getAll() {
-      return cache.getCCRConceptMap().values();
+      return cache.getCCRConcept(uri);
    }
-
 }

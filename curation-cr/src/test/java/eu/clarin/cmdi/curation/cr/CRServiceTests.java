@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.cr;
 
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
@@ -36,7 +37,7 @@ class CRServiceTests {
    CacheManager cacheManager;
 
 	@Test
-	void getCRService() {
+	void getCRService() throws PPHServiceNotAvailableException {
 
 	   
 	   phService.getProfileHeaders().stream().limit(5).forEach(header -> {
@@ -54,7 +55,7 @@ class CRServiceTests {
 	}
 	
 	@Test
-	void useUache() {
+	void useUache() throws PPHServiceNotAvailableException {
 	   
       phService.getProfileHeaders().stream().limit(5).forEach(header -> {
 

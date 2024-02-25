@@ -1,3 +1,6 @@
+# 6.3.1
+- adapting concept registry access 
+
 # 6.3.0
 - upgrade to Spring Boot 3.2.2
 - adding origin to duplicated mdSelflinks and rendering list in HTML view (issue #213)

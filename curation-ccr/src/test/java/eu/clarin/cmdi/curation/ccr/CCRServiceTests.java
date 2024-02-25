@@ -1,5 +1,7 @@
 package eu.clarin.cmdi.curation.ccr;
 
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
@@ -11,9 +13,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 
 import org.springframework.context.annotation.Import;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @EnableConfigurationProperties
@@ -28,23 +27,13 @@ class CCRServiceTests {
 
    @Autowired
    CacheManager cacheManager;
-
-   @Test
-   void getAll() {
-
-      assertTrue(service.getAll().size() > 0);
-      
-      //test for URIs in uri field
-      assertTrue(service.getAll().stream().allMatch(concept -> concept.getUri().startsWith("http")));
-
-   }
    
    @Test
-   void useCache() {
+   void useCache() throws CCRServiceNotAvailableException {
 
-      service.getAll();
+      service.getConcept("http://hdl.handle.net/11459/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c");
 
-      assertNotNull(cacheManager.getCache("ccrCache").get("getCCRConceptMap"));
+      Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/11459/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
 
    }
 
@@ -53,5 +42,4 @@ class CCRServiceTests {
    public static class TestConfig {
 
    }
-
 }

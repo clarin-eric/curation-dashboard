@@ -11,6 +11,7 @@ import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.CCRStatus;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
@@ -256,17 +257,26 @@ public abstract class ProfileParser {
     * @param uri the uri
     * @return the ccr concept
     */
-   protected CCRConcept createConcept(String uri){
+   protected CCRConcept createConcept(String uri) {
 
       if (uri == null)
          return null;
       CCRConcept concept;
       if (uri.startsWith("http://purl.org/dc/terms/")) {
+
          concept = new CCRConcept(uri, uri.substring("http://purl.org/dc/terms/".length()), CCRStatus.DUBLIN_CORE);
       }
       else {
-         CCRConcept ccrConcept = ccrService.getConcept(uri);
 
+         CCRConcept ccrConcept = null;
+
+         try {
+            ccrConcept = ccrService.getConcept(uri);
+         }
+         catch(CCRServiceNotAvailableException ex){
+
+            log.error("CCRService not available. Setting default concept for URI '{}'", uri);
+         }
 
          if (ccrConcept != null)
             concept = ccrConcept;

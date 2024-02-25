@@ -7,6 +7,7 @@ import java.util.Map;
 import com.ximpleware.VTDException;
 
 import eu.clarin.cmdi.curation.ccr.CCRService;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
@@ -119,10 +120,10 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 				xpathComponentNode.put(xpath, cmdiNode);
 			}
 			else {
-			   
-				cmdiNode.concept = createConcept(node.ref);
-				
-				xpathElementNode.put(xpath, cmdiNode);
+
+                cmdiNode.concept = createConcept(node.ref);
+
+                xpathElementNode.put(xpath, cmdiNode);
 			}
 
 			xpathNode.put(xpath, cmdiNode);

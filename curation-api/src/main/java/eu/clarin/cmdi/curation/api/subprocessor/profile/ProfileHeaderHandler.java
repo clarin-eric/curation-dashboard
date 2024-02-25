@@ -9,6 +9,7 @@ import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.pph.PPHService;
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,17 +55,23 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
          report.score += report.headerReport.score;
       }
 
-      pphService.getProfileHeaders().stream()
-            .filter(profileHeader -> profileHeader.getName().equals(report.headerReport.getName())
-                  && !profileHeader.getId().equals(report.headerReport.getId()))
-            .findAny().ifPresent(profileReport -> report.details.add(new Detail(Severity.WARNING,"header",
-                  "The name '" + report.headerReport.getName() + "' of the profile is not unique")));
 
-      pphService.getProfileHeaders().stream()
-            .filter(profileHeader -> profileHeader.getDescription().equals(report.headerReport.getDescription())
-                  && !profileHeader.getId().equals(report.headerReport.getId()))
-            .findAny().ifPresent(profileReport -> report.details.add(new Detail(Severity.WARNING,"header",
-                  "The description '" + report.headerReport.getDescription() + "' of the profile is not unique")));
+      try {
+         pphService.getProfileHeaders().stream()
+               .filter(profileHeader -> profileHeader.getName().equals(report.headerReport.getName())
+                     && !profileHeader.getId().equals(report.headerReport.getId()))
+               .findAny().ifPresent(profileReport -> report.details.add(new Detail(Severity.WARNING,"header",
+                     "The name '" + report.headerReport.getName() + "' of the profile is not unique")));
 
+         pphService.getProfileHeaders().stream()
+               .filter(profileHeader -> profileHeader.getDescription().equals(report.headerReport.getDescription())
+                     && !profileHeader.getId().equals(report.headerReport.getId()))
+               .findAny().ifPresent(profileReport -> report.details.add(new Detail(Severity.WARNING,"header",
+                     "The description '" + report.headerReport.getDescription() + "' of the profile is not unique")));
+      }
+      catch (PPHServiceNotAvailableException e) {
+
+         throw new RuntimeException(e);
+      }
    }
 }

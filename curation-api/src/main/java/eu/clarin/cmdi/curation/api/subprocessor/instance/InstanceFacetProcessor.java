@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -189,6 +190,9 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
             log.error("can't parse file '{}'", instance.getPath());
             instanceReport.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
             instanceReport.isProcessable = false;
+         }
+         catch (CRServiceStorageException e) {
+             throw new RuntimeException(e);
          }
       }
    }

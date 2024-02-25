@@ -5,6 +5,7 @@ package eu.clarin.cmdi.curation.api.subprocessor.profile;
 
 import java.util.Map;
 
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -80,7 +81,10 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
          report.details.add(new Detail(Severity.FATAL,"facet" , "no ParsedProfile for profile id " + header.getId()));
 
       }
-      report.facetReport.percProfileCoverage = (double) report.facetReport.numOfFacetsCoveredByProfile/report.facetReport.numOfFacets;
+      catch (CRServiceStorageException e) {
+          throw new RuntimeException(e);
+      }
+       report.facetReport.percProfileCoverage = (double) report.facetReport.numOfFacetsCoveredByProfile/report.facetReport.numOfFacets;
       report.facetReport.score = report.facetReport.percProfileCoverage;
       report.score+=report.facetReport.score;
    }
