@@ -1,9 +1,5 @@
 package eu.clarin.cmdi.curation.api.subprocessor.collection;
 
-import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
-import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
-import eu.clarin.linkchecker.persistence.repository.UrlRepository;
-import eu.clarin.linkchecker.persistence.utils.Category;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
@@ -15,8 +11,11 @@ import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Stati
 import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport.InvalidReference;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
+import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
+import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
+import eu.clarin.linkchecker.persistence.repository.UrlRepository;
+import eu.clarin.linkchecker.persistence.utils.Category;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;

@@ -4,14 +4,13 @@
  */
 package eu.clarin.cmdi.curation.web.conf;
 
-import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.util.Collection;
-
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import lombok.Data;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.util.Collection;
 
 /**
  *

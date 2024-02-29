@@ -1,11 +1,11 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
-import java.util.Collection;
-import java.util.Map;
-
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Collection;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Getter

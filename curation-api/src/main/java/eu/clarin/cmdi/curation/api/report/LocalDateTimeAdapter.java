@@ -4,10 +4,10 @@
  */
 package eu.clarin.cmdi.curation.api.report;
 
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  *

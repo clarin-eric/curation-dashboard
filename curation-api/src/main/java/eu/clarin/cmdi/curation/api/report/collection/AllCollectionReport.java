@@ -1,21 +1,15 @@
 package eu.clarin.cmdi.curation.api.report.collection;
 
+import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
+import eu.clarin.cmdi.curation.api.report.NamedReport;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
-import eu.clarin.cmdi.curation.api.report.NamedReport;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)

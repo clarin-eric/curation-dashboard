@@ -1,11 +1,11 @@
 package eu.clarin.cmdi.curation.cr;
 
-import javax.xml.validation.Schema;
-
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
+
+import javax.xml.validation.Schema;
 
 public interface CRService {
 	

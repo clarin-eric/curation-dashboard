@@ -1,12 +1,17 @@
 package eu.clarin.cmdi.curation.ccr.cache;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import eu.clarin.cmdi.curation.ccr.CCRConcept;
+import eu.clarin.cmdi.curation.ccr.CCRStatus;
+import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Component;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -15,20 +20,13 @@ import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
-import eu.clarin.cmdi.curation.ccr.CCRStatus;
-import org.apache.commons.lang3.EnumUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Component;
-
-import eu.clarin.cmdi.curation.ccr.CCRConcept;
-import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
-import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
-import lombok.extern.slf4j.Slf4j;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * The type Ccr cache.

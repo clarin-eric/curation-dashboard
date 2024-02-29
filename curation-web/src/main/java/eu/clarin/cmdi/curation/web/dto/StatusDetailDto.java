@@ -4,17 +4,15 @@
  */
 package eu.clarin.cmdi.curation.web.dto;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-
 import eu.clarin.linkchecker.persistence.model.StatusDetail;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
 
 
 /**

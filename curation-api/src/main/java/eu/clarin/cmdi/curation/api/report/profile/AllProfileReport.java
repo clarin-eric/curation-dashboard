@@ -1,25 +1,19 @@
 package eu.clarin.cmdi.curation.api.report.profile;
 
+import eu.clarin.cmdi.curation.api.report.AggregationReport;
+import eu.clarin.cmdi.curation.api.report.Detail.Severity;
+import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
+import eu.clarin.cmdi.curation.api.report.NamedReport;
+import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport.Coverage;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import eu.clarin.cmdi.curation.api.report.AggregationReport;
-import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
-import eu.clarin.cmdi.curation.api.report.Detail.Severity;
-import eu.clarin.cmdi.curation.api.report.NamedReport;
-import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport.Coverage;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 
 @XmlRootElement

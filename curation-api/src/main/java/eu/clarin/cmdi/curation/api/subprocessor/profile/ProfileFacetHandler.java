@@ -3,12 +3,6 @@
  */
 package eu.clarin.cmdi.curation.api.subprocessor.profile;
 
-import java.util.Map;
-
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.report.Detail;
@@ -19,11 +13,16 @@ import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport.Coverag
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 
 /**

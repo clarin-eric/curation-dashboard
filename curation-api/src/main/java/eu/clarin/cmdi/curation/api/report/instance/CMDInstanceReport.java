@@ -1,19 +1,12 @@
 package eu.clarin.cmdi.curation.api.report.instance;
 
-import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
-
-import eu.clarin.cmdi.curation.api.report.instance.sec.FileReport;
-import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport;
-import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport;
-import eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport;
-import eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport;
-import eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.*;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
-
 import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 

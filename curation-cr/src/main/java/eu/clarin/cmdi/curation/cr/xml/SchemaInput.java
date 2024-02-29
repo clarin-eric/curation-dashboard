@@ -1,9 +1,9 @@
 package eu.clarin.cmdi.curation.cr.xml;
 
+import org.w3c.dom.ls.LSInput;
+
 import java.io.InputStream;
 import java.io.Reader;
-
-import org.w3c.dom.ls.LSInput;
 
 public class SchemaInput implements LSInput{
 	

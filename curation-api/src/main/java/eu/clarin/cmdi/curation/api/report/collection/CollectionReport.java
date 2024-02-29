@@ -3,19 +3,11 @@ package eu.clarin.cmdi.curation.api.report.collection;
 import eu.clarin.cmdi.curation.api.report.Detail;
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
-import eu.clarin.cmdi.curation.api.report.collection.sec.FacetReport;
-import eu.clarin.cmdi.curation.api.report.collection.sec.FileReport;
-import eu.clarin.cmdi.curation.api.report.collection.sec.HeaderReport;
-import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport;
-import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport;
-import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport;
-import eu.clarin.cmdi.curation.api.report.collection.sec.XmlPopulationReport;
-import eu.clarin.cmdi.curation.api.report.collection.sec.XmlValidityReport;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
+import eu.clarin.cmdi.curation.api.report.collection.sec.*;
 import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

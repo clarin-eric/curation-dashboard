@@ -1,12 +1,9 @@
 package eu.clarin.cmdi.curation.ccr;
 
-import java.util.Collection;
-
+import eu.clarin.cmdi.curation.ccr.cache.CCRCache;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import eu.clarin.cmdi.curation.ccr.cache.CCRCache;
 
 
 /**

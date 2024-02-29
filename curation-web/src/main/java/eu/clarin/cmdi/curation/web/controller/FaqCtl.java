@@ -4,13 +4,8 @@
  */
 package eu.clarin.cmdi.curation.web.controller;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-
+import eu.clarin.cmdi.curation.web.conf.WebConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.commonmark.Extension;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.node.Node;
@@ -22,8 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import eu.clarin.cmdi.curation.web.conf.WebConfig;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * The type Faq ctl.

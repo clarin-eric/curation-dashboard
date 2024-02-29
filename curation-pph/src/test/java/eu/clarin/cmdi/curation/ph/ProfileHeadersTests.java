@@ -1,5 +1,8 @@
 package eu.clarin.cmdi.curation.ph;
 
+import eu.clarin.cmdi.curation.pph.PPHService;
+import eu.clarin.cmdi.curation.pph.cache.PPHCache;
+import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
 import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +14,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-
-import eu.clarin.cmdi.curation.pph.PPHService;
-import eu.clarin.cmdi.curation.pph.cache.PPHCache;
-import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

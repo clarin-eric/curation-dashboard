@@ -1,5 +1,18 @@
 package eu.clarin.cmdi.curation.cr;
 
+import eu.clarin.cmdi.curation.cr.cache.CRCache;
+import eu.clarin.cmdi.curation.cr.conf.CRConfig;
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
+import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
+import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
+import eu.clarin.cmdi.curation.pph.PPHService;
+import eu.clarin.cmdi.curation.pph.ProfileHeader;
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.xml.validation.Schema;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,21 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.validation.Schema;
-
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import eu.clarin.cmdi.curation.pph.ProfileHeader;
-import eu.clarin.cmdi.curation.pph.PPHService;
-import eu.clarin.cmdi.curation.cr.cache.CRCache;
-import eu.clarin.cmdi.curation.cr.conf.CRConfig;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
-import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

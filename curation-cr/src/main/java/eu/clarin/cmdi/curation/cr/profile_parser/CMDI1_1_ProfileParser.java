@@ -1,16 +1,14 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.ximpleware.VTDException;
-
 import eu.clarin.cmdi.curation.ccr.CCRService;
-import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
+
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * The type Cmdi 1 1 profile parser.

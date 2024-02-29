@@ -1,8 +1,8 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
-import java.util.Objects;
-
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
+
+import java.util.Objects;
 
 public class CMDINode{
 	

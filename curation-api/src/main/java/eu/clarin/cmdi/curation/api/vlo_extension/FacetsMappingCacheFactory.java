@@ -1,22 +1,25 @@
 package eu.clarin.cmdi.curation.api.vlo_extension;
 
-import java.util.*;
-
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.ximpleware.NavException;
-
 import eu.clarin.cmdi.curation.api.cache.FacetMappingCache;
 import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.Pattern;
 import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
-import eu.clarin.cmdi.vlo.importer.mapping.*;
+import eu.clarin.cmdi.vlo.importer.mapping.ConceptLinkPathMapper;
+import eu.clarin.cmdi.vlo.importer.mapping.FacetMappingFactory;
+import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The type Facets mapping cache factory.

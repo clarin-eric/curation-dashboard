@@ -1,14 +1,18 @@
 package eu.clarin.cmdi.curation.app;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.util.stream.Stream;
-
+import eu.clarin.cmdi.curation.api.CurationModule;
+import eu.clarin.cmdi.curation.api.entity.CurationEntityType;
+import eu.clarin.cmdi.curation.api.report.collection.AllCollectionReport;
+import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
+import eu.clarin.cmdi.curation.api.report.linkchecker.AllLinkcheckerReport;
+import eu.clarin.cmdi.curation.api.report.profile.AllProfileReport;
+import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
+import eu.clarin.cmdi.curation.api.utils.FileStorage;
+import eu.clarin.cmdi.curation.app.conf.AppConfig;
+import eu.clarin.cmdi.curation.pph.PPHService;
 import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
+import eu.clarin.linkchecker.persistence.service.LinkService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,18 +25,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import eu.clarin.cmdi.curation.api.CurationModule;
-import eu.clarin.cmdi.curation.api.entity.CurationEntityType;
-import eu.clarin.cmdi.curation.api.report.collection.AllCollectionReport;
-import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
-import eu.clarin.cmdi.curation.api.report.linkchecker.AllLinkcheckerReport;
-import eu.clarin.cmdi.curation.api.report.profile.AllProfileReport;
-import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
-import eu.clarin.cmdi.curation.api.utils.FileStorage;
-import eu.clarin.cmdi.curation.app.conf.AppConfig;
-import eu.clarin.cmdi.curation.pph.PPHService;
-import eu.clarin.linkchecker.persistence.service.LinkService;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.util.stream.Stream;
 
 /**
  * The type Curation app.

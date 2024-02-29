@@ -1,22 +1,21 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDNav;
-
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.CCRStatus;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
-import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
+import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
 
 /**
  * The type Profile parser.
