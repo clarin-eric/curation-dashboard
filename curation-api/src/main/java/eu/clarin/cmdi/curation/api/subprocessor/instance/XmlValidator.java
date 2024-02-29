@@ -127,7 +127,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
    /**
     * The type Cmd instance content handler.
     */
-   class CMDInstanceContentHandler extends DefaultHandler {
+   static class CMDInstanceContentHandler extends DefaultHandler {
 
       /**
        * The Instance.

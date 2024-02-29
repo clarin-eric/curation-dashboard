@@ -65,8 +65,8 @@ public class XPathValueService {
       
       return xpathValueMap;
    }
-   
-   private class ServiceHandler extends DefaultHandler {
+
+   private static class ServiceHandler extends DefaultHandler {
       // to add a counter to the element path, if we have multiple elements of the same path
       // sample: /element[2]/text()
       private final Map<Path, Integer> elementCount = new HashMap<Path, Integer>();
