@@ -37,10 +37,18 @@ import org.xml.sax.helpers.DefaultHandler;
 @Slf4j
 public class CCRCache {
 
-    @Autowired
+
     private CCRConfig ccrProps;
 
-    private final SAXParserFactory fac = SAXParserFactory.newInstance();
+    private final SAXParserFactory fac;
+
+    @Autowired
+    public CCRCache(CCRConfig ccrProps) {
+        this.ccrProps = ccrProps;
+
+        this.fac = SAXParserFactory.newInstance();
+        this.fac.setNamespaceAware(true);
+    }
 
     /**
      * Gets ccr concept map.
@@ -125,19 +133,19 @@ public class CCRCache {
                         @Override
                         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-                            switch (qName) {
+                            switch (localName) {
 
-                                case "skos:prefLabel", "ns0:status" -> elementValue = new StringBuilder();
+                                case "prefLabel", "status" -> elementValue = new StringBuilder();
                             }
                         }
 
                         @Override
                         public void endElement(String uri, String localName, String qName) throws SAXException {
 
-                            switch (qName) {
+                            switch (localName) {
 
-                                case "skos:prefLabel" -> this.prefLabel = this.elementValue.toString();
-                                case "ns0:status" -> this.status = EnumUtils.getEnum(CCRStatus.class, this.elementValue.toString().toUpperCase(), CCRStatus.UNKNOWN);
+                                case "prefLabel" -> this.prefLabel = this.elementValue.toString();
+                                case "status" -> this.status = EnumUtils.getEnum(CCRStatus.class, this.elementValue.toString().toUpperCase(), CCRStatus.UNKNOWN);
                             }
                         }
 
