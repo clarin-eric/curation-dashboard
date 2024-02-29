@@ -2,7 +2,6 @@ package eu.clarin.cmdi.curation.ccr;
 
 import eu.clarin.cmdi.curation.ccr.cache.CCRCache;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
@@ -12,8 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 class CCRServiceImpl implements CCRService {
 
-   @Autowired
-   private CCRCache cache;
+   private final CCRCache cache;
+
+   public CCRServiceImpl(CCRCache cache) {
+      this.cache = cache;
+   }
 
    /**
     * Gets concept.
