@@ -281,7 +281,7 @@ public abstract class ProfileParser {
          if (ccrConcept != null)
             concept = ccrConcept;
          else
-            concept = new CCRConcept(uri, "invalid concept", CCRStatus.NaN);
+            concept = new CCRConcept(uri, "invalid concept", CCRStatus.UNKNOWN);
       }
 
       return concept;
