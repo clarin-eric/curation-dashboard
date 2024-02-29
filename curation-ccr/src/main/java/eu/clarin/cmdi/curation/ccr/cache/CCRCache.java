@@ -17,6 +17,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import eu.clarin.cmdi.curation.ccr.CCRStatus;
+import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -119,7 +120,7 @@ public class CCRCache {
                         private StringBuilder elementValue;
 
                         String prefLabel;
-                        CCRStatus status = CCRStatus.NaN;
+                        CCRStatus status = CCRStatus.UNKNOWN;
 
                         @Override
                         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -136,7 +137,7 @@ public class CCRCache {
                             switch (qName) {
 
                                 case "skos:prefLabel" -> this.prefLabel = this.elementValue.toString();
-                                case "ns0:status" -> this.status = CCRStatus.valueOf(this.elementValue.toString().toUpperCase());
+                                case "ns0:status" -> this.status = EnumUtils.getEnum(CCRStatus.class, this.elementValue.toString().toUpperCase(), CCRStatus.UNKNOWN);
                             }
                         }
 

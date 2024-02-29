@@ -23,9 +23,5 @@ public enum CCRStatus {
 	/**
 	 * Unknown ccr status.
 	 */
-	UNKNOWN,
-	/**
-	 * Na n ccr status.
-	 */
-	NaN
+	UNKNOWN
 }
