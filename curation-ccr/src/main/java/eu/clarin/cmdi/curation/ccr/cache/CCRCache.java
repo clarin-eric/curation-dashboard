@@ -38,7 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class CCRCache {
 
 
-    private CCRConfig ccrProps;
+    private final CCRConfig ccrProps;
 
     private final SAXParserFactory fac;
 

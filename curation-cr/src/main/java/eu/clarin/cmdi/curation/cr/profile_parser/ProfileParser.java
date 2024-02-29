@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.cr.profile_parser;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import com.ximpleware.AutoPilot;
 import com.ximpleware.NavException;
@@ -106,10 +107,10 @@ public abstract class ProfileParser {
     *
     * @param vn     the vn
     * @param profileHeader the profile header
-    * @return the profile header
     * @throws VTDException the vtd exception
     */
-   protected ProfileHeader fillInHeader(VTDNav vn, ProfileHeader profileHeader) throws VTDException {
+   protected void fillInHeader(VTDNav vn, ProfileHeader profileHeader) throws VTDException {
+
       AutoPilot ap = new AutoPilot(vn);
       ap.declareXPathNameSpace("cmd", "http://www.clarin.eu/cmd/1");
       ap.declareXPathNameSpace("xs", "http://www.w3.org/2001/XMLSchema");
@@ -119,8 +120,6 @@ public abstract class ProfileParser {
       profileHeader.setDescription(evaluateXPath("//cmd:Header/cmd:Description/text()", ap));
       profileHeader.setStatus(evaluateXPath("//cmd:Header/cmd:Status/text()", ap));
       profileHeader.setCmdiVersion(getCMDVersion());
-      return profileHeader;
-
    }
 
    private Collection<CRElement> processElements() throws VTDException {
@@ -140,7 +139,7 @@ public abstract class ProfileParser {
          }
 
          String minOccurs = extractAttributeValue("minOccurs");
-         _new.isRequired = minOccurs != null ? !minOccurs.equals("0") : true;
+         _new.isRequired = minOccurs == null || !minOccurs.equals("0");
 
          _new.lvl = vn.getCurrentDepth();
 
@@ -278,10 +277,7 @@ public abstract class ProfileParser {
             log.error("CCRService not available. Setting default concept for URI '{}'", uri);
          }
 
-         if (ccrConcept != null)
-            concept = ccrConcept;
-         else
-            concept = new CCRConcept(uri, "invalid concept", CCRStatus.UNKNOWN);
+          concept = Objects.requireNonNullElseGet(ccrConcept, () -> new CCRConcept(uri, "invalid concept", CCRStatus.UNKNOWN));
       }
 
       return concept;
