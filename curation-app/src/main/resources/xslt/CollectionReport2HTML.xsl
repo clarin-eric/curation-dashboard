@@ -11,6 +11,7 @@
  "/>
 
     </xsl:function>
+    <xsl:decimal-format NaN="N/A" />
 	<xsl:template match="/collectionReport">
 		<html>
 			<head>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:decimal-format NaN="N/A" />
 	<xsl:template match="/cmdProfileReport">
 		<xsl:variable name="schemaLoc">
 			<xsl:value-of select="./headerReport/schemaLocation" />

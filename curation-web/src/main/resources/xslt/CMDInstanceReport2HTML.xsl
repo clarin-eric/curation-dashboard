@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:decimal-format NaN="N/A" />
 	<xsl:template match="/cmdInstanceReport">
 		<html>
 			<head>
@@ -70,10 +71,9 @@
 					ProfileID:
 					<a>
 						<xsl:attribute name="href">
-                            <xsl:value-of
-							select="./profileHeaderReport/schemaLocation"></xsl:value-of>
+                            <xsl:value-of select="./profileHeaderReport/schemaLocation" />
                         </xsl:attribute>
-						<xsl:value-of select="./profileHeaderReport/id"></xsl:value-of>
+						<xsl:value-of select="./profileHeaderReport/id" />
 					</a>
 				</p>
 				<!-- <p>Status: -->
@@ -118,13 +118,13 @@
 									<xsl:when test="not(position() > 100)">
 										<tr>
 											<td>
-												<xsl:value-of select="./severity"></xsl:value-of>
+												<xsl:value-of select="./severity" />
 											</td>
 											<td>
-												<xsl:value-of select="./segment"></xsl:value-of>
+												<xsl:value-of select="./segment" />
 											</td>
 											<td>
-												<xsl:value-of select="./message"></xsl:value-of>
+												<xsl:value-of select="./message" />
 											</td>
 										</tr>
 									</xsl:when>
@@ -197,13 +197,13 @@
 							<xsl:when test="@coveredByProfile = 'true'">
 								<td class="facetCovered"
 									style="background-color: lightgreen;">
-									<xsl:value-of select="@coveredByProfile"></xsl:value-of>
+									<xsl:value-of select="@coveredByProfile" />
 								</td>
 							</xsl:when>
 							<xsl:otherwise>
 								<td class="facetNotCovered"
 									style="background-color: lightcoral;">
-									<xsl:value-of select="@coveredByProfile"></xsl:value-of>
+									<xsl:value-of select="@coveredByProfile" />
 								</td>
 							</xsl:otherwise>
 						</xsl:choose>
@@ -211,13 +211,13 @@
 							<xsl:when test="@coveredByInstance = 'true'">
 								<td class="facetCovered"
 									style="background-color: lightgreen;">
-									<xsl:value-of select="@coveredByInstance"></xsl:value-of>
+									<xsl:value-of select="@coveredByInstance" />
 								</td>
 							</xsl:when>
 							<xsl:otherwise>
 								<td class="facetNotCovered"
 									style="background-color: lightcoral;">
-									<xsl:value-of select="@coveredByInstance"></xsl:value-of>
+									<xsl:value-of select="@coveredByInstance" />
 								</td>
 							</xsl:otherwise>
 						</xsl:choose>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:decimal-format NaN="N/A" />
 	<xsl:template match="/linkcheckerDetailReport">
 		<html>
 			<head>
@@ -19,8 +20,6 @@
 				<xsl:apply-templates select="categoryReport" />
 			</body>
 		</html>
-
-
 	</xsl:template>
 	<xsl:template match="categoryReport">
 		<h3 class="anchor">

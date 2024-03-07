@@ -9,9 +9,8 @@
    concat(upper-case(substring($arg,1,1)),
              substring($arg,2))
  "/>
-
     </xsl:function>
-
+    <xsl:decimal-format NaN="N/A" />
     <xsl:template match="/allCollectionReport">
         <html>
             <body>
@@ -36,7 +35,7 @@
 
                             <xsl:for-each select="./collection[1]/facets/facet">
                                 <th data-sortable="true">
-                                    <xsl:value-of select="functx:capitalize-first(@name)"></xsl:value-of>
+                                    <xsl:value-of select="functx:capitalize-first(@name)" />
                                 </th>
                             </xsl:for-each>
                         </tr>
@@ -49,50 +48,49 @@
                                     <a>
                                         <xsl:attribute name="href">
                                             <xsl:text>/collection/</xsl:text>
-                                            <xsl:value-of select="translate(reportName,'.:','__')"></xsl:value-of>
+                                            <xsl:value-of select="translate(reportName,'.:','__')" />
                                             <xsl:text>.html</xsl:text>
                                         </xsl:attribute>
-                                        <xsl:value-of select="@name"></xsl:value-of>
+                                        <xsl:value-of select="@name" />
                                     </a>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="format-number(scorePercentage,'0.00%')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(scorePercentage,'0.00%')"/>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="numOfFiles"></xsl:value-of>
+                                    <xsl:value-of select="numOfFiles"/>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="numOfProfiles"></xsl:value-of>
+                                    <xsl:value-of select="numOfProfiles"/>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="numOfUniqueLinks"></xsl:value-of>
+                                    <xsl:value-of select="numOfUniqueLinks"/>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="numOfCheckedLinks"></xsl:value-of>
+                                    <xsl:value-of select="numOfCheckedLinks"/>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="format-number(ratioOfValidLinks,'0.00%')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(ratioOfValidLinks,'0.00%')"/>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="numOfResourcesies"></xsl:value-of>
+                                    <xsl:value-of select="numOfResourcesies"/>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="format-number(avgNumOfResources,'0.0')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(avgNumOfResources,'0.0')"/>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="format-number(ratioOfValidRecords,'0.00%')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(ratioOfValidRecords,'0.00%')"/>
                                 </td>
                                 <td>
-                                    <xsl:value-of
-                                            select="format-number(avgNumOfEmptyXMLElements,'0.0')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(avgNumOfEmptyXMLElements,'0.0')"/>
                                 </td>
                                 <td>
-                                    <xsl:value-of select="format-number(avgFacetCoverage,'0.0%')"></xsl:value-of>
+                                    <xsl:value-of select="format-number(avgFacetCoverage,'0.0%')"/>
                                 </td>
 
                                 <xsl:for-each select="facets/facet">
                                     <td>
-                                        <xsl:value-of select="format-number(./@avgCoverage,'0.00%')"></xsl:value-of>
+                                        <xsl:value-of select="format-number(./@avgCoverage,'0.00%')"/>
                                     </td>
                                 </xsl:for-each>
                             </tr>
