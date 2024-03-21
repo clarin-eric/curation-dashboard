@@ -236,8 +236,7 @@
 		- Value Mapping
 		<br />
 
-		<button class="btn btn-info" id="facetValuesButton"
-			type="button" onClick="toggleFacets()">Show Facet Values</button>
+		<button class="btn btn-info" id="facetValuesButton" type="button">Show Facet Values</button>
 
 		<div id="facetTable" hidden="true">
 			<h3>Facet mapping</h3>
