@@ -73,8 +73,6 @@ $(document).ready( function () {
     $("#collections_filter").hide();//hide top filter which is not necessary
     $("#profiles_filter").hide();//hide top filter which is not necessary
 
-    redirectDeprecatedURLs();
-
 } );
 
 Dropzone.autoDiscover = false;
@@ -104,51 +102,32 @@ $("div#cmdi-dropzone").dropzone({
       }
 });
 
-function toggleFacets() {
-    var facetTable = $('#facetTable');
+$('#facetValuesButton').click(function (){
 
-    if(facetTable.attr("hidden")){
-        $('#facetValuesButton').html("Hide Facet Values");
-        facetTable.removeAttr("hidden");
+    if($('#facetTable').attr("hidden")){
+        $(this).html("Hide Facet Values");
+        $('#facetTable').removeAttr("hidden");
     }else{
-        $('#facetValuesButton').html("Show Facet Values");
-        facetTable.attr("hidden",true);
-    }
-}
-
-$('#validateButton').click(function() {
-    //only change to spinner if input is valid
-    if($('#url-input').val()){
-        $(this).html('<div>Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="uploadWheel" class="spinner"></div>');
-//        $(this).html('<div>Curating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="uploadWheel" class="spinner"></div>');
-        $(this).prop('disabled', true);
+        $(this).html("Show Facet Values");
+        $('#facetTable').attr("hidden",true);
     }
 });
+$('#validateButton').click(function() {
 
+    //only change to spinner if input is valid
+    if($('#url-input').val()){
+        $(this).parent().attr("hidden", true);
+        $(this).parent().next().attr("hidden", false);
+    }
+});
+/*
 window.onpageshow = function (event) {
     //when back button is clicked, validate button doesnt refresh and stays in the loading spinner phase
     //this is to insure that it does
-    var button = $('#validateButton');
-    button.html('Validate');
-    button.prop('disabled', false);
-
-    //highlight button of current page(a little bit too hardcoded, should think of a better solution...)
-        var path = window.location.pathname;
-        if(path==="/"){
-            $('#validatorButton').addClass("highlight-button");
-        }else if(path==="/profile/table"){
-            $('#profilesButton').addClass("highlight-button");
-        }else if(path==="/collection/table"){
-            $('#collectionsButton').addClass("highlight-button");
-        }else if(path==="/statistics"){
-            $('#statisticsButton').addClass("highlight-button");
-        }else if(path==="/help"){
-            $('#helpButton').addClass("highlight-button");
-        }else if(path==="/faq"){
-            $('#faqButton').addClass("highlight-button");
-        }
+    $('#validateButton').html('Validate');
+    $('#validateButton').prop('disabled', false);
 };
-
+*/
 var table = $('#statsTable');
 var collectionName = table.attr("data-collection");
 var category = table.attr("data-category");
@@ -193,7 +172,14 @@ $(window).scroll(function() {
 
                            //add toggle logic to all new buttons on the table and remove the class from them so that the logic doesn't get applied twice on ajax call
                            $(".showUrlInfo").click(function() {
-                               toggleInfo($(this));
+                               if($(this).parent().parent().next().attr("hidden")){
+                                   $(this).parent().parent().next().removeAttr("hidden");
+                                   $(this).text("Hide");
+                               }
+                               else{
+                                   $(this).parent().parent().next().attr("hidden", true);
+                                   $(this).text("Show")
+                               }
                            });
                            $(".showUrlInfo").removeClass("showUrlInfo");
                        }
@@ -206,48 +192,21 @@ $(window).scroll(function() {
             }
         }
     }
-
 });
 
 //add toggle logic to all buttons on the table and remove the class from them so that the logic doesn't get applied twice on ajax call
 $(".showUrlInfo").click(function() {
-    toggleInfo($(this));
+
+    if($(this).parent().parent().next().attr("hidden")){
+        $(this).parent().parent().next().removeAttr("hidden");
+        $(this).text("Hide");
+    }
+    else{
+        $(this).parent().parent().next().attr("hidden", true);
+        $(this).text("Show")
+    }
 });
 $(".showUrlInfo").removeClass("showUrlInfo");
-
-function toggleInfo(button){
-
-    var element = button.parent().parent().next();
-
-    if(element.attr("hidden")){
-        element.removeAttr("hidden");
-        button.text("Hide");
-    }else{
-        element.attr("hidden",true);
-        button.text("Show");
-    }
-
-}
-
-//harvester uses old links that won't work anymore
-//so for backwards compatibility's sake, we have a redirect for deprecated paths
-//when menzo returns and updates the harvester, this method can be deleted
-function redirectDeprecatedURLs(){
-
-    if(window.location.hash.startsWith("#!ResultView/collection//")){
-
-        var hashArray = window.location.hash.split("/");
-
-        if(hashArray !== undefined && hashArray.length != 0){
-            var collectionName = hashArray[hashArray.length-1];
-
-            var newUrl = window.location.origin + "/collection/"+ collectionName+".html";
-
-            window.location.replace(newUrl);
-        }
-    }
-
-}
 
 
 
