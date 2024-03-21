@@ -13,7 +13,12 @@
 			</form>
 			<div class="row instanceElement">
 				<button class="btn btn-info centerContainer" id="validateButton" type="submit" form="urlForm">Validate</button>
-			</div>		
+			</div>
+			<div class="row instanceElement" hidden="true">
+				<div>Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div>
+				<div id="uploadWheel" class="spinner"></div>
+			</div>
+
 			<div class="row instanceElement">
 				<div class="dropzone dragAndDropBox" id="cmdi-dropzone">
 					<div class="dz-message">
