@@ -15,7 +15,17 @@
 				<h1>Linkchecker Detail Report</h1>
 				<h2>
 					Collection name:
-					<xsl:value-of select="replace(@provider,'_',' ')" />
+					<a>
+						<xsl:attribute name="href">
+							<xsl:text>/collection</xsl:text>
+							<xsl:if test="@provider!='Overall'">
+								<xsl:text>/</xsl:text>
+								<xsl:value-of select="@provider" />
+								<xsl:text>.html</xsl:text>
+							</xsl:if>
+						</xsl:attribute>
+						<xsl:value-of select="replace(@provider,'_',' ')" />
+					</a>
 				</h2>
 				<xsl:apply-templates select="categoryReport" />
 			</body>
