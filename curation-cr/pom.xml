@@ -50,5 +50,10 @@
       	<artifactId>spring-boot-configuration-processor</artifactId>
       	<optional>true</optional>
       </dependency>
+      <dependency>
+         <groupId>eu.clarin.cmdi</groupId>
+         <artifactId>curation-commons</artifactId>
+         <version>${project.version}</version>
+      </dependency>
    </dependencies>
 </project>

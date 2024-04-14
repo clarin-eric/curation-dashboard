@@ -37,7 +37,7 @@ class CCRServiceTests {
    }
 
    @SpringBootConfiguration
-
+   @ComponentScan(basePackages = "eu.clarin.cmdi.curation")
    public static class TestConfig {
 
    }

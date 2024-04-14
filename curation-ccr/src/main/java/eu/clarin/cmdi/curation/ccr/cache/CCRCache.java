@@ -4,6 +4,7 @@ import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.CCRStatus;
 import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,16 @@ import java.security.NoSuchAlgorithmException;
 @Slf4j
 public class CCRCache {
 
-
+    private final HttpUtils httpUtils;
     private final CCRConfig ccrProps;
 
     private final SAXParserFactory fac;
 
     @Autowired
-    public CCRCache(CCRConfig ccrProps) {
+    public CCRCache(HttpUtils httpUtils, CCRConfig ccrProps) {
+
+        this.httpUtils = httpUtils;
+
         this.ccrProps = ccrProps;
 
         this.fac = SAXParserFactory.newInstance();
@@ -120,7 +124,7 @@ public class CCRCache {
 
             SAXParser parser = fac.newSAXParser();
 
-            parser.parse(new URL(restApiUrlStr).openStream(),
+            parser.parse(httpUtils.getURLConnection(restApiUrlStr).getInputStream(),
                     new DefaultHandler() {
 
                         private StringBuilder elementValue;

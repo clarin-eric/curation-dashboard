@@ -1,8 +1,10 @@
 package eu.clarin.cmdi.curation.pph.cache;
 
+import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.xml.sax.Attributes;
@@ -26,7 +28,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class PPHCache {
 
-   /**
+   @Autowired
+   private final HttpUtils httpUtils;
+
+    public PPHCache(HttpUtils httpUtils) {
+        this.httpUtils = httpUtils;
+    }
+
+    /**
     * Gets profile headers map.
     *
     * @param restUrl the rest url
@@ -45,7 +54,8 @@ public class PPHCache {
 
          log.trace("component registry URL: {}", (restUrl + query));
 
-         InputStream in = new URL(restUrl + query).openStream();
+         InputStream in = httpUtils.getURLConnection(restUrl + query).getInputStream();
+
 
          parser.parse(in, new DefaultHandler() {
 

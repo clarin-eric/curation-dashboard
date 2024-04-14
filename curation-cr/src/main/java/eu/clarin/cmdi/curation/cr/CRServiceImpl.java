@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.cr;
 
+import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import eu.clarin.cmdi.curation.cr.cache.CRCache;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
@@ -32,6 +33,7 @@ public class CRServiceImpl implements CRService {
    public static final String PROFILE_ID_FORMAT = "clarin\\.eu:cr1:p_[0-9]+";
    public static final Pattern PROFILE_ID_PATTERN = Pattern.compile(PROFILE_ID_FORMAT);
 
+   private final HttpUtils httpUtils;
    private final CRConfig props;
 
    public final Pattern CR_REST_PATTERN;
@@ -47,9 +49,11 @@ public class CRServiceImpl implements CRService {
     */
 
    @Autowired
-   public CRServiceImpl(CRConfig props) {
+   public CRServiceImpl(HttpUtils httpUtils, CRConfig props) {
 
-      this.props = props;
+      this.httpUtils = httpUtils;
+
+       this.props = props;
 
       String CR_REST = props.getRestApi().replaceFirst("http(s)?", "(http|https)").replaceFirst("/1\\..+", "/.+");
 
@@ -91,7 +95,7 @@ public class CRServiceImpl implements CRService {
             CharBuffer buffer = CharBuffer.allocate(1000);
 
             InputStreamReader reader;
-            try(InputStream in = new URL(schemaLocation).openStream()) {
+            try(InputStream in = httpUtils.getURLConnection(schemaLocation).getInputStream()) {
                reader = new InputStreamReader(in);
                reader.read(buffer);
                String content = buffer.rewind().toString();

@@ -81,9 +81,7 @@
       </repository>
    </repositories>
    <modules>
-      <!--
-      <module>curation-web</module>
-      -->
+      <module>curation-commons</module>
       <module>curation-pph</module>
       <module>curation-ccr</module>
       <module>curation-cr</module>
