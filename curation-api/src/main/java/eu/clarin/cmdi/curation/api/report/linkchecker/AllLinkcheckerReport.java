@@ -21,6 +21,10 @@ public class AllLinkcheckerReport implements NamedReport {
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();
 
+   @XmlAttribute
+   @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+   public LocalDateTime previousCreationTime;
+
    @XmlElement(name = "overall")
    private Overall overall = new Overall();
 
@@ -32,6 +36,24 @@ public class AllLinkcheckerReport implements NamedReport {
       
       return getClass().getSimpleName();
    
+   }
+
+   @Override
+   public LocalDateTime getCreationTime() {
+
+      return this.creationTime;
+   }
+
+   @Override
+   public void setPreviousCreationTime(LocalDateTime previousCreationTime) {
+
+      this.previousCreationTime = previousCreationTime;
+   }
+
+   @Override
+   public LocalDateTime getPreviousCreationTime() {
+
+      return this.previousCreationTime;
    }
 
    public void addReport(CollectionReport collectionReport) {

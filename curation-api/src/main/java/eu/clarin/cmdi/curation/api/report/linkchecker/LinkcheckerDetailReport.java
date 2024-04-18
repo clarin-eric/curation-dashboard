@@ -34,6 +34,9 @@ public class LinkcheckerDetailReport implements NamedReport{
    @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    private LocalDateTime creationTime = LocalDateTime.now();
+   @XmlAttribute
+   @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+   private LocalDateTime previousCreationTime;
    @XmlElement(name = "categoryReport")
    private final Collection<CategoryReport> categoryReports = new TreeSet<CategoryReport>((report1, report2) -> report1.category.compareTo(report2.category));
 

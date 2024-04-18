@@ -22,6 +22,10 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
    @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();
+
+   @XmlAttribute
+   @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+   public LocalDateTime previousCreationTime;
    @XmlElement(name = "profile")
    private List<Profile> profiles = new ArrayList<Profile>();
 
@@ -30,6 +34,24 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
 
       return this.getClass().getSimpleName();
    
+   }
+
+   @Override
+   public LocalDateTime getCreationTime() {
+
+      return this.creationTime;
+   }
+
+   @Override
+   public void setPreviousCreationTime(LocalDateTime previousCreationTime) {
+
+      this.previousCreationTime = previousCreationTime;
+   }
+
+   @Override
+   public LocalDateTime getPreviousCreationTime() {
+
+      return this.previousCreationTime;
    }
 
 

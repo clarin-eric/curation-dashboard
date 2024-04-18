@@ -28,6 +28,10 @@ public class CMDProfileReport implements NamedReport{
    @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public final LocalDateTime creationTime = LocalDateTime.now();
+
+   @XmlAttribute
+   @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+   public LocalDateTime previousCreationTime;
    @XmlAttribute
    public static final double maxScore = 3.0;
    @XmlAttribute
@@ -54,7 +58,26 @@ public class CMDProfileReport implements NamedReport{
 
    @Override
    public String getName() {
+
       return (this.headerReport!=null?this.headerReport.getId():"missing header report");
+   }
+
+   @Override
+   public LocalDateTime getCreationTime() {
+
+      return this.creationTime;
+   }
+
+   @Override
+   public void setPreviousCreationTime(LocalDateTime previousCreationTime) {
+
+      this.previousCreationTime = previousCreationTime;
+   }
+
+   @Override
+   public LocalDateTime getPreviousCreationTime() {
+
+      return this.previousCreationTime;
    }
 
 

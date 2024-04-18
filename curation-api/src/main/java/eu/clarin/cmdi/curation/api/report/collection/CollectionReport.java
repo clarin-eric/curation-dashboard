@@ -44,6 +44,10 @@ public class CollectionReport implements NamedReport{
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();
 
+   @XmlAttribute
+   @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+   public LocalDateTime previousCreationTime;
+
    @XmlElement
    public final FileReport fileReport = new FileReport();
    
@@ -91,5 +95,23 @@ public class CollectionReport implements NamedReport{
    @Override
    public String getName() {
       return fileReport.provider;
+   }
+
+   @Override
+   public LocalDateTime getCreationTime() {
+
+      return this.creationTime;
+   }
+
+   @Override
+   public void setPreviousCreationTime(LocalDateTime previousCreationTime) {
+
+      this.previousCreationTime = previousCreationTime;
+   }
+
+   @Override
+   public LocalDateTime getPreviousCreationTime() {
+
+      return this.previousCreationTime;
    }
 }

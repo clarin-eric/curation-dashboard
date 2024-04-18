@@ -1,6 +1,5 @@
 /**
  * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
- *
  */
 package eu.clarin.cmdi.curation.api.utils;
 
@@ -22,10 +21,14 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The type File storage.
@@ -34,169 +37,217 @@ import java.time.LocalDateTime;
 @Component
 public class FileStorage {
 
-   /**
-    * The Conf.
-    */
-   @Autowired
-   ApiConfig conf;
+    private final Pattern creationTimePattern = Pattern.compile("creationTime=\"(.+)\"");
 
-   /**
-    * Save report.
-    *
-    * @param report          the report
-    * @param entityType      the entity type
-    * @param makeStampedCopy the make stamped copy
-    */
-   public void saveReport(NamedReport report, CurationEntityType entityType, boolean makeStampedCopy) {
-      
-      Path xmlFilePath = saveReportAsXML(report, entityType);
-      
-      Path htmlFilePath = saveReportAsHTML(report, entityType);
-      
-      
-      if(makeStampedCopy) {
-         copyStampedFile(xmlFilePath);
-         copyStampedFile(htmlFilePath);
-      }
+    private final Pattern previousCreationTimePattern = Pattern.compile("previousCreationTime=\"(.+)\"");
 
-   }
+    /**
+     * The Conf.
+     */
+    private final ApiConfig conf;
 
-   /**
-    * Check output path.
-    */
-   @PostConstruct
-   public void checkOutputPath() {
-      
-      if(conf.getDirectory().getOut() == null && Files.notExists(conf.getDirectory().getOut())) {
-         
-         log.error("the property 'curation.directory.out' is either not set or the path doesn't exist");
-         throw new RuntimeException();
-         
-      }
-   }
+    public FileStorage(ApiConfig conf) {
+        this.conf = conf;
+    }
+
+    /**
+     * Save report.
+     *
+     * @param report          the report
+     * @param entityType      the entity type
+     * @param makeStampedCopy the make stamped copy
+     */
+    public void saveReport(NamedReport report, CurationEntityType entityType, boolean makeStampedCopy) {
+
+        //getting creation time from previous report with simple pattern search and set it as previous creation time in current report
+        if (makeStampedCopy) {
+
+            Path previousReportPath = getOutputPath(report.getName(), entityType, "xml");
+
+            if (Files.exists(previousReportPath)) {
+
+                try (InputStream in = Files.newInputStream(previousReportPath)) {
+
+                    byte[] buffer = new byte[500];
+                    in.read(buffer);
+
+                    String text = new String(buffer);
+
+                    Matcher matcher = this.creationTimePattern.matcher(text);
+
+                    LocalDateTime previousCreationTime = null;
+
+                    // the second conditions assures that we don't point to the same file in case we run the program more than one time per day
+                    if (matcher.find() && !report.getCreationTime().format(DateTimeFormatter.ISO_LOCAL_DATE).equals(matcher.group(1).substring(0, 10))) {
+
+                        previousCreationTime = LocalDateTime.parse(matcher.group(1), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                    } else {
+
+                        matcher = this.previousCreationTimePattern.matcher(text);
+
+                        if (matcher.find()) {
+
+                            previousCreationTime = LocalDateTime.parse(matcher.group(1), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                        }
+                    }
+
+                    report.setPreviousCreationTime(previousCreationTime);
+                }
+                catch (IOException e) {
+
+                    log.error("couldn't get previous creation time from file {}", previousReportPath);
+                }
+            }
+        }
+
+        Path xmlFilePath = saveReportAsXML(report, entityType);
+
+        Path htmlFilePath = saveReportAsHTML(report, entityType);
 
 
-   /**
-    * Save report as xml path.
-    *
-    * @param report     the report
-    * @param entityType the entity type
-    * @return the path
-    */
-   public Path saveReportAsXML(NamedReport report, CurationEntityType entityType) {
-      
-      Path outputPath = getOutputPath(report.getName(), entityType, "xml");
-      
-      Marshaller marshaller = null;
-      
-      try {
-         JAXBContext jc = JAXBContext.newInstance(report.getClass());
+        if (makeStampedCopy) {
+            copyStampedFile(xmlFilePath, report);
+            copyStampedFile(htmlFilePath, report);
+        }
 
-         marshaller = jc.createMarshaller();
-         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-         marshaller.setProperty(jakarta.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
-      }
-      catch (PropertyException e) {
+    }
 
-         log.error("can't set properties for marshaller");
-         throw new RuntimeException(e);
-      
-      }
-      catch (JAXBException e) {
+    /**
+     * Check output path.
+     */
+    @PostConstruct
+    public void checkOutputPath() {
 
-         log.error("can't create JAXBContext for class '{}'\n{}", report.getClass(), e);
-         
-      }
-      
-      try {
-         marshaller.marshal(report, Files.newOutputStream(outputPath));
-      }
-      catch (IOException e) {
-         
-         log.error("can't create/write to file '{}'", outputPath);
-         throw new RuntimeException(e);
-      }
-      catch (JAXBException e) {
-         
-         log.error("can't marshall report '{}'", report.getName());
-      }  
-      
-      return outputPath;
-   }
+        if (conf.getDirectory().getOut() == null && Files.notExists(conf.getDirectory().getOut())) {
 
-   /**
-    * Save report as html path.
-    *
-    * @param report     the report
-    * @param entityType the entity type
-    * @return the path
-    */
-   public Path saveReportAsHTML(NamedReport report, CurationEntityType entityType) {
-      
-      Path outputPath = getOutputPath(report.getName(), entityType, "html");
+            log.error("the property 'curation.directory.out' is either not set or the path doesn't exist");
+            throw new RuntimeException();
 
-      TransformerFactory factory = BasicTransformerFactory.newInstance();
-      
-      String resourceName = "/xslt/" + report.getClass().getSimpleName() + "2HTML.xsl";
+        }
+    }
 
-      Source xslt = new StreamSource(
-            this.getClass().getResourceAsStream(resourceName));
 
-      Transformer transformer;
-      
-      try {
-         transformer = factory.newTransformer(xslt);
-         
-         transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report),
-               new StreamResult(outputPath.toFile()));
-      }
-      catch (TransformerConfigurationException e) {
-         
-         log.error("can't load resource '{}'", resourceName);
-         throw new RuntimeException(e);
-      
-      }
-      catch (TransformerException|JAXBException e) {
+    /**
+     * Save report as xml path.
+     *
+     * @param report     the report
+     * @param entityType the entity type
+     * @return the path
+     */
+    public Path saveReportAsXML(NamedReport report, CurationEntityType entityType) {
 
-         log.error("can't transforn report '{}'", report.getName());
-      
-      }
-      
-      return outputPath;
-   }   
-   
-   private Path getOutputPath(String reportName, CurationEntityType entityType, String fileSuffix) {
-      Path outPath = conf.getDirectory().getOut().resolve(fileSuffix).resolve(entityType.toString());
-      
-      if(Files.notExists(outPath)) {
-         try {
-            Files.createDirectories(outPath);
-         }
-         catch (IOException e) {
-            
-            log.error("can't create directory '{}' - make sure the user has got creation rights", outPath);
+        Path outputPath = getOutputPath(report.getName(), entityType, "xml");
+
+        Marshaller marshaller = null;
+
+        try {
+            JAXBContext jc = JAXBContext.newInstance(report.getClass());
+
+            marshaller = jc.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.setProperty(jakarta.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
+        }
+        catch (PropertyException e) {
+
+            log.error("can't set properties for marshaller");
             throw new RuntimeException(e);
-         
-         }
-      }
 
-      String filename = FileNameEncoder.encode(reportName) + "." + fileSuffix;
-      
-      return outPath.resolve(filename);
-   }
-   
-   private void copyStampedFile(Path path) {
-      String stampedFileName = path.getFileName().toString().replace(".",
-            "_" + String.format("%1tF", LocalDateTime.now()) + ".");
-      Path stampedPath = path.getParent().resolve(stampedFileName);
-      try {
-         Files.copy(path, stampedPath, StandardCopyOption.REPLACE_EXISTING);
-      }
-      catch (IOException e) {
-         
-         log.error("can't copy file '{}' to stamped file '{}'", path, stampedPath);
-         throw new RuntimeException(e);
-      }
-   }
+        }
+        catch (JAXBException e) {
+
+            log.error("can't create JAXBContext for class '{}'\n{}", report.getClass(), e);
+
+        }
+
+        try {
+            marshaller.marshal(report, Files.newOutputStream(outputPath));
+        }
+        catch (IOException e) {
+
+            log.error("can't create/write to file '{}'", outputPath);
+            throw new RuntimeException(e);
+        }
+        catch (JAXBException e) {
+
+            log.error("can't marshall report '{}'", report.getName());
+        }
+
+        return outputPath;
+    }
+
+    /**
+     * Save report as html path.
+     *
+     * @param report     the report
+     * @param entityType the entity type
+     * @return the path
+     */
+    public Path saveReportAsHTML(NamedReport report, CurationEntityType entityType) {
+
+        Path outputPath = getOutputPath(report.getName(), entityType, "html");
+
+        TransformerFactory factory = BasicTransformerFactory.newInstance();
+
+        String resourceName = "/xslt/" + report.getClass().getSimpleName() + "2HTML.xsl";
+
+        Source xslt = new StreamSource(
+                this.getClass().getResourceAsStream(resourceName));
+
+        Transformer transformer;
+
+        try {
+            transformer = factory.newTransformer(xslt);
+
+            transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report),
+                    new StreamResult(outputPath.toFile()));
+        }
+        catch (TransformerConfigurationException e) {
+
+            log.error("can't load resource '{}'", resourceName);
+            throw new RuntimeException(e);
+
+        }
+        catch (TransformerException | JAXBException e) {
+
+            log.error("can't transform report '{}'", report.getName());
+
+        }
+
+        return outputPath;
+    }
+
+    private Path getOutputPath(String reportName, CurationEntityType entityType, String fileSuffix) {
+        Path outPath = conf.getDirectory().getOut().resolve(fileSuffix).resolve(entityType.toString());
+
+        if (Files.notExists(outPath)) {
+            try {
+                Files.createDirectories(outPath);
+            }
+            catch (IOException e) {
+
+                log.error("can't create directory '{}' - make sure the user has got creation rights", outPath);
+                throw new RuntimeException(e);
+
+            }
+        }
+
+        String filename = FileNameEncoder.encode(reportName) + "." + fileSuffix;
+
+        return outPath.resolve(filename);
+    }
+
+    private void copyStampedFile(Path path, NamedReport report) {
+        String stampedFileName = path.getFileName().toString().replace(".",
+                "_" + report.getCreationTime().format(DateTimeFormatter.ISO_LOCAL_DATE) + ".");
+        Path stampedPath = path.getParent().resolve(stampedFileName);
+        try {
+            Files.copy(path, stampedPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        catch (IOException e) {
+
+            log.error("can't copy file '{}' to stamped file '{}'", path, stampedPath);
+            throw new RuntimeException(e);
+        }
+    }
 
 }
