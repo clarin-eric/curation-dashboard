@@ -2,6 +2,7 @@
 - allowing proxy usage for external HTTP calls (issue #227)
 - sending User-Agent string with HTTP calls (issue #222) 
 - setting timeout for connection and reading (issue #231)
+- making collection report history accessible (issue #233)
 
 
 # 6.3.1
