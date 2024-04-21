@@ -22,10 +22,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
@@ -41,7 +46,6 @@ public class CCRCache {
 
     private final SAXParserFactory fac;
 
-    @Autowired
     public CCRCache(HttpUtils httpUtils, CCRConfig ccrProps) {
 
         this.httpUtils = httpUtils;
@@ -115,16 +119,52 @@ public class CCRCache {
             }
         } // end switch off validation check
 
+        String fileName = conceptURI.replaceAll("[/.:]", "_") + ".xml";
 
-        String restApiUrlStr = ccrProps.getRestApi() + ccrProps.getQuery().replace("${conceptURI}", URLEncoder.encode(conceptURI, StandardCharsets.UTF_8));
+        Path filePath = ccrProps.getCcrCache().resolve(fileName);
 
-        log.debug("Fetching from {}", restApiUrlStr);
+        try {
+            if(Files.notExists(filePath, LinkOption.NOFOLLOW_LINKS) || Files.size(filePath) == 0){
+
+                if(Files.notExists(ccrProps.getCcrCache())) {
+
+                    try {
+
+                        Files.createDirectories(ccrProps.getCcrCache());
+                    }
+                    catch (IOException e) {
+
+                        log.error("could create ccr cache directory '{}'", ccrProps.getCcrCache());
+                        throw new CCRServiceNotAvailableException(e);
+                    }
+                }
+
+                String restApiUrlStr = ccrProps.getRestApi() + ccrProps.getQuery().replace("${conceptURI}", URLEncoder.encode(conceptURI, StandardCharsets.UTF_8));
+
+                log.debug("Fetching from {}", restApiUrlStr);
+
+                try(InputStream in = httpUtils.getURLConnection(restApiUrlStr).getInputStream()){
+
+                    Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
+                }
+                catch (IOException e) {
+
+                    log.error("can't cache concept '{}'", conceptURI);
+                    throw new CCRServiceNotAvailableException(e);
+                }
+            }
+        }
+        catch (IOException e) {
+
+            log.error("can't cache concept '{}'", conceptURI);
+            throw new CCRServiceNotAvailableException(e);
+        }
 
         try {
 
             SAXParser parser = fac.newSAXParser();
 
-            parser.parse(httpUtils.getURLConnection(restApiUrlStr).getInputStream(),
+            parser.parse(filePath.toFile(),
                     new DefaultHandler() {
 
                         private StringBuilder elementValue;
@@ -173,18 +213,14 @@ public class CCRCache {
             log.info("can't configure new SAXParser", ex);
             throw new CCRServiceNotAvailableException(ex);
         }
-        catch (MalformedURLException ex) {
-
-            log.info("the URL '{}' is no valid URL for lookup", restApiUrlStr);
-        }
         catch (IOException ex) {
 
-            log.info("can't read incoming stream", ex);
+            log.info("can't read file '{}'", filePath);
         }
 
         catch (SAXException ex) {
 
-            log.info("can't parse incoming stream", ex);
+            log.info("can't parse file '{}'", filePath);
         }
 
         return concept[0];
