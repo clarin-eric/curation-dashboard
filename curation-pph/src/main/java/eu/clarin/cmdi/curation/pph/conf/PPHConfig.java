@@ -10,9 +10,7 @@ import java.nio.file.Path;
 @ConfigurationProperties(prefix = "curation.pph-service")
 @Data
 public class PPHConfig {
-   
-   private Path xsdCache;
-   
+
    private String RestApi;
    
    private String query;
