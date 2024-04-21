@@ -37,9 +37,9 @@ import java.util.regex.Pattern;
 @Component
 public class FileStorage {
 
-    private final Pattern creationTimePattern = Pattern.compile("creationTime=\"(.+)\"");
+    private final Pattern creationTimePattern = Pattern.compile("creationTime=\"(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\"");
 
-    private final Pattern previousCreationTimePattern = Pattern.compile("previousCreationTime=\"(.+)\"");
+    private final Pattern previousCreationTimePattern = Pattern.compile("previousCreationTime=\"(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\"");
 
     /**
      * The Conf.
@@ -100,16 +100,9 @@ public class FileStorage {
             }
         }
 
-        Path xmlFilePath = saveReportAsXML(report, entityType);
+        saveReportAsXML(report, entityType, makeStampedCopy);
 
-        Path htmlFilePath = saveReportAsHTML(report, entityType);
-
-
-        if (makeStampedCopy) {
-            copyStampedFile(xmlFilePath, report);
-            copyStampedFile(htmlFilePath, report);
-        }
-
+        saveReportAsHTML(report, entityType, makeStampedCopy);
     }
 
     /**
@@ -134,7 +127,7 @@ public class FileStorage {
      * @param entityType the entity type
      * @return the path
      */
-    public Path saveReportAsXML(NamedReport report, CurationEntityType entityType) {
+    public Path saveReportAsXML(NamedReport report, CurationEntityType entityType, boolean makeStampedCopy) {
 
         Path outputPath = getOutputPath(report.getName(), entityType, "xml");
 
@@ -172,6 +165,22 @@ public class FileStorage {
             log.error("can't marshall report '{}'", report.getName());
         }
 
+        if(makeStampedCopy){
+
+            String stampedFileName = report.getName() + "_" + report.getCreationTime().format(DateTimeFormatter.ISO_LOCAL_DATE) + ".xml";
+
+            Path stampedPath = outputPath.getParent().resolve(stampedFileName);
+
+            try {
+                Files.copy(outputPath, stampedPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+            catch (IOException e) {
+
+                log.error("can't copy file '{}' to stamped file '{}'", outputPath, stampedPath);
+                throw new RuntimeException(e);
+            }
+        }
+
         return outputPath;
     }
 
@@ -182,7 +191,7 @@ public class FileStorage {
      * @param entityType the entity type
      * @return the path
      */
-    public Path saveReportAsHTML(NamedReport report, CurationEntityType entityType) {
+    public Path saveReportAsHTML(NamedReport report, CurationEntityType entityType, boolean makeStampedCopy) {
 
         Path outputPath = getOutputPath(report.getName(), entityType, "html");
 
@@ -213,6 +222,51 @@ public class FileStorage {
 
         }
 
+        if(makeStampedCopy){
+
+            String stampedFileName = report.getName() + "_" + report.getCreationTime().format(DateTimeFormatter.ISO_LOCAL_DATE) + ".html";
+
+            Path stampedPath = outputPath.getParent().resolve(stampedFileName);
+
+            resourceName = "/xslt/" + report.getClass().getSimpleName() + "2HTMLStamped.xsl";
+
+            InputStream in = this.getClass().getResourceAsStream(resourceName);
+
+            if(in != null){
+
+                xslt = new StreamSource(in);
+
+                try {
+                    transformer = factory.newTransformer(xslt);
+
+                    transformer.transform(new JAXBSource(JAXBContext.newInstance(report.getClass()), report),
+                            new StreamResult(stampedPath.toFile()));
+                }
+                catch (TransformerConfigurationException e) {
+
+                    log.error("can't load resource '{}'", resourceName);
+                    throw new RuntimeException(e);
+
+                }
+                catch (TransformerException | JAXBException e) {
+
+                    log.error("can't transform report '{}'", report.getName());
+
+                }
+            }
+            else{
+
+                try {
+                    Files.copy(outputPath, stampedPath, StandardCopyOption.REPLACE_EXISTING);
+                }
+                catch (IOException e) {
+
+                    log.error("can't copy file '{}' to stamped file '{}'", outputPath, stampedPath);
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
         return outputPath;
     }
 
@@ -235,19 +289,4 @@ public class FileStorage {
 
         return outPath.resolve(filename);
     }
-
-    private void copyStampedFile(Path path, NamedReport report) {
-        String stampedFileName = path.getFileName().toString().replace(".",
-                "_" + report.getCreationTime().format(DateTimeFormatter.ISO_LOCAL_DATE) + ".");
-        Path stampedPath = path.getParent().resolve(stampedFileName);
-        try {
-            Files.copy(path, stampedPath, StandardCopyOption.REPLACE_EXISTING);
-        }
-        catch (IOException e) {
-
-            log.error("can't copy file '{}' to stamped file '{}'", path, stampedPath);
-            throw new RuntimeException(e);
-        }
-    }
-
 }

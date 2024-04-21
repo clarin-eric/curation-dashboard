@@ -196,3 +196,6 @@ div.markdown table, div.markdown th, div.markdown td {
 	background-color: #FA5858;
 }
 */
+.alert{
+    background-color: rgba(250, 88, 88, 0.76);
+}

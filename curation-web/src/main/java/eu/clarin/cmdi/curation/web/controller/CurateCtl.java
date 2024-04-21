@@ -105,9 +105,9 @@ public class CurateCtl {
                
                // we're saving any user upload as instance to prevent 
                // overriding public profiles by user intervention
-               storage.saveReportAsXML(report, CurationEntityType.INSTANCE);
+               storage.saveReportAsXML(report, CurationEntityType.INSTANCE, false);
 
-               htmlFilePath = storage.saveReportAsHTML(report, CurationEntityType.INSTANCE);
+               htmlFilePath = storage.saveReportAsHTML(report, CurationEntityType.INSTANCE, false);
             }
             else {  
 
@@ -213,9 +213,9 @@ public class CurateCtl {
 
          // we're saving any user upload as instance to prevent 
          // overriding public profiles by user intervention
-         storage.saveReportAsXML(report, CurationEntityType.INSTANCE);
+         storage.saveReportAsXML(report, CurationEntityType.INSTANCE, false);
 
-         return storage.saveReportAsHTML(report, CurationEntityType.INSTANCE);
+         return storage.saveReportAsHTML(report, CurationEntityType.INSTANCE, false);
 
       }
       catch (IOException e) {

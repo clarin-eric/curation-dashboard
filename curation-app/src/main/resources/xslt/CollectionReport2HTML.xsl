@@ -17,47 +17,47 @@
             <head>
             </head>
             <body>
-                <div class="creationTime">
-                    created at
-                    <xsl:value-of select="./@creationTime"/>
+                <div>
+                    <div class="creationTime">
+                        created at
+                        <xsl:value-of select="./@creationTime"/>
+                        <xsl:text> </xsl:text>
+                        (<a>
+                            <xsl:attribute name="href">
+                                <xsl:text>/collection/</xsl:text>
+                                <xsl:value-of select="//fileReport/provider"/>
+                                <xsl:text>_</xsl:text>
+                                <xsl:value-of select="substring(./@previousCreationTime, 1, 10)" />
+                                <xsl:text>.html</xsl:text>
+                            </xsl:attribute>
+                            <xsl:text>previous report</xsl:text>
+                        </a>)
+                    </div>
+                    <div class="download">
+                        download as
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:text>/download/collection/</xsl:text>
+                                <xsl:value-of select="//fileReport/provider"/>
+                                <xsl:text>_</xsl:text>
+                                <xsl:value-of select="substring(./@creationTime, 1, 10)" />
+                            </xsl:attribute>
+                            <xsl:text>xml</xsl:text>
+                        </a>
+                        <xsl:text> </xsl:text>
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:text>/download/collection/</xsl:text>
+                                <xsl:value-of select="//fileReport/provider"/>
+                                <xsl:text>_</xsl:text>
+                                <xsl:value-of select="substring(./@creationTime, 1, 10)" />
+                                <xsl:text>?format=json</xsl:text>
+                            </xsl:attribute>
+                            <xsl:text>json</xsl:text>
+                        </a>
+                    </div>
+                    <div class="clear"/>
                 </div>
-                <xsl:text> </xsl:text>
-                <div class="creationTime">
-                    (<a>
-                        <xsl:attribute name="href">
-                            <xsl:text>/collection/</xsl:text>
-                            <xsl:value-of select="//fileReport/provider"/>
-                            <xsl:text>_</xsl:text>
-                            <xsl:value-of select="substring(./@previousCreationTime, 1, 10)" />
-                            <xsl:text>.html</xsl:text>
-                        </xsl:attribute>
-                        <xsl:text>previous report</xsl:text>
-                    </a>)
-                </div>
-                <div class="download">
-                    download as
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:text>/download/collection/</xsl:text>
-                            <xsl:value-of select="//fileReport/provider"/>
-                            <xsl:text>_</xsl:text>
-                            <xsl:value-of select="substring(./@creationTime, 1, 10)" />
-                        </xsl:attribute>
-                        <xsl:text>xml</xsl:text>
-                    </a>
-                    <xsl:text> </xsl:text>
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:text>/download/collection/</xsl:text>
-                            <xsl:value-of select="//fileReport/provider"/>
-                            <xsl:text>_</xsl:text>
-                            <xsl:value-of select="substring(./@creationTime, 1, 10)" />
-                            <xsl:text>?format=json</xsl:text>
-                        </xsl:attribute>
-                        <xsl:text>json</xsl:text>
-                    </a>
-                </div>
-                <div class="clear"/>
                 <h1>Collection Report</h1>
                 <h3>
                     Collection name:
