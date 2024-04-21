@@ -55,7 +55,7 @@ public class RecordCtl {
       
       if(Files.notExists(cmdiPath) || !cmdiPath.startsWith(conf.getDirectory().getDataRoot())) {
          
-         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");         
+         ResponseEntity.notFound().build();
       }
       
       StreamingResponseBody stream = outputStream -> {

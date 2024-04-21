@@ -80,7 +80,7 @@ public class Download {
 
       if (Files.notExists(xmlPath)) {
 
-         throw new RuntimeException("no report for entity '" + reportName + "'");
+         return ResponseEntity.notFound().build();
 
       }
       
@@ -188,8 +188,10 @@ public class Download {
       String[] formatedString = {
             switch(format) {
                case "json" -> "{\n   \"creationDate\": \"%1$tF %1$tT\",\n   \"collection\": \"%2$s\",\n   \"category\": \"%3$s\",\n   \"link\": [";
-               case "tsv" -> "checkedLinks createdionDate: %1$tF %1$tT, collection: %2$s, category: %3$s\n"
-                     + "url\tcheckingDate\tmethod\tstatusCode\tbyteSize\tduration\tredirects\tmessage\tcollection\torigin\texpected-mime-type\n";
+               case "tsv" -> """
+                       checkedLinks createdionDate: %1$tF %1$tT, collection: %2$s, category: %3$s
+                       url\tcheckingDate\tmethod\tstatusCode\tbyteSize\tduration\tredirects\tmessage\tcollection\torigin\texpected-mime-type
+                       """;
                default ->  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<checkedLinks creationDate=\"%1$tF %1$tT\" collection=\"%2$s\" category=\"%3$s\">\n";
             }
          };
