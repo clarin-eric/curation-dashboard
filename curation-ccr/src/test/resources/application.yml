@@ -3,6 +3,6 @@ logging:
       root: ERROR
 curation:
    ccr-service:
+      ccr-cache: ${java.io.tmpdir}/curation/ccr_cache
       restApi: "https://vocabularies.clarin.eu/clavas/rest/v1/data"
       query: "?uri=${conceptURI}"
-    
