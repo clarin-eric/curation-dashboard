@@ -149,14 +149,14 @@ public class CCRCache {
                 }
                 catch (IOException e) {
 
-                    log.error("can't cache concept '{}'", conceptURI);
-                    throw new CCRServiceNotAvailableException(e);
+                    log.info("can't cache concept '{}'", conceptURI);
+                    return concept[0];
                 }
             }
         }
         catch (IOException e) {
 
-            log.error("can't cache concept '{}'", conceptURI);
+            log.error("can't access file '{}'", filePath);
             throw new CCRServiceNotAvailableException(e);
         }
 
