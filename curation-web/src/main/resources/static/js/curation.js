@@ -2,8 +2,8 @@ $(document).ready( function () {
     $.extend( $.fn.dataTable.defaults, {
         paging: false,
         searching: true,
-        scrollY: '70vh',
-        sScrollX: "100%",
+        scrollY: true,
+        scrollX: true,
         scrollCollapse: true
     } );
     // Setup - add a text input to each footer cell
@@ -22,15 +22,10 @@ $(document).ready( function () {
         } );
     } );
  
-    var table = $('#collections').DataTable( {
+    $('#collections').DataTable( {
 
         orderCellsTop: true,
-        fixedHeader: true,
-        
-        columnDefs: [
-    		{targets: 0,	className: 'dt-body-left'},
-    		{targets: '_all',  className: 'dt-body-right'}
-    	]
+        fixedHeader: true
     } ); 
     
     $('#profiles thead tr').clone(true).appendTo( '#profiles thead' );
@@ -52,11 +47,6 @@ $(document).ready( function () {
 
         orderCellsTop: true,
         fixedHeader: true,
-        
-        columnDefs: [
-            {targets: [2, 3, 4, 5, 20],    className: 'dt-body-right'},
-            {targets: '_all',  className: 'dt-body-left'}
-        ],
         'rowCallback': function(row, data, index){
             for(var i=6; i<=19;i++){
                 if(data[i] == 'true'){

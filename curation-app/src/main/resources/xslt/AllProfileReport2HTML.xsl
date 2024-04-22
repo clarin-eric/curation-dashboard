@@ -1,30 +1,22 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0"
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:functx="http://www.functx.com">
-	<xsl:function name="functx:capitalize-first"
-		as="xs:string?" xmlns:functx="http://www.functx.com">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema"xmlns:functx="http://www.functx.com">
+	<xsl:function name="functx:capitalize-first" as="xs:string?" xmlns:functx="http://www.functx.com">
 		<xsl:param name="arg" as="xs:string?" />
-
-		<xsl:sequence
-			select="
-   concat(upper-case(substring($arg,1,1)),
-             substring($arg,2))
- " />
-
+		<xsl:sequence select="concat(upper-case(substring($arg,1,1)), substring($arg,2))" />
 	</xsl:function>
 	<xsl:output method="html" indent="yes" />
 	<xsl:decimal-format NaN="N/A" />
 	<xsl:template match="/allProfileReport">
 		<html>
 			<body>
-				<div class="creation-time">
-					created at
-					<xsl:value-of select="./@creationTime" />
+				<div class="infoLine">
+					<div class="floatLeft">
+						created at
+						<xsl:value-of select="./@creationTime" />
+					</div>
+					<div class="floatRight">download as <a href="/download/profile/AllProfileReport">xml</a><xsl:text> </xsl:text><a href="/download/profile/AllProfileReport?format=json">json</a><xsl:text> </xsl:text><a href="/download/profile/AllProfileReport?format=tsv">tsv</a></div>
+					<div class="clear" />
 				</div>
-				<div class="download">download as <a href="/download/profile/AllProfileReport">xml</a><xsl:text> </xsl:text><a href="/download/profile/AllProfileReport?format=json">json</a><xsl:text> </xsl:text><a href="/download/profile/AllProfileReport?format=tsv">tsv</a></div>
-				<div class="clear" />
 				<table id="profiles" class="display text-nowrap" width="100%">
 					<thead>
 						<tr>

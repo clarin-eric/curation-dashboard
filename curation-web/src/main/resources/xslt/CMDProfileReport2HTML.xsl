@@ -10,32 +10,34 @@
 			<head>
 			</head>
 			<body>
-				<div class="creationTime">
-					created at
-					<xsl:value-of select="./@creationTime" />
+				<div class="infoLine">
+					<div class="floatLeft">
+						created at
+						<xsl:value-of select="./@creationTime" />
+					</div>
+					<div class="floatRight">
+						download as
+						<a>
+							<xsl:attribute name="href">
+					   <xsl:text>/download/instance/</xsl:text>
+					   <xsl:value-of
+								select="translate(./headerReport/id,'.:','__')" />
+					</xsl:attribute>
+							<xsl:text>xml</xsl:text>
+						</a>
+						<xsl:text> </xsl:text>
+						<a>
+							<xsl:attribute name="href">
+					   <xsl:text>/download/instance/</xsl:text>
+					   <xsl:value-of
+								select="translate(./headerReport/id,'.:','__')" />
+							<xsl:text>?format=json</xsl:text>
+					</xsl:attribute>
+							<xsl:text>json</xsl:text>
+						</a>
+					</div>
+					<div class="clear" />
 				</div>
-				<div class="download">
-					download as
-					<a>
-						<xsl:attribute name="href">
-                   <xsl:text>/download/instance/</xsl:text>
-                   <xsl:value-of
-							select="translate(./headerReport/id,'.:','__')" />
-                </xsl:attribute>
-						<xsl:text>xml</xsl:text>
-					</a>
-					<xsl:text> </xsl:text>
-					<a>
-						<xsl:attribute name="href">
-                   <xsl:text>/download/instance/</xsl:text>
-                   <xsl:value-of
-							select="translate(./headerReport/id,'.:','__')" />
-						<xsl:text>?format=json</xsl:text>	
-                </xsl:attribute>
-						<xsl:text>json</xsl:text>
-					</a>
-				</div>
-				<div class="clear" />
 				<h1>CMD Profile Report</h1>
            <p>
                Score: 

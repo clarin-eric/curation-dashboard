@@ -17,11 +17,12 @@
             <head>
             </head>
             <body>
-                <div>
-                    <div class="creationTime">
+                <div class="infoLine">
+                    <div class="leftFloat">
                         created at
                         <xsl:value-of select="./@creationTime"/>
-                        <xsl:text> </xsl:text>
+                    </div>
+                    <div class="leftFloat">
                         (<a>
                             <xsl:attribute name="href">
                                 <xsl:text>/collection/</xsl:text>
@@ -33,7 +34,7 @@
                             <xsl:text>previous report</xsl:text>
                         </a>)
                     </div>
-                    <div class="download">
+                    <div class="floatRight">
                         download as
                         <a>
                             <xsl:attribute name="href">

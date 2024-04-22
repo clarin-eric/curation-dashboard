@@ -119,6 +119,18 @@ a:hover {
 .highlight-button{
     background-color: #d8d8d8 !important;
 }
+div.infoLine{
+    font-family: "Lucida Console", "Courier New", monospace;
+    font-size: 0.8em;
+}
+div.floatLeft{
+    float: left;
+    margin-right: 5em;
+}
+div.floatRight{
+    float: right;
+    margin-left: 5em;
+}
 div.creationTime{
    float: left;
    font-family: "Lucida Console", "Courier New", monospace;

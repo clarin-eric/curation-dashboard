@@ -7,11 +7,13 @@
 			<head>
 			</head>
 			<body>
-				<div class="creation-time">
-					created at
-					<xsl:value-of select="./@creationTime" />
+				<div class="infoLine">
+					<div class="floatLeft">
+						created at
+						<xsl:value-of select="./@creationTime" />
+					</div>
+					<div class="clear" />
 				</div>
-				<div class="clear" />
 				<h1>Linkchecker Detail Report</h1>
 				<h2>
 					Collection name:
