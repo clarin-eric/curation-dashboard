@@ -87,6 +87,7 @@ public class CMDInstanceReport implements NamedReport {
    public Collection<Detail> details = new ArrayList<Detail>();
 
    @Override
+   @XmlTransient
    public String getName() {
       if (fileReport.location != null && fileReport.location.contains(".xml")) {
          String normalisedPath = fileReport.location.replace('\\', '/');
@@ -98,6 +99,7 @@ public class CMDInstanceReport implements NamedReport {
    }
 
    @Override
+   @XmlTransient
    public LocalDateTime getCreationTime() {
 
       return this.creationTime;
@@ -110,6 +112,7 @@ public class CMDInstanceReport implements NamedReport {
    }
 
    @Override
+   @XmlTransient
    public LocalDateTime getPreviousCreationTime() {
 
       return this.previousCreationTime;

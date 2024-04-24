@@ -32,6 +32,7 @@ public class AllLinkcheckerReport implements NamedReport {
    private Set<CMDCollection> collections = new TreeSet<CMDCollection>((col1, col2) -> col1.name.compareTo(col2.name));
 
    @Override
+   @XmlTransient
    public String getName() {
       
       return getClass().getSimpleName();
@@ -39,6 +40,7 @@ public class AllLinkcheckerReport implements NamedReport {
    }
 
    @Override
+   @XmlTransient
    public LocalDateTime getCreationTime() {
 
       return this.creationTime;
@@ -51,6 +53,7 @@ public class AllLinkcheckerReport implements NamedReport {
    }
 
    @Override
+   @XmlTransient
    public LocalDateTime getPreviousCreationTime() {
 
       return this.previousCreationTime;

@@ -30,6 +30,7 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
    private List<Profile> profiles = new ArrayList<Profile>();
 
    @Override
+   @XmlTransient
    public String getName() {
 
       return this.getClass().getSimpleName();
@@ -37,6 +38,7 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
    }
 
    @Override
+   @XmlTransient
    public LocalDateTime getCreationTime() {
 
       return this.creationTime;
@@ -49,6 +51,7 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
    }
 
    @Override
+   @XmlTransient
    public LocalDateTime getPreviousCreationTime() {
 
       return this.previousCreationTime;

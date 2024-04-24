@@ -93,11 +93,13 @@ public class CollectionReport implements NamedReport{
 
 
    @Override
+   @XmlTransient
    public String getName() {
       return fileReport.provider;
    }
 
    @Override
+   @XmlTransient
    public LocalDateTime getCreationTime() {
 
       return this.creationTime;
@@ -110,6 +112,7 @@ public class CollectionReport implements NamedReport{
    }
 
    @Override
+   @XmlTransient
    public LocalDateTime getPreviousCreationTime() {
 
       return this.previousCreationTime;
