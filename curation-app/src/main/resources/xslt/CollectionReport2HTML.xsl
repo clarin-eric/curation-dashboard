@@ -17,11 +17,11 @@
             </head>
             <body>
                 <div class="infoLine">
-                    <div class="leftFloat">
+                    <div class="floatLeft">
                         created at
                         <xsl:value-of select="./@creationTime"/>
                     </div>
-                    <div class="leftFloat">
+                    <div class="floatLeft">
                         (<a>
                             <xsl:attribute name="href">
                                 <xsl:text>/collection/</xsl:text>
