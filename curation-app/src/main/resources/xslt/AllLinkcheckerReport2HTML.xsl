@@ -14,7 +14,7 @@
 			   <div class="floatLeft">
 				   <a href="/linkchecker/latestChecks">latest checks</a>
 			   </div>
-			   <div class="FloatRight">
+			   <div class="floatRight">
 				   download as <a href="/download/linkchecker/AllLinkcheckerReport">xml</a>
 				   <xsl:text> </xsl:text>
 				   <a href="/download/linkchecker/AllLinkcheckerReport?format=json">json</a>
