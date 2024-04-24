@@ -20,7 +20,7 @@ public class ProfileReportCache {
    @Autowired
    CMDProfileProcessor processor;
    
-   @Cacheable(value = "publicProfileReportCache", key = "#profile.schemaLocation", condition = "'instance'.equals(@apiConfig.getMode())")
+   @Cacheable(value = "publicProfileReportCache", key = "#profile.schemaLocation", condition = "!'instance'.equals(@apiConfig.getMode())")
    public CMDProfileReport getProfileReport(CMDProfile profile) {
       
       return processor.process(profile);
