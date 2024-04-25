@@ -7,7 +7,6 @@ package eu.clarin.cmdi.curation.api.report;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
-
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 

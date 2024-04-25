@@ -1,10 +1,8 @@
 package eu.clarin.cmdi.curation.web;
 
 import jakarta.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
@@ -17,7 +15,6 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
  * The type Curation web application.
  */
 @SpringBootApplication
-@EnableAutoConfiguration
 @ComponentScan({"eu.clarin.cmdi.curation", "eu.clarin.linkchecker.persistence"})
 @EnableJpaRepositories(basePackages = "eu.clarin.linkchecker.persistence.repository")
 @EntityScan(basePackages = "eu.clarin.linkchecker.persistence.model")

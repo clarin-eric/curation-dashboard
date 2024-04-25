@@ -1,29 +1,29 @@
 package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
-import eu.clarin.linkchecker.persistence.model.Client;
-import eu.clarin.linkchecker.persistence.repository.ClientRepository;
-import eu.clarin.linkchecker.persistence.service.LinkService;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.Detail;
 import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
+import eu.clarin.cmdi.vlo.PIDUtils;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.Resource;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.data.util.Pair;
-
-import java.util.*;
-import java.util.stream.Stream;
-
+import eu.clarin.linkchecker.persistence.model.Client;
+import eu.clarin.linkchecker.persistence.repository.ClientRepository;
+import eu.clarin.linkchecker.persistence.service.LinkService;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Component;
 
-import eu.clarin.cmdi.vlo.PIDUtils;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * The type Url validator.

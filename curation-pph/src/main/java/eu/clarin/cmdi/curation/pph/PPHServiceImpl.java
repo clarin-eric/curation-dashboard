@@ -1,13 +1,12 @@
 package eu.clarin.cmdi.curation.pph;
 
-import java.util.Collection;
-
+import eu.clarin.cmdi.curation.pph.cache.PPHCache;
+import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
 import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.clarin.cmdi.curation.pph.cache.PPHCache;
-import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
+import java.util.Collection;
 
 /**
  * The type Pph service.

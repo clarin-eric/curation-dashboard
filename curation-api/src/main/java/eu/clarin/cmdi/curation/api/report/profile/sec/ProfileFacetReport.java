@@ -4,18 +4,12 @@
  */
 package eu.clarin.cmdi.curation.api.report.profile.sec;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-
+import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 
 /**

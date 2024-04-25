@@ -4,21 +4,20 @@
  */
 package eu.clarin.cmdi.curation.api.report.linkchecker;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.TreeSet;
-
-import jakarta.xml.bind.annotation.*;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.linkchecker.persistence.utils.Category;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.TreeSet;
 
 /**
  *
@@ -35,6 +34,9 @@ public class LinkcheckerDetailReport implements NamedReport{
    @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    private LocalDateTime creationTime = LocalDateTime.now();
+   @XmlAttribute
+   @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+   private LocalDateTime previousCreationTime;
    @XmlElement(name = "categoryReport")
    private final Collection<CategoryReport> categoryReports = new TreeSet<CategoryReport>((report1, report2) -> report1.category.compareTo(report2.category));
 

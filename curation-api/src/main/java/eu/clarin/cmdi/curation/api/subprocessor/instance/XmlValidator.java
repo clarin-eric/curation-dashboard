@@ -1,22 +1,5 @@
 package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.validation.ValidatorHandler;
-
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.Detail;
 import eu.clarin.cmdi.curation.api.report.Detail.Severity;
@@ -26,8 +9,19 @@ import eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.xml.CMDErrorHandler;
 import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.validation.ValidatorHandler;
+import java.io.IOException;
 
 /**
  * The type Xml validator.
@@ -133,7 +127,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
    /**
     * The type Cmd instance content handler.
     */
-   class CMDInstanceContentHandler extends DefaultHandler {
+   static class CMDInstanceContentHandler extends DefaultHandler {
 
       /**
        * The Instance.

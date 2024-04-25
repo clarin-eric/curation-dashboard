@@ -4,7 +4,13 @@
  */
 package eu.clarin.cmdi.curation.api;
 
-import static org.junit.jupiter.api.Assertions.*;
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
+import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -15,14 +21,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.stream.IntStream;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-
-import eu.clarin.cmdi.curation.api.conf.ApiConfig;
-import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
-import lombok.extern.slf4j.Slf4j;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *

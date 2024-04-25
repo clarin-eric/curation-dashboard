@@ -1,15 +1,8 @@
 package eu.clarin.cmdi.curation.api;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
+import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
 
-import eu.clarin.cmdi.curation.api.conf.ApiConfig;
-import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Import(TestConfig.class)

@@ -5,7 +5,6 @@ import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Statistics;
 import eu.clarin.linkchecker.persistence.utils.Category;
-
 import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -22,6 +21,10 @@ public class AllLinkcheckerReport implements NamedReport {
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime creationTime = LocalDateTime.now();
 
+   @XmlAttribute
+   @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+   public LocalDateTime previousCreationTime;
+
    @XmlElement(name = "overall")
    private Overall overall = new Overall();
 
@@ -29,10 +32,31 @@ public class AllLinkcheckerReport implements NamedReport {
    private Set<CMDCollection> collections = new TreeSet<CMDCollection>((col1, col2) -> col1.name.compareTo(col2.name));
 
    @Override
+   @XmlTransient
    public String getName() {
       
       return getClass().getSimpleName();
    
+   }
+
+   @Override
+   @XmlTransient
+   public LocalDateTime getCreationTime() {
+
+      return this.creationTime;
+   }
+
+   @Override
+   public void setPreviousCreationTime(LocalDateTime previousCreationTime) {
+
+      this.previousCreationTime = previousCreationTime;
+   }
+
+   @Override
+   @XmlTransient
+   public LocalDateTime getPreviousCreationTime() {
+
+      return this.previousCreationTime;
    }
 
    public void addReport(CollectionReport collectionReport) {

@@ -1,25 +1,25 @@
 package eu.clarin.cmdi.curation.pph.cache;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import eu.clarin.cmdi.curation.commons.http.HttpUtils;
+import eu.clarin.cmdi.curation.pph.ProfileHeader;
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import eu.clarin.cmdi.curation.pph.ProfileHeader;
-import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
-import lombok.extern.slf4j.Slf4j;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The type Pph cache.
@@ -28,7 +28,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PPHCache {
 
-   /**
+   @Autowired
+   private final HttpUtils httpUtils;
+
+    public PPHCache(HttpUtils httpUtils) {
+        this.httpUtils = httpUtils;
+    }
+
+    /**
     * Gets profile headers map.
     *
     * @param restUrl the rest url
@@ -47,7 +54,8 @@ public class PPHCache {
 
          log.trace("component registry URL: {}", (restUrl + query));
 
-         InputStream in = new URL(restUrl + query).openStream();
+         InputStream in = httpUtils.getURLConnection(restUrl + query).getInputStream();
+
 
          parser.parse(in, new DefaultHandler() {
 

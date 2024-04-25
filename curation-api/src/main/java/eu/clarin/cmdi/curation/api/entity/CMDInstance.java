@@ -1,15 +1,5 @@
 package eu.clarin.cmdi.curation.api.entity;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import eu.clarin.cmdi.curation.api.processor.CMDInstanceProcessor;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
@@ -18,6 +8,15 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import eu.clarin.cmdi.vlo.importer.solr.DocumentStoreException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Scope(value="prototype")

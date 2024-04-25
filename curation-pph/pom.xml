@@ -18,5 +18,10 @@
          <groupId>org.springframework.boot</groupId>
          <artifactId>spring-boot-starter-cache</artifactId>
       </dependency>
+      <dependency>
+         <groupId>eu.clarin.cmdi</groupId>
+         <artifactId>curation-commons</artifactId>
+         <version>${project.version}</version>
+      </dependency>
    </dependencies>
 </project>

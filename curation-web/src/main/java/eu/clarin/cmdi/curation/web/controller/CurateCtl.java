@@ -7,9 +7,7 @@ import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
-
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -107,9 +105,9 @@ public class CurateCtl {
                
                // we're saving any user upload as instance to prevent 
                // overriding public profiles by user intervention
-               storage.saveReportAsXML(report, CurationEntityType.INSTANCE);
+               storage.saveReportAsXML(report, CurationEntityType.INSTANCE, false);
 
-               htmlFilePath = storage.saveReportAsHTML(report, CurationEntityType.INSTANCE);
+               htmlFilePath = storage.saveReportAsHTML(report, CurationEntityType.INSTANCE, false);
             }
             else {  
 
@@ -215,9 +213,9 @@ public class CurateCtl {
 
          // we're saving any user upload as instance to prevent 
          // overriding public profiles by user intervention
-         storage.saveReportAsXML(report, CurationEntityType.INSTANCE);
+         storage.saveReportAsXML(report, CurationEntityType.INSTANCE, false);
 
-         return storage.saveReportAsHTML(report, CurationEntityType.INSTANCE);
+         return storage.saveReportAsHTML(report, CurationEntityType.INSTANCE, false);
 
       }
       catch (IOException e) {

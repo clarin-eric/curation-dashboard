@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
-
 import org.springframework.context.annotation.Import;
 
 @SpringBootTest
@@ -38,7 +37,7 @@ class CCRServiceTests {
    }
 
    @SpringBootConfiguration
-
+   @ComponentScan(basePackages = "eu.clarin.cmdi.curation")
    public static class TestConfig {
 
    }

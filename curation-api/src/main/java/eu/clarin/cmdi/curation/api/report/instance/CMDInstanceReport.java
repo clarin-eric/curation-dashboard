@@ -1,19 +1,12 @@
 package eu.clarin.cmdi.curation.api.report.instance;
 
-import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
-
-import eu.clarin.cmdi.curation.api.report.instance.sec.FileReport;
-import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport;
-import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport;
-import eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport;
-import eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport;
-import eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport;
+import eu.clarin.cmdi.curation.api.report.instance.sec.*;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
-
 import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -56,6 +49,10 @@ public class CMDInstanceReport implements NamedReport {
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public final LocalDateTime creationTime = LocalDateTime.now();
 
+   @XmlAttribute
+   @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+   public LocalDateTime previousCreationTime;
+
    // sub reports **************************************
 
    // ProfileHeader
@@ -90,6 +87,7 @@ public class CMDInstanceReport implements NamedReport {
    public Collection<Detail> details = new ArrayList<Detail>();
 
    @Override
+   @XmlTransient
    public String getName() {
       if (fileReport.location != null && fileReport.location.contains(".xml")) {
          String normalisedPath = fileReport.location.replace('\\', '/');
@@ -98,5 +96,25 @@ public class CMDInstanceReport implements NamedReport {
       else {
          return fileReport.location;
       }
+   }
+
+   @Override
+   @XmlTransient
+   public LocalDateTime getCreationTime() {
+
+      return this.creationTime;
+   }
+
+   @Override
+   public void setPreviousCreationTime(LocalDateTime previousCreationTime) {
+
+      this.previousCreationTime = previousCreationTime;
+   }
+
+   @Override
+   @XmlTransient
+   public LocalDateTime getPreviousCreationTime() {
+
+      return this.previousCreationTime;
    }
 }

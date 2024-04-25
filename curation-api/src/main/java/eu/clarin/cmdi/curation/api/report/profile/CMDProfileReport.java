@@ -1,27 +1,20 @@
 package eu.clarin.cmdi.curation.api.report.profile;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.Detail;
+import eu.clarin.cmdi.curation.api.report.LocalDateTimeAdapter;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ComponentReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * A selection of values from a single CMDProfileReport which will form a line
@@ -35,6 +28,10 @@ public class CMDProfileReport implements NamedReport{
    @XmlAttribute
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public final LocalDateTime creationTime = LocalDateTime.now();
+
+   @XmlAttribute
+   @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+   public LocalDateTime previousCreationTime;
    @XmlAttribute
    public static final double maxScore = 3.0;
    @XmlAttribute
@@ -60,8 +57,30 @@ public class CMDProfileReport implements NamedReport{
 
 
    @Override
+   @XmlTransient
    public String getName() {
+
       return (this.headerReport!=null?this.headerReport.getId():"missing header report");
+   }
+
+   @Override
+   @XmlTransient
+   public LocalDateTime getCreationTime() {
+
+      return this.creationTime;
+   }
+
+   @Override
+   public void setPreviousCreationTime(LocalDateTime previousCreationTime) {
+
+      this.previousCreationTime = previousCreationTime;
+   }
+
+   @Override
+   @XmlTransient
+   public LocalDateTime getPreviousCreationTime() {
+
+      return this.previousCreationTime;
    }
 
 

@@ -1,14 +1,14 @@
 package eu.clarin.cmdi.curation.api;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.Collection;
-
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.Collection;
 
 
 /**

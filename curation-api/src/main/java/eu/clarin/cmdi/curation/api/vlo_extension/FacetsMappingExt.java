@@ -1,13 +1,12 @@
 package eu.clarin.cmdi.curation.api.vlo_extension;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-
-import org.apache.commons.collections.CollectionUtils;
-
 import eu.clarin.cmdi.vlo.importer.Pattern;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetDefinition;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
+import org.apache.commons.collections.CollectionUtils;
+
+import java.util.Collection;
+import java.util.LinkedHashMap;
 
 /**
  * The type Facets mapping ext.

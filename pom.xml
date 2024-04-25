@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-parent</artifactId>
-      <version>3.2.2</version>
+      <version>3.2.5</version>
       <relativePath /> <!-- lookup parent from repository -->
    </parent>
    <groupId>eu.clarin.cmdi</groupId>
@@ -20,7 +20,7 @@
       <maven.compiler.target>17</maven.compiler.target>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <linkchecker-persistence.version>1.0.1</linkchecker-persistence.version>
-      <revision>6.3.1</revision>
+      <revision>6.4.0</revision>
       <vlo.version>4.11.6</vlo.version>
       <vtd.version>2.11</vtd.version>
       <saxon.version>12.3</saxon.version>
@@ -81,9 +81,7 @@
       </repository>
    </repositories>
    <modules>
-      <!--
-      <module>curation-web</module>
-      -->
+      <module>curation-commons</module>
       <module>curation-pph</module>
       <module>curation-ccr</module>
       <module>curation-cr</module>

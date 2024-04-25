@@ -1,9 +1,9 @@
 package eu.clarin.cmdi.curation.cr;
 
-import javax.xml.validation.Schema;
-
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import lombok.Data;
+
+import javax.xml.validation.Schema;
 
 @Data
 public class ProfileCacheEntry {

@@ -1,25 +1,19 @@
 package eu.clarin.cmdi.curation.web.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.util.Calendar;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import eu.clarin.cmdi.curation.api.conf.ApiConfig;
+import eu.clarin.cmdi.curation.web.dto.StatusDetailDto;
+import eu.clarin.linkchecker.persistence.model.StatusDetail;
+import eu.clarin.linkchecker.persistence.utils.Category;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
+import lombok.extern.slf4j.Slf4j;
+import net.sf.saxon.BasicTransformerFactory;
 import org.hibernate.jpa.AvailableHints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ContentDisposition;
@@ -33,18 +27,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-
-import eu.clarin.cmdi.curation.api.conf.ApiConfig;
-import eu.clarin.cmdi.curation.web.dto.StatusDetailDto;
-import eu.clarin.linkchecker.persistence.model.StatusDetail;
-import eu.clarin.linkchecker.persistence.utils.Category;
-import lombok.extern.slf4j.Slf4j;
-import net.sf.saxon.BasicTransformerFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.util.Calendar;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * The type Download.
@@ -83,7 +80,7 @@ public class Download {
 
       if (Files.notExists(xmlPath)) {
 
-         throw new RuntimeException("no report for entity '" + reportName + "'");
+         return ResponseEntity.notFound().build();
 
       }
       
@@ -191,8 +188,10 @@ public class Download {
       String[] formatedString = {
             switch(format) {
                case "json" -> "{\n   \"creationDate\": \"%1$tF %1$tT\",\n   \"collection\": \"%2$s\",\n   \"category\": \"%3$s\",\n   \"link\": [";
-               case "tsv" -> "checkedLinks createdionDate: %1$tF %1$tT, collection: %2$s, category: %3$s\n"
-                     + "url\tcheckingDate\tmethod\tstatusCode\tbyteSize\tduration\tredirects\tmessage\tcollection\torigin\texpected-mime-type\n";
+               case "tsv" -> """
+                       checkedLinks createdionDate: %1$tF %1$tT, collection: %2$s, category: %3$s
+                       url\tcheckingDate\tmethod\tstatusCode\tbyteSize\tduration\tredirects\tmessage\tcollection\torigin\texpected-mime-type
+                       """;
                default ->  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<checkedLinks creationDate=\"%1$tF %1$tT\" collection=\"%2$s\" category=\"%3$s\">\n";
             }
          };

@@ -1,12 +1,18 @@
 package eu.clarin.cmdi.curation.ccr.cache;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import eu.clarin.cmdi.curation.ccr.CCRConcept;
+import eu.clarin.cmdi.curation.ccr.CCRStatus;
+import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.commons.http.HttpUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Component;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -15,19 +21,18 @@ import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
-import eu.clarin.cmdi.curation.ccr.CCRStatus;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Component;
-
-import eu.clarin.cmdi.curation.ccr.CCRConcept;
-import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
-import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
-import lombok.extern.slf4j.Slf4j;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * The type Ccr cache.
@@ -36,10 +41,20 @@ import org.xml.sax.helpers.DefaultHandler;
 @Slf4j
 public class CCRCache {
 
-    @Autowired
-    private CCRConfig ccrProps;
+    private final HttpUtils httpUtils;
+    private final CCRConfig ccrProps;
 
-    private final SAXParserFactory fac = SAXParserFactory.newInstance();
+    private final SAXParserFactory fac;
+
+    public CCRCache(HttpUtils httpUtils, CCRConfig ccrProps) {
+
+        this.httpUtils = httpUtils;
+
+        this.ccrProps = ccrProps;
+
+        this.fac = SAXParserFactory.newInstance();
+        this.fac.setNamespaceAware(true);
+    }
 
     /**
      * Gets ccr concept map.
@@ -104,39 +119,75 @@ public class CCRCache {
             }
         } // end switch off validation check
 
+        String fileName = conceptURI.replaceAll("[/.:]", "_") + ".xml";
 
-        String restApiUrlStr = ccrProps.getRestApi() + ccrProps.getQuery().replace("${conceptURI}", URLEncoder.encode(conceptURI, StandardCharsets.UTF_8));
+        Path filePath = ccrProps.getCcrCache().resolve(fileName);
 
-        log.debug("Fetching from {}", restApiUrlStr);
+        try {
+            if(Files.notExists(filePath, LinkOption.NOFOLLOW_LINKS) || Files.size(filePath) == 0){
+
+                if(Files.notExists(ccrProps.getCcrCache())) {
+
+                    try {
+
+                        Files.createDirectories(ccrProps.getCcrCache());
+                    }
+                    catch (IOException e) {
+
+                        log.error("could create ccr cache directory '{}'", ccrProps.getCcrCache());
+                        throw new CCRServiceNotAvailableException(e);
+                    }
+                }
+
+                String restApiUrlStr = ccrProps.getRestApi() + ccrProps.getQuery().replace("${conceptURI}", URLEncoder.encode(conceptURI, StandardCharsets.UTF_8));
+
+                log.debug("Fetching from {}", restApiUrlStr);
+
+                try(InputStream in = httpUtils.getURLConnection(restApiUrlStr).getInputStream()){
+
+                    Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
+                }
+                catch (IOException e) {
+
+                    log.info("can't cache concept '{}'", conceptURI);
+                    return concept[0];
+                }
+            }
+        }
+        catch (IOException e) {
+
+            log.error("can't access file '{}'", filePath);
+            throw new CCRServiceNotAvailableException(e);
+        }
 
         try {
 
             SAXParser parser = fac.newSAXParser();
 
-            parser.parse(new URL(restApiUrlStr).openStream(),
+            parser.parse(filePath.toFile(),
                     new DefaultHandler() {
 
                         private StringBuilder elementValue;
 
                         String prefLabel;
-                        CCRStatus status = CCRStatus.NaN;
+                        CCRStatus status = CCRStatus.UNKNOWN;
 
                         @Override
                         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-                            switch (qName) {
+                            switch (localName) {
 
-                                case "skos:prefLabel", "ns0:status" -> elementValue = new StringBuilder();
+                                case "prefLabel", "status" -> elementValue = new StringBuilder();
                             }
                         }
 
                         @Override
                         public void endElement(String uri, String localName, String qName) throws SAXException {
 
-                            switch (qName) {
+                            switch (localName) {
 
-                                case "skos:prefLabel" -> this.prefLabel = this.elementValue.toString();
-                                case "ns0:status" -> this.status = CCRStatus.valueOf(this.elementValue.toString().toUpperCase());
+                                case "prefLabel" -> this.prefLabel = this.elementValue.toString();
+                                case "status" -> this.status = EnumUtils.getEnum(CCRStatus.class, this.elementValue.toString().toUpperCase(), CCRStatus.UNKNOWN);
                             }
                         }
 
@@ -162,18 +213,14 @@ public class CCRCache {
             log.info("can't configure new SAXParser", ex);
             throw new CCRServiceNotAvailableException(ex);
         }
-        catch (MalformedURLException ex) {
-
-            log.info("the URL '{}' is no valid URL for lookup", restApiUrlStr);
-        }
         catch (IOException ex) {
 
-            log.info("can't read incoming stream", ex);
+            log.info("can't read file '{}'", filePath);
         }
 
         catch (SAXException ex) {
 
-            log.info("can't parse incoming stream", ex);
+            log.info("can't parse file '{}'", filePath);
         }
 
         return concept[0];

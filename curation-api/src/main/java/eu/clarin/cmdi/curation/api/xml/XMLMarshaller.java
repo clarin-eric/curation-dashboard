@@ -3,13 +3,13 @@
  */
 package eu.clarin.cmdi.curation.api.xml;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
+
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * The type Xml marshaller.

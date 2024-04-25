@@ -19,9 +19,9 @@
 <link rel="stylesheet" id="curation-styles" th:href="@{/css/curation.css}"
    type="text/css" />
 <link rel="stylesheet" type="text/css"
-   href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+   href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css">
 <link rel="stylesheet" id="dropzone-styles"
-   th:href="@{/css/dropzone.min.css}" type="text/css" />
+   href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 
 </head>
 <body class="home">
@@ -126,16 +126,15 @@
       </div>
       <!-- #wrapper-footer-full -->
    </div>
-   <script type="text/javascript"
-      th:src="@{/fundament/vendor/jquery/jquery.min.js}"></script>
+   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js" />
    <script type="text/javascript"
       th:src="@{/fundament/js/fundament.min.js}"></script>
-   <script type="text/javascript" th:src="@{/js/dropzone.min.js}"></script>
+   <script type="text/javascript" src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
    <script type="text/javascript" th:src="@{/js/curation.js}"></script>
    <script type="text/javascript"
-      src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+      src="https://cdn.datatables.net/2.0.2/js/dataTables.min.js"></script>
    <script type="text/javascript"
-      src="https://cdn.datatables.net/fixedheader/3.1.5/js/dataTables.fixedHeader.min.js"></script>
+      src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
    <!-- Matomo -->
    <script type="text/javascript">
       var _paq = window._paq = window._paq || [];
