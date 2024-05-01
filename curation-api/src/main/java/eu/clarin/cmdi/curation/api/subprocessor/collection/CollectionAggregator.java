@@ -32,8 +32,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Stream;
 
 /**
@@ -53,7 +53,7 @@ public class CollectionAggregator {
    @Autowired
    private UrlRepository uRep;
 
-   private Map<String, Collection<String>> mdSelfLinks = new HashMap<String, Collection<String>>();
+   private final Map<String, Collection<String>> mdSelfLinks = new HashMap<String, Collection<String>>();
 
    /**
     * Process.
@@ -69,7 +69,7 @@ public class CollectionAggregator {
       
       collectionReport.fileReport.collectionRoot = conf.getDirectory().getDataRoot().relativize(collection.getPath()).toString();
 
-      ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadpoolSize());
+      ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
       try {
          Files.walkFileTree(collection.getPath(), new FileVisitor<Path>() {
@@ -135,7 +135,7 @@ public class CollectionAggregator {
             Thread.sleep(1000);
          }
          catch (InterruptedException ex) {
-            log.error("Error occured while waiting for the threadpool to terminate.");
+            log.error("Error occurred while waiting for the threadpool to terminate.");
          }
       }
 
@@ -151,7 +151,7 @@ public class CollectionAggregator {
     */
    public synchronized void addReport(CollectionReport collectionReport, CMDInstanceReport instanceReport) {
       
-      if(instanceReport.details.size() > 0) {//only add a record if there're details to report
+      if(instanceReport.details.size() > 0) {//only add a record if there are details to report
          
          collectionReport.recordDetails.add(new RecordDetail(instanceReport.fileReport.location, instanceReport.details));
       }
@@ -329,8 +329,8 @@ public class CollectionAggregator {
                / collectionReport.fileReport.numOfFiles;
          collectionReport.fileReport.scorePercentage = collectionReport.fileReport.aggregatedScore 
                / (double) collectionReport.fileReport.numOfFiles;
-         collectionReport.fileReport.avgScore = (double) (collectionReport.fileReport.aggregatedScore
-               / collectionReport.fileReport.numOfFiles);         
+         collectionReport.fileReport.avgScore = collectionReport.fileReport.aggregatedScore
+               / collectionReport.fileReport.numOfFiles;
          //profile
          collectionReport.profileReport.totNumOfProfiles = collectionReport.profileReport.profiles.size();
          
@@ -387,12 +387,12 @@ public class CollectionAggregator {
                         / (double) collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements);
          }
          collectionReport.xmlPopulationReport.scorePercentage = collectionReport.xmlPopulationReport.aggregatedScore
-               / (double) collectionReport.xmlPopulationReport.aggregatedMaxScore;
+               / collectionReport.xmlPopulationReport.aggregatedMaxScore;
          collectionReport.xmlPopulationReport.avgScore = (collectionReport.xmlPopulationReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          // xmlvalidity
          collectionReport.xmlValidityReport.scorePercentage = collectionReport.xmlValidityReport.aggregatedScore
-               / (double) collectionReport.xmlValidityReport.aggregatedMaxScore;
+               / collectionReport.xmlValidityReport.aggregatedMaxScore;
          collectionReport.xmlValidityReport.avgScore = (collectionReport.xmlValidityReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          // facet
@@ -401,7 +401,7 @@ public class CollectionAggregator {
          collectionReport.facetReport.percCoverageNonZero = (double) collectionReport.facetReport.facets.stream()
                .filter(facet -> facet.count > 0).count() / collectionReport.facetReport.facets.size();
          collectionReport.facetReport.scorePercentage = collectionReport.facetReport.aggregatedScore
-               / (double) collectionReport.facetReport.aggregatedMaxScore;
+               / collectionReport.facetReport.aggregatedMaxScore;
          collectionReport.facetReport.avgScore = (collectionReport.facetReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          // linkchecker
@@ -419,7 +419,7 @@ public class CollectionAggregator {
                   / (double) collectionReport.linkcheckerReport.totNumOfLinksWithDuration;
          }
          collectionReport.linkcheckerReport.scorePercentage = collectionReport.linkcheckerReport.aggregatedScore
-               / (double) collectionReport.linkcheckerReport.aggregatedMaxScore;
+               / collectionReport.linkcheckerReport.aggregatedMaxScore;
          //collection
          collectionReport.avgScore = collectionReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable;         
