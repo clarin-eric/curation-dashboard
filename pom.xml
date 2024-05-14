@@ -13,7 +13,7 @@
    <version>${revision}</version>
    <organization>
       <name>CLARIN</name>
-      <url>http://www.clarin.eu</url>
+      <url>https://www.clarin.eu</url>
    </organization>
    <properties>
       <maven.compiler.source>17</maven.compiler.source>
