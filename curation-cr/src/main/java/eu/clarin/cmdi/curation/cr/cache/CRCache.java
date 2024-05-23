@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.cr.cache;
 import com.ximpleware.ParseException;
 import com.ximpleware.VTDGen;
 import eu.clarin.cmdi.curation.ccr.CCRService;
+import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import eu.clarin.cmdi.curation.cr.ProfileCacheEntry;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
@@ -24,6 +25,7 @@ import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,6 +56,9 @@ public class CRCache {
     */
    @Autowired
    PPHService pphService;
+
+   @Autowired
+   HttpUtils httpUtils;
 
    /**
     * Instantiates a new Cr cache.
@@ -109,15 +114,17 @@ public class CRCache {
             if(Files.notExists(xsd.getParent())) {
                Files.createDirectories(xsd.getParent());
             }
-            
-//            Files.createFile(xsd);
+
             log.debug("XSD for the {} is not in the local cache, it will be downloaded", profileHeader.getSchemaLocation());
 
             if (profileHeader.getSchemaLocation().startsWith("file:")) {
                Files.copy(Paths.get(new URI(profileHeader.getSchemaLocation())), xsd, StandardCopyOption.REPLACE_EXISTING);
             }
             else {
-               FileUtils.copyURLToFile(new URL(profileHeader.getSchemaLocation()), xsd.toFile());
+               try(InputStream in = httpUtils.getURLConnection(profileHeader.getSchemaLocation()).getInputStream()){
+
+                  Files.copy(in, xsd, StandardCopyOption.REPLACE_EXISTING);
+               }
             }
          }
       }
