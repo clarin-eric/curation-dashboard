@@ -12,11 +12,14 @@ import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport.Coverage;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,15 +50,15 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
     * @param profile the profile
     * @param report  the report
     */
-   public void process(CMDProfile profile, CMDProfileReport report) {
+   public void process(CMDProfile profile, CMDProfileReport report) throws MalFunctioningProcessorException {
       
       report.facetReport = new ProfileFacetReport();
-      
-      ProfileHeader header = crService.createProfileHeader(profile.getSchemaLocation(), "1.x", false);
-      
-      FacetsMapping facetMapping = fac.getFacetsMapping(header);
 
       try {
+         ProfileHeader header = crService.createProfileHeader(profile.getSchemaLocation(), "1.x", false);
+
+         FacetsMapping facetMapping = fac.getFacetsMapping(header);
+
          final Map<String, CMDINode> elements = crService.getParsedProfile(header).getXpathElementNode();
          
    
@@ -76,12 +79,12 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
       }
       catch (NoProfileCacheEntryException e) {
          
-         log.debug("no ParsedProfile for profile id '{}'", header.getId());
-         report.details.add(new Detail(Severity.FATAL,"facet" , "no ParsedProfile for profile id " + header.getId()));
+         log.debug("no ParsedProfile for profile location '{}'", profile.getSchemaLocation());
+         report.details.add(new Detail(Severity.FATAL,"facet" , "no ParsedProfile for profile location " + profile.getSchemaLocation()));
 
       }
-      catch (CRServiceStorageException e) {
-          throw new RuntimeException(e);
+      catch (CRServiceStorageException | PPHServiceNotAvailableException | CCRServiceNotAvailableException e) {
+          throw new MalFunctioningProcessorException(e);
       }
        report.facetReport.percProfileCoverage = (double) report.facetReport.numOfFacetsCoveredByProfile/report.facetReport.numOfFacets;
       report.facetReport.score = report.facetReport.percProfileCoverage;

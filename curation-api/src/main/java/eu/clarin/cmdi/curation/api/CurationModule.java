@@ -4,6 +4,7 @@ import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
+import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -67,7 +68,7 @@ public interface CurationModule {
     * @param path the path
     * @return the collection report
     */
-   public CollectionReport processCollection(Path path);
+   public CollectionReport processCollection(Path path) throws MalFunctioningProcessorException;
 
    /**
     * Gets linkchecker detail reports.

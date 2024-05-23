@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.cr.cache;
 import com.ximpleware.ParseException;
 import com.ximpleware.VTDGen;
 import eu.clarin.cmdi.curation.ccr.CCRService;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import eu.clarin.cmdi.curation.cr.ProfileCacheEntry;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
@@ -76,7 +77,7 @@ public class CRCache {
     * @throws NoProfileCacheEntryException the no profile cache entry exception
     */
    @Cacheable(value = "publicProfileCache", key = "#profileHeader.id")
-   public ProfileCacheEntry getPublicEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException, CRServiceStorageException {
+   public ProfileCacheEntry getPublicEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException, CRServiceStorageException, CCRServiceNotAvailableException {
       return getProfileCacheEntry(profileHeader);
    }
 
@@ -88,11 +89,11 @@ public class CRCache {
     * @throws NoProfileCacheEntryException the no profile cache entry exception
     */
    @Cacheable(value = "privateProfileCache", key = "#profileHeader.id", condition = "#profileHeader.reliable")
-   public ProfileCacheEntry getPrivateEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException, CRServiceStorageException {
+   public ProfileCacheEntry getPrivateEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException, CRServiceStorageException, CCRServiceNotAvailableException {
       return getProfileCacheEntry(profileHeader);
    }
    
-   private ProfileCacheEntry getProfileCacheEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException, CRServiceStorageException {
+   private ProfileCacheEntry getProfileCacheEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException, CRServiceStorageException, CCRServiceNotAvailableException {
       
       String fileName = profileHeader.getSchemaLocation().replaceAll("[/.:]", "_");
       
@@ -169,9 +170,6 @@ public class CRCache {
          throw new NoProfileCacheEntryException();
          
       }
-
-
-
 
       ProfileParser parser = ProfileParserFactory.createParser(profileHeader.getCmdiVersion(), ccrService);
 

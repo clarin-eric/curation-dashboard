@@ -10,10 +10,13 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ComponentReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -41,7 +44,7 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
     * @param profile the profile
     * @param report  the report
     */
-   public void process(CMDProfile profile, CMDProfileReport report) {
+   public void process(CMDProfile profile, CMDProfileReport report) throws MalFunctioningProcessorException {
       
       ParsedProfile parsedProfile = null;
 
@@ -54,8 +57,8 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
          return;
 
       }
-      catch (CRServiceStorageException e) {
-          throw new RuntimeException(e);
+      catch (CRServiceStorageException | PPHServiceNotAvailableException | CCRServiceNotAvailableException e) {
+          throw new MalFunctioningProcessorException(e);
       }
 
        report.conceptReport =  new ConceptReport();

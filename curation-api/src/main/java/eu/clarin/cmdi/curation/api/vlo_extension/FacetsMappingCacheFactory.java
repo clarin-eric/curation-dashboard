@@ -2,10 +2,12 @@ package eu.clarin.cmdi.curation.api.vlo_extension;
 
 import com.ximpleware.NavException;
 import eu.clarin.cmdi.curation.api.cache.FacetMappingCache;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.pph.ProfileHeader;
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.Pattern;
 import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
@@ -62,8 +64,13 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
    @Override
    public FacetsMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
 
-      return getFacetsMapping(
-            crService.createProfileHeader(vloConfig.getComponentRegistryProfileSchema(profileId), "1.x", false));
+       try {
+           return getFacetsMapping(
+                 crService.createProfileHeader(vloConfig.getComponentRegistryProfileSchema(profileId), "1.x", false));
+       }
+       catch (PPHServiceNotAvailableException e) {
+           throw new RuntimeException(e);
+       }
 
    }
 
@@ -109,7 +116,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
                log.error("no ProfileCacheEntry object for profile id '{}'", header.getId());
 
             }
-            catch (CRServiceStorageException e) {
+            catch (CRServiceStorageException | PPHServiceNotAvailableException | CCRServiceNotAvailableException e) {
                 throw new RuntimeException(e);
             }
 

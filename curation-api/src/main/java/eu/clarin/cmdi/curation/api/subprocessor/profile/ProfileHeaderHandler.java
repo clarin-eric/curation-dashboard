@@ -7,6 +7,7 @@ import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
+import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.pph.PPHService;
 import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
@@ -34,28 +35,27 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
     * @param profile the profile
     * @param report  the report
     */
-   public void process(CMDProfile profile, CMDProfileReport report) {
-
-      report.headerReport = new ProfileHeaderReport(
-            crService.createProfileHeader(profile.getSchemaLocation(), "1.x", false));
-      
-      // instance mode is only used by web app for user upload
-      // user uploads are not reliable and must therefore be cached separately
-      if("instance".equals(this.conf.getMode())){
-         report.headerReport.getProfileHeader().setReliable(false);
-      }
-
-      if (!report.headerReport.getProfileHeader().isPublic()) {
-         log.debug("profile {} not public", profile.getSchemaLocation());
-         report.details.add((new Detail(Severity.WARNING,"header" , "Profile is not public")));
-      }
-      else {
-         report.headerReport.score = 1;
-         report.score += report.headerReport.score;
-      }
-
+   public void process(CMDProfile profile, CMDProfileReport report) throws MalFunctioningProcessorException {
 
       try {
+         report.headerReport = new ProfileHeaderReport(
+                 crService.createProfileHeader(profile.getSchemaLocation(), "1.x", false));
+
+         // instance mode is only used by web app for user upload
+         // user uploads are not reliable and must therefore be cached separately
+         if("instance".equals(this.conf.getMode())){
+            report.headerReport.getProfileHeader().setReliable(false);
+         }
+
+         if (!report.headerReport.getProfileHeader().isPublic()) {
+            log.debug("profile {} not public", profile.getSchemaLocation());
+            report.details.add((new Detail(Severity.WARNING,"header" , "Profile is not public")));
+         }
+         else {
+            report.headerReport.score = 1;
+            report.score += report.headerReport.score;
+         }
+
          pphService.getProfileHeaders().stream()
                .filter(profileHeader -> profileHeader.getName().equals(report.headerReport.getName())
                      && !profileHeader.getId().equals(report.headerReport.getId()))
@@ -70,7 +70,7 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
       }
       catch (PPHServiceNotAvailableException e) {
 
-         throw new RuntimeException(e);
+         throw new MalFunctioningProcessorException(e);
       }
    }
 }

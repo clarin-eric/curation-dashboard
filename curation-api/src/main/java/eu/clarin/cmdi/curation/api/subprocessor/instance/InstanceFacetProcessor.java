@@ -15,10 +15,13 @@ import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.Value
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.xml.XPathValueService;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +63,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
     * @param instanceReport the instance report
     */
    @Override
-   public void process(CMDInstance instance, CMDInstanceReport instanceReport) {
+   public void process(CMDInstance instance, CMDInstanceReport instanceReport) throws MalFunctioningProcessorException {
       
       if(instance.getCmdiData().isEmpty()) {
          
@@ -189,8 +192,8 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
             instanceReport.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
             instanceReport.isProcessable = false;
          }
-         catch (CRServiceStorageException e) {
-             throw new RuntimeException(e);
+         catch (CRServiceStorageException | PPHServiceNotAvailableException | CCRServiceNotAvailableException e) {
+             throw new MalFunctioningProcessorException(e);
          }
       }
    }

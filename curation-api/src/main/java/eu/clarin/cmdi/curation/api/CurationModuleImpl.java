@@ -11,6 +11,7 @@ import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport.Co
 import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport.StatusDetailReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
+import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.model.Status;
@@ -80,7 +81,12 @@ public class CurationModuleImpl implements CurationModule {
     */
    @Override
    public CMDProfileReport processCMDProfile(URL schemaLocation) {
-      return ctx.getBean(CMDProfile.class, schemaLocation.toString(), "1.x").generateReport();
+       try {
+           return ctx.getBean(CMDProfile.class, schemaLocation.toString(), "1.x").generateReport();
+       }
+       catch (MalFunctioningProcessorException e) {
+           throw new RuntimeException(e);
+       }
    }
 
    /**
@@ -117,7 +123,7 @@ public class CurationModuleImpl implements CurationModule {
          try {
             return ctx.getBean(CMDInstance.class, path, Files.size(path), "testProvider").generateReport();
          }
-         catch (IOException|BeansException e) {
+         catch (IOException | BeansException | MalFunctioningProcessorException e) {
 
             throw new RuntimeException(e);
 
@@ -160,7 +166,7 @@ public class CurationModuleImpl implements CurationModule {
 
          return report;
       }
-      catch (IOException e) {
+      catch (IOException | MalFunctioningProcessorException e) {
 
          throw new RuntimeException(e);
 
@@ -174,7 +180,7 @@ public class CurationModuleImpl implements CurationModule {
     * @return the collection report
     */
    @Override
-   public CollectionReport processCollection(Path path) {
+   public CollectionReport processCollection(Path path) throws MalFunctioningProcessorException {
 
       return ctx.getBean(CMDCollection.class, path).generateReport();
 

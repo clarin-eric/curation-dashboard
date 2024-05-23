@@ -7,6 +7,7 @@ package eu.clarin.cmdi.curation.api;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
+import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -133,7 +134,7 @@ public class CollectionTest {
    } 
    
    @Test
-   void file() throws IOException {
+   void file() throws IOException, MalFunctioningProcessorException {
       
       assertEquals(100, collectionReport.fileReport.numOfFiles);
       
@@ -193,14 +194,14 @@ public class CollectionTest {
                   .stream().map(link -> link.mdSelfLink).findFirst().get()
             );
       }
-      catch (IOException e) {
+      catch (IOException | MalFunctioningProcessorException e) {
          
          log.error("", e);
       }
    }
     
    @Test
-   void resourceProxy() throws IOException {
+   void resourceProxy() throws IOException, MalFunctioningProcessorException {
       
       assertEquals(instanceReport.resProxyReport.numOfResources *100, collectionReport.resProxyReport.totNumOfResources);
       

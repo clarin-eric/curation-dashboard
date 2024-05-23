@@ -53,7 +53,7 @@ public abstract class ProfileParser {
     * @return the parsed profile
     * @throws NoProfileCacheEntryException the no profile cache entry exception
     */
-   public ParsedProfile parse(VTDNav navigator, ProfileHeader profileHeader) throws NoProfileCacheEntryException{
+   public ParsedProfile parse(VTDNav navigator, ProfileHeader profileHeader) throws NoProfileCacheEntryException, CCRServiceNotAvailableException {
       vn = navigator;
       try {
          fillInHeader(vn, profileHeader);
@@ -99,7 +99,7 @@ public abstract class ProfileParser {
     * @throws VTDException                 the vtd exception
     * @throws NoProfileCacheEntryException the no profile cache entry exception
     */
-   protected abstract ParsedProfile createParsedProfile(ProfileHeader profileHeader, Collection<CRElement> nodes) throws VTDException, NoProfileCacheEntryException;
+   protected abstract ParsedProfile createParsedProfile(ProfileHeader profileHeader, Collection<CRElement> nodes) throws VTDException, NoProfileCacheEntryException, CCRServiceNotAvailableException;
 
    /**
     * Fill in header profile header.
@@ -255,7 +255,7 @@ public abstract class ProfileParser {
     * @param uri the uri
     * @return the ccr concept
     */
-   protected CCRConcept createConcept(String uri) {
+   protected CCRConcept createConcept(String uri) throws CCRServiceNotAvailableException {
 
       if (uri == null)
          return null;
@@ -268,13 +268,8 @@ public abstract class ProfileParser {
 
          CCRConcept ccrConcept = null;
 
-         try {
-            ccrConcept = ccrService.getConcept(uri);
-         }
-         catch(CCRServiceNotAvailableException ex){
+         ccrConcept = ccrService.getConcept(uri);
 
-            log.error("CCRService not available. Setting default concept for URI '{}'", uri);
-         }
 
           concept = Objects.requireNonNullElseGet(ccrConcept, () -> new CCRConcept(uri, "invalid concept", CCRStatus.UNKNOWN));
       }

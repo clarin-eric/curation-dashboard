@@ -11,6 +11,7 @@ import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Stati
 import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport.InvalidReference;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
+import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.linkchecker.persistence.repository.UrlRepository;
@@ -33,7 +34,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 /**
@@ -69,7 +72,16 @@ public class CollectionAggregator {
       
       collectionReport.fileReport.collectionRoot = conf.getDirectory().getDataRoot().relativize(collection.getPath()).toString();
 
-      ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadpoolSize());
+      //ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadpoolSize());
+      ThreadPoolExecutor executor = new ThreadPoolExecutor(conf.getThreadpoolSize(), conf.getThreadpoolSize(), 1, TimeUnit.DAYS, new LinkedBlockingQueue<>()){
+
+         @Override
+         protected void afterExecute(Runnable r, Throwable t) {
+            if(t != null){
+               this.shutdown();
+            }
+         }
+      };
 
       try {
          Files.walkFileTree(collection.getPath(), new FileVisitor<Path>() {
@@ -100,8 +112,16 @@ public class CollectionAggregator {
 
                executor.submit(() -> {
 
-                  CMDInstanceReport instanceReport = instance.generateReport();
-                  addReport(collectionReport, instanceReport);
+                   CMDInstanceReport instanceReport = null;
+                   try {
+                       instanceReport = instance.generateReport();
+                   }
+                   catch (MalFunctioningProcessorException e) {
+                       throw new RuntimeException(e);
+                   }
+
+
+                   addReport(collectionReport, instanceReport);
 
                }); // end executor.submit
 
