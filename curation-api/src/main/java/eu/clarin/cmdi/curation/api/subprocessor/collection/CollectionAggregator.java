@@ -33,10 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Stream;
 
 /**
@@ -77,8 +74,19 @@ public class CollectionAggregator {
 
          @Override
          protected void afterExecute(Runnable r, Throwable t) {
+
+            if (t == null
+                    && r instanceof Future<?>
+                    && ((Future<?>)r).isDone()) {
+               try {
+                  ((Future<?>) r).get();
+               }
+               catch (CancellationException |  ExecutionException | InterruptedException e) {
+                  t = e;
+               }
+            }
             if(t != null){
-               this.shutdown();
+               this.shutdownNow();
             }
          }
       };
