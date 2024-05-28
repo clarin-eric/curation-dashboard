@@ -22,6 +22,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
+import net.jcip.annotations.NotThreadSafe;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Import(TestConfig.class)
 @TestInstance(Lifecycle.PER_CLASS)
 @Slf4j
+@NotThreadSafe
 public class CollectionTest {
    
    private final ApiConfig conf;
