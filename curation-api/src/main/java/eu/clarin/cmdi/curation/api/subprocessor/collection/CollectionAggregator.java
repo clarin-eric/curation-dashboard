@@ -86,6 +86,7 @@ public class CollectionAggregator {
                }
             }
             if(t != null){
+               log.error("Error occurred while generating report - shutting down executor", t);
                this.shutdownNow();
             }
          }
@@ -266,7 +267,11 @@ public class CollectionAggregator {
          collectionReport.fileReport.numOfFilesNonProcessable++;
       }
       
-      collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
+      if(instanceReport.facetReport == null) {
+          log.warn("Cannot add facet scor from instance to aggregated score - facet report does not exist for instance {}", instanceReport.getName());
+      } else {
+        collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
+      }
 
    }
 
