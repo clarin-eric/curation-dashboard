@@ -90,8 +90,8 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
 
       // the key of the facetValuesMap is the target facet name
-      instanceReport.facetReport.coverages.stream().forEach(coverage -> {
-         if (coverage.coveredByInstance = facetValuesMap.keySet().contains(coverage.name)) { // initialization and test!
+      instanceReport.facetReport.coverages.forEach(coverage -> {
+         if (coverage.coveredByInstance = facetValuesMap.containsKey(coverage.name)) { // initialization and test!
             instanceReport.facetReport.numOfFacetsCoveredByInstance++;
          }
       });

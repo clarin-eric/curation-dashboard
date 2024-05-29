@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -43,7 +42,7 @@ public class CollectionTest {
    
    private final Path file099CopyPath;
    
-   private Path collectionPath;
+   private final Path collectionPath;
    
    private CMDInstanceReport instanceReport;
    
