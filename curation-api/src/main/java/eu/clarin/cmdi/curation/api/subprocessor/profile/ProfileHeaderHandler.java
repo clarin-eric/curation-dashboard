@@ -7,7 +7,7 @@ import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
-import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.pph.PPHService;
 import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;

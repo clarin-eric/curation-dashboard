@@ -11,7 +11,7 @@ import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport.Co
 import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport.StatusDetailReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
-import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.model.Status;

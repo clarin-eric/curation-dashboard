@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.curation.commons.exception;
+package eu.clarin.cmdi.curation.api.exception;
 
 public class MalFunctioningProcessorException extends Exception{
     public MalFunctioningProcessorException() {

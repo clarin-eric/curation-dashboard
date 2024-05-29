@@ -3,7 +3,7 @@
  */
 package eu.clarin.cmdi.curation.api.subprocessor;
 
-import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 
 /**
  * The type Abstract subprocessor.

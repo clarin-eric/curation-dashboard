@@ -2,7 +2,7 @@ package eu.clarin.cmdi.curation.api.entity;
 
 import eu.clarin.cmdi.curation.api.processor.CMDInstanceProcessor;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
-import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.CMDIRecordProcessor;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;

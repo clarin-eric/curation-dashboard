@@ -9,7 +9,7 @@ import eu.clarin.cmdi.curation.api.report.profile.AllProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
 import eu.clarin.cmdi.curation.app.conf.AppConfig;
-import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.pph.PPHService;
 import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import eu.clarin.linkchecker.persistence.service.LinkService;

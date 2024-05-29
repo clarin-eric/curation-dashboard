@@ -4,7 +4,7 @@ import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
-import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 
 import java.net.MalformedURLException;
 import java.net.URL;

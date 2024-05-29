@@ -7,7 +7,7 @@ package eu.clarin.cmdi.curation.api;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
-import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -124,27 +125,27 @@ public class CollectionTest {
    @Test
    void collection() {
       
-      assertEquals(collectionPath.getFileName().toString(), collectionReport.getName());     
+      assertEquals(collectionPath.getFileName().toString(), this.collectionReport.getName());
       
 //      assertEquals(instanceReport.instanceScore * 100, collectionReport.aggregatedScore, 0.1);
       
-      assertEquals(instanceReport.instanceScore, collectionReport.avgScore, 0.1); 
+      assertEquals(instanceReport.instanceScore, this.collectionReport.avgScore, 0.1);
       
-      assertEquals(CMDInstanceReport.maxScore * 100 + collectionReport.linkcheckerReport.aggregatedMaxScore, collectionReport.aggregatedMaxScore, 0.1);
+      assertEquals(CMDInstanceReport.maxScore * 100 + this.collectionReport.linkcheckerReport.aggregatedMaxScore, collectionReport.aggregatedMaxScore, 0.1);
    } 
    
    @Test
    void file() throws IOException, MalFunctioningProcessorException {
       
-      assertEquals(100, collectionReport.fileReport.numOfFiles);
+      assertEquals(100, this.collectionReport.fileReport.numOfFiles);
       
-      assertEquals(0, collectionReport.fileReport.numOfFilesNonProcessable);
+      assertEquals(0, this.collectionReport.fileReport.numOfFilesNonProcessable);
       
-      assertEquals(100, collectionReport.fileReport.numOfFilesProcessable);
+      assertEquals(100, this.collectionReport.fileReport.numOfFilesProcessable);
       
-      assertEquals(instanceReport.fileReport.size * 100, collectionReport.fileReport.size);
+      assertEquals(instanceReport.fileReport.size * 100, this.collectionReport.fileReport.size);
       
-      assertEquals(instanceReport.fileReport.score, collectionReport.fileReport.avgScore, 0.1);
+      assertEquals(instanceReport.fileReport.score, this.collectionReport.fileReport.avgScore, 0.1);
       
       // now we blow up our file099 to the maximum file size +1
       try(RandomAccessFile raf = new RandomAccessFile(this.file099Path.toFile(), "rw")){

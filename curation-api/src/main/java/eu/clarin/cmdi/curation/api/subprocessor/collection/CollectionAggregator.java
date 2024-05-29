@@ -11,7 +11,7 @@ import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Stati
 import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport.InvalidReference;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
-import eu.clarin.cmdi.curation.commons.exception.MalFunctioningProcessorException;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.linkchecker.persistence.repository.UrlRepository;
@@ -53,7 +53,9 @@ public class CollectionAggregator {
    @Autowired
    private UrlRepository uRep;
 
-   private Map<String, Collection<String>> mdSelfLinks = new HashMap<String, Collection<String>>();
+   private final Map<String, Collection<String>> mdSelfLinks = new HashMap<String, Collection<String>>();
+
+   private int counter;
 
    /**
     * Process.
@@ -86,6 +88,7 @@ public class CollectionAggregator {
                }
             }
             if(t != null){
+               log.debug("", t);
                this.shutdownNow();
             }
          }
@@ -115,10 +118,10 @@ public class CollectionAggregator {
 
                collectionReport.fileReport.size += attrs.size();
 
-               CMDInstance instance = ctx.getBean(CMDInstance.class, filePath, attrs.size(),
+               final CMDInstance instance = ctx.getBean(CMDInstance.class, filePath, attrs.size(),
                      collectionReport.fileReport.provider);
 
-               executor.submit(() -> {
+               executor.execute(() -> {
 
                    CMDInstanceReport instanceReport = null;
                    try {
@@ -128,10 +131,9 @@ public class CollectionAggregator {
                        throw new RuntimeException(e);
                    }
 
-
                    addReport(collectionReport, instanceReport);
 
-               }); // end executor.submit
+               }); // end executor.execute
 
                return FileVisitResult.CONTINUE;
             }
@@ -158,17 +160,14 @@ public class CollectionAggregator {
 
       executor.shutdown();
 
-      while (!executor.isTerminated()) {
-         try {
-            Thread.sleep(1000);
-         }
-         catch (InterruptedException ex) {
-            log.error("Error occured while waiting for the threadpool to terminate.");
-         }
+       try {
+           executor.awaitTermination(1, TimeUnit.HOURS);
+       }
+       catch (InterruptedException e) {
+          log.error("Error occured while waiting for the threadpool to terminate.");
       }
 
       calculateAverages(collectionReport);
-
    }
 
    /**
@@ -261,13 +260,11 @@ public class CollectionAggregator {
                                           .get()
                                           .count++
                         );
+         collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
       }
       else {
          collectionReport.fileReport.numOfFilesNonProcessable++;
       }
-      
-      collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
-
    }
 
    private void calculateAverages(CollectionReport collectionReport) {
