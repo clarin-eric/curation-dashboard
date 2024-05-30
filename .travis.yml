@@ -1,4 +1,4 @@
 language: java
 jdk:
 - openjdk17
-script: mvnw test
+script: ./mvnw test
