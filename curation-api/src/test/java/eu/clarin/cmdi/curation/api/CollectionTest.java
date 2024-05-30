@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @Import(TestConfig.class)
 @TestInstance(Lifecycle.PER_CLASS)
+@NotThreadSafe
 @Slf4j
 public class CollectionTest {
    
