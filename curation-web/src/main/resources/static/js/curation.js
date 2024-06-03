@@ -1,8 +1,9 @@
 $(document).ready( function () {
     $.extend( $.fn.dataTable.defaults, {
+        info: false,
         paging: false,
-        searching: true,
-        scrollY: true,
+        searching: false,
+        scrollY: '70vh',
         scrollX: true,
         scrollCollapse: true
     } );
