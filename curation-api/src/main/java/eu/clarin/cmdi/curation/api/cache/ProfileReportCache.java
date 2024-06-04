@@ -7,6 +7,7 @@ package eu.clarin.cmdi.curation.api.cache;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.processor.CMDProfileProcessor;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class ProfileReportCache {
    CMDProfileProcessor processor;
    
    @Cacheable(value = "publicProfileReportCache", key = "#profile.schemaLocation", condition = "!'instance'.equals(@apiConfig.getMode())")
-   public CMDProfileReport getProfileReport(CMDProfile profile) {
+   public CMDProfileReport getProfileReport(CMDProfile profile) throws MalFunctioningProcessorException {
       
       return processor.process(profile);
       

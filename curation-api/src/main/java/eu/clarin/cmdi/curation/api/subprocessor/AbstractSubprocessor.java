@@ -3,6 +3,8 @@
  */
 package eu.clarin.cmdi.curation.api.subprocessor;
 
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
+
 /**
  * The type Abstract subprocessor.
  *
@@ -17,6 +19,6 @@ public abstract class AbstractSubprocessor<E, R> {
      * @param entity the entity
      * @param report the report
      */
-    public abstract void process(E entity, R report);
+    public abstract void process(E entity, R report) throws MalFunctioningProcessorException;
 
 }

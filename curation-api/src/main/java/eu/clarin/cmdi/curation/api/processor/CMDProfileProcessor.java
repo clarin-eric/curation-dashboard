@@ -8,6 +8,7 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.subprocessor.profile.ProfileConceptHandler;
 import eu.clarin.cmdi.curation.api.subprocessor.profile.ProfileFacetHandler;
 import eu.clarin.cmdi.curation.api.subprocessor.profile.ProfileHeaderHandler;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -23,7 +24,7 @@ public class CMDProfileProcessor {
    @Autowired
    ApplicationContext ctx;
 
-   public CMDProfileReport process(CMDProfile profile) {
+   public CMDProfileReport process(CMDProfile profile) throws MalFunctioningProcessorException {
 
       CMDProfileReport report = new CMDProfileReport();
 

@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.cr.profile_parser;
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDGen;
 import eu.clarin.cmdi.curation.ccr.CCRService;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
@@ -97,7 +98,7 @@ class CMDI1_2_ProfileParser extends ProfileParser {
      */
     @Override
     protected ParsedProfile createParsedProfile(ProfileHeader profileHeader, Collection<CRElement> nodes)
-            throws NoProfileCacheEntryException {
+            throws NoProfileCacheEntryException, CCRServiceNotAvailableException {
 
 
         // add xpaths from envelope
@@ -114,35 +115,36 @@ class CMDI1_2_ProfileParser extends ProfileParser {
         Map<String, CMDINode> xpathElementNode = new LinkedHashMap<>(envelope.getXpathElementNode());
         Map<String, CMDINode> xpathComponentNode = new LinkedHashMap<>(envelope.getXpathComponentNode());
 
-        nodes.stream().filter(n -> n.isLeaf || n.type == NodeType.COMPONENT).forEach(node -> {
-            StringBuilder xpath = new StringBuilder();
-            CRElement parent = node.parent;
-            while (parent != null) {
-                xpath.insert(0, "cmdp:" + parent.name + "/");
-                parent = parent.parent;
+        for(CRElement node : nodes){
+            if(node.isLeaf || node.type == NodeType.COMPONENT){
+                StringBuilder xpath = new StringBuilder();
+                CRElement parent = node.parent;
+                while (parent != null) {
+                    xpath.insert(0, "cmdp:" + parent.name + "/");
+                    parent = parent.parent;
+                }
+                xpath = new StringBuilder("/cmd:CMD/cmd:Components/" + xpath
+                        + (node.type == NodeType.ATTRIBUTE || node.type == NodeType.CMD_VERSION_ATTR ? "@" + node.name
+                        : "cmdp:" + node.name + "/text()"));
+
+                CMDINode cmdiNode = new CMDINode();
+                cmdiNode.isRequired = node.isRequired;
+
+                if (node.type == NodeType.COMPONENT) {
+
+                    cmdiNode.component = new Component(node.name, node.ref);
+
+                    xpathComponentNode.put(xpath.toString(), cmdiNode);
+                } else {
+
+                    cmdiNode.concept = createConcept(node.ref);
+
+                    xpathElementNode.put(xpath.toString(), cmdiNode);
+                }
+
+                xpathNode.put(xpath.toString(), cmdiNode);
             }
-            xpath = new StringBuilder("/cmd:CMD/cmd:Components/" + xpath
-                    + (node.type == NodeType.ATTRIBUTE || node.type == NodeType.CMD_VERSION_ATTR ? "@" + node.name
-                    : "cmdp:" + node.name + "/text()"));
-
-            CMDINode cmdiNode = new CMDINode();
-            cmdiNode.isRequired = node.isRequired;
-
-            if (node.type == NodeType.COMPONENT) {
-
-                cmdiNode.component = new Component(node.name, node.ref);
-
-                xpathComponentNode.put(xpath.toString(), cmdiNode);
-            } else {
-
-                cmdiNode.concept = createConcept(node.ref);
-
-                xpathElementNode.put(xpath.toString(), cmdiNode);
-            }
-
-            xpathNode.put(xpath.toString(), cmdiNode);
-
-        });
+        }
 
         return new ParsedProfile(
                 profileHeader,

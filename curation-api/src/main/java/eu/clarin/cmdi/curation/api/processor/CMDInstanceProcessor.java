@@ -4,6 +4,7 @@ import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.subprocessor.instance.*;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -30,16 +31,17 @@ public class CMDInstanceProcessor {
             .map(abstactSubprocessorClass -> ctx.getBean(abstactSubprocessorClass)).collect(Collectors.toList());       
    }
 
-   public CMDInstanceReport process(CMDInstance instance){
+   public CMDInstanceReport process(CMDInstance instance) throws MalFunctioningProcessorException {
 
       final CMDInstanceReport instanceReport = new CMDInstanceReport();
 
 
-      this.subprocessors
-         .stream()
-         .takeWhile(p -> instanceReport.isProcessable)
-         .forEach(subprocessor -> subprocessor.process(instance, instanceReport));
+      for(AbstractSubprocessor subprocessor : this.subprocessors) {
 
+          if(!instanceReport.isProcessable) break;
+
+          subprocessor.process(instance, instanceReport);
+      }
 
       return instanceReport;
    }

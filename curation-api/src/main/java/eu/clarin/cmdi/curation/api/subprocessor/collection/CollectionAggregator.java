@@ -11,6 +11,7 @@ import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Stati
 import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport.InvalidReference;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.linkchecker.persistence.repository.UrlRepository;
@@ -32,8 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 import java.util.stream.Stream;
 
 /**
@@ -53,7 +53,9 @@ public class CollectionAggregator {
    @Autowired
    private UrlRepository uRep;
 
-   private Map<String, Collection<String>> mdSelfLinks = new HashMap<String, Collection<String>>();
+   private final Map<String, Collection<String>> mdSelfLinks = new HashMap<String, Collection<String>>();
+
+   private int counter;
 
    /**
     * Process.
@@ -69,7 +71,28 @@ public class CollectionAggregator {
       
       collectionReport.fileReport.collectionRoot = conf.getDirectory().getDataRoot().relativize(collection.getPath()).toString();
 
-      ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadpoolSize());
+      //ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadpoolSize());
+      ThreadPoolExecutor executor = new ThreadPoolExecutor(conf.getThreadpoolSize(), conf.getThreadpoolSize(), 1, TimeUnit.DAYS, new LinkedBlockingQueue<>()){
+
+         @Override
+         protected void afterExecute(Runnable r, Throwable t) {
+
+            if (t == null
+                    && r instanceof Future<?>
+                    && ((Future<?>)r).isDone()) {
+               try {
+                  ((Future<?>) r).get();
+               }
+               catch (CancellationException |  ExecutionException | InterruptedException e) {
+                  t = e;
+               }
+            }
+            if(t != null){
+               log.debug("", t);
+               this.shutdownNow();
+            }
+         }
+      };
 
       try {
          Files.walkFileTree(collection.getPath(), new FileVisitor<Path>() {
@@ -95,15 +118,22 @@ public class CollectionAggregator {
 
                collectionReport.fileReport.size += attrs.size();
 
-               CMDInstance instance = ctx.getBean(CMDInstance.class, filePath, attrs.size(),
+               final CMDInstance instance = ctx.getBean(CMDInstance.class, filePath, attrs.size(),
                      collectionReport.fileReport.provider);
 
-               executor.submit(() -> {
+               executor.execute(() -> {
 
-                  CMDInstanceReport instanceReport = instance.generateReport();
-                  addReport(collectionReport, instanceReport);
+                   CMDInstanceReport instanceReport = null;
+                   try {
+                       instanceReport = instance.generateReport();
+                   }
+                   catch (MalFunctioningProcessorException e) {
+                       throw new RuntimeException(e);
+                   }
 
-               }); // end executor.submit
+                   addReport(collectionReport, instanceReport);
+
+               }); // end executor.execute
 
                return FileVisitResult.CONTINUE;
             }
@@ -130,17 +160,14 @@ public class CollectionAggregator {
 
       executor.shutdown();
 
-      while (!executor.isTerminated()) {
-         try {
-            Thread.sleep(1000);
-         }
-         catch (InterruptedException ex) {
-            log.error("Error occured while waiting for the threadpool to terminate.");
-         }
+       try {
+           executor.awaitTermination(1, TimeUnit.HOURS);
+       }
+       catch (InterruptedException e) {
+          log.error("Error occured while waiting for the threadpool to terminate.");
       }
 
       calculateAverages(collectionReport);
-
    }
 
    /**
@@ -233,13 +260,11 @@ public class CollectionAggregator {
                                           .get()
                                           .count++
                         );
+         collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
       }
       else {
          collectionReport.fileReport.numOfFilesNonProcessable++;
       }
-      
-      collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
-
    }
 
    private void calculateAverages(CollectionReport collectionReport) {

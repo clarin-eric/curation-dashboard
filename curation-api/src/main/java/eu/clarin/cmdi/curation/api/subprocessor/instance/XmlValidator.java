@@ -8,9 +8,12 @@ import eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport;
 import eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.xml.CMDErrorHandler;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
+import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,7 +43,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
     * @param report   the report
     */
    @Override
-   public void process(CMDInstance instance, CMDInstanceReport report) {
+   public void process(CMDInstance instance, CMDInstanceReport report) throws MalFunctioningProcessorException {
       
       report.xmlPopulationReport = new XmlPopulationReport();
       
@@ -57,9 +60,9 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
          
          return;
       }
-      catch (CRServiceStorageException e) {
+      catch (CRServiceStorageException | PPHServiceNotAvailableException | CCRServiceNotAvailableException e) {
 
-          throw new RuntimeException(e);
+          throw new MalFunctioningProcessorException(e);
       }
 
        final int messageCount = report.details.size();

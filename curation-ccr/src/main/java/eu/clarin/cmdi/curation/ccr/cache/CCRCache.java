@@ -7,7 +7,6 @@ import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.xml.sax.Attributes;
@@ -173,7 +172,7 @@ public class CCRCache {
                         CCRStatus status = CCRStatus.UNKNOWN;
 
                         @Override
-                        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+                        public void startElement(String uri, String localName, String qName, Attributes attributes) {
 
                             switch (localName) {
 
@@ -182,7 +181,7 @@ public class CCRCache {
                         }
 
                         @Override
-                        public void endElement(String uri, String localName, String qName) throws SAXException {
+                        public void endElement(String uri, String localName, String qName) {
 
                             switch (localName) {
 
@@ -192,13 +191,13 @@ public class CCRCache {
                         }
 
                         @Override
-                        public void endDocument() throws SAXException {
+                        public void endDocument()  {
 
                             concept[0] = new CCRConcept(conceptURI, prefLabel, status);
                         }
 
                         @Override
-                        public void characters(char[] ch, int start, int length) throws SAXException {
+                        public void characters(char[] ch, int start, int length) {
                             if (elementValue == null) {
                                 elementValue = new StringBuilder();
                             } else {
@@ -210,12 +209,13 @@ public class CCRCache {
 
         catch (ParserConfigurationException ex) {
 
-            log.info("can't configure new SAXParser", ex);
+            log.error("can't configure new SAXParser", ex);
             throw new CCRServiceNotAvailableException(ex);
         }
         catch (IOException ex) {
 
-            log.info("can't read file '{}'", filePath);
+            log.error("can't read file '{}'", filePath);
+            throw new CCRServiceNotAvailableException(ex);
         }
 
         catch (SAXException ex) {

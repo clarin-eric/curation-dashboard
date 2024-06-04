@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.cr;
 
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import eu.clarin.cmdi.curation.cr.cache.CRCache;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
@@ -75,15 +76,11 @@ public class CRServiceImpl implements CRService {
     }
 
     @Override
-    public ProfileHeader createProfileHeader(String schemaLocation, String cmdiVersion, boolean isLocalFile) {
+    public ProfileHeader createProfileHeader(String schemaLocation, String cmdiVersion, boolean isLocalFile) throws PPHServiceNotAvailableException {
         ProfileHeader header = null;
         if (!isLocalFile && schemaLocation.startsWith(pphConfig.getRestApi())) {
-            try {
-                header = pphService.getProfileHeader(getIdFromSchemaLocation(schemaLocation));
-            }
-            catch (PPHServiceNotAvailableException e) {
-                throw new RuntimeException(e);
-            }
+
+            header = pphService.getProfileHeader(getIdFromSchemaLocation(schemaLocation));
         }
 
         if (header == null) {
@@ -124,13 +121,13 @@ public class CRServiceImpl implements CRService {
     }
 
     @Override
-    public ParsedProfile getParsedProfile(ProfileHeader header) throws NoProfileCacheEntryException, CRServiceStorageException {
+    public ParsedProfile getParsedProfile(ProfileHeader header) throws NoProfileCacheEntryException, CRServiceStorageException, PPHServiceNotAvailableException, CCRServiceNotAvailableException {
 
         return getEntry(header).getParsedProfile();
 
     }
 
-    private synchronized ProfileCacheEntry getEntry(ProfileHeader header) throws NoProfileCacheEntryException, CRServiceStorageException {
+    private synchronized ProfileCacheEntry getEntry(ProfileHeader header) throws NoProfileCacheEntryException, CRServiceStorageException, PPHServiceNotAvailableException, CCRServiceNotAvailableException {
 
         if (header.getId() == null || header.getId().isEmpty()) {
             header.setId(createProfileHeader(header.getSchemaLocation(), header.getCmdiVersion(), header.isLocalFile()).getId());
@@ -141,7 +138,7 @@ public class CRServiceImpl implements CRService {
     }
 
     @Override
-    public Schema getSchema(ProfileHeader header) throws NoProfileCacheEntryException, CRServiceStorageException {
+    public Schema getSchema(ProfileHeader header) throws NoProfileCacheEntryException, CRServiceStorageException, PPHServiceNotAvailableException, CCRServiceNotAvailableException {
 
         return getEntry(header).getSchema();
 
