@@ -1,3 +1,9 @@
+# 6.4.1
+- fix for rendering issue in tables (issue #245)
+- adding back to current link in historic reports (issue #242)
+- re-engineering exception handling to stop thread pool (re-opend issue #218)
+- adding identification and timeout for schema look-up (re-opened issues #222, #231)
+
 # 6.4.0
 - allowing proxy usage for external HTTP calls (issue #227)
 - sending User-Agent string with HTTP calls (issue #222) 
