@@ -9,6 +9,7 @@ import eu.clarin.cmdi.curation.api.report.profile.AllProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
 import eu.clarin.cmdi.curation.app.conf.AppConfig;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.pph.PPHService;
 import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import eu.clarin.linkchecker.persistence.service.LinkService;
@@ -90,7 +91,14 @@ public class CurationApp {
             final AllCollectionReport allCollectionReport = new AllCollectionReport();
             final AllLinkcheckerReport allLinkcheckerReport = new AllLinkcheckerReport();         
    
-            conf.getDirectory().getIn().forEach(inPath -> processCollection(inPath, allCollectionReport,allLinkcheckerReport ));   
+            conf.getDirectory().getIn().forEach(inPath -> {
+                try {
+                    processCollection(inPath, allCollectionReport,allLinkcheckerReport );
+                }
+                catch (MalFunctioningProcessorException e) {
+                    throw new RuntimeException(e);
+                }
+            });
 
             storage.saveReport(allCollectionReport, CurationEntityType.COLLECTION, true);
             storage.saveReport(allLinkcheckerReport, CurationEntityType.LINKCHECKER, true);
@@ -160,7 +168,7 @@ public class CurationApp {
       };
    }
    
-   private void processCollection(Path path, AllCollectionReport allCollectionReport, AllLinkcheckerReport allLinkcheckerReport) {      
+   private void processCollection(Path path, AllCollectionReport allCollectionReport, AllLinkcheckerReport allLinkcheckerReport) throws MalFunctioningProcessorException {
 
       if(isCollectionRoot(path)) {
          
@@ -178,7 +186,14 @@ public class CurationApp {
       }
       else {
          try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path)){
-            directoryStream.forEach(dir -> processCollection(dir, allCollectionReport, allLinkcheckerReport));
+            directoryStream.forEach(dir -> {
+                try {
+                    processCollection(dir, allCollectionReport, allLinkcheckerReport);
+                }
+                catch (MalFunctioningProcessorException e) {
+                    throw new RuntimeException(e);
+                }
+            });
          }
          catch (IOException e) {
             log.error("can't create directory stream for path '{}'", path);

@@ -33,6 +33,16 @@
                             <xsl:text>previous report</xsl:text>
                         </a>)
                     </div>
+                    <div class="floatLeft">
+                        (<a>
+                        <xsl:attribute name="href">
+                            <xsl:text>/collection/</xsl:text>
+                            <xsl:value-of select="//fileReport/provider"/>
+                            <xsl:text>.html</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>current report</xsl:text>
+                    </a>)
+                    </div>
                     <div class="floatRight">
                         download as
                         <a>

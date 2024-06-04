@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.api.entity;
 
 import eu.clarin.cmdi.curation.api.cache.ProfileReportCache;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -28,7 +29,7 @@ public class CMDProfile{
         this.cmdiVersion = cmdiVersion;
     }
 
-    public CMDProfileReport generateReport() {
+    public CMDProfileReport generateReport() throws MalFunctioningProcessorException {
         return profileReportCache.getProfileReport(this);
     }
 }

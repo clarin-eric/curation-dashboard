@@ -11,6 +11,7 @@ import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Stati
 import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport.InvalidReference;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.linkchecker.persistence.repository.UrlRepository;
@@ -32,8 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.stream.Stream;
 
 /**
@@ -55,6 +55,8 @@ public class CollectionAggregator {
 
    private final Map<String, Collection<String>> mdSelfLinks = new HashMap<String, Collection<String>>();
 
+   private int counter;
+
    /**
     * Process.
     *
@@ -69,7 +71,28 @@ public class CollectionAggregator {
       
       collectionReport.fileReport.collectionRoot = conf.getDirectory().getDataRoot().relativize(collection.getPath()).toString();
 
-      ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+      //ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadpoolSize());
+      ThreadPoolExecutor executor = new ThreadPoolExecutor(conf.getThreadpoolSize(), conf.getThreadpoolSize(), 1, TimeUnit.DAYS, new LinkedBlockingQueue<>()){
+
+         @Override
+         protected void afterExecute(Runnable r, Throwable t) {
+
+            if (t == null
+                    && r instanceof Future<?>
+                    && ((Future<?>)r).isDone()) {
+               try {
+                  ((Future<?>) r).get();
+               }
+               catch (CancellationException |  ExecutionException | InterruptedException e) {
+                  t = e;
+               }
+            }
+            if(t != null){
+               log.debug("", t);
+               this.shutdownNow();
+            }
+         }
+      };
 
       try {
          Files.walkFileTree(collection.getPath(), new FileVisitor<Path>() {
@@ -95,15 +118,22 @@ public class CollectionAggregator {
 
                collectionReport.fileReport.size += attrs.size();
 
-               CMDInstance instance = ctx.getBean(CMDInstance.class, filePath, attrs.size(),
+               final CMDInstance instance = ctx.getBean(CMDInstance.class, filePath, attrs.size(),
                      collectionReport.fileReport.provider);
 
-               executor.submit(() -> {
+               executor.execute(() -> {
 
-                  CMDInstanceReport instanceReport = instance.generateReport();
-                  addReport(collectionReport, instanceReport);
+                   CMDInstanceReport instanceReport = null;
+                   try {
+                       instanceReport = instance.generateReport();
+                   }
+                   catch (MalFunctioningProcessorException e) {
+                       throw new RuntimeException(e);
+                   }
 
-               }); // end executor.submit
+                   addReport(collectionReport, instanceReport);
+
+               }); // end executor.execute
 
                return FileVisitResult.CONTINUE;
             }
@@ -130,17 +160,14 @@ public class CollectionAggregator {
 
       executor.shutdown();
 
-      while (!executor.isTerminated()) {
-         try {
-            Thread.sleep(1000);
-         }
-         catch (InterruptedException ex) {
-            log.error("Error occurred while waiting for the threadpool to terminate.");
-         }
+       try {
+           executor.awaitTermination(1, TimeUnit.HOURS);
+       }
+       catch (InterruptedException e) {
+          log.error("Error occured while waiting for the threadpool to terminate.");
       }
 
       calculateAverages(collectionReport);
-
    }
 
    /**
@@ -151,7 +178,7 @@ public class CollectionAggregator {
     */
    public synchronized void addReport(CollectionReport collectionReport, CMDInstanceReport instanceReport) {
       
-      if(instanceReport.details.size() > 0) {//only add a record if there are details to report
+      if(instanceReport.details.size() > 0) {//only add a record if there're details to report
          
          collectionReport.recordDetails.add(new RecordDetail(instanceReport.fileReport.location, instanceReport.details));
       }
@@ -233,13 +260,11 @@ public class CollectionAggregator {
                                           .get()
                                           .count++
                         );
+         collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
       }
       else {
          collectionReport.fileReport.numOfFilesNonProcessable++;
       }
-      
-      collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
-
    }
 
    private void calculateAverages(CollectionReport collectionReport) {
@@ -329,8 +354,8 @@ public class CollectionAggregator {
                / collectionReport.fileReport.numOfFiles;
          collectionReport.fileReport.scorePercentage = collectionReport.fileReport.aggregatedScore 
                / (double) collectionReport.fileReport.numOfFiles;
-         collectionReport.fileReport.avgScore = collectionReport.fileReport.aggregatedScore
-               / collectionReport.fileReport.numOfFiles;
+         collectionReport.fileReport.avgScore = (double) (collectionReport.fileReport.aggregatedScore
+               / collectionReport.fileReport.numOfFiles);         
          //profile
          collectionReport.profileReport.totNumOfProfiles = collectionReport.profileReport.profiles.size();
          
@@ -387,12 +412,12 @@ public class CollectionAggregator {
                         / (double) collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements);
          }
          collectionReport.xmlPopulationReport.scorePercentage = collectionReport.xmlPopulationReport.aggregatedScore
-               / collectionReport.xmlPopulationReport.aggregatedMaxScore;
+               / (double) collectionReport.xmlPopulationReport.aggregatedMaxScore;
          collectionReport.xmlPopulationReport.avgScore = (collectionReport.xmlPopulationReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          // xmlvalidity
          collectionReport.xmlValidityReport.scorePercentage = collectionReport.xmlValidityReport.aggregatedScore
-               / collectionReport.xmlValidityReport.aggregatedMaxScore;
+               / (double) collectionReport.xmlValidityReport.aggregatedMaxScore;
          collectionReport.xmlValidityReport.avgScore = (collectionReport.xmlValidityReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          // facet
@@ -401,7 +426,7 @@ public class CollectionAggregator {
          collectionReport.facetReport.percCoverageNonZero = (double) collectionReport.facetReport.facets.stream()
                .filter(facet -> facet.count > 0).count() / collectionReport.facetReport.facets.size();
          collectionReport.facetReport.scorePercentage = collectionReport.facetReport.aggregatedScore
-               / collectionReport.facetReport.aggregatedMaxScore;
+               / (double) collectionReport.facetReport.aggregatedMaxScore;
          collectionReport.facetReport.avgScore = (collectionReport.facetReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable);
          // linkchecker
@@ -419,7 +444,7 @@ public class CollectionAggregator {
                   / (double) collectionReport.linkcheckerReport.totNumOfLinksWithDuration;
          }
          collectionReport.linkcheckerReport.scorePercentage = collectionReport.linkcheckerReport.aggregatedScore
-               / collectionReport.linkcheckerReport.aggregatedMaxScore;
+               / (double) collectionReport.linkcheckerReport.aggregatedMaxScore;
          //collection
          collectionReport.avgScore = collectionReport.aggregatedScore
                / (double) collectionReport.fileReport.numOfFilesProcessable;         
