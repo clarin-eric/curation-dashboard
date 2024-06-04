@@ -42,7 +42,7 @@ public class PPHCache {
     * @param query   the query part added to the rest url
     * @return the profile headers map with profile id as key
     */
-   @Cacheable(value = "pphCache", key = "#query")
+   @Cacheable(value = "pphCache", key = "#query", sync = true)
    public Map<String, ProfileHeader> getProfileHeadersMap(String restUrl, String query) throws PPHServiceNotAvailableException {
 
       Map<String, ProfileHeader> profileHeaders = new ConcurrentHashMap<String, ProfileHeader>();
