@@ -14,7 +14,8 @@ spring:
       password: ${DATABASE_PASSWORD}
       driver-class-name: org.mariadb.jdbc.Driver
       hikari:
-         maximum-pool-size: ${HIKARI_MAXIMUM-POOL-SIZE:100}
+         maximum-pool-size: ${DATABASE_MAXIMUM-POOL-SIZE:10}
+         connection-timeout: ${DATABASE_CONNECTION_TIMEOUT:30000}
    jpa:
       show-sql: false
       hibernate:
