@@ -47,17 +47,7 @@ $(document).ready( function () {
     var table2 = $('#profiles').DataTable( {
 
         orderCellsTop: true,
-        fixedHeader: true,
-        'rowCallback': function(row, data, index){
-            for(var i=6; i<=19;i++){
-                if(data[i] == 'true'){
-                    $(row).find('td:eq(' + i + ')').css('background-color', 'lightgreen');
-                }
-                else{
-                    $(row).find('td:eq(' + i + ')').css('background-color', 'lightcoral');
-                }
-            }
-          }
+        fixedHeader: true
     } );
 
 
