@@ -1,3 +1,7 @@
+# 7.0.0
+- using Java 21
+- making web-app more accessible (issue )
+
 # 6.4.1
 - fix for rendering issue in tables (issue #245)
 - adding back to current link in historic reports (issue #242)
