@@ -67,7 +67,6 @@ curation:
       - temporalCoverage
    clientUsername: curation   
    max_file_size: 100000
-   threadpoolSize: ${THREADPOOL_SIZE:10}
    mode: instance
    doc-url: "https://raw.githubusercontent.com/clarin-eric/cereal/main/curation-dashboard/markdown"
    vlo_config_location: "${VLO_CONFIG_LOCATION}"      

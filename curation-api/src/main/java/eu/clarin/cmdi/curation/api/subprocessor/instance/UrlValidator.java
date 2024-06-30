@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 import java.util.stream.Stream;
 
 /**
@@ -38,6 +39,8 @@ public class UrlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
    private LinkService lService;
    @Autowired
    private ClientRepository clRepository;
+   // restricting parallel database access - the default size of the hikari cp is 10
+   private static final Semaphore semaphore = new Semaphore(10);
    
    private Client client;
    
@@ -118,8 +121,20 @@ public class UrlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
                )
             );
          }
-         
-         lService.savePerOrigin(client, instance.getProvidergroupName(), origin, urlMimes);
+
+         try{
+
+            UrlValidator.semaphore.acquire();
+            lService.savePerOrigin(client, instance.getProvidergroupName(), origin, urlMimes);
+         }
+         catch (InterruptedException e) {
+
+             throw new RuntimeException(e);
+         }
+         finally {
+
+            UrlValidator.semaphore.release();
+         }
       }
    }
 }
