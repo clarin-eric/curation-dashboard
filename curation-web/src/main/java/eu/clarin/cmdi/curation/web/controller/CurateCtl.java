@@ -101,7 +101,7 @@ public class CurateCtl {
             
             if(crService.isSchemaCRResident(urlStr)) { // is a public schema URL
                   
-               NamedReport report = curation.processCMDProfile(schemaURL);
+               NamedReport report = curation.processCMDProfile(urlStr);
                
                // we're saving any user upload as instance to prevent 
                // overriding public profiles by user intervention
@@ -114,7 +114,7 @@ public class CurateCtl {
                Path inFilePath = null;
                
                try {
-                  inFilePath = Files.createTempFile(FileNameEncoder.encode(urlStr.toString()), "xml");
+                  inFilePath = Files.createTempFile(FileNameEncoder.encode(urlStr), "xml");
    
                   FileUtils.copyURLToFile(schemaURL, inFilePath.toFile());
                }
@@ -196,14 +196,8 @@ public class CurateCtl {
                throw new RuntimeException("profile has no cmd 1.2 namespace declaration");
             }
             else {
-               
-               try {
-                  report = curation.processCMDProfile(inFilePath.toUri().toURL());
-               }
-               catch (MalformedURLException e) {
-                  
-                 new RuntimeException(e);
-               }   
+
+               report = curation.processCMDProfile(inFilePath.toUri().toString());
             }
          }
          else { // no profile - so processed as CMD instance

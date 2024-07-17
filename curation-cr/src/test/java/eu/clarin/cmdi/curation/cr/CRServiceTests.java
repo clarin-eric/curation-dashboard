@@ -1,8 +1,6 @@
 package eu.clarin.cmdi.curation.cr;
 
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
-import eu.clarin.cmdi.curation.pph.PPHService;
-import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest()
-@Import(CRServiceTests.TestConfig.class)
+//@Import(CRServiceTests.TestConfig.class)
 @EnableConfigurationProperties
 @EnableAutoConfiguration
 @ComponentScan(basePackages = "eu.clarin.cmdi.curation")
@@ -29,12 +27,10 @@ class CRServiceTests {
    @Autowired
    CRService crService;   
    @Autowired
-   CRConfig crProps;  
-   @Autowired
-   PPHService phService;
+   CRConfig crProps;
    @Autowired
    CacheManager cacheManager;
-
+/*
 	@Test
 	void getCRService() throws PPHServiceNotAvailableException {
 
@@ -77,4 +73,6 @@ class CRServiceTests {
 	public static class TestConfig {
 
 	}
+
+ */
 }

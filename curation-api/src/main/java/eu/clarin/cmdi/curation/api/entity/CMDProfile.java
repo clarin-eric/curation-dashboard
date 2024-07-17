@@ -18,15 +18,18 @@ import org.springframework.stereotype.Component;
 public class CMDProfile{
 
     private String schemaLocation;
-    
-    private String cmdiVersion;
+
+    private boolean isCacheable;
+
     
     @Autowired
     ProfileReportCache profileReportCache;
 
-    public CMDProfile(String schemaLocation, String cmdiVersion) {
+    public CMDProfile(String schemaLocation, boolean isCacheable) {
+
         this.schemaLocation = schemaLocation;
-        this.cmdiVersion = cmdiVersion;
+
+        this.isCacheable = isCacheable;
     }
 
     public CMDProfileReport generateReport() throws MalFunctioningProcessorException {

@@ -21,7 +21,6 @@ import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
-import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -78,8 +77,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
       instanceReport.facetReport = new InstanceFacetReport();
 
       profileReportCache
-            .getProfileReport(new CMDProfile(instanceReport.profileHeaderReport.getSchemaLocation(),
-                  instanceReport.profileHeaderReport.getCmdiVersion())).facetReport.coverages
+            .getProfileReport(new CMDProfile(instanceReport.profileHeaderReport.getSchemaLocation(), true)).facetReport.coverages
             .forEach(profileCoverage -> instanceReport.facetReport.coverages
                   .add(new Coverage(profileCoverage.name, profileCoverage.coveredByProfile)));
 
@@ -107,7 +105,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
          try {
             Map<String, CMDINode> cmdiNodeMap = crService
-                  .getParsedProfile(instanceReport.profileHeaderReport.getProfileHeader()).getXpathElementNode();
+                  .getParsedProfile(instanceReport.profileHeaderReport.getProfileHeader().schemaLocation(), true).xpathElementNode();
 
             final Map<Integer, List<ValueSet>> indexValueSetMap = facetValuesMap.values() // a List of ValueSet
                   .stream().flatMap(List::stream).collect(Collectors.groupingBy(ValueSet::getVtdIndex));
@@ -119,7 +117,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
             VTDNav nav = vtdGen.getNav();
             AutoPilot ap = new AutoPilot(nav);
 
-            // attention: we assume that the the xpath in the stream are in document order
+            // attention: we assume that the xpath in the stream are in document order
             // if this is not the case a call of ap.resetXPath() is mandatory
             this.xpathValueService.getXpathValueMap(instance.getPath()).entrySet()
                .stream().filter(node -> StringUtils.isNotBlank(node.getValue()))
@@ -143,16 +141,14 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
                         if (vtdIndex != -1 && (valueSetList = indexValueSetMap.get(vtdIndex)) != null) {
                            
-                           valueSetList.forEach(valueSet -> {
-                              valueNode.facets.add(
-                                    new FacetValueStruct(
-                                       valueSet.getTargetFacetName(),
-                                       valueSet.isDerived(), 
-                                       valueSet.isResultOfValueMapping(),
-                                       valueSet.getValueLanguagePair().getLeft()
-                                    )
-                                 );                              
-                              });
+                           valueSetList.forEach(valueSet -> valueNode.facets.add(
+                                 new FacetValueStruct(
+                                    valueSet.getTargetFacetName(),
+                                    valueSet.isDerived(),
+                                    valueSet.isResultOfValueMapping(),
+                                    valueSet.getValueLanguagePair().getLeft()
+                                 )
+                              ));
                         }
                      }
                      catch (XPathParseException e) {
@@ -161,7 +157,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                      }
                      catch (XPathEvalException e) {
 
-                        log.error("can't evalute xpath '{}'", node.getKey());
+                        log.error("can't evaluate xpath '{}'", node.getKey());
                      }
                      
                      catch (NavException e) {
@@ -192,7 +188,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
             instanceReport.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
             instanceReport.isProcessable = false;
          }
-         catch (CRServiceStorageException | PPHServiceNotAvailableException | CCRServiceNotAvailableException e) {
+         catch (CRServiceStorageException | CCRServiceNotAvailableException e) {
              throw new MalFunctioningProcessorException(e);
          }
       }

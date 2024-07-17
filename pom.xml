@@ -83,7 +83,6 @@
    </repositories>
    <modules>
       <module>curation-commons</module>
-      <module>curation-pph</module>
       <module>curation-ccr</module>
       <module>curation-cr</module>
       <module>curation-api</module>

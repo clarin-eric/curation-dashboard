@@ -18,8 +18,7 @@ import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
-import eu.clarin.cmdi.curation.pph.ProfileHeader;
-import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
+import eu.clarin.cmdi.curation.cr.profile_parser.ProfileHeader;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +54,10 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
       report.facetReport = new ProfileFacetReport();
 
       try {
-         ProfileHeader header = crService.createProfileHeader(profile.getSchemaLocation(), "1.x", false);
 
-         FacetsMapping facetMapping = fac.getFacetsMapping(header);
+         FacetsMapping facetMapping = fac.getFacetsMapping(profile.getSchemaLocation());
 
-         final Map<String, CMDINode> elements = crService.getParsedProfile(header).getXpathElementNode();
+         final Map<String, CMDINode> elements = crService.getParsedProfile(profile.getSchemaLocation(), true).xpathElementNode();
          
    
          for (String facetName : conf.getFacets()) {
@@ -83,7 +81,7 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
          report.details.add(new Detail(Severity.FATAL,"facet" , "no ParsedProfile for profile location " + profile.getSchemaLocation()));
 
       }
-      catch (CRServiceStorageException | PPHServiceNotAvailableException | CCRServiceNotAvailableException e) {
+      catch (CRServiceStorageException | CCRServiceNotAvailableException e) {
           throw new MalFunctioningProcessorException(e);
       }
        report.facetReport.percProfileCoverage = (double) report.facetReport.numOfFacetsCoveredByProfile/report.facetReport.numOfFacets;

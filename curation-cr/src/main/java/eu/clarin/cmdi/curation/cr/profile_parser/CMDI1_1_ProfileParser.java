@@ -1,11 +1,13 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
 import com.ximpleware.VTDException;
+import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
-import eu.clarin.cmdi.curation.pph.ProfileHeader;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -14,7 +16,8 @@ import java.util.Map;
 /**
  * The type Cmdi 1 1 profile parser.
  */
-class CMDI1_1_ProfileParser extends ProfileParser{
+@Service
+public class CMDI1_1_ProfileParser extends ProfileParser{
 
 	/**
 	 * Instantiates a new Cmdi 1 1 profile parser.
@@ -22,9 +25,9 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 	 * @param ccrService the ccr service
 	 */
 	public CMDI1_1_ProfileParser(CCRService ccrService) {
-      
+
 	   super(ccrService);
-      
+
    }
 
 	/**
@@ -53,9 +56,8 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 	 * @return the cr element
 	 * @throws VTDException the vtd exception
 	 */
-	@Override
-	protected CRElement processNameAttributeNode() throws VTDException {
-		String name = extractAttributeValue("name");
+	protected CRElement processNameAttributeNode(VTDNav vn) throws VTDException {
+		String name = extractAttributeValue(vn,"name");
 		if(name == null)
 			return null;
 		
@@ -70,11 +72,11 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 				break;
 			case "ComponentId":
 				elem.type = NodeType.COMPONENT;
-				elem.ref = extractAttributeValue("fixed");
+				elem.ref = extractAttributeValue(vn,"fixed");
 				break;
 			default: // attribute
 				elem.type = NodeType.ATTRIBUTE;
-				elem.ref = extractAttributeValue(conceptAttributeName());				
+				elem.ref = extractAttributeValue(vn, conceptAttributeName());
 				elem.name = name;				
 		}
 		
@@ -84,19 +86,12 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 	/**
 	 * Create parsed profile
 	 *
-	 * @param profileHeader the profile header
 	 * @param nodes  the nodes
 	 * @return the parsed profile
 	 * @throws VTDException the vtd exception
 	 */
 	@Override
-	protected ParsedProfile createParsedProfile(ProfileHeader profileHeader, Collection<CRElement> nodes) throws VTDException, CCRServiceNotAvailableException {
-		
-      Map<String, CMDINode> xpathNode = new LinkedHashMap<>();
-
-      Map<String, CMDINode> xpathElementNode = new LinkedHashMap<>();
-
-      Map<String, CMDINode> xpathComponentNode = new LinkedHashMap<>();
+	protected void fillMaps(Collection<CRElement> nodes, Map<String, CMDINode> xpathNode, Map<String, CMDINode> xpathElementNode, Map<String, CMDINode> xpathComponentNode) throws CCRServiceNotAvailableException {
 
 	  	for(CRElement node : nodes){
 			  if(node.isLeaf || node.type == NodeType.COMPONENT){
@@ -128,12 +123,5 @@ class CMDI1_1_ProfileParser extends ProfileParser{
 
 			  }
 		}
-
-      return new ParsedProfile(
-            profileHeader,
-            xpathNode, 
-            xpathElementNode, 
-            xpathComponentNode
-         );
 	}
 }

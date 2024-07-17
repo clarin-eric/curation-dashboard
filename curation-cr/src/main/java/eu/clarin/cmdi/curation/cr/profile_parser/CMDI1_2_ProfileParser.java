@@ -1,13 +1,19 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
+import com.ximpleware.NavException;
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDGen;
+import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.cr.cache.CRCache;
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
-import eu.clarin.cmdi.curation.pph.ProfileHeader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -16,21 +22,24 @@ import java.util.Map;
 /**
  * The type Cmdi 1 2 profile parser.
  */
-class CMDI1_2_ProfileParser extends ProfileParser {
+@Service
+public class CMDI1_2_ProfileParser extends ProfileParser {
 
-    private static final String ENVELOPE_URL = "https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd";
+    public static final String ENVELOPE_URL = "https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd";
 
-    private static ParsedProfile envelope;
+    private final ApplicationContext ctx;
+
 
     /**
      * Instantiates a new Cmdi 1 2 profile parser.
      *
      * @param ccrService the ccr service
      */
-    public CMDI1_2_ProfileParser(CCRService ccrService) {
+    public CMDI1_2_ProfileParser(CCRService ccrService, ApplicationContext ctx) {
 
         super(ccrService);
 
+        this.ctx = ctx;
     }
 
     /**
@@ -60,22 +69,22 @@ class CMDI1_2_ProfileParser extends ProfileParser {
      * @throws VTDException the vtd exception
      */
     @Override
-    protected CRElement processNameAttributeNode() throws VTDException {
+    protected CRElement processNameAttributeNode(VTDNav vn) throws VTDException {
         // ref attribute
-        String ref = extractAttributeValue("ref");
+        String ref = extractAttributeValue(vn,"ref");
         if ("cmd:ComponentId".equals(ref)) {
             CRElement elem = new CRElement();
             elem.isLeaf = true;
             elem.lvl = vn.getCurrentDepth();
             elem.type = NodeType.COMPONENT;
-            elem.ref = extractAttributeValue("fixed");
+            elem.ref = extractAttributeValue(vn,"fixed");
             return elem;
         }
 
         // name attribute
-        String name = extractAttributeValue("name");
+        String name = extractAttributeValue(vn,"name");
         if (name != null) {
-            String concept = extractAttributeValue("cmd:ConceptLink");
+            String concept = extractAttributeValue(vn,"cmd:ConceptLink");
             CRElement elem = new CRElement();
             elem.isLeaf = true;
             elem.lvl = vn.getCurrentDepth();
@@ -89,31 +98,27 @@ class CMDI1_2_ProfileParser extends ProfileParser {
     }
 
     /**
-     * Create parsed profile parsed profile.
+     * Create parsed profile.
      *
-     * @param profileHeader the profile header
+     *
      * @param nodes         the nodes
      * @return the parsed profile
      * @throws NoProfileCacheEntryException the no profile cache entry exception
      */
     @Override
-    protected ParsedProfile createParsedProfile(ProfileHeader profileHeader, Collection<CRElement> nodes)
-            throws NoProfileCacheEntryException, CCRServiceNotAvailableException {
+    protected void fillMaps(Collection<CRElement> nodes, Map<String, CMDINode> xpathNode, Map<String, CMDINode> xpathElementNode, Map<String, CMDINode> xpathComponentNode) throws CCRServiceNotAvailableException, CRServiceStorageException {
 
+        ProfileParser parser = ctx.getBean(CMDI1_1_ProfileParser.class);
 
-        // add xpaths from envelope
-        if (envelope == null) {
-            CMDI1_1_ProfileParser envelopeParser = new CMDI1_1_ProfileParser(ccrService);
-            VTDGen vg = new VTDGen();
+        VTDGen vg = new VTDGen();
 
-            vg.parseHttpUrl(ENVELOPE_URL, true);
+        vg.parseHttpUrl(ENVELOPE_URL, true);
 
-            envelope = envelopeParser.parse(vg.getNav(), new ProfileHeader());
-        }
+        ParsedProfile envelope = parser.parse(vg.getNav(), ENVELOPE_URL, true, true);
 
-        Map<String, CMDINode> xpathNode = new LinkedHashMap<>(envelope.getXpathNode());
-        Map<String, CMDINode> xpathElementNode = new LinkedHashMap<>(envelope.getXpathElementNode());
-        Map<String, CMDINode> xpathComponentNode = new LinkedHashMap<>(envelope.getXpathComponentNode());
+        xpathNode.putAll(envelope.xpathNode());
+        xpathElementNode.putAll(envelope.xpathElementNode());
+        xpathComponentNode.putAll(envelope.xpathComponentNode());
 
         for(CRElement node : nodes){
             if(node.isLeaf || node.type == NodeType.COMPONENT){
@@ -145,12 +150,5 @@ class CMDI1_2_ProfileParser extends ProfileParser {
                 xpathNode.put(xpath.toString(), cmdiNode);
             }
         }
-
-        return new ParsedProfile(
-                profileHeader,
-                xpathNode,
-                xpathElementNode,
-                xpathComponentNode
-        );
     }
 }

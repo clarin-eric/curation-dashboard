@@ -13,7 +13,6 @@ import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
-import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -50,7 +49,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
 
       ValidatorHandler schemaValidator;
       try {
-         schemaValidator = crService.getSchema(report.profileHeaderReport.getProfileHeader()).newValidatorHandler();
+         schemaValidator = crService.getSchema(report.profileHeaderReport.getProfileHeader().schemaLocation(), true).newValidatorHandler();
       }
       catch (NoProfileCacheEntryException e) {
 
@@ -60,7 +59,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
          
          return;
       }
-      catch (CRServiceStorageException | PPHServiceNotAvailableException | CCRServiceNotAvailableException e) {
+      catch (CRServiceStorageException| CCRServiceNotAvailableException e) {
 
           throw new MalFunctioningProcessorException(e);
       }

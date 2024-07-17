@@ -11,7 +11,7 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.CollectionUsa
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.CRServiceImpl;
-import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
+import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
     * The Conf.
     */
    @Autowired
-   PPHConfig conf;
+   CRConfig crConfig;
    @Autowired
    private CRService crService;   
    @Autowired
@@ -168,30 +168,22 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
       
       String schemaLocation = instanceReport.instanceHeaderReport.schemaLocation!=null?
             instanceReport.instanceHeaderReport.schemaLocation:
-               conf.getRestApi() + "/" + instanceReport.instanceHeaderReport.mdProfile + "/xsd";
-      
-      try {
-         CMDProfileReport profileReport = curationModule.processCMDProfile(new URL(schemaLocation));
-         
-         instanceReport.profileHeaderReport = profileReport.headerReport;
+               crConfig.getRestApi() + "/" + instanceReport.instanceHeaderReport.mdProfile + "/xsd";
 
-         instanceReport.profileScore = profileReport.score;
-         instanceReport.instanceScore += profileReport.score;
-          
-         if(instance.getProvidergroupName() != null) {
-            synchronized(this) {
-               profileReport.collectionUsage.stream()
-                  .filter(usage -> usage.collectionName.equals(instance.getProvidergroupName()))
-                  .findFirst()
-                  .ifPresentOrElse(cu -> cu.count++, () -> profileReport.collectionUsage.add(new CollectionUsage(instance.getProvidergroupName())));
-            }
-         }        
-      }
-      catch (MalformedURLException e) {
-         log.error("schemaLocation '{}' not an URL", schemaLocation);
-         instanceReport.details.add(new Detail(Severity.FATAL, "header", "no valid schemaLocation"));
-         instanceReport.isProcessable=false;
-         return;
+      CMDProfileReport profileReport = curationModule.processCMDProfile(schemaLocation);
+
+      instanceReport.profileHeaderReport = profileReport.headerReport;
+
+      instanceReport.profileScore = profileReport.score;
+      instanceReport.instanceScore += profileReport.score;
+
+      if(instance.getProvidergroupName() != null) {
+         synchronized(this) {
+            profileReport.collectionUsage.stream()
+               .filter(usage -> usage.collectionName.equals(instance.getProvidergroupName()))
+               .findFirst()
+               .ifPresentOrElse(cu -> cu.count++, () -> profileReport.collectionUsage.add(new CollectionUsage(instance.getProvidergroupName())));
+         }
       }
 
       instanceReport.instanceScore+=instanceReport.instanceHeaderReport.score;

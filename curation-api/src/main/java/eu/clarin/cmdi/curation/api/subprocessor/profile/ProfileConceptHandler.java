@@ -16,7 +16,6 @@ import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
-import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -49,7 +48,7 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
       ParsedProfile parsedProfile = null;
 
       try {
-         parsedProfile = crService.getParsedProfile(report.headerReport.getProfileHeader());
+         parsedProfile = crService.getParsedProfile(report.headerReport.getSchemaLocation(),  true);
       }
       catch (NoProfileCacheEntryException e) {
          report.details.add(new Detail(Severity.FATAL,"concept" , "can't get ParsedProfile for profile id '" + report.headerReport.getId() + "'"));
@@ -57,7 +56,7 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
          return;
 
       }
-      catch (CRServiceStorageException | PPHServiceNotAvailableException | CCRServiceNotAvailableException e) {
+      catch (CRServiceStorageException | CCRServiceNotAvailableException e) {
           throw new MalFunctioningProcessorException(e);
       }
 
@@ -66,7 +65,7 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
       final Map<String, ConceptReport.Concept> conceptMap = new HashMap<String, ConceptReport.Concept>();
       
       parsedProfile
-      .getXpathElementNode()
+      .xpathElementNode()
       .entrySet()
       .stream()
       .filter(entrySet -> entrySet.getKey().startsWith("/cmd:CMD/cmd:Components/"))
@@ -97,7 +96,7 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
       
       Map<String, ComponentReport.Component> componentMap = new HashMap<String, ComponentReport.Component>();
 
-      parsedProfile.getXpathComponentNode().values().forEach(crc -> {
+      parsedProfile.xpathComponentNode().values().forEach(crc -> {
          report.componentReport.total++;
          
          if (crc.isRequired) {

@@ -10,8 +10,7 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
 import eu.clarin.cmdi.curation.app.conf.AppConfig;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
-import eu.clarin.cmdi.curation.pph.PPHService;
-import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.linkchecker.persistence.service.LinkService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,7 @@ public class CurationApp {
    @Autowired
    private CurationModule curation;
    @Autowired
-   private PPHService pphService;
+   private CRService crService;
    /**
     * The Storage.
     */
@@ -110,33 +109,20 @@ public class CurationApp {
             
             final AllProfileReport allProfileReport = new AllProfileReport();
 
+            crService.getPublicSchemaLocations().forEach(schemaLocation -> {
 
-            try {
-               pphService.getProfileHeaders().forEach(header -> {
+               log.info("start processing profile '{}'", schemaLocation);
 
-                  log.info("start processing profile '{}'", header.getId());
+               CMDProfileReport profileReport = curation.processCMDProfile(schemaLocation);
 
-                  try {
-                     CMDProfileReport profileReport = curation.processCMDProfile(header.getId());
+               allProfileReport.addReport(profileReport);
 
-                     allProfileReport.addReport(profileReport);
+               storage.saveReport(profileReport, CurationEntityType.PROFILE, false);
 
-                     storage.saveReport(profileReport, CurationEntityType.PROFILE, false);
+               log.info("done processing profile '{}'", schemaLocation);
+            });
 
-                  }
-                  catch (MalformedURLException e1) {
-
-                     log.error("malformed URL for id '{}' - check the setting for curation.pph-service.restApi", header.getId());
-                  }
-
-                  log.info("done processing profile '{}'", header.getId());
-               });
-
-               storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);
-            }
-            catch (PPHServiceNotAvailableException e) {
-               throw new RuntimeException(e);
-            }
+            storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);
 
          }
          

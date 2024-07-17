@@ -12,7 +12,6 @@ import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport.St
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
-import eu.clarin.cmdi.curation.pph.conf.PPHConfig;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.model.Status;
 import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
@@ -44,8 +43,6 @@ import java.util.stream.StreamSupport;
 public class CurationModuleImpl implements CurationModule {
 
    @Autowired
-   private PPHConfig pphConf;
-   @Autowired
    private ApplicationContext ctx;
    @Autowired
    private AggregatedStatusRepository asRep;
@@ -55,34 +52,13 @@ public class CurationModuleImpl implements CurationModule {
    /**
     * Process cmd profile cmd profile report.
     *
-    * @param profileId the profile id
-    * @return the cmd profile report
-    */
-   @Override
-   public CMDProfileReport processCMDProfile(String profileId) {
-      
-      String urlStr = pphConf.getRestApi() + "/" + profileId + "/xsd";
-      try {
-         return processCMDProfile(new URL(pphConf.getRestApi() + "/" + profileId + "/xsd"));
-      }
-      catch (MalformedURLException e) {
-         
-         log.error("malformed URL '{}' - check if property 'curation.pph-service.restApi' is set correctly", urlStr);
-         throw new RuntimeException(e);
-      }
-   
-   }
-
-   /**
-    * Process cmd profile cmd profile report.
-    *
     * @param schemaLocation the schema location
     * @return the cmd profile report
     */
    @Override
-   public CMDProfileReport processCMDProfile(URL schemaLocation) {
+   public CMDProfileReport processCMDProfile(String schemaLocation) {
        try {
-           return ctx.getBean(CMDProfile.class, schemaLocation.toString(), "1.x").generateReport();
+           return ctx.getBean(CMDProfile.class, schemaLocation, true).generateReport();
        }
        catch (MalFunctioningProcessorException e) {
            throw new RuntimeException(e);
@@ -97,18 +73,8 @@ public class CurationModuleImpl implements CurationModule {
     */
    @Override
    public CMDProfileReport processCMDProfile(Path path) {
-
-      try {
          
-         return processCMDProfile(path.toUri().toURL());
-      
-      }
-      catch (MalformedURLException e) {
-         
-         log.error("can't create URL from path '{}'", path);
-         throw new RuntimeException(e);
-      
-      }
+         return processCMDProfile(path.toUri().toString());
    }
 
    /**

@@ -4,7 +4,8 @@
  */
 package eu.clarin.cmdi.curation.api.report.profile.sec;
 
-import eu.clarin.cmdi.curation.pph.ProfileHeader;
+
+import eu.clarin.cmdi.curation.cr.profile_parser.ProfileHeader;
 import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class ProfileHeaderReport {
    public static final double maxScore = 1.0;
    @XmlAttribute
    public double score;
-   private final ProfileHeader header;  
+   private final ProfileHeader header;
 
    @XmlTransient
    public ProfileHeader getProfileHeader() {
@@ -30,28 +31,26 @@ public class ProfileHeaderReport {
    }
    @XmlElement
    public String getId() {
-      return header.getId();
+      return header.id();
    }
    @XmlElement
    public String getSchemaLocation() {
-      return header.getSchemaLocation();
+      return header.schemaLocation();
    }
    @XmlElement
    public String getName() {
-      return header.getName();
+      return header.name();
    }
    @XmlElement
    public String getDescription() {
-      return header.getDescription();
+      return header.description();
    }
    @XmlElement
    public String getCmdiVersion() {
-      return header.getCmdiVersion();
+      return header.cmdiVersion();
    }
    @XmlElement
-   public String getStatus() {
-      return header.getStatus();
-   }
+   public String getStatus() { return header.status(); }
    @XmlElement
    public boolean isPublic() {
       return header.isPublic();

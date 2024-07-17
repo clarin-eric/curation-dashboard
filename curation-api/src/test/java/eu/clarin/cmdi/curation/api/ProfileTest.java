@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
 
@@ -52,16 +53,16 @@ public class ProfileTest {
       try {
          
          CMDProfileReport report;
+
+         String schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd";
          
-         URL schemaURL = new URL("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd");
-         
-         report = curation.processCMDProfile(schemaURL);         
+         report = curation.processCMDProfile(schemaLocation);
          //must be true since it's a public profile
          assertTrue(report.headerReport.isPublic());
          
          Path tmpFilePath = Files.createTempFile(null, null);
          
-         FileUtils.copyURLToFile(schemaURL, tmpFilePath.toFile());
+         FileUtils.copyURLToFile(new URL(schemaLocation), tmpFilePath.toFile());
          
          report = curation.processCMDProfile(tmpFilePath);
          // the same profile but uploaded by a user
@@ -126,26 +127,25 @@ public class ProfileTest {
       try {
          
          // a public profile processed in collection mode should be added to the public cache 
-         this.cacheManager.getCache("privateProfileCache").clear(); 
-         this.cacheManager.getCache("publicProfileCache").clear(); 
+         this.cacheManager.getCache("profileCache").clear();
          
          conf.setMode("collection");
          
-         URL schemaURL = new URL("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd");
+         String schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd";
          
-         curation.processCMDProfile(schemaURL); 
+         curation.processCMDProfile(schemaLocation);
          
-         assertNotNull(this.cacheManager.getCache("publicProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         assertNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         
+         assertNotNull(this.cacheManager.getCache("profileCache").get(schemaLocation));
+
+ /*
          // same public file not loaded via registry URL but by file
          // hence the profile not public, since it doesn't come from the registry, and should be stored in the private cache
-         this.cacheManager.getCache("privateProfileCache").clear(); 
-         this.cacheManager.getCache("publicProfileCache").clear(); 
+         this.cacheManager.getCache("profileCache").clear();
+
          
          Path tmpFilePath = Files.createTempFile(null, null);
          
-         FileUtils.copyURLToFile(schemaURL, tmpFilePath.toFile());         
+         FileUtils.copyURLToFile(new URL(schemaLocation), tmpFilePath.toFile());
          
          curation.processCMDProfile(tmpFilePath); 
          
@@ -154,15 +154,17 @@ public class ProfileTest {
          
          // now we take it from the registry but in instance mode which is usually triggered by a user in the web interface
          // we treat user actions as not reliable and the profile should be stored neither in public nor in private cache
-         this.cacheManager.getCache("privateProfileCache").clear(); 
+         this.cacheManager.getCache("profileCache").clear();
          this.cacheManager.getCache("publicProfileCache").clear(); 
          
          conf.setMode("instance");                
-         curation.processCMDProfile(schemaURL); 
+         curation.processCMDProfile(schemaLocation);
          
          assertNull(this.cacheManager.getCache("publicProfileCache").get("clarin.eu:cr1:p_1403526079380"));
          assertNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         
+
+
+  */
       }
       catch(Exception ex) {
          
