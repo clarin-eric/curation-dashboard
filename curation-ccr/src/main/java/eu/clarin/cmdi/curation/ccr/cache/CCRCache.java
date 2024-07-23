@@ -60,7 +60,7 @@ public class CCRCache {
      *
      * @return the ccr concept map with conceptURI as key
      */
-    @Cacheable(value = "ccrCache")
+    @Cacheable(value = "ccrCache", sync = true)
     public CCRConcept getCCRConcept(String conceptURI) throws CCRServiceNotAvailableException {
 
         final CCRConcept[] concept = {null};
