@@ -179,9 +179,9 @@ public class CollectionAggregator {
 
             //profile
             collectionReport.profileReport.profiles.stream()
-                    .filter(profile -> profile.profileId.equals(instanceReport.profileHeaderReport.getId())).findFirst()
+                    .filter(profile -> profile.schemaLocation.equals(instanceReport.profileHeaderReport.getSchemaLocation())).findFirst()
                     .ifPresentOrElse(profile -> profile.count++, () -> collectionReport.profileReport.profiles
-                            .add(new Profile(instanceReport.profileHeaderReport.getId(), instanceReport.profileHeaderReport.getProfileHeader().isPublic(), instanceReport.profileScore)));
+                            .add(new Profile(instanceReport.profileHeaderReport.getSchemaLocation(), instanceReport.profileHeaderReport.getProfileHeader().isPublic(), instanceReport.profileScore)));
             collectionReport.profileReport.aggregatedScore += instanceReport.profileScore;
 
             // header

@@ -387,7 +387,7 @@
         <table class="reportTable">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Schema Location</th>
                     <th>Is public</th>
                     <th>Score</th>
                     <th>Count</th>
@@ -409,8 +409,8 @@
                               order="descending"/>
                     <xsl:sort select="./@count" data-type="number"
                               order="descending"/>
-                    <xsl:variable name="profileID">
-                        <xsl:value-of select="./@profileId"/>
+                    <xsl:variable name="schemaLocation">
+                        <xsl:value-of select="./@schemaLocation"/>
                     </xsl:variable>
                     <tr>
                         <td>
@@ -418,10 +418,10 @@
                                 <xsl:attribute name="href">
                                     <xsl:text>/profile/</xsl:text>
                                     <xsl:value-of
-                                            select="translate(./@profileId,'.:','__')"/>
+                                            select="translate(./@schemaLocation,'.:/','___')"/>
                                     <xsl:text>.html</xsl:text>
                                 </xsl:attribute>
-                                <xsl:value-of select="./@profileId"/>
+                                <xsl:value-of select="./@schemaLocation"/>
                             </a>
                         </td>
                         <td>

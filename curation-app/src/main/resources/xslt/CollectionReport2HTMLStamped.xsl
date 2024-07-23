@@ -419,12 +419,12 @@
                               order="descending"/>
                     <xsl:sort select="./@count" data-type="number"
                               order="descending"/>
-                    <xsl:variable name="profileID">
-                        <xsl:value-of select="./@profileId"/>
+                    <xsl:variable name="schemaLocation">
+                        <xsl:value-of select="./@schemaLocation"/>
                     </xsl:variable>
                     <tr>
                         <td>
-                            <xsl:value-of select="./@profileId"/>
+                            <xsl:value-of select="./@schemaLocation"/>
                         </td>
                         <td>
                             <xsl:value-of select="./@isPublic"/>

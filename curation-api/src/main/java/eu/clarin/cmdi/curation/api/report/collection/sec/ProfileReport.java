@@ -41,7 +41,7 @@ public class ProfileReport {
    @NoArgsConstructor(force = true)
    public static class Profile {
       @XmlAttribute
-      public final String profileId;
+      public final String schemaLocation;
       @XmlAttribute
       public final boolean isPublic;
       @XmlAttribute
