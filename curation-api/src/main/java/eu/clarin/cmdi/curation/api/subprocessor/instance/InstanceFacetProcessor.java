@@ -105,7 +105,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
          try {
             Map<String, CMDINode> cmdiNodeMap = crService
-                  .getParsedProfile(instanceReport.profileHeaderReport.getProfileHeader().schemaLocation(), true).xpathElementNode();
+                  .getParsedProfile(instanceReport.profileHeaderReport.getProfileHeader().schemaLocation()).xpathElementNode();
 
             final Map<Integer, List<ValueSet>> indexValueSetMap = facetValuesMap.values() // a List of ValueSet
                   .stream().flatMap(List::stream).collect(Collectors.groupingBy(ValueSet::getVtdIndex));

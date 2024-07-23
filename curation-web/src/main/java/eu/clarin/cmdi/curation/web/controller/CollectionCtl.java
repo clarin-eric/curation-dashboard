@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.nio.file.Path;
@@ -35,7 +36,7 @@ public class CollectionCtl {
     * @return the collection
     */
    @GetMapping(value = {"", "/{collectionReportName}"})
-   public String getCollection(@PathVariable(value = "collectionReportName", required = false) Optional<String> collectionReportName, Model model) {
+   public String getCollection(@RequestHeader("Accept") String acceptHeader, @PathVariable(value = "collectionReportName", required = false) Optional<String> collectionReportName, Model model) {
 
       Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("collection");
       

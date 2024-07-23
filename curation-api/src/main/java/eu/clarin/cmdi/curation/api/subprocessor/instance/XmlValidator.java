@@ -49,7 +49,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
 
       ValidatorHandler schemaValidator;
       try {
-         schemaValidator = crService.getSchema(report.profileHeaderReport.getProfileHeader().schemaLocation(), true).newValidatorHandler();
+         schemaValidator = crService.getSchema(report.profileHeaderReport.getProfileHeader().schemaLocation()).newValidatorHandler();
       }
       catch (NoProfileCacheEntryException e) {
 

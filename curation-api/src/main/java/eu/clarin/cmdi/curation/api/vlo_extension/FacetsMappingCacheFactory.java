@@ -92,7 +92,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
             final Map<String, List<Pattern>> result = new HashMap<>();
 
             try {
-               crService.getParsedProfile(schemaLocation, true).xpathElementNode().entrySet()
+               crService.getParsedProfile(schemaLocation).xpathElementNode().entrySet()
                   .stream()
                   .filter(element -> (element.getValue().concept != null))
                   .forEach(element -> result.computeIfAbsent(element.getValue().concept.getUri(), k -> new ArrayList<>())

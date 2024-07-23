@@ -108,8 +108,8 @@ public class CRCache {
     * @return the public entry
     * @throws NoProfileCacheEntryException the no profile cache entry exception
     */
-   @Cacheable(value = "profileCache", key ="#schemaLocation", condition = "#isCacheable", sync = true)
-   public ProfileCacheEntry getEntry(String schemaLocation, boolean isCacheable) throws CCRServiceNotAvailableException, CRServiceStorageException {
+   @Cacheable(value = "profileCache", key ="#schemaLocation", condition = "#schemaLocation.startsWith('http')", sync = true)
+   public ProfileCacheEntry getEntry(String schemaLocation) throws CCRServiceNotAvailableException, CRServiceStorageException {
 
       String fileName = schemaLocation.replaceAll("[/.:]", "_");
 
@@ -158,7 +158,7 @@ public class CRCache {
                   default -> throw new UnsupportedOperationException();
                };
 
-               parsedProfile = parser.parse(nv, schemaLocation, this.publicSchemaLocations.contains(schemaLocation), isCacheable);
+               parsedProfile = parser.parse(nv, schemaLocation, this.publicSchemaLocations.contains(schemaLocation));
 
                break;
             }

@@ -7,7 +7,6 @@ public record ProfileHeader(
         String name,
         String description,
         String status,
-        boolean isPublic,
-        boolean isCacheable
+        boolean isPublic
 ) {
 }
