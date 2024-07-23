@@ -21,7 +21,7 @@
 							<xsl:attribute name="href">
 					   <xsl:text>/download/instance/</xsl:text>
 					   <xsl:value-of
-								select="translate(./headerReport/id,'.:','__')" />
+								select="translate(./headerReport/schemaLocation,'.:/','___')" />
 					</xsl:attribute>
 							<xsl:text>xml</xsl:text>
 						</a>
@@ -30,7 +30,7 @@
 							<xsl:attribute name="href">
 					   <xsl:text>/download/instance/</xsl:text>
 					   <xsl:value-of
-								select="translate(./headerReport/id,'.:','__')" />
+								select="translate(./headerReport/schemaLocation,'.:/','___')" />
 							<xsl:text>?format=json</xsl:text>
 					</xsl:attribute>
 							<xsl:text>json</xsl:text>

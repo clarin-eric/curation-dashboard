@@ -70,12 +70,12 @@
 				<p>Url: /download/xml/instance/</p>
 
 				<p>
-					ProfileID:
+					Schema Location:
 					<a>
 						<xsl:attribute name="href">
                             <xsl:value-of select="./profileHeaderReport/schemaLocation" />
                         </xsl:attribute>
-						<xsl:value-of select="./profileHeaderReport/id" />
+						<xsl:value-of select="./profileHeaderReport/schemaLocation" />
 					</a>
 				</p>
 				<!-- <p>Status: -->
