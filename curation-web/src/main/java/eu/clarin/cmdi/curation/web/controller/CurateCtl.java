@@ -15,10 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -68,7 +65,7 @@ public class CurateCtl {
     * @return the instance query param
     */
    @GetMapping()
-   public String getInstanceQueryParam(@RequestParam(name="url-input", required=false) String urlStr, Model model) {  
+   public String getInstanceQueryParam(@RequestHeader("Accept") String acceptHeader, @RequestParam(name="url-input", required=false) String urlStr, Model model) {
       
       log.debug("urlStr: {}", urlStr);
 
@@ -90,21 +87,16 @@ public class CurateCtl {
          
          if (urlStr.matches("http(s)?://.+")) { //the string is a URL
             
-            if(crService.isSchemaCRResident(urlStr)) { // is a public schema URL
+            if(crService.isPublicSchema(urlStr)) { // is a public schema URL
                   
-               NamedReport report = curation.processCMDProfile(urlStr);
-               
-               // we're saving any user upload as instance to prevent 
-               // overriding public profiles by user intervention
-               storage.saveReportAsXML(report, CurationEntityType.INSTANCE, false);
-
-               htmlFilePath = storage.saveReportAsHTML(report, CurationEntityType.INSTANCE, false);
+               return "redirect:/profile/" + FileNameEncoder.encode(crService.getIdFromSchemaLocation(urlStr)) + ".html";
             }
             else {  
 
                Path inFilePath = null;
                
                try(InputStream in = httpUtils.getURLConnection(urlStr, MediaType.APPLICATION_XML_VALUE).getInputStream()) {
+
                   inFilePath = Files.createTempFile(FileNameEncoder.encode(urlStr), "xml");
    
                   FileUtils.copyInputStreamToFile(in, inFilePath.toFile());
