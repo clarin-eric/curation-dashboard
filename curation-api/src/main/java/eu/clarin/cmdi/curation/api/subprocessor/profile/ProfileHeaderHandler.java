@@ -39,7 +39,7 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
 
       try {
          report.headerReport = new ProfileHeaderReport(
-                 crService.createProfileHeader(profile.getSchemaLocation(), true));
+                 crService.createProfileHeader(profile.getSchemaLocation()));
 
 
          if (!report.headerReport.getProfileHeader().isPublic()) {
