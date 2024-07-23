@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.*;
+import java.net.http.HttpHeaders;
 
 @Component
 public class HttpUtils {
@@ -29,6 +30,15 @@ public class HttpUtils {
         connection.setReadTimeout(httpConfig.getReadTimeout());
 
         connection.setRequestProperty("User-Agent", httpConfig.getUserAgent());
+
+        return connection;
+    }
+
+    public URLConnection getURLConnection(String urlString, String acceptHeader) throws IOException {
+
+        URLConnection connection = getURLConnection(urlString);
+
+        connection.setRequestProperty("Accept", acceptHeader);
 
         return connection;
     }

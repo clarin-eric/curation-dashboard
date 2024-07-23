@@ -5,6 +5,7 @@ import eu.clarin.cmdi.curation.api.entity.CurationEntityType;
 import eu.clarin.cmdi.curation.api.report.NamedReport;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
+import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,8 @@ public class CurateCtl {
     */
    @Autowired
    CRService crService;
+   @Autowired
+   HttpUtils httpUtils;
 
    /**
     * Gets instance query param.
@@ -87,18 +90,6 @@ public class CurateCtl {
          
          if (urlStr.matches("http(s)?://.+")) { //the string is a URL
             
-            URL schemaURL;
-            
-            try {
-               
-               schemaURL = new URL(urlStr);
-            }
-            catch(MalformedURLException ex) {
-               
-               throw new RuntimeException("the URL '" + urlStr + "' is not valid");                  
-            }   
-               
-            
             if(crService.isSchemaCRResident(urlStr)) { // is a public schema URL
                   
                NamedReport report = curation.processCMDProfile(urlStr);
@@ -113,10 +104,10 @@ public class CurateCtl {
 
                Path inFilePath = null;
                
-               try {
+               try(InputStream in = httpUtils.getURLConnection(urlStr, MediaType.APPLICATION_XML_VALUE).getInputStream()) {
                   inFilePath = Files.createTempFile(FileNameEncoder.encode(urlStr), "xml");
    
-                  FileUtils.copyURLToFile(schemaURL, inFilePath.toFile());
+                  FileUtils.copyInputStreamToFile(in, inFilePath.toFile());
                }
                catch (IOException e) {              
                   
