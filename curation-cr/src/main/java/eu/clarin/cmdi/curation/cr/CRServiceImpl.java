@@ -57,22 +57,28 @@ public class CRServiceImpl implements CRService {
 
 
     @Override
-    public ProfileHeader createProfileHeader(String schemaLocation, boolean isCacheable) throws NoProfileCacheEntryException, CRServiceStorageException, CCRServiceNotAvailableException {
+    public ProfileHeader createProfileHeader(String schemaLocation) throws NoProfileCacheEntryException, CRServiceStorageException, CCRServiceNotAvailableException {
 
-        return this.crCache.getEntry(schemaLocation, isCacheable).getParsedProfile().header();
+        return this.crCache.getEntry(schemaLocation).getParsedProfile().header();
     }
 
     @Override
-    public ParsedProfile getParsedProfile(String schemaLocation, boolean isCacheable) throws NoProfileCacheEntryException, CCRServiceNotAvailableException, CRServiceStorageException {
+    public ParsedProfile getParsedProfile(String schemaLocation) throws NoProfileCacheEntryException, CCRServiceNotAvailableException, CRServiceStorageException {
 
-        return crCache.getEntry(schemaLocation, isCacheable).getParsedProfile();
+        return crCache.getEntry(schemaLocation).getParsedProfile();
 
     }
 
     @Override
-    public Schema getSchema(String schemaLocation, boolean isCacheable) throws NoProfileCacheEntryException, CCRServiceNotAvailableException, CRServiceStorageException {
+    public Schema getSchema(String schemaLocation) throws NoProfileCacheEntryException, CCRServiceNotAvailableException, CRServiceStorageException {
 
-        return crCache.getEntry(schemaLocation, isCacheable).getSchema();
+        return crCache.getEntry(schemaLocation).getSchema();
+    }
+
+    @Override
+    public boolean isPublicSchema(String schemaLocation) {
+
+        return this.crCache.getPublicSchemaLocations().contains(schemaLocation);
     }
 
     @Override
@@ -85,7 +91,7 @@ public class CRServiceImpl implements CRService {
 
         return this.crCache.getPublicSchemaLocations().stream();
     }
-
+    @Override
     public String getIdFromSchemaLocation(String schemaLocation) {
         Matcher matcher = PROFILE_ID_PATTERN.matcher(schemaLocation);
 

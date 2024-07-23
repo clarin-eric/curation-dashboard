@@ -11,13 +11,17 @@ import java.util.stream.Stream;
 
 public interface CRService {
 	
-	public ProfileHeader createProfileHeader(String schemaLocation, boolean isCacheable) throws NoProfileCacheEntryException, CRServiceStorageException, CCRServiceNotAvailableException;
+	public ProfileHeader createProfileHeader(String schemaLocation) throws NoProfileCacheEntryException, CRServiceStorageException, CCRServiceNotAvailableException;
 
-	ParsedProfile getParsedProfile(String schemaLocation, boolean isCacheable) throws NoProfileCacheEntryException, CCRServiceNotAvailableException, CRServiceStorageException;
+	ParsedProfile getParsedProfile(String schemaLocation) throws NoProfileCacheEntryException, CCRServiceNotAvailableException, CRServiceStorageException;
 
-	Schema getSchema(String schemaLocation, boolean isCacheable) throws NoProfileCacheEntryException, CCRServiceNotAvailableException, CRServiceStorageException;
+	Schema getSchema(String schemaLocation) throws NoProfileCacheEntryException, CCRServiceNotAvailableException, CRServiceStorageException;
+
+	boolean isPublicSchema(String schemaLocation);
 
 	boolean isSchemaCRResident(String schemaLocation);
 
 	Stream<String> getPublicSchemaLocations();
+
+	String getIdFromSchemaLocation(String schemaLocation);
 }
