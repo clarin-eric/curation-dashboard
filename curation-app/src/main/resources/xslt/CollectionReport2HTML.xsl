@@ -66,8 +66,9 @@
                 </h3>
                 <a>
                     <xsl:attribute name="href">
-                        <xsl:text>https://vlo.clarin.eu/search?q=_metadataDirectory:</xsl:text>
+                        <xsl:text>https://vlo.clarin.eu/search?q=_fileName:*</xsl:text>
                         <xsl:value-of select="//fileReport/collectionRoot"/>
+                        <xsl:text>*</xsl:text>
                     </xsl:attribute>
                     <xsl:text>search for collection in VLO</xsl:text>
                 </a>
