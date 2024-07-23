@@ -137,7 +137,7 @@ public class ProfileTest {
          
          assertNotNull(this.cacheManager.getCache("profileCache").get(schemaLocation));
 
- /*
+
          // same public file not loaded via registry URL but by file
          // hence the profile not public, since it doesn't come from the registry, and should be stored in the private cache
          this.cacheManager.getCache("profileCache").clear();
@@ -149,22 +149,7 @@ public class ProfileTest {
          
          curation.processCMDProfile(tmpFilePath); 
          
-         assertNull(this.cacheManager.getCache("publicProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         assertNotNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         
-         // now we take it from the registry but in instance mode which is usually triggered by a user in the web interface
-         // we treat user actions as not reliable and the profile should be stored neither in public nor in private cache
-         this.cacheManager.getCache("profileCache").clear();
-         this.cacheManager.getCache("publicProfileCache").clear(); 
-         
-         conf.setMode("instance");                
-         curation.processCMDProfile(schemaLocation);
-         
-         assertNull(this.cacheManager.getCache("publicProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         assertNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-
-
-  */
+         assertNull(this.cacheManager.getCache("profileCache").get("clarin.eu:cr1:p_1403526079380"));
       }
       catch(Exception ex) {
          
