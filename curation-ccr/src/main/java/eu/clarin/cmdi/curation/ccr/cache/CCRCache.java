@@ -22,6 +22,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -145,6 +146,11 @@ public class CCRCache {
                 try(InputStream in = httpUtils.getURLConnection(restApiUrlStr).getInputStream()){
 
                     Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
+                }
+                catch(ConnectException e){
+
+                    log.error("can't connect to server ");
+                    throw new CCRServiceNotAvailableException(e);
                 }
                 catch (IOException e) {
 

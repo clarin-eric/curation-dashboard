@@ -13,7 +13,7 @@
    <version>${revision}</version>
    <organization>
       <name>CLARIN</name>
-      <url>http://www.clarin.eu</url>
+      <url>https://www.clarin.eu</url>
    </organization>
    <properties>
       <java.version>21</java.version>
@@ -25,6 +25,7 @@
       <vlo.version>4.11.6</vlo.version>
       <vtd.version>2.11</vtd.version>
       <saxon.version>12.3</saxon.version>
+      <mockserver.version>5.15.0</mockserver.version>
    </properties>
    <dependencies>
       <dependency>
@@ -101,6 +102,11 @@
             <artifactId>Saxon-HE</artifactId>
          <version>${saxon.version}</version>
       </dependency>
+       <dependency>
+          <groupId>org.mock-server</groupId>
+          <artifactId>mockserver-spring-test-listener</artifactId>
+          <version>${mockserver.version}</version>
+       </dependency>
    	</dependencies>
    </dependencyManagement>
 </project>
