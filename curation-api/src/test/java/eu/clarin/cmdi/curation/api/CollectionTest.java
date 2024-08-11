@@ -262,7 +262,7 @@ public class CollectionTest {
    }
 
 
-//   @Test
+   @Test
    void linkchecking() {
       
       assertEquals(300, collectionReport.linkcheckerReport.totNumOfLinks);
