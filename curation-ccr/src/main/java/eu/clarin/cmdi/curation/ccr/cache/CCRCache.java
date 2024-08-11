@@ -22,10 +22,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -149,7 +146,12 @@ public class CCRCache {
                 }
                 catch(ConnectException e){
 
-                    log.error("can't connect to server ");
+                    log.error("can't connect to server");
+                    throw new CCRServiceNotAvailableException(e);
+                }
+                catch(SocketTimeoutException e){
+
+                    log.error("socket timeout from server");
                     throw new CCRServiceNotAvailableException(e);
                 }
                 catch (IOException e) {
