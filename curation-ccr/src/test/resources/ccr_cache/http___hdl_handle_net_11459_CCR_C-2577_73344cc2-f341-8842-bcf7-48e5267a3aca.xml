@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:ns0="http://openskos.org/xmlns#">
+
+  <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__6f1577b8-53f1-a686-68ac-a64e0df865af">
+    <rdfs:label xml:lang="en">pilot-submission</rdfs:label>
+    <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-2577_73344cc2-f341-8842-bcf7-48e5267a3aca"/>
+  </skos:Collection>
+
+  <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__f60dacb3-06ce-e74f-f79c-4ce5f0a7a31b">
+    <rdfs:label xml:lang="en">LUCEA</rdfs:label>
+    <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-2577_73344cc2-f341-8842-bcf7-48e5267a3aca"/>
+  </skos:Collection>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-2577_73344cc2-f341-8842-bcf7-48e5267a3aca"/>
+  </skos:ConceptScheme>
+
+  <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__a64b45fb-7cc3-fe74-a4f5-7e370177bd9e">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-2577_73344cc2-f341-8842-bcf7-48e5267a3aca"/>
+  </skos:Collection>
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-2577_73344cc2-f341-8842-bcf7-48e5267a3aca">
+    <skos:notation>sampleRate</skos:notation>
+    <skos:definition xml:lang="en">Specification of the sample rate that is used for the recording. (source: CLARIN)</skos:definition>
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <ns0:inSkosCollection rdf:resource="http://hdl.handle.net/11459/CCR__a64b45fb-7cc3-fe74-a4f5-7e370177bd9e"/>
+    <ns0:inSkosCollection rdf:resource="http://hdl.handle.net/11459/CCR__f60dacb3-06ce-e74f-f79c-4ce5f0a7a31b"/>
+    <ns0:inSkosCollection rdf:resource="http://hdl.handle.net/11459/CCR__6f1577b8-53f1-a686-68ac-a64e0df865af"/>
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:altLabel>sampleRate</skos:altLabel>
+    <ns0:status>approved</ns0:status>
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-2577</skos:changeNote>
+    <skos:prefLabel xml:lang="en">sample rate</skos:prefLabel>
+  </skos:Concept>
+
+</rdf:RDF>

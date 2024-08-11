@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:ns0="http://openskos.org/xmlns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-6183_f3cffe8f-766e-3165-6f28-c011097dc762">
+    <skos:altLabel>type</skos:altLabel>
+    <skos:altLabel>purposeType</skos:altLabel>
+    <skos:notation>purposeType</skos:notation>
+    <ns0:status>candidate</ns0:status>
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-6183</skos:changeNote>
+    <skos:definition xml:lang="en">http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-purpose.html (source: http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-purpose.html)</skos:definition>
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:prefLabel xml:lang="en">purpose type</skos:prefLabel>
+  </skos:Concept>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-6183_f3cffe8f-766e-3165-6f28-c011097dc762"/>
+  </skos:ConceptScheme>
+
+</rdf:RDF>

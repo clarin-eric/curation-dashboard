@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:ns0="http://openskos.org/xmlns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-5514_145df064-6ac4-f0d3-7de8-1002dfb9b45e">
+    <skos:altLabel>SpeechCoding</skos:altLabel>
+    <skos:altLabel>speechCoding</skos:altLabel>
+    <ns0:status>candidate</ns0:status>
+    <skos:prefLabel xml:lang="en">sample coding</skos:prefLabel>
+    <skos:definition xml:lang="en">the coding of a single sample within a digital signal (source: CLARIN-D)</skos:definition>
+    <ns0:inSkosCollection>
+      <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__f60dacb3-06ce-e74f-f79c-4ce5f0a7a31b">
+        <rdfs:label xml:lang="en">LUCEA</rdfs:label>
+        <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-5514_145df064-6ac4-f0d3-7de8-1002dfb9b45e"/>
+      </skos:Collection>
+    </ns0:inSkosCollection>
+
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-5514</skos:changeNote>
+    <skos:example xml:lang="en">Most audio signals are encoded with 16bit signed integer. Telephone signals are encoded as either alaw (EU) or mlaw (US/AS) logarithmic scaled 8bit signed integers.</skos:example>
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:notation>speechCoding</skos:notation>
+  </skos:Concept>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-5514_145df064-6ac4-f0d3-7de8-1002dfb9b45e"/>
+  </skos:ConceptScheme>
+
+</rdf:RDF>

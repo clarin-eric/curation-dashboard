@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:ns0="http://openskos.org/xmlns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-6181_9dc2ec32-a4c4-b9b9-1ba2-e356f0906abd">
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:altLabel>language</skos:altLabel>
+    <skos:altLabel>lang</skos:altLabel>
+    <skos:definition xml:lang="en">(language) indicates the language of the element content using a ‘tag’ generated according to BCP 47. (source: http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-att.global.html)</skos:definition>
+    <ns0:inSkosCollection>
+      <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__eaef6356-3e43-2e3d-0cfe-af4226d57c37">
+        <rdfs:label xml:lang="en">TEI Header UCPH</rdfs:label>
+        <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-6181_9dc2ec32-a4c4-b9b9-1ba2-e356f0906abd"/>
+      </skos:Collection>
+    </ns0:inSkosCollection>
+
+    <skos:notation>languageXML</skos:notation>
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-6181</skos:changeNote>
+    <ns0:status>candidate</ns0:status>
+    <skos:prefLabel xml:lang="en">xmlLang</skos:prefLabel>
+  </skos:Concept>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-6181_9dc2ec32-a4c4-b9b9-1ba2-e356f0906abd"/>
+  </skos:ConceptScheme>
+
+</rdf:RDF>

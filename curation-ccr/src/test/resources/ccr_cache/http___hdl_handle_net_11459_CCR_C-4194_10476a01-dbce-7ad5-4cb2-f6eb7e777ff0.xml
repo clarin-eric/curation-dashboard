@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:ns0="http://openskos.org/xmlns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-4194_10476a01-dbce-7ad5-4cb2-f6eb7e777ff0">
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-4194</skos:changeNote>
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:notation>fistNameGivenName</skos:notation>
+    <skos:altLabel>firstName</skos:altLabel>
+    <skos:altLabel>first name</skos:altLabel>
+    <skos:definition xml:lang="en">A personal name that specifies and differentiates between members of a group of individuals, especially in a family, and is purposefully given, usually by a child's parents at or near birth, in contrast to an inherited one such as a family name. (source: Wikipedia)</skos:definition>
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <ns0:status>candidate</ns0:status>
+    <skos:prefLabel xml:lang="en">given name</skos:prefLabel>
+  </skos:Concept>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-4194_10476a01-dbce-7ad5-4cb2-f6eb7e777ff0"/>
+  </skos:ConceptScheme>
+
+</rdf:RDF>

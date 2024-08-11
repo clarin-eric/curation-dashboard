@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:ns0="http://openskos.org/xmlns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-6241_4fa5cd26-85f4-0cd7-3e64-198730224fea">
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-6241</skos:changeNote>
+    <skos:definition xml:lang="en">provides an externally-defined means of identifying the entity (or entities) being named, using a coded value of some kind. (source: http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-att.canonical.html)</skos:definition>
+    <skos:altLabel>key</skos:altLabel>
+    <skos:altLabel>canonicalKey</skos:altLabel>
+    <ns0:status>candidate</ns0:status>
+    <skos:notation>canonicalKey</skos:notation>
+    <skos:prefLabel xml:lang="en">canonical key</skos:prefLabel>
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+  </skos:Concept>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-6241_4fa5cd26-85f4-0cd7-3e64-198730224fea"/>
+  </skos:ConceptScheme>
+
+</rdf:RDF>

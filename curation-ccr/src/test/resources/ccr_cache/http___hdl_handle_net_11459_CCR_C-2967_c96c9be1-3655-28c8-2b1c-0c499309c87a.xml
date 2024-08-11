@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:ns0="http://openskos.org/xmlns#">
+
+  <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__898e6bd1-2f6d-34d2-323a-b760f610784f">
+    <rdfs:label xml:lang="en">MetadataProject</rdfs:label>
+    <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-2967_c96c9be1-3655-28c8-2b1c-0c499309c87a"/>
+  </skos:Collection>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-undecided_0103ef85-e040-85f0-c3a1-7b26f5659821">
+    <rdfs:label xml:lang="en">undecided</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-2967_c96c9be1-3655-28c8-2b1c-0c499309c87a"/>
+  </skos:ConceptScheme>
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-2967_c96c9be1-3655-28c8-2b1c-0c499309c87a">
+    <ns0:inSkosCollection rdf:resource="http://hdl.handle.net/11459/CCR__898e6bd1-2f6d-34d2-323a-b760f610784f"/>
+    <skos:notation>distributionMedium</skos:notation>
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-2967</skos:changeNote>
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-undecided_0103ef85-e040-85f0-c3a1-7b26f5659821"/>
+    <skos:example xml:lang="en">CD-ROM, hard disk, download (source: INL)</skos:example>
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-undecided_0103ef85-e040-85f0-c3a1-7b26f5659821"/>
+    <skos:altLabel>DistributionMedium</skos:altLabel>
+    <skos:altLabel>Distribution medium</skos:altLabel>
+    <skos:prefLabel xml:lang="en">Distribution medium</skos:prefLabel>
+    <ns0:status>candidate</ns0:status>
+    <skos:definition xml:lang="en">The medium on/by which the resource is distributed (source: INL)</skos:definition>
+  </skos:Concept>
+
+</rdf:RDF>

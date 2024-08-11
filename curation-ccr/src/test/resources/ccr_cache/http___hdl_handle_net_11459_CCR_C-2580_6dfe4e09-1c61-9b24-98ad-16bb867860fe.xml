@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:ns0="http://openskos.org/xmlns#">
+
+  <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__750d203b-ba0e-2d28-36e4-7bed4d9ef60b">
+    <rdfs:label xml:lang="en">textCorpusProfile UCPH</rdfs:label>
+    <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-2580_6dfe4e09-1c61-9b24-98ad-16bb867860fe"/>
+  </skos:Collection>
+
+  <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__6f1577b8-53f1-a686-68ac-a64e0df865af">
+    <rdfs:label xml:lang="en">pilot-submission</rdfs:label>
+    <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-2580_6dfe4e09-1c61-9b24-98ad-16bb867860fe"/>
+  </skos:Collection>
+
+  <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__f60dacb3-06ce-e74f-f79c-4ce5f0a7a31b">
+    <rdfs:label xml:lang="en">LUCEA</rdfs:label>
+    <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-2580_6dfe4e09-1c61-9b24-98ad-16bb867860fe"/>
+  </skos:Collection>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-2580_6dfe4e09-1c61-9b24-98ad-16bb867860fe"/>
+  </skos:ConceptScheme>
+
+  <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__a64b45fb-7cc3-fe74-a4f5-7e370177bd9e">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-2580_6dfe4e09-1c61-9b24-98ad-16bb867860fe"/>
+  </skos:Collection>
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-2580_6dfe4e09-1c61-9b24-98ad-16bb867860fe">
+    <ns0:status>approved</ns0:status>
+    <ns0:inSkosCollection rdf:resource="http://hdl.handle.net/11459/CCR__750d203b-ba0e-2d28-36e4-7bed4d9ef60b"/>
+    <ns0:inSkosCollection rdf:resource="http://hdl.handle.net/11459/CCR__6f1577b8-53f1-a686-68ac-a64e0df865af"/>
+    <ns0:inSkosCollection rdf:resource="http://hdl.handle.net/11459/CCR__f60dacb3-06ce-e74f-f79c-4ce5f0a7a31b"/>
+    <ns0:inSkosCollection rdf:resource="http://hdl.handle.net/11459/CCR__a64b45fb-7cc3-fe74-a4f5-7e370177bd9e"/>
+    <skos:definition xml:lang="en">The size of the resource with regard to the SizeUnit measurement in form of a number. (source: CLARIN)</skos:definition>
+    <skos:altLabel>size</skos:altLabel>
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:prefLabel xml:lang="en">size</skos:prefLabel>
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:notation>size</skos:notation>
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-2580</skos:changeNote>
+  </skos:Concept>
+
+</rdf:RDF>

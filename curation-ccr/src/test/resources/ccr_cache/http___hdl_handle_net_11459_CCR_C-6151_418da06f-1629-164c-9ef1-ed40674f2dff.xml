@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:ns0="http://openskos.org/xmlns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-6151_418da06f-1629-164c-9ef1-ed40674f2dff">
+    <ns0:status>candidate</ns0:status>
+    <ns0:inSkosCollection>
+      <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__eaef6356-3e43-2e3d-0cfe-af4226d57c37">
+        <rdfs:label xml:lang="en">TEI Header UCPH</rdfs:label>
+        <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-6151_418da06f-1629-164c-9ef1-ed40674f2dff"/>
+      </skos:Collection>
+    </ns0:inSkosCollection>
+
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:definition xml:lang="en">characterizes a single purpose or communicative function of the text. (source: http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-purpose.html)</skos:definition>
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-6151</skos:changeNote>
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:prefLabel xml:lang="en">purpose</skos:prefLabel>
+    <skos:notation>purpose</skos:notation>
+    <skos:altLabel>purpose</skos:altLabel>
+  </skos:Concept>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-6151_418da06f-1629-164c-9ef1-ed40674f2dff"/>
+  </skos:ConceptScheme>
+
+</rdf:RDF>
