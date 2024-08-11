@@ -43,15 +43,17 @@ public abstract class ProfileParser {
     *
     * @param vn the navigator
     * @param schemaLocation the schema location
-    * @param isPublic
+    * @param header public schema header or null
     * @return the parsed profile
     * @throws NoProfileCacheEntryException the no profile cache entry exception
     */
-   public ParsedProfile parse(VTDNav vn, String schemaLocation, boolean isPublic) throws CCRServiceNotAvailableException, CRServiceStorageException {
+   public ParsedProfile parse(VTDNav vn, String schemaLocation, ProfileHeader header) throws CCRServiceNotAvailableException, CRServiceStorageException {
 
       try {
 
-         ProfileHeader header = getHeader(vn, schemaLocation, isPublic);
+         if(header == null){
+            header = getHeader(vn, schemaLocation);
+         }
 
          Collection<CRElement> nodes = processElements(vn);
 
@@ -121,7 +123,7 @@ public abstract class ProfileParser {
     * @param vn     the vn
     * @throws VTDException the vtd exception
     */
-   protected eu.clarin.cmdi.curation.cr.profile_parser.ProfileHeader getHeader(VTDNav vn, String schemaLocation, boolean isPublic) throws VTDException {
+   protected eu.clarin.cmdi.curation.cr.profile_parser.ProfileHeader getHeader(VTDNav vn, String schemaLocation) throws VTDException {
 
       AutoPilot ap = new AutoPilot(vn);
       ap.declareXPathNameSpace("cmd", "http://www.clarin.eu/cmd/1");
@@ -134,7 +136,7 @@ public abstract class ProfileParser {
          evaluateXPath(vn,"//cmd:Header/cmd:Name/text()", ap),
          evaluateXPath(vn, "//cmd:Header/cmd:Description/text()", ap),
          evaluateXPath(vn,"//cmd:Header/cmd:Status/text()", ap),
-         isPublic
+              false
       );
    }
 

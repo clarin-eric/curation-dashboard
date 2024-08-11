@@ -15,7 +15,6 @@ import eu.clarin.cmdi.curation.cr.profile_parser.CMDI1_2_ProfileParser;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParser;
 import eu.clarin.cmdi.curation.cr.xml.SchemaResourceResolver;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,9 +30,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The type Cr cache.
@@ -43,23 +41,17 @@ import java.util.HashSet;
 public class CRCache {
    
    private final SchemaFactory schemaFactory;
-
-
-   private final HashSet<String> publicSchemaLocations;
    
    @Autowired
    private CRConfig crConfig;
-
-
-   /**
-    * The Ccr service.
-    */
    @Autowired
-   CCRService ccrService;
+   private CCRService ccrService;
    @Autowired
-   HttpUtils httpUtils;
+   private HttpUtils httpUtils;
    @Autowired
-   ApplicationContext ctx;
+   private PPHCache pphCache;
+   @Autowired
+   private ApplicationContext ctx;
 
 
 
@@ -69,36 +61,6 @@ public class CRCache {
    public CRCache() {
       
       schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-      publicSchemaLocations = new HashSet<>();
-
-   }
-
-   @PostConstruct
-   public void loadPublicProfiles() {
-
-      VTDGen vg = new VTDGen();
-
-      vg.parseHttpUrl(crConfig.getRestApi() + crConfig.getQuery(), false);
-
-      VTDNav vn = vg.getNav();
-
-      int i=0;
-
-      try {
-         while(i<vn.getTokenCount()){
-
-            if(vn.matchRawTokenString(i, "id")){
-
-               this.publicSchemaLocations.add(crConfig.getRestApi() + "/" + vn.toNormalizedString(++i) + "/xsd");
-            }
-            i++;
-         }
-      }
-      catch (NavException e) {
-
-         log.error("can't load public profiles from location '{}'", crConfig.getRestApi() + crConfig.getQuery());
-      }
    }
 
    /**
@@ -113,12 +75,25 @@ public class CRCache {
 
       String fileName = schemaLocation.replaceAll("[/.:]", "_");
 
-      Path xsd = Paths.get(System.getProperty("java.io.tmpdir"), fileName + ".xsd");
+      Path xsd = crConfig.getCrCache().resolve(fileName + ".xsd");
 
       // if not download it
 
       try {
          if (Files.notExists(xsd) || Files.size(xsd) == 0) {
+
+            if(Files.notExists(crConfig.getCrCache())) {
+
+               try {
+
+                  Files.createDirectories(crConfig.getCrCache());
+               }
+               catch (IOException e) {
+
+                  log.error("could create cr cache directory '{}'", crConfig.getCrCache());
+                  throw new CCRServiceNotAvailableException(e);
+               }
+            }
 
             log.debug("XSD for the {} is not in the local cache, it will be downloaded", schemaLocation);
 
@@ -153,12 +128,12 @@ public class CRCache {
          for(int i=0; i<nv.getTokenCount(); i++ ){
             if(nv.matchRawTokenString(i, "xmlns:cmd")){
                ProfileParser parser =  switch(nv.toNormalizedString(i+1)){
-                  case "http://www.clarin.eu/cmd/1" -> this.ctx.getBean(CMDI1_2_ProfileParser.class);
-                  case "http://www.clarin.eu/cmd" -> this.ctx.getBean(CMDI1_1_ProfileParser.class);
+                  case "http://www.clarin.eu/cmd/1", "https://www.clarin.eu/cmd/1" -> this.ctx.getBean(CMDI1_2_ProfileParser.class);
+                  case "http://www.clarin.eu/cmd", "https://www.clarin.eu/cmd" -> this.ctx.getBean(CMDI1_1_ProfileParser.class);
                   default -> throw new UnsupportedOperationException();
                };
 
-               parsedProfile = parser.parse(nv, schemaLocation, this.publicSchemaLocations.contains(schemaLocation));
+               parsedProfile = parser.parse(nv, schemaLocation, this.pphCache.getProfileHeadersMap().get(schemaLocation));
 
                break;
             }
@@ -185,7 +160,7 @@ public class CRCache {
       return new ProfileCacheEntry(parsedProfile, schema);
    }
 
-   public HashSet<String> getPublicSchemaLocations() {
-      return publicSchemaLocations;
+   public Set<String> getPublicSchemaLocations() {
+      return this.pphCache.getProfileHeadersMap().keySet();
    }
 }

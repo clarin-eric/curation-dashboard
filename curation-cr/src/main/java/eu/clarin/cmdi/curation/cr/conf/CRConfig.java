@@ -13,6 +13,8 @@ import java.nio.file.Path;
 @Data
 public class CRConfig {
 
+   private Path crCache;
+
    private String restApi;
 
    private String query;

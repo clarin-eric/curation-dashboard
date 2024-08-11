@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.nio.file.Path;
@@ -35,7 +36,7 @@ public class ProfileCtl {
     * @return the profile
     */
    @GetMapping(value = {"", "/{profileReportName}"})
-   public String getProfile(@PathVariable(value = "profileReportName") Optional<String> profileReportName, Model model) {
+   public String getProfile(@RequestHeader("Accept") String acceptHeader, @PathVariable(value = "profileReportName") Optional<String> profileReportName, Model model) {
       
       Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("profile");
       

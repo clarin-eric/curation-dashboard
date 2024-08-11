@@ -114,7 +114,7 @@ public class CMDI1_2_ProfileParser extends ProfileParser {
 
         vg.parseHttpUrl(ENVELOPE_URL, true);
 
-        ParsedProfile envelope = parser.parse(vg.getNav(), ENVELOPE_URL, true);
+        ParsedProfile envelope = parser.parse(vg.getNav(), ENVELOPE_URL, new ProfileHeader("1.x", ENVELOPE_URL, "", "", "", "", true));
 
         xpathNode.putAll(envelope.xpathNode());
         xpathElementNode.putAll(envelope.xpathElementNode());
