@@ -5,10 +5,8 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
-import org.mockserver.springtest.MockServerTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
 
@@ -81,11 +79,11 @@ public class ProfileTest {
       CMDProfileReport report;
       
       try{         
-         this.cacheManager.getCache("privateProfileCache").clear();  
+         this.cacheManager.getCache("crCache").clear();
          report = curation.processCMDProfile(getTmpFile("",""));        
          assertEquals(conf.getFacets().size(), report.facetReport.numOfFacetsCoveredByProfile);
          
-         this.cacheManager.getCache("privateProfileCache").clear();         
+         this.cacheManager.getCache("crCache").clear();
          report = curation.processCMDProfile(getTmpFile("cmd:ConceptLink=\"http://hdl.handle.net/11459/CCR_C-2571_2be2e583-e5af-34c2-3673-93359ec1f7df\"", ""));
          assertEquals(conf.getFacets().size() -1, report.facetReport.numOfFacetsCoveredByProfile); 
       }
@@ -101,12 +99,12 @@ public class ProfileTest {
       CMDProfileReport report;
       
       try{         
-         this.cacheManager.getCache("privateProfileCache").clear();  
+         this.cacheManager.getCache("crCache").clear();
          report = curation.processCMDProfile(getTmpFile("",""));        
          assertEquals(101, report.conceptReport.total);
          assertEquals(88, report.conceptReport.withConcept);
          
-         this.cacheManager.getCache("privateProfileCache").clear();   
+         this.cacheManager.getCache("crCache").clear();
          // we delete the concept link, which is four times in the file
          report = curation.processCMDProfile(getTmpFile("cmd:ConceptLink=\"http://hdl.handle.net/11459/CCR_C-63_95ec8724-267a-8689-a04d-50ae515bbacf\"", ""));
          // since we haven't deleted any element, the number should have remained the same
@@ -128,7 +126,7 @@ public class ProfileTest {
       try {
          
          // a public profile processed in collection mode should be added to the public cache 
-         this.cacheManager.getCache("profileCache").clear();
+         this.cacheManager.getCache("crCache").clear();
          
          conf.setMode("collection");
          
@@ -136,12 +134,12 @@ public class ProfileTest {
          
          curation.processCMDProfile(schemaLocation);
          
-         assertNotNull(this.cacheManager.getCache("profileCache").get(schemaLocation));
+         assertNotNull(this.cacheManager.getCache("crCache").get(schemaLocation));
 
 
          // same public file not loaded via registry URL but by file
          // hence the profile not public, since it doesn't come from the registry, and should be stored in the private cache
-         this.cacheManager.getCache("profileCache").clear();
+         this.cacheManager.getCache("crCache").clear();
 
          
          Path tmpFilePath = Files.createTempFile(null, null);
@@ -150,7 +148,7 @@ public class ProfileTest {
          
          curation.processCMDProfile(tmpFilePath); 
          
-         assertNull(this.cacheManager.getCache("profileCache").get("clarin.eu:cr1:p_1403526079380"));
+         assertNull(this.cacheManager.getCache("crCache").get("clarin.eu:cr1:p_1403526079380"));
       }
       catch(Exception ex) {
          

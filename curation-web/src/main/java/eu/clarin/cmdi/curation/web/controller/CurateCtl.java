@@ -7,6 +7,7 @@ import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
 import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -20,8 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -86,29 +85,35 @@ public class CurateCtl {
          }         
          
          if (urlStr.matches("http(s)?://.+")) { //the string is a URL
-            
-            if(crService.isPublicSchema(urlStr)) { // is a public schema URL
-                  
-               return "redirect:/profile/" + FileNameEncoder.encode(crService.getIdFromSchemaLocation(urlStr)) + ".html";
+
+            try {
+
+               if (crService.isPublicSchema(urlStr)) { // is a public schema URL
+
+                  return "redirect:/profile/" + FileNameEncoder.encode(crService.getIdFromSchemaLocation(urlStr)) + ".html";
+               } else {
+
+                  Path inFilePath = null;
+
+                  try (InputStream in = httpUtils.getURLConnection(urlStr, MediaType.APPLICATION_XML_VALUE).getInputStream()) {
+
+                     inFilePath = Files.createTempFile(FileNameEncoder.encode(urlStr), "xml");
+
+                     FileUtils.copyInputStreamToFile(in, inFilePath.toFile());
+                  }
+                  catch (IOException e) {
+
+                     log.error("couldn't download URL '{}' to file '{}'", urlStr, inFilePath);
+                     throw new RuntimeException("internal error - please inform Clarin-Eric");
+
+                  }
+
+                  htmlFilePath = curate(inFilePath);
+               }
             }
-            else {  
+            catch (PPHCacheException e){
 
-               Path inFilePath = null;
-               
-               try(InputStream in = httpUtils.getURLConnection(urlStr, MediaType.APPLICATION_XML_VALUE).getInputStream()) {
-
-                  inFilePath = Files.createTempFile(FileNameEncoder.encode(urlStr), "xml");
-   
-                  FileUtils.copyInputStreamToFile(in, inFilePath.toFile());
-               }
-               catch (IOException e) {              
-                  
-                  log.error("couldn't download URL '{}' to file '{}'", urlStr, inFilePath);
-                  throw new RuntimeException("internal error - please inform Clarin-Eric");
-               
-               }
-               
-               htmlFilePath = curate(inFilePath);
+               throw new RuntimeException("internal error - please inform Clarin-Eric");
             }
          }
          else {//the string is a relative path

@@ -1,22 +1,17 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
-import com.ximpleware.NavException;
 import com.ximpleware.VTDException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
-import eu.clarin.cmdi.curation.cr.cache.CRCache;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -103,7 +98,8 @@ public class CMDI1_2_ProfileParser extends ProfileParser {
      *
      * @param nodes         the nodes
      * @return the parsed profile
-     * @throws NoProfileCacheEntryException the no profile cache entry exception
+     * @throws CCRServiceNotAvailableException
+     * @throws CRServiceStorageException
      */
     @Override
     protected void fillMaps(Collection<CRElement> nodes, Map<String, CMDINode> xpathNode, Map<String, CMDINode> xpathElementNode, Map<String, CMDINode> xpathComponentNode) throws CCRServiceNotAvailableException, CRServiceStorageException {

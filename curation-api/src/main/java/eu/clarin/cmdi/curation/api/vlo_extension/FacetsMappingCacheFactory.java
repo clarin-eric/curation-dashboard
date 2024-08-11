@@ -4,7 +4,8 @@ import eu.clarin.cmdi.curation.api.cache.FacetMappingCache;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.Pattern;
 import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
@@ -98,12 +99,12 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
                   .forEach(element -> result.computeIfAbsent(element.getValue().concept.getUri(), k -> new ArrayList<>())
                   .add(new Pattern(element.getKey())));
             }
-            catch (NoProfileCacheEntryException e) {
+            catch (NoCRCacheEntryException e) {
 
                log.error("no ProfileCacheEntry object for schemaLocation '{}'", schemaLocation);
 
             }
-            catch (CRServiceStorageException | CCRServiceNotAvailableException e) {
+            catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
                 throw new RuntimeException(e);
             }
 

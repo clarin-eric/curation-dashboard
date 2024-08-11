@@ -1,24 +1,17 @@
 package eu.clarin.cmdi.curation.cr;
 
-import com.ximpleware.NavException;
-import com.ximpleware.VTDGen;
-import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.cache.CRCache;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import eu.clarin.cmdi.curation.cr.profile_parser.ProfileHeader;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.xml.validation.Schema;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -57,26 +50,32 @@ public class CRServiceImpl implements CRService {
 
 
     @Override
-    public ProfileHeader createProfileHeader(String schemaLocation) throws NoProfileCacheEntryException, CRServiceStorageException, CCRServiceNotAvailableException {
+    public ProfileHeader createProfileHeader(String schemaLocation) throws CRServiceStorageException, CCRServiceNotAvailableException, PPHCacheException, NoCRCacheEntryException {
 
-        return this.crCache.getEntry(schemaLocation).getParsedProfile().header();
+        return getParsedProfile(schemaLocation).header();
     }
 
     @Override
-    public ParsedProfile getParsedProfile(String schemaLocation) throws NoProfileCacheEntryException, CCRServiceNotAvailableException, CRServiceStorageException {
+    public ParsedProfile getParsedProfile(String schemaLocation) throws CRServiceStorageException, CCRServiceNotAvailableException, PPHCacheException, NoCRCacheEntryException {
+
+        if(crCache.getEntry(schemaLocation) == null){
+            throw new NoCRCacheEntryException();
+        }
 
         return crCache.getEntry(schemaLocation).getParsedProfile();
-
     }
 
     @Override
-    public Schema getSchema(String schemaLocation) throws NoProfileCacheEntryException, CCRServiceNotAvailableException, CRServiceStorageException {
+    public Schema getSchema(String schemaLocation) throws CCRServiceNotAvailableException, CRServiceStorageException, PPHCacheException, NoCRCacheEntryException {
 
+        if(crCache.getEntry(schemaLocation) == null){
+            throw new NoCRCacheEntryException();
+        }
         return crCache.getEntry(schemaLocation).getSchema();
     }
 
     @Override
-    public boolean isPublicSchema(String schemaLocation) {
+    public boolean isPublicSchema(String schemaLocation) throws PPHCacheException {
 
         return this.crCache.getPublicSchemaLocations().contains(schemaLocation);
     }
@@ -87,7 +86,7 @@ public class CRServiceImpl implements CRService {
     }
 
     @Override
-    public Stream<String> getPublicSchemaLocations() {
+    public Stream<String> getPublicSchemaLocations() throws PPHCacheException {
 
         return this.crCache.getPublicSchemaLocations().stream();
     }

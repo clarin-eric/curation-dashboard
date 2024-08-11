@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.logging.MockServerLogger;
-import org.mockserver.model.Delay;
-import org.mockserver.model.HttpResponse;
 import org.mockserver.socket.tls.KeyStoreFactory;
 import org.mockserver.springtest.MockServerPort;
 import org.mockserver.springtest.MockServerTest;
@@ -27,11 +25,9 @@ import org.springframework.context.annotation.Import;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockserver.model.HttpError.error;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
@@ -110,7 +106,7 @@ class CCRServiceTests {
    }
 
    @Test
-   void noParseableResult() throws CCRServiceNotAvailableException {
+   void nonParseableResult() throws CCRServiceNotAvailableException {
 
       this.mockServerClient
               .when(

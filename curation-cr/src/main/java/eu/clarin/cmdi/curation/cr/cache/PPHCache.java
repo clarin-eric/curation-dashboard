@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.cr.cache;
 
 import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ProfileHeader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class PPHCache {
     * @return the profile headers map with profile id as key
     */
    @Cacheable(value = "pphCache", sync = true)
-   public Map<String, ProfileHeader> getProfileHeadersMap() {
+   public Map<String, ProfileHeader> getProfileHeadersMap() throws PPHCacheException {
 
       String fileName = crConfig.getRestApi().replaceAll("[/.:]", "_");
 
@@ -79,10 +80,12 @@ public class PPHCache {
       catch (MalformedURLException e) {
 
          log.error("the concept registry URL '{}' is malformed", crConfig.getRestApi() + crConfig.getQuery());
+         throw new PPHCacheException(e);
       }
       catch (IOException e) {
 
          log.error("can't access xml file '{}'", xml);
+         throw new PPHCacheException(e);
       }
 
       Map<String, ProfileHeader> profileHeaders = new ConcurrentHashMap<>();
@@ -150,14 +153,17 @@ public class PPHCache {
       catch (IOException e) {
          
          log.error("IOException while reading stream from file '{}'", xml);
+         throw new PPHCacheException(e);
       }
       catch (SAXException e) {
 
          log.error("stream not parsable for ProfileHeader");
+         throw new PPHCacheException(e);
       }
       catch (ParserConfigurationException e) {
 
          log.error("can't configure new SAXParser");
+         throw new PPHCacheException(e);
       }
 
       return profileHeaders;

@@ -1,7 +1,10 @@
 package eu.clarin.cmdi.curation.cr.exception;
 
-public class NoProfileCacheEntryException extends Exception {
+import java.io.Serial;
 
+public class NoCRCacheEntryException extends Exception {
+
+   @Serial
    private static final long serialVersionUID = 1L;
 
 }

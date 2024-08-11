@@ -3,13 +3,12 @@ package eu.clarin.cmdi.curation.cr.cache;
 import com.ximpleware.NavException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
-import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import eu.clarin.cmdi.curation.cr.ProfileCacheEntry;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDI1_1_ProfileParser;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDI1_2_ProfileParser;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
@@ -45,8 +44,6 @@ public class CRCache {
    @Autowired
    private CRConfig crConfig;
    @Autowired
-   private CCRService ccrService;
-   @Autowired
    private HttpUtils httpUtils;
    @Autowired
    private PPHCache pphCache;
@@ -68,10 +65,10 @@ public class CRCache {
     *
     * @param schemaLocation the schemaURL
     * @return the public entry
-    * @throws NoProfileCacheEntryException the no profile cache entry exception
+    * @throws CCRServiceNotAvailableException the ccr service is not available
     */
-   @Cacheable(value = "profileCache", key ="#schemaLocation", condition = "#schemaLocation.startsWith('http')", sync = true)
-   public ProfileCacheEntry getEntry(String schemaLocation) throws CCRServiceNotAvailableException, CRServiceStorageException {
+   @Cacheable(value = "crCache", key ="#schemaLocation", condition = "#schemaLocation.startsWith('http')", sync = true)
+   public ProfileCacheEntry getEntry(String schemaLocation) throws CRServiceStorageException, CCRServiceNotAvailableException, PPHCacheException {
 
       String fileName = schemaLocation.replaceAll("[/.:]", "_");
 
@@ -91,7 +88,7 @@ public class CRCache {
                catch (IOException e) {
 
                   log.error("could create cr cache directory '{}'", crConfig.getCrCache());
-                  throw new CCRServiceNotAvailableException(e);
+                  throw new CRServiceStorageException(e);
                }
             }
 
@@ -106,25 +103,25 @@ public class CRCache {
       catch (MalformedURLException e) {
 
          log.debug("the schema location URL '{}' is malformed", schemaLocation);
-
-
+         return null;
       }
       catch (IOException e) {
 
-         log.debug("can't access xsd file '{}'", xsd);
-         throw new CRServiceStorageException(e);
+         log.debug("can't access xsd file '{}'", schemaLocation);
+         return null;
       }
 
-      VTDGen vg = new VTDGen();
 
-      vg.parseFile(xsd.toString(), true);
-
-
-      VTDNav nv = vg.getNav();
 
       ParsedProfile parsedProfile = null;
 
       try {
+         VTDGen vg = new VTDGen();
+
+         vg.parseFile(xsd.toString(), true);
+
+         VTDNav nv = vg.getNav();
+
          for(int i=0; i<nv.getTokenCount(); i++ ){
             if(nv.matchRawTokenString(i, "xmlns:cmd")){
                ProfileParser parser =  switch(nv.toNormalizedString(i+1)){
@@ -139,9 +136,10 @@ public class CRCache {
             }
          }
       }
-      catch (NavException e) {
+      catch (NavException | IllegalArgumentException e) {
 
          log.info("can't process schema '{}'", schemaLocation);
+         return null;
       }
 
 
@@ -155,12 +153,13 @@ public class CRCache {
       catch (SAXException e) {
          
          log.info("can't create Schema object from file '{}'", xsd);
+         return null;
       }
 
       return new ProfileCacheEntry(parsedProfile, schema);
    }
 
-   public Set<String> getPublicSchemaLocations() {
+   public Set<String> getPublicSchemaLocations() throws PPHCacheException {
       return this.pphCache.getProfileHeadersMap().keySet();
    }
 }

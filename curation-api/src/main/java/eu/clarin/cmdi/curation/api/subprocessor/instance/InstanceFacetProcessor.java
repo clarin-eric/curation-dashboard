@@ -19,7 +19,8 @@ import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
@@ -169,7 +170,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                   });
 
          }
-         catch (NoProfileCacheEntryException e1) {
+         catch (NoCRCacheEntryException e1) {
             
             log.error("no parsable profile '{}'", instanceReport.instanceHeaderReport.schemaLocation);
             instanceReport.details.add(new Detail(Severity.FATAL, "facets", "can't parse profile '" + instanceReport.instanceHeaderReport.schemaLocation + "'"));
@@ -188,7 +189,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
             instanceReport.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
             instanceReport.isProcessable = false;
          }
-         catch (CRServiceStorageException | CCRServiceNotAvailableException e) {
+         catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
              throw new MalFunctioningProcessorException(e);
          }
       }

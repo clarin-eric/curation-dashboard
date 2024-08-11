@@ -11,7 +11,8 @@ import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -64,16 +65,14 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
                      "The description '" + report.headerReport.getDescription() + "' of the profile is not unique")));
       */
       }
+      catch (NoCRCacheEntryException e) {
+         report.details.add(new Detail(Severity.FATAL,"concept" , "can't get ParsedProfile for profile id '" + report.headerReport.getId() + "'"));
+         log.debug("can't get ParsedProfile for profile id '{}'", report.headerReport.getId());
+         return;
 
-
-      catch (NoProfileCacheEntryException e) {
-          throw new RuntimeException(e);
       }
-      catch (CRServiceStorageException e) {
-          throw new RuntimeException(e);
-      }
-      catch (CCRServiceNotAvailableException e) {
-          throw new RuntimeException(e);
+      catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
+          throw new MalFunctioningProcessorException(e);
       }
    }
 }

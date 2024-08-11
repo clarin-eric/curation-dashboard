@@ -12,7 +12,8 @@ import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,7 +52,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       try {
          schemaValidator = crService.getSchema(report.profileHeaderReport.getProfileHeader().schemaLocation()).newValidatorHandler();
       }
-      catch (NoProfileCacheEntryException e) {
+      catch (NoCRCacheEntryException e) {
 
          log.error("no ProfileCacheEntry for profile id '{}'", report.profileHeaderReport.getId());
          report.details.add(new Detail(Severity.FATAL, "xml-validation", "no ProfileCacheEntry for profile id '" + report.profileHeaderReport.getId() + "'"));
@@ -59,7 +60,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
          
          return;
       }
-      catch (CRServiceStorageException| CCRServiceNotAvailableException e) {
+      catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
 
           throw new MalFunctioningProcessorException(e);
       }

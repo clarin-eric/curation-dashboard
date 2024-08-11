@@ -9,7 +9,6 @@ import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.CCRStatus;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,7 +44,8 @@ public abstract class ProfileParser {
     * @param schemaLocation the schema location
     * @param header public schema header or null
     * @return the parsed profile
-    * @throws NoProfileCacheEntryException the no profile cache entry exception
+    * @throws CCRServiceNotAvailableException
+    * @throws CRServiceStorageException
     */
    public ParsedProfile parse(VTDNav vn, String schemaLocation, ProfileHeader header) throws CCRServiceNotAvailableException, CRServiceStorageException {
 
@@ -112,8 +112,8 @@ public abstract class ProfileParser {
     * @param xpathElementNode
     * @param xpathComponentNode
     * @return the parsed profile
-    * @throws VTDException                 the vtd exception
-    * @throws NoProfileCacheEntryException the no profile cache entry exception
+    * @throws CCRServiceNotAvailableException
+    * @throws CRServiceStorageException
     */
    protected abstract void fillMaps(Collection<CRElement> nodes, Map<String, CMDINode> xpathNode, Map<String, CMDINode> xpathElementNode, Map<String, CMDINode> xpathComponentNode) throws CCRServiceNotAvailableException, CRServiceStorageException;
 
