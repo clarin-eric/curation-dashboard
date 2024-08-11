@@ -42,15 +42,15 @@ import java.security.NoSuchAlgorithmException;
 public class CCRCache {
 
     private final HttpUtils httpUtils;
-    private final CCRConfig ccrProps;
+    private final CCRConfig ccrConfig;
 
     private final SAXParserFactory fac;
 
-    public CCRCache(HttpUtils httpUtils, CCRConfig ccrProps) {
+    public CCRCache(HttpUtils httpUtils, CCRConfig ccrConfig) {
 
         this.httpUtils = httpUtils;
 
-        this.ccrProps = ccrProps;
+        this.ccrConfig = ccrConfig;
 
         this.fac = SAXParserFactory.newInstance();
         this.fac.setNamespaceAware(true);
@@ -93,7 +93,7 @@ public class CCRCache {
                 sc.init(null, trustAllCerts, new java.security.SecureRandom());
                 HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-                String refHostName = new URL(ccrProps.getRestApi()).getHost();
+                String refHostName = new URL(ccrConfig.getRestApi()).getHost();
 
                 HttpsURLConnection
                         .setDefaultHostnameVerifier((hostname, session) -> hostname.equals(refHostName));
@@ -114,32 +114,32 @@ public class CCRCache {
             }
             catch (MalformedURLException ex) {
 
-                log.error("can't extract hostname from URL '{}'", ccrProps.getRestApi());
+                log.error("can't extract hostname from URL '{}'", ccrConfig.getRestApi());
                 throw new CCRServiceNotAvailableException(ex);
             }
         } // end switch off validation check
 
         String fileName = conceptURI.replaceAll("[/.:]", "_") + ".xml";
 
-        Path filePath = ccrProps.getCcrCache().resolve(fileName);
+        Path filePath = ccrConfig.getCcrCache().resolve(fileName);
 
         try {
             if(Files.notExists(filePath, LinkOption.NOFOLLOW_LINKS) || Files.size(filePath) == 0){
 
-                if(Files.notExists(ccrProps.getCcrCache())) {
+                if(Files.notExists(ccrConfig.getCcrCache())) {
 
                     try {
 
-                        Files.createDirectories(ccrProps.getCcrCache());
+                        Files.createDirectories(ccrConfig.getCcrCache());
                     }
                     catch (IOException e) {
 
-                        log.error("could create ccr cache directory '{}'", ccrProps.getCcrCache());
+                        log.error("could create ccr cache directory '{}'", ccrConfig.getCcrCache());
                         throw new CCRServiceNotAvailableException(e);
                     }
                 }
 
-                String restApiUrlStr = ccrProps.getRestApi() + ccrProps.getQuery().replace("${conceptURI}", URLEncoder.encode(conceptURI, StandardCharsets.UTF_8));
+                String restApiUrlStr = ccrConfig.getRestApi() + ccrConfig.getQuery().replace("${conceptURI}", URLEncoder.encode(conceptURI, StandardCharsets.UTF_8));
 
                 log.debug("Fetching from {}", restApiUrlStr);
 
