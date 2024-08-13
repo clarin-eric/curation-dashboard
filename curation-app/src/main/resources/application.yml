@@ -12,7 +12,9 @@ spring:
       url: ${DATABASE_URI}
       username: ${DATABASE_USER}
       password: ${DATABASE_PASSWORD}
-      driver-class-name: org.mariadb.jdbc.Driver
+      hikari:
+         connection-timeout: 3600000
+         maximum-pool-size: 30
    jpa:
       show-sql: false
       hibernate:
@@ -27,6 +29,7 @@ spring:
         location: ${java.io.tmpdir}  
 curation:
    cr-service:
+      cr-cache: ${java.io.tmpdir}/curation/cr_cache
       restApi: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
       query: "?registrySpace=published&status=production&status=development&&status=deprecated"
    ccr-service:
@@ -64,4 +67,5 @@ curation:
    link_deletion_after: ${LINK_DELETION_AFTER:365}
    purge_history_after: ${PURGE_HISTORY_AFTER:365}
    purge_obsolete_after: ${PURGE_OBSOLETE_AFTER:100}
+   purge_report_after: ${PURGE_REPORT_AFTER:365}
    vlo_config_location: ${VLO_CONFIG_LOCATION:}
