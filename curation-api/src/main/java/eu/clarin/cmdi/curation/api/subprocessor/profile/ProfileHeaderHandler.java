@@ -13,6 +13,7 @@ import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
+import eu.clarin.cmdi.curation.cr.profile_parser.ProfileHeader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -66,8 +67,11 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
       */
       }
       catch (NoCRCacheEntryException e) {
-         report.details.add(new Detail(Severity.FATAL,"concept" , "can't get ParsedProfile for profile id '" + report.headerReport.getId() + "'"));
-         log.debug("can't get ParsedProfile for profile id '{}'", report.headerReport.getId());
+         report.details.add(new Detail(Severity.FATAL,"concept" , "can't parse profile '" + profile.getSchemaLocation() + "'"));
+         log.debug("can't parse profile '{}'", profile.getSchemaLocation());
+
+         report.headerReport = new ProfileHeaderReport(new ProfileHeader("n/a", profile.getSchemaLocation(), "n/a", "n/a", "n/a", "n/a", false));
+
          return;
 
       }

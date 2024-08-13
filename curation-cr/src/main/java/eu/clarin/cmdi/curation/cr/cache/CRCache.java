@@ -9,10 +9,7 @@ import eu.clarin.cmdi.curation.cr.ProfileCacheEntry;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
-import eu.clarin.cmdi.curation.cr.profile_parser.CMDI1_1_ProfileParser;
-import eu.clarin.cmdi.curation.cr.profile_parser.CMDI1_2_ProfileParser;
-import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
-import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParser;
+import eu.clarin.cmdi.curation.cr.profile_parser.*;
 import eu.clarin.cmdi.curation.cr.xml.SchemaResourceResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,6 +157,7 @@ public class CRCache {
    }
 
    public Set<String> getPublicSchemaLocations() throws PPHCacheException {
+
       return this.pphCache.getProfileHeadersMap().keySet();
    }
 }
