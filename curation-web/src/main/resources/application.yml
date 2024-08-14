@@ -34,10 +34,11 @@ server:
    port: 8443  
 curation:
    cr-service:
+      cr-cache: ${java.io.tmpdir}/curation/cr_cache
       restApi: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
       query: "?registrySpace=published&status=production&status=development&&status=deprecated"
    ccr-service:
-      ccr-cache: ${APPLICATION_HOME_DIRECTORY}/ccr_cache
+      ccr-cache: ${java.io.tmpdir}/curation/ccr_cache
       restApi: "https://vocabularies.clarin.eu/clavas/rest/v1/data"
       query: "?uri=${conceptURI}"
    directory:
