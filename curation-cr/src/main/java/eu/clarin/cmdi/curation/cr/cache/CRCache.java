@@ -35,9 +35,6 @@ import java.util.Set;
 @Component
 @Slf4j
 public class CRCache {
-   
-   private final SchemaFactory schemaFactory;
-   
    @Autowired
    private CRConfig crConfig;
    @Autowired
@@ -46,16 +43,6 @@ public class CRCache {
    private PPHCache pphCache;
    @Autowired
    private ApplicationContext ctx;
-
-
-
-   /**
-    * Instantiates a new Cr cache.
-    */
-   public CRCache() {
-      
-      schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-   }
 
    /**
     * Gets public entry.
@@ -108,8 +95,6 @@ public class CRCache {
          return null;
       }
 
-
-
       ParsedProfile parsedProfile = null;
 
       try {
@@ -139,13 +124,13 @@ public class CRCache {
          return null;
       }
 
+      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+      schemaFactory.setResourceResolver(new SchemaResourceResolver());
 
       Schema schema = null;
-      
-      schemaFactory.setResourceResolver(new SchemaResourceResolver());
-            
+
       try {
-         schema = schemaFactory.newSchema(xsd.toFile());
+         schema = schemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(xsd.toFile());
       }
       catch (SAXException e) {
          
