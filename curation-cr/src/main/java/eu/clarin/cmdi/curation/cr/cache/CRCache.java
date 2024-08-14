@@ -130,7 +130,7 @@ public class CRCache {
       Schema schema = null;
 
       try {
-         schema = schemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(xsd.toFile());
+         schema = schemaFactory.newSchema(xsd.toFile());
       }
       catch (SAXException e) {
          

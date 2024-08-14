@@ -148,7 +148,7 @@ public class ProfileTest {
          
          curation.processCMDProfile(tmpFilePath); 
          
-         assertNull(this.cacheManager.getCache("crCache").get("clarin.eu:cr1:p_1403526079380"));
+         assertNull(this.cacheManager.getCache("crCache").get("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd"));
       }
       catch(Exception ex) {
          

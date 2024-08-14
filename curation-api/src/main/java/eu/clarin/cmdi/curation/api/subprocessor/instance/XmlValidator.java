@@ -54,7 +54,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
       }
       catch (NoCRCacheEntryException e) {
 
-         log.error("no ProfileCacheEntry for profile id '{}'", report.profileHeaderReport.getId());
+         log.error("no ProfileCacheEntry for profile '{}'", report.profileHeaderReport.getSchemaLocation());
          report.details.add(new Detail(Severity.FATAL, "xml-validation", "no ProfileCacheEntry for profile '" + report.profileHeaderReport.getSchemaLocation() + "'"));
          report.isProcessable=false;
          
