@@ -146,7 +146,9 @@ public class CurationApp {
             log.info("start purging obsolete table from records checked before {} days", conf.getPurgeObsoleteAfter());
             linkService.purgeObsolete(conf.getPurgeObsoleteAfter());
             log.info("done purging obsolete");
-            
+            log.info("purging reports older than {} days", conf.getPurgeReportAfter());
+            this.storage.purgeReportAfter(conf.getPurgeReportAfter());
+            log.info("done purging reports");
          }
          
          log.info("end time: {}", LocalDateTime.now());
