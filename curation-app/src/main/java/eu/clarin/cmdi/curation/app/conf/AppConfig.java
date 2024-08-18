@@ -33,6 +33,8 @@ public class AppConfig {
    private int purgeHistoryAfter;
    
    private int purgeObsoleteAfter;
+
+   private int purgeReportAfter;
    
    @Data
    public static class Directory {

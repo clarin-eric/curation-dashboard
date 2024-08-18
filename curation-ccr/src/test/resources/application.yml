@@ -1,3 +1,4 @@
+# properties are documented in the application.yml of the curation-app module
 logging:
    level:
       root: ERROR

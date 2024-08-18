@@ -132,23 +132,33 @@ public class CurationApp {
             log.info("done writing linkchecker detail reports");
  
          }
-         
+
          if("all".equalsIgnoreCase(conf.getMode())) {
-            log.info("start deactivating links older than {} days", conf.getLinkDeactivationAfter());
-            linkService.deactivateLinksOlderThan(conf.getLinkDeactivationAfter());
-            log.info("done deactivating links");
-            log.info("start deleting links older than {} days", conf.getLinkDeletionAfter());
-            linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
-            log.info("done deleting links");
-            log.info("start purging history table from records checked before {} days", conf.getPurgeHistoryAfter());
-            linkService.purgeHistory(conf.getPurgeHistoryAfter());
-            log.info("done purging history");
-            log.info("start purging obsolete table from records checked before {} days", conf.getPurgeObsoleteAfter());
-            linkService.purgeObsolete(conf.getPurgeObsoleteAfter());
-            log.info("done purging obsolete");
-            log.info("purging reports older than {} days", conf.getPurgeReportAfter());
-            this.storage.purgeReportAfter(conf.getPurgeReportAfter());
-            log.info("done purging reports");
+            if(conf.getLinkDeactivationAfter() > 0) {
+               log.info("start deactivating links older than {} days", conf.getLinkDeactivationAfter());
+               linkService.deactivateLinksOlderThan(conf.getLinkDeactivationAfter());
+               log.info("done deactivating links");
+            }
+            if(conf.getLinkDeletionAfter() > 0) {
+               log.info("start deleting links older than {} days", conf.getLinkDeletionAfter());
+               linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
+               log.info("done deleting links");
+            }
+            if(conf.getPurgeHistoryAfter() > 0) {
+               log.info("start purging history table from records checked before {} days", conf.getPurgeHistoryAfter());
+               linkService.purgeHistory(conf.getPurgeHistoryAfter());
+               log.info("done purging history");
+            }
+            if(conf.getPurgeObsoleteAfter() > 0) {
+               log.info("start purging obsolete table from records checked before {} days", conf.getPurgeObsoleteAfter());
+               linkService.purgeObsolete(conf.getPurgeObsoleteAfter());
+               log.info("done purging obsolete");
+            }
+            if(conf.getPurgeReportAfter() > 0) {
+               log.info("purging reports older than {} days from path '{}'", conf.getPurgeReportAfter(), conf.getDirectory().getOut());
+               this.storage.purgeReportAfter(conf.getPurgeReportAfter());
+               log.info("done purging reports");
+            }
          }
          
          log.info("end time: {}", LocalDateTime.now());

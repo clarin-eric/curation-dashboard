@@ -1,3 +1,4 @@
+# properties are documented in the application.yml of the curation-app module
 spring:
    datasource:
       url: ${DATABASE_URI}
