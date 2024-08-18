@@ -46,14 +46,14 @@ class CRServiceTests {
 
     @Autowired
     CRCache crCache;
-   @Autowired
-   CRService crService;   
-   @Autowired
-   CRConfig crConfig;
-   @Autowired
-   HttpConfig httpConfig;
-   @Autowired
-   CacheManager cacheManager;
+    @Autowired
+    CRService crService;
+    @Autowired
+    CRConfig crConfig;
+    @Autowired
+    HttpConfig httpConfig;
+    @Autowired
+    CacheManager cacheManager;
 
     private MockServerClient mockServerClient;
 
@@ -67,7 +67,7 @@ class CRServiceTests {
     }
 
     @Test
-    void serverNotAvailable(){
+    void serverNotAvailable() {
 
         this.mockServerClient
                 .when(
@@ -77,7 +77,7 @@ class CRServiceTests {
                         response().withStatusCode(200)
                 );
 
-        httpConfig.setProxyPort(this.mockServerPort +1);
+        httpConfig.setProxyPort(this.mockServerPort + 1);
 
         try {
             assertDoesNotThrow(() -> this.crCache.getEntry("http://www.wowasa.com/clarin.eu:cr1:p_1403526079381/xsd"));
@@ -89,7 +89,7 @@ class CRServiceTests {
             // but it shouldn't be cached
             assertNull(cacheManager.getCache("crCache").get(Paths.get("tmp", "77777").toUri().toString()));
         }
-        catch(Exception e){
+        catch (Exception e) {
 
         }
 
@@ -147,48 +147,49 @@ class CRServiceTests {
 
     }
 
-	@Test
-	void isPublic()  {
+    @Test
+    void isPublic() {
 
-	      try {
-            
-            assertTrue(crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079381/xsd").header().isPublic() );
-            assertFalse(crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_9990106710826/xsd").header().isPublic() );
+        try {
+            assertDoesNotThrow(() -> crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd"));
+            assertTrue(crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd").header().isPublic());
+            assertDoesNotThrow(() -> crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_9990106710826/xsd"));
+            assertFalse(crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_9990106710826/xsd").header().isPublic());
             assertFalse(crService.getParsedProfile(this.crConfig.getCrCache().resolve("https___catalog_clarin_eu_ds_ComponentRegistry_rest_registry_1_x_profiles_clarin_eu_cr1_p_1403526079380_xsd.xsd").toUri().toString()).header().isPublic());
-	      }
-         catch (Exception e) {
+        }
+        catch (Exception e) {
 
             log.error("error in schema");
             log.error("", e);
-         }
-	}
-	
-	@Test
-	void cacheUsage() {
+        }
+    }
 
-         try {
+    @Test
+    void cacheUsage() {
 
-             crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079381/xsd");
-             crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_9990106710826/xsd");
+        try {
 
-             crService.getParsedProfile(this.crConfig.getCrCache().resolve("https___catalog_clarin_eu_ds_ComponentRegistry_rest_registry_1_x_profiles_clarin_eu_cr1_p_1403526079380_xsd.xsd").toUri().toString());
-            
-            assertNotNull(cacheManager.getCache("crCache").get("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079381/xsd"));
+            crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd");
+            crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_9990106710826/xsd");
+
+            crService.getParsedProfile(this.crConfig.getCrCache().resolve("https___catalog_clarin_eu_ds_ComponentRegistry_rest_registry_1_x_profiles_clarin_eu_cr1_p_1403526079380_xsd.xsd").toUri().toString());
+
+            assertNotNull(cacheManager.getCache("crCache").get("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd"));
             assertNotNull(cacheManager.getCache("crCache").get("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_9990106710826/xsd"));
-            // next should be cached when loaded from a file
-            assertNotNull(cacheManager.getCache("crCache").get(this.crConfig.getCrCache().resolve("https___catalog_clarin_eu_ds_ComponentRegistry_rest_registry_1_x_profiles_clarin_eu_cr1_p_1403526079380_xsd.xsd").toUri().toString()));
+            // next should NOT be cached when loaded from a file
+            assertNull(cacheManager.getCache("crCache").get(this.crConfig.getCrCache().resolve("https___catalog_clarin_eu_ds_ComponentRegistry_rest_registry_1_x_profiles_clarin_eu_cr1_p_1403526079380_xsd.xsd").toUri().toString()));
 
-         }
-         catch (Exception e) {
+        }
+        catch (Exception e) {
 
             log.error("error in schema");
             log.error("", e);
-         }
-	}
-	
-	@SpringBootConfiguration
-	@EnableCaching
-	public static class TestConfig {
+        }
+    }
 
-	}
+    @SpringBootConfiguration
+    @EnableCaching
+    public static class TestConfig {
+
+    }
 }
