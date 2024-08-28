@@ -11,6 +11,7 @@ import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -71,10 +72,12 @@ public class CurateCtl {
       if (urlStr == null || urlStr.isEmpty()) {
          
          model.addAttribute("insert", "fragments/validator.html");
+
+         return "generic";
       }
       else {
          
-         Path htmlFilePath = null;
+         Path inFilePath = null;
          
          
          // just to make it more user friendly ignore leading and trailing spaces
@@ -90,10 +93,20 @@ public class CurateCtl {
 
                if (crService.isPublicSchema(urlStr)) { // is a public schema URL
 
-                  return "redirect:/profile/" + FileNameEncoder.encode(crService.getIdFromSchemaLocation(urlStr)) + ".html";
-               } else {
+                  if (StringUtils.isNotEmpty(acceptHeader) && acceptHeader.contains("json")) {
 
-                  Path inFilePath = null;
+                     return "forward:/download/profile/" + FileNameEncoder.encode(urlStr) + "?format=json";
+                  }
+                  else if (StringUtils.isNotEmpty(acceptHeader) && acceptHeader.contains("xml")){
+
+                     return "forward:/download/profile/" + FileNameEncoder.encode(urlStr);
+                  }
+                  else {
+
+                     return "forward:/profile/" + FileNameEncoder.encode(urlStr) + ".html";
+                  }
+               }
+               else {
 
                   try (InputStream in = httpUtils.getURLConnection(urlStr, MediaType.APPLICATION_XML_VALUE).getInputStream()) {
 
@@ -107,8 +120,6 @@ public class CurateCtl {
                      throw new RuntimeException("internal error - please inform Clarin-Eric");
 
                   }
-
-                  htmlFilePath = curate(inFilePath);
                }
             }
             catch (PPHCacheException e){
@@ -118,21 +129,20 @@ public class CurateCtl {
          }
          else {//the string is a relative path
 
-            Path inFilePath = conf.getDirectory().getDataRoot().resolve(urlStr).normalize();
+            inFilePath = conf.getDirectory().getDataRoot().resolve(urlStr).normalize();
             log.debug("inFilePath: {}", inFilePath);
             if (Files.notExists(inFilePath) || !inFilePath.startsWith(conf.getDirectory().getDataRoot())) {
                
                log.error("no valid input file with path '{}'", inFilePath);
                throw new RuntimeException("Given URL is invalid");
             } // else go down and curate the file
-            
-            htmlFilePath = curate(inFilePath);
          }
+
+         String returnString = createReport(inFilePath, acceptHeader, model);
+         return returnString;
          
-         model.addAttribute("insert", htmlFilePath.toString());               
+
       }
-      
-      return "generic";
    }
 
    /**
@@ -149,14 +159,8 @@ public class CurateCtl {
       Path inFilePath = Paths.get(System.getProperty("java.io.tmpdir"), System.currentTimeMillis() + "_curation.tmp");
       
       try {
-         file.transferTo(inFilePath);
-         
-         Path reportPath = curate(inFilePath);
-         
-         log.debug("reportPath: {}", reportPath);
-         
-         model.addAttribute("insert", reportPath.toString());
 
+         file.transferTo(inFilePath);
       }
       catch (IOException e) {
          
@@ -164,10 +168,10 @@ public class CurateCtl {
          throw new RuntimeException("Given URL is invalid");
       }
       
-      return "generic";
+      return createReport(inFilePath, null, model);
    }
 
-   private Path curate(Path inFilePath) {
+   private String createReport(Path inFilePath, String acceptHeader, Model model) {
 
       NamedReport report = null;     
       
@@ -180,13 +184,9 @@ public class CurateCtl {
          String text = new String(buffer);
          
          if (text.contains("xmlns:xs=")) {// it's a profile
-            if (!text.contains("http://www.clarin.eu/cmd/1")) { // but not a valid cmd 1.2 profile
-               throw new RuntimeException("profile has no cmd 1.2 namespace declaration");
-            }
-            else {
+
 
                report = curation.processCMDProfile(inFilePath.toUri().toString());
-            }
          }
          else { // no profile - so processed as CMD instance
             
@@ -197,7 +197,27 @@ public class CurateCtl {
          // overriding public profiles by user intervention
          storage.saveReportAsXML(report, CurationEntityType.INSTANCE, false);
 
-         return storage.saveReportAsHTML(report, CurationEntityType.INSTANCE, false);
+         storage.saveReportAsHTML(report, CurationEntityType.INSTANCE, false);
+
+         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.contains("json")) {
+
+            return "forward:/download/instance/" + report.getName() + "?format=json";
+         }
+         else if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.contains("xml")) {
+
+            return "forward:/download/instance/" + report.getName();
+         }
+         else {
+
+            Path htmlFilePath = conf.getDirectory().getOut()
+                    .resolve("html")
+                    .resolve("instance")
+                    .resolve(report.getName() + ".html");
+
+            model.addAttribute("insert", htmlFilePath.toString());
+         }
+
+         return "generic";
 
       }
       catch (IOException e) {
