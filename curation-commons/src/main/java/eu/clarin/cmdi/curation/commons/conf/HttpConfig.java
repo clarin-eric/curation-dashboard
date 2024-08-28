@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class HttpConfig {
 
-    private String userAgent = "CLARIN-curation-dashboard";
+    private String userAgent;
 
-    private int connectionTimeout = 5000;
+    private int connectionTimeout;
 
-    private int readTimeout = 5000;
+    private int readTimeout;
 
     private String proxyHost;
 
