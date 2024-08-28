@@ -25,11 +25,15 @@ public class HttpUtils {
 
         URLConnection connection = url.openConnection(proxy);
 
-        connection.setConnectTimeout(httpConfig.getConnectionTimeout());
-
-        connection.setReadTimeout(httpConfig.getReadTimeout());
-
-        connection.setRequestProperty("User-Agent", httpConfig.getUserAgent());
+        if(httpConfig.getConnectionTimeout() > 0) {
+            connection.setConnectTimeout(httpConfig.getConnectionTimeout());
+        }
+        if(httpConfig.getReadTimeout() > 0) {
+            connection.setReadTimeout(httpConfig.getReadTimeout());
+        }
+        if(StringUtils.isNotBlank(httpConfig.getUserAgent())) {
+            connection.setRequestProperty("User-Agent", httpConfig.getUserAgent());
+        }
 
         return connection;
     }
