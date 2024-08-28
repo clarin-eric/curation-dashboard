@@ -13,7 +13,7 @@ logging:
       eu.clarin.cmdi.curation.app.CurationApp: INFO
 spring:
    jackson:
-      #only no empty properties are processed. Otherwise, default value from object mapping is taken
+      #only non empty properties are processed. Otherwise, default value from object mapping is taken
       default-property-inclusion: non_empty
    datasource:
       # your database URL according to the driver specification
@@ -46,6 +46,16 @@ spring:
         # temporary location of uploaded files
         location: ${java.io.tmpdir}
 curation:
+   http:
+      # the user agent String, send with any request
+      # empty String turns of the feature
+      user-agent: CLARIN-curation-dashboard
+      # connection timeout for request in ms
+      # 0 turns of the feature
+      connection-timeout: 10000
+      # read timeout in ms
+      # 0 turns of the feature
+      read-timeout: 10000
    cr-service:
       # mandatory output directory to cache profiles from component registry
       cr-cache: ${java.io.tmpdir}/curation/cr_cache
@@ -66,8 +76,8 @@ curation:
       # home directory of the application which is only used as a root for other directories
       home: ${APPLICATION_HOME_DIRECTORY}
       dataRoot: ${APPLICATION_HOME_DIRECTORY}/data
+      # root directory for collections of CMD files
       in: >
-         # root directory for collections of CMD files
          ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
       # output directory for reports
       out: ${APPLICATION_HOME_DIRECTORY}/public
@@ -96,19 +106,15 @@ curation:
    #doc_url:
    clientUsername: curation
    # deactivate links in url_context table when they are not confirmed for x days. 0 turns of the feature
-   # link_deactivation_after:0
-   link_deactivation_after: ${LINK_DEACTIVATION_AFTER}
-   # link_deletion_after:0
-   link_deletion_after: ${LINK_DELETION_AFTER}
+   link_deactivation_after: ${LINK_DEACTIVATION_AFTER:365}
+   # delete links are when not confirmed for x days (flat info saved in obsolete). 0 turns of the feature
+   link_deletion_after: ${LINK_DELETION_AFTER:365}
    # purge links from history table (flat info saved in obsolete) after x days. 0 turns of the feature
-   # purge_history_after:0
-   purge_history_after: ${PURGE_HISTORY_AFTER}
+   purge_history_after: ${PURGE_HISTORY_AFTER:365}
    # purge records from obsolete table after y days. 0 turns of the feature
-   # purge_obsolete_after:0
-   purge_obsolete_after: ${PURGE_OBSOLETE_AFTER}
+   purge_obsolete_after: ${PURGE_OBSOLETE_AFTER:100}
    # purge reports from directory.out path, older than x days. 0 turns of the feature
-   # purge_report_after: 0
-   purge_report_after: ${PURGE_REPORT_AFTER}
+   purge_report_after: ${PURGE_REPORT_AFTER:365}
    # path to the vloConfig.xml file. Empty path uses default vloConfig from vlo-commons
    # vlo_config_location:""
-   vlo_config_location: ${VLO_CONFIG_LOCATION}
+   vlo_config_location: ${VLO_CONFIG_LOCATION:}
