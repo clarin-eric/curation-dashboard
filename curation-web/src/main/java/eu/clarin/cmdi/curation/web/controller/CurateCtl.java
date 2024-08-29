@@ -93,11 +93,11 @@ public class CurateCtl {
 
                if (crService.isPublicSchema(urlStr)) { // is a public schema URL
 
-                  if (StringUtils.isNotEmpty(acceptHeader) && acceptHeader.contains("json")) {
+                  if (StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
 
                      return "forward:/download/profile/" + FileNameEncoder.encode(urlStr) + "?format=json";
                   }
-                  else if (StringUtils.isNotEmpty(acceptHeader) && acceptHeader.contains("xml")){
+                  else if (StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))){
 
                      return "forward:/download/profile/" + FileNameEncoder.encode(urlStr);
                   }
@@ -199,11 +199,11 @@ public class CurateCtl {
 
          storage.saveReportAsHTML(report, CurationEntityType.INSTANCE, false);
 
-         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.contains("json")) {
+         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
 
             return "forward:/download/instance/" + report.getName() + "?format=json";
          }
-         else if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.contains("xml")) {
+         else if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))) {
 
             return "forward:/download/instance/" + report.getName();
          }
