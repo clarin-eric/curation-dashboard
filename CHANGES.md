@@ -1,6 +1,14 @@
 # 7.0.0
-- using Java 21
-- making web-app more accessible (issue )
+- based on Java 21
+- using virtual threads in collection processing (issue #228) 
+- improving accessibility of web-app (issue #249)
+- sending accept header for outgoing http-calls (issue #250)
+- processing accept header for incoming calls (issue #251)
+- reducing calls to external services in maven tests (issue #244)
+- using mock server for service tests (issue #234)
+- adding functionality to delete outdated reports (issue #241)
+- returning pre-generated profile reports in case of public profile validation (issue #258)
+- bug fixes (issues #252, #256, #257)
 
 # 6.4.1
 - fix for rendering issue in tables (issue #245)
