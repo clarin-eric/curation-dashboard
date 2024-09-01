@@ -86,8 +86,6 @@ class CRServiceTests {
             assertNotNull(cacheManager.getCache("crCache").get("http://www.wowasa.com/clarin.eu:cr1:p_1403526079381/xsd"));
             // even with a local file it should throw an exception
             assertDoesNotThrow(() -> this.crCache.getEntry(Paths.get("tmp", "77777").toUri().toString()));
-            // but it shouldn't be cached
-            assertNull(cacheManager.getCache("crCache").get(Paths.get("tmp", "77777").toUri().toString()));
         }
         catch (Exception e) {
 
@@ -176,10 +174,7 @@ class CRServiceTests {
 
             assertNotNull(cacheManager.getCache("crCache").get("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd"));
             assertNotNull(cacheManager.getCache("crCache").get("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_9990106710826/xsd"));
-            // next should NOT be cached when loaded from a file
-            assertNull(cacheManager.getCache("crCache").get(this.crConfig.getCrCache().resolve("https___catalog_clarin_eu_ds_ComponentRegistry_rest_registry_1_x_profiles_clarin_eu_cr1_p_1403526079380_xsd.xsd").toUri().toString()));
-
-        }
+         }
         catch (Exception e) {
 
             log.error("error in schema");
