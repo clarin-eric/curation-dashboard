@@ -8,9 +8,12 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.pph.PPHService;
-import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
+import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
+import eu.clarin.cmdi.curation.cr.profile_parser.ProfileHeader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,8 +29,7 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
    private ApiConfig conf;
    @Autowired
    private CRService crService;
-   @Autowired
-   private PPHService pphService;
+
 
    /**
     * Process.
@@ -39,13 +41,8 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
 
       try {
          report.headerReport = new ProfileHeaderReport(
-                 crService.createProfileHeader(profile.getSchemaLocation(), "1.x", false));
+                 crService.createProfileHeader(profile.getSchemaLocation()));
 
-         // instance mode is only used by web app for user upload
-         // user uploads are not reliable and must therefore be cached separately
-         if("instance".equals(this.conf.getMode())){
-            report.headerReport.getProfileHeader().setReliable(false);
-         }
 
          if (!report.headerReport.getProfileHeader().isPublic()) {
             log.debug("profile {} not public", profile.getSchemaLocation());
@@ -55,7 +52,7 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
             report.headerReport.score = 1;
             report.score += report.headerReport.score;
          }
-
+/* we need a better solution here since these warnings depend on the order
          pphService.getProfileHeaders().stream()
                .filter(profileHeader -> profileHeader.getName().equals(report.headerReport.getName())
                      && !profileHeader.getId().equals(report.headerReport.getId()))
@@ -67,10 +64,19 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
                      && !profileHeader.getId().equals(report.headerReport.getId()))
                .findAny().ifPresent(profileReport -> report.details.add(new Detail(Severity.WARNING,"header",
                      "The description '" + report.headerReport.getDescription() + "' of the profile is not unique")));
+      */
       }
-      catch (PPHServiceNotAvailableException e) {
+      catch (NoCRCacheEntryException e) {
+         report.details.add(new Detail(Severity.FATAL,"concept" , "can't parse profile '" + profile.getSchemaLocation() + "'"));
+         log.debug("can't parse profile '{}'", profile.getSchemaLocation());
 
-         throw new MalFunctioningProcessorException(e);
+         report.headerReport = new ProfileHeaderReport(new ProfileHeader("n/a", profile.getSchemaLocation(), "n/a", "n/a", "n/a", "n/a", false));
+
+         return;
+
+      }
+      catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
+          throw new MalFunctioningProcessorException(e);
       }
    }
 }

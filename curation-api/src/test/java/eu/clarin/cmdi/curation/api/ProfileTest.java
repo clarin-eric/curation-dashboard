@@ -52,16 +52,16 @@ public class ProfileTest {
       try {
          
          CMDProfileReport report;
+
+         String schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd";
          
-         URL schemaURL = new URL("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd");
-         
-         report = curation.processCMDProfile(schemaURL);         
+         report = curation.processCMDProfile(schemaLocation);
          //must be true since it's a public profile
          assertTrue(report.headerReport.isPublic());
          
          Path tmpFilePath = Files.createTempFile(null, null);
          
-         FileUtils.copyURLToFile(schemaURL, tmpFilePath.toFile());
+         FileUtils.copyURLToFile(new URL(schemaLocation), tmpFilePath.toFile());
          
          report = curation.processCMDProfile(tmpFilePath);
          // the same profile but uploaded by a user
@@ -79,11 +79,11 @@ public class ProfileTest {
       CMDProfileReport report;
       
       try{         
-         this.cacheManager.getCache("privateProfileCache").clear();  
+         this.cacheManager.getCache("crCache").clear();
          report = curation.processCMDProfile(getTmpFile("",""));        
          assertEquals(conf.getFacets().size(), report.facetReport.numOfFacetsCoveredByProfile);
          
-         this.cacheManager.getCache("privateProfileCache").clear();         
+         this.cacheManager.getCache("crCache").clear();
          report = curation.processCMDProfile(getTmpFile("cmd:ConceptLink=\"http://hdl.handle.net/11459/CCR_C-2571_2be2e583-e5af-34c2-3673-93359ec1f7df\"", ""));
          assertEquals(conf.getFacets().size() -1, report.facetReport.numOfFacetsCoveredByProfile); 
       }
@@ -99,12 +99,12 @@ public class ProfileTest {
       CMDProfileReport report;
       
       try{         
-         this.cacheManager.getCache("privateProfileCache").clear();  
+         this.cacheManager.getCache("crCache").clear();
          report = curation.processCMDProfile(getTmpFile("",""));        
          assertEquals(101, report.conceptReport.total);
          assertEquals(88, report.conceptReport.withConcept);
          
-         this.cacheManager.getCache("privateProfileCache").clear();   
+         this.cacheManager.getCache("crCache").clear();
          // we delete the concept link, which is four times in the file
          report = curation.processCMDProfile(getTmpFile("cmd:ConceptLink=\"http://hdl.handle.net/11459/CCR_C-63_95ec8724-267a-8689-a04d-50ae515bbacf\"", ""));
          // since we haven't deleted any element, the number should have remained the same
@@ -126,43 +126,29 @@ public class ProfileTest {
       try {
          
          // a public profile processed in collection mode should be added to the public cache 
-         this.cacheManager.getCache("privateProfileCache").clear(); 
-         this.cacheManager.getCache("publicProfileCache").clear(); 
+         this.cacheManager.getCache("crCache").clear();
          
          conf.setMode("collection");
          
-         URL schemaURL = new URL("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd");
+         String schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd";
          
-         curation.processCMDProfile(schemaURL); 
+         curation.processCMDProfile(schemaLocation);
          
-         assertNotNull(this.cacheManager.getCache("publicProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         assertNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         
+         assertNotNull(this.cacheManager.getCache("crCache").get(schemaLocation));
+
+
          // same public file not loaded via registry URL but by file
          // hence the profile not public, since it doesn't come from the registry, and should be stored in the private cache
-         this.cacheManager.getCache("privateProfileCache").clear(); 
-         this.cacheManager.getCache("publicProfileCache").clear(); 
+         this.cacheManager.getCache("crCache").clear();
+
          
          Path tmpFilePath = Files.createTempFile(null, null);
          
-         FileUtils.copyURLToFile(schemaURL, tmpFilePath.toFile());         
+         FileUtils.copyURLToFile(new URL(schemaLocation), tmpFilePath.toFile());
          
          curation.processCMDProfile(tmpFilePath); 
          
-         assertNull(this.cacheManager.getCache("publicProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         assertNotNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         
-         // now we take it from the registry but in instance mode which is usually triggered by a user in the web interface
-         // we treat user actions as not reliable and the profile should be stored neither in public nor in private cache
-         this.cacheManager.getCache("privateProfileCache").clear(); 
-         this.cacheManager.getCache("publicProfileCache").clear(); 
-         
-         conf.setMode("instance");                
-         curation.processCMDProfile(schemaURL); 
-         
-         assertNull(this.cacheManager.getCache("publicProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         assertNull(this.cacheManager.getCache("privateProfileCache").get("clarin.eu:cr1:p_1403526079380"));
-         
+         assertNull(this.cacheManager.getCache("crCache").get("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd"));
       }
       catch(Exception ex) {
          

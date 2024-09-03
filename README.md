@@ -15,9 +15,7 @@ erDiagram
     curation-web ||--o{ curation-api:uses
     curation-app ||--o{ curation-api:uses
     curation-api ||--o{ curation-cr:uses
-    curation-api ||--o{ curation-pph:uses
     curation-cr ||--o{ curation-ccr:uses
-    curation-cr ||--o{ curation-pph:uses
 ```
 
 ### curation-web
@@ -46,10 +44,6 @@ An addition to this the ProfileCacheEntry contains an instance of Schema, which 
 ### curation-ccr
 The CCR service is managing instances of CCRConcept. A CRRConcept is a Java object which contains information on URI,
 preferred label and status of a specific concept.
-
-### curation-pph
-The PPH service os managing instances of ProfileHeader. A ProfileHeader is a Java object which contains information
-on id, name, description, etc. of a specific profile.
 
 
 

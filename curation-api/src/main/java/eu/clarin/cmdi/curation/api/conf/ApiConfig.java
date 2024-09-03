@@ -28,8 +28,6 @@ public class ApiConfig {
    
    private Directory directory = new Directory();
    
-   private int threadpoolSize;
-   
    private String vloConfigLocation;
    
    private String linkDataSource;

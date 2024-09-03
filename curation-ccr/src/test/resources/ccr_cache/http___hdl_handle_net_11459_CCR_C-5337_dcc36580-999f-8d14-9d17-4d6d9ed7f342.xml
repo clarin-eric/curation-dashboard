@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:ns0="http://openskos.org/xmlns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-5337_dcc36580-999f-8d14-9d17-4d6d9ed7f342">
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:definition xml:lang="en">describes the approximate size of a text as stored on some carrier medium, whether digital or non-digital, specified in any convenient units. (source: TEI P5 2.1.0)</skos:definition>
+    <ns0:status>candidate</ns0:status>
+    <skos:notation>extent</skos:notation>
+    <skos:altLabel>extent</skos:altLabel>
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-5337</skos:changeNote>
+    <skos:prefLabel xml:lang="en">extent</skos:prefLabel>
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <ns0:inSkosCollection>
+      <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__062ea191-c240-92f2-1bcd-be4cd935c5fb">
+        <rdfs:label xml:lang="en">TEI Header 2.1.0</rdfs:label>
+        <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-5337_dcc36580-999f-8d14-9d17-4d6d9ed7f342"/>
+      </skos:Collection>
+    </ns0:inSkosCollection>
+
+  </skos:Concept>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-5337_dcc36580-999f-8d14-9d17-4d6d9ed7f342"/>
+  </skos:ConceptScheme>
+
+</rdf:RDF>

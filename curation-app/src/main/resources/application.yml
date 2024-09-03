@@ -1,46 +1,85 @@
 logging:
-   file: 
+   file:
+      # the name of the log-file
       name: ${APPLICATION_HOME_DIRECTORY}/logs/curation-app.log
       logback:
          rollingpolicy:
+            # we're rolling after 10MB which is only reached when we have a massif occurrence of errors
             max-file-size: 10MB
    level:
+      # generally we only want to log errors
       root: ERROR
+      # only CurationApp we're logging in info level to see the progress in processing
       eu.clarin.cmdi.curation.app.CurationApp: INFO
 spring:
+   jackson:
+      #only non empty properties are processed. Otherwise, default value from object mapping is taken
+      default-property-inclusion: non_empty
    datasource:
+      # your database URL according to the driver specification
       url: ${DATABASE_URI}
+      # database user name
       username: ${DATABASE_USER}
+      # database password
       password: ${DATABASE_PASSWORD}
-      driver-class-name: org.mariadb.jdbc.Driver
+      hikari:
+         #overriding default value of 30000 (30 seconds) to prevent timeouts in virtual threads
+         connection-timeout: 3600000
+         #overriding default value of 10
+         maximum-pool-size: 30
    jpa:
+      # show sql statements in log
       show-sql: false
       hibernate:
+         # turn the DDL auto-generation off (atabase is initialized by the schema.sql script of the linkchecker-persistence project)
          ddl-auto: none
+      # set the hibernate dialect for SQL generation
       database-platform: org.hibernate.dialect.MariaDBDialect
    sql:
       init:
+         # we want to run the schema.sql script always when we start the project, to assure that any table is there
          mode: always    
    servlet:
       multipart:
+         # enable multi part file upload. Used for user upload in validation
         enabled: true
-        location: ${java.io.tmpdir}  
+        # temporary location of uploaded files
+        location: ${java.io.tmpdir}
 curation:
-   pph-service:
+   http:
+      # the user agent String, send with any request
+      # empty String turns of the feature
+      user-agent: CLARIN-curation-dashboard
+      # connection timeout for request in ms
+      # 0 turns of the feature
+      connection-timeout: 10000
+      # read timeout in ms
+      # 0 turns of the feature
+      read-timeout: 10000
+   cr-service:
+      # mandatory output directory to cache profiles from component registry
+      cr-cache: ${java.io.tmpdir}/curation/cr_cache
+      # mandatory URL to receive public profile headers
       restApi: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
+      # optional but probably required query string to specify which profile headers we want
       query: "?registrySpace=published&status=production&status=development&&status=deprecated"
    ccr-service:
+      # mandatory output directory to cache concepts from concept registry
       ccr-cache: ${java.io.tmpdir}/curation/ccr_cache
+      # mandatory URL to receive concept registry information
       restApi: "https://vocabularies.clarin.eu/clavas/rest/v1/data"
+      # mandatory query string to receive concept registry information on a specific concept
       query: "?uri=${conceptURI}"
-   cr-service:
-      xsd_cache: ${java.io.tmpdir}/curation/xsd_cache
+   # modes are all|profile|instance|
    mode: all
    directory:
+      # home directory of the application which is only used as a root for other directories
       home: ${APPLICATION_HOME_DIRECTORY}
       dataRoot: ${APPLICATION_HOME_DIRECTORY}/data
+      # root directory for collections of CMD files
       in: >
          ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
+      # output directory for reports
       out: ${APPLICATION_HOME_DIRECTORY}/public
    facets: 
       - languageCode
@@ -58,13 +97,24 @@ curation:
       - license
       - availability
       - temporalCoverage
-   threadpool_size: ${THREADPOOL_SIZE:10}
+   # maximum size of the CMD file. Bigger files are treated as non-processable
    max_file_size: 100000
-   base_url:
-   doc_url:
-   clientUsername: curation 
+   # URL of the web application
+   # default:= String ""
+   #base_url:
+   # root URL of the help and faq page
+   #doc_url:
+   clientUsername: curation
+   # deactivate links in url_context table when they are not confirmed for x days. 0 turns of the feature
    link_deactivation_after: ${LINK_DEACTIVATION_AFTER:365}
+   # delete links are when not confirmed for x days (flat info saved in obsolete). 0 turns of the feature
    link_deletion_after: ${LINK_DELETION_AFTER:365}
+   # purge links from history table (flat info saved in obsolete) after x days. 0 turns of the feature
    purge_history_after: ${PURGE_HISTORY_AFTER:365}
+   # purge records from obsolete table after y days. 0 turns of the feature
    purge_obsolete_after: ${PURGE_OBSOLETE_AFTER:100}
+   # purge reports from directory.out path, older than x days. 0 turns of the feature
+   purge_report_after: ${PURGE_REPORT_AFTER:365}
+   # path to the vloConfig.xml file. Empty path uses default vloConfig from vlo-commons
+   # vlo_config_location:""
    vlo_config_location: ${VLO_CONFIG_LOCATION:}

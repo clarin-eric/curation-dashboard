@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:ns0="http://openskos.org/xmlns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-6234_ee3326cf-4e27-e7bb-a934-2176f3a5835f">
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:notation>passiveInteraction</skos:notation>
+    <skos:altLabel>passiveInteraction</skos:altLabel>
+    <skos:altLabel>passive</skos:altLabel>
+    <skos:prefLabel xml:lang="en">passive interaction</skos:prefLabel>
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-6234</skos:changeNote>
+    <skos:definition xml:lang="en">specifies the number of passive participants (or addressees) to whom a text is directed or in whose presence it is created or performed. (source: http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-interaction.html)</skos:definition>
+    <ns0:inSkosCollection>
+      <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__eaef6356-3e43-2e3d-0cfe-af4226d57c37">
+        <rdfs:label xml:lang="en">TEI Header UCPH</rdfs:label>
+        <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-6234_ee3326cf-4e27-e7bb-a934-2176f3a5835f"/>
+      </skos:Collection>
+    </ns0:inSkosCollection>
+
+    <ns0:status>candidate</ns0:status>
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+  </skos:Concept>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-6234_ee3326cf-4e27-e7bb-a934-2176f3a5835f"/>
+  </skos:ConceptScheme>
+
+</rdf:RDF>

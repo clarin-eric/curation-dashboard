@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:ns0="http://openskos.org/xmlns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-6177_8e40366a-172a-9f6a-cc6a-fcb982209d53">
+    <ns0:inSkosCollection>
+      <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__eaef6356-3e43-2e3d-0cfe-af4226d57c37">
+        <rdfs:label xml:lang="en">TEI Header UCPH</rdfs:label>
+        <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-6177_8e40366a-172a-9f6a-cc6a-fcb982209d53"/>
+      </skos:Collection>
+    </ns0:inSkosCollection>
+
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:definition xml:lang="en">(number) gives a number (or other label) for an element, which is not necessarily unique within the document. (source: http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-att.global.html)</skos:definition>
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:altLabel>n</skos:altLabel>
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-6177</skos:changeNote>
+    <skos:prefLabel xml:lang="en">number</skos:prefLabel>
+    <ns0:status>candidate</ns0:status>
+    <skos:notation>n</skos:notation>
+  </skos:Concept>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-6177_8e40366a-172a-9f6a-cc6a-fcb982209d53"/>
+  </skos:ConceptScheme>
+
+</rdf:RDF>

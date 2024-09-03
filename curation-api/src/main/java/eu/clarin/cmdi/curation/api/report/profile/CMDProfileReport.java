@@ -7,10 +7,12 @@ import eu.clarin.cmdi.curation.api.report.profile.sec.ComponentReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileHeaderReport;
+import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FileUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -60,7 +62,7 @@ public class CMDProfileReport implements NamedReport{
    @XmlTransient
    public String getName() {
 
-      return (this.headerReport!=null?this.headerReport.getId():"missing header report");
+      return FileNameEncoder.encode(this.headerReport.getSchemaLocation());
    }
 
    @Override

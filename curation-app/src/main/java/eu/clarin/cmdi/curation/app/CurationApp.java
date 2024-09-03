@@ -10,8 +10,7 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
 import eu.clarin.cmdi.curation.app.conf.AppConfig;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
-import eu.clarin.cmdi.curation.pph.PPHService;
-import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.linkchecker.persistence.service.LinkService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,7 +49,7 @@ public class CurationApp {
    @Autowired
    private CurationModule curation;
    @Autowired
-   private PPHService pphService;
+   private CRService crService;
    /**
     * The Storage.
     */
@@ -110,33 +108,20 @@ public class CurationApp {
             
             final AllProfileReport allProfileReport = new AllProfileReport();
 
+            crService.getPublicSchemaLocations().forEach(schemaLocation -> {
 
-            try {
-               pphService.getProfileHeaders().forEach(header -> {
+               log.info("start processing profile '{}'", schemaLocation);
 
-                  log.info("start processing profile '{}'", header.getId());
+               CMDProfileReport profileReport = curation.processCMDProfile(schemaLocation);
 
-                  try {
-                     CMDProfileReport profileReport = curation.processCMDProfile(header.getId());
+               allProfileReport.addReport(profileReport);
 
-                     allProfileReport.addReport(profileReport);
+               storage.saveReport(profileReport, CurationEntityType.PROFILE, false);
 
-                     storage.saveReport(profileReport, CurationEntityType.PROFILE, false);
+               log.info("done processing profile '{}'", schemaLocation);
+            });
 
-                  }
-                  catch (MalformedURLException e1) {
-
-                     log.error("malformed URL for id '{}' - check the setting for curation.pph-service.restApi", header.getId());
-                  }
-
-                  log.info("done processing profile '{}'", header.getId());
-               });
-
-               storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);
-            }
-            catch (PPHServiceNotAvailableException e) {
-               throw new RuntimeException(e);
-            }
+            storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);
 
          }
          
@@ -147,21 +132,33 @@ public class CurationApp {
             log.info("done writing linkchecker detail reports");
  
          }
-         
+
          if("all".equalsIgnoreCase(conf.getMode())) {
-            log.info("start deactivating links older than {} days", conf.getLinkDeactivationAfter());
-            linkService.deactivateLinksOlderThan(conf.getLinkDeactivationAfter());
-            log.info("done deactivating links");
-            log.info("start deleting links older than {} days", conf.getLinkDeletionAfter());
-            linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
-            log.info("done deleting links");
-            log.info("start purging history table from records checked before {} days", conf.getPurgeHistoryAfter());
-            linkService.purgeHistory(conf.getPurgeHistoryAfter());
-            log.info("done purging history");
-            log.info("start purging obsolete table from records checked before {} days", conf.getPurgeObsoleteAfter());
-            linkService.purgeObsolete(conf.getPurgeObsoleteAfter());
-            log.info("done purging obsolete");
-            
+            if(conf.getLinkDeactivationAfter() > 0) {
+               log.info("start deactivating links older than {} days", conf.getLinkDeactivationAfter());
+               linkService.deactivateLinksOlderThan(conf.getLinkDeactivationAfter());
+               log.info("done deactivating links");
+            }
+            if(conf.getLinkDeletionAfter() > 0) {
+               log.info("start deleting links older than {} days", conf.getLinkDeletionAfter());
+               linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
+               log.info("done deleting links");
+            }
+            if(conf.getPurgeHistoryAfter() > 0) {
+               log.info("start purging history table from records checked before {} days", conf.getPurgeHistoryAfter());
+               linkService.purgeHistory(conf.getPurgeHistoryAfter());
+               log.info("done purging history");
+            }
+            if(conf.getPurgeObsoleteAfter() > 0) {
+               log.info("start purging obsolete table from records checked before {} days", conf.getPurgeObsoleteAfter());
+               linkService.purgeObsolete(conf.getPurgeObsoleteAfter());
+               log.info("done purging obsolete");
+            }
+            if(conf.getPurgeReportAfter() > 0) {
+               log.info("purging reports older than {} days from path '{}'", conf.getPurgeReportAfter(), conf.getDirectory().getOut());
+               this.storage.purgeReportAfter(conf.getPurgeReportAfter());
+               log.info("done purging reports");
+            }
          }
          
          log.info("end time: {}", LocalDateTime.now());

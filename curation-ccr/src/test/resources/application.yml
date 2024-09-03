@@ -1,7 +1,14 @@
+# properties are documented in the application.yml of the curation-app module
 logging:
    level:
       root: ERROR
 curation:
+   http:
+      user-agent: "CLARIN-curation-dashboard"
+      connection-timeout: 5000
+      read-timeout: 5000
+      proxy-host: 127.0.0.1
+      proxy-port: ${mockServerPort}
    ccr-service:
       ccr-cache: ${java.io.tmpdir}/curation/ccr_cache
       restApi: "https://vocabularies.clarin.eu/clavas/rest/v1/data"

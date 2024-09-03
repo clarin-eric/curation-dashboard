@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:ns0="http://openskos.org/xmlns#">
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept>
+      <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-6242_d29eeaca-30ef-2169-ac29-89814e839818">
+        <skos:definition xml:lang="en">may be used to specify further information about the entity referenced by this name, for example the occupation of a person, or the status of a place. (source: http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-att.naming.html)</skos:definition>
+        <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-6242</skos:changeNote>
+        <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+        <skos:altLabel xml:lang="en">naming role</skos:altLabel>
+        <skos:altLabel>namingRole</skos:altLabel>
+        <skos:altLabel>role</skos:altLabel>
+        <ns0:status>candidate</ns0:status>
+        <skos:notation>namingRole</skos:notation>
+        <skos:prefLabel xml:lang="en">name role</skos:prefLabel>
+        <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+      </skos:Concept>
+    </skos:hasTopConcept>
+
+  </skos:ConceptScheme>
+
+</rdf:RDF>

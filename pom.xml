@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-parent</artifactId>
-      <version>3.2.5</version>
+      <version>3.3.3</version>
       <relativePath /> <!-- lookup parent from repository -->
    </parent>
    <groupId>eu.clarin.cmdi</groupId>
@@ -16,14 +16,16 @@
       <url>https://www.clarin.eu</url>
    </organization>
    <properties>
-      <maven.compiler.source>17</maven.compiler.source>
-      <maven.compiler.target>17</maven.compiler.target>
+      <java.version>21</java.version>
+      <maven.compiler.source>21</maven.compiler.source>
+      <maven.compiler.target>21</maven.compiler.target>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <linkchecker-persistence.version>1.0.2</linkchecker-persistence.version>
-      <revision>6.4.1</revision>
+      <linkchecker-persistence.version>1.0.3</linkchecker-persistence.version>
+      <revision>7.0.0-SNAPSHOT</revision>
       <vlo.version>4.11.6</vlo.version>
       <vtd.version>2.11</vtd.version>
       <saxon.version>12.3</saxon.version>
+      <mockserver.version>5.15.0</mockserver.version>
    </properties>
    <dependencies>
       <dependency>
@@ -53,6 +55,13 @@
       no spring-boot-maven-plugin here, since we don't want to create an executable of any module
       see https://spring.io/guides/gs/multi-module/
       -->
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+               <argLine>-XX:+EnableDynamicAgentLoading</argLine>
+            </configuration>
+         </plugin>
       </plugins>
    </build>
    <repositories>
@@ -82,7 +91,6 @@
    </repositories>
    <modules>
       <module>curation-commons</module>
-      <module>curation-pph</module>
       <module>curation-ccr</module>
       <module>curation-cr</module>
       <module>curation-api</module>
@@ -101,6 +109,11 @@
             <artifactId>Saxon-HE</artifactId>
          <version>${saxon.version}</version>
       </dependency>
+       <dependency>
+          <groupId>org.mock-server</groupId>
+          <artifactId>mockserver-spring-test-listener</artifactId>
+          <version>${mockserver.version}</version>
+       </dependency>
    	</dependencies>
    </dependencyManagement>
 </project>

@@ -6,11 +6,13 @@ package eu.clarin.cmdi.curation.web.controller;
 
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
@@ -42,7 +44,16 @@ public class LinkcheckerCtl {
     * @return the report
     */
    @GetMapping()
-   public String getReport(Model model) {
+   public String getReport(@RequestHeader("Accept") String acceptHeader, Model model) {
+
+      if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
+
+         return "forward:/download/linkchecker/AllLinkcheckerReport?format=json";
+      }
+      if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))) {
+
+         return "forward:/download/linkchecker/AllLinkcheckerReport";
+      }
 
       Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("linkchecker")
             .resolve("AllLinkcheckerReport.html");
@@ -63,7 +74,20 @@ public class LinkcheckerCtl {
     * @return the report
     */
    @GetMapping("/{providergroupName}")
-   public String getReport(@PathVariable(value = "providergroupName") String providergroupName, Model model) {
+   public String getReport(@RequestHeader("Accept") String acceptHeader, @PathVariable(value = "providergroupName") String providergroupName, Model model) {
+
+      if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
+
+         return "forward:/download/linkchecker/" + providergroupName + "?format=json";
+      }
+      if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))) {
+
+         return "forward:/download/linkchecker/" + providergroupName + "?format=xml";
+      }
+      if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("text/tab-separated-values")) {
+
+         return "forward:/download/linkchecker/" + providergroupName + "?format=tsv";
+      }
 
       Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("linkchecker")
             .resolve(providergroupName + ".html");

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:ns0="http://openskos.org/xmlns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-6132_d287635d-07dc-e2c4-6261-5e4f9a0cf693">
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-6132</skos:changeNote>
+    <ns0:inSkosCollection>
+      <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__eaef6356-3e43-2e3d-0cfe-af4226d57c37">
+        <rdfs:label xml:lang="en">TEI Header UCPH</rdfs:label>
+        <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-6132_d287635d-07dc-e2c4-6261-5e4f9a0cf693"/>
+      </skos:Collection>
+    </ns0:inSkosCollection>
+
+    <skos:altLabel>editor</skos:altLabel>
+    <ns0:status>candidate</ns0:status>
+    <skos:notation>editorBibliograhicItem</skos:notation>
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:prefLabel xml:lang="en">editor</skos:prefLabel>
+    <skos:definition xml:lang="en">contains a secondary statement of responsibility for a bibliographic item, for example the name of an individual, institution or organization, (or of several such) acting as editor, compiler, translator, etc. (source: http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-editor.html)</skos:definition>
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+  </skos:Concept>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-6132_d287635d-07dc-e2c4-6261-5e4f9a0cf693"/>
+  </skos:ConceptScheme>
+
+</rdf:RDF>

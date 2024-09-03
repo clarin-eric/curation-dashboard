@@ -8,14 +8,11 @@ import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.CCRStatus;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
-import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * The type Profile parser.
@@ -27,11 +24,6 @@ public abstract class ProfileParser {
     * The Ccr service.
     */
    protected CCRService ccrService;
-
-   /**
-    * The Vn.
-    */
-   protected VTDNav vn;
 
    private CRElement _cur;
 
@@ -48,25 +40,47 @@ public abstract class ProfileParser {
    /**
     * Parse parsed profile.
     *
-    * @param navigator the navigator
-    * @param profileHeader the profile header
+    * @param vn the navigator
+    * @param schemaLocation the schema location
+    * @param header public schema header or null
     * @return the parsed profile
-    * @throws NoProfileCacheEntryException the no profile cache entry exception
+    * @throws CCRServiceNotAvailableException
+    * @throws CRServiceStorageException
     */
-   public ParsedProfile parse(VTDNav navigator, ProfileHeader profileHeader) throws NoProfileCacheEntryException, CCRServiceNotAvailableException {
-      vn = navigator;
+   public ParsedProfile parse(VTDNav vn, String schemaLocation, ProfileHeader header) throws CCRServiceNotAvailableException, CRServiceStorageException {
+
       try {
-         fillInHeader(vn, profileHeader);
-         Collection<CRElement> nodes = processElements();
-         return createParsedProfile(profileHeader, nodes);
+
+         if(header == null){
+            header = getHeader(vn, schemaLocation);
+         }
+
+         Collection<CRElement> nodes = processElements(vn);
+
+         Map<String, CMDINode> xpathNode = new LinkedHashMap<>();
+
+         Map<String, CMDINode> xpathElementNode = new LinkedHashMap<>();
+
+         Map<String, CMDINode> xpathComponentNode = new LinkedHashMap<>();
+
+         fillMaps(nodes, xpathNode, xpathElementNode, xpathComponentNode);
+
+
+         return new ParsedProfile(
+                 header,
+                 xpathNode,
+                 xpathElementNode,
+                 xpathComponentNode);
       }
       catch (VTDException e) {
-         
-         log.error("profile not parsable!");
+
+         log.info("profile not parsable!");
          log.debug("", e);
-         throw new NoProfileCacheEntryException();
       }
+
+      return null;
    }
+
 
    /**
     * Gets cmd version.
@@ -88,40 +102,45 @@ public abstract class ProfileParser {
     * @return the cr element
     * @throws VTDException the vtd exception
     */
-   protected abstract CRElement processNameAttributeNode() throws VTDException;
+   protected abstract CRElement processNameAttributeNode(VTDNav vn) throws VTDException;
 
    /**
-    * Create parsed profile parsed profile.
+    * fill the maps
     *
-    * @param profileHeader the profile header
     * @param nodes  the nodes
+    * @param xpathNode
+    * @param xpathElementNode
+    * @param xpathComponentNode
     * @return the parsed profile
-    * @throws VTDException                 the vtd exception
-    * @throws NoProfileCacheEntryException the no profile cache entry exception
+    * @throws CCRServiceNotAvailableException
+    * @throws CRServiceStorageException
     */
-   protected abstract ParsedProfile createParsedProfile(ProfileHeader profileHeader, Collection<CRElement> nodes) throws VTDException, NoProfileCacheEntryException, CCRServiceNotAvailableException;
+   protected abstract void fillMaps(Collection<CRElement> nodes, Map<String, CMDINode> xpathNode, Map<String, CMDINode> xpathElementNode, Map<String, CMDINode> xpathComponentNode) throws CCRServiceNotAvailableException, CRServiceStorageException;
 
    /**
     * Fill in header profile header.
     *
     * @param vn     the vn
-    * @param profileHeader the profile header
     * @throws VTDException the vtd exception
     */
-   protected void fillInHeader(VTDNav vn, ProfileHeader profileHeader) throws VTDException {
+   protected eu.clarin.cmdi.curation.cr.profile_parser.ProfileHeader getHeader(VTDNav vn, String schemaLocation) throws VTDException {
 
       AutoPilot ap = new AutoPilot(vn);
       ap.declareXPathNameSpace("cmd", "http://www.clarin.eu/cmd/1");
       ap.declareXPathNameSpace("xs", "http://www.w3.org/2001/XMLSchema");
 
-      profileHeader.setId(evaluateXPath("//cmd:Header/cmd:ID/text()", ap));
-      profileHeader.setName(evaluateXPath("//cmd:Header/cmd:Name/text()", ap));
-      profileHeader.setDescription(evaluateXPath("//cmd:Header/cmd:Description/text()", ap));
-      profileHeader.setStatus(evaluateXPath("//cmd:Header/cmd:Status/text()", ap));
-      profileHeader.setCmdiVersion(getCMDVersion());
+      return new ProfileHeader(
+         this.getCMDVersion(),
+         schemaLocation,
+         evaluateXPath(vn,"//cmd:Header/cmd:ID/text()", ap),
+         evaluateXPath(vn,"//cmd:Header/cmd:Name/text()", ap),
+         evaluateXPath(vn, "//cmd:Header/cmd:Description/text()", ap),
+         evaluateXPath(vn,"//cmd:Header/cmd:Status/text()", ap),
+              false
+      );
    }
 
-   private Collection<CRElement> processElements() throws VTDException {
+   private Collection<CRElement> processElements(VTDNav vn) throws VTDException {
       Collection<CRElement> nodes = new ArrayList<>();
       vn.toElement(VTDNav.ROOT);// reset
       AutoPilot ap = new AutoPilot(vn);
@@ -129,22 +148,22 @@ public abstract class ProfileParser {
       ap.selectElement("xs:element");
       while (ap.iterate()) {// process single element
          CRElement _new = new CRElement();
-         _new.isLeaf = !isComplex();
+         _new.isLeaf = !isComplex(vn);
 
-         _new.name = extractAttributeValue("name");
+         _new.name = extractAttributeValue(vn, "name");
          if (_new.name == null) {
             _new.name = "";
             log.error("Element at {} doesn't have specified name, xpaths will be invalid", vn.getCurrentIndex());
          }
 
-         String minOccurs = extractAttributeValue("minOccurs");
+         String minOccurs = extractAttributeValue(vn,"minOccurs");
          _new.isRequired = minOccurs == null || !minOccurs.equals("0");
 
          _new.lvl = vn.getCurrentDepth();
 
          // getAttrs
          vn.push();
-         Collection<CRElement> attributes = getAttributes();
+         Collection<CRElement> attributes = getAttributes(vn);
          vn.pop();
          CRElement component = attributes.stream().filter(attr -> attr.type == NodeType.COMPONENT).findAny()
                .orElse(null);
@@ -155,7 +174,7 @@ public abstract class ProfileParser {
          }
          else {
             _new.type = NodeType.ELEMENT;
-            _new.ref = extractAttributeValue(conceptAttributeName());
+            _new.ref = extractAttributeValue(vn, conceptAttributeName());
          }
 
          // resolve parent
@@ -166,7 +185,7 @@ public abstract class ProfileParser {
                _new.parent = _cur.parent;
             else {// child.lvl < lvl -> sibling of parent('s parent)
                CRElement parent = _cur.parent;
-               while (_new.lvl <= parent.lvl)
+               while (parent != null && _new.lvl <= parent.lvl)
                   parent = parent.parent;
                _new.parent = parent;
             }
@@ -184,7 +203,7 @@ public abstract class ProfileParser {
       return nodes;
    }
 
-   private boolean isComplex() throws VTDException {
+   private boolean isComplex(VTDNav vn) throws VTDException {
       vn.push();
       AutoPilot ap = new AutoPilot(vn);
       ap.declareXPathNameSpace("xs", "http://www.w3.org/2001/XMLSchema");
@@ -194,7 +213,7 @@ public abstract class ProfileParser {
       return isComplex;
    }
 
-   private Collection<CRElement> getAttributes() throws VTDException {
+   private Collection<CRElement> getAttributes(VTDNav vn) throws VTDException {
       Collection<CRElement> attributes = new ArrayList<>();
 
       vn.push();
@@ -202,7 +221,7 @@ public abstract class ProfileParser {
       ap.declareXPathNameSpace("xs", "http://www.w3.org/2001/XMLSchema");
       ap.selectXPath("./xs:complexType/xs:simpleContent/xs:extension/xs:attribute");
       while (ap.evalXPath() != -1) {
-         CRElement nameAttr = processNameAttributeNode();
+         CRElement nameAttr = processNameAttributeNode(vn);
          if (nameAttr != null)
             attributes.add(nameAttr);
       }
@@ -214,7 +233,7 @@ public abstract class ProfileParser {
          ap.declareXPathNameSpace("xs", "http://www.w3.org/2001/XMLSchema");
          ap.selectXPath("./xs:complexType/xs:attribute");
          while (ap.evalXPath() != -1) {
-            CRElement nameAttr = processNameAttributeNode();
+            CRElement nameAttr = processNameAttributeNode(vn);
             if (nameAttr != null)
                attributes.add(nameAttr);
          }
@@ -231,7 +250,7 @@ public abstract class ProfileParser {
     * @throws VTDException the vtd exception
     */
 // utils
-   protected String evaluateXPath(String xpath, AutoPilot ap) throws VTDException {
+   protected String evaluateXPath(VTDNav vn, String xpath, AutoPilot ap) throws VTDException {
       ap.selectXPath(xpath);
       int index = ap.evalXPath();
       return index != -1 ? vn.toString(index).trim() : null;
@@ -244,7 +263,7 @@ public abstract class ProfileParser {
     * @return the string
     * @throws NavException the nav exception
     */
-   protected String extractAttributeValue(String attrName) throws NavException {
+   protected String extractAttributeValue(VTDNav vn, String attrName) throws NavException {
       int ind = vn.getAttrVal(attrName);
       return ind != -1 ? vn.toNormalizedString(ind) : null;
    }

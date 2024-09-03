@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.*;
+import java.net.http.HttpHeaders;
 
 @Component
 public class HttpUtils {
@@ -24,11 +25,24 @@ public class HttpUtils {
 
         URLConnection connection = url.openConnection(proxy);
 
-        connection.setConnectTimeout(httpConfig.getConnectionTimeout());
+        if(httpConfig.getConnectionTimeout() > 0) {
+            connection.setConnectTimeout(httpConfig.getConnectionTimeout());
+        }
+        if(httpConfig.getReadTimeout() > 0) {
+            connection.setReadTimeout(httpConfig.getReadTimeout());
+        }
+        if(StringUtils.isNotBlank(httpConfig.getUserAgent())) {
+            connection.setRequestProperty("User-Agent", httpConfig.getUserAgent());
+        }
 
-        connection.setReadTimeout(httpConfig.getReadTimeout());
+        return connection;
+    }
 
-        connection.setRequestProperty("User-Agent", httpConfig.getUserAgent());
+    public URLConnection getURLConnection(String urlString, String acceptHeader) throws IOException {
+
+        URLConnection connection = getURLConnection(urlString);
+
+        connection.setRequestProperty("Accept", acceptHeader);
 
         return connection;
     }

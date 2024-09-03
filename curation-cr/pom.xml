@@ -37,11 +37,6 @@
          <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>eu.clarin.cmdi</groupId>
-         <artifactId>curation-pph</artifactId>
-         <version>${project.version}</version>
-      </dependency>
-      <dependency>
          <groupId>org.springframework.boot</groupId>
          <artifactId>spring-boot-starter-cache</artifactId>
       </dependency>
@@ -54,6 +49,11 @@
          <groupId>eu.clarin.cmdi</groupId>
          <artifactId>curation-commons</artifactId>
          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.mock-server</groupId>
+         <artifactId>mockserver-spring-test-listener</artifactId>
+         <scope>test</scope>
       </dependency>
    </dependencies>
 </project>

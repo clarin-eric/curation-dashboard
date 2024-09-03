@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:ns0="http://openskos.org/xmlns#">
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept>
+      <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-6184_5f26086f-2fdc-2ecd-4ef5-4bdddcccbbcf">
+        <skos:definition xml:lang="en">(responsible party) indicates the agency responsible for the intervention or interpretation, for example an editor or transcriber. (source: http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-att.responsibility.html)</skos:definition>
+        <skos:notation>noteResp</skos:notation>
+        <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+        <ns0:status>candidate</ns0:status>
+        <skos:altLabel>resp</skos:altLabel>
+        <skos:altLabel>noteResp</skos:altLabel>
+        <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-6184</skos:changeNote>
+        <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+        <skos:prefLabel xml:lang="en">responsible party</skos:prefLabel>
+      </skos:Concept>
+    </skos:hasTopConcept>
+
+  </skos:ConceptScheme>
+
+</rdf:RDF>

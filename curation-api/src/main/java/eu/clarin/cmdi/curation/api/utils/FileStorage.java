@@ -25,8 +25,11 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -288,5 +291,28 @@ public class FileStorage {
         String filename = FileNameEncoder.encode(reportName) + "." + fileSuffix;
 
         return outPath.resolve(filename);
+    }
+
+    public void purgeReportAfter(int days) {
+
+        try {
+            Files.walk(this.conf.getDirectory().getOut()).forEach(path -> {
+
+                try {
+                    if(Files.isRegularFile(path) && Files.getLastModifiedTime(path).toInstant().isBefore(Instant.now().minus(days, ChronoUnit.DAYS))) {
+                        Files.delete(path);
+                    }
+                }
+                catch (IOException e) {
+
+                    log.error("can't delete file '{}'", path);
+                }
+
+            });
+        }
+        catch (IOException e) {
+
+            log.error("can't process directory '{}' for purging old reports", conf.getDirectory().getOut());
+        }
     }
 }

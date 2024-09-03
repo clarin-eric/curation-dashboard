@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:ns0="http://openskos.org/xmlns#">
+
+  <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__a64b45fb-7cc3-fe74-a4f5-7e370177bd9e">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-2546_180dca37-c1d8-dffe-5d46-8f16de143320"/>
+  </skos:Collection>
+
+  <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+    <rdfs:label xml:lang="en">Metadata</rdfs:label>
+    <skos:hasTopConcept rdf:resource="http://hdl.handle.net/11459/CCR_C-2546_180dca37-c1d8-dffe-5d46-8f16de143320"/>
+  </skos:ConceptScheme>
+
+  <skos:Collection rdf:about="http://hdl.handle.net/11459/CCR__750d203b-ba0e-2d28-36e4-7bed4d9ef60b">
+    <rdfs:label xml:lang="en">textCorpusProfile UCPH</rdfs:label>
+    <skos:member rdf:resource="http://hdl.handle.net/11459/CCR_C-2546_180dca37-c1d8-dffe-5d46-8f16de143320"/>
+  </skos:Collection>
+
+  <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-2546_180dca37-c1d8-dffe-5d46-8f16de143320">
+    <ns0:inSkosCollection rdf:resource="http://hdl.handle.net/11459/CCR__a64b45fb-7cc3-fe74-a4f5-7e370177bd9e"/>
+    <ns0:inSkosCollection rdf:resource="http://hdl.handle.net/11459/CCR__750d203b-ba0e-2d28-36e4-7bed4d9ef60b"/>
+    <skos:definition xml:lang="en">A URL referring to another resource that can be used in various contexts. (source: CLARIN)</skos:definition>
+    <skos:changeNote>This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-2546</skos:changeNote>
+    <skos:notation>urlOtherResource</skos:notation>
+    <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+    <skos:altLabel>url</skos:altLabel>
+    <ns0:status>approved</ns0:status>
+    <skos:prefLabel xml:lang="en">url</skos:prefLabel>
+    <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+  </skos:Concept>
+
+</rdf:RDF>

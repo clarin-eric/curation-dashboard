@@ -69,7 +69,7 @@ public class HelpCtl {
       }
       catch(MalformedURLException e) {
          
-         log.error("mal formed URL '{}' for markup downlaod", markdownUrlString);
+         log.error("mal formed URL '{}' for markup download", markdownUrlString);
          
       }
       catch(IOException e) {

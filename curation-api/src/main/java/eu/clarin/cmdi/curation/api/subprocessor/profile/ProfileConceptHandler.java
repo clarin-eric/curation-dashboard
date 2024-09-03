@@ -14,9 +14,9 @@ import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
-import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -35,85 +35,85 @@ import java.util.Map.Entry;
 @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDProfileReport> {
 
-   @Autowired
-   private CRService crService;
+    @Autowired
+    private CRService crService;
 
-   /**
-    * Process.
-    *
-    * @param profile the profile
-    * @param report  the report
-    */
-   public void process(CMDProfile profile, CMDProfileReport report) throws MalFunctioningProcessorException {
-      
-      ParsedProfile parsedProfile = null;
+    /**
+     * Process.
+     *
+     * @param profile the profile
+     * @param report  the report
+     */
+    public void process(CMDProfile profile, CMDProfileReport report) throws MalFunctioningProcessorException {
 
-      try {
-         parsedProfile = crService.getParsedProfile(report.headerReport.getProfileHeader());
-      }
-      catch (NoProfileCacheEntryException e) {
-         report.details.add(new Detail(Severity.FATAL,"concept" , "can't get ParsedProfile for profile id '" + report.headerReport.getId() + "'"));
-         log.debug("can't get ParsedProfile for profile id '{}'", report.headerReport.getId());
-         return;
+        ParsedProfile parsedProfile;
 
-      }
-      catch (CRServiceStorageException | PPHServiceNotAvailableException | CCRServiceNotAvailableException e) {
-          throw new MalFunctioningProcessorException(e);
-      }
+        try {
 
-       report.conceptReport =  new ConceptReport();
-      
-      final Map<String, ConceptReport.Concept> conceptMap = new HashMap<String, ConceptReport.Concept>();
-      
-      parsedProfile
-      .getXpathElementNode()
-      .entrySet()
-      .stream()
-      .filter(entrySet -> entrySet.getKey().startsWith("/cmd:CMD/cmd:Components/"))
-      .map(Entry::getValue)
-      .forEach(n -> {
-         report.conceptReport.total++;
-         
-         if (n.isRequired)
-            report.conceptReport.required++;
+            parsedProfile = crService.getParsedProfile(profile.getSchemaLocation());
+        }
+        catch (NoCRCacheEntryException e) {
 
-         if (n.concept != null) {
-            report.conceptReport.withConcept++;
+            report.details.add(new Detail(Severity.FATAL, "concept", "can't parse profile '" + profile.getSchemaLocation() + "'"));
+            log.debug("can't parse profile '{}'", profile.getSchemaLocation());
+            return;
+        }
+        catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
 
-       
-            conceptMap.computeIfAbsent(n.concept.getUri(), k -> new ConceptReport.Concept(n.concept)).count++;
+            throw new MalFunctioningProcessorException(e);
+        }
 
-         }  
-      });
-      
-      report.conceptReport.unique = conceptMap.size();
-      report.conceptReport.percWithConcept = (report.conceptReport.total!=0?(double) report.conceptReport.withConcept/report.conceptReport.total:0.0);
-      report.conceptReport.concepts = conceptMap.values();
-      
-      report.conceptReport.score = report.conceptReport.percWithConcept;
-      report.score+=report.conceptReport.score;
-      
-      report.componentReport = new ComponentReport();
-      
-      Map<String, ComponentReport.Component> componentMap = new HashMap<String, ComponentReport.Component>();
+        report.conceptReport = new ConceptReport();
 
-      parsedProfile.getXpathComponentNode().values().forEach(crc -> {
-         report.componentReport.total++;
-         
-         if (crc.isRequired) {
-            report.componentReport.required++;
-         }
-         
-         componentMap
-            .computeIfAbsent(crc.component.id, k -> new ComponentReport.Component(crc.component.id, crc.component.name))
-            .count++;
+        final Map<String, ConceptReport.Concept> conceptMap = new HashMap<>();
 
-      });
-           
-      report.componentReport.unique = componentMap.size();
-      
-      report.componentReport.components = componentMap.values();
-      
+        parsedProfile
+                .xpathElementNode()
+                .entrySet()
+                .stream()
+                .filter(entrySet -> entrySet.getKey().startsWith("/cmd:CMD/cmd:Components/"))
+                .map(Entry::getValue)
+                .forEach(n -> {
+                    report.conceptReport.total++;
 
-   }
+                    if (n.isRequired)
+                        report.conceptReport.required++;
+
+                    if (n.concept != null) {
+                        report.conceptReport.withConcept++;
+
+
+                        conceptMap.computeIfAbsent(n.concept.getUri(), k -> new ConceptReport.Concept(n.concept)).count++;
+
+                    }
+                });
+
+        report.conceptReport.unique = conceptMap.size();
+        report.conceptReport.percWithConcept = (report.conceptReport.total != 0 ? (double) report.conceptReport.withConcept / report.conceptReport.total : 0.0);
+        report.conceptReport.concepts = conceptMap.values();
+
+        report.conceptReport.score = report.conceptReport.percWithConcept;
+        report.score += report.conceptReport.score;
+
+        report.componentReport = new ComponentReport();
+
+        Map<String, ComponentReport.Component> componentMap = new HashMap<>();
+
+        parsedProfile.xpathComponentNode().values().forEach(crc -> {
+            report.componentReport.total++;
+
+            if (crc.isRequired) {
+                report.componentReport.required++;
+            }
+
+            componentMap
+                    .computeIfAbsent(crc.component.id, k -> new ComponentReport.Component(crc.component.id, crc.component.name))
+                    .count++;
+
+        });
+
+        report.componentReport.unique = componentMap.size();
+
+        report.componentReport.components = componentMap.values();
+    }
 }

@@ -1,5 +1,8 @@
 language: java
 jdk:
-- openjdk17
+- openjdk21
+script:
+  - env
+  - java -version
 
 

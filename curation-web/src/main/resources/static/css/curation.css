@@ -211,3 +211,9 @@ div.markdown table, div.markdown th, div.markdown td {
 .alert{
     background-color: rgba(250, 88, 88, 0.76);
 }
+#profiles .facetCovered{
+    background-color: lightgreen;
+}
+#profiles .facetNotCovered{
+    background-color: lightcoral;
+}

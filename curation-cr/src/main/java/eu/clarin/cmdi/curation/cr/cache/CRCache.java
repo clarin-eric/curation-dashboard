@@ -1,24 +1,20 @@
 package eu.clarin.cmdi.curation.cr.cache;
 
-import com.ximpleware.ParseException;
+import com.ximpleware.NavException;
 import com.ximpleware.VTDGen;
-import eu.clarin.cmdi.curation.ccr.CCRService;
+import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import eu.clarin.cmdi.curation.cr.ProfileCacheEntry;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
-import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
-import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParser;
-import eu.clarin.cmdi.curation.cr.profile_parser.ProfileParserFactory;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
+import eu.clarin.cmdi.curation.cr.profile_parser.*;
 import eu.clarin.cmdi.curation.cr.xml.SchemaResourceResolver;
-import eu.clarin.cmdi.curation.pph.PPHService;
-import eu.clarin.cmdi.curation.pph.ProfileHeader;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
@@ -28,13 +24,10 @@ import javax.xml.validation.SchemaFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Set;
 
 /**
  * The type Cr cache.
@@ -42,165 +35,114 @@ import java.nio.file.StandardCopyOption;
 @Component
 @Slf4j
 public class CRCache {
-   
-   private final SchemaFactory schemaFactory;
-   
    @Autowired
-   private CRConfig props;
-   /**
-    * The Ccr service.
-    */
+   private CRConfig crConfig;
    @Autowired
-   CCRService ccrService;
-   /**
-    * The Pph service.
-    */
+   private HttpUtils httpUtils;
    @Autowired
-   PPHService pphService;
-
+   private PPHCache pphCache;
    @Autowired
-   HttpUtils httpUtils;
-
-   /**
-    * Instantiates a new Cr cache.
-    */
-   public CRCache() {
-      
-      schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-   }
+   private ApplicationContext ctx;
 
    /**
     * Gets public entry.
     *
-    * @param profileHeader the profile header
+    * @param schemaLocation the schemaURL
     * @return the public entry
-    * @throws NoProfileCacheEntryException the no profile cache entry exception
+    * @throws CCRServiceNotAvailableException the ccr service is not available
     */
-   @Cacheable(value = "publicProfileCache", key = "#profileHeader.id")
-   public ProfileCacheEntry getPublicEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException, CRServiceStorageException, CCRServiceNotAvailableException {
-      return getProfileCacheEntry(profileHeader);
-   }
+   @Cacheable(value = "crCache", key ="#schemaLocation", sync = true)
+   public ProfileCacheEntry getEntry(String schemaLocation) throws CRServiceStorageException, CCRServiceNotAvailableException, PPHCacheException {
 
-   /**
-    * Gets private entry.
-    *
-    * @param profileHeader the profile header
-    * @return the private entry
-    * @throws NoProfileCacheEntryException the no profile cache entry exception
-    */
-   @Cacheable(value = "privateProfileCache", key = "#profileHeader.id", condition = "#profileHeader.reliable")
-   public ProfileCacheEntry getPrivateEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException, CRServiceStorageException, CCRServiceNotAvailableException {
-      return getProfileCacheEntry(profileHeader);
-   }
-   
-   private ProfileCacheEntry getProfileCacheEntry(ProfileHeader profileHeader) throws NoProfileCacheEntryException, CRServiceStorageException, CCRServiceNotAvailableException {
-      
-      String fileName = profileHeader.getSchemaLocation().replaceAll("[/.:]", "_");
-      
-      Path xsd = props.getXsdCache()
-                  .resolve(isPublicCache(profileHeader)?"":"private_profile")
-                  .resolve(fileName + ".xsd");
-      
+      String fileName = schemaLocation.replaceAll("[/.:]", "_");
 
-      // try to load it from the disk
+      Path xsd = crConfig.getCrCache().resolve(fileName + ".xsd");
 
-      log.info("profile {} is public. Loading schema from {}", profileHeader.getId(), xsd);
-
-      
-         // if not download it
+      // if not download it
 
       try {
-         if (Files.notExists(xsd) || Files.size(xsd) == 0 || !isPublicCache(profileHeader)) {// keep public profiles on disk
-            // create directories if they don't exist
-            if(Files.notExists(xsd.getParent())) {
-               Files.createDirectories(xsd.getParent());
-            }
+         if (Files.notExists(xsd) || Files.size(xsd) == 0) {
 
-            log.debug("XSD for the {} is not in the local cache, it will be downloaded", profileHeader.getSchemaLocation());
+            if(Files.notExists(crConfig.getCrCache())) {
 
-            if (profileHeader.getSchemaLocation().startsWith("file:")) {
-               Files.copy(Paths.get(new URI(profileHeader.getSchemaLocation())), xsd, StandardCopyOption.REPLACE_EXISTING);
-            }
-            else {
-               try(InputStream in = httpUtils.getURLConnection(profileHeader.getSchemaLocation()).getInputStream()){
+               try {
 
-                  Files.copy(in, xsd, StandardCopyOption.REPLACE_EXISTING);
+                  Files.createDirectories(crConfig.getCrCache());
                }
+               catch (IOException e) {
+
+                  log.error("could create cr cache directory '{}'", crConfig.getCrCache());
+                  throw new CRServiceStorageException(e);
+               }
+            }
+
+            log.debug("XSD for the {} is not in the local cache, it will be downloaded", schemaLocation);
+
+            try(InputStream in = httpUtils.getURLConnection(schemaLocation).getInputStream()) {
+
+               Files.copy(in, xsd, StandardCopyOption.REPLACE_EXISTING);
             }
          }
       }
       catch (MalformedURLException e) {
-         
-         log.debug("the schema location URL '{}' is malformed", profileHeader.getSchemaLocation());
-         throw new NoProfileCacheEntryException();
-         
+
+         log.debug("the schema location URL '{}' is malformed", schemaLocation);
+         return null;
       }
       catch (IOException e) {
-         
-         log.debug("can't access xsd file '{}'", xsd);
-         throw new CRServiceStorageException(e);
-      }
-      catch (URISyntaxException e) {
-         
-         log.debug("can't copy URI '{}' is malformed", profileHeader.getSchemaLocation());
-         throw new NoProfileCacheEntryException();
+
+         log.debug("can't access xsd file '{}'", schemaLocation);
+         return null;
       }
 
-
-
-      VTDGen vg = new VTDGen();
-
+      ParsedProfile parsedProfile = null;
 
       try {
-         vg.setDoc(Files.readAllBytes(xsd));
+         VTDGen vg = new VTDGen();
 
-         vg.parse(true);
+         vg.parseFile(xsd.toString(), true);
 
+         VTDNav nv = vg.getNav();
 
+         for(int i=0; i<nv.getTokenCount(); i++ ){
+            if(nv.matchRawTokenString(i, "xmlns:cmd")){
+               ProfileParser parser =  switch(nv.toNormalizedString(i+1)){
+                  case "http://www.clarin.eu/cmd/1", "https://www.clarin.eu/cmd/1" -> this.ctx.getBean(CMDI1_2_ProfileParser.class);
+                  case "http://www.clarin.eu/cmd", "https://www.clarin.eu/cmd" -> this.ctx.getBean(CMDI1_1_ProfileParser.class);
+                  default -> throw new UnsupportedOperationException();
+               };
+
+               parsedProfile = parser.parse(nv, schemaLocation, this.pphCache.getProfileHeadersMap().get(schemaLocation));
+
+               break;
+            }
+         }
       }
-      catch (IOException e) {
-         
-         log.error("can't read file '{}'", xsd);
-         throw new CRServiceStorageException(e);
-      
-      }
-      catch (ParseException e) {
-         
-         log.error("can't parse file '{}'", xsd);
-         throw new NoProfileCacheEntryException();
-         
+      catch (NavException | IllegalArgumentException e) {
+
+         log.info("can't process schema '{}'", schemaLocation);
+         return null;
       }
 
-      ProfileParser parser = ProfileParserFactory.createParser(profileHeader.getCmdiVersion(), ccrService);
-
-      ParsedProfile parsedProfile = parser.parse(vg.getNav(), profileHeader);
-      Schema schema = null;
-      
+      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
       schemaFactory.setResourceResolver(new SchemaResourceResolver());
-            
+
+      Schema schema = null;
+
       try {
          schema = schemaFactory.newSchema(xsd.toFile());
       }
       catch (SAXException e) {
          
-         log.error("can't create Schema object from file '{}'", xsd);
-         throw new NoProfileCacheEntryException(); 
-      
+         log.info("can't create Schema object from file '{}'", xsd);
+         return null;
       }
 
-
       return new ProfileCacheEntry(parsedProfile, schema);
-      
    }
 
+   public Set<String> getPublicSchemaLocations() throws PPHCacheException {
 
-   /**
-    * Is public cache boolean.
-    *
-    * @param profileHeader the header
-    * @return the boolean
-    */
-   public boolean isPublicCache(ProfileHeader profileHeader) {
-      return profileHeader.isPublic() && profileHeader.isReliable() && (profileHeader.getCmdiVersion().equals("1.x") || profileHeader.getCmdiVersion().equals("1.2"));
-   }  
+      return this.pphCache.getProfileHeadersMap().keySet();
+   }
 }

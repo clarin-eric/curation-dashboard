@@ -20,11 +20,11 @@ public interface CurationModule {
    /**
     * Process cmd profile cmd profile report.
     *
-    * @param profileId the profile id
+    * @param schemaLocation the schema location
     * @return the cmd profile report
     * @throws MalformedURLException the malformed url exception
     */
-   public CMDProfileReport processCMDProfile(String profileId) throws MalformedURLException;
+   public CMDProfileReport processCMDProfile(String schemaLocation);
 
    /**
     * Process cmd profile cmd profile report.
@@ -34,14 +34,6 @@ public interface CurationModule {
     * @throws MalformedURLException the malformed url exception
     */
    public CMDProfileReport processCMDProfile(Path path) throws MalformedURLException;
-
-   /**
-    * Process cmd profile cmd profile report.
-    *
-    * @param schemaLocation the schema location
-    * @return the cmd profile report
-    */
-   public CMDProfileReport processCMDProfile(URL schemaLocation);
 
    /**
     * Process cmd instance cmd instance report.

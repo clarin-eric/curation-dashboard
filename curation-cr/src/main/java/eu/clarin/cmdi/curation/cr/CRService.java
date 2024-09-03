@@ -2,21 +2,27 @@ package eu.clarin.cmdi.curation.cr;
 
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.cr.exception.NoProfileCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
-import eu.clarin.cmdi.curation.pph.ProfileHeader;
-import eu.clarin.cmdi.curation.pph.exception.PPHServiceNotAvailableException;
+import eu.clarin.cmdi.curation.cr.profile_parser.ProfileHeader;
 
 import javax.xml.validation.Schema;
+import java.util.stream.Stream;
 
 public interface CRService {
 	
-	public ProfileHeader createProfileHeader(String schemaLocation, String cmdiVersion, boolean isLocalFile) throws PPHServiceNotAvailableException;
+	ProfileHeader createProfileHeader(String schemaLocation) throws CRServiceStorageException, CCRServiceNotAvailableException, PPHCacheException, NoCRCacheEntryException;
 
-	ParsedProfile getParsedProfile(ProfileHeader header) throws NoProfileCacheEntryException, CRServiceStorageException, PPHServiceNotAvailableException, CCRServiceNotAvailableException;
+	ParsedProfile getParsedProfile(String schemaLocation) throws CCRServiceNotAvailableException, CRServiceStorageException, PPHCacheException, NoCRCacheEntryException;
 
-	Schema getSchema(ProfileHeader header) throws NoProfileCacheEntryException, CRServiceStorageException, PPHServiceNotAvailableException, CCRServiceNotAvailableException;
+	Schema getSchema(String schemaLocation) throws CCRServiceNotAvailableException, CRServiceStorageException, PPHCacheException, NoCRCacheEntryException;
+
+	boolean isPublicSchema(String schemaLocation) throws PPHCacheException;
 
 	boolean isSchemaCRResident(String schemaLocation);
-	
+
+	Stream<String> getPublicSchemaLocations() throws PPHCacheException;
+
+	String getIdFromSchemaLocation(String schemaLocation);
 }
