@@ -1,26 +1,26 @@
 # 7.0.0
 - based on Java 21
-- using virtual threads in collection processing (issue #228) 
-- improving accessibility of web-app (issue #249)
-- sending accept header for outgoing http-calls (issue #250)
-- processing accept header for incoming calls (issue #251)
-- reducing calls to external services in maven tests (issue #244)
-- using mock server for service tests (issue #234)
-- adding functionality to delete outdated reports (issue #241)
-- returning pre-generated profile reports in case of public profile validation (issue #258)
-- bug fixes (issues #252, #256, #257)
+- using virtual threads in collection processing (https://github.com/clarin-eric/curation-dashboard/issues/228) 
+- improving accessibility of web-app (https://github.com/clarin-eric/curation-dashboard/issues/249)
+- sending accept header for outgoing http-calls (https://github.com/clarin-eric/curation-dashboard/issues/250)
+- processing accept header for incoming calls (https://github.com/clarin-eric/curation-dashboard/issues/251)
+- reducing calls to external services in maven tests (https://github.com/clarin-eric/curation-dashboard/issues/244)
+- using mock server for service tests (https://github.com/clarin-eric/curation-dashboard/issues/234)
+- adding functionality to delete outdated reports (https://github.com/clarin-eric/curation-dashboard/issues/241)
+- returning pre-generated profile reports in case of public profile validation (https://github.com/clarin-eric/curation-dashboard/issues/258)
+- bug fixes (https://github.com/clarin-eric/curation-dashboard/issues/252, https://github.com/clarin-eric/curation-dashboard/issues/256, https://github.com/clarin-eric/curation-dashboard/issues/257)
 
 # 6.4.1
-- fix for rendering issue in tables (issue #245)
-- adding back to current link in historic reports (issue #242)
-- re-engineering exception handling to stop thread pool (re-opend issue #218)
-- adding identification and timeout for schema look-up (re-opened issues #222, #231)
+- fix for rendering issue in tables (issue https://github.com/clarin-eric/curation-dashboard/issues/245)
+- adding back to current link in historic reports (issue https://github.com/clarin-eric/curation-dashboard/issues/242)
+- re-engineering exception handling to stop thread pool (re-opend issue https://github.com/clarin-eric/curation-dashboard/issues/218)
+- adding identification and timeout for schema look-up (re-opened issues https://github.com/clarin-eric/curation-dashboard/issues/222, https://github.com/clarin-eric/curation-dashboard/issues/231)
 
 # 6.4.0
-- allowing proxy usage for external HTTP calls (issue #227)
-- sending User-Agent string with HTTP calls (issue #222) 
-- setting timeout for connection and reading (issue #231)
-- making collection report history accessible (issue #233)
+- allowing proxy usage for external HTTP calls (issue https://github.com/clarin-eric/curation-dashboard/issues/227)
+- sending User-Agent string with HTTP calls (issue https://github.com/clarin-eric/curation-dashboard/issues/222) 
+- setting timeout for connection and reading (issue https://github.com/clarin-eric/curation-dashboard/issues/231)
+- making collection report history accessible (issue https://github.com/clarin-eric/curation-dashboard/issues/233)
 
 
 # 6.3.1
