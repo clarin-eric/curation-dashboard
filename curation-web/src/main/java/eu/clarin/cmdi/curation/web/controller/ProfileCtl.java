@@ -1,7 +1,9 @@
 package eu.clarin.cmdi.curation.web.controller;
 
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
+import eu.clarin.cmdi.curation.web.exception.NoSuchReportException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -45,16 +48,19 @@ public class ProfileCtl {
       
       if(profileReportName.isPresent()) {
 
-         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
+         String basename = FilenameUtils.getBaseName(profileReportName.get());
+         String extension = FilenameUtils.getExtension(profileReportName.get());
+
+         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json") || "json".equals(extension)) {
 
             return "forward:/download/profile/" + profileReportName.get() + "?format=json";
          }
-         if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))) {
+         if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml")) || "xml".equals(extension)) {
 
             return "forward:/download/profile/" + profileReportName.get() ;
          }
          
-         reportPath = reportPath.resolve(Paths.get(profileReportName.get()));
+         reportPath = reportPath.resolve(basename + ".html");
       
       }
       else {
@@ -75,8 +81,11 @@ public class ProfileCtl {
          reportPath = reportPath.resolve("AllProfileReport.html");
       
       }
-      
-      log.debug("reportPath: {}", reportPath);
+
+      if(Files.notExists(reportPath)){
+
+         throw new NoSuchReportException();
+      }
       
       model.addAttribute("insert", reportPath.toString());
 

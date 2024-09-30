@@ -1,3 +1,6 @@
+# 7.0.1
+- issue https://github.com/clarin-eric/curation-dashboard/issues/261
+
 # 7.0.0
 - based on Java 21
 - using virtual threads in collection processing (https://github.com/clarin-eric/curation-dashboard/issues/228) 

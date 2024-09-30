@@ -5,7 +5,9 @@
 package eu.clarin.cmdi.curation.web.controller;
 
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
+import eu.clarin.cmdi.curation.web.exception.NoSuchReportException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The type Linkchecker ctl.
@@ -69,31 +72,59 @@ public class LinkcheckerCtl {
    /**
     * Gets report.
     *
-    * @param providergroupName the providergroup name
+    * @param linkcheckerReportName the linkchecker report name
     * @param model             the model
     * @return the report
     */
-   @GetMapping("/{providergroupName}")
-   public String getReport(@RequestHeader("Accept") String acceptHeader, @PathVariable(value = "providergroupName") String providergroupName, Model model) {
+   @GetMapping(value = {"","/{linkcheckerReportName}"})
+   public String getReport(@RequestHeader("Accept") String acceptHeader, @PathVariable(value = "linkcheckerReportName") Optional<String> linkcheckerReportName, Model model) {
 
-      if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
+      Path reportPath;
 
-         return "forward:/download/linkchecker/" + providergroupName + "?format=json";
+      if(linkcheckerReportName.isPresent()){
+
+         String basename = FilenameUtils.getBaseName(linkcheckerReportName.get());
+         String extension = FilenameUtils.getExtension(linkcheckerReportName.get());
+
+         if (StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json") || "json".equals(extension)) {
+
+            return "forward:/download/linkchecker/" + basename + "?format=json";
+         }
+         if (StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml")) || "xml".equals(extension)) {
+
+            return "forward:/download/linkchecker/" + basename + "?format=xml";
+         }
+         if (StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("text/tab-separated-values") || "tsv".equals(extension)) {
+
+            return "forward:/download/linkchecker/" + basename + "?format=tsv";
+         }
+
+         reportPath = conf.getDirectory().getOut().resolve("html").resolve("linkchecker")
+                 .resolve(basename + ".html");
+
+
       }
-      if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))) {
+      else{
 
-         return "forward:/download/linkchecker/" + providergroupName + "?format=xml";
+         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
+
+            return "forward:/download/linkchecker/AllLinkcheckerReport?format=json";
+         }
+         if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))) {
+
+            return "forward:/download/linkchecker/AllLinkcheckerReport";
+         }
+
+         reportPath = conf.getDirectory().getOut().resolve("html").resolve("linkchecker")
+                 .resolve("AllLinkcheckerReport.html");
       }
-      if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("text/tab-separated-values")) {
 
-         return "forward:/download/linkchecker/" + providergroupName + "?format=tsv";
+      if(Files.notExists(reportPath)){
+
+         throw new NoSuchReportException();
       }
-
-      Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("linkchecker")
-            .resolve(providergroupName + ".html");
 
       model.addAttribute("insert", reportPath.toString());
-
       return "generic";
    }
 
