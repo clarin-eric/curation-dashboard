@@ -8,6 +8,7 @@ import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Collection;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ComponentReport {
+public class ComponentReport implements Serializable {
    @XmlAttribute
    public int total;
    @XmlAttribute
@@ -29,7 +30,7 @@ public class ComponentReport {
    @XmlAccessorType(XmlAccessType.FIELD)
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public static class Component {
+   public static class Component implements Serializable {
 
       @XmlAttribute
       public final String id;

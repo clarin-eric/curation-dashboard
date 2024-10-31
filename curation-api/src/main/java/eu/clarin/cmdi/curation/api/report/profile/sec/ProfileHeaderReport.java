@@ -10,6 +10,8 @@ import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  *
  */
@@ -18,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @XmlType(propOrder = {"id", "schemaLocation", "name", "description", "cmdiVersion", "status", "public"})
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
-public class ProfileHeaderReport {
+public class ProfileHeaderReport implements Serializable {
    @XmlAttribute
    public static final double maxScore = 1.0;
    @XmlAttribute

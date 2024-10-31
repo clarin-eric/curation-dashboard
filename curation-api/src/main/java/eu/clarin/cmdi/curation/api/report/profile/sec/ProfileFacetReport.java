@@ -8,6 +8,7 @@ import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -17,7 +18,7 @@ import java.util.Collection;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
-public class ProfileFacetReport {
+public class ProfileFacetReport implements Serializable {
    @XmlAttribute
    public static final double maxScore = 1.0;
    @XmlAttribute
@@ -37,7 +38,7 @@ public class ProfileFacetReport {
    @XmlAccessorType(XmlAccessType.FIELD)
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public static class Coverage {
+   public static class Coverage implements Serializable {
       @XmlAttribute
       public final String name;
       @XmlAttribute

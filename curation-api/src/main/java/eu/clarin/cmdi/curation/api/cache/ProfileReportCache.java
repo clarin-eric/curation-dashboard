@@ -21,7 +21,7 @@ public class ProfileReportCache {
    @Autowired
    CMDProfileProcessor processor;
    
-   @Cacheable(value = "publicProfileReportCache", key = "#profile.schemaLocation", condition = "#profile.schemaLocation.startsWith('http')", sync = true)
+   @Cacheable(value = "profileReportCache", key = "#profile.schemaLocation", condition = "#profile.schemaLocation.startsWith('http')", sync = true)
    public CMDProfileReport getProfileReport(CMDProfile profile) throws MalFunctioningProcessorException {
       
       return processor.process(profile);

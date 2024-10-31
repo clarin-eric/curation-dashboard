@@ -9,6 +9,7 @@ import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -16,7 +17,7 @@ import java.util.ArrayList;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConceptReport {
+public class ConceptReport implements Serializable {
    @XmlAttribute
    public static final double maxScore = 1.0;
    @XmlAttribute
@@ -40,7 +41,7 @@ public class ConceptReport {
    @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public static class Concept {
+   public static class Concept implements Serializable {
 
       private final CCRConcept ccrConcept;
       @XmlAttribute

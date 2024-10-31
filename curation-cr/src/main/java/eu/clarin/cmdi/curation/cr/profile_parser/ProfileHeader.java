@@ -1,5 +1,7 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
+import java.io.Serializable;
+
 public record ProfileHeader(
         String cmdiVersion,
         String schemaLocation,
@@ -8,5 +10,5 @@ public record ProfileHeader(
         String description,
         String status,
         boolean isPublic
-) {
+) implements Serializable {
 }
