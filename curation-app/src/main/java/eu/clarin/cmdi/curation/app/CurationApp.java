@@ -19,6 +19,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +32,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.stream.Stream;
 
 /**
@@ -60,6 +63,8 @@ public class CurationApp {
     */
    @Autowired
    LinkService linkService;
+   @Autowired
+   CacheManager cacheManager;
 
    /**
     * The entry point of application.
@@ -108,9 +113,11 @@ public class CurationApp {
             
             final AllProfileReport allProfileReport = new AllProfileReport();
 
-            crService.getPublicSchemaLocations().forEach(schemaLocation -> {
+            final Cache cache = this.cacheManager.getCache("profileReportCache");
 
-               log.info("start processing profile '{}'", schemaLocation);
+            crService.getPublicSchemaLocations().forEach(schemaLocation -> { //this is for the public profiles
+
+               log.info("start processing public profile '{}'", schemaLocation);
 
                CMDProfileReport profileReport = curation.processCMDProfile(schemaLocation);
 
@@ -118,7 +125,22 @@ public class CurationApp {
 
                storage.saveReport(profileReport, CurationEntityType.PROFILE, false);
 
-               log.info("done processing profile '{}'", schemaLocation);
+               cache.evict(schemaLocation);
+
+               log.info("done processing public profile '{}'", schemaLocation);
+            });
+
+            // now we have to do the same for the non public profiles used by CMDI files
+
+            Iterator<javax.cache.Cache.Entry<String,CMDProfileReport>> it = ((javax.cache.Cache) cache.getNativeCache()).iterator();
+
+            it.forEachRemaining(entry -> {
+
+               log.info("start processing non public profile '{}'", entry.getValue().headerReport.getSchemaLocation());
+               allProfileReport.addReport(entry.getValue());
+
+               storage.saveReport(entry.getValue(), CurationEntityType.PROFILE, false);
+               log.info("done processing non public profile '{}'", entry.getValue().headerReport.getSchemaLocation());
             });
 
             storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);
