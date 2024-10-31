@@ -16,7 +16,7 @@ import java.util.Collection;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ComponentReport implements Serializable {
+public class ComponentReport {
    @XmlAttribute
    public int total;
    @XmlAttribute
@@ -30,7 +30,7 @@ public class ComponentReport implements Serializable {
    @XmlAccessorType(XmlAccessType.FIELD)
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public static class Component implements Serializable {
+   public static class Component {
 
       @XmlAttribute
       public final String id;

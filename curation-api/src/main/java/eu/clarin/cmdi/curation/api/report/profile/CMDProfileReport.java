@@ -12,7 +12,6 @@ import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.FileUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -25,7 +24,7 @@ import java.util.Collection;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CMDProfileReport implements NamedReport, Serializable {
+public class CMDProfileReport implements NamedReport {
    @XmlTransient
    public boolean isValidReport = true;
    @XmlAttribute

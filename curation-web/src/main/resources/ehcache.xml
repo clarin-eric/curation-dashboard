@@ -1,0 +1,42 @@
+<ehcache:config
+        xmlns:ehcache="http://www.ehcache.org/v3"
+        xmlns:jcache="http://www.ehcache.org/v3/jsr107">
+    <ehcache:service>
+        <jcache:defaults enable-management="true" enable-statistics="true" />
+    </ehcache:service>
+    <ehcache:persistence directory="/tmp/ehcache"/>
+    <ehcache:cache alias="ccrCache">
+        <ehcache:expiry>
+            <ehcache:ttl unit="days">1</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:disk persistent="true" unit="GB">1</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    <ehcache:cache alias="crCache">
+        <ehcache:expiry>
+            <ehcache:ttl unit="hours">1</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">1000</ehcache:heap>
+    </ehcache:cache>
+    <ehcache:cache alias="pphCache">
+        <ehcache:expiry>
+            <ehcache:ttl unit="days">1</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:disk persistent="true" unit="GB">1</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
+    <ehcache:cache alias="profileReportCache">
+        <ehcache:expiry>
+            <ehcache:ttl unit="minutes">5</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">500</ehcache:heap>
+    </ehcache:cache>
+    <ehcache:cache alias="facetMappingCache">
+        <ehcache:expiry>
+            <ehcache:none/>
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">1000</ehcache:heap>
+    </ehcache:cache>
+</ehcache:config>

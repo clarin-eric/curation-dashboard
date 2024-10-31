@@ -10,6 +10,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  *
  */

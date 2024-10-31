@@ -20,6 +20,9 @@ spring:
 server:
    error:
       include-stacktrace: always
+   cache:
+      jcache:
+         config: classpath:ehcache.xml
 curation:
    cr-service:
       cr-cache: ${java.io.tmpdir}/curation/cr_cache

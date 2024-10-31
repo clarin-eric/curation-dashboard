@@ -2,9 +2,10 @@ package eu.clarin.cmdi.curation.cr.profile_parser;
 
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class CMDINode{
+public class CMDINode implements Serializable {
 	
 	public boolean isRequired;
 	public CCRConcept concept;
@@ -30,7 +31,7 @@ public class CMDINode{
 		return Objects.hash(isRequired, concept, component);
 	}
 
-	public static class Component{
+	public static class Component implements Serializable {
 		public String name;
 		public String id;
 		

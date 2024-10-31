@@ -32,7 +32,10 @@ server:
       key-store-password: password
       key-alias: selfsigned
       enabled: true
-   port: 8443  
+   port: 8443
+   cache:
+      jcache:
+         config: classpath:ehcache.xml
 curation:
    cr-service:
       cr-cache: ${java.io.tmpdir}/curation/cr_cache

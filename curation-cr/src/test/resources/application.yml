@@ -17,3 +17,7 @@ curation:
       user-agent: "CLARIN-curation-dashboard"
       connection-timeout: 5000
       read-timeout: 5000
+spring:
+   cache:
+      jcache:
+         config: classpath:ehcache.xml

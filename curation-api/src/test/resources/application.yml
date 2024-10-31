@@ -8,7 +8,10 @@ spring:
       show-sql: true
       hibernate:
          ddl-auto: none
-      database-platform: org.hibernate.dialect.MariaDBDialect    
+      database-platform: org.hibernate.dialect.MariaDBDialect
+   cache:
+      jcache:
+         config: classpath:ehcache.xml
 curation:
    mode: all
    cr-service:

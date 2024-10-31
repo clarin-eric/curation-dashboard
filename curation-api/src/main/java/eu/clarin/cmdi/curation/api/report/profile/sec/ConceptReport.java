@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConceptReport implements Serializable {
+public class ConceptReport {
    @XmlAttribute
    public static final double maxScore = 1.0;
    @XmlAttribute
@@ -41,7 +41,7 @@ public class ConceptReport implements Serializable {
    @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public static class Concept implements Serializable {
+   public static class Concept {
 
       private final CCRConcept ccrConcept;
       @XmlAttribute

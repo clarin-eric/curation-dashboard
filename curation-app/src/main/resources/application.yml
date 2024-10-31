@@ -45,6 +45,9 @@ spring:
         enabled: true
         # temporary location of uploaded files
         location: ${java.io.tmpdir}
+   cache:
+      jcache:
+         config: classpath:ehcache.xml
 curation:
    http:
       # the user agent String, send with any request
@@ -62,7 +65,7 @@ curation:
       # mandatory URL to receive public profile headers
       restApi: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
       # optional but probably required query string to specify which profile headers we want
-      query: "?registrySpace=published&status=production&status=development&&status=deprecated"
+      query: "?registrySpace=published&status=production&status=development&status=deprecated"
    ccr-service:
       # mandatory output directory to cache concepts from concept registry
       ccr-cache: ${java.io.tmpdir}/curation/ccr_cache

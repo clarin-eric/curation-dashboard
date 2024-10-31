@@ -20,7 +20,7 @@ import java.io.Serializable;
 @XmlType(propOrder = {"id", "schemaLocation", "name", "description", "cmdiVersion", "status", "public"})
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
-public class ProfileHeaderReport implements Serializable {
+public class ProfileHeaderReport {
    @XmlAttribute
    public static final double maxScore = 1.0;
    @XmlAttribute

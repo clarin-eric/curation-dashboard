@@ -18,7 +18,7 @@ import java.util.Collection;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
-public class ProfileFacetReport implements Serializable {
+public class ProfileFacetReport {
    @XmlAttribute
    public static final double maxScore = 1.0;
    @XmlAttribute
@@ -38,7 +38,7 @@ public class ProfileFacetReport implements Serializable {
    @XmlAccessorType(XmlAccessType.FIELD)
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public static class Coverage implements Serializable {
+   public static class Coverage {
       @XmlAttribute
       public final String name;
       @XmlAttribute
