@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.cr.cache;
 
 import com.ximpleware.NavException;
+import com.ximpleware.ParseException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
@@ -21,8 +22,7 @@ import org.xml.sax.SAXException;
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,53 +54,29 @@ public class CRCache {
    @Cacheable(value = "crCache", key ="#schemaLocation", sync = true)
    public ProfileCacheEntry getEntry(String schemaLocation) throws CRServiceStorageException, CCRServiceNotAvailableException, PPHCacheException {
 
-      String fileName = schemaLocation.replaceAll("[/.:]", "_");
+      String schemaString;
 
-      Path xsd = crConfig.getCrCache().resolve(fileName + ".xsd");
+      try(BufferedReader reader = new BufferedReader(new InputStreamReader(httpUtils.getURLConnection(schemaLocation).getInputStream()))) {
 
-      // if not download it
+         StringBuffer buffer = new StringBuffer();
 
-      try {
-         if (Files.notExists(xsd) || Files.size(xsd) == 0) {
-
-            if(Files.notExists(crConfig.getCrCache())) {
-
-               try {
-
-                  Files.createDirectories(crConfig.getCrCache());
-               }
-               catch (IOException e) {
-
-                  log.error("could create cr cache directory '{}'", crConfig.getCrCache());
-                  throw new CRServiceStorageException(e);
-               }
-            }
-
-            log.debug("XSD for the {} is not in the local cache, it will be downloaded", schemaLocation);
-
-            try(InputStream in = httpUtils.getURLConnection(schemaLocation).getInputStream()) {
-
-               Files.copy(in, xsd, StandardCopyOption.REPLACE_EXISTING);
-            }
-         }
-      }
-      catch (MalformedURLException e) {
-
-         log.debug("the schema location URL '{}' is malformed", schemaLocation);
-         return null;
+         reader.lines().forEach(buffer::append);
+         schemaString = buffer.toString();
       }
       catch (IOException e) {
 
-         log.debug("can't access xsd file '{}'", schemaLocation);
+         log.error("couldn't get schema '{}'", schemaLocation);
          return null;
       }
+
 
       ParsedProfile parsedProfile = null;
 
       try {
          VTDGen vg = new VTDGen();
 
-         vg.parseFile(xsd.toString(), true);
+         vg.setDoc(schemaString.getBytes());
+         vg.parse(true);
 
          VTDNav nv = vg.getNav();
 
@@ -118,27 +94,27 @@ public class CRCache {
             }
          }
       }
-      catch (NavException | IllegalArgumentException e) {
+      catch (NavException | IllegalArgumentException | ParseException e) {
 
          log.info("can't process schema '{}'", schemaLocation);
          return null;
       }
 
-      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-      schemaFactory.setResourceResolver(new SchemaResourceResolver());
+//      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+//      schemaFactory.setResourceResolver(new SchemaResourceResolver());
+//
+//      Schema schema = null;
+//
+//      try {
+//         schema = schemaFactory.newSchema(xsd.toFile());
+//      }
+//      catch (SAXException e) {
+//
+//         log.info("can't create Schema object from file '{}'", xsd);
+//         return null;
+//      }
 
-      Schema schema = null;
-
-      try {
-         schema = schemaFactory.newSchema(xsd.toFile());
-      }
-      catch (SAXException e) {
-         
-         log.info("can't create Schema object from file '{}'", xsd);
-         return null;
-      }
-
-      return new ProfileCacheEntry(parsedProfile, schema);
+      return new ProfileCacheEntry(parsedProfile, schemaString);
    }
 
    public Set<String> getPublicSchemaLocations() throws PPHCacheException {

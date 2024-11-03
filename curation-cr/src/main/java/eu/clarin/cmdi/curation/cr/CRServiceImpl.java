@@ -11,7 +11,6 @@ import eu.clarin.cmdi.curation.cr.profile_parser.ProfileHeader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.xml.validation.Schema;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -62,16 +61,16 @@ public class CRServiceImpl implements CRService {
             throw new NoCRCacheEntryException();
         }
 
-        return crCache.getEntry(schemaLocation).getParsedProfile();
+        return crCache.getEntry(schemaLocation).parsedProfile();
     }
 
     @Override
-    public Schema getSchema(String schemaLocation) throws CCRServiceNotAvailableException, CRServiceStorageException, PPHCacheException, NoCRCacheEntryException {
+    public String getSchemaString(String schemaLocation) throws CCRServiceNotAvailableException, CRServiceStorageException, PPHCacheException, NoCRCacheEntryException {
 
         if(crCache.getEntry(schemaLocation) == null){
             throw new NoCRCacheEntryException();
         }
-        return crCache.getEntry(schemaLocation).getSchema();
+        return crCache.getEntry(schemaLocation).schemaString();
     }
 
     @Override

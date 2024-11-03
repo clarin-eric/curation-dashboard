@@ -14,15 +14,20 @@ import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
+import eu.clarin.cmdi.curation.cr.xml.SchemaResourceResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.ValidatorHandler;
 import java.io.IOException;
 
@@ -50,7 +55,12 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
 
       ValidatorHandler schemaValidator;
       try {
-         schemaValidator = crService.getSchema(report.profileHeaderReport.getProfileHeader().schemaLocation()).newValidatorHandler();
+         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+         schemaFactory.setResourceResolver(new SchemaResourceResolver());
+
+         Schema schema = schemaFactory.newSchema(new StreamSource(crService.getSchemaString((report.profileHeaderReport.getProfileHeader().schemaLocation()))));
+
+         schemaValidator = schema.newValidatorHandler();
       }
       catch (NoCRCacheEntryException e) {
 
@@ -60,7 +70,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
          
          return;
       }
-      catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
+      catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException | SAXException e) {
 
           throw new MalFunctioningProcessorException(e);
       }

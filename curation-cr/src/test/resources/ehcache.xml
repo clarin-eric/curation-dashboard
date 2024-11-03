@@ -6,20 +6,24 @@
         <ehcache:expiry>
             <ehcache:none/>
         </ehcache:expiry>
-        <ehcache:heap unit="entries">1000</ehcache:heap>
+        <ehcache:resources>
+            <ehcache:disk persistent="true" unit="GB">1</ehcache:disk>
+        </ehcache:resources>
     </ehcache:cache>
     <ehcache:cache alias="crCache">
         <ehcache:expiry>
             <ehcache:none/>
         </ehcache:expiry>
-        <ehcache:heap unit="entries">1000</ehcache:heap>
+        <ehcache:resources>
+            <ehcache:disk unit="GB" persistent="true">1</ehcache:disk>
+        </ehcache:resources>
     </ehcache:cache>
     <ehcache:cache alias="pphCache">
         <ehcache:expiry>
             <ehcache:none/>
         </ehcache:expiry>
         <ehcache:resources>
-            <ehcache:disk unit="GB" persistent="true">10</ehcache:disk>
+            <ehcache:disk unit="GB" persistent="true">1</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
 </ehcache:config>
