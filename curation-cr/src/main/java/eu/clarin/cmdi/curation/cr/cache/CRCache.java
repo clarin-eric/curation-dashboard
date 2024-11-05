@@ -31,14 +31,14 @@ import java.util.Set;
 @Slf4j
 public class CRCache {
 
-   private final ProfileCache profilCache;
+   private final ProfileCache profileCache;
 
    private final PPHCache pphCache;
 
    private final ApplicationContext ctx;
 
-    public CRCache(ProfileCache profilCache, PPHCache pphCache, ApplicationContext ctx) {
-        this.profilCache = profilCache;
+    public CRCache(ProfileCache profileCache, PPHCache pphCache, ApplicationContext ctx) {
+        this.profileCache = profileCache;
         this.pphCache = pphCache;
         this.ctx = ctx;
     }
@@ -53,7 +53,7 @@ public class CRCache {
    @Cacheable(value = "crCache", key ="#schemaLocation", sync = true)
    public ProfileCacheEntry getEntry(String schemaLocation) throws CRServiceStorageException, CCRServiceNotAvailableException, PPHCacheException {
 
-      String schemaString = this.profilCache.getProfileAsString(schemaLocation);
+      String schemaString = this.profileCache.getProfileAsString(schemaLocation);
 
       if(Objects.isNull(schemaString)){
 
