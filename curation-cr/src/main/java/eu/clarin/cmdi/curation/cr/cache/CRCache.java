@@ -5,28 +5,23 @@ import com.ximpleware.ParseException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
-import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import eu.clarin.cmdi.curation.cr.ProfileCacheEntry;
-import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.profile_parser.*;
 import eu.clarin.cmdi.curation.cr.xml.SchemaResourceResolver;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -35,16 +30,20 @@ import java.util.Set;
 @Component
 @Slf4j
 public class CRCache {
-   @Autowired
-   private CRConfig crConfig;
-   @Autowired
-   private HttpUtils httpUtils;
-   @Autowired
-   private PPHCache pphCache;
-   @Autowired
-   private ApplicationContext ctx;
 
-   /**
+   private final ProfileCache profilCache;
+
+   private final PPHCache pphCache;
+
+   private final ApplicationContext ctx;
+
+    public CRCache(ProfileCache profilCache, PPHCache pphCache, ApplicationContext ctx) {
+        this.profilCache = profilCache;
+        this.pphCache = pphCache;
+        this.ctx = ctx;
+    }
+
+    /**
     * Gets public entry.
     *
     * @param schemaLocation the schemaURL
@@ -54,25 +53,17 @@ public class CRCache {
    @Cacheable(value = "crCache", key ="#schemaLocation", sync = true)
    public ProfileCacheEntry getEntry(String schemaLocation) throws CRServiceStorageException, CCRServiceNotAvailableException, PPHCacheException {
 
-      String schemaString;
+      String schemaString = this.profilCache.getProfileAsString(schemaLocation);
 
-      try(BufferedReader reader = new BufferedReader(new InputStreamReader(httpUtils.getURLConnection(schemaLocation).getInputStream()))) {
+      if(Objects.isNull(schemaString)){
 
-         StringBuffer buffer = new StringBuffer();
-
-         reader.lines().forEach(buffer::append);
-         schemaString = buffer.toString();
-      }
-      catch (IOException e) {
-
-         log.error("couldn't get schema '{}'", schemaLocation);
          return null;
       }
-
 
       ParsedProfile parsedProfile = null;
 
       try {
+
          VTDGen vg = new VTDGen();
 
          vg.setDoc(schemaString.getBytes());
@@ -100,21 +91,21 @@ public class CRCache {
          return null;
       }
 
-//      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-//      schemaFactory.setResourceResolver(new SchemaResourceResolver());
-//
-//      Schema schema = null;
-//
-//      try {
-//         schema = schemaFactory.newSchema(xsd.toFile());
-//      }
-//      catch (SAXException e) {
-//
-//         log.info("can't create Schema object from file '{}'", xsd);
-//         return null;
-//      }
+      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+      schemaFactory.setResourceResolver(new SchemaResourceResolver());
 
-      return new ProfileCacheEntry(parsedProfile, schemaString);
+      Schema schema = null;
+
+      try {
+         schema = schemaFactory.newSchema(new StreamSource(new StringReader(schemaString)));
+      }
+      catch (SAXException e) {
+
+         log.info("can't create Schema object from file '{}'", schemaLocation);
+         return null;
+      }
+
+      return new ProfileCacheEntry(parsedProfile, schema);
    }
 
    public Set<String> getPublicSchemaLocations() throws PPHCacheException {
