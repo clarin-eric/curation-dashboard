@@ -35,6 +35,8 @@ public class HeaderReport {
    public long numWithMdProfile;
    @XmlElement
    public long numWithMdSelflink;
+   @XmlElement
+   public long numWithUniqueMdSelflink;
    @XmlElement   
    public long numWithMdCollectionDisplayName;
    

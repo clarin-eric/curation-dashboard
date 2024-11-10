@@ -308,6 +308,10 @@
             <xsl:value-of select="format-number(numWithMdSelflink, '###,##0')"/>
         </p>
         <p>
+            Number of files with <b>unique</b> MdSelfLink:
+            <xsl:value-of select="format-number(numWithUniqueMdSelflink, '###,##0')"/>
+        </p>
+        <p>
             Number of files with MdCollectionDisplayName:
             <xsl:value-of select="format-number(numWithMdCollectionDisplayName, '###,##0')"/>
         </p>

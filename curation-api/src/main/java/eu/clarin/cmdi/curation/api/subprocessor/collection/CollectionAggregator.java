@@ -253,7 +253,16 @@ public class CollectionAggregator {
         this.mdSelfLinks.entrySet()
                 .stream()
                 .filter(entrySet -> entrySet.getValue().size() > 1)
-                .forEach(entrySet -> collectionReport.headerReport.duplicatedMDSelfLink.add(new MDSelfLink(entrySet.getKey(), entrySet.getValue())));
+                .forEach(entrySet -> {
+                    if(entrySet.getValue().size() == 1){ //link is unique
+                        collectionReport.headerReport.numWithUniqueMdSelflink++;
+                    }
+                    else {//duplicate link
+                        collectionReport.headerReport.duplicatedMDSelfLink.add(new MDSelfLink(entrySet.getKey(), entrySet.getValue()));
+                    }
+                });
+        // adding score for unique selflinks
+        collectionReport.profileReport.aggregatedScore += collectionReport.headerReport.numWithUniqueMdSelflink;
 
         // lincheckerReport
 
@@ -309,8 +318,8 @@ public class CollectionAggregator {
 
         collectionReport.profileReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.maxScore
                 * collectionReport.fileReport.numOfFilesProcessable;
-
-        collectionReport.headerReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport.maxScore
+        // adding 1 to instance max score for uniqueness of MDselflink
+        collectionReport.headerReport.aggregatedMaxScore = (eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport.maxScore + 1)
                 * collectionReport.fileReport.numOfFilesProcessable;
 
         collectionReport.resProxyReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport.maxScore
