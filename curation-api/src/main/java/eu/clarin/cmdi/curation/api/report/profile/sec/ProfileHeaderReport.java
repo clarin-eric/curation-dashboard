@@ -10,14 +10,12 @@ import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
-import java.io.Serializable;
-
 /**
  *
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = {"id", "schemaLocation", "name", "description", "cmdiVersion", "status", "public"})
+@XmlType(propOrder = {"id", "schemaLocation", "name", "description", "cmdiVersion", "status", "public", "crResident"})
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class ProfileHeaderReport {
@@ -57,4 +55,6 @@ public class ProfileHeaderReport {
    public boolean isPublic() {
       return header.isPublic();
    }
+   @XmlElement
+   public boolean isCrResident() { return header.isCrResident(); }
 }

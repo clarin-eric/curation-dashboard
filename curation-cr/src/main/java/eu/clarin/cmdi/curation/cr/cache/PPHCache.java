@@ -31,141 +31,142 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class PPHCache {
 
-   @Autowired
-   private final HttpUtils httpUtils;
-   @Autowired
-   CRConfig crConfig;
+    @Autowired
+    private final HttpUtils httpUtils;
+    @Autowired
+    CRConfig crConfig;
 
     public PPHCache(HttpUtils httpUtils) {
         this.httpUtils = httpUtils;
     }
 
     /**
-    * Gets profile headers map.
-    *
-    * @return the profile headers map with profile id as key
-    */
-   @Cacheable(value = "pphCache", sync = true)
-   public Map<String, ProfileHeader> getProfileHeadersMap() throws PPHCacheException {
+     * Gets profile headers map.
+     *
+     * @return the profile headers map with profile id as key
+     */
+    @Cacheable(value = "pphCache", sync = true)
+    public Map<String, ProfileHeader> getProfileHeadersMap() throws PPHCacheException {
 
-      String fileName = crConfig.getRestApi().replaceAll("[/.:]", "_");
+        String fileName = crConfig.getRestApi().replaceAll("[/.:]", "_");
 
-      Path xml = crConfig.getCrCache().resolve(fileName + ".xml");
+        Path xml = crConfig.getCrCache().resolve(fileName + ".xml");
 
-      // if not download it
+        // if not download it
 
-      try {
-         if (Files.notExists(xml) || Files.size(xml) == 0) {
+        try {
+            if (Files.notExists(xml) || Files.size(xml) == 0) {
 
-            if(Files.notExists(crConfig.getCrCache())) {
+                if (Files.notExists(crConfig.getCrCache())) {
 
-               try {
+                    try {
 
-                  Files.createDirectories(crConfig.getCrCache());
-               }
-               catch (IOException e) {
+                        Files.createDirectories(crConfig.getCrCache());
+                    }
+                    catch (IOException e) {
 
-                  log.error("could create cr cache directory '{}'", crConfig.getCrCache());
-               }
+                        log.error("could create cr cache directory '{}'", crConfig.getCrCache());
+                    }
+                }
+
+                log.debug("XML is not in the local cache, it will be downloaded");
+
+                try (InputStream in = httpUtils.getURLConnection(crConfig.getRestApi() + crConfig.getQuery()).getInputStream()) {
+
+                    Files.copy(in, xml, StandardCopyOption.REPLACE_EXISTING);
+                }
             }
+        }
+        catch (MalformedURLException e) {
 
-            log.debug("XML is not in the local cache, it will be downloaded");
+            log.error("the concept registry URL '{}' is malformed", crConfig.getRestApi() + crConfig.getQuery());
+            throw new PPHCacheException(e);
+        }
+        catch (IOException e) {
 
-            try(InputStream in = httpUtils.getURLConnection(crConfig.getRestApi() + crConfig.getQuery()).getInputStream()) {
+            log.error("can't access xml file '{}'", xml);
+            throw new PPHCacheException(e);
+        }
 
-               Files.copy(in, xml, StandardCopyOption.REPLACE_EXISTING);
-            }
-         }
-      }
-      catch (MalformedURLException e) {
+        Map<String, ProfileHeader> profileHeaders = new ConcurrentHashMap<>();
 
-         log.error("the concept registry URL '{}' is malformed", crConfig.getRestApi() + crConfig.getQuery());
-         throw new PPHCacheException(e);
-      }
-      catch (IOException e) {
+        try (InputStream in = Files.newInputStream(xml)) {
 
-         log.error("can't access xml file '{}'", xml);
-         throw new PPHCacheException(e);
-      }
+            SAXParserFactory fac = SAXParserFactory.newInstance();
+            SAXParser parser = fac.newSAXParser();
 
-      Map<String, ProfileHeader> profileHeaders = new ConcurrentHashMap<>();
+            log.trace("component registry URL: {}", (crConfig.getRestApi() + crConfig.getQuery()));
 
-      try (InputStream in = Files.newInputStream(xml)){
+            parser.parse(in, new DefaultHandler() {
 
-         SAXParserFactory fac = SAXParserFactory.newInstance();
-         SAXParser parser = fac.newSAXParser();
+                private StringBuilder elementValue;
+                private String id, name, description, status;
 
-         log.trace("component registry URL: {}", (crConfig.getRestApi() + crConfig.getQuery()));
+                @Override
+                public void startElement(String uri, String localName, String qName, Attributes attributes)
+                        throws SAXException {
 
-         parser.parse(in, new DefaultHandler() {
+                    switch (qName) {
+                        case "profileDescription" -> {
+                            this.id = null;
+                            this.name = null;
+                            this.description = null;
+                        }
+                        case "id", "name", "description", "status" -> elementValue = new StringBuilder();
+                    }
+                }
 
-            private StringBuilder elementValue;
-            private String id, name, description, status;
+                @Override
+                public void endElement(String uri, String localName, String qName) throws SAXException {
 
-            @Override
-            public void startElement(String uri, String localName, String qName, Attributes attributes)
-                  throws SAXException {
+                    switch (qName) {
+                        case "profileDescription" ->
+                                profileHeaders.put((crConfig.getRestApi() + "/" + this.id + "/xsd"),
+                                        new ProfileHeader(
+                                                "1.x",
+                                                (crConfig.getRestApi() + "/" + this.id + "/xsd"),
+                                                this.id,
+                                                this.name,
+                                                this.description,
+                                                this.status,
+                                                true,
+                                                true
+                                        )
+                                );
+                        case "id" -> this.id = elementValue.toString();
+                        case "name" -> this.name = elementValue.toString();
+                        case "description" -> this.description = elementValue.toString();
+                        case "status" -> this.status = elementValue.toString().toLowerCase();
+                    }
+                }
 
-               switch(qName) {
-                  case "profileDescription" -> {
-                     this.id = null;
-                     this.name = null;
-                     this.description = null;
-                  }
-                  case "id", "name", "description", "status" -> elementValue = new StringBuilder();
-               }
-            }
+                @Override
+                public void characters(char[] ch, int start, int length) throws SAXException {
+                    if (elementValue == null) {
+                        elementValue = new StringBuilder();
+                    } else {
+                        elementValue.append(ch, start, length);
+                    }
+                }
+            });
+        }
 
-            @Override
-            public void endElement(String uri, String localName, String qName) throws SAXException {
+        catch (IOException e) {
 
-               switch (qName) {
-                  case "profileDescription" -> profileHeaders.put((crConfig.getRestApi() + "/" + this.id + "/xsd"),
-                                       new ProfileHeader(
-                                   "1.x",
-                                               (crConfig.getRestApi() + "/" + this.id + "/xsd"),
-                                               this.id,
-                                               this.name,
-                                               this.description,
-                                               this.status,
-                                       true
-                                       )
-                  );
-                  case "id" -> this.id = elementValue.toString();
-                  case "name" -> this.name = elementValue.toString();
-                  case "description" -> this.description = elementValue.toString();
-                  case "status" -> this.status = elementValue.toString().toLowerCase();
-               }
-            }
+            log.error("IOException while reading stream from file '{}'", xml);
+            throw new PPHCacheException(e);
+        }
+        catch (SAXException e) {
 
-            @Override
-            public void characters(char[] ch, int start, int length) throws SAXException {
-               if (elementValue == null) {
-                  elementValue = new StringBuilder();
-               }
-               else {
-                  elementValue.append(ch, start, length);
-               }
-            }
-         });
-      }
+            log.error("stream not parsable for ProfileHeader");
+            throw new PPHCacheException(e);
+        }
+        catch (ParserConfigurationException e) {
 
-      catch (IOException e) {
-         
-         log.error("IOException while reading stream from file '{}'", xml);
-         throw new PPHCacheException(e);
-      }
-      catch (SAXException e) {
+            log.error("can't configure new SAXParser");
+            throw new PPHCacheException(e);
+        }
 
-         log.error("stream not parsable for ProfileHeader");
-         throw new PPHCacheException(e);
-      }
-      catch (ParserConfigurationException e) {
-
-         log.error("can't configure new SAXParser");
-         throw new PPHCacheException(e);
-      }
-
-      return profileHeaders;
-   }
+        return profileHeaders;
+    }
 }

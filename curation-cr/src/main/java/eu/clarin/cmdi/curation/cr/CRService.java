@@ -20,8 +20,6 @@ public interface CRService {
 
 	boolean isPublicSchema(String schemaLocation) throws PPHCacheException;
 
-	boolean isSchemaCRResident(String schemaLocation);
-
 	Stream<String> getPublicSchemaLocations() throws PPHCacheException;
 
 	String getIdFromSchemaLocation(String schemaLocation);

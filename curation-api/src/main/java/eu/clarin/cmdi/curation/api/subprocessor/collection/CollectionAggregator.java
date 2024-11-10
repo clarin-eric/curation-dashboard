@@ -159,7 +159,7 @@ public class CollectionAggregator {
      */
     public synchronized void addReport(CollectionReport collectionReport, CMDInstanceReport instanceReport) {
 
-        if (instanceReport.details.size() > 0) {//only add a record if there're details to report
+        if (!instanceReport.details.isEmpty()) {//only add a record if there're details to report
 
             collectionReport.recordDetails.add(new RecordDetail(instanceReport.fileReport.location, instanceReport.details));
         }
@@ -188,8 +188,8 @@ public class CollectionAggregator {
             if (instanceReport.instanceHeaderReport.schemaLocation != null) {
                 collectionReport.headerReport.numWithSchemaLocation++;
             }
-            if (instanceReport.instanceHeaderReport.isCRResident) {
-                collectionReport.headerReport.numSchemaCRResident++;
+            if (instanceReport.instanceHeaderReport.isCrResident) {
+                collectionReport.headerReport.numSchemaCrResident++;
             }
             if (instanceReport.instanceHeaderReport.mdProfile != null) {
                 collectionReport.headerReport.numWithMdProfile++;
@@ -214,7 +214,7 @@ public class CollectionAggregator {
             collectionReport.resProxyReport.totNumOfResourcesWithMime += instanceReport.resProxyReport.numOfResourcesWithMime;
             collectionReport.resProxyReport.totNumOfResourcesWithReference += instanceReport.resProxyReport.numOfResourcesWithReference;
 
-            if (instanceReport.resProxyReport.invalidReferences.size() > 0) {
+            if (!instanceReport.resProxyReport.invalidReferences.isEmpty()) {
                 collectionReport.resProxyReport.invalidReferences.add(new InvalidReference(
                         instanceReport.fileReport.location, instanceReport.resProxyReport.invalidReferences));
             }
@@ -252,7 +252,6 @@ public class CollectionAggregator {
 
         this.mdSelfLinks.entrySet()
                 .stream()
-                .filter(entrySet -> entrySet.getValue().size() > 1)
                 .forEach(entrySet -> {
                     if(entrySet.getValue().size() == 1){ //link is unique
                         collectionReport.headerReport.numWithUniqueMdSelflink++;
@@ -262,7 +261,7 @@ public class CollectionAggregator {
                     }
                 });
         // adding score for unique selflinks
-        collectionReport.profileReport.aggregatedScore += collectionReport.headerReport.numWithUniqueMdSelflink;
+        collectionReport.headerReport.aggregatedScore += collectionReport.headerReport.numWithUniqueMdSelflink;
 
         // lincheckerReport
 

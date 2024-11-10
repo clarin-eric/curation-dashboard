@@ -9,6 +9,7 @@ public record ProfileHeader(
         String name,
         String description,
         String status,
-        boolean isPublic
+        boolean isPublic,
+        boolean isCrResident
 ) implements Serializable {
 }

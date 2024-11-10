@@ -21,7 +21,7 @@ public class InstanceHeaderReport {
    @XmlElement
    public String schemaLocation;
    @XmlElement
-   public boolean isCRResident;
+   public boolean isCrResident;
    @XmlElement   
    public String mdProfile;
    @XmlElement   

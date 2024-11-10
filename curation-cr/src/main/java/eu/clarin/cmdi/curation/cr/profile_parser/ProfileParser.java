@@ -7,12 +7,15 @@ import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.CCRStatus;
+import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * The type Profile parser.
@@ -20,6 +23,7 @@ import java.util.*;
 @Slf4j
 public abstract class ProfileParser {
 
+   private final Pattern CR_REST_PATTERN;
    /**
     * The Ccr service.
     */
@@ -27,14 +31,20 @@ public abstract class ProfileParser {
 
    private CRElement _cur;
 
+
+
    /**
     * Instantiates a new Profile parser.
     *
     * @param ccrService the ccr service
     */
-   public ProfileParser(CCRService ccrService) {
+   public ProfileParser(CCRService ccrService, CRConfig crConfig) {
       
       this.ccrService = ccrService;
+
+      String CR_REST = crConfig.getRestApi().replaceFirst("http(s)?", "(http|https)").replaceFirst("/1\\..+", "/.+");
+
+      this.CR_REST_PATTERN = Pattern.compile(CR_REST);
    }
 
    /**
@@ -136,7 +146,8 @@ public abstract class ProfileParser {
          evaluateXPath(vn,"//cmd:Header/cmd:Name/text()", ap),
          evaluateXPath(vn, "//cmd:Header/cmd:Description/text()", ap),
          evaluateXPath(vn,"//cmd:Header/cmd:Status/text()", ap),
-              false
+        false,
+         isCrResident(schemaLocation)
       );
    }
 
@@ -294,5 +305,9 @@ public abstract class ProfileParser {
       }
 
       return concept;
+   }
+   private boolean isCrResident(String schemaLocation) {
+
+      return CR_REST_PATTERN.matcher(schemaLocation).matches();
    }
 }

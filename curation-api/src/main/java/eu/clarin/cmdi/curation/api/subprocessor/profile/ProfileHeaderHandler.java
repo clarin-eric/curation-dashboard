@@ -70,7 +70,7 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
          report.details.add(new Detail(Severity.FATAL,"concept" , "can't parse profile '" + profile.getSchemaLocation() + "'"));
          log.debug("can't parse profile '{}'", profile.getSchemaLocation());
 
-         report.headerReport = new ProfileHeaderReport(new ProfileHeader("n/a", profile.getSchemaLocation(), "n/a", "n/a", "n/a", "n/a", false));
+         report.headerReport = new ProfileHeaderReport(new ProfileHeader("n/a", profile.getSchemaLocation(), "n/a", "n/a", "n/a", "n/a", false, false));
 
          return;
 

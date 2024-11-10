@@ -30,7 +30,7 @@ public class HeaderReport {
    @XmlElement
    public long numWithSchemaLocation;
    @XmlElement
-   public long numSchemaCRResident;
+   public long numSchemaCrResident;
    @XmlElement
    public long numWithMdProfile;
    @XmlElement

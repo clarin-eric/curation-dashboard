@@ -5,6 +5,7 @@ import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
@@ -30,9 +31,9 @@ public class CMDI1_2_ProfileParser extends ProfileParser {
      *
      * @param ccrService the ccr service
      */
-    public CMDI1_2_ProfileParser(CCRService ccrService, ApplicationContext ctx) {
+    public CMDI1_2_ProfileParser(CCRService ccrService, ApplicationContext ctx, CRConfig crConfig) {
 
-        super(ccrService);
+        super(ccrService, crConfig);
 
         this.ctx = ctx;
     }
@@ -110,7 +111,7 @@ public class CMDI1_2_ProfileParser extends ProfileParser {
 
         vg.parseHttpUrl(ENVELOPE_URL, true);
 
-        ParsedProfile envelope = parser.parse(vg.getNav(), ENVELOPE_URL, new ProfileHeader("1.x", ENVELOPE_URL, "", "", "", "", true));
+        ParsedProfile envelope = parser.parse(vg.getNav(), ENVELOPE_URL, new ProfileHeader("1.x", ENVELOPE_URL, "", "", "", "", true, true));
 
         xpathNode.putAll(envelope.xpathNode());
         xpathElementNode.putAll(envelope.xpathElementNode());

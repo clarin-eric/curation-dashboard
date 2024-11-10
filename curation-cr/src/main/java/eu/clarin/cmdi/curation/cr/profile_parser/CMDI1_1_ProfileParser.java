@@ -4,13 +4,12 @@ import com.ximpleware.VTDException;
 import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -24,9 +23,9 @@ public class CMDI1_1_ProfileParser extends ProfileParser{
 	 *
 	 * @param ccrService the ccr service
 	 */
-	public CMDI1_1_ProfileParser(CCRService ccrService) {
+	public CMDI1_1_ProfileParser(CCRService ccrService, CRConfig crConfig) {
 
-	   super(ccrService);
+	   super(ccrService, crConfig);
 
    }
 

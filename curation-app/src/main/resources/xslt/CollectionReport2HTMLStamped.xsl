@@ -308,7 +308,7 @@
         </p>
         <p>
             Number of files where schemaLocation is CR resident:
-            <xsl:value-of select="format-number(numSchemaCRResident, '###,##0')"/>
+            <xsl:value-of select="format-number(numSchemaCrResident, '###,##0')"/>
         </p>
         <p>
             Number of files with MdProfile:

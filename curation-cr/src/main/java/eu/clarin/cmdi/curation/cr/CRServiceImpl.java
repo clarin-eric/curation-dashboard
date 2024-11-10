@@ -20,10 +20,8 @@ import java.util.stream.Stream;
 @Service
 public class CRServiceImpl implements CRService {
 
-    public static final String PROFILE_PREFIX = "clarin.eu:cr1:";
     public static final String PROFILE_ID_FORMAT = "clarin\\.eu:cr1:p_[0-9]+";
     public static final Pattern PROFILE_ID_PATTERN = Pattern.compile(PROFILE_ID_FORMAT);
-    public final Pattern CR_REST_PATTERN;
 
     private final CRConfig crConfig;
     private final CRCache crCache;
@@ -40,10 +38,6 @@ public class CRServiceImpl implements CRService {
         this.crConfig = crConfig;
 
         this.crCache = crCache;
-
-        String CR_REST = crConfig.getRestApi().replaceFirst("http(s)?", "(http|https)").replaceFirst("/1\\..+", "/.+");
-
-        this.CR_REST_PATTERN = Pattern.compile(CR_REST);
     }
 
 
@@ -78,11 +72,6 @@ public class CRServiceImpl implements CRService {
     public boolean isPublicSchema(String schemaLocation) throws PPHCacheException {
 
         return this.crCache.getPublicSchemaLocations().contains(schemaLocation);
-    }
-
-    @Override
-    public boolean isSchemaCRResident(String schemaLocation) {
-        return CR_REST_PATTERN.matcher(schemaLocation).matches();
     }
 
     @Override

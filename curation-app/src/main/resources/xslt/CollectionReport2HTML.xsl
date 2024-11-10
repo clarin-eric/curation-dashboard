@@ -297,7 +297,7 @@
         </p>
         <p>
             Number of files where schemaLocation is CR resident:
-            <xsl:value-of select="format-number(numSchemaCRResident, '###,##0')"/>
+            <xsl:value-of select="format-number(numSchemaCrResident, '###,##0')"/>
         </p>
         <p>
             Number of files with MdProfile:
@@ -318,7 +318,7 @@
 
         <xsl:if test="./duplicatedMDSelfLinks/duplicatedMDSelfLink">
 
-            <h2 id="duplicatedMDSelfLinks">Duplicated MDSelfLinks:</h2>
+            <h3 id="duplicatedMDSelfLinks">Duplicated MDSelfLinks:</h3>
 
             <table class="reportTable">
                 <thead>

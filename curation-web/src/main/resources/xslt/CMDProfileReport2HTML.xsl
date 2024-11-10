@@ -98,6 +98,14 @@
 								<xsl:value-of select="./headerReport/status" />
 							</td>
 						</tr>
+						<tr>
+							<th>Public</th>
+							<td><xsl:value-of select="./headerReport/public" /></td>
+						</tr>
+						<tr>
+							<th>CR resident</th>
+							<td><xsl:value-of select="./headerReport/crResident" /></td>
+						</tr>
 					</xsl:if>
 				</table>
 				<hr />

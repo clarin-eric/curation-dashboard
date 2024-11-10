@@ -78,6 +78,10 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
       public String getId() {
          return report.headerReport.getId();
       };
+      @XmlAttribute
+      public boolean isPublic() { return report.headerReport.isPublic(); }
+      @XmlAttribute
+      public boolean isCrResident() { return report.headerReport.isCrResident(); }
       @XmlElement
       public String getName() {
          return report.headerReport.getName();

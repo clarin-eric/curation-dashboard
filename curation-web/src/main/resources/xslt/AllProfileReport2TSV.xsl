@@ -17,6 +17,8 @@
 <xsl:text>&#9;</xsl:text>
 <xsl:text>Name</xsl:text>
 <xsl:text>&#9;</xsl:text>
+<xsl:text>(P)ublic (C)R resident</xsl:text>
+<xsl:text>&#9;</xsl:text>
 <xsl:text>Score</xsl:text>
 <xsl:text>&#9;</xsl:text>
 <xsl:text>Collection Usage</xsl:text>
@@ -35,6 +37,8 @@
 <xsl:value-of select="@id"></xsl:value-of>
 <xsl:text>&#9;</xsl:text>
 <xsl:value-of select="name"></xsl:value-of>
+<xsl:text>&#9;</xsl:text>
+<xsl:if test="@public">P</xsl:if><xsl:if test="@crResident">C</xsl:if>
 <xsl:text>&#9;</xsl:text>
 <xsl:value-of select="score"></xsl:value-of>
 <xsl:text>&#9;</xsl:text>
