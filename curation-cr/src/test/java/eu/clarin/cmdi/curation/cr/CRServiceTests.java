@@ -63,7 +63,7 @@ class CRServiceTests {
     @BeforeAll
     public void prepareFileCache() throws IOException {
 
-        FileUtils.copyDirectory(new File(this.getClass().getResource("/cr_cache").getFile()), crConfig.getCrCache().toFile());
+        FileUtils.copyDirectory(new File(this.getClass().getResource("/cr_cache").getFile()), new File("/tmp/curation"));
     }
 
     //@Test

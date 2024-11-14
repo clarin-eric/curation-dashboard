@@ -127,10 +127,10 @@ public class CollectionTest {
       assertEquals(collectionPath.getFileName().toString(), this.collectionReport.getName());
       
 //      assertEquals(instanceReport.instanceScore * 100, collectionReport.aggregatedScore, 0.1);
-      
-      assertEquals(instanceReport.instanceScore, this.collectionReport.avgScore, 0.1);
-      
-      assertEquals(CMDInstanceReport.maxScore * 100 + this.collectionReport.linkcheckerReport.aggregatedMaxScore, collectionReport.aggregatedMaxScore, 0.1);
+      // adding 1 for unique MD selflink which doesn't exist on instance level
+      assertEquals(instanceReport.instanceScore +1, this.collectionReport.avgScore, 0.1);
+      // adding 1 for unique MD selflink which doesn't exist on instance level
+      assertEquals((CMDInstanceReport.maxScore +1) * 100 + this.collectionReport.linkcheckerReport.aggregatedMaxScore, collectionReport.aggregatedMaxScore, 0.1);
    } 
    
    @Test
@@ -168,7 +168,7 @@ public class CollectionTest {
       
       assertEquals((instanceReport.instanceHeaderReport.schemaLocation!=null?1:0) * 100,  collectionReport.headerReport.numWithSchemaLocation);
       
-      assertEquals((instanceReport.instanceHeaderReport.isCRResident?1:0) * 100,  collectionReport.headerReport.numSchemaCRResident);
+      assertEquals((instanceReport.instanceHeaderReport.isCrResident?1:0) * 100,  collectionReport.headerReport.numSchemaCrResident);
       
       assertEquals((instanceReport.instanceHeaderReport.mdProfile!=null?1:0) * 100,  collectionReport.headerReport.numWithMdProfile);
       
@@ -177,8 +177,8 @@ public class CollectionTest {
       assertEquals(0, collectionReport.headerReport.duplicatedMDSelfLink.size());
       
       assertEquals((instanceReport.instanceHeaderReport.mdCollectionDisplayName!=null?1:0) * 100,  collectionReport.headerReport.numWithMdCollectionDisplayName);
-      
-      assertEquals(instanceReport.instanceHeaderReport.score, collectionReport.headerReport.avgScore, 0.1);
+      // adding 1 for unique MD selflink which doesn't exist on instance level
+      assertEquals(instanceReport.instanceHeaderReport.score +1, collectionReport.headerReport.avgScore, 0.1);
       
       //we copy file 000.xml to 099.xml which should create a duplicated self link
       try {

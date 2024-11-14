@@ -9,9 +9,13 @@ import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.CollectionUsage;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.CRServiceImpl;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
+import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
+import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +36,21 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
    /**
     * The Conf.
     */
-   @Autowired
-   CRConfig crConfig;
-   @Autowired
-   private CRService crService;   
-   @Autowired
-   private CurationModule curationModule;
 
-   /**
+   private final CRConfig crConfig;
+
+   private final CRService crService;
+
+   private final CurationModule curationModule;
+
+    public InstanceHeaderProcessor(CRConfig crConfig, CRService crService, CurationModule curationModule) {
+
+       this.crConfig = crConfig;
+        this.crService = crService;
+        this.curationModule = curationModule;
+    }
+
+    /**
     * Process.
     *
     * @param instance       the instance
@@ -96,22 +107,15 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
             
          }
          else {
+
             instanceReport.instanceHeaderReport.score+=2; // Availability if mdProfile and CRResidence
             instanceReport.details.add(new Detail(Severity.WARNING, "header", "Attribute schemaLocation is missing. " + instanceReport.instanceHeaderReport.mdProfile + " is assumed"));
           
          }
       }
       else {//schemaLocation available
-         
+
          instanceReport.instanceHeaderReport.score++; // availability of schemaLocation
-         
-         if(instanceReport.instanceHeaderReport.isCrResident) {
-            
-            instanceReport.instanceHeaderReport.score++; // CRResidence
-         }
-         else {
-            instanceReport.details.add(new Detail(Severity.WARNING, "header", "Schema not registered"));
-         }
          
          if (instanceReport.instanceHeaderReport.mdProfile == null) {
             
@@ -173,6 +177,14 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
       CMDProfileReport profileReport = curationModule.processCMDProfile(schemaLocation);
 
       instanceReport.profileHeaderReport = profileReport.headerReport;
+
+      if(instanceReport.instanceHeaderReport.isCrResident = instanceReport.profileHeaderReport.isCrResident()) {
+
+         instanceReport.instanceHeaderReport.score++; // CRResidence
+      }
+      else {
+         instanceReport.details.add(new Detail(Severity.WARNING, "header", "Schema not registered"));
+      }
 
       instanceReport.profileScore = profileReport.score;
       instanceReport.instanceScore += profileReport.score;
