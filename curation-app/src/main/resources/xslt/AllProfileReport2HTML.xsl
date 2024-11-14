@@ -95,15 +95,6 @@
 									<xsl:value-of
 											select="format-number(percOfElementsWithConcept,'0.00%')"/>
 								</td>
-								<td>
-									<a>
-										<xsl:attribute name="href">
-											<xsl:text>https://clarin.oeaw.ac.at/exist/apps/smc-browser/index.html?graph=smc-graph-groups-profiles-datcats-rr.js&amp;depth-before=7&amp;depth-after=2&amp;link-distance=120&amp;charge=250&amp;friction=75&amp;gravity=10&amp;node-size=4&amp;link-width=1&amp;labels=show&amp;curve=straight-arrow&amp;layout=horizontal-tree&amp;selected=</xsl:text>
-											<xsl:value-of select="translate(@id,'.:','_')"/>
-										</xsl:attribute>
-										explore in SMC browser
-									</a>
-								</td>
 							</tr>
 						</xsl:for-each>
 					</tbody>
