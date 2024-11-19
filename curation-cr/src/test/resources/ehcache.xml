@@ -15,7 +15,7 @@
             <ehcache:none/>
         </ehcache:expiry>
         <ehcache:resources>
-            <ehcache:disk unit="GB" persistent="true">1</ehcache:disk>
+            <ehcache:disk persistent="true" unit="GB">1</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     <ehcache:cache alias="profileCache">
@@ -23,7 +23,7 @@
             <ehcache:none/>
         </ehcache:expiry>
         <ehcache:resources>
-            <ehcache:disk unit="GB" persistent="true">1</ehcache:disk>
+            <ehcache:disk persistent="true" unit="GB">1</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     <ehcache:cache alias="crCache">
