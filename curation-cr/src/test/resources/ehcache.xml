@@ -1,8 +1,13 @@
+<!--
+copied from ehcache/ehcache.xml to module test/resources
+-->
 <ehcache:config
         xmlns:ehcache="http://www.ehcache.org/v3"
         xmlns:jcache="http://www.ehcache.org/v3/jsr107">
     <ehcache:persistence directory="/tmp/ehcache"/>
     <ehcache:cache alias="ccrCache">
+        <ehcache:key-type>java.lang.String</ehcache:key-type>
+        <ehcache:value-type>java.io.Serializable</ehcache:value-type>
         <ehcache:expiry>
             <ehcache:none/>
         </ehcache:expiry>
@@ -11,6 +16,8 @@
         </ehcache:resources>
     </ehcache:cache>
     <ehcache:cache alias="pphCache">
+        <ehcache:key-type>java.lang.String</ehcache:key-type>
+        <ehcache:value-type>java.io.Serializable</ehcache:value-type>
         <ehcache:expiry>
             <ehcache:none/>
         </ehcache:expiry>
@@ -19,6 +26,8 @@
         </ehcache:resources>
     </ehcache:cache>
     <ehcache:cache alias="profileCache">
+        <ehcache:key-type>java.lang.String</ehcache:key-type>
+        <ehcache:value-type>java.io.Serializable</ehcache:value-type>
         <ehcache:expiry>
             <ehcache:none/>
         </ehcache:expiry>

@@ -4,7 +4,6 @@
     <ehcache:service>
         <jcache:defaults enable-management="true" enable-statistics="true" />
     </ehcache:service>
-    <ehcache:persistence directory="/tmp/ehcache"/>
     <ehcache:cache alias="ccrCache">
         <ehcache:expiry>
             <ehcache:ttl unit="days">1</ehcache:ttl>

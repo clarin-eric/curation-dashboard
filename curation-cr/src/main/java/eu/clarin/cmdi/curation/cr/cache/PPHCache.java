@@ -45,7 +45,7 @@ public class PPHCache {
      *
      * @return the profile headers map with profile id as key
      */
-    @Cacheable(value = "pphCache", sync = true)
+    @Cacheable(value = "pphCache", key = "'none'", sync = true)
     public Map<String, ProfileHeader> getProfileHeadersMap() throws PPHCacheException {
 
         String fileName = crConfig.getRestApi().replaceAll("[/.:]", "_");
