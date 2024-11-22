@@ -24,10 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
@@ -116,62 +112,13 @@ public class CCRCache {
             }
         } // end switch off validation check
 
-        String fileName = conceptURI.replaceAll("[/.:]", "_") + ".xml";
+        String restApiUrlStr = ccrConfig.getRestApi() + ccrConfig.getQuery().replace("${conceptURI}", URLEncoder.encode(conceptURI, StandardCharsets.UTF_8));
 
-        Path filePath = ccrConfig.getCcrCache().resolve(fileName);
-
-        try {
-            if(Files.notExists(filePath, LinkOption.NOFOLLOW_LINKS) || Files.size(filePath) == 0){
-
-                if(Files.notExists(ccrConfig.getCcrCache())) {
-
-                    try {
-
-                        Files.createDirectories(ccrConfig.getCcrCache());
-                    }
-                    catch (IOException e) {
-
-                        log.error("could create ccr cache directory '{}'", ccrConfig.getCcrCache());
-                        throw new CCRServiceNotAvailableException(e);
-                    }
-                }
-
-                String restApiUrlStr = ccrConfig.getRestApi() + ccrConfig.getQuery().replace("${conceptURI}", URLEncoder.encode(conceptURI, StandardCharsets.UTF_8));
-
-                log.debug("Fetching from {}", restApiUrlStr);
-
-                try(InputStream in = httpUtils.getURLConnection(restApiUrlStr).getInputStream()){
-
-                    Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
-                }
-                catch(ConnectException e){
-
-                    log.error("can't connect to server");
-                    throw new CCRServiceNotAvailableException(e);
-                }
-                catch(SocketTimeoutException e){
-
-                    log.error("socket timeout from server");
-                    throw new CCRServiceNotAvailableException(e);
-                }
-                catch (IOException e) {
-
-                    log.info("can't cache concept '{}'", conceptURI);
-                    return concept[0];
-                }
-            }
-        }
-        catch (IOException e) {
-
-            log.error("can't access file '{}'", filePath);
-            throw new CCRServiceNotAvailableException(e);
-        }
-
-        try {
+        try(InputStream in = httpUtils.getURLConnection(restApiUrlStr).getInputStream()) {
 
             SAXParser parser = fac.newSAXParser();
 
-            parser.parse(filePath.toFile(),
+            parser.parse(in,
                     new DefaultHandler() {
 
                         private StringBuilder elementValue;
@@ -222,13 +169,13 @@ public class CCRCache {
         }
         catch (IOException ex) {
 
-            log.error("can't read file '{}'", filePath);
+            log.error("can't read URL '{}'", restApiUrlStr);
             throw new CCRServiceNotAvailableException(ex);
         }
 
         catch (SAXException ex) {
 
-            log.info("can't parse file '{}'", filePath);
+            log.info("can't parse file from URL'{}'", restApiUrlStr);
         }
 
         return concept[0];

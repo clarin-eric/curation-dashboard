@@ -3,7 +3,6 @@ package eu.clarin.cmdi.curation.ccr;
 import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.commons.conf.HttpConfig;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -66,9 +64,6 @@ class CCRServiceTests {
       // ensure all connection using HTTPS will use the SSL context defined by
       // MockServer to allow dynamically generated certificates to be accepted
       HttpsURLConnection.setDefaultSSLSocketFactory(new KeyStoreFactory(new MockServerLogger()).sslContext().getSocketFactory());
-
-      FileUtils.copyDirectory(new File(this.getClass().getResource("/ccr_cache").getFile()), ccrConfig.getCcrCache().toFile());
-
 
    }
    @Test

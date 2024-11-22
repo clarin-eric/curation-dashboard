@@ -8,7 +8,6 @@ import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.springtest.MockServerPort;
@@ -23,8 +22,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -59,12 +56,6 @@ class CRServiceTests {
 
     @MockServerPort
     private Integer mockServerPort;
-
-    @BeforeAll
-    public void prepareFileCache() throws IOException {
-
-        FileUtils.copyDirectory(new File(this.getClass().getResource("/cr_cache").getFile()), crConfig.getCrCache().toFile());
-    }
 
     //@Test
     void serverNotAvailable() {

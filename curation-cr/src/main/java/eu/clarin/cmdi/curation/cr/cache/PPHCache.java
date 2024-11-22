@@ -17,10 +17,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -48,49 +44,9 @@ public class PPHCache {
     @Cacheable(value = "pphCache", key = "'none'", sync = true)
     public Map<String, ProfileHeader> getProfileHeadersMap() throws PPHCacheException {
 
-        String fileName = crConfig.getRestApi().replaceAll("[/.:]", "_");
-
-        Path xml = crConfig.getCrCache().resolve(fileName + ".xml");
-
-        // if not download it
-
-        try {
-            if (Files.notExists(xml) || Files.size(xml) == 0) {
-
-                if (Files.notExists(crConfig.getCrCache())) {
-
-                    try {
-
-                        Files.createDirectories(crConfig.getCrCache());
-                    }
-                    catch (IOException e) {
-
-                        log.error("could create cr cache directory '{}'", crConfig.getCrCache());
-                    }
-                }
-
-                log.debug("XML is not in the local cache, it will be downloaded");
-
-                try (InputStream in = httpUtils.getURLConnection(crConfig.getRestApi() + crConfig.getQuery()).getInputStream()) {
-
-                    Files.copy(in, xml, StandardCopyOption.REPLACE_EXISTING);
-                }
-            }
-        }
-        catch (MalformedURLException e) {
-
-            log.error("the concept registry URL '{}' is malformed", crConfig.getRestApi() + crConfig.getQuery());
-            throw new PPHCacheException(e);
-        }
-        catch (IOException e) {
-
-            log.error("can't access xml file '{}'", xml);
-            throw new PPHCacheException(e);
-        }
-
         Map<String, ProfileHeader> profileHeaders = new ConcurrentHashMap<>();
 
-        try (InputStream in = Files.newInputStream(xml)) {
+        try (InputStream in = httpUtils.getURLConnection(crConfig.getRestApi() + crConfig.getQuery()).getInputStream()) {
 
             SAXParserFactory fac = SAXParserFactory.newInstance();
             SAXParser parser = fac.newSAXParser();
@@ -153,7 +109,7 @@ public class PPHCache {
 
         catch (IOException e) {
 
-            log.error("IOException while reading stream from file '{}'", xml);
+            log.error("IOException while reading public profiles from URL '{}'", crConfig.getRestApi() + crConfig.getQuery());
             throw new PPHCacheException(e);
         }
         catch (SAXException e) {

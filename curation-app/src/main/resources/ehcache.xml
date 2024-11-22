@@ -4,7 +4,7 @@
     <ehcache:service>
         <jcache:defaults enable-management="true" enable-statistics="true" />
     </ehcache:service>
-    <ehcache:persistence directory="${curation.directory.dataRoot}/ehcache"/>
+    <ehcache:persistence directory="/share/ehcache"/>
     <ehcache:cache alias="ccrCache">
         <ehcache:expiry>
             <ehcache:ttl unit="days">7</ehcache:ttl>
