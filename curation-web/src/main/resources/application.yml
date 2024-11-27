@@ -18,6 +18,9 @@ spring:
       hibernate:
          ddl-auto: none
       database-platform: org.hibernate.dialect.MariaDBDialect
+   cache:
+      jcache:
+         config: classpath:ehcache.xml
    servlet:
       multipart:
         enabled: true
@@ -33,9 +36,6 @@ server:
       key-alias: selfsigned
       enabled: true
    port: 8443
-   cache:
-      jcache:
-         config: classpath:ehcache.xml
 curation:
    cr-service:
       cr-cache: ${java.io.tmpdir}/curation/cr_cache
