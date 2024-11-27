@@ -173,7 +173,7 @@ public class CCRCache {
             }
             catch (IOException ex) {
 
-                log.error("can't read URL '{}'", restApiUrlStr);
+                log.info("can't read URL '{}'", restApiUrlStr);
             }
 
             catch (SAXException ex) {
