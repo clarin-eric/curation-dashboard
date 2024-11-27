@@ -33,6 +33,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 
 /**
@@ -49,6 +51,8 @@ public class CollectionAggregator {
     private final UrlRepository uRep;
 
     private final Map<String, Collection<String>> mdSelfLinks = new HashMap<>();
+
+    private final Lock lock = new ReentrantLock();
 
     public CollectionAggregator(ApiConfig conf, ApplicationContext ctx, AggregatedStatusRepository aRep, UrlRepository uRep) {
         this.conf = conf;
@@ -162,93 +166,100 @@ public class CollectionAggregator {
      * @param collectionReport the collection report
      * @param instanceReport   the instance report
      */
-    public synchronized void addReport(CollectionReport collectionReport, CMDInstanceReport instanceReport) {
+    public void addReport(CollectionReport collectionReport, CMDInstanceReport instanceReport) {
 
-        if (!instanceReport.details.isEmpty()) {//only add a record if there're details to report
+        this.lock.lock();
 
-            collectionReport.recordDetails.add(new RecordDetail(instanceReport.fileReport.location, instanceReport.details));
+        try {
+            if (!instanceReport.details.isEmpty()) {//only add a record if there're details to report
+
+                collectionReport.recordDetails.add(new RecordDetail(instanceReport.fileReport.location, instanceReport.details));
+            }
+
+            if (instanceReport.isProcessable) {
+
+                if (instanceReport.instanceScore > collectionReport.maxScore) {
+                    collectionReport.maxScore = instanceReport.instanceScore;
+                }
+
+                if (instanceReport.instanceScore < collectionReport.minScore)
+                    collectionReport.minScore = instanceReport.instanceScore;
+
+                // file
+                collectionReport.fileReport.numOfFilesProcessable++;
+                collectionReport.fileReport.aggregatedScore += instanceReport.fileReport.score;
+
+                //profile
+                collectionReport.profileReport.profiles.stream()
+                        .filter(profile -> profile.schemaLocation.equals(instanceReport.profileHeaderReport.getSchemaLocation())).findFirst()
+                        .ifPresentOrElse(profile -> profile.count++, () -> collectionReport.profileReport.profiles
+                                .add(new Profile(instanceReport.profileHeaderReport.getSchemaLocation(), instanceReport.profileHeaderReport.getProfileHeader().isPublic(), instanceReport.profileScore)));
+                collectionReport.profileReport.aggregatedScore += instanceReport.profileScore;
+
+                // header
+                if (instanceReport.instanceHeaderReport.schemaLocation != null) {
+                    collectionReport.headerReport.numWithSchemaLocation++;
+                }
+                if (instanceReport.instanceHeaderReport.isCrResident) {
+                    collectionReport.headerReport.numSchemaCrResident++;
+                }
+                if (instanceReport.instanceHeaderReport.mdProfile != null) {
+                    collectionReport.headerReport.numWithMdProfile++;
+                }
+                if (instanceReport.instanceHeaderReport.mdCollectionDisplayName != null) {
+                    collectionReport.headerReport.numWithMdCollectionDisplayName++;
+                }
+                if (instanceReport.instanceHeaderReport.mdSelfLink != null) {
+
+                    collectionReport.headerReport.numWithMdSelflink++;
+
+                    this.mdSelfLinks
+                            .computeIfAbsent(instanceReport.instanceHeaderReport.mdSelfLink, k -> new ArrayList<>())
+                            .add(instanceReport.fileReport.location);
+
+                }
+
+                collectionReport.headerReport.aggregatedScore += instanceReport.instanceHeaderReport.score;
+
+                // ResProxies
+                collectionReport.resProxyReport.totNumOfResources += instanceReport.resProxyReport.numOfResources;
+                collectionReport.resProxyReport.totNumOfResourcesWithMime += instanceReport.resProxyReport.numOfResourcesWithMime;
+                collectionReport.resProxyReport.totNumOfResourcesWithReference += instanceReport.resProxyReport.numOfResourcesWithReference;
+
+                if (!instanceReport.resProxyReport.invalidReferences.isEmpty()) {
+                    collectionReport.resProxyReport.invalidReferences.add(new InvalidReference(
+                            instanceReport.fileReport.location, instanceReport.resProxyReport.invalidReferences));
+                }
+                collectionReport.resProxyReport.aggregatedScore += instanceReport.resProxyReport.score;
+
+                // XmlPopulation
+                collectionReport.xmlPopulationReport.totNumOfXMLElements += instanceReport.xmlPopulationReport.numOfXMLElements;
+                collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements += instanceReport.xmlPopulationReport.numOfXMLSimpleElements;
+                collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements += instanceReport.xmlPopulationReport.numOfXMLEmptyElements;
+                collectionReport.xmlPopulationReport.aggregatedScore += instanceReport.xmlPopulationReport.score;
+
+                // XmlValidation
+                collectionReport.xmlValidityReport.totNumOfValidRecords += instanceReport.xmlValidityReport.score;
+                collectionReport.xmlValidityReport.aggregatedScore += instanceReport.xmlValidityReport.score;
+
+                // Facet
+                instanceReport.facetReport.coverages
+                        .stream()
+                        .filter(coverage -> coverage.coveredByInstance)
+                        .forEach(instanceFacet -> collectionReport.facetReport.facets
+                                .stream()
+                                .filter(collectionFacet -> collectionFacet.name.equals(instanceFacet.name))
+                                .findFirst()
+                                .get()
+                                .count++
+                        );
+                collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
+            } else {
+                collectionReport.fileReport.numOfFilesNonProcessable++;
+            }
         }
-
-        if (instanceReport.isProcessable) {
-
-            if (instanceReport.instanceScore > collectionReport.maxScore) {
-                collectionReport.maxScore = instanceReport.instanceScore;
-            }
-
-            if (instanceReport.instanceScore < collectionReport.minScore)
-                collectionReport.minScore = instanceReport.instanceScore;
-
-            // file
-            collectionReport.fileReport.numOfFilesProcessable++;
-            collectionReport.fileReport.aggregatedScore += instanceReport.fileReport.score;
-
-            //profile
-            collectionReport.profileReport.profiles.stream()
-                    .filter(profile -> profile.schemaLocation.equals(instanceReport.profileHeaderReport.getSchemaLocation())).findFirst()
-                    .ifPresentOrElse(profile -> profile.count++, () -> collectionReport.profileReport.profiles
-                            .add(new Profile(instanceReport.profileHeaderReport.getSchemaLocation(), instanceReport.profileHeaderReport.getProfileHeader().isPublic(), instanceReport.profileScore)));
-            collectionReport.profileReport.aggregatedScore += instanceReport.profileScore;
-
-            // header
-            if (instanceReport.instanceHeaderReport.schemaLocation != null) {
-                collectionReport.headerReport.numWithSchemaLocation++;
-            }
-            if (instanceReport.instanceHeaderReport.isCrResident) {
-                collectionReport.headerReport.numSchemaCrResident++;
-            }
-            if (instanceReport.instanceHeaderReport.mdProfile != null) {
-                collectionReport.headerReport.numWithMdProfile++;
-            }
-            if (instanceReport.instanceHeaderReport.mdCollectionDisplayName != null) {
-                collectionReport.headerReport.numWithMdCollectionDisplayName++;
-            }
-            if (instanceReport.instanceHeaderReport.mdSelfLink != null) {
-
-                collectionReport.headerReport.numWithMdSelflink++;
-
-                this.mdSelfLinks
-                        .computeIfAbsent(instanceReport.instanceHeaderReport.mdSelfLink, k -> new ArrayList<>())
-                        .add(instanceReport.fileReport.location);
-
-            }
-
-            collectionReport.headerReport.aggregatedScore += instanceReport.instanceHeaderReport.score;
-
-            // ResProxies
-            collectionReport.resProxyReport.totNumOfResources += instanceReport.resProxyReport.numOfResources;
-            collectionReport.resProxyReport.totNumOfResourcesWithMime += instanceReport.resProxyReport.numOfResourcesWithMime;
-            collectionReport.resProxyReport.totNumOfResourcesWithReference += instanceReport.resProxyReport.numOfResourcesWithReference;
-
-            if (!instanceReport.resProxyReport.invalidReferences.isEmpty()) {
-                collectionReport.resProxyReport.invalidReferences.add(new InvalidReference(
-                        instanceReport.fileReport.location, instanceReport.resProxyReport.invalidReferences));
-            }
-            collectionReport.resProxyReport.aggregatedScore += instanceReport.resProxyReport.score;
-
-            // XmlPopulation
-            collectionReport.xmlPopulationReport.totNumOfXMLElements += instanceReport.xmlPopulationReport.numOfXMLElements;
-            collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements += instanceReport.xmlPopulationReport.numOfXMLSimpleElements;
-            collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements += instanceReport.xmlPopulationReport.numOfXMLEmptyElements;
-            collectionReport.xmlPopulationReport.aggregatedScore += instanceReport.xmlPopulationReport.score;
-
-            // XmlValidation
-            collectionReport.xmlValidityReport.totNumOfValidRecords += instanceReport.xmlValidityReport.score;
-            collectionReport.xmlValidityReport.aggregatedScore += instanceReport.xmlValidityReport.score;
-
-            // Facet
-            instanceReport.facetReport.coverages
-                    .stream()
-                    .filter(coverage -> coverage.coveredByInstance)
-                    .forEach(instanceFacet -> collectionReport.facetReport.facets
-                            .stream()
-                            .filter(collectionFacet -> collectionFacet.name.equals(instanceFacet.name))
-                            .findFirst()
-                            .get()
-                            .count++
-                    );
-            collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
-        } else {
-            collectionReport.fileReport.numOfFilesNonProcessable++;
+        finally {
+            this.lock.unlock();
         }
     }
 
