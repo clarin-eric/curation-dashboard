@@ -102,6 +102,8 @@ curation:
       - temporalCoverage
    # maximum size of the CMD file. Bigger files are treated as non-processable
    max_file_size: 100000
+   # maximum number of parallel threads in collection processing
+   maxThreads: ${MAX_THREADS:10}
    # URL of the web application
    # default:= String ""
    #base_url:

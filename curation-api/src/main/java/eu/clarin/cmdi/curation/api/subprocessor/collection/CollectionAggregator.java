@@ -17,7 +17,6 @@ import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.linkchecker.persistence.repository.UrlRepository;
 import eu.clarin.linkchecker.persistence.utils.Category;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -44,18 +43,19 @@ import java.util.stream.Stream;
 @Scope("prototype")
 public class CollectionAggregator {
 
-    @Autowired
-    private ApiConfig conf;
-    @Autowired
-    private ApplicationContext ctx;
-    @Autowired
-    private AggregatedStatusRepository aRep;
-    @Autowired
-    private UrlRepository uRep;
+    private final ApiConfig conf;
+    private final ApplicationContext ctx;
+    private final AggregatedStatusRepository aRep;
+    private final UrlRepository uRep;
 
-    private final Map<String, Collection<String>> mdSelfLinks = new HashMap<String, Collection<String>>();
+    private final Map<String, Collection<String>> mdSelfLinks = new HashMap<>();
 
-    private int counter;
+    public CollectionAggregator(ApiConfig conf, ApplicationContext ctx, AggregatedStatusRepository aRep, UrlRepository uRep) {
+        this.conf = conf;
+        this.ctx = ctx;
+        this.aRep = aRep;
+        this.uRep = uRep;
+    }
 
     /**
      * Process.
@@ -71,20 +71,21 @@ public class CollectionAggregator {
 
         collectionReport.fileReport.collectionRoot = conf.getDirectory().getDataRoot().relativize(collection.getPath()).toString();
 
-        //ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(conf.getThreadpoolSize());
-        ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+        final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+        //
+        final Semaphore maxTreads = new Semaphore(conf.getMaxThreads());
 
         try {
-            Files.walkFileTree(collection.getPath(), new FileVisitor<Path>() {
+            Files.walkFileTree(collection.getPath(), new FileVisitor<>() {
 
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
 
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult visitFile(Path filePath, BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult visitFile(Path filePath, BasicFileAttributes attrs) {
 
                     collectionReport.fileReport.numOfFiles++;
 
@@ -103,13 +104,17 @@ public class CollectionAggregator {
 
                     executor.execute(() -> {
 
-                        CMDInstanceReport instanceReport = null;
+
+                        CMDInstanceReport instanceReport;
                         try {
+                            maxTreads.acquire();
                             instanceReport = instance.generateReport();
                         }
-                        catch (MalFunctioningProcessorException e) {
+                        catch (MalFunctioningProcessorException | InterruptedException e) {
                             executor.shutdownNow();
                             throw new RuntimeException(e);
+                        } finally {
+                            maxTreads.release();
                         }
 
                         addReport(collectionReport, instanceReport);
@@ -120,13 +125,13 @@ public class CollectionAggregator {
                 }
 
                 @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
                     log.error("can't access file '{}'", file);
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
 
                     return FileVisitResult.CONTINUE;
                 }
@@ -145,7 +150,7 @@ public class CollectionAggregator {
             executor.awaitTermination(1, TimeUnit.HOURS);
         }
         catch (InterruptedException e) {
-            log.error("Error occured while waiting for the threadpool to terminate.");
+            log.error("Error occurred while waiting for the thread pool to terminate.");
         }
 
         calculateAverages(collectionReport);
@@ -202,7 +207,7 @@ public class CollectionAggregator {
                 collectionReport.headerReport.numWithMdSelflink++;
 
                 this.mdSelfLinks
-                        .computeIfAbsent(instanceReport.instanceHeaderReport.mdSelfLink, k -> new ArrayList<String>())
+                        .computeIfAbsent(instanceReport.instanceHeaderReport.mdSelfLink, k -> new ArrayList<>())
                         .add(instanceReport.fileReport.location);
 
             }
@@ -251,7 +256,6 @@ public class CollectionAggregator {
         // find all mdSelfLinks which appear in more than origin
 
         this.mdSelfLinks.entrySet()
-                .stream()
                 .forEach(entrySet -> {
                     if(entrySet.getValue().size() == 1){ //link is unique
                         collectionReport.headerReport.numWithUniqueMdSelflink++;

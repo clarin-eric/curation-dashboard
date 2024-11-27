@@ -37,13 +37,15 @@ public class ApiConfig {
    private String clientUsername;
    
    private String clientPassword;
+
+   private int maxThreads;
    
    @Bean
    public VloConfig vloConfig() {
       try {
          if (vloConfigLocation == null || vloConfigLocation.isEmpty()) {
             log.warn(
-                  "loading default VloConfig.xml from vlo-commons.jar - PROGRAM WILL WORK BUT WILL PROBABABLY DELIVER UNATTENDED RESULTS!!!");
+                  "loading default VloConfig.xml from vlo-commons.jar - PROGRAM WILL WORK BUT WILL PROBABLY DELIVER UNATTENDED RESULTS!!!");
             log.warn("make sure to define a valid curation:vlo_config_location in the file application.yml");
             return DefaultVloConfigFactory.configureDefaultMappingLocations(new DefaultVloConfigFactory().newConfig());
          }
