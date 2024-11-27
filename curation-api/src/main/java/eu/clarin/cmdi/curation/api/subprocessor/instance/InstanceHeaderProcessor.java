@@ -9,22 +9,17 @@ import eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.CollectionUsage;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
-import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.CRServiceImpl;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
-import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
-import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 
 /**
@@ -42,6 +37,8 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
    private final CRService crService;
 
    private final CurationModule curationModule;
+
+   private final Lock lock = new ReentrantLock();
 
     public InstanceHeaderProcessor(CRConfig crConfig, CRService crService, CurationModule curationModule) {
 
@@ -190,11 +187,15 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
       instanceReport.instanceScore += profileReport.score;
 
       if(instance.getProvidergroupName() != null) {
-         synchronized(this) {
+         this.lock.lock();
+         try {
             profileReport.collectionUsage.stream()
                .filter(usage -> usage.collectionName.equals(instance.getProvidergroupName()))
                .findFirst()
                .ifPresentOrElse(cu -> cu.count++, () -> profileReport.collectionUsage.add(new CollectionUsage(instance.getProvidergroupName())));
+         }
+         finally {
+            this.lock.unlock();
          }
       }
 
