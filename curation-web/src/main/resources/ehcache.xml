@@ -16,6 +16,12 @@
         </ehcache:expiry>
         <ehcache:heap unit="entries">500</ehcache:heap>
     </ehcache:cache>
+    <ehcache:cache alias="profileCache">
+        <ehcache:expiry>
+            <ehcache:ttl unit="hours">1</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">500</ehcache:heap>
+    </ehcache:cache>
     <ehcache:cache alias="crCache">
         <ehcache:expiry>
             <ehcache:ttl unit="hours">1</ehcache:ttl>
