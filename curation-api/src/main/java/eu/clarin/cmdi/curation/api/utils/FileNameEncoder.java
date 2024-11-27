@@ -12,6 +12,6 @@ public class FileNameEncoder {
      * @return the string
      */
     public static String encode(String sourceString){
-        return sourceString.replaceAll("[/.:]", "_");
+        return sourceString.replaceAll("[\\/.:]", "_");
     }
 }

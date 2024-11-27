@@ -89,13 +89,8 @@ public class CMDInstanceReport implements NamedReport {
    @Override
    @XmlTransient
    public String getName() {
-      if (fileReport.location != null && fileReport.location.contains(".xml")) {
-         String normalisedPath = fileReport.location.replace('\\', '/');
-         return FileNameEncoder.encode(normalisedPath);
-      }
-      else {
-         return fileReport.location;
-      }
+
+      return FileNameEncoder.encode(fileReport.location);
    }
 
    @Override
