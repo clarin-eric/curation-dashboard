@@ -50,7 +50,7 @@ curation:
       out: >
          /tmp/public
    max_file_size: 100000
-   maxThreads: 10
+   max_in_queue: 10
 logging:
    level:
       root: ERROR 

@@ -38,7 +38,7 @@ public class ApiConfig {
    
    private String clientPassword;
 
-   private int maxThreads;
+   private int maxInQueue;
    
    @Bean
    public VloConfig vloConfig() {

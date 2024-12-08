@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.api.subprocessor.collection;
 
+import eu.clarin.cmdi.curation.api.CurationModule;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
@@ -12,6 +13,8 @@ import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport.InvalidReference;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
+import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
+import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.linkchecker.persistence.repository.UrlRepository;
@@ -28,11 +31,9 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
@@ -51,6 +52,8 @@ public class CollectionAggregator {
     private final UrlRepository uRep;
 
     private final Map<String, Collection<String>> mdSelfLinks = new HashMap<>();
+
+    private final Map<String, AtomicInteger> profileUsage = new HashMap<>();
 
     private final Lock lock = new ReentrantLock();
 
@@ -77,7 +80,7 @@ public class CollectionAggregator {
 
         final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
         //
-        final Semaphore maxTreads = new Semaphore(conf.getMaxThreads());
+        final Semaphore maxInQueue = new Semaphore(conf.getMaxInQueue());
 
         try {
             Files.walkFileTree(collection.getPath(), new FileVisitor<>() {
@@ -90,6 +93,13 @@ public class CollectionAggregator {
 
                 @Override
                 public FileVisitResult visitFile(Path filePath, BasicFileAttributes attrs) {
+
+                    try {
+                        maxInQueue.acquire();
+                    }
+                    catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     collectionReport.fileReport.numOfFiles++;
 
@@ -111,16 +121,16 @@ public class CollectionAggregator {
 
                         CMDInstanceReport instanceReport;
                         try {
-                            maxTreads.acquire();
                             instanceReport = instance.generateReport();
                         }
-                        catch (MalFunctioningProcessorException | InterruptedException e) {
+                        catch (MalFunctioningProcessorException e) {
                             executor.shutdownNow();
                             throw new RuntimeException(e);
-                        } finally {
-                            maxTreads.release();
                         }
-
+                        finally {
+                            maxInQueue.release();
+                        }
+                        CollectionAggregator.this.lock.lock();
                         addReport(collectionReport, instanceReport);
 
                     }); // end executor.execute
@@ -167,8 +177,6 @@ public class CollectionAggregator {
      * @param instanceReport   the instance report
      */
     public void addReport(CollectionReport collectionReport, CMDInstanceReport instanceReport) {
-
-        this.lock.lock();
 
         try {
             if (!instanceReport.details.isEmpty()) {//only add a record if there are details to report
@@ -254,7 +262,10 @@ public class CollectionAggregator {
                                 .count++
                         );
                 collectionReport.facetReport.aggregatedScore += instanceReport.facetReport.score;
-            } else {
+
+                this.profileUsage.computeIfAbsent(instanceReport.profileHeaderReport.getSchemaLocation(), k -> new AtomicInteger()).incrementAndGet();
+            }
+            else {
                 collectionReport.fileReport.numOfFilesNonProcessable++;
             }
         }
@@ -448,6 +459,11 @@ public class CollectionAggregator {
             collectionReport.avgScore = collectionReport.aggregatedScore
                     / (double) collectionReport.fileReport.numOfFilesProcessable;
 
+            // add profileUsage
+            this.profileUsage.forEach((k,v) -> this.ctx.getBean(CurationModule.class)
+                                                    .processCMDProfile(k)
+                                                    .collectionUsage
+                                                    .add(new CMDProfileReport.CollectionUsage(collectionReport.fileReport.provider, v.get())));
         }
     }
 }
