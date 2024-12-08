@@ -41,7 +41,6 @@
 								</th>
 							</xsl:for-each>
 							<th>Perc Of Elements With Concepts</th>
-							<th>SMC</th>
 						</tr>
 					</thead>
 					<tbody>
