@@ -171,7 +171,7 @@ public class CollectionAggregator {
         this.lock.lock();
 
         try {
-            if (!instanceReport.details.isEmpty()) {//only add a record if there're details to report
+            if (!instanceReport.details.isEmpty()) {//only add a record if there are details to report
 
                 collectionReport.recordDetails.add(new RecordDetail(instanceReport.fileReport.location, instanceReport.details));
             }
@@ -239,7 +239,7 @@ public class CollectionAggregator {
                 collectionReport.xmlPopulationReport.aggregatedScore += instanceReport.xmlPopulationReport.score;
 
                 // XmlValidation
-                collectionReport.xmlValidityReport.totNumOfValidRecords += instanceReport.xmlValidityReport.score;
+                collectionReport.xmlValidityReport.totNumOfValidRecords += (int) instanceReport.xmlValidityReport.score;
                 collectionReport.xmlValidityReport.aggregatedScore += instanceReport.xmlValidityReport.score;
 
                 // Facet
@@ -266,15 +266,13 @@ public class CollectionAggregator {
     private void calculateAverages(CollectionReport collectionReport) {
         // find all mdSelfLinks which appear in more than origin
 
-        this.mdSelfLinks.entrySet()
-                .forEach(entrySet -> {
-                    if(entrySet.getValue().size() == 1){ //link is unique
-                        collectionReport.headerReport.numWithUniqueMdSelflink++;
-                    }
-                    else {//duplicate link
-                        collectionReport.headerReport.duplicatedMDSelfLink.add(new MDSelfLink(entrySet.getKey(), entrySet.getValue()));
-                    }
-                });
+        this.mdSelfLinks.forEach((key, value) -> {
+            if (value.size() == 1) { //link is unique
+                collectionReport.headerReport.numWithUniqueMdSelflink++;
+            } else {//duplicate link
+                collectionReport.headerReport.duplicatedMDSelfLink.add(new MDSelfLink(key, value));
+            }
+        });
         // adding score for unique selflinks
         collectionReport.headerReport.aggregatedScore += collectionReport.headerReport.numWithUniqueMdSelflink;
 
@@ -322,7 +320,7 @@ public class CollectionAggregator {
             collectionReport.linkcheckerReport.aggregatedMaxScore = collectionReport.fileReport.numOfFilesProcessable
                     * collectionReport.linkcheckerReport.totNumOfCheckedLinks / (double) collectionReport.linkcheckerReport.totNumOfLinks;
 
-            collectionReport.linkcheckerReport.aggregatedScore = (double) collectionReport.linkcheckerReport.ratioOfValidLinks
+            collectionReport.linkcheckerReport.aggregatedScore = collectionReport.linkcheckerReport.ratioOfValidLinks
                     * collectionReport.fileReport.numOfFilesProcessable
                     * collectionReport.linkcheckerReport.totNumOfCheckedLinks / (double) collectionReport.linkcheckerReport.totNumOfLinks;
         }
@@ -355,8 +353,8 @@ public class CollectionAggregator {
                     / collectionReport.fileReport.numOfFiles;
             collectionReport.fileReport.scorePercentage = collectionReport.fileReport.aggregatedScore
                     / (double) collectionReport.fileReport.numOfFiles;
-            collectionReport.fileReport.avgScore = (double) (collectionReport.fileReport.aggregatedScore
-                    / collectionReport.fileReport.numOfFiles);
+            collectionReport.fileReport.avgScore = collectionReport.fileReport.aggregatedScore
+                    / collectionReport.fileReport.numOfFiles;
             //profile
             collectionReport.profileReport.totNumOfProfiles = collectionReport.profileReport.profiles.size();
 
@@ -381,11 +379,11 @@ public class CollectionAggregator {
             collectionReport.profileReport.avgScore = collectionReport.profileReport.aggregatedScore
                     / (double) collectionReport.fileReport.numOfFilesProcessable;
             collectionReport.profileReport.scorePercentage = collectionReport.profileReport.aggregatedScore
-                    / (double) collectionReport.profileReport.aggregatedMaxScore;
+                    / collectionReport.profileReport.aggregatedMaxScore;
 
             // header
             collectionReport.headerReport.scorePercentage = collectionReport.headerReport.aggregatedScore
-                    / (double) collectionReport.headerReport.aggregatedMaxScore;
+                    / collectionReport.headerReport.aggregatedMaxScore;
             collectionReport.headerReport.avgScore = (collectionReport.headerReport.aggregatedScore
                     / (double) collectionReport.fileReport.numOfFilesProcessable);
             // resProxy
@@ -404,7 +402,7 @@ public class CollectionAggregator {
                     / (double) collectionReport.fileReport.numOfFilesProcessable;
             collectionReport.xmlPopulationReport.avgNumOfXMLSimpleElements = collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements
                     / (double) collectionReport.fileReport.numOfFilesProcessable;
-            collectionReport.xmlPopulationReport.avgNumOfXMLEmptyElements = collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
+            collectionReport.xmlPopulationReport.avgNumOfXMLEmptyElements = (double) collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
                     / collectionReport.fileReport.numOfFilesProcessable;
 
             if (collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements > 0) {
@@ -413,12 +411,12 @@ public class CollectionAggregator {
                         / (double) collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements);
             }
             collectionReport.xmlPopulationReport.scorePercentage = collectionReport.xmlPopulationReport.aggregatedScore
-                    / (double) collectionReport.xmlPopulationReport.aggregatedMaxScore;
+                    / collectionReport.xmlPopulationReport.aggregatedMaxScore;
             collectionReport.xmlPopulationReport.avgScore = (collectionReport.xmlPopulationReport.aggregatedScore
                     / (double) collectionReport.fileReport.numOfFilesProcessable);
             // xmlvalidity
             collectionReport.xmlValidityReport.scorePercentage = collectionReport.xmlValidityReport.aggregatedScore
-                    / (double) collectionReport.xmlValidityReport.aggregatedMaxScore;
+                    / collectionReport.xmlValidityReport.aggregatedMaxScore;
             collectionReport.xmlValidityReport.avgScore = (collectionReport.xmlValidityReport.aggregatedScore
                     / (double) collectionReport.fileReport.numOfFilesProcessable);
             // facet
@@ -427,7 +425,7 @@ public class CollectionAggregator {
             collectionReport.facetReport.percCoverageNonZero = (double) collectionReport.facetReport.facets.stream()
                     .filter(facet -> facet.count > 0).count() / collectionReport.facetReport.facets.size();
             collectionReport.facetReport.scorePercentage = collectionReport.facetReport.aggregatedScore
-                    / (double) collectionReport.facetReport.aggregatedMaxScore;
+                    / collectionReport.facetReport.aggregatedMaxScore;
             collectionReport.facetReport.avgScore = (collectionReport.facetReport.aggregatedScore
                     / (double) collectionReport.fileReport.numOfFilesProcessable);
             // linkchecker
@@ -445,7 +443,7 @@ public class CollectionAggregator {
                         / (double) collectionReport.linkcheckerReport.totNumOfLinksWithDuration;
             }
             collectionReport.linkcheckerReport.scorePercentage = collectionReport.linkcheckerReport.aggregatedScore
-                    / (double) collectionReport.linkcheckerReport.aggregatedMaxScore;
+                    / collectionReport.linkcheckerReport.aggregatedMaxScore;
             //collection
             collectionReport.avgScore = collectionReport.aggregatedScore
                     / (double) collectionReport.fileReport.numOfFilesProcessable;
