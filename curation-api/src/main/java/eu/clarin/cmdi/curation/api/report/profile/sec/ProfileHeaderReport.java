@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProfileHeaderReport {
    @XmlAttribute
-   public static final double maxScore = 1.0;
+   public static final double maxScore = 2.0;
    @XmlAttribute
    public double score;
    private final ProfileHeader header;

@@ -35,7 +35,7 @@ public class CMDProfileReport implements NamedReport {
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime previousCreationTime;
    @XmlAttribute
-   public static final double maxScore = 3.0;
+   public static final double maxScore = 4.0;
    @XmlAttribute
    public double score;
 

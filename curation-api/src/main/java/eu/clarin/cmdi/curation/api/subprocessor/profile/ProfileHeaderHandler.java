@@ -44,27 +44,26 @@ public class ProfileHeaderHandler extends AbstractSubprocessor<CMDProfile, CMDPr
                  crService.createProfileHeader(profile.getSchemaLocation()));
 
 
-         if (!report.headerReport.getProfileHeader().isPublic()) {
+         if (report.headerReport.getProfileHeader().isPublic()) {
+
+            report.headerReport.score++;
+         }
+         else {
+
             log.debug("profile {} not public", profile.getSchemaLocation());
             report.details.add((new Detail(Severity.WARNING,"header" , "Profile is not public")));
          }
-         else {
-            report.headerReport.score = 1;
-            report.score += report.headerReport.score;
-         }
-/* we need a better solution here since these warnings depend on the order
-         pphService.getProfileHeaders().stream()
-               .filter(profileHeader -> profileHeader.getName().equals(report.headerReport.getName())
-                     && !profileHeader.getId().equals(report.headerReport.getId()))
-               .findAny().ifPresent(profileReport -> report.details.add(new Detail(Severity.WARNING,"header",
-                     "The name '" + report.headerReport.getName() + "' of the profile is not unique")));
+         if(report.headerReport.getProfileHeader().isCrResident()) {
 
-         pphService.getProfileHeaders().stream()
-               .filter(profileHeader -> profileHeader.getDescription().equals(report.headerReport.getDescription())
-                     && !profileHeader.getId().equals(report.headerReport.getId()))
-               .findAny().ifPresent(profileReport -> report.details.add(new Detail(Severity.WARNING,"header",
-                     "The description '" + report.headerReport.getDescription() + "' of the profile is not unique")));
-      */
+            report.headerReport.score++; // CRResidence
+         }
+         else {
+
+            report.details.add(new Detail(Severity.WARNING, "header", "Schema not registered"));
+         }
+
+         report.score += report.headerReport.score;
+
       }
       catch (NoCRCacheEntryException e) {
          report.details.add(new Detail(Severity.FATAL,"concept" , "can't parse profile '" + profile.getSchemaLocation() + "'"));

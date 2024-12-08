@@ -175,13 +175,13 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
 
       instanceReport.profileHeaderReport = profileReport.headerReport;
 
-      if(instanceReport.instanceHeaderReport.isCrResident = instanceReport.profileHeaderReport.isCrResident()) {
-
-         instanceReport.instanceHeaderReport.score++; // CRResidence
-      }
-      else {
-         instanceReport.details.add(new Detail(Severity.WARNING, "header", "Schema not registered"));
-      }
+//      if(instanceReport.instanceHeaderReport.isCrResident = instanceReport.profileHeaderReport.isCrResident()) {
+//
+//         instanceReport.instanceHeaderReport.score++; // CRResidence
+//      }
+//      else {
+//         instanceReport.details.add(new Detail(Severity.WARNING, "header", "Schema not registered"));
+//      }
 
       instanceReport.profileScore = profileReport.score;
       instanceReport.instanceScore += profileReport.score;

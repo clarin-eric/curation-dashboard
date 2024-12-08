@@ -15,7 +15,7 @@ import jakarta.xml.bind.annotation.*;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InstanceHeaderReport {
    @XmlAttribute
-   public static final double maxScore = 5.0;
+   public static final double maxScore = 4.0;
    @XmlAttribute
    public double score;
    @XmlElement
