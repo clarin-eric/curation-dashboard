@@ -24,7 +24,7 @@ class CCRServiceImpl implements CCRService {
     * @return the concept
     */
    @Override
-   public synchronized CCRConcept getConcept(String uri) throws CCRServiceNotAvailableException {
+   public CCRConcept getConcept(String uri) throws CCRServiceNotAvailableException {
 
       return cache.getCCRConcept(uri);
    }

@@ -95,6 +95,6 @@ public class CMDProfileReport implements NamedReport {
       @XmlAttribute
       public final String collectionName;
       @XmlAttribute
-      public int count = 1;
+      public final int count;
    }
 }
