@@ -60,8 +60,8 @@
 									<xsl:value-of select="name"/>
 								</td>
 								<td>
-									<xsl:if test="@public">P</xsl:if>
-									<xsl:if test="@crResident">C</xsl:if>
+									<xsl:if test="@public='true'">P</xsl:if>
+									<xsl:if test="@crResident='true'">C</xsl:if>
 								</td>
 								<td>
 									<xsl:value-of select="format-number(score,'0.00')"/>
