@@ -30,7 +30,8 @@
 						<tr>
 							<th>Id</th>
 							<th>Name</th>
-							<th>(P)ublic<br />(C)R resident</th>
+							<th>Public</th>
+							<th>CR resident</th>
 							<th>Score</th>
 							<th>Collection Usage</th>
 							<th>Instance Usage</th>
@@ -60,8 +61,10 @@
 									<xsl:value-of select="name"/>
 								</td>
 								<td>
-									<xsl:if test="@public='true'">P</xsl:if>
-									<xsl:if test="@crResident='true'">C</xsl:if>
+									<xsl:value-of select="@public" />
+								</td>
+								<td>
+									<xsl:value-of select="@crResident" />
 								</td>
 								<td>
 									<xsl:value-of select="format-number(score,'0.00')"/>
