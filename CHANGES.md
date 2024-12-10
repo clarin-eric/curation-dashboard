@@ -1,5 +1,16 @@
-# 7.0.1
-- issue https://github.com/clarin-eric/curation-dashboard/issues/261
+# 7.1.0
+- make HTML reports callable with and without *.html suffix (issue https://github.com/clarin-eric/curation-dashboard/issues/261)
+- implementation of persistable cache manager ehcache (issue https://github.com/clarin-eric/curation-dashboard/issues/262)
+  - removing file caches (issue https://github.com/clarin-eric/curation-dashboard/issues/267)
+- adding columns for public and CR residence in profile overview, profile detail view and collection's profile section (issue https://github.com/clarin-eric/curation-dashboard/issues/264)
+- adding score for uniqueness of MD selflinks to collection score (issue https://github.com/clarin-eric/curation-dashboard/issues/265)
+- removing link from profile overview to SMC browser (issue https://github.com/clarin-eric/curation-dashboard/issues/266)
+- making parallel processing for collection controllable again (issue https://github.com/clarin-eric/curation-dashboard/issues/270)
+- shifting scoring for CR residence from CMDI instance to profile (issue https://github.com/clarin-eric/curation-dashboard/issues/272)
+- bug fixes
+  - generating of non public profile reports used in collections (issue https://github.com/clarin-eric/curation-dashboard/issues/263)
+  - assuring correct naming of CMDI instance reports (issue https://github.com/clarin-eric/curation-dashboard/issues/269)
+  - replacing remained synchronized access to methods (issue https://github.com/clarin-eric/curation-dashboard/issues/268)
 
 # 7.0.0
 - based on Java 21
