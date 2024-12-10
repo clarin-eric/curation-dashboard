@@ -392,6 +392,7 @@
                 <tr>
                     <th>Schema Location</th>
                     <th>Is public</th>
+                    <th>Is CR resident</th>
                     <th>Score</th>
                     <th>Count</th>
                 </tr>
@@ -429,6 +430,9 @@
                         </td>
                         <td>
                             <xsl:value-of select="./@isPublic"/>
+                        </td>
+                        <td>
+                            <xsl:value-of select="./@isCrResident"/>
                         </td>
                         <td class='text-right'>
                             <xsl:value-of

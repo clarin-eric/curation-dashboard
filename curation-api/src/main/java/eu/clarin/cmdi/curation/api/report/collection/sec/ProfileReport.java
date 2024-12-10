@@ -45,6 +45,8 @@ public class ProfileReport {
       @XmlAttribute
       public final boolean isPublic;
       @XmlAttribute
+      public final boolean isCrResident;
+      @XmlAttribute
       public final double score;
       @XmlAttribute
       public int count = 1;

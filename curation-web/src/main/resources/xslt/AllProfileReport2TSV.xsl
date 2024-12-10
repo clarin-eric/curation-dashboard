@@ -17,7 +17,9 @@
 <xsl:text>&#9;</xsl:text>
 <xsl:text>Name</xsl:text>
 <xsl:text>&#9;</xsl:text>
-<xsl:text>(P)ublic (C)R resident</xsl:text>
+<xsl:text>Public</xsl:text>
+<xsl:text>&#9;</xsl:text>
+<xsl:text>CR resident</xsl:text>
 <xsl:text>&#9;</xsl:text>
 <xsl:text>Score</xsl:text>
 <xsl:text>&#9;</xsl:text>
@@ -28,31 +30,33 @@
 <xsl:text>Facet Coverage</xsl:text>
 <xsl:for-each select="./profile[1]/facets/facet">
 	<xsl:text>&#9;</xsl:text>
-	<xsl:value-of select="functx:capitalize-first(@name)"></xsl:value-of>
+	<xsl:value-of select="functx:capitalize-first(@name)" />
 </xsl:for-each>
 <xsl:text>&#9;</xsl:text>
 <xsl:text>Perc Of Elements With Concepts</xsl:text>
 <xsl:for-each select="profile">
 <xsl:text>&#xa;</xsl:text>
-<xsl:value-of select="@id"></xsl:value-of>
+<xsl:value-of select="@id" />
 <xsl:text>&#9;</xsl:text>
-<xsl:value-of select="name"></xsl:value-of>
+<xsl:value-of select="name" />
 <xsl:text>&#9;</xsl:text>
-<xsl:if test="@public">P</xsl:if><xsl:if test="@crResident">C</xsl:if>
+<xsl:value-of select="@public" />
 <xsl:text>&#9;</xsl:text>
-<xsl:value-of select="score"></xsl:value-of>
+<xsl:value-of select="@crResident" />
 <xsl:text>&#9;</xsl:text>
-<xsl:value-of select="collectionUsage"></xsl:value-of>
+<xsl:value-of select="score" />
 <xsl:text>&#9;</xsl:text>
-<xsl:value-of select="instanceUsage"></xsl:value-of>
+<xsl:value-of select="collectionUsage" />
 <xsl:text>&#9;</xsl:text>
-<xsl:value-of select="facetCoverage"></xsl:value-of>
+<xsl:value-of select="instanceUsage" />
+<xsl:text>&#9;</xsl:text>
+<xsl:value-of select="facetCoverage" />
 <xsl:for-each select="facets/facet">
     <xsl:text>&#9;</xsl:text>
-    <xsl:value-of select="@coveredByProfile"></xsl:value-of>
+    <xsl:value-of select="@coveredByProfile" />
 </xsl:for-each>
 <xsl:text>&#9;</xsl:text>
-<xsl:value-of select="percOfElementsWithConcept"></xsl:value-of>
+<xsl:value-of select="percOfElementsWithConcept" />
 </xsl:for-each>
 	</xsl:template>
 </xsl:stylesheet>

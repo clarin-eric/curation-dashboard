@@ -403,13 +403,14 @@
                 <tr>
                     <th>ID</th>
                     <th>Is public</th>
+                    <th>Is CR resident</th>
                     <th>Score</th>
                     <th>Count</th>
                 </tr>
             </thead>
             <tfoot>
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         Total number of profiles:
                         <xsl:value-of
                                 select="./totNumOfProfiles"/>
@@ -432,6 +433,9 @@
                         </td>
                         <td>
                             <xsl:value-of select="./@isPublic"/>
+                        </td>
+                        <td>
+                            <xsl:value-of select="./@isCrResident"/>
                         </td>
                         <td class='text-right'>
                             <xsl:value-of
