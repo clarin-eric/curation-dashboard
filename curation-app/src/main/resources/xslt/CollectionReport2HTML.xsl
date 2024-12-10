@@ -399,7 +399,7 @@
             </thead>
             <tfoot>
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         Total number of profiles:
                         <xsl:value-of
                                 select="./totNumOfProfiles"/>
