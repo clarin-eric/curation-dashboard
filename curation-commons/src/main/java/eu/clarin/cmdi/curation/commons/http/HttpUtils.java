@@ -40,7 +40,7 @@ public class HttpUtils {
         return connection;
     }
 
-    public URLConnection getURLConnection(String urlString, String acceptHeader) throws IOException {
+    public URLConnection getURLConnection(String urlString, String acceptHeader) throws IOException, URISyntaxException {
 
         URLConnection connection = getURLConnection(urlString);
 

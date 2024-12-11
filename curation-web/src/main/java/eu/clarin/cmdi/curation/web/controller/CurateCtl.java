@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -114,7 +115,7 @@ public class CurateCtl {
 
                      FileUtils.copyInputStreamToFile(in, inFilePath.toFile());
                   }
-                  catch (IOException e) {
+                  catch (IOException | URISyntaxException e) {
 
                      log.error("couldn't download URL '{}' to file '{}'", urlStr, inFilePath);
                      throw new RuntimeException("internal error - please inform Clarin-Eric");
