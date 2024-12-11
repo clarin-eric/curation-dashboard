@@ -66,9 +66,6 @@
 						</xsl:otherwise>
 					</xsl:choose>
 				</p>
-
-				<p>Url: /download/xml/instance/</p>
-
 				<p>
 					Schema Location:
 					<a>
