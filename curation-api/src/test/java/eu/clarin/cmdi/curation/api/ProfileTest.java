@@ -53,7 +53,7 @@ public class ProfileTest {
          
          CMDProfileReport report;
 
-         String schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd";
+         String schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1404130561238/xsd";
          
          report = curation.processCMDProfile(schemaLocation);
          //must be true since it's a public profile

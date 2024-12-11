@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.3</version>
+        <version>3.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>eu.clarin.cmdi</groupId>
@@ -88,15 +88,15 @@
                 <executions>
                     <execution>
                         <id>copy-caches</id>
-                        <phase>generate-test-sources</phase>
+                        <phase>test</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${java.io.tmpdir}/ehcache</outputDirectory>
+                            <outputDirectory>${java.io.tmpdir}/ehtestcache</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>ehcache</directory>
+                                    <directory>ehtestcache</directory>
                                 </resource>
                             </resources>
                         </configuration>

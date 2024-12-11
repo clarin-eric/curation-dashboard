@@ -22,9 +22,9 @@ curation:
       ccr-cache: ${java.io.tmpdir}/curation/ccr_cache
       restApi: "https://vocabularies.clarin.eu/clavas/rest/v1/data"
       query: "?uri=${conceptURI}"
-   http:
-      proxy-host: 127.0.0.1
-      proxy-port: ${mockServerPort}
+#   http:
+#      proxy-host: 127.0.0.1
+#      proxy-port: ${mockServerPort}
    facets: 
       - languageCode
       - collection
