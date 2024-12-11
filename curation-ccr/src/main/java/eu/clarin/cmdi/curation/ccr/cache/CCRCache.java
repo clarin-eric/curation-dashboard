@@ -171,7 +171,7 @@ public class CCRCache {
                 log.error("can't configure new SAXParser", ex);
                 throw new CCRServiceNotAvailableException(ex);
             }
-            catch (IOException ex) {
+            catch (IOException | URISyntaxException ex) {
 
                 log.info("can't read URL '{}'", restApiUrlStr);
             }

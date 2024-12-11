@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 
 @Component
 @Slf4j
@@ -32,7 +33,7 @@ public class ProfileCache {
             reader.lines().forEach(buffer::append);
             schemaString = buffer.toString();
         }
-        catch (IOException e) {
+        catch (IOException | URISyntaxException e) {
 
             log.error("couldn't get schema '{}'", schemaLocation);
             return null;

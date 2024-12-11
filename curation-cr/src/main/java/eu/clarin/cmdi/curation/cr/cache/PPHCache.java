@@ -17,6 +17,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -107,7 +108,7 @@ public class PPHCache {
             });
         }
 
-        catch (IOException e) {
+        catch (IOException | URISyntaxException e) {
 
             log.error("IOException while reading public profiles from URL '{}'", crConfig.getRestApi() + crConfig.getQuery());
             throw new PPHCacheException(e);
