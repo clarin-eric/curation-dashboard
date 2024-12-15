@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<cmd:CMD xmlns:cmd="http://www.clarin.eu/cmd/1" xmlns:cmdp="http://www.clarin.eu/cmd/1/profiles/clarin.eu:cr1:p_1380106710826" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" CMDVersion="1.2" xsi:schemaLocation="http://www.clarin.eu/cmd/1 https://infra.clarin.eu/CMDI/1.x/xsd/cmd-envelop.xsd http://www.clarin.eu/cmd/1/profiles/clarin.eu:cr1:p_1380106710826 https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1380106710826/xsd">
+          <cmd:Header>
+            <cmd:MdCreator>GEI - WorldViews</cmd:MdCreator>
+            <cmd:MdCreationDate>2018-09-14</cmd:MdCreationDate>
+            <cmd:MdSelfLink>http://worldviews.gei.de/rest/content/cmdi/DE_2009_BergerEtAl_PolitikEntdecken_31/eng/</cmd:MdSelfLink>
+            <cmd:MdProfile>clarin.eu:cr1:p_1380106710826</cmd:MdProfile>
+            <cmd:MdCollectionDisplayName>WorldViews</cmd:MdCollectionDisplayName>
+          </cmd:Header>
+          <cmd:Resources>
+            <cmd:ResourceProxyList>
+              <cmd:ResourceProxy id="rp_lp">
+                <cmd:ResourceType mimetype="application/xhtml+xml">LandingPage</cmd:ResourceType>
+                <cmd:ResourceRef>http://worldviews.gei.de/open/DE_2009_BergerEtAl_PolitikEntdecken_31/eng/</cmd:ResourceRef>
+              </cmd:ResourceProxy>
+              <cmd:ResourceProxy id="rp_tei">
+                <cmd:ResourceType mimetype="application/tei+xml">Resource</cmd:ResourceType>
+                <cmd:ResourceRef>http://worldviews.gei.de/rest/content/tei/DE_2009_BergerEtAl_PolitikEntdecken_31/eng/</cmd:ResourceRef>
+              </cmd:ResourceProxy>
+            </cmd:ResourceProxyList>
+            <cmd:JournalFileProxyList/>
+            <cmd:ResourceRelationList/>
+          </cmd:Resources>
+          <cmd:Components>
+            <cmdp:teiHeader>
+              <cmdp:type>textbook source</cmdp:type>
+              <cmdp:fileDesc cmd:ComponentId="clarin.eu:cr1:c_1379939315561">
+                <cmdp:titleStmt cmd:ComponentId="clarin.eu:cr1:c_1375880372983">
+                  <cmdp:title level="a" lang="ger">"Familienzuwachs" - EU (2004)</cmdp:title>
+                  <cmdp:title level="a" lang="eng" type="translated">"New Family Members" - EU (2004)</cmdp:title>
+                  <cmdp:author>Berger-von der Heide, Thomas</cmdp:author>
+                  <cmdp:author>Ernst, Christian</cmdp:author>
+                  <cmdp:author>Gillhausen, Mechthild Freifrau von</cmdp:author>
+                  <cmdp:author>Holstein, Karl-Heinz</cmdp:author>
+                  <cmdp:author>Köster, Elisabeth</cmdp:author>
+                  <cmdp:author>Oelmann, Bärbel</cmdp:author>
+                  <cmdp:author>Rüchardt, Tanja</cmdp:author>
+                  <cmdp:author>Rudyk, Ellen</cmdp:author>
+                  <cmdp:author>Zimmermann, Thomas</cmdp:author>
+                  <cmdp:author>Laspe, Tanja</cmdp:author>
+                  <cmdp:editor role="translator">Bischewski, Marret</cmdp:editor>
+                </cmdp:titleStmt>
+                <cmdp:editionStmt cmd:ComponentId="clarin.eu:cr1:c_1381926654590">
+                  <cmdp:edition>
+                    <cmdp:note>Version 1</cmdp:note>
+                  </cmdp:edition>
+                </cmdp:editionStmt>
+                <cmdp:extent cmd:ComponentId="clarin.eu:cr1:c_1375880372984">
+                  <cmdp:num type="pages" n="1">31</cmdp:num>
+                </cmdp:extent>
+                <cmdp:publicationStmt cmd:ComponentId="clarin.eu:cr1:c_1375880372991">
+                  <cmdp:publisher>Georg-Eckert-Institut</cmdp:publisher>
+                  <cmdp:date when="2017">2017</cmdp:date>
+                  <cmdp:idno type="PURL_TEI">http://worldviews.gei.de/rest/content/tei/DE_2009_BergerEtAl_PolitikEntdecken_31/eng/</cmdp:idno>
+                  <cmdp:idno type="PURL_HTML">http://worldviews.gei.de/open/DE_2009_BergerEtAl_PolitikEntdecken_31/eng/</cmdp:idno>
+                  <cmdp:idno type="WV_ID">DE_2009_BergerEtAl_PolitikEntdecken_31_eng</cmdp:idno>
+                  <cmdp:availability cmd:ComponentId="clarin.eu:cr1:c_1375880372986" status="restricted">
+                    <cmdp:licence>CC BY-NC-SA 3.0 DE</cmdp:licence>
+                    <cmdp:ab cmd:ComponentId="clarin.eu:cr1:c_1375880372985" type="https://creativecommons.org/licenses/by-nc-sa/3.0/de/"/>
+                  </cmdp:availability>
+                </cmdp:publicationStmt>
+                <cmdp:notesStmt cmd:ComponentId="clarin.eu:cr1:c_1375880372992">
+                  <cmdp:note>translated from ger</cmdp:note>
+                </cmdp:notesStmt>
+                <cmdp:sourceDesc cmd:ComponentId="clarin.eu:cr1:c_1375880373029">
+                  <cmdp:biblStruct cmd:ComponentId="clarin.eu:cr1:c_1379939315559">
+                    <cmdp:idno type="ISBN">978-3-06-064045-4</cmdp:idno>
+                    <cmdp:idno type="PPNc">585771618</cmdp:idno>
+                    <cmdp:idno type="PPNf">613892895</cmdp:idno>
+                    <cmdp:monogr cmd:ComponentId="clarin.eu:cr1:c_1379939315552">
+                      <cmdp:title lang="ger">9/10 : Politik entdecken :  : Ausgabe N</cmdp:title>
+                      <cmdp:title lang="eng">Discover Politics</cmdp:title>
+                      <cmdp:edition>1st ed.; 1st pr. [1. Aufl.; 1. Dr.]</cmdp:edition>
+                      <cmdp:author cmd:ComponentId="clarin.eu:cr1:c_1379939315551">
+                        <cmdp:name>Ernst, Christian</cmdp:name>
+                        <cmdp:name>Gillhausen, Mechthild Freifrau von</cmdp:name>
+                        <cmdp:name>Holstein, Karl-Heinz</cmdp:name>
+                        <cmdp:name>Köster, Elisabeth</cmdp:name>
+                        <cmdp:name>Oelmann, Bärbel</cmdp:name>
+                        <cmdp:name>Rudyk, Ellen</cmdp:name>
+                        <cmdp:name>Rüchardt, Tanja</cmdp:name>
+                        <cmdp:name>Zimmermann, Thomas</cmdp:name>
+                      </cmdp:author>
+                      <cmdp:editor cmd:ComponentId="clarin.eu:cr1:c_1379939315553">
+                        <cmdp:name>Berger-von der Heide, Thomas</cmdp:name>
+                        <cmdp:name>Laspe, Tanja</cmdp:name>
+                      </cmdp:editor>
+                      <cmdp:imprint cmd:ComponentId="clarin.eu:cr1:c_1379939315555">
+                        <cmdp:pubPlace>Berlin</cmdp:pubPlace>
+                        <cmdp:publisher>Cornelsen Verlag</cmdp:publisher>
+                        <cmdp:date cert="high" when="2009">2009</cmdp:date>
+                      </cmdp:imprint>
+                      <cmdp:extent cmd:ComponentId="clarin.eu:cr1:c_1375880372984">
+                        <cmdp:num type="pages">128</cmdp:num>
+                      </cmdp:extent>
+                    </cmdp:monogr>
+                  </cmdp:biblStruct>
+                  <cmdp:msDesc cmd:ComponentId="clarin.eu:cr1:c_1407745712054">
+                    <cmdp:msIdentifier cmd:ComponentId="clarin.eu:cr1:c_1407745712039">
+                      <cmdp:repository>Georg-Eckert-Institut. Leibniz-Institut für internationale Schulbuchforschung, Braunschweig (DE)</cmdp:repository>
+                      <cmdp:idno type="shelfmark">SDR-V 38(1,2009)9/10</cmdp:idno>
+                    </cmdp:msIdentifier>
+                    <cmdp:msContents cmd:ComponentId="clarin.eu:cr1:c_1407745712038">
+                      <cmdp:msItem cmd:ComponentId="clarin.eu:cr1:c_1407745712037" n="ger"/>
+                    </cmdp:msContents>
+                  </cmdp:msDesc>
+                </cmdp:sourceDesc>
+              </cmdp:fileDesc>
+              <cmdp:encodingDesc cmd:ComponentId="clarin.eu:cr1:c_1379939315562">
+                <cmdp:samplingDecl cmd:ComponentId="clarin.eu:cr1:c_1375880372982">
+                  <cmdp:ab>Text excerpts are chosen because they are striking in terms of representation interpretive framework and/or perspective. They are portrayals that are published in widely distributed textbooks or stand out due to their unique standpoint. They are collected by project partners or the editorial team‚ given academic context and translated into German and English paying particular attention to the cultural and historical context of the source text.</cmdp:ab>
+                </cmdp:samplingDecl>
+                <cmdp:projectDesc cmd:ComponentId="clarin.eu:cr1:c_1375880372987">
+                  <cmdp:ab>WorldViews is a multilingual‚ digital resource for primary sources containing excerpts from textbooks from around the world on topics that are of global‚ transnational and interregional relevance. The selected source material from textbooks reveals how the individual countries position themselves in the world and how they portray other countries and their histories. Academic contributions provide more in-depth interpretations of the source material as well as information on the national education and textbook systems and background information on the history of education.</cmdp:ab>
+                </cmdp:projectDesc>
+              </cmdp:encodingDesc>
+              <cmdp:profileDesc cmd:ComponentId="clarin.eu:cr1:c_1379925925653">
+                <cmdp:langUsage cmd:ComponentId="clarin.eu:cr1:c_1375880373021">
+                  <cmdp:language ident="eng">eng</cmdp:language>
+                </cmdp:langUsage>
+                <cmdp:textClass cmd:ComponentId="clarin.eu:cr1:c_1375880373027">
+                  <cmdp:classCode scheme="WV.textType">textbook source</cmdp:classCode>
+                  <cmdp:classCode scheme="WV.sourceType">author text</cmdp:classCode>
+                  <cmdp:classCode scheme="WV.sourceType">infographic - map - political map</cmdp:classCode>
+                  <cmdp:classCode scheme="WV.educationalLevel">Secondary level 1</cmdp:classCode>
+                  <cmdp:classCode scheme="WV.educationalSubject">Social studies</cmdp:classCode>
+                  <cmdp:classCode scheme="WV.placeOfUse">Germany</cmdp:classCode>
+                  <cmdp:classCode scheme="WV.placeOfUse">Lower Saxony</cmdp:classCode>
+                  <cmdp:keywords scheme="" cmd:ComponentId="clarin.eu:cr1:c_1380613302381">
+                    <cmdp:list cmd:ComponentId="clarin.eu:cr1:c_1380613302392" type="">
+                      <cmdp:item n="k_christianity">Christianity</cmdp:item>
+                      <cmdp:item n="k_islam">Islam</cmdp:item>
+                      <cmdp:item n="k_enlargement_of_the_european_union">Enlargement of the European Union</cmdp:item>
+                      <cmdp:item n="k_european_integration">European Integration</cmdp:item>
+                      <cmdp:item n="k_european_union">European Union</cmdp:item>
+                      <cmdp:item n="k_turkey">Turkey</cmdp:item>
+                      <cmdp:item n="k_20th_century">20th Century</cmdp:item>
+                      <cmdp:item n="k_21st_century">21st Century</cmdp:item>
+                      <cmdp:item n="k_turks">Turks</cmdp:item>
+                    </cmdp:list>
+                  </cmdp:keywords>
+                </cmdp:textClass>
+              </cmdp:profileDesc>
+            </cmdp:teiHeader>
+          </cmd:Components>
+        </cmd:CMD>
