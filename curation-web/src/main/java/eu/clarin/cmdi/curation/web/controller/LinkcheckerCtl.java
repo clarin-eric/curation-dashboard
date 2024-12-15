@@ -43,35 +43,6 @@ public class LinkcheckerCtl {
    /**
     * Gets report.
     *
-    * @param model the model
-    * @return the report
-    */
-   @GetMapping()
-   public String getReport(@RequestHeader("Accept") String acceptHeader, Model model) {
-
-      if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
-
-         return "forward:/download/linkchecker/AllLinkcheckerReport?format=json";
-      }
-      if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))) {
-
-         return "forward:/download/linkchecker/AllLinkcheckerReport";
-      }
-
-      Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("linkchecker")
-            .resolve("AllLinkcheckerReport.html");
-
-      log.debug("reportPath: {}", reportPath);
-
-      model.addAttribute("insert", reportPath.toString());
-
-      return "generic";
-
-   }
-
-   /**
-    * Gets report.
-    *
     * @param linkcheckerReportName the linkchecker report name
     * @param model             the model
     * @return the report
