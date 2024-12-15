@@ -8,7 +8,10 @@ spring:
       show-sql: true
       hibernate:
          ddl-auto: none
-      database-platform: org.hibernate.dialect.MariaDBDialect 
+      database-platform: org.hibernate.dialect.MariaDBDialect
+   cache:
+      jcache:
+         config: classpath:ehcache.xml
 server:
    error:
       include-stacktrace: always         
@@ -17,7 +20,6 @@ curation:
       restApi: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
       query: "?registrySpace=published&status=production&status=development&&status=deprecated"
    ccr-service:
-      ccr-cache: ${java.io.tmpdir}/curation/ccr_cache
       restApi: "https://vocabularies.clarin.eu/clavas/rest/v1/data"
       query: "?uri=${conceptURI}"
    facets: 
@@ -43,8 +45,8 @@ curation:
       dataRoot: /data/result/cmdi
       in: 
         - /home/clarin/git/curation-dashboard/curation-api/src/test/resources/instance/SAW_Leipzig_Repository
-      out: /tmp/public
-      share: /tmp
+      out: ${java.io.tmpdir}/curation/public
+      share: ${java.io.tmpdir}
    max_file_size: 100000
    threadPoolSize: 3
    mode: collection          
