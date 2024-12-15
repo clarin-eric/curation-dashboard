@@ -48,7 +48,7 @@ public class LinkcheckerCtl {
     * @return the report
     */
    @GetMapping(value = {"","/{linkcheckerReportName}"})
-   public String getReport(@RequestHeader("Accept") String acceptHeader, @PathVariable(value = "linkcheckerReportName") Optional<String> linkcheckerReportName, Model model) {
+   public String getReport(@RequestHeader("Accept") Optional<String> acceptHeader, @PathVariable(value = "linkcheckerReportName") Optional<String> linkcheckerReportName, Model model) {
 
       Path reportPath;
 
@@ -57,15 +57,15 @@ public class LinkcheckerCtl {
          String basename = FilenameUtils.getBaseName(linkcheckerReportName.get());
          String extension = FilenameUtils.getExtension(linkcheckerReportName.get());
 
-         if (StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json") || "json".equals(extension)) {
+         if (acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json") || "json".equals(extension)) {
 
             return "forward:/download/linkchecker/" + basename + "?format=json";
          }
-         if (StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml")) || "xml".equals(extension)) {
+         if (acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml")) || "xml".equals(extension)) {
 
             return "forward:/download/linkchecker/" + basename + "?format=xml";
          }
-         if (StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("text/tab-separated-values") || "tsv".equals(extension)) {
+         if (acceptHeader.isPresent() && acceptHeader.get().startsWith("text/tab-separated-values") || "tsv".equals(extension)) {
 
             return "forward:/download/linkchecker/" + basename + "?format=tsv";
          }
@@ -77,11 +77,11 @@ public class LinkcheckerCtl {
       }
       else{
 
-         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
+         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json")) {
 
             return "forward:/download/linkchecker/AllLinkcheckerReport?format=json";
          }
-         if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))) {
+         if(acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml"))) {
 
             return "forward:/download/linkchecker/AllLinkcheckerReport";
          }

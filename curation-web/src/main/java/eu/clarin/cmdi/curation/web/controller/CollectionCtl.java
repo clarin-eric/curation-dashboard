@@ -40,7 +40,7 @@ public class CollectionCtl {
     * @return the collection
     */
    @GetMapping(value = {"", "/{collectionReportName}"})
-   public String getCollection(@RequestHeader("Accept") String acceptHeader, @PathVariable(value = "collectionReportName", required = false) Optional<String> collectionReportName, Model model) {
+   public String getCollection(@RequestHeader("Accept") Optional<String> acceptHeader, @PathVariable(value = "collectionReportName", required = false) Optional<String> collectionReportName, Model model) {
 
       Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("collection");
       
@@ -49,11 +49,11 @@ public class CollectionCtl {
          String basename = FilenameUtils.getBaseName(collectionReportName.get());
          String extension = FilenameUtils.getExtension(collectionReportName.get());
 
-         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json") || "json".equals(extension)) {
+         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json") || "json".equals(extension)) {
 
             return "forward:/download/collection/" + basename + "?format=json";
          }
-         if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml")) || "xml".equals(extension)) {
+         if(acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml")) || "xml".equals(extension)) {
 
             return "forward:/download/collection/" + basename ;
          }
@@ -63,15 +63,15 @@ public class CollectionCtl {
       }
       else { // without specific collectionReportName we return the AllCollectionReport.html
 
-         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
+         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json")) {
 
             return "forward:/download/collection/AllCollectionReport?format=json";
          }
-         if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))) {
+         if(acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml"))) {
 
             return "forward:/download/collection/AllCollectionReport";
          }
-         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("text/tab-separated-values")) {
+         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("text/tab-separated-values")) {
 
             return "forward:/download/collection/AllCollectionReport?format=tsv";
          }

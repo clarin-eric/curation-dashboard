@@ -41,7 +41,7 @@ public class ProfileCtl {
     * @return the profile
     */
    @GetMapping(value = {"", "/{profileReportName}"})
-   public String getProfile(@RequestHeader("Accept") String acceptHeader, @PathVariable(value = "profileReportName") Optional<String> profileReportName, Model model) {
+   public String getProfile(@RequestHeader("Accept") Optional<String> acceptHeader, @PathVariable(value = "profileReportName") Optional<String> profileReportName, Model model) {
 
       String returnString = null;
       Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("profile");
@@ -51,11 +51,11 @@ public class ProfileCtl {
          String basename = FilenameUtils.getBaseName(profileReportName.get());
          String extension = FilenameUtils.getExtension(profileReportName.get());
 
-         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json") || "json".equals(extension)) {
+         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json") || "json".equals(extension)) {
 
             return "forward:/download/profile/" + profileReportName.get() + "?format=json";
          }
-         if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml")) || "xml".equals(extension)) {
+         if(acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml")) || "xml".equals(extension)) {
 
             return "forward:/download/profile/" + profileReportName.get() ;
          }
@@ -65,15 +65,15 @@ public class ProfileCtl {
       }
       else {
 
-         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
+         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json")) {
 
             return "forward:/download/profile/AllProfileReport?format=json";
          }
-         if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))) {
+         if(acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml"))) {
 
             return "forward:/download/profile/AllProfileReport";
          }
-         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("text/tab-separated-values")) {
+         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("text/tab-separated-values")) {
 
             return "forward:/download/profile/AllProfileReport?format=tsv";
          }

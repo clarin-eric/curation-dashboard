@@ -12,6 +12,7 @@ import eu.clarin.cmdi.curation.web.conf.WebConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.zookeeper.Op;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 /**
  * The type Curate ctl.
@@ -66,7 +68,7 @@ public class CurateCtl {
     * @return the instance query param
     */
    @GetMapping()
-   public String getInstanceQueryParam(@RequestHeader("Accept") String acceptHeader, @RequestParam(name="url-input", required=false) String urlStr, Model model) {
+   public String getInstance(@RequestHeader("Accept") Optional<String> acceptHeader, @RequestParam(name="url-input", required=false) String urlStr, Model model) {
       
       log.debug("urlStr: {}", urlStr);
 
@@ -94,11 +96,11 @@ public class CurateCtl {
 
                if (crService.isPublicSchema(urlStr)) { // is a public schema URL
 
-                  if (StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
+                  if (acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json")) {
 
                      return "forward:/download/profile/" + FileNameEncoder.encode(urlStr) + "?format=json";
                   }
-                  else if (StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))){
+                  else if (acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml"))){
 
                      return "forward:/download/profile/" + FileNameEncoder.encode(urlStr);
                   }
@@ -155,7 +157,7 @@ public class CurateCtl {
     */
 // this is for drag and drop instance form
    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-   public String postInstance(@RequestParam("file") MultipartFile file, Model model) {
+   public String postInstance(@RequestHeader("Accept") Optional<String> acceptHeader, @RequestParam("file") MultipartFile file, Model model) {
 
       Path inFilePath = Paths.get(System.getProperty("java.io.tmpdir"), System.currentTimeMillis() + "_curation.tmp");
       
@@ -169,10 +171,10 @@ public class CurateCtl {
          throw new RuntimeException("Given URL is invalid");
       }
       
-      return createReport(inFilePath, null, model);
+      return createReport(inFilePath, acceptHeader, model);
    }
 
-   private String createReport(Path inFilePath, String acceptHeader, Model model) {
+   private String createReport(Path inFilePath, Optional<String> acceptHeader, Model model) {
 
       NamedReport report = null;     
       
@@ -200,11 +202,11 @@ public class CurateCtl {
 
          storage.saveReportAsHTML(report, CurationEntityType.INSTANCE, false);
 
-         if(StringUtils.isNotEmpty(acceptHeader) && acceptHeader.startsWith("application/json")) {
+         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json")) {
 
             return "forward:/download/instance/" + report.getName() + "?format=json";
          }
-         else if(StringUtils.isNotEmpty(acceptHeader) && (acceptHeader.startsWith("application/xml") || acceptHeader.startsWith("text/xml"))) {
+         else if(acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml"))) {
 
             return "forward:/download/instance/" + report.getName();
          }
