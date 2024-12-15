@@ -1,3 +1,8 @@
+# 7.1.1
+- adding tests for curation-web module (issue https://github.com/clarin-eric/curation-dashboard/issues/271)
+- bug fixes 
+  - ambiguous mapping in linkcheckerCtl (issue https://github.com/clarin-eric/curation-dashboard/issues/273)
+  - making accept header optional (issue https://github.com/clarin-eric/curation-dashboard/issues/274)
 # 7.1.0
 - make HTML reports callable with and without *.html suffix (issue https://github.com/clarin-eric/curation-dashboard/issues/261)
 - implementation of persistable cache manager ehcache (issue https://github.com/clarin-eric/curation-dashboard/issues/262)
