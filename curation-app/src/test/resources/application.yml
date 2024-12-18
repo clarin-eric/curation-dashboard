@@ -43,7 +43,7 @@ curation:
       in: 
         - /home/clarin/git/curation-dashboard/curation-api/src/test/resources/instance/SAW_Leipzig_Repository
       out: /tmp/public
-   max_file_size: 100000
+   max_file_size: 100000000
    threadPoolSize: 3
    mode: collection          
 logging:
