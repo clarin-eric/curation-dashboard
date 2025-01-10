@@ -9,7 +9,6 @@ import eu.clarin.cmdi.curation.api.report.instance.sec.FileReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.xml.transform.*;
@@ -31,14 +30,13 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
    private static final Pattern _pattern = Pattern.compile("xmlns(:.+?)?=\"http(s)?://www.clarin.eu/cmd/(1)?");
 
-   private ApiConfig conf;
+   private final ApiConfig conf;
 
    /**
     * Instantiates a new File size validator.
     *
     * @param conf the conf
     */
-   @Autowired
    public FileSizeValidator(ApiConfig conf) {
 
       this.conf = conf;
@@ -145,13 +143,13 @@ public class FileSizeValidator extends AbstractSubprocessor<CMDInstance, CMDInst
 
       }
 
-      if (report.fileReport.size > conf.getMaxFileSize()) {
+      if (report.fileReport.size > conf.getMaxFileSize().toBytes()) {
 
          log.debug("file '{}' has a size of {} bytes which exceeds the limit of {}", instance.getPath(),
                report.fileReport.size, conf.getMaxFileSize());
 
          report.details.add(new Detail(Severity.FATAL, "file",
-               "the file size exceeds the limit allowed (" + conf.getMaxFileSize() + "B)"));
+               "the file size exceeds the limit allowed (" + conf.getMaxFileSize().toMegabytes() + "MB)"));
          report.isProcessable = false;
 
          return;

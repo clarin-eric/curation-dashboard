@@ -66,7 +66,7 @@ public class InstanceTest {
    void file() {
       
       assertEquals(11139, this.referenceReport.fileReport.size);
-      assertTrue(this.referenceReport.fileReport.size <= conf.getMaxFileSize());
+      assertTrue(this.referenceReport.fileReport.size <= conf.getMaxFileSize().toBytes());
       assertEquals(1.0, this.referenceReport.fileReport.score);
       
       // now we add a comment at the end which is a bit larger than the maximal file 
@@ -78,7 +78,7 @@ public class InstanceTest {
          
          writer.write("<!-- ");
          
-         IntStream.range(0, conf.getMaxFileSize()).forEach(i -> {
+         IntStream.range(0, (int) conf.getMaxFileSize().toBytes()).forEach(i -> {
             try {
                writer.write('c');
             }
@@ -98,7 +98,7 @@ public class InstanceTest {
       
       CMDInstanceReport report = curation.processCMDInstance(tmpFilePath);
       
-      assertTrue(report.fileReport.size > conf.getMaxFileSize());
+      assertTrue(report.fileReport.size > conf.getMaxFileSize().toBytes());
       assertFalse(report.isProcessable);
    }
    

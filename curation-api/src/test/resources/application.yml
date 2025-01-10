@@ -49,7 +49,7 @@ curation:
       in:
       out: >
          /tmp/public
-   max_file_size: 100000000
+   max_file_size: 100MB
    max_in_queue: 10
 logging:
    level:

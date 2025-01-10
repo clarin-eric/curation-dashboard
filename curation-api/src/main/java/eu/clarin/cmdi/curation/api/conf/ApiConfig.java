@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import org.springframework.util.unit.DataSize;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class ApiConfig {
    
    private String mode;
    
-   private int maxFileSize;
+   private DataSize maxFileSize;
    
    private Collection<String> facets;
    

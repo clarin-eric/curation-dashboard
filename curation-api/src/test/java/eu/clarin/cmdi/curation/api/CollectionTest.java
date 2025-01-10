@@ -149,7 +149,7 @@ public class CollectionTest {
       // now we blow up our file099 to the maximum file size +1
       try(RandomAccessFile raf = new RandomAccessFile(this.file099Path.toFile(), "rw")){
          
-         raf.setLength(this.conf.getMaxFileSize() +1);
+         raf.setLength(this.conf.getMaxFileSize().toBytes() +1);
       };
       
       //now a new local report
