@@ -1,3 +1,7 @@
+# 7.1.2
+- setting maximum CMDI file size to 100MB (issue https://github.com/clarin-eric/curation-dashboard/issues/275)
+- upgrading to Spring Boot 3.4.1
+
 # 7.1.1
 - adding tests for curation-web module (issue https://github.com/clarin-eric/curation-dashboard/issues/271)
 - bug fixes 
