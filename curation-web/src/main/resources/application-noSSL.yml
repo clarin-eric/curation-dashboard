@@ -55,7 +55,7 @@ curation:
          ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
       out: ${APPLICATION_HOME_DIRECTORY}/public
       share: /data
-   max_file_size: 100000000
+   max_file_size: 100MB
    mode: instance
    doc-url: "https://raw.githubusercontent.com/clarin-eric/cereal/main/curation-dashboard/markdown"         
 logging:
