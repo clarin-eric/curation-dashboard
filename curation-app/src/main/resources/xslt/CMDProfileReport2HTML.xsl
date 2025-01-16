@@ -104,7 +104,7 @@
 						<td><xsl:value-of select="./headerReport/public" /></td>
 					</tr>
 					<tr>
-						<th>CR resident</th>
+						<th>In component registry</th>
 						<td><xsl:value-of select="./headerReport/crResident" /></td>
 					</tr>
 				</table>

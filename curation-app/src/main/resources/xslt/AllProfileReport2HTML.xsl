@@ -31,11 +31,11 @@
 							<th>Id</th>
 							<th>Name</th>
 							<th>Public</th>
-							<th>CR resident</th>
+							<th>In component registry</th>
 							<th>Score</th>
 							<th>Collection Usage</th>
 							<th>Instance Usage</th>
-							<th>FacetCoverage</th>
+							<th>Facet Coverage</th>
 							<xsl:for-each select="./profile[1]/facets/facet">
 								<th>
 									<xsl:value-of select="functx:capitalize-first(@name)"/>
