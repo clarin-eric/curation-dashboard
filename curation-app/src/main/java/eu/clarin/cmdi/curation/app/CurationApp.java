@@ -3,6 +3,7 @@ package eu.clarin.cmdi.curation.app;
 import eu.clarin.cmdi.curation.api.CurationModule;
 import eu.clarin.cmdi.curation.api.entity.CurationEntityType;
 import eu.clarin.cmdi.curation.api.report.collection.AllCollectionReport;
+import eu.clarin.cmdi.curation.api.report.collection.CollectionHistoryReport;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.linkchecker.AllLinkcheckerReport;
 import eu.clarin.cmdi.curation.api.report.profile.AllProfileReport;
@@ -33,6 +34,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -46,6 +49,8 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties
 @Slf4j
 public class CurationApp {
+
+   private static final Pattern pattern = Pattern.compile("(\\S+)_(\\d{4}-\\d{2}-\\d{2}).html");
    
    @Autowired
    private AppConfig conf;   
@@ -92,8 +97,9 @@ public class CurationApp {
          
         
             final AllCollectionReport allCollectionReport = new AllCollectionReport();
-            final AllLinkcheckerReport allLinkcheckerReport = new AllLinkcheckerReport();         
-   
+            final AllLinkcheckerReport allLinkcheckerReport = new AllLinkcheckerReport();
+            final CollectionHistoryReport collectionHistoryReport = new CollectionHistoryReport();
+
             conf.getDirectory().getIn().forEach(inPath -> {
                 try {
                     processCollection(inPath, allCollectionReport,allLinkcheckerReport );
@@ -103,8 +109,20 @@ public class CurationApp {
                 }
             });
 
+            // we create a meta report of all collection reports
+            Files.walk(conf.getDirectory().getOut().resolve("html").resolve("collection")).forEach(path -> {
+
+               Matcher matcher;
+
+               if(!path.getFileName().toString().startsWith("AllCollectionReport") && (matcher = pattern.matcher(path.getFileName().toString())).matches()) {
+
+                  collectionHistoryReport.addReport(matcher.group(1).replaceAll("_", " ").trim(), matcher.group(2), path.getFileName().toString());
+               }
+            });
+
             storage.saveReport(allCollectionReport, CurationEntityType.COLLECTION, true);
             storage.saveReport(allLinkcheckerReport, CurationEntityType.LINKCHECKER, true);
+            storage.saveReport(collectionHistoryReport, CurationEntityType.COLLECTION, false);
 
          }
          // it's important to process profiles after collections, to fill the collection usage section of the profiles 

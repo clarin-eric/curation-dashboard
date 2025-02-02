@@ -101,6 +101,9 @@
                         </xsl:for-each>
                     </tbody>
                 </table>
+                <div class="floatRight">
+                    <a href="/collection/CollectionHistoryReport.html">report history</a>
+                </div>
             </body>
         </html>
     </xsl:template>
