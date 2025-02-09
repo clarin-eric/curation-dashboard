@@ -11,6 +11,8 @@
                 <div class="infoLine">
                    <div class="floatLeft">
                        created at <xsl:value-of select="./@creationTime" />
+                       <xsl:text> </xsl:text>
+                       (<a href="/collection/CollectionHistoryReport.html">report history</a>)
                    </div>
                    <div class="floatRight">
                        download as <a href="/download/collection/AllCollectionReport">xml</a>
@@ -101,9 +103,6 @@
                         </xsl:for-each>
                     </tbody>
                 </table>
-                <div class="floatRight">
-                    <a href="/collection/CollectionHistoryReport.html">report history</a>
-                </div>
             </body>
         </html>
     </xsl:template>
