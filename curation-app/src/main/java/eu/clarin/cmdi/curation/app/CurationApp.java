@@ -109,7 +109,19 @@ public class CurationApp {
                 }
             });
 
-            // we create a meta report of all collection reports
+            // save reports
+            storage.saveReport(allCollectionReport, CurationEntityType.COLLECTION, true);
+            storage.saveReport(allLinkcheckerReport, CurationEntityType.LINKCHECKER, true);
+            storage.saveReport(collectionHistoryReport, CurationEntityType.COLLECTION, false);
+
+            // remove old reports
+            if(conf.getPurgeReportAfter() > 0) {
+               log.info("purging reports older than {} days from path '{}'", conf.getPurgeReportAfter(), conf.getDirectory().getOut());
+               this.storage.purgeReportAfter(conf.getPurgeReportAfter());
+               log.info("done purging reports");
+            }
+
+            // create a meta report of all collection reports
             Files.walk(conf.getDirectory().getOut().resolve("html").resolve("collection")).forEach(path -> {
 
                Matcher matcher;
@@ -119,11 +131,6 @@ public class CurationApp {
                   collectionHistoryReport.addReport(matcher.group(1).replaceAll("_", " ").trim(), matcher.group(2), path.getFileName().toString());
                }
             });
-
-            storage.saveReport(allCollectionReport, CurationEntityType.COLLECTION, true);
-            storage.saveReport(allLinkcheckerReport, CurationEntityType.LINKCHECKER, true);
-            storage.saveReport(collectionHistoryReport, CurationEntityType.COLLECTION, false);
-
          }
          // it's important to process profiles after collections, to fill the collection usage section of the profiles 
          // before they're printed out
@@ -162,7 +169,6 @@ public class CurationApp {
             });
 
             storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);
-
          }
          
          if("all".equalsIgnoreCase(conf.getMode()) || "linkchecker".equalsIgnoreCase(conf.getMode())) {
@@ -170,7 +176,6 @@ public class CurationApp {
             log.info("start writing linkchecker detail reports");
             curation.getLinkcheckerDetailReports().forEach(report -> storage.saveReport(report, CurationEntityType.LINKCHECKER, false));
             log.info("done writing linkchecker detail reports");
- 
          }
 
          if("all".equalsIgnoreCase(conf.getMode())) {
@@ -193,11 +198,6 @@ public class CurationApp {
                log.info("start purging obsolete table from records checked before {} days", conf.getPurgeObsoleteAfter());
                linkService.purgeObsolete(conf.getPurgeObsoleteAfter());
                log.info("done purging obsolete");
-            }
-            if(conf.getPurgeReportAfter() > 0) {
-               log.info("purging reports older than {} days from path '{}'", conf.getPurgeReportAfter(), conf.getDirectory().getOut());
-               this.storage.purgeReportAfter(conf.getPurgeReportAfter());
-               log.info("done purging reports");
             }
          }
          
