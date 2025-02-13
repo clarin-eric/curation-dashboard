@@ -4,8 +4,10 @@
         <h1>Report History</h1>
         <xsl:for-each select="collection">
             <p>
-            <h2><xsl:value-of select="@name" /> </h2>
-
+            <h2>
+                <xsl:attribute name="id"><xsl:value-of select="@name" /></xsl:attribute>
+                <xsl:value-of select="@name" />
+            </h2>
             <xsl:for-each select="report">
                 <a>
                     <xsl:attribute name="href">
