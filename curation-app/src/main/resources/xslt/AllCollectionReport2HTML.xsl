@@ -14,16 +14,16 @@
                 created at
                 <xsl:value-of select="./@creationTime"/>
                 <xsl:text> </xsl:text>
-                (<a href="/collection/CollectionHistoryReport.html">report history</a>)
+                (<a href="/provider/CollectionHistoryReport.html">report history</a>)
             </div>
             <div class="floatRight">
                 download as
-                <a href="/download/collection/AllCollectionReport">xml</a>
+                <a href="/download/provider/AllCollectionReport">xml</a>
                 <xsl:text>
                        </xsl:text>
-                <a href="/download/collection/AllCollectionReport?format=json">json</a>
+                <a href="/download/provider/AllCollectionReport?format=json">json</a>
                 <xsl:text> </xsl:text>
-                <a href="/download/collection/AllCollectionReport?format=tsv">tsv</a>
+                <a href="/download/provider/AllCollectionReport?format=tsv">tsv</a>
             </div>
             <div class="clear"/>
         </div>
@@ -57,7 +57,7 @@
                         <td>
                             <a>
                                 <xsl:attribute name="href">
-                                    <xsl:text>/collection/</xsl:text>
+                                    <xsl:text>/provider/</xsl:text>
                                     <xsl:value-of select="translate(reportName,'.:','__')"/>
                                     <xsl:text>.html</xsl:text>
                                 </xsl:attribute>

@@ -185,7 +185,7 @@
         <table class="reportTable">
             <thead>
                 <tr>
-                    <th scope="col">Collection</th>
+                    <th scope="col">Metadata Provider</th>
                     <th scope="col">Usage</th>
                 </tr>
             </thead>
@@ -216,7 +216,7 @@
                 The components section shows information on the kind, id and the
                 usage of concepts in the profile.
                 <br/>
-                For more information on componets, have a look at the
+                For more information on components, have a look at the
                 <a
                         href="https://www.clarin.eu/content/component-registry-documentation">Component Registry
                     Documentation
