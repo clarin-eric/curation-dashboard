@@ -109,11 +109,6 @@ public class CurationApp {
                 }
             });
 
-            // save reports
-            storage.saveReport(allCollectionReport, CurationEntityType.COLLECTION, true);
-            storage.saveReport(allLinkcheckerReport, CurationEntityType.LINKCHECKER, true);
-            storage.saveReport(collectionHistoryReport, CurationEntityType.COLLECTION, false);
-
             // remove old reports
             if(conf.getPurgeReportAfter() > 0) {
                log.info("purging reports older than {} days from path '{}'", conf.getPurgeReportAfter(), conf.getDirectory().getOut());
@@ -128,9 +123,16 @@ public class CurationApp {
 
                if(!path.getFileName().toString().startsWith("AllCollectionReport") && (matcher = pattern.matcher(path.getFileName().toString())).matches()) {
 
-                  collectionHistoryReport.addReport(matcher.group(1).replaceAll("_", " ").trim(), matcher.group(2), path.getFileName().toString());
+                  collectionHistoryReport.addReport(matcher.group(1).trim(), matcher.group(2), path.getFileName().toString());
                }
             });
+
+            // save reports
+            storage.saveReport(allCollectionReport, CurationEntityType.COLLECTION, true);
+            storage.saveReport(allLinkcheckerReport, CurationEntityType.LINKCHECKER, true);
+            storage.saveReport(collectionHistoryReport, CurationEntityType.COLLECTION, false);
+
+
          }
          // it's important to process profiles after collections, to fill the collection usage section of the profiles 
          // before they're printed out
