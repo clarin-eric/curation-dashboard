@@ -2,7 +2,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all">
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes" />
     <xsl:template match="/collectionHistoryReport">
-        <h1>Report History</h1>
+        <h1>Metadata Provider Report History</h1>
         <ul>
             <xsl:for-each select="collection">
                 <li>

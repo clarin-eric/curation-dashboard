@@ -83,7 +83,7 @@
                             <xsl:value-of select="format-number(ratioOfValidLinks,'0.00%')"/>
                         </td>
                         <td>
-                            <xsl:value-of select="numOfResourcesies"/>
+                            <xsl:value-of select="numOfResourceses"/>
                         </td>
                         <td>
                             <xsl:value-of select="format-number(avgNumOfResources,'0.0')"/>

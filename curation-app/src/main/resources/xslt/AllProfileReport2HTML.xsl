@@ -7,7 +7,6 @@
         <xsl:param name="arg" as="xs:string?"/>
         <xsl:sequence select="concat(upper-case(substring($arg,1,1)), substring($arg,2))"/>
     </xsl:function>
-    <xsl:output method="html" indent="yes"/>
     <xsl:decimal-format NaN="N/A"/>
     <xsl:template match="/allProfileReport">
         <div class="infoLine">
