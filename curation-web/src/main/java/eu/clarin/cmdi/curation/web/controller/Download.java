@@ -75,6 +75,11 @@ public class Download {
          @PathVariable("reportName") String reportName,
          @RequestParam(value = "format", required = false, defaultValue = "xml") String format) {
 
+      // requirement to use replace "collection" in path
+      if("metadataprovider".equals(curationEntityType)){
+         curationEntityType = "collection";
+      }
+
       java.nio.file.Path xmlPath = conf.getDirectory().getOut().resolve("xml").resolve(curationEntityType)
             .resolve(reportName + ".xml");
 

@@ -1,3 +1,9 @@
+# 7.2.0
+- adding collection history report (issue https://github.com/clarin-eric/curation-dashboard/issues/277)
+- renaming collection and file headline in HTML (issue https://github.com/clarin-eric/curation-dashboard/issues/279) 
+- 
+- upgrading to Spring Boot 3.4.2
+
 # 7.1.2
 - setting maximum CMDI file size to 100MB (issue https://github.com/clarin-eric/curation-dashboard/issues/275)
 - upgrading to Spring Boot 3.4.1

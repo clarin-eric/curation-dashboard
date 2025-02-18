@@ -10,7 +10,7 @@
    <name>curation-web</name>
    <description>curation web application</description>
    <properties>
-      <commonmark.version>0.22.0</commonmark.version>
+      <commonmark.version>0.24.0</commonmark.version>
    </properties>
    <dependencies>
       <dependency>

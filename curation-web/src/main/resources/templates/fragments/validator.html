@@ -1,31 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8">
-	</head>
-	<body>
-		<div class="fullscreen">
-			<form action="/curate" id="urlForm">
-				<div class="row instanceElement">
-					<input type="text" class="form-control col-md-3" placeholder="CMD record URL / CMD profile URL" id="url-input"
-					       name="url-input" required>
-				</div>
-			</form>
-			<div class="row instanceElement">
-				<button class="btn btn-info centerContainer" id="validateButton" type="submit" form="urlForm">Validate</button>
-			</div>
-			<div class="row instanceElement" hidden="true">
-				<div>Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div>
-				<div id="uploadWheel" class="spinner"></div>
-			</div>
+<div class="fullscreen">
+	<form action="/curate" id="urlForm">
+		<div class="row instanceElement">
+			<input type="text" class="form-control col-md-3" placeholder="CMD record URL / CMD profile URL"
+				   id="url-input"
+				   name="url-input" required>
+		</div>
+	</form>
+	<div class="row instanceElement">
+		<button class="btn btn-info centerContainer" id="validateButton" type="submit" form="urlForm">Validate</button>
+	</div>
+	<div class="row instanceElement" hidden="true">
+		<div>Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div>
+		<div id="uploadWheel" class="spinner"></div>
+	</div>
 
-			<div class="row instanceElement">
-				<div class="dropzone dragAndDropBox" id="cmdi-dropzone">
-					<div class="dz-message">
-						Drag a CMD record / CMD profile here or click to open file browser
-					</div>
-				</div>
+	<div class="row instanceElement">
+		<div class="dropzone dragAndDropBox" id="cmdi-dropzone">
+			<div class="dz-message">
+				Drag a CMD record / CMD profile here or click to open file browser
 			</div>
 		</div>
-	</body>
-</html>
+	</div>
+</div>

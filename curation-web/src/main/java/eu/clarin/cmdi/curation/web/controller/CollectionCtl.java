@@ -22,7 +22,7 @@ import java.util.Optional;
  * The type Collection ctl.
  */
 @Controller
-@RequestMapping("/collection")
+@RequestMapping(value = {"/collection", "/metadataprovider"})
 @Slf4j
 public class CollectionCtl {
 
