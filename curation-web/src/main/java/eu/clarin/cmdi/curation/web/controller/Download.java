@@ -76,7 +76,7 @@ public class Download {
          @RequestParam(value = "format", required = false, defaultValue = "xml") String format) {
 
       // requirement to use replace "collection" in path
-      if("provider".equals(curationEntityType)){
+      if("metadataprovider".equals(curationEntityType)){
          curationEntityType = "collection";
       }
 

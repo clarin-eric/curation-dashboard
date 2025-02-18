@@ -25,7 +25,7 @@
             <xsl:for-each select="report">
                 <a>
                     <xsl:attribute name="href">
-                        <xsl:text>/provider/</xsl:text><xsl:value-of select="@fileName" />
+                        <xsl:text>/metadataprovider/</xsl:text><xsl:value-of select="@fileName" />
                     </xsl:attribute>
                     <xsl:value-of select="@isoDate" />
                 </a>

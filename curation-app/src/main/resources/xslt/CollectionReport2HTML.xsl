@@ -23,7 +23,7 @@
                 (
                 <a>
                     <xsl:attribute name="href">
-                        <xsl:text>/provider/</xsl:text>
+                        <xsl:text>/metadataprovider/</xsl:text>
                         <xsl:value-of select="//fileReport/provider"/>
                         <xsl:text>_</xsl:text>
                         <xsl:value-of select="substring(./@previousCreationTime, 1, 10)"/>
@@ -37,7 +37,7 @@
                 download as
                 <a>
                     <xsl:attribute name="href">
-                        <xsl:text>/download/provider/</xsl:text>
+                        <xsl:text>/download/metadataprovider/</xsl:text>
                         <xsl:value-of select="//fileReport/provider"/>
                         <xsl:text>_</xsl:text>
                         <xsl:value-of select="substring(./@creationTime, 1, 10)"/>
@@ -47,7 +47,7 @@
                 <xsl:text> </xsl:text>
                 <a>
                     <xsl:attribute name="href">
-                        <xsl:text>/download/provider/</xsl:text>
+                        <xsl:text>/download/metadataprovider/</xsl:text>
                         <xsl:value-of select="//fileReport/provider"/>
                         <xsl:text>_</xsl:text>
                         <xsl:value-of select="substring(./@creationTime, 1, 10)"/>
