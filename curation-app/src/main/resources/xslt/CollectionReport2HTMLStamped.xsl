@@ -2,7 +2,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:functx="http://www.functx.com"
                 exclude-result-prefixes="#all">
-    <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
+    <xsl:output method="xhtml" indent="yes" omit-xml-declaration="yes"/>
     <xsl:function name="functx:capitalize-first" as="xs:string?">
         <xsl:param name="arg" as="xs:string?"/>
 

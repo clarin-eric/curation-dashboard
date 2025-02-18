@@ -2,7 +2,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:functx="http://www.functx.com"
                 exclude-result-prefixes="#all">
-    <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
+    <xsl:output method="xhtml" indent="yes" omit-xml-declaration="yes"/>
     <xsl:function name="functx:capitalize-first" as="xs:string?">
         <xsl:param name="arg" as="xs:string?"/>
         <xsl:sequence select="concat(upper-case(substring($arg,1,1)), substring($arg,2))"/>
@@ -25,7 +25,7 @@
                 <xsl:text> </xsl:text>
                 <a href="/download/metadataprovider/AllCollectionReport?format=tsv">tsv</a>
             </div>
-            <div class="clear"/>
+            <div class="clear" />
         </div>
         <table id="collections" class="display text-nowrap" width="100%">
             <thead>

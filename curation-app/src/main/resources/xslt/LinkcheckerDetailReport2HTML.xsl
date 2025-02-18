@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes="#all">
-    <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
+    <xsl:output method="xhtml" indent="yes" omit-xml-declaration="yes"/>
     <xsl:decimal-format NaN="N/A"/>
     <xsl:template match="/linkcheckerDetailReport">
         <div class="infoLine">
