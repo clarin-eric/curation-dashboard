@@ -60,6 +60,7 @@ Dropzone.autoDiscover = false;
 
 $("div#cmdi-dropzone").dropzone({
     url: "/curate",
+    headers: {'Accept': 'text/html, application/xhtml+xml'},
     paramName: "file", // The name that will be used to transfer the file
       maxFilesize: 5, // MB
       success: function(file, done) {
