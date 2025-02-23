@@ -107,13 +107,13 @@
                                     </xsl:attribute>
                                     <xsl:choose>
                                         <xsl:when test="name(.) = 'fileReport'">Metadata Records</xsl:when>
-                                        <xsl:when test="name(.) = 'profileReport'">Profile usage</xsl:when>
+                                        <xsl:when test="name(.) = 'profileReport'">Profile Usage</xsl:when>
                                         <xsl:when test="name(.) = 'headerReport'">Header</xsl:when>
-                                        <xsl:when test="name(.) = 'resProxyReport'">Resource proxy</xsl:when>
-                                        <xsl:when test="name(.) = 'xmlPopulationReport'">XML population
+                                        <xsl:when test="name(.) = 'resProxyReport'">Resource Proxy</xsl:when>
+                                        <xsl:when test="name(.) = 'xmlPopulationReport'">XML Population
                                         </xsl:when>
-                                        <xsl:when test="name(.) = 'xmlValidityReport'">XML validation</xsl:when>
-                                        <xsl:when test="name(.) = 'linkcheckerReport'">Link validation
+                                        <xsl:when test="name(.) = 'xmlValidityReport'">XML Validation</xsl:when>
+                                        <xsl:when test="name(.) = 'linkcheckerReport'">Link Validation
                                         </xsl:when>
                                         <xsl:when test="name(.) = 'facetReport'">Facets</xsl:when>
                                         <xsl:otherwise>xxxxxxxxx</xsl:otherwise>
@@ -135,15 +135,15 @@
         </table>
         <br/>
         The above table is based on
-        <xsl:value-of select="format-number(//fileReport/numOfFilesProcessable, '###,##0')"/> processable files.
+        <xsl:value-of select="format-number(//fileReport/numOfFilesProcessable, '###,##0')"/> processable Metadata Records.
         <xsl:if test="//fileReport/numOfFilesNonProcessable>0">
             There are also
-            <xsl:value-of select="format-number(//fileReport/numOfFilesNonProcessable, '###,##0')"/> files in
-            the collection that could not be processed.
-            See <a href="#recordDetails">record details</a> table for more information.
+            <xsl:value-of select="format-number(//fileReport/numOfFilesNonProcessable, '###,##0')"/> Metadata Records from
+            the Metadata Provider that could not be processed.
+            See <a href="#recordDetails">Metadata Record Details</a> table for more information.
         </xsl:if>
         <br/>
-        <b>All per file averages (except in the Files section) are based on the number of processable files</b>
+        <b>All per Metadata Record averages (except in the Metadata Records section) are based on the number of processable Metadata Records</b>
         <br/>
         <br/>
         <xsl:apply-templates select="fileReport"/>
@@ -168,14 +168,14 @@
                 <summary>
                     <h2 id="recordDetails">Metadata Record Details:</h2>
                 </summary>
-                <p>The metadata record details section shows the particularities of each record as far as they're of
-                    importance for the data provider.
+                <p>The Record Details section shows the particularities of each record as far as they're of
+                    importance for the Metadata Provider.
                 </p>
             </details>
             <table class="reportTable">
                 <thead>
                     <tr>
-                        <th>File</th>
+                        <th>Metadata Record</th>
                         <th>Info</th>
                         <th>Validate</th>
                     </tr>
@@ -244,34 +244,34 @@
             <summary>
                 <h2 class="anchor" id="fileReport">Metadata Records</h2>
             </summary>
-            <p>General information on the number of files and the file size.</p>
+            <p>General information on the number of Metadata Records and their size (in CMDI 1.2).</p>
         </details>
 
         <p>
-            Number of files:
+            Number of Metadata Records:
             <xsl:value-of select="format-number(./numOfFiles, '###,##0')"/>
         </p>
         <p>
-            Number of processable files:
+            Number of processable Metadata Records:
             <xsl:value-of select="format-number(./numOfFilesProcessable, '###,##0')"/>
         </p>
         <p>
-            Total size:
+            Total size (in CMDI 1.2):
             <xsl:value-of select="format-number(./size, '###,##0')"/>
             B
         </p>
         <p>
-            Average size:
+            Average size (in CMDI 1.2):
             <xsl:value-of select="format-number(./avgFileSize, '###,##0')"/>
             B
         </p>
         <p>
-            Minimal file size:
+            Minimal Metadata Record size (in CMDI 1.2):
             <xsl:value-of select="format-number(./minFileSize, '###,##0')"/>
             B
         </p>
         <p>
-            Maximal file size:
+            Maximal Metadata Record size (in CMDI 1.2):
             <xsl:value-of select="format-number(./maxFileSize, '###,##0')"/>
             B
         </p>
@@ -284,33 +284,33 @@
                 <h2 class="anchor" id="headerReport">Header</h2>
             </summary>
             <p>
-                The header section shows information on the availibilty of attribute schemaLocation as well as the
+                The header section shows information on the availability of attribute schemaLocation as well as the
                 elements
                 MdSelfLink, MdProfile and MdCollectionDisplayName.
             </p>
         </details>
         <p>
-            Number of files with schemaLocation:
+            Number of Metadata Records with schemaLocation:
             <xsl:value-of select="format-number(numWithSchemaLocation, '###,##0')"/>
         </p>
         <p>
-            Number of files where schemaLocation is CR resident:
+            Number of Metadata Records where schemaLocation is CR resident:
             <xsl:value-of select="format-number(numSchemaCrResident, '###,##0')"/>
         </p>
         <p>
-            Number of files with MdProfile:
+            Number of Metadata Records with MdProfile:
             <xsl:value-of select="format-number(numWithMdProfile, '###,##0')"/>
         </p>
         <p>
-            Number of files with MdSelfLink:
+            Number of Metadata Records with MdSelfLink:
             <xsl:value-of select="format-number(numWithMdSelflink, '###,##0')"/>
         </p>
         <p>
-            Number of files with <b>unique</b> MdSelfLink:
+            Number of Metadata Records with <b>unique</b> MdSelfLink:
             <xsl:value-of select="format-number(numWithUniqueMdSelflink, '###,##0')"/>
         </p>
         <p>
-            Number of files with MdCollectionDisplayName:
+            Number of Metadata Records with MdCollectionDisplayName:
             <xsl:value-of select="format-number(numWithMdCollectionDisplayName, '###,##0')"/>
         </p>
 
@@ -378,11 +378,10 @@
     <xsl:template match="profileReport">
         <details>
             <summary>
-                <h2 class="anchor" id="profileReport">Profile usage</h2>
+                <h2 class="anchor" id="profileReport">Profile Usage</h2>
             </summary>
             <p>
-                The profile usage section shows information shows which profiles are used how oftenly in a collection.
-                collection.
+                The Profile Usage section shows information shows which profiles are used how often in Metadata records of a certain Metadata Provider.
             </p>
         </details>
         <table class="reportTable">
@@ -452,8 +451,8 @@
             <summary>
                 <h2 class="anchor" id="facetReport">Facets</h2>
             </summary>
-            <p>The facet section shows the facet coverage within the
-                collection. A facet can be covered by the instance
+            <p>The Facets section shows the facet coverage within the
+                Metadata Records of a Metadata Provider. A facet can be covered by the instance
                 even when it is not covered by the profile when cross facet mapping is used.
             </p>
         </details>
@@ -461,15 +460,15 @@
         <table class="reportTable">
             <thead>
                 <tr>
-                    <th scope="col">name</th>
-                    <th scope="col">coverage</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Coverage</th>
                 </tr>
             </thead>
             <tfoot>
                 <tr>
                     <td colspan="2">
                         <b>
-                            average facet-coverage:
+                            Average facet-coverage:
                             <xsl:value-of
                                     select="format-number(./@avgScore,'0.0%')"/>
                         </b>
@@ -496,9 +495,9 @@
     <xsl:template match="resProxyReport">
         <details>
             <summary>
-                <h2 class="anchor" id="resProxyReport">Resource proxy</h2>
+                <h2 class="anchor" id="resProxyReport">Resource Proxy</h2>
             </summary>
-            <p>The resource proxy section shows information on the number of
+            <p>The Resource Proxy section shows information on the number of
                 resource proxies on the kind (the mime type) of resources.
                 A resource proxy is a link to an external resource, described by
                 the CMD file.
@@ -541,20 +540,20 @@
     <xsl:template match="xmlValidityReport">
         <details>
             <summary>
-                <h2 class="anchor" id="xmlValidityReport">XML validation</h2>
+                <h2 class="anchor" id="xmlValidityReport">XML Validation</h2>
             </summary>
-            <p>The XML validation section shows the result of a simple
+            <p>The XML Validation section shows the result of a simple
                 validation of each CMD file against its profile.
             </p>
         </details>
 
         <p>
-            Number of XML valid Records:
+            Number of XML valid records:
             <xsl:value-of
                     select="format-number(./totNumOfValidRecords, '###,##0')"/>
         </p>
         <p>
-            Ratio XML valid Records:
+            Ratio XML valid records:
             <xsl:value-of
                     select="format-number(./@avgScore,'0.0%')"/>
         </p>
@@ -564,10 +563,10 @@
     <xsl:template match="xmlPopulationReport">
         <details>
             <summary>
-                <h2 class="anchor" id="xmlPopulationReport">XML population</h2>
+                <h2 class="anchor" id="xmlPopulationReport">XML Population</h2>
             </summary>
-            <p>The XML population section shows information on the number of xml
-                elements and the fact if these elements are conatining data.
+            <p>The XML Population section shows information on the number of xml
+                elements and the fact if these elements are containing data.
             </p>
         </details>
 
@@ -612,9 +611,9 @@
     <xsl:template match="linkcheckerReport">
         <details>
             <summary>
-                <h2 class="anchor" id="linkcheckerReport">Link validation</h2>
+                <h2 class="anchor" id="linkcheckerReport">Link Validation</h2>
             </summary>
-            <p>The link validation section shows information on the number of
+            <p>The Link Validation section shows information on the number of
                 links and the results of link checking for the links which
                 have been checked so far.
             </p>
