@@ -71,7 +71,7 @@
             </tfoot>
         </table>
         <br/>
-        <h3>Collections:</h3>
+        <h3>Metadata Providers:</h3>
 
         <xsl:for-each select="collection">
 

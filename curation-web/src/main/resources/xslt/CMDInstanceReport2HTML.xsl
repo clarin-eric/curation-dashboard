@@ -76,7 +76,7 @@
         <!-- <xsl:value-of select="./profile-section/status"/> -->
         <!-- </p> -->
         <p>
-            File Size:
+            Metadata Record size:
             <xsl:value-of select="./fileReport/size"/>
             B
         </p>
@@ -95,9 +95,9 @@
             <hr/>
             <details>
                 <summary>
-                    <h2 id="recordDetails">Record details:</h2>
+                    <h2 id="recordDetails">Record Detail:</h2>
                 </summary>
-                <p>The record details section shows the particalarities the record
+                <p>The Record Detail section shows the particularities the record
                     as far as they're of importance for the data provider.
                 </p>
             </details>
@@ -140,9 +140,9 @@
     <xsl:template match="facetReport">
         <details>
             <summary>
-                <h2>Facets</h2>
+                <h2>Facet</h2>
             </summary>
-            <p>The facet section shows the facet coverage in the uploaded file
+            <p>The Facet section shows the facet coverage in the uploaded file
             </p>
         </details>
 
@@ -323,9 +323,9 @@
     <xsl:template match="resProxyReport">
         <details>
             <summary>
-                <h2>Resource proxy</h2>
+                <h2>Resource Proxy</h2>
             </summary>
-            <p>The resource proxy section shows information on the number of
+            <p>The Resource Proxy section shows information on the number of
                 resource proxies on the kind (the mime type) of resources.
                 A
                 resource
@@ -335,24 +335,24 @@
             </p>
         </details>
         <p>
-            Total number ResourceProxies:
+            Total number resource proxies:
             <xsl:value-of select="./numOfResources"/>
         </p>
         <p>
-            Number of ResourceProxies having specified MIME type:
+            Number of resource proxies having specified MIME type:
             <xsl:value-of select="./numOfResourcesWithMime"/>
         </p>
         <p>
-            Percent of ResourceProxies having specified MIME type:
+            Percent of resource proxies having specified MIME type:
             <xsl:value-of
                     select="format-number(./percOfResourcesWithMime,'0.0%')"/>
         </p>
         <p>
-            Number of ResourceProxies having reference:
+            Number of resource proxies having reference:
             <xsl:value-of select="./numOfResourcesWithReference"/>
         </p>
         <p>
-            Percent of ResourceProxies having reference:
+            Percent of resource proxies having reference:
             <xsl:value-of
                     select="format-number(./percOfResourcesWithReference,'0.0%')"/>
         </p>
@@ -381,10 +381,10 @@
     <xsl:template match="xmlPopulationReport">
         <details>
             <summary>
-                <h2>XML population</h2>
+                <h2>XML Population</h2>
             </summary>
-            <p>The XML populated section shows information on the number of xml
-                elements and the fact if these elements are conatining data.
+            <p>The XML Population section shows information on the number of xml
+                elements and the fact if these elements are containing data.
             </p>
         </details>
         <p>
@@ -410,9 +410,9 @@
     <xsl:template match="xmlValidityReport">
         <details>
             <summary>
-                <h2>XML validation</h2>
+                <h2>XML Validation</h2>
             </summary>
-            <p>The XML validation section shows the result of a simple
+            <p>The XML Validation section shows the result of a simple
                 validation
                 of each CMD file against its profile.
             </p>

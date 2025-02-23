@@ -127,7 +127,7 @@
                                         <xsl:when test="name(.) = 'xmlValidityReport'">XML Validation</xsl:when>
                                         <xsl:when test="name(.) = 'linkcheckerReport'">Link Validation
                                         </xsl:when>
-                                        <xsl:when test="name(.) = 'facetReport'">Facets</xsl:when>
+                                        <xsl:when test="name(.) = 'facetReport'">Facet</xsl:when>
                                         <xsl:otherwise>xxxxxxxxx</xsl:otherwise>
                                     </xsl:choose>
                                 </a>
@@ -152,7 +152,7 @@
             There are also
             <xsl:value-of select="format-number(//fileReport/numOfFilesNonProcessable, '###,##0')"/> Metadata Records from
             the Metadata Provider that could not be processed.
-            See <a href="#recordDetails">Metadata Record Details</a> table for more information.
+            See <a href="#recordDetail">Metadata Record Detail</a> table for more information.
         </xsl:if>
         <br/>
         <b>All per Metadata Record averages (except in the Metadata Records section) are based on the number of processable Metadata Records</b>
@@ -178,9 +178,9 @@
             <hr/>
             <details>
                 <summary>
-                    <h2 id="recordDetails">Metadata Record Details:</h2>
+                    <h2 id="recordDetail">Metadata Record Detail:</h2>
                 </summary>
-                <p>The Record Details section shows the particularities of each record as far as they're of
+                <p>The Record Detail section shows the particularities of each record as far as they're of
                     importance for the Metadata Provider.
                 </p>
             </details>
@@ -254,7 +254,7 @@
     <xsl:template match="fileReport">
         <details>
             <summary>
-                <h2 class="anchor" id="fileReport">Metadata Records</h2>
+                <h2 class="anchor" id="fileReport">Metadata Record</h2>
             </summary>
             <p>General information on the number of Metadata Records and their size (in CMDI 1.2).</p>
         </details>
@@ -453,9 +453,9 @@
     <xsl:template match="facetReport">
         <details>
             <summary>
-                <h2 class="anchor" id="facetReport">Facets</h2>
+                <h2 class="anchor" id="facetReport">Facet</h2>
             </summary>
-            <p>The Facets section shows the facet coverage within the
+            <p>The Facet section shows the facet coverage within the
                 Metadata Records of a Metadata Provider. A facet can be covered by the instance
                 even when it is not covered by the profile when cross facet mapping is used.
             </p>

@@ -31,7 +31,7 @@
                     <th>Public</th>
                     <th>In component registry</th>
                     <th>Score</th>
-                    <th>Provider Usage</th>
+                    <th>MD Provider Usage</th>
                     <th>Instance Usage</th>
                     <th>Facet Coverage</th>
                     <xsl:for-each select="./profile[1]/facets/facet">

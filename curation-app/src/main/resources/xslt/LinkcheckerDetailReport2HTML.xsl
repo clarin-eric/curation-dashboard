@@ -11,9 +11,9 @@
             </div>
             <div class="clear"/>
         </div>
-        <h1>Linkchecker Detail Report</h1>
+        <h1>Link Checker Detail Report</h1>
         <h2>
-            Collection name:
+            Metadata Provider:
             <a>
                 <xsl:attribute name="href">
                     <xsl:text>/collection</xsl:text>
