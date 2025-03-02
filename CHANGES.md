@@ -1,7 +1,9 @@
+# 7.3.0
+- adding URL parameter »format« in those controllers, where it hasn't existed so far to get the report in JSON, XML or TVS format (issue https://github.com/clarin-eric/curation-dashboard/issues/280)
+
 # 7.2.0
 - adding collection history report (issue https://github.com/clarin-eric/curation-dashboard/issues/277)
-- renaming collection and file headline in HTML (issue https://github.com/clarin-eric/curation-dashboard/issues/279) 
-- 
+- renaming collection and file headline in HTML (issue https://github.com/clarin-eric/curation-dashboard/issues/279)
 - upgrading to Spring Boot 3.4.2
 
 # 7.1.2
