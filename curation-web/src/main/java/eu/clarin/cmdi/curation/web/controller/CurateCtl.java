@@ -180,8 +180,9 @@ public class CurateCtl {
          log.error("can't access multipart file '{}'", file);
          throw new RuntimeException("Given URL is invalid");
       }
-      
-      return createReport(inFilePath, acceptHeader, model);
+
+      String returnString = createReport(inFilePath, acceptHeader, model);
+      return returnString;
    }
 
    private String createReport(Path inFilePath, Optional<String> acceptHeader, Model model) {
