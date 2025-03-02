@@ -68,7 +68,7 @@ public class CurateCtl {
     * @return the instance query param
     */
    @GetMapping()
-   public String getInstance(@RequestHeader("Accept") Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @RequestParam(name="url-input", required=false) String urlStr, Model model) {
+   public String getInstance(@RequestHeader(name = "Accept", required = false) Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @RequestParam(name="url-input", required=false) String urlStr, Model model) {
 
       // if a format is set, it has priority over the acceptHeader
       if(format.isPresent()) {
@@ -162,7 +162,7 @@ public class CurateCtl {
     */
 // this is for drag and drop instance form
    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-   public String postInstance(@RequestHeader("Accept") Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @RequestParam("file") MultipartFile file, Model model) {
+   public String postInstance(@RequestHeader(name = "Accept", required = false) Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @RequestParam("file") MultipartFile file, Model model) {
 
       // if a format is set, it has priority over the acceptHeader
       if(format.isPresent()) {

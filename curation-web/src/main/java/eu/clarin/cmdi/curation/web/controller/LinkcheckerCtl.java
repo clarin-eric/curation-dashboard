@@ -12,10 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,8 +45,12 @@ public class LinkcheckerCtl {
     * @return the report
     */
    @GetMapping(value = {"","/{linkcheckerReportName}"})
-   public String getReport(@RequestHeader("Accept") Optional<String> acceptHeader, @PathVariable(value = "linkcheckerReportName") Optional<String> linkcheckerReportName, Model model) {
+   public String getReport(@RequestHeader("Accept") Optional<String> acceptHeader, @RequestParam(name ="format", required = false) Optional<String> format, @PathVariable(value = "linkcheckerReportName") Optional<String> linkcheckerReportName, Model model) {
 
+      // if a format is set, it has priority over the acceptHeader
+      if(format.isPresent()){
+         acceptHeader = format;
+      }
       Path reportPath;
 
       if(linkcheckerReportName.isPresent()){

@@ -38,7 +38,7 @@ public class ProfileCtl {
     * @return the profile
     */
    @GetMapping(value = {"", "/{profileReportName}"})
-   public String getProfile(@RequestHeader("Accept") Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @PathVariable(value = "profileReportName") Optional<String> profileReportName, Model model) {
+   public String getProfile(@RequestHeader(name = "Accept", required = false) Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @PathVariable(value = "profileReportName") Optional<String> profileReportName, Model model) {
 
       // if a format is set, it has priority over the acceptHeader
       if(format.isPresent()) {

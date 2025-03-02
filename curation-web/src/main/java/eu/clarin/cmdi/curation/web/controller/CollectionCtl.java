@@ -37,7 +37,7 @@ public class CollectionCtl {
     * @return the collection
     */
    @GetMapping(value = {"", "/{collectionReportName}"})
-   public String getCollection(@RequestHeader("Accept") Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @PathVariable(value = "collectionReportName", required = false) Optional<String> collectionReportName, Model model) {
+   public String getCollection(@RequestHeader(name = "Accept", required = false) Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @PathVariable(value = "collectionReportName", required = false) Optional<String> collectionReportName, Model model) {
 
       // if a format is set, it has priority over the acceptHeader
       if(format.isPresent()) {
