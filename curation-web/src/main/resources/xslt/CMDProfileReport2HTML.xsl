@@ -104,7 +104,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>In component registry</th>
+                    <th>In Component Registry</th>
                     <td>
                         <xsl:value-of select="./headerReport/crResident"/>
                     </td>
@@ -114,9 +114,9 @@
         <hr/>
         <details>
             <summary>
-                <h2>Facet</h2>
+                <h2>Facets</h2>
             </summary>
-            <p>The Facet section shows if a specific facet is covered by the
+            <p>The facets section shows if a specific facet is covered by the
                 profile.
                 In other words, if the profile defines an element for the facet.
             </p>
@@ -212,10 +212,10 @@
          -->
         <details>
             <summary>
-                <h2>CMD Component</h2>
+                <h2>CMD Components</h2>
             </summary>
             <p>
-                The CMD Component section shows information on the kind, id and the
+                The CMD components section shows information on the kind, id and the
                 usage of concepts in the profile.
                 <br/>
                 For more information on components, have a look at the
@@ -270,10 +270,10 @@
         <hr/>
         <details>
             <summary>
-                <h2>CMD Concept</h2>
+                <h2>CMD Concepts</h2>
             </summary>
             <p>
-                The CMD Concept section shows information on the kind, state and the
+                The CMD concepts section shows information on the kind, state and the
                 number of concepts used in the profile.
                 <br/>
                 For more information on concepts, have a look at the
@@ -360,9 +360,9 @@
             <hr/>
             <details>
                 <summary>
-                    <h2>Detail</h2>
+                    <h2>Details</h2>
                 </summary>
-                <p>The Detail section shows the number and the kind of details,
+                <p>The details section shows the number and the kind of details,
                     which might have an impact on the processing of the profile.
                 </p>
             </details>

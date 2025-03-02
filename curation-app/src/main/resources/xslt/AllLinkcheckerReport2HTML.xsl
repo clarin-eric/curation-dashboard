@@ -116,7 +116,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="5">
-                            Total number with response:
+                            Total Number With Response:
                             <xsl:value-of select="format-number(@totNumOfLinksWithDuration, '###,##0')"/>
                             &#0183;
                             Average Response Duration(ms):

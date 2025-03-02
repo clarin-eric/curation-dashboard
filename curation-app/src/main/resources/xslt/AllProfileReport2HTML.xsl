@@ -29,7 +29,7 @@
                     <th>Id</th>
                     <th>Name</th>
                     <th>Public</th>
-                    <th>In component registry</th>
+                    <th>In Component Registry</th>
                     <th>Score</th>
                     <th>MD Provider Usage</th>
                     <th>Instance Usage</th>

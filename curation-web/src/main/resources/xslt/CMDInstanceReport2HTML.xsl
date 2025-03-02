@@ -34,7 +34,7 @@
         </div>
         <h1>CMD Record Report</h1>
         <p>
-            Profile Score:
+            Profile score:
             <xsl:value-of
                     select="format-number(./@profileScore,'0.00')"/>
             <br/>
@@ -64,7 +64,7 @@
             </xsl:choose>
         </p>
         <p>
-            Schema Location:
+            Schema location:
             <a>
                 <xsl:attribute name="href">
                     <xsl:value-of select="./profileHeaderReport/schemaLocation"/>
@@ -76,7 +76,7 @@
         <!-- <xsl:value-of select="./profile-section/status"/> -->
         <!-- </p> -->
         <p>
-            Metadata Record size:
+            File size (in CMDI 1.2):
             <xsl:value-of select="./fileReport/size"/>
             B
         </p>
@@ -95,9 +95,9 @@
             <hr/>
             <details>
                 <summary>
-                    <h2 id="recordDetails">Record Detail:</h2>
+                    <h2 id="recordDetails">Record Details:</h2>
                 </summary>
-                <p>The Record Detail section shows the particularities the record
+                <p>The record details section shows the particularities the record
                     as far as they're of importance for the data provider.
                 </p>
             </details>
@@ -140,41 +140,41 @@
     <xsl:template match="facetReport">
         <details>
             <summary>
-                <h2>Facet</h2>
+                <h2>Facets</h2>
             </summary>
-            <p>The Facet section shows the facet coverage in the uploaded file
+            <p>The facets section shows the facet coverage in the uploaded file
             </p>
         </details>
 
-        <h3>Facet coverage</h3>
+        <h3>Facet Coverage</h3>
 
         <table class="reportTable">
             <thead>
                 <tr>
-                    <td>name</td>
-                    <td>covered by profile</td>
-                    <td>covered by instance</td>
+                    <td>Name</td>
+                    <td>Covered By Profile</td>
+                    <td>Covered By Instance</td>
                 </tr>
             </thead>
             <tfoot>
                 <tr>
                     <td colspan="3">
                         <b>
-                            covered by profile
+                            Covered by profile
                             <xsl:value-of
                                     select="count(./coverages/facet[@coveredByProfile = 'true'])"/>
                             /
                             <xsl:value-of select="./@numOfFacets"/>
                             ;
 
-                            covered by Instance
+                            Covered by Instance
                             <xsl:value-of
                                     select="./@numOfFacetsCoveredByInstance"/>
                             /
                             <xsl:value-of select="./@numOfFacets"/>
                             ;
 
-                            instance coverage:
+                            Instance coverage:
                             <xsl:value-of
                                     select="format-number(./@percCoveragedByInstance,'0.0%')"/>
                         </b>
@@ -224,13 +224,13 @@
 
         <br/>
         <font color="#ffd100">&#9873;</font>
-        - Derived Facet
+        - Derived facet
         <br/>
         <font color="#00aa00">&#9873;</font>
-        - Value Mapping
+        - Value mapping
         <br/>
 
-        <button class="btn btn-info" id="facetValuesButton" type="button">Show Facet Values</button>
+        <button class="btn btn-info" id="facetValuesButton" type="button">Show facet values</button>
 
         <div id="facetTable" hidden="true">
             <h3>Facet mapping</h3>
@@ -325,13 +325,10 @@
             <summary>
                 <h2>Resource Proxy</h2>
             </summary>
-            <p>The Resource Proxy section shows information on the number of
+            <p>The resource proxy section shows information on the number of
                 resource proxies on the kind (the mime type) of resources.
-                A
-                resource
-                proxy is a link to an external resource, described by
-                the
-                CMD file.
+                A resource proxy is a link to an external resource, described by
+                the CMD file.
             </p>
         </details>
         <p>
@@ -383,7 +380,7 @@
             <summary>
                 <h2>XML Population</h2>
             </summary>
-            <p>The XML Population section shows information on the number of xml
+            <p>The XML population section shows information on the number of xml
                 elements and the fact if these elements are containing data.
             </p>
         </details>
@@ -412,9 +409,8 @@
             <summary>
                 <h2>XML Validation</h2>
             </summary>
-            <p>The XML Validation section shows the result of a simple
-                validation
-                of each CMD file against its profile.
+            <p>The XML validation section shows the result of a simple
+                validation of each CMD file against its profile.
             </p>
         </details>
         <p>
