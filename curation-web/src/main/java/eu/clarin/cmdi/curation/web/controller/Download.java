@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
+import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.web.dto.StatusDetailDto;
 import eu.clarin.linkchecker.persistence.model.StatusDetail;
 import eu.clarin.linkchecker.persistence.utils.Category;
@@ -71,12 +72,34 @@ public class Download {
    @RequestMapping(value = "/{curationEntityType}/{reportName}", method = {RequestMethod.GET, RequestMethod.POST})
    public ResponseEntity<StreamingResponseBody> getFile(@PathVariable("curationEntityType") String curationEntityType,
          @PathVariable("reportName") String reportName,
-         @RequestParam(value = "format", required = false, defaultValue = "xml") String format) {
+         @RequestHeader(name = "Accept", required = false) Optional<String> acceptHeader,
+         @RequestParam(value = "format", required = false) Optional<String> format) {
 
       // requirement to use replace "collection" in path
       if("metadataprovider".equals(curationEntityType)){
          curationEntityType = "collection";
       }
+
+      // if URL parameter format is not set, we take the accept header
+      if(format.isEmpty() && acceptHeader.isPresent()){
+
+         if (acceptHeader.get().startsWith("application/json")) {
+
+            format = Optional.of("json");
+         }
+         else if (acceptHeader.get().startsWith("text/tab-separated-values") ){
+
+            format = Optional.of("tsv");
+         }
+      }
+
+      // if nothing is set neither in URL parameter format nor accept header or if it's no know return type we set xml by default
+      if(format.isEmpty()){
+
+         format = Optional.of("xml");
+      }
+
+
 
       java.nio.file.Path xmlPath = conf.getDirectory().getOut().resolve("xml").resolve(curationEntityType)
             .resolve(reportName + ".xml");
@@ -87,19 +110,21 @@ public class Download {
 
       }
       
-      final MediaType mediaType = switch(format) {      
+      final MediaType mediaType = switch(format.get()) {
       
          case "json" -> MediaType.APPLICATION_JSON;
          case "tsv" -> new MediaType("text", "tab-separated-values");
          default -> MediaType.APPLICATION_XML;
       };
 
+      final String finalFormat = format.get();
+
       StreamingResponseBody stream = outputStream -> {
 
-         if ("tsv".equalsIgnoreCase(format) || "json".equalsIgnoreCase(format)) {
+         if ("tsv".equalsIgnoreCase(finalFormat) || "json".equalsIgnoreCase(finalFormat)) {
 
-            String xslFileName = "tsv".equalsIgnoreCase(format)
-                  ? "/xslt/" + reportName + "2" + format.toUpperCase() + ".xsl"
+            String xslFileName = "tsv".equalsIgnoreCase(finalFormat)
+                  ? STR."/xslt/\{reportName}2\{finalFormat.toUpperCase()}.xsl"
                   : "/xslt/XML2JSON.xsl";
             TransformerFactory factory = BasicTransformerFactory.newInstance();
 
@@ -112,7 +137,7 @@ public class Download {
             catch (TransformerException e) {
 
                throw new RuntimeException(
-                     "can't create output in format '" + format + "' - please download as xml", e);
+                     "can't create output in format '" + finalFormat + "' - please download as xml", e);
 
             }
          }
@@ -128,14 +153,14 @@ public class Download {
 
             }
             catch (IOException e) {
-               
+
                log.error("can't read report '{}'", xmlPath);
                throw new RuntimeException("internal error - please contact Clarin");
-            
+
             }
          }
       };
-      
+
       return ResponseEntity.ok().contentType(new MediaType(mediaType)).body(stream);
    
    }
@@ -152,36 +177,57 @@ public class Download {
    @GetMapping("/linkchecker/{providergroupName}/{category}")
    public ResponseEntity<StreamingResponseBody> getFile(@PathVariable("providergroupName") String providergroupName,
          @PathVariable("category") Category category,
-         @RequestParam(value = "format", required = false, defaultValue = "xml") String format,
+         @RequestHeader(name = "Accept", required = false) Optional<String> acceptHeader,
+         @RequestParam(value = "format", required = false) Optional<String> format,
          @RequestParam(value = "zipped", required = false, defaultValue = "false") boolean zipped) {
+
+      // if URL parameter format is not set, we take the accept header
+      if(format.isEmpty() && acceptHeader.isPresent()){
+
+         if (acceptHeader.get().startsWith("application/json")) {
+
+            format = Optional.of("json");
+         }
+         else if (acceptHeader.get().startsWith("text/tab-separated-values") ){
+
+            format = Optional.of("tsv");
+         }
+      }
+
+      // if nothing is set neither in URL parameter format nor accept header or if it's no know return type we set xml by default
+      if(format.isEmpty()){
+
+         format = Optional.of("xml");
+      }
       
       HttpHeaders headers = new HttpHeaders();
       
       
-      headers.setContentType(new MediaType("application", zipped?"zip":format));
+      headers.setContentType(new MediaType("application", zipped?"zip":format.get()));
       
       headers.setContentDisposition(
             ContentDisposition
                .inline()
-               .filename(providergroupName + "-" + category + (zipped?".zip":"." + format))
+               .filename(providergroupName + "-" + category + (zipped?".zip":"." + format.get()))
                .build()
             );
-      
+
+      final String finalFormat = format.get();
       return ResponseEntity.ok().headers(headers)
             .body(outputStream -> {
         
                if(zipped) {
                   ZipOutputStream zipOutStream = new ZipOutputStream(outputStream);
-                  zipOutStream.putNextEntry(new ZipEntry(providergroupName + "." + format));
+                  zipOutStream.putNextEntry(new ZipEntry(providergroupName + "." + finalFormat));
 
-                  writeDetails(zipOutStream, providergroupName, category, format);                  
+                  writeDetails(zipOutStream, providergroupName, category, finalFormat);
                   
                   zipOutStream.closeEntry();
                   zipOutStream.close();               
                }
                else {
                   
-                  writeDetails(outputStream, providergroupName, category, format);
+                  writeDetails(outputStream, providergroupName, category, finalFormat);
                }
             });      
    }

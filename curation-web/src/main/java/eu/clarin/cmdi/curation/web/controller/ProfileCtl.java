@@ -40,26 +40,23 @@ public class ProfileCtl {
    @GetMapping(value = {"", "/{profileReportName}"})
    public String getProfile(@RequestHeader(name = "Accept", required = false) Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @PathVariable(value = "profileReportName") Optional<String> profileReportName, Model model) {
 
-      // if a format is set, it has priority over the acceptHeader
-      if(format.isPresent()) {
-         acceptHeader = Optional.of("application/" + format.get());
-      }
-
       String returnString = null;
       Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("profile");
       
       if(profileReportName.isPresent()) {
 
          String basename = FilenameUtils.getBaseName(profileReportName.get());
-         String extension = FilenameUtils.getExtension(profileReportName.get());
 
-         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json") || "json".equals(extension)) {
+         if(format.isPresent() ||
+                 ( acceptHeader.isPresent() &&
+                         (acceptHeader.get().startsWith("application/json") ||
+                                 acceptHeader.get().startsWith("application/xml") ||
+                                 acceptHeader.get().startsWith("text/xml")
+                         )
+                 )
+         ) {
 
-            return "forward:/download/profile/" + profileReportName.get() + "?format=json";
-         }
-         if(acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml")) || "xml".equals(extension)) {
-
-            return "forward:/download/profile/" + profileReportName.get() ;
+            return "forward:/download/profile/" + basename;
          }
          
          reportPath = reportPath.resolve(basename + ".html");
@@ -67,17 +64,17 @@ public class ProfileCtl {
       }
       else {
 
-         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json")) {
-
-            return "forward:/download/profile/AllProfileReport?format=json";
-         }
-         if(acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml"))) {
+         if(format.isPresent() ||
+                 ( acceptHeader.isPresent() &&
+                         (acceptHeader.get().startsWith("application/json") ||
+                                 acceptHeader.get().startsWith("application/xml") ||
+                                 acceptHeader.get().startsWith("text/xml") ||
+                                 acceptHeader.get().startsWith("text/tab-separated-values")
+                         )
+                 )
+         ) {
 
             return "forward:/download/profile/AllProfileReport";
-         }
-         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("text/tab-separated-values")) {
-
-            return "forward:/download/profile/AllProfileReport?format=tsv";
          }
          
          reportPath = reportPath.resolve("AllProfileReport.html");

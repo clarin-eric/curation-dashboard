@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 /**
@@ -39,25 +38,22 @@ public class CollectionCtl {
    @GetMapping(value = {"", "/{collectionReportName}"})
    public String getCollection(@RequestHeader(name = "Accept", required = false) Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @PathVariable(value = "collectionReportName", required = false) Optional<String> collectionReportName, Model model) {
 
-      // if a format is set, it has priority over the acceptHeader
-      if(format.isPresent()) {
-         acceptHeader = Optional.of("application/" + format.get());
-      }
-
       Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("collection");
       
       if(collectionReportName.isPresent()) {
 
          String basename = FilenameUtils.getBaseName(collectionReportName.get());
-         String extension = FilenameUtils.getExtension(collectionReportName.get());
 
-         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json") || "json".equals(extension)) {
+         if(format.isPresent() ||
+                 ( acceptHeader.isPresent() &&
+                         (acceptHeader.get().startsWith("application/json") ||
+                                 acceptHeader.get().startsWith("application/xml") ||
+                                 acceptHeader.get().startsWith("text/xml")
+                         )
+                 )
+         ) {
 
-            return "forward:/download/collection/" + basename + "?format=json";
-         }
-         if(acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml")) || "xml".equals(extension)) {
-
-            return "forward:/download/collection/" + basename ;
+            return "forward:/download/collection/" + basename;
          }
 
          reportPath = reportPath.resolve(basename + ".html");
@@ -65,17 +61,17 @@ public class CollectionCtl {
       }
       else { // without specific collectionReportName we return the AllCollectionReport.html
 
-         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json")) {
-
-            return "forward:/download/collection/AllCollectionReport?format=json";
-         }
-         if(acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml"))) {
+         if(format.isPresent() ||
+                 ( acceptHeader.isPresent() &&
+                         (acceptHeader.get().startsWith("application/json") ||
+                                 acceptHeader.get().startsWith("application/xml") ||
+                                 acceptHeader.get().startsWith("text/xml") ||
+                                 acceptHeader.get().startsWith("text/tab-separated-values")
+                         )
+                 )
+         ) {
 
             return "forward:/download/collection/AllCollectionReport";
-         }
-         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("text/tab-separated-values")) {
-
-            return "forward:/download/collection/AllCollectionReport?format=tsv";
          }
          
          reportPath = reportPath.resolve("AllCollectionReport.html");

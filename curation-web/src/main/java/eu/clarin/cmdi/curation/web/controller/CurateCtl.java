@@ -70,10 +70,6 @@ public class CurateCtl {
    @GetMapping()
    public String getInstance(@RequestHeader(name = "Accept", required = false) Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @RequestParam(name="url-input", required=false) String urlStr, Model model) {
 
-      // if a format is set, it has priority over the acceptHeader
-      if(format.isPresent()) {
-         acceptHeader = Optional.of("application/" + format.get());
-      }
 
       log.debug("urlStr: {}", urlStr);
 
@@ -146,7 +142,7 @@ public class CurateCtl {
             } // else go down and curate the file
          }
 
-         String returnString = createReport(inFilePath, acceptHeader, model);
+         String returnString = createReport(inFilePath, format, acceptHeader, model);
          return returnString;
          
 
@@ -164,11 +160,6 @@ public class CurateCtl {
    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
    public String postInstance(@RequestHeader(name = "Accept", required = false) Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @RequestParam("file") MultipartFile file, Model model) {
 
-      // if a format is set, it has priority over the acceptHeader
-      if(format.isPresent()) {
-         acceptHeader = Optional.of("application/" + format.get());
-      }
-
       Path inFilePath = Paths.get(System.getProperty("java.io.tmpdir"), System.currentTimeMillis() + "_curation.tmp");
       
       try {
@@ -181,11 +172,11 @@ public class CurateCtl {
          throw new RuntimeException("Given URL is invalid");
       }
 
-      String returnString = createReport(inFilePath, acceptHeader, model);
+      String returnString = createReport(inFilePath, format, acceptHeader, model);
       return returnString;
    }
 
-   private String createReport(Path inFilePath, Optional<String> acceptHeader, Model model) {
+   private String createReport(Path inFilePath, Optional<String> format, Optional<String> acceptHeader, Model model) {
 
       NamedReport report = null;     
       
@@ -213,14 +204,18 @@ public class CurateCtl {
 
          storage.saveReportAsHTML(report, CurationEntityType.INSTANCE, false);
 
-         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json")) {
-
-            return "forward:/download/instance/" + report.getName() + "?format=json";
-         }
-         else if(acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml"))) {
+         if(format.isPresent() ||
+              ( acceptHeader.isPresent() &&
+                   (acceptHeader.get().startsWith("application/json") ||
+                     acceptHeader.get().startsWith("application/xml") ||
+                     acceptHeader.get().startsWith("text/xml")
+                   )
+              )
+            ) {
 
             return "forward:/download/instance/" + report.getName();
          }
+
          else {
 
             Path htmlFilePath = conf.getDirectory().getOut()

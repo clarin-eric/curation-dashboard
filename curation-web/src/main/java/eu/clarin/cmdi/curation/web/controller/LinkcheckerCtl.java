@@ -45,30 +45,24 @@ public class LinkcheckerCtl {
     * @return the report
     */
    @GetMapping(value = {"","/{linkcheckerReportName}"})
-   public String getReport(@RequestHeader("Accept") Optional<String> acceptHeader, @RequestParam(name ="format", required = false) Optional<String> format, @PathVariable(value = "linkcheckerReportName") Optional<String> linkcheckerReportName, Model model) {
+   public String getReport(@RequestHeader(name = "Accept", required = false) Optional<String> acceptHeader, @RequestParam(name ="format", required = false) Optional<String> format, @PathVariable(value = "linkcheckerReportName") Optional<String> linkcheckerReportName, Model model) {
 
-      // if a format is set, it has priority over the acceptHeader
-      if(format.isPresent()){
-         acceptHeader = format;
-      }
       Path reportPath;
 
       if(linkcheckerReportName.isPresent()){
 
          String basename = FilenameUtils.getBaseName(linkcheckerReportName.get());
-         String extension = FilenameUtils.getExtension(linkcheckerReportName.get());
 
-         if (acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json") || "json".equals(extension)) {
+          if(format.isPresent() ||
+                  ( acceptHeader.isPresent() &&
+                          (acceptHeader.get().startsWith("application/json") ||
+                                  acceptHeader.get().startsWith("application/xml") ||
+                                  acceptHeader.get().startsWith("text/xml")
+                          )
+                  )
+          ) {
 
-            return "forward:/download/linkchecker/" + basename + "?format=json";
-         }
-         if (acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml")) || "xml".equals(extension)) {
-
-            return "forward:/download/linkchecker/" + basename + "?format=xml";
-         }
-         if (acceptHeader.isPresent() && acceptHeader.get().startsWith("text/tab-separated-values") || "tsv".equals(extension)) {
-
-            return "forward:/download/linkchecker/" + basename + "?format=tsv";
+            return "forward:/download/linkchecker/" + basename;
          }
 
          reportPath = conf.getDirectory().getOut().resolve("html").resolve("linkchecker")
@@ -78,11 +72,14 @@ public class LinkcheckerCtl {
       }
       else{
 
-         if(acceptHeader.isPresent() && acceptHeader.get().startsWith("application/json")) {
-
-            return "forward:/download/linkchecker/AllLinkcheckerReport?format=json";
-         }
-         if(acceptHeader.isPresent() && (acceptHeader.get().startsWith("application/xml") || acceptHeader.get().startsWith("text/xml"))) {
+          if(format.isPresent() ||
+                  ( acceptHeader.isPresent() &&
+                          (acceptHeader.get().startsWith("application/json") ||
+                                  acceptHeader.get().startsWith("application/xml") ||
+                                  acceptHeader.get().startsWith("text/xml")
+                          )
+                  )
+          ) {
 
             return "forward:/download/linkchecker/AllLinkcheckerReport";
          }
