@@ -124,7 +124,7 @@ public class Download {
          if ("tsv".equalsIgnoreCase(finalFormat) || "json".equalsIgnoreCase(finalFormat)) {
 
             String xslFileName = "tsv".equalsIgnoreCase(finalFormat)
-                  ? STR."/xslt/\{reportName}2\{finalFormat.toUpperCase()}.xsl"
+                  ? "/xslt/" + reportName + "2" + finalFormat.toUpperCase() + ".xsl"
                   : "/xslt/XML2JSON.xsl";
             TransformerFactory factory = BasicTransformerFactory.newInstance();
 
