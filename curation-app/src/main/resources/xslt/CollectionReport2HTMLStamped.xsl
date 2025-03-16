@@ -155,7 +155,7 @@
             See <a href="#recordDetail">Metadata Record Details</a> table for more information.
         </xsl:if>
         <br/>
-        <b>All per metadata record averages (except in the metadata records section) are based on the number of processable metadata records</b>
+        <b>All "per metadata record" averages are based on the number of processable metadata records (except in the Metadata Records section) </b>
         <br/>
         <br/>
         <xsl:apply-templates select="fileReport"/>
