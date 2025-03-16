@@ -252,7 +252,7 @@
             <xsl:value-of select="format-number(./numOfFiles, '###,##0')"/>
         </p>
         <p>
-            Number of processable Metadata Records:
+            Number of processable metadata records:
             <xsl:value-of select="format-number(./numOfFilesProcessable, '###,##0')"/>
         </p>
         <p>
@@ -452,7 +452,7 @@
                 <h2 class="anchor" id="facetReport">Facets</h2>
             </summary>
             <p>The facets section shows the facet coverage within the
-                Metadata Records of a Metadata Provider. A facet can be covered by the instance
+                metadata records of a metadata provider. A facet can be covered by the instance
                 even when it is not covered by the profile when cross facet mapping is used.
             </p>
         </details>
