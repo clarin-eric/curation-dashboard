@@ -1,3 +1,6 @@
+# 7.3.1
+- fix for maven lookup (issue  https://github.com/clarin-eric/curation-dashboard/issues/281)
+
 # 7.3.0
 - adding URL parameter »format« in those controllers, where it hasn't existed so far to get the report in JSON, XML or TVS format (issue https://github.com/clarin-eric/curation-dashboard/issues/280)
 
