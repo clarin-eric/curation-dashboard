@@ -1,3 +1,6 @@
+# 7.4.0
+- adding timelines for link checking (issue https://github.com/clarin-eric/curation-dashboard/issues/278)
+
 # 7.3.1
 - fix for maven lookup (issue  https://github.com/clarin-eric/curation-dashboard/issues/281)
 

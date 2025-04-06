@@ -697,6 +697,14 @@
                     </xsl:for-each>
                 </tbody>
             </table>
+            <br/>
+            <img alt="timeline of link checking results" width="800" higth="200">
+                <xsl:attribute name="src">
+                    <xsl:text>/img/linkchecker/</xsl:text>
+                    <xsl:value-of select="//fileReport/provider" />
+                    <xsl:text>.png</xsl:text>
+                </xsl:attribute>
+            </img>
         </xsl:if>
     </xsl:template>
 </xsl:stylesheet>

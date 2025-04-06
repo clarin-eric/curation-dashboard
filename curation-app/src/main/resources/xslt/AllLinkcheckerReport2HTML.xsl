@@ -53,7 +53,6 @@
                         </td>
                     </tr>
                 </xsl:for-each>
-
             </tbody>
             <tfoot>
                 <tr>
@@ -70,6 +69,8 @@
                 </tr>
             </tfoot>
         </table>
+        <br />
+        <img src="/img/linkchecker/Overall.png" alt="timeline of link checking results" width="800" higth="200" />
         <br/>
         <h3>Metadata Providers:</h3>
 
@@ -129,6 +130,13 @@
                 </tfoot>
             </table>
             <br/>
+            <img alt="timeline of link checking results" width="800" higth="200">
+                <xsl:attribute name="src">
+                    <xsl:text>/img/linkchecker/</xsl:text>
+                    <xsl:value-of select="$name" />
+                    <xsl:text>.png</xsl:text>
+                </xsl:attribute>
+            </img>
         </xsl:for-each>
     </xsl:template>
 </xsl:stylesheet>
