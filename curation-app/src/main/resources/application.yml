@@ -123,3 +123,16 @@ curation:
    # path to the vloConfig.xml file. Empty path uses default vloConfig from vlo-commons
    # vlo_config_location:""
    vlo_config_location: ${VLO_CONFIG_LOCATION:}
+   chart:
+      title: "Link checking results"
+      xAxisLabel: "date"
+      yAxisLabel: "number of links"
+      width: 800
+      height: 200
+      colors:
+         Ok: "#5ba300"
+         Undetermined: "#8babf1"
+         Restricted_Access: "#0073e6"
+         Blocked_By_Robots_txt: "#054fb9"
+         Broken: "#f57600"
+         Invalid_URL: "#c44601"

@@ -11,12 +11,11 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileStorage;
 import eu.clarin.cmdi.curation.app.conf.AppConfig;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
-import eu.clarin.cmdi.curation.chart.StackedAreaChartFactory;
+import eu.clarin.cmdi.curation.chart.SimpleChartFactory;
+import eu.clarin.cmdi.curation.chart.StackedAreaChart;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.linkchecker.persistence.service.LinkService;
 import lombok.extern.slf4j.Slf4j;
-import org.jfree.data.time.Day;
-import org.jfree.data.time.TimeTableXYDataset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -45,7 +44,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -82,6 +83,8 @@ public class CurationApp {
     LinkService linkService;
     @Autowired
     CacheManager cacheManager;
+    @Autowired
+    SimpleChartFactory chartFactory;
 
     /**
      * The entry point of application.
@@ -148,10 +151,8 @@ public class CurationApp {
                 log.info("start generating linkchecker charts");
                 final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+                final Map<String, StackedAreaChart> charts = new HashMap<>();
 
-                final StackedAreaChartFactory stackedAreaChartFactory = StackedAreaChartFactory.newInstance();
-                stackedAreaChartFactory.setLabels("Link checking results", "date", "number of links");
-                stackedAreaChartFactory.setDimensions(800, 200);
 
                 // we walk through the AllLinkcheckerReport files that have a timestamp and sort them, oldest first
                 Files.walk(conf.getDirectory().getOut().resolve("xml").resolve("linkchecker"))
@@ -185,7 +186,11 @@ public class CurationApp {
                                                 this.collectionName = attributes.getValue("name");
                                                 break;
                                             case "statistics":
-                                                stackedAreaChartFactory.addXY(this.collectionName, attributes.getValue("category"), this.creationDate, Double.valueOf(attributes.getValue("count")));
+                                                charts.computeIfAbsent(
+                                                    this.collectionName,
+                                                k -> chartFactory.createStackedAreaChart())
+                                                        .addValue(attributes.getValue("category"), this.creationDate, Double.valueOf(attributes.getValue("count"))
+                                                    );
                                                 break;
                                             default:
                                         }
@@ -213,10 +218,18 @@ public class CurationApp {
                     Files.createDirectories(imgDirectory);
                 }
 
-                stackedAreaChartFactory.saveAll(imgDirectory);
+                charts.forEach((collectionName, chart) -> {
+                    try {
+
+                        chart.save(imgDirectory, collectionName);
+                    }
+                    catch (IOException e) {
+
+                        log.error("can't save chart of collection '{}'", collectionName);
+                    }
+                });
+
                 log.info("done generating linkchecker charts");
-
-
             }
             // it's important to process profiles after collections, to fill the collection usage section of the profiles
             // before they're printed out
