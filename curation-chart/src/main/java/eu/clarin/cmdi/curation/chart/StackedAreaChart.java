@@ -46,6 +46,11 @@ public class StackedAreaChart {
         dataset.add(new Day(date), value, seriesName);
     }
 
+    public void addValues(Date date, Map<String, Double> values) {
+
+        values.forEach((key, value) -> addValue(key, date, value));
+    }
+
     public void save(Path outputDir, String fileName) throws IOException {
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart(this.conf.getTitle(), this.conf.getXAxisLabel(), this.conf.getYAxisLabel(), dataset);

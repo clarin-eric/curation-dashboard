@@ -13,6 +13,7 @@ import eu.clarin.cmdi.curation.app.conf.AppConfig;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.chart.SimpleChartFactory;
 import eu.clarin.cmdi.curation.chart.StackedAreaChart;
+import eu.clarin.cmdi.curation.chart.conf.ChartConfig;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.linkchecker.persistence.service.LinkService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,10 +44,7 @@ import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -67,6 +65,8 @@ public class CurationApp {
 
     @Autowired
     private AppConfig conf;
+    @Autowired
+    private ChartConfig chartConf;
     @Autowired
     private CurationModule curation;
     @Autowired
@@ -167,6 +167,7 @@ public class CurationApp {
 
                                     private Date creationDate;
                                     private String collectionName;
+                                    private Map<String, Double> values;
 
                                     @Override
                                     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -181,18 +182,35 @@ public class CurationApp {
                                                 break;
                                             case "overall":
                                                 this.collectionName = "Overall";
+
+                                                this.values = new LinkedHashMap<>();
+                                                chartConf.getColors().forEach((k, v) -> this.values.put(k, 0.0));
+
                                                 break;
                                             case "collection":
                                                 this.collectionName = attributes.getValue("name");
+
+                                                this.values = new LinkedHashMap<>();
+                                                chartConf.getColors().forEach((k, v) -> this.values.put(k, 0.0));
+
                                                 break;
                                             case "statistics":
-                                                charts.computeIfAbsent(
-                                                    this.collectionName,
-                                                k -> chartFactory.createStackedAreaChart())
-                                                        .addValue(attributes.getValue("category"), this.creationDate, Double.valueOf(attributes.getValue("count"))
-                                                    );
+                                                values.put(attributes.getValue("category"), Double.valueOf(attributes.getValue("count")));
                                                 break;
                                             default:
+                                        }
+                                    }
+
+                                    @Override
+                                    public void endElement(String uri, String localName, String qName) throws SAXException {
+                                        switch(qName){
+                                            case "overall":
+                                            case "collection":
+                                                charts.computeIfAbsent(
+                                                                this.collectionName,
+                                                                k -> chartFactory.createStackedAreaChart()
+                                                        ).addValues(creationDate, values);
+
                                         }
                                     }
                                 });
