@@ -130,9 +130,9 @@ curation:
       width: 800
       height: 200
       colors:
-         Ok: "#5ba300"
-         Undetermined: "#8babf1"
-         Restricted_Access: "#0073e6"
-         Blocked_By_Robots_txt: "#054fb9"
-         Broken: "#f57600"
-         Invalid_URL: "#c44601"
+         Ok: "#44AA99"
+         Undetermined: "#DDCC77"
+         Restricted_Access: "#88CCEE"
+         Blocked_By_Robots_txt: "#332288"
+         Broken: "#AA4499"
+         Invalid_URL: "#882255"
