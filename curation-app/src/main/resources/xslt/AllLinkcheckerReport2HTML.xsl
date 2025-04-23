@@ -137,6 +137,7 @@
                     <xsl:text>.png</xsl:text>
                 </xsl:attribute>
             </img>
+            <br />
         </xsl:for-each>
     </xsl:template>
 </xsl:stylesheet>
