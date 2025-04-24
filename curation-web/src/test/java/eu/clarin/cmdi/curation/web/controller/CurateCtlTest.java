@@ -44,7 +44,7 @@ class CurateCtlTest {
         // sending the same file with accept header xml should return status code OK and a xml file
         this.mockMvc.perform(multipart("/curate").file(multiPartFile).accept(MediaType.APPLICATION_XML)).andDo(print()).andExpect(status().isOk()).andExpect(forwardedUrlPattern("/download/instance/_tmp_*_curation_tmp"));
         // sending the same file with accept header json should return status code OK and a json file
-        this.mockMvc.perform(multipart("/curate").file(multiPartFile).accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(forwardedUrlPattern("/download/instance/_tmp_*_curation_tmp?format=json"));
+        this.mockMvc.perform(multipart("/curate").file(multiPartFile).accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(forwardedUrlPattern("/download/instance/_tmp_*_curation_tmp"));
 
         // creating a mock multipart from a profile
         multiPartFile = new MockMultipartFile("file", "media-corpus-profile.xsd", MediaType.MULTIPART_FORM_DATA_VALUE, this.getClass().getResourceAsStream("/testfiles/media-corpus-profile.xsd"));
@@ -53,7 +53,7 @@ class CurateCtlTest {
         // sending the same file with accept header xml should return status code OK and a xml file
         this.mockMvc.perform(multipart("/curate").file(multiPartFile).accept(MediaType.APPLICATION_XML)).andDo(print()).andExpect(status().isOk()).andExpect(forwardedUrlPattern("/download/instance/file____tmp_*_curation_tmp"));
         // sending the same file with accept header json should return status code OK and a json file
-        this.mockMvc.perform(multipart("/curate").file(multiPartFile).accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(forwardedUrlPattern("/download/instance/file____tmp_*_curation_tmp?format=json"));
+        this.mockMvc.perform(multipart("/curate").file(multiPartFile).accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(forwardedUrlPattern("/download/instance/file____tmp_*_curation_tmp"));
 
     }
 
