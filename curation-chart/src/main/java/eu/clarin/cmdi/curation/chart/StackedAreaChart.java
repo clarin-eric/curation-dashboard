@@ -18,6 +18,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.IntStream;
 
+/**
+ * The type Stacked area chart.
+ */
 @Slf4j
 public class StackedAreaChart {
 
@@ -27,6 +30,11 @@ public class StackedAreaChart {
 
     private final TimeTableXYDataset dataset;
 
+    /**
+     * Instantiates a new Stacked area chart.
+     *
+     * @param conf the conf
+     */
     public StackedAreaChart(ChartConfig conf) {
 
         this.conf = conf;
@@ -41,16 +49,36 @@ public class StackedAreaChart {
 
     }
 
+    /**
+     * Add value.
+     *
+     * @param seriesName the series name
+     * @param date       the date
+     * @param value      the value
+     */
     public void addValue(String seriesName, Date date, double value) {
 
         dataset.add(new Day(date), value, seriesName);
     }
 
+    /**
+     * Add values.
+     *
+     * @param date   the date
+     * @param values the values
+     */
     public void addValues(Date date, Map<String, Double> values) {
 
         values.forEach((key, value) -> addValue(key, date, value));
     }
 
+    /**
+     * Save.
+     *
+     * @param outputDir the output dir
+     * @param fileName  the file name
+     * @throws IOException the io exception
+     */
     public void save(Path outputDir, String fileName) throws IOException {
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart(this.conf.getTitle(), this.conf.getXAxisLabel(), this.conf.getYAxisLabel(), dataset);
