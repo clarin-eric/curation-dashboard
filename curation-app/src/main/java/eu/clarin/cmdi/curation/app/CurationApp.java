@@ -17,7 +17,6 @@ import eu.clarin.cmdi.curation.chart.conf.ChartConfig;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.linkchecker.persistence.service.LinkService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -63,28 +62,35 @@ public class CurationApp {
 
     private static final Pattern pattern = Pattern.compile("(\\S+)_(\\d{4}-\\d{2}-\\d{2}).html");
 
-    @Autowired
-    private AppConfig conf;
-    @Autowired
-    private ChartConfig chartConf;
-    @Autowired
-    private CurationModule curation;
-    @Autowired
-    private CRService crService;
+    private final AppConfig conf;
+    private final ChartConfig chartConf;
+    private final CurationModule curation;
+    private final CRService crService;
     /**
      * The Storage.
      */
-    @Autowired
+    final
     FileStorage storage;
     /**
      * The Link service.
      */
-    @Autowired
+    final
     LinkService linkService;
-    @Autowired
+    final
     CacheManager cacheManager;
-    @Autowired
+    final
     SimpleChartFactory chartFactory;
+
+    public CurationApp(AppConfig conf, ChartConfig chartConf, CurationModule curation, CRService crService, FileStorage storage, LinkService linkService, CacheManager cacheManager, SimpleChartFactory chartFactory) {
+        this.conf = conf;
+        this.chartConf = chartConf;
+        this.curation = curation;
+        this.crService = crService;
+        this.storage = storage;
+        this.linkService = linkService;
+        this.cacheManager = cacheManager;
+        this.chartFactory = chartFactory;
+    }
 
     /**
      * The entry point of application.
@@ -98,11 +104,11 @@ public class CurationApp {
     /**
      * Command line runner command line runner.
      *
-     * @param ctx the ctx
+     * @param ignoredCtx the ctx
      * @return the command line runner
      */
     @Bean
-    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+    public CommandLineRunner commandLineRunner(ApplicationContext ignoredCtx) {
 
         return args -> {
 
@@ -132,15 +138,17 @@ public class CurationApp {
                 }
 
                 // create a meta report of all collection reports
-                Files.walk(conf.getDirectory().getOut().resolve("html").resolve("collection")).forEach(path -> {
+                try(Stream<Path> paths = Files.walk(conf.getDirectory().getOut().resolve("html").resolve("collection"))) {
+                    paths.forEach(path -> {
 
-                    Matcher matcher;
+                        Matcher matcher;
 
-                    if (!path.getFileName().toString().startsWith("AllCollectionReport") && (matcher = pattern.matcher(path.getFileName().toString())).matches()) {
+                        if (!path.getFileName().toString().startsWith("AllCollectionReport") && (matcher = pattern.matcher(path.getFileName().toString())).matches()) {
 
-                        collectionHistoryReport.addReport(matcher.group(1).trim(), matcher.group(2), path.getFileName().toString());
-                    }
-                });
+                            collectionHistoryReport.addReport(matcher.group(1).trim(), matcher.group(2), path.getFileName().toString());
+                        }
+                    });
+                }
 
                 // save reports
                 storage.saveReport(allCollectionReport, CurationEntityType.COLLECTION, true);
@@ -155,79 +163,81 @@ public class CurationApp {
 
 
                 // we walk through the AllLinkcheckerReport files that have a timestamp and sort them, oldest first
-                Files.walk(conf.getDirectory().getOut().resolve("xml").resolve("linkchecker"))
+                try(Stream<Path> paths = Files.walk(conf.getDirectory().getOut().resolve("xml").resolve("linkchecker"))
                         .filter(filePath -> filePath.getFileName().toString().matches("AllLinkcheckerReport_\\d{4}-\\d{2}-\\d{2}.xml"))
-                        .sorted((p1, p2) -> p1.compareTo(p2))
-                        .forEach(filePath -> {
-                            // each file is parsed for the creationDate, the collection-name and the category/number information
-                            try {
-                                SAXParser parser = saxParserFactory.newSAXParser();
+                        .sorted(Comparator.naturalOrder())) {
+                    paths.forEach(filePath -> {
+                        // each file is parsed for the creationDate, the collection-name and the category/number information
+                        try {
+                            SAXParser parser = saxParserFactory.newSAXParser();
 
-                                parser.parse(Files.newInputStream(filePath), new DefaultHandler() {
+                            parser.parse(Files.newInputStream(filePath), new DefaultHandler() {
 
-                                    private Date creationDate;
-                                    private String collectionName;
-                                    private Map<String, Double> values;
+                                private Date creationDate;
+                                private String collectionName;
+                                private Map<String, Double> values;
 
-                                    @Override
-                                    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-                                        switch (qName) {
-                                            case "allLinkcheckerReport":
-                                                try {
-                                                    this.creationDate = dateFormat.parse(attributes.getValue("creationTime"));
-                                                }
-                                                catch (ParseException e) {
-                                                    throw new RuntimeException(e);
-                                                }
-                                                break;
-                                            case "overall":
-                                                this.collectionName = "Overall";
+                                @Override
+                                public void startElement(String uri, String localName, String qName, Attributes attributes) {
+                                    switch (qName) {
+                                        case "allLinkcheckerReport":
+                                            try {
+                                                this.creationDate = dateFormat.parse(attributes.getValue("creationTime"));
+                                            }
+                                            catch (ParseException e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                            break;
+                                        case "overall":
+                                            this.collectionName = "Overall";
 
-                                                this.values = new LinkedHashMap<>();
-                                                chartConf.getColors().forEach((k, v) -> this.values.put(k, 0.0));
+                                            this.values = new LinkedHashMap<>();
+                                            chartConf.getColors().forEach((k, v) -> this.values.put(k, 0.0));
 
-                                                break;
-                                            case "collection":
-                                                this.collectionName = attributes.getValue("name");
+                                            break;
+                                        case "collection":
+                                            this.collectionName = attributes.getValue("name");
 
-                                                this.values = new LinkedHashMap<>();
-                                                chartConf.getColors().forEach((k, v) -> this.values.put(k, 0.0));
+                                            this.values = new LinkedHashMap<>();
+                                            chartConf.getColors().forEach((k, v) -> this.values.put(k, 0.0));
 
-                                                break;
-                                            case "statistics":
-                                                values.put(attributes.getValue("category"), Double.valueOf(attributes.getValue("count")));
-                                                break;
-                                            default:
-                                        }
+                                            break;
+                                        case "statistics":
+                                            values.put(attributes.getValue("category"), Double.valueOf(attributes.getValue("count")));
+                                            break;
+                                        default:
                                     }
+                                }
 
-                                    @Override
-                                    public void endElement(String uri, String localName, String qName) throws SAXException {
-                                        switch(qName){
-                                            case "overall":
-                                            case "collection":
-                                                charts.computeIfAbsent(
-                                                                this.collectionName,
-                                                                k -> chartFactory.createStackedAreaChart()
-                                                        ).addValues(creationDate, values);
+                                @Override
+                                public void endElement(String uri, String localName, String qName) {
+                                    switch (qName) {
+                                        case "overall":
+                                        case "collection":
+                                            charts.computeIfAbsent(
+                                                    this.collectionName,
+                                                    k -> chartFactory.createStackedAreaChart()
+                                            ).addValues(creationDate, values);
 
-                                        }
                                     }
-                                });
-                            }
-                            catch (ParserConfigurationException e) {
+                                }
+                            });
+                        }
+                        catch (ParserConfigurationException e) {
 
-                                throw new RuntimeException(e);
-                            }
-                            catch (SAXException e) {
+                            log.error("can't create SAX parser", e);
+                            throw new RuntimeException(e);
+                        }
+                        catch (SAXException e) {
 
-                                throw new RuntimeException(e);
-                            }
-                            catch (IOException e) {
+                            log.error("can't parse file '{}'", filePath);
+                        }
+                        catch (IOException e) {
 
-                                throw new RuntimeException(e);
-                            }
-                        });
+                            log.error("can't read file '{}'", filePath);
+                        }
+                    });
+                }
 
                 Path imgDirectory = conf.getDirectory().getOut().resolve("img").resolve("linkchecker");
 
@@ -267,12 +277,13 @@ public class CurationApp {
 
                     storage.saveReport(profileReport, CurationEntityType.PROFILE, false);
 
+                    assert cache != null;
                     cache.evict(schemaLocation);
 
                     log.info("done processing public profile '{}'", schemaLocation);
                 });
 
-                // now we have to do the same for the non public profiles used by CMDI files
+                // now we have to do the same for the nonpublic profiles used by CMDI files
 
                 Iterator<javax.cache.Cache.Entry<String, CMDProfileReport>> it = ((javax.cache.Cache) cache.getNativeCache()).iterator();
 
