@@ -16,7 +16,7 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '21'
-        distribution: 'corretto'
+        distribution: 'temurin'
         cache: maven
     - name: Build with MavenWrapper
       run: ./mvnw -B package
