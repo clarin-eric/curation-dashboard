@@ -4,6 +4,8 @@ spring:
       username: sa
       password: password
       driver-class-name: org.h2.Driver
+      hikari:
+         auto-commit: true
    jpa:
       show-sql: true
       hibernate:
