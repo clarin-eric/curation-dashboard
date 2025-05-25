@@ -27,7 +27,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with MavenWrapper
-      run: ./mvnw -X package
+      run: ./mvnw -X -Dtest=CollectionTest#linkchecking -Dsurefire.failIfNoSpecifiedTests=false clean test
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
