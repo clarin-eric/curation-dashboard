@@ -7,6 +7,7 @@ import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
+import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.mockserver.client.MockServerClient;
@@ -57,7 +58,7 @@ class CRServiceTests {
     @MockServerPort
     private Integer mockServerPort;
 
-    //@Test
+    @Test
     void serverNotAvailable() {
 
         this.mockServerClient
@@ -68,24 +69,24 @@ class CRServiceTests {
                         response().withStatusCode(200)
                 );
 
+        // we're making the proxy server inaccessible by incrementing the port to call
         httpConfig.setProxyPort(this.mockServerPort + 1);
 
-        try {
-            assertDoesNotThrow(() -> this.crCache.getEntry("http://www.wowasa.com/clarin.eu:cr1:p_1403526079381/xsd"));
-            assertThrows(NoCRCacheEntryException.class, () -> crService.getParsedProfile("http://www.wowasa.com/clarin.eu:cr1:p_1403526079381/xsd"));
-            // should be cached
-            assertNotNull(cacheManager.getCache("crCache").get("http://www.wowasa.com/clarin.eu:cr1:p_1403526079381/xsd"));
-            // even with a local file it should throw an exception
-            assertDoesNotThrow(() -> this.crCache.getEntry(Paths.get("tmp", "77777").toUri().toString()));
-        }
-        catch (Exception e) {
+        // we are using a proxy server which responds with ok status, but since we call it on the wrong port, the server is not accessible
+        // no exception should be thrown in crCache but a null value should be cached for the profile
+        assertDoesNotThrow(() -> this.crCache.getEntry("http://www.wowasa.com/clarin.eu:cr1:p_1403526079381/xsd"));
+        // the attempt to get the parsed profile should result in an exception, since we can't create a ParsedProfile from null
+        assertThrows(NoCRCacheEntryException.class, () -> crService.getParsedProfile("http://www.wowasa.com/clarin.eu:cr1:p_1403526079381/xsd"));
+        // there should by a cache entry (we're testing for the existence of a cache entry, not for its value!)
+        assertNotNull(cacheManager.getCache("crCache").get("http://www.wowasa.com/clarin.eu:cr1:p_1403526079381/xsd"));
+        // even with a non-existent local file it shouldn't throw an exception
+        assertDoesNotThrow(() -> this.crCache.getEntry(Paths.get("tmp", "77777").toUri().toString()));
 
-        }
-
+        // resetting to the correct proxy server port
         httpConfig.setProxyPort(this.mockServerPort);
     }
 
-    //@Test
+    @Test
     void connectionTimeout() throws NoCRCacheEntryException, CRServiceStorageException, CCRServiceNotAvailableException, PPHCacheException {
 
         this.mockServerClient
@@ -98,17 +99,16 @@ class CRServiceTests {
                                 .withDelay(TimeUnit.SECONDS, 6)
                 );
 
+        // we are using a proxy server which responds with ok status after 6 seconds, which is more than the standard connection timeout of 5 seconds
+        // no exception should be thrown in crCache but a null value should be cached for the profile
         assertDoesNotThrow(() -> this.crCache.getEntry("http://www.wowasa.com/clarin.eu:cr1:p_1403526079382/xsd"));
-        assertThrows(NoCRCacheEntryException.class, () -> this.crService.getParsedProfile("http://www.wowasa.com/clarin.eu:cr1:p_1403526079382/xsd"));
-
-        assertFalse(this.crService.isPublicSchema("http://www.wowasa.com/clarin.eu:cr1:p_1403526079382/xsd"));
-        // should be cached
+        // the attempt to get the parsed profile should result in an exception, since we can't create a ParsedProfile from null
+        assertThrows(NoCRCacheEntryException.class, () -> crService.getParsedProfile("http://www.wowasa.com/clarin.eu:cr1:p_1403526079382/xsd"));
+        // there should by a cache entry (we're testing for the existence of a cache entry, not for its value!)
         assertNotNull(cacheManager.getCache("crCache").get("http://www.wowasa.com/clarin.eu:cr1:p_1403526079382/xsd"));
-
-
     }
 
-    //@Test
+    @Test
     void nonParseableResult() throws CCRServiceNotAvailableException, CRServiceStorageException, PPHCacheException, NoCRCacheEntryException {
 
         this.mockServerClient
@@ -136,41 +136,40 @@ class CRServiceTests {
 
     }
 
-    //@Test
+    @Test
     void isPublic() {
 
+        assertDoesNotThrow(() -> crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1380106710826/xsd"));
+
+        ParsedProfile parsedProfile = null;
+
         try {
-            assertDoesNotThrow(() -> crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd"));
-            assertTrue(crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd").header().isPublic());
-//            assertDoesNotThrow(() -> crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_9990106710826/xsd"));
-//            assertFalse(crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_9990106710826/xsd").header().isPublic());
-            assertFalse(crService.getParsedProfile(this.crConfig.getCrCache().resolve("https___catalog_clarin_eu_ds_ComponentRegistry_rest_registry_1_x_profiles_clarin_eu_cr1_p_1403526079380_xsd.xsd").toUri().toString()).header().isPublic());
+
+            parsedProfile = crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1380106710826/xsd");
         }
         catch (Exception e) {
 
             log.error("error in schema");
             log.error("", e);
         }
-    }
-
-    @Test
-    void cacheUsage() {
+        // the profile is in the context registry
+        assertTrue(parsedProfile.header().isCrResident());
+        // and it is public
+        assertTrue(parsedProfile.header().isPublic());
 
         try {
 
-            crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd");
- //           crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_9990106710826/xsd");
-
-            crService.getParsedProfile(this.crConfig.getCrCache().resolve("https___catalog_clarin_eu_ds_ComponentRegistry_rest_registry_1_x_profiles_clarin_eu_cr1_p_1403526079380_xsd.xsd").toUri().toString());
-
-            assertNotNull(cacheManager.getCache("crCache").get("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd"));
-//            assertNotNull(cacheManager.getCache("crCache").get("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_9990106710826/xsd"));
-         }
+            parsedProfile = crService.getParsedProfile("file:///tmp/17661427897514518579.tmp");
+        }
         catch (Exception e) {
 
             log.error("error in schema");
             log.error("", e);
         }
+        // uploaded profiles are not in the context registry
+        assertFalse(parsedProfile.header().isCrResident());
+        // uploaded profiles can't be public, since only profiles from the context registry can be public
+        assertFalse(parsedProfile.header().isPublic());
     }
 
     @SpringBootConfiguration
