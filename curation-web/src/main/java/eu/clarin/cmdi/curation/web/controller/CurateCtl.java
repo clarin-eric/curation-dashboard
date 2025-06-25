@@ -9,6 +9,7 @@ import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
+import eu.clarin.cmdi.curation.web.exception.ProfileNotSupportedException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -190,8 +191,14 @@ public class CurateCtl {
          
          if (text.contains("xmlns:xs=")) {// it's a profile
 
+            if(text.contains("http://www.clarin.eu/cmd/1")) {
 
                report = curation.processCMDProfile(inFilePath.toUri().toString());
+            }
+            else {
+
+               throw new ProfileNotSupportedException();
+            }
          }
          else { // no profile - so processed as CMD instance
             
