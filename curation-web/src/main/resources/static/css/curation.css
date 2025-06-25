@@ -188,26 +188,6 @@ div.markdown table {
 div.markdown table, div.markdown th, div.markdown td {
   border: 1px solid;
 }
-/*
-.Ok{
-	background-color: #00FF80;
-}
-.Undetermined{
-	background-color: #BFFF00;
-}
-.Restricted_Access{
-	background-color: #F4FA58;
-}
-.Blocked_By_Robots_txt{
-	background-color: #FE9A2E;
-} 
-.Broken{
-	background-color: #F78181;
-}
-.Invalid_URL{
-	background-color: #FA5858;
-}
-*/
 .alert{
     background-color: rgba(250, 88, 88, 0.76);
 }
@@ -216,4 +196,12 @@ div.markdown table, div.markdown th, div.markdown td {
 }
 #profiles .facetNotCovered{
     background-color: lightcoral;
+}
+img.chart-linkchecker{
+    margin: 6px;
+}
+article{
+    border-bottom-style: solid;
+    border-bottom-width: 3px;
+    border-bottom-color: black;
 }

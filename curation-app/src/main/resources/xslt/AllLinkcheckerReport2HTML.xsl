@@ -20,71 +20,11 @@
             </div>
             <div class="clear"/>
         </div>
-        <h3>Overall</h3>
-        <table class="reportTable">
-            <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Count</th>
-                    <th>Average Response Duration(ms)</th>
-                    <th>Max Response Duration(ms)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <xsl:for-each select="overall/statistics">
-                    <xsl:variable name="category">
-                        <xsl:value-of select="./@category"/>
-                    </xsl:variable>
-                    <tr class="{$category}">
-
-                        <td>
-                            <a href="/linkchecker/Overall#{$category}">
-                                <xsl:value-of select="@category"/>
-                            </a>
-                        </td>
-                        <td class='text-right'>
-                            <xsl:value-of select="format-number(@count, '###,##0')"/>
-                        </td>
-                        <td class='text-right'>
-                            <xsl:value-of select="format-number(@avgRespTime, '###,##0.0')"/>
-                        </td>
-                        <td class='text-right'>
-                            <xsl:value-of select="format-number(@maxRespTime, '###,##0.0')"/>
-                        </td>
-                    </tr>
-                </xsl:for-each>
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="5">
-                        Total number with response:
-                        <xsl:value-of select="format-number(overall/@totNumOfLinksWithDuration, '###,##0')"/>
-                        &#0183;
-                        Average Response Duration(ms):
-                        <xsl:value-of select="format-number(overall/@avgRespTime,'###,##0.0')"/>
-                        &#0183;
-                        Max Response Duration(ms):
-                        <xsl:value-of select="format-number(overall/@maxRespTime,'###,##0.0')"/>
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
-        <br />
-        <img src="/img/linkchecker/Overall.png" alt="timeline of link checking results" width="800" higth="200" />
-        <br/>
-        <h3>Metadata Providers:</h3>
-
-        <xsl:for-each select="collection">
-
-            <xsl:variable name="name" select="@name"/>
-
-            <h4>
-                <xsl:value-of select="replace($name,'_',' ')"/>
-            </h4>
+        <article>
+            <h3>Overall</h3>
             <table class="reportTable">
                 <thead>
                     <tr>
-
                         <th>Category</th>
                         <th>Count</th>
                         <th>Average Response Duration(ms)</th>
@@ -92,13 +32,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <xsl:for-each select="statistics">
+                    <xsl:for-each select="overall/statistics">
                         <xsl:variable name="category">
                             <xsl:value-of select="./@category"/>
                         </xsl:variable>
                         <tr class="{$category}">
+
                             <td>
-                                <a href="/linkchecker/{$name}#{$category}">
+                                <a href="/linkchecker/Overall#{$category}">
                                     <xsl:value-of select="@category"/>
                                 </a>
                             </td>
@@ -117,27 +58,83 @@
                 <tfoot>
                     <tr>
                         <td colspan="5">
-                            Total Number With Response:
-                            <xsl:value-of select="format-number(@totNumOfLinksWithDuration, '###,##0')"/>
+                            Total number with response:
+                            <xsl:value-of select="format-number(overall/@totNumOfLinksWithDuration, '###,##0')"/>
                             &#0183;
                             Average Response Duration(ms):
-                            <xsl:value-of select="format-number(@avgRespTime,'###,##0.0')"/>
+                            <xsl:value-of select="format-number(overall/@avgRespTime,'###,##0.0')"/>
                             &#0183;
                             Max Response Duration(ms):
-                            <xsl:value-of select="format-number(@maxRespTime,'###,##0.0')"/>
+                            <xsl:value-of select="format-number(overall/@maxRespTime,'###,##0.0')"/>
                         </td>
                     </tr>
                 </tfoot>
             </table>
-            <br/>
-            <img alt="timeline of link checking results" width="800" higth="200">
-                <xsl:attribute name="src">
-                    <xsl:text>/img/linkchecker/</xsl:text>
-                    <xsl:value-of select="$name" />
-                    <xsl:text>.png</xsl:text>
-                </xsl:attribute>
-            </img>
-            <br />
+            <img class="chart" src="/img/linkchecker/Overall.png" alt="timeline of link checking results" width="800" higth="200" />
+        </article>
+        <xsl:for-each select="collection">
+            <article>
+                <xsl:variable name="name" select="@name"/>
+
+                <h3>
+                    <xsl:value-of select="replace($name,'_',' ')"/>
+                </h3>
+                <table class="reportTable">
+                    <thead>
+                        <tr>
+
+                            <th>Category</th>
+                            <th>Count</th>
+                            <th>Average Response Duration(ms)</th>
+                            <th>Max Response Duration(ms)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <xsl:for-each select="statistics">
+                            <xsl:variable name="category">
+                                <xsl:value-of select="./@category"/>
+                            </xsl:variable>
+                            <tr class="{$category}">
+                                <td>
+                                    <a href="/linkchecker/{$name}#{$category}">
+                                        <xsl:value-of select="@category"/>
+                                    </a>
+                                </td>
+                                <td class='text-right'>
+                                    <xsl:value-of select="format-number(@count, '###,##0')"/>
+                                </td>
+                                <td class='text-right'>
+                                    <xsl:value-of select="format-number(@avgRespTime, '###,##0.0')"/>
+                                </td>
+                                <td class='text-right'>
+                                    <xsl:value-of select="format-number(@maxRespTime, '###,##0.0')"/>
+                                </td>
+                            </tr>
+                        </xsl:for-each>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5">
+                                Total Number With Response:
+                                <xsl:value-of select="format-number(@totNumOfLinksWithDuration, '###,##0')"/>
+                                &#0183;
+                                Average Response Duration(ms):
+                                <xsl:value-of select="format-number(@avgRespTime,'###,##0.0')"/>
+                                &#0183;
+                                Max Response Duration(ms):
+                                <xsl:value-of select="format-number(@maxRespTime,'###,##0.0')"/>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <img class="chart" alt="timeline of link checking results" width="800" higth="200">
+                    <xsl:attribute name="src">
+                        <xsl:text>/img/linkchecker/</xsl:text>
+                        <xsl:value-of select="$name" />
+                        <xsl:text>.png</xsl:text>
+                    </xsl:attribute>
+                </img>
+            </article>
         </xsl:for-each>
     </xsl:template>
 </xsl:stylesheet>
