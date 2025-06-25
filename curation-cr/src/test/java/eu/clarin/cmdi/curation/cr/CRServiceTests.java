@@ -11,6 +11,8 @@ import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.mockserver.client.MockServerClient;
+import org.mockserver.logging.MockServerLogger;
+import org.mockserver.socket.tls.KeyStoreFactory;
 import org.mockserver.springtest.MockServerPort;
 import org.mockserver.springtest.MockServerTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
+import javax.net.ssl.HttpsURLConnection;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -57,6 +61,14 @@ class CRServiceTests {
 
     @MockServerPort
     private Integer mockServerPort;
+
+    @BeforeAll
+    public void prepareFileCache() throws IOException {
+        // ensure all connection using HTTPS will use the SSL context defined by
+        // MockServer to allow dynamically generated certificates to be accepted
+        HttpsURLConnection.setDefaultSSLSocketFactory(new KeyStoreFactory(new MockServerLogger()).sslContext().getSocketFactory());
+
+    }
 
     @Test
     void serverNotAvailable() {
@@ -139,37 +151,48 @@ class CRServiceTests {
     @Test
     void isPublic() {
 
-        assertDoesNotThrow(() -> crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1380106710826/xsd"));
+        assertDoesNotThrow(() -> {
+            ParsedProfile parsedProfile = crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1380106710826/xsd");
+            // the profile is in the context registry
+            assertTrue(parsedProfile.header().isCrResident());
+            // and it is public
+            assertTrue(parsedProfile.header().isPublic());
+        });
 
-        ParsedProfile parsedProfile = null;
+        this.mockServerClient
+                .when(
+                        request()
+                )
+                .respond(
+                        response()
+                                .withBody(
+                                        """
+                                        <?xml version="1.0" encoding="UTF-8"?>
+                                        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cmd="http://www.clarin.eu/cmd/1" xmlns:cue="http://www.clarin.eu/cmd/cues/1" xmlns:cue_old="http://www.clarin.eu/cmdi/cues/1" xmlns:cmdp="http://www.clarin.eu/cmd/1/profiles/clarin.eu:cr1:p_1381926654571" targetNamespace="http://www.clarin.eu/cmd/1/profiles/clarin.eu:cr1:p_1381926654571" elementFormDefault="qualified">
+                                          <xs:annotation>
+                                            <xs:appinfo xmlns:ann="http://www.clarin.eu">
+                                              <cmd:Header>
+                                                <cmd:ID>clarin.eu:cr1:p_1381926654571</cmd:ID>
+                                                <cmd:Name>Corpus</cmd:Name>
+                                                <cmd:Description>Profile for the description of corpora containing basic metadata for the integration of resources into the various parts of the CLARIN-D infrastructure. Version 0.1</cmd:Description>
+                                                <cmd:Status>production</cmd:Status>
+                                              </cmd:Header>
+                                            </xs:appinfo>
+                                          </xs:annotation>
+                                          <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+                                          <xs:import namespace="http://www.clarin.eu/cmd/1" schemaLocation="https://infra.clarin.eu/CMDI/1.x/xsd/cmd-envelop.xsd"/>      
+                                        </xs:schema>      
+                                        """
+                                )
+                );
 
-        try {
+        assertDoesNotThrow(() -> {
+            ParsedProfile parsedProfile = crService.getParsedProfile("https://wowasa.com/clarin.eu:cr1:p_1380106710826/xsd");
 
-            parsedProfile = crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1380106710826/xsd");
-        }
-        catch (Exception e) {
-
-            log.error("error in schema");
-            log.error("", e);
-        }
-        // the profile is in the context registry
-        assertTrue(parsedProfile.header().isCrResident());
-        // and it is public
-        assertTrue(parsedProfile.header().isPublic());
-
-        try {
-
-            parsedProfile = crService.getParsedProfile("file:///tmp/17661427897514518579.tmp");
-        }
-        catch (Exception e) {
-
-            log.error("error in schema");
-            log.error("", e);
-        }
-        // uploaded profiles are not in the context registry
-        assertFalse(parsedProfile.header().isCrResident());
-        // uploaded profiles can't be public, since only profiles from the context registry can be public
-        assertFalse(parsedProfile.header().isPublic());
+            assertFalse(parsedProfile.header().isCrResident());
+            // uploaded profiles can't be public, since only profiles from the context registry can be public
+            assertFalse(parsedProfile.header().isPublic());
+        });
     }
 
     @SpringBootConfiguration
