@@ -20,7 +20,7 @@
             </div>
             <div class="clear"/>
         </div>
-        <article>
+        <article class="shadow p-3 mb-5 bg-body-tertiary rounded">
             <h3>Overall</h3>
             <table class="reportTable">
                 <thead>
@@ -73,7 +73,7 @@
             <img class="chart" src="/img/linkchecker/Overall.png" alt="timeline of link checking results" width="800" higth="200" />
         </article>
         <xsl:for-each select="collection">
-            <article>
+            <article class="shadow p-3 mb-5 bg-body-tertiary rounded">
                 <xsl:variable name="name" select="@name"/>
 
                 <h3>
