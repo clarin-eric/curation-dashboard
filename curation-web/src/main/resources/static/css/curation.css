@@ -200,8 +200,3 @@ div.markdown table, div.markdown th, div.markdown td {
 img.chart-linkchecker{
     margin: 6px;
 }
-article{
-    border-bottom-style: solid;
-    border-bottom-width: 3px;
-    border-bottom-color: black;
-}
