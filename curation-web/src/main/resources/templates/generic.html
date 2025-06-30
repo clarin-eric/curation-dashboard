@@ -10,61 +10,55 @@
       <meta content="Curation Dashboard" name="apple-mobile-web-app-title">
 
       <link rel="icon" th:href="@{/images/favicon.png}" type="image/png" >
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
       <link id="curation-styles" rel="stylesheet" th:href="@{/css/curation.css}" type="text/css">
-      <link id="bootstrap-css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
       <link href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" rel="stylesheet"
          type="text/css">
       <link href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" id="dropzone-styles"
          rel="stylesheet" type="text/css">
-
-
-
    </head>
    <body>
-      <div class="container">
+      <div class="d-flex flex-column min-vh-100">
        <!-- header -->
-         <header class="bg-secondary-subtle">
+         <header class="container bg-secondary-subtle">
             <nav class="navbar navbar-expand-lg">
-               <div class="container-fluid">
-                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                     <span class="navbar-toggler-icon"></span>
-                  </button>
-                  <div class="collapse navbar-collapse" id="navbarNav">
-                     <span class="d-none d-lg-block">Curation Dashboard @version@</span>
-                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                           <a class="nav-link active" href="/">Validator</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="/profile">Profiles</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="/metadataprovider">Metadata Providers</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="/linkchecker">Link Checker</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="/help">Help</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="/faq">FAQ</a>
-                        </li>
-                     </ul>
-                     <a class="navbar-brand ms-auto d-none d-lg-block" aria-label="Go to Clarin website" href="https://www.clarin.eu/">
-                        <img alt="Clarin logo" width="115" height="46" th:src="@{/images/clarin-logo-wide.png}">
-                     </a>
-                  </div>
+               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+               </button>
+               <div class="collapse navbar-collapse" id="navbarNav">
+                  <span class="d-none d-lg-block">Curation Dashboard @version@</span>
+                  <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                     <li class="nav-item">
+                        <a class="nav-link" href="/">Validator</a>
+                     </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="/profile">Profiles</a>
+                     </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="/metadataprovider">Metadata Providers</a>
+                     </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="/linkchecker">Link Checker</a>
+                     </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="/help">Help</a>
+                     </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="/faq">FAQ</a>
+                     </li>
+                  </ul>
+                  <a class="navbar-brand ms-auto d-none d-lg-block" aria-label="Go to Clarin website" href="https://www.clarin.eu/">
+                     <img alt="Clarin logo" width="115" height="46" th:src="@{/images/clarin-logo-wide.png}">
+                  </a>
                </div>
             </nav>
          </header>
-         <main>
-            <div class="fullscreen content" id="content" th:insert="${insert}">
-               <!--Here comes dynamic content from jsoup-->
-            </div>
+         <!-- main area -->
+         <main class="container" id="content" th:insert="${insert}">
+               <!--inserted with thymeleaf-->
          </main>
          <!-- footer -->
-         <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+         <footer class="container mt-auto d-flex flex-wrap justify-content-between align-items-center border-top">
             <p class="col-md-4 mb-0 text-body-secondary text-uppercase">© 2025 clarin eric</p>
             <ul class="nav col-md-4 justify-content-end">
                <li class="nav-item">

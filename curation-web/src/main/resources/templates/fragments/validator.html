@@ -1,20 +1,21 @@
-<div class="fullscreen">
-	<form action="/curate" id="urlForm">
-		<div class="row instanceElement">
-			<input type="text" class="form-control col-md-3" placeholder="CMD record URL / CMD profile URL"
+<div class="container-fluid">
+	<form class="row mt-5 mb-5" action="/curate" id="urlForm">
+		<div class="col-8">
+			<input class="form-control" type="text" placeholder="CMD record URL / CMD profile URL"
 				   id="url-input"
 				   name="url-input" required>
 		</div>
+		<div class="col-4">
+			<button class="btn btn-primary" id="validateButton" type="submit" form="urlForm">Validate</button>
+		</div>
 	</form>
-	<div class="row instanceElement">
-		<button class="btn btn-info centerContainer" id="validateButton" type="submit" form="urlForm">Validate</button>
-	</div>
-	<div class="row instanceElement" hidden="true">
+
+	<div class="row" hidden="true">
 		<div>Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div>
 		<div id="uploadWheel" class="spinner"></div>
 	</div>
 
-	<div class="row instanceElement">
+	<div class="row">
 		<div class="dropzone dragAndDropBox" id="cmdi-dropzone">
 			<div class="dz-message">
 				Drag a CMD record / CMD profile here or click to open file browser
