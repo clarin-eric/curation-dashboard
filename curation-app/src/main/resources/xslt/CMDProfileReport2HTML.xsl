@@ -48,7 +48,7 @@
                 <xsl:value-of select="format-number(./headerReport/@score,'0.00')"/> /
                 <xsl:value-of select="format-number(./headerReport/@maxScore,'0.00')"/>
             </b>
-            <table class="reportTable">
+            <table class="table">
                 <tr>
                     <th>Name</th>
                     <td>
@@ -182,7 +182,7 @@
                 </summary>
                 <p>The usage section shows by which Metadata Provider the profile is used</p>
             </details>
-            <table class="reportTable">
+            <table class="table">
                 <thead>
                     <tr>
                         <th scope="col">Metadata Provider</th>
@@ -234,7 +234,7 @@
             <p>Number of required components:
                 <xsl:value-of select="./componentReport/@required"/>
             </p>
-            <table class="reportTable">
+            <table class="table">
                 <thead>
                     <tr>
                         <th scope="col">Name</th>
@@ -304,7 +304,7 @@
                 <xsl:value-of
                         select="format-number(./conceptReport/@percWithConcept,'0.0%')"/>
             </p>
-            <table class="reportTable">
+            <table class="table">
                 <thead>
                     <tr>
                         <th scope="col">Concept</th>
@@ -362,7 +362,7 @@
                         which might have an impact on the processing of the profile.
                     </p>
                 </details>
-                <table class="reportTable">
+                <table class="table">
                     <thead>
                         <tr>
                             <th scope="col">Segment</th>

@@ -80,19 +80,22 @@
             <xsl:value-of select="./fileReport/size"/>
             B
         </p>
-        <hr/>
-        <xsl:apply-templates select="./facetReport"/>
-        <hr/>
-        <xsl:apply-templates select="./resProxyReport"/>
-        <hr/>
-        <xsl:apply-templates
-                select="./xmlPopulationReport"/>
-        <hr/>
-        <xsl:apply-templates
-                select="./xmlValidityReport"/>
-
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+            <xsl:apply-templates select="./facetReport"/>
+        </section>
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+            <xsl:apply-templates select="./resProxyReport"/>
+        </section>
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+            <xsl:apply-templates
+                    select="./xmlPopulationReport"/>
+        </section>
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+            <xsl:apply-templates
+                    select="./xmlValidityReport"/>
+        </section>
         <xsl:if test="./details/detail">
-            <hr/>
+            <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
             <details>
                 <summary>
                     <h2 id="recordDetails">Record Details:</h2>
@@ -101,7 +104,7 @@
                     as far as they're of importance for the data provider.
                 </p>
             </details>
-            <table class="reportTable">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Severity</th>
@@ -134,6 +137,7 @@
                     </xsl:for-each>
                 </tbody>
             </table>
+            </section>
         </xsl:if>
     </xsl:template>
     <!-- Facets -->
@@ -148,7 +152,7 @@
 
         <h3>Facet Coverage</h3>
 
-        <table class="reportTable">
+        <table class="table">
             <thead>
                 <tr>
                     <td>Name</td>
@@ -234,7 +238,7 @@
 
         <div id="facetTable" hidden="true">
             <h3>Facet mapping</h3>
-            <table class="reportTable">
+            <table class="table">
                 <thead>
                     <tr>
                         <th scope="col">XPath</th>
@@ -353,7 +357,7 @@
             <xsl:value-of
                     select="format-number(./percOfResourcesWithReference,'0.0%')"/>
         </p>
-        <table class="reportTable">
+        <table class="table">
             <thead>
                 <tr>
                     <th scope="col">Resource Type</th>
