@@ -80,12 +80,12 @@
                         <xsl:for-each select="./facets/facet">
                             <xsl:choose>
                                 <xsl:when test="@coveredByProfile = 'true'">
-                                    <td class="facetCovered">
+                                    <td class="bg-success  bg-opacity-50">
                                         <xsl:value-of select="@coveredByProfile"/>
                                     </td>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <td class="facetNotCovered">
+                                    <td class="bg-danger  bg-opacity-50">
                                         <xsl:value-of select="@coveredByProfile"/>
                                     </td>
                                 </xsl:otherwise>

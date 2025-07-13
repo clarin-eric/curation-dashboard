@@ -258,7 +258,7 @@
                                     <xsl:value-of select="./@id"/>
                                 </a>
                             </td>
-                            <td class="text-right">
+                            <td class="text-end">
                                 <xsl:value-of select="./@count"/>
                             </td>
                         </tr>

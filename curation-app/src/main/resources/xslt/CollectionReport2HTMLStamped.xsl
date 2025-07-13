@@ -14,7 +14,7 @@
     </xsl:function>
     <xsl:decimal-format NaN="N/A"/>
     <xsl:template match="/collectionReport">
-        <div class="infoLine alert">
+        <div class="infoLine bg-danger bg-opacity-50">
             <div class="floatLeft">
                 created at
                 <xsl:value-of select="./@creationTime"/>
