@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 
 
 @XmlRootElement
@@ -27,7 +28,7 @@ public class AllProfileReport implements AggregationReport<CMDProfileReport>, Na
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime previousCreationTime;
    @XmlElement(name = "profile")
-   private List<Profile> profiles = new ArrayList<Profile>();
+   private Collection<Profile> profiles = new TreeSet<Profile>((p1, p2) -> p1.getId().compareTo(p2.getId()));
 
    @Override
    @XmlTransient

@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TreeSet;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -24,7 +24,7 @@ public class AllCollectionReport implements NamedReport {
    public LocalDateTime previousCreationTime;
 
    @XmlElement(name = "collection")
-   private Collection<CollectionReportWrapper> collectionReports = new ArrayList<CollectionReportWrapper>();
+   private Collection<CollectionReportWrapper> collectionReports = new TreeSet<CollectionReportWrapper>((r1, r2) -> r1.getName().compareTo(r2.getName()));
 
 
    @Override

@@ -24,7 +24,7 @@ $(document).ready( function () {
     } );
  
     $('#collections').DataTable( {
-
+        order: [],
         orderCellsTop: true,
         fixedHeader: true
     } ); 
@@ -45,7 +45,7 @@ $(document).ready( function () {
     } );
     
     var table2 = $('#profiles').DataTable( {
-
+        order: [],
         orderCellsTop: true,
         fixedHeader: true
     } );
