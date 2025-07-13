@@ -127,8 +127,8 @@ curation:
       title: "Link checking results"
       xAxisLabel: "date"
       yAxisLabel: "number of links"
-      width: 800
-      height: 200
+      width: 1200
+      height: 300
       colors:
          Ok: "#44AA99"
          Undetermined: "#DDCC77"
