@@ -135,7 +135,7 @@
             <p>Percentage of facets covered by profile:
                 <xsl:value-of select="format-number(./facetReport/@percProfileCoverage,'0.0%')"/>
             </p>
-            <table class="reportTable">
+            <table class="table">
                 <thead>
                     <tr>
                         <th scope="col">Name</th>
@@ -344,7 +344,7 @@
                             <td>
                                 <xsl:value-of select="./@status"/>
                             </td>
-                            <td class="text-right">
+                            <td class="text-end">
                                 <xsl:value-of select="./@count"/>
                             </td>
                         </tr>

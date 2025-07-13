@@ -441,11 +441,11 @@
                         <td>
                             <xsl:value-of select="./@isCrResident"/>
                         </td>
-                        <td class='text-right'>
+                        <td class='text-end'>
                             <xsl:value-of
                                     select="format-number(./@score,'0.00')"/>
                         </td>
-                        <td class='text-right'>
+                        <td class='text-end'>
                             <xsl:value-of select="format-number(./@count, '###,##0')"/>
                         </td>
                     </tr>
@@ -491,7 +491,7 @@
                         <td>
                             <xsl:value-of select="./@name"/>
                         </td>
-                        <td class="text-right">
+                        <td class="text-end">
                             <xsl:value-of
                                     select="format-number(./@avgCoverage,'0.0%')"/>
                         </td>

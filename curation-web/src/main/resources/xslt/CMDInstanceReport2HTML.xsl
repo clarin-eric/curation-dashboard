@@ -370,7 +370,7 @@
                         <td>
                             <xsl:value-of select="./@type"/>
                         </td>
-                        <td class="text-right">
+                        <td class="text-end">
                             <xsl:value-of select="./@count"/>
                         </td>
                     </tr>

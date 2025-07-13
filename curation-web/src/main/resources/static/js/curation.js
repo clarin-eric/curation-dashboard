@@ -78,8 +78,7 @@ $("div#cmdi-dropzone").dropzone({
         $('#validateButton').prop('disabled', true);
 
         if(progress == 100){
-            $('div#cmdi-dropzone').append('<div>Upload complete. Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="uploadWheel" class="spinner"></div>')
-
+            $('div#cmdi-dropzone').append('<div>Upload complete. Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div class="spinner-border" role="status"><span class="visually-hidden">Validating...</span></div>');
         }
       }
 });
@@ -98,8 +97,8 @@ $('#validateButton').click(function() {
 
     //only change to spinner if input is valid
     if($('#url-input').val()){
-        $(this).parent().attr("hidden", true);
-        $(this).parent().next().attr("hidden", false);
+        $(this).parent().parent().attr("hidden", true);
+        $(this).parent().parent().next().attr("hidden", false);
     }
 });
 /*

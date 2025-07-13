@@ -437,11 +437,11 @@
                         <td>
                             <xsl:value-of select="./@isCrResident"/>
                         </td>
-                        <td class='text-right'>
+                        <td class='text-end'>
                             <xsl:value-of
                                     select="format-number(./@score,'0.00')"/>
                         </td>
-                        <td class='text-right'>
+                        <td class='text-end'>
                             <xsl:value-of select="format-number(./@count, '###,##0')"/>
                         </td>
                     </tr>
@@ -487,7 +487,7 @@
                         <td>
                             <xsl:value-of select="./@name"/>
                         </td>
-                        <td class="text-right">
+                        <td class="text-end">
                             <xsl:value-of
                                     select="format-number(./@avgCoverage,'0.0%')"/>
                         </td>
@@ -704,7 +704,7 @@
                 </tbody>
             </table>
             <br/>
-            <img alt="timeline of link checking results" width="800" higth="200">
+            <img class="w-100" alt="timeline of link checking results">
                 <xsl:attribute name="src">
                     <xsl:text>/img/linkchecker/</xsl:text>
                     <xsl:value-of select="//fileReport/provider" />

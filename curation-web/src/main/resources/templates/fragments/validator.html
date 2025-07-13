@@ -1,18 +1,22 @@
 <div class="container-fluid">
-	<form class="row mt-5 mb-5" action="/curate" id="urlForm">
+
+	<div class="row mt-5 mb-5">
 		<div class="col-8">
-			<input class="form-control" type="text" placeholder="CMD record URL / CMD profile URL"
-				   id="url-input"
-				   name="url-input" required>
+			<form action="/curate" id="urlForm">
+				<input class="form-control" type="text" placeholder="CMD record URL / CMD profile URL"
+					   id="url-input"
+					   name="url-input" required>
+			</form>
 		</div>
 		<div class="col-4">
 			<button class="btn btn-primary" id="validateButton" type="submit" form="urlForm">Validate</button>
 		</div>
-	</form>
+	</div>
+	<div class="row mt-5 mb-5" hidden="true">
+		<span>Validating...</span>
+		<div class="spinner-border" role="status">
 
-	<div class="row" hidden="true">
-		<div>Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div>
-		<div id="uploadWheel" class="spinner"></div>
+		</div>
 	</div>
 
 	<div class="row">
