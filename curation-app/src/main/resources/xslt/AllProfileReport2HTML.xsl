@@ -23,7 +23,7 @@
             </div>
             <div class="clear"/>
         </div>
-        <table id="profiles" class="display text-nowrap" width="100%">
+        <table id="profiles" class="table table-striped dataTable" width="100%">
             <thead>
                 <tr>
                     <th>Id</th>

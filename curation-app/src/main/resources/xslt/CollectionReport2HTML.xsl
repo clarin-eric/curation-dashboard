@@ -74,7 +74,7 @@
         <br/>
         <!-- scoreTable -->
 
-        <table class="reportTable">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Section</th>
@@ -146,24 +146,31 @@
         <b>All "per metadata record" averages are based on the number of processable metadata records (except in the Metadata Records section) </b>
         <br/>
         <br/>
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
         <xsl:apply-templates select="fileReport"/>
-        <hr/>
+        </section>
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
         <xsl:apply-templates select="headerReport"/>
-        <hr/>
+        </section>
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
         <xsl:apply-templates select="profileReport"/>
-        <hr/>
+        </section>
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
         <xsl:apply-templates select="facetReport"/>
-        <hr/>
+        </section>
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
         <xsl:apply-templates select="resProxyReport"/>
-        <hr/>
+        </section>
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
         <xsl:apply-templates select="xmlValidityReport"/>
-        <hr/>
+        </section>
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
         <xsl:apply-templates select="xmlPopulationReport"/>
-        <hr/>
+        </section>
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
         <xsl:apply-templates select="linkcheckerReport"/>
-
+        </section>
         <xsl:if test="./recordDetails/record">
-            <hr/>
             <details>
                 <summary>
                     <h2 id="recordDetail">Metadata Record Details:</h2>
@@ -172,7 +179,7 @@
                     importance for the metadata provider.
                 </p>
             </details>
-            <table class="reportTable">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Metadata Record</th>
@@ -193,7 +200,6 @@
                                         </xsl:attribute>
                                         <xsl:value-of select="./@origin"/>
                                     </a>
-
                                 </td>
                                 <td>
                                     <button type="button" class="showUrlInfo btn btn-info"
@@ -318,7 +324,7 @@
 
             <h3 id="duplicatedMDSelfLinks">Duplicated MDSelfLinks:</h3>
 
-            <table class="reportTable">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>MDSelfLink</th>
@@ -384,7 +390,7 @@
                 The profile usage section shows information shows which profiles are used how often in metadata records of a certain metadata Provider.
             </p>
         </details>
-        <table class="reportTable">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Schema Location</th>
@@ -457,7 +463,7 @@
             </p>
         </details>
 
-        <table class="reportTable">
+        <table class="table">
             <thead>
                 <tr>
                     <th scope="col">Name</th>
@@ -653,7 +659,7 @@
         <xsl:if test="./linkchecker/statistics">
             <h3>Link Checking Results</h3>
 
-            <table class="reportTable">
+            <table class="table">
                 <thead>
                     <tr>
                         <th scope="col">Category</th>

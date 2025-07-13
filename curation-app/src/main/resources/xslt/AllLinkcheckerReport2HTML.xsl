@@ -22,7 +22,7 @@
         </div>
         <article class="shadow p-3 mb-5 bg-body-tertiary rounded">
             <h3>Overall</h3>
-            <table class="reportTable">
+            <table class="table w-100">
                 <thead>
                     <tr>
                         <th>Category</th>
@@ -70,7 +70,7 @@
                     </tr>
                 </tfoot>
             </table>
-            <img class="chart" src="/img/linkchecker/Overall.png" alt="timeline of link checking results" width="800" higth="200" />
+            <img class="w-100" src="/img/linkchecker/Overall.png" alt="timeline of link checking results" />
         </article>
         <xsl:for-each select="collection">
             <article class="shadow p-3 mb-5 bg-body-tertiary rounded">
@@ -79,7 +79,7 @@
                 <h3>
                     <xsl:value-of select="replace($name,'_',' ')"/>
                 </h3>
-                <table class="reportTable">
+                <table class="table w-100">
                     <thead>
                         <tr>
 
@@ -127,7 +127,7 @@
                         </tr>
                     </tfoot>
                 </table>
-                <img class="chart" alt="timeline of link checking results" width="800" higth="200">
+                <img class="w-100" alt="timeline of link checking results">
                     <xsl:attribute name="src">
                         <xsl:text>/img/linkchecker/</xsl:text>
                         <xsl:value-of select="$name" />
