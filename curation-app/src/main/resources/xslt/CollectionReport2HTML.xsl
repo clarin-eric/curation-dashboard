@@ -78,19 +78,19 @@
             <thead>
                 <tr>
                     <th>Section</th>
-                    <th>Score</th>
-                    <th>Score Percentage</th>
+                    <th class="text-end">Score</th>
+                    <th class="text-end">Score Percentage</th>
                 </tr>
             </thead>
             <tfoot>
                 <tr>
                     <td>Total</td>
-                    <td align="right">
+                    <td  class="text-end">
                         <xsl:value-of select="format-number(@aggregatedScore,'###,##0.0')"/>
                         /
                         <xsl:value-of select="format-number(@aggregatedMaxScore,'###,##0.0')"/>
                     </td>
-                    <td align="right">
+                    <td  class="text-end">
                         <xsl:value-of select="format-number(@scorePercentage, '0.0%')"/>
                     </td>
                 </tr>
@@ -120,12 +120,12 @@
                                     </xsl:choose>
                                 </a>
                             </td>
-                            <td align="right">
+                            <td  class="text-end">
                                 <xsl:value-of select="format-number(@aggregatedScore,'###,##0.0')"/>
                                 /
                                 <xsl:value-of select="format-number(@aggregatedMaxScore,'###,##0.0')"/>
                             </td>
-                            <td align="right">
+                            <td  class="text-end">
                                 <xsl:value-of select="format-number(@scorePercentage,'0.0%')"/>
                             </td>
                         </tr>
@@ -396,8 +396,8 @@
                     <th>Schema Location</th>
                     <th>Is Public</th>
                     <th>In Component Registry</th>
-                    <th>Score</th>
-                    <th>Count</th>
+                    <th class="text-end">Score</th>
+                    <th class="text-end">Count</th>
                 </tr>
             </thead>
             <tfoot>
@@ -467,7 +467,7 @@
             <thead>
                 <tr>
                     <th scope="col">Name</th>
-                    <th scope="col">Coverage</th>
+                    <th scope="col" class="text-end">Coverage</th>
                 </tr>
             </thead>
             <tfoot>
@@ -662,10 +662,10 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th scope="col">Category</th>
-                        <th scope="col">Count</th>
-                        <th scope="col">Average Response Duration(ms)</th>
-                        <th scope="col">Max Response Duration(ms)</th>
+                        <th scope="col" class="text-start">Category</th>
+                        <th scope="col" class="text-end">Count</th>
+                        <th scope="col" class="text-end">Average Response Duration(ms)</th>
+                        <th scope="col" class="text-end">Max Response Duration(ms)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -676,7 +676,7 @@
                             <xsl:attribute name="class">
                                 <xsl:value-of select="./@category"/>
                             </xsl:attribute>
-                            <td align="right">
+                            <td class="text-start">
                                 <a>
                                     <xsl:attribute name="href">
                                         <xsl:text>/linkchecker/</xsl:text>
@@ -688,14 +688,14 @@
                                 </a>
                             </td>
 
-                            <td align="right">
+                            <td class="text-end">
                                 <xsl:value-of select="format-number(./@count, '###,##0')"/>
                             </td>
-                            <td align="right">
+                            <td class="text-end">
                                 <xsl:value-of
                                         select="format-number(./@avgRespTime, '###,##0.0')"/>
                             </td>
-                            <td align="right">
+                            <td class="text-end">
                                 <xsl:value-of
                                         select="format-number(./@maxRespTime, '###,##0.0')"/>
                             </td>

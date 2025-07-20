@@ -137,3 +137,7 @@ div.markdown table, div.markdown th, div.markdown td {
 .alert{
     background-color: rgba(250, 88, 88, 0.76);
 }
+/* necessary to set text color for a whole row */
+tr.text-danger td, tr.text-warning td, tr.text-success td {
+    color: inherit;
+}

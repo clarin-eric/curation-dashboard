@@ -148,28 +148,18 @@
                         <xsl:sort select="./@coveredByProfile"
                                   order="descending"/>
                         <tr>
-                            <xsl:choose>
-                                <xsl:when test="./@coveredByProfile = 'false'">
-                                    <td>
-                                        <font color="#d33d3d">
-                                            <xsl:value-of select="./@name"/>
-                                        </font>
-                                    </td>
-                                    <td>
-                                        <font color="#d33d3d">
-                                            <xsl:value-of select="./@coveredByProfile"/>
-                                        </font>
-                                    </td>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <td>
-                                        <xsl:value-of select="./@name"/>
-                                    </td>
-                                    <td>
-                                        <xsl:value-of select="./@coveredByProfile"/>
-                                    </td>
-                                </xsl:otherwise>
-                            </xsl:choose>
+                            <xsl:attribute name="class">
+                                <xsl:choose>
+                                    <xsl:when test="./@coveredByProfile = 'false'">text-danger</xsl:when>
+                                    <xsl:otherwise>text-success</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
+                            <td>
+                                <xsl:value-of select="./@name"/>
+                            </td>
+                            <td>
+                                <xsl:value-of select="./@coveredByProfile"/>
+                            </td>
                         </tr>
                     </xsl:for-each>
                 </tbody>
@@ -186,7 +176,7 @@
                 <thead>
                     <tr>
                         <th scope="col">Metadata Provider</th>
-                        <th scope="col">Usage</th>
+                        <th scope="col" class="text-end">Usage</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -200,7 +190,7 @@
                             <td>
                                 <xsl:value-of select="./@collectionName"/>
                             </td>
-                            <td>
+                            <td class="text-end">
                                 <xsl:value-of select="./@count"/>
                             </td>
                         </tr>
@@ -239,7 +229,7 @@
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Id</th>
-                        <th scope="col">Count</th>
+                        <th scope="col" class="text-end">Count</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -309,7 +299,7 @@
                     <tr>
                         <th scope="col">Concept</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Count</th>
+                        <th scope="col" class="text-end">Count</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -372,62 +362,24 @@
                     </thead>
                     <tbody>
                         <xsl:for-each select="./details/detail">
-                            <xsl:variable name="seg">
-                                <xsl:value-of select="./segment"/>
-                            </xsl:variable>
-                            <xsl:choose>
-                                <xsl:when test="./severity = 'ERROR'">
-                                    <tr>
-                                        <td>
-                                            <font color="#d33d3d">
-                                                <xsl:copy-of select="$seg"/>
-                                            </font>
-                                        </td>
-                                        <td>
-                                            <font color="#d33d3d">
-                                                <xsl:value-of select="./severity"/>
-                                            </font>
-                                        </td>
-                                        <td>
-                                            <font color="#d33d3d">
-                                                <xsl:value-of select="./message"/>
-                                            </font>
-                                        </td>
-                                    </tr>
-                                </xsl:when>
-                                <xsl:when test="./severity = 'WARNING'">
-                                    <tr>
-                                        <td>
-                                            <font color="#dbd839">
-                                                <xsl:copy-of select="$seg"/>
-                                            </font>
-                                        </td>
-                                        <td>
-                                            <font color="#dbd839">
-                                                <xsl:value-of select="./severity"/>
-                                            </font>
-                                        </td>
-                                        <td>
-                                            <font color="#dbd839">
-                                                <xsl:value-of select="./message"/>
-                                            </font>
-                                        </td>
-                                    </tr>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <tr>
-                                        <td>
-                                            <xsl:copy-of select="$seg"/>
-                                        </td>
-                                        <td>
-                                            <xsl:value-of select="./severity"/>
-                                        </td>
-                                        <td>
-                                            <xsl:value-of select="./message"/>
-                                        </td>
-                                    </tr>
-                                </xsl:otherwise>
-                            </xsl:choose>
+                            <tr>
+                                <xsl:attribute name="class">
+                                    <xsl:choose>
+                                        <xsl:when test="./severity = 'ERROR'">text-danger</xsl:when>
+                                        <xsl:when test="./severity = 'WARNING'">text-warning</xsl:when>
+                                        <xsl:otherwise></xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:attribute>
+                                <td>
+                                    <xsl:value-of select="./segment"/>
+                                </td>
+                                <td>
+                                    <xsl:value-of select="./severity"/>
+                                </td>
+                                <td>
+                                    <xsl:value-of select="./message"/>
+                                </td>
+                            </tr>
                         </xsl:for-each>
                     </tbody>
                 </table>

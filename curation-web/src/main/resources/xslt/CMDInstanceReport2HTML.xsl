@@ -193,39 +193,32 @@
                         </td>
                         <xsl:choose>
                             <xsl:when test="@coveredByProfile = 'true'">
-                                <td class="facetCovered"
-                                    style="background-color: lightgreen;">
+                                <td class="bg-success">
                                     <xsl:value-of select="@coveredByProfile"/>
                                 </td>
                             </xsl:when>
                             <xsl:otherwise>
-                                <td class="facetNotCovered"
-                                    style="background-color: lightcoral;">
+                                <td class="bg-danger">
                                     <xsl:value-of select="@coveredByProfile"/>
                                 </td>
                             </xsl:otherwise>
                         </xsl:choose>
                         <xsl:choose>
                             <xsl:when test="@coveredByInstance = 'true'">
-                                <td class="facetCovered"
-                                    style="background-color: lightgreen;">
+                                <td class="bg-success">
                                     <xsl:value-of select="@coveredByInstance"/>
                                 </td>
                             </xsl:when>
                             <xsl:otherwise>
-                                <td class="facetNotCovered"
-                                    style="background-color: lightcoral;">
+                                <td class="bg-danger">
                                     <xsl:value-of select="@coveredByInstance"/>
                                 </td>
                             </xsl:otherwise>
                         </xsl:choose>
                     </tr>
-
                 </xsl:for-each>
-
             </tbody>
         </table>
-
         <br/>
         <font color="#ffd100">&#9873;</font>
         - Derived facet
@@ -361,7 +354,7 @@
             <thead>
                 <tr>
                     <th scope="col">Resource Type</th>
-                    <th scope="col">Count</th>
+                    <th scope="col" class="text-end">Count</th>
                 </tr>
             </thead>
             <tbody>
