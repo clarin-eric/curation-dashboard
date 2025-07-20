@@ -1,3 +1,6 @@
+# 7.5.0
+- changing web-layout for bootstrap 5.3.7 (issues https://github.com/clarin-eric/curation-dashboard/issues/286, https://github.com/clarin-eric/curation-dashboard/issues/282, https://github.com/clarin-eric/curation-dashboard/issues/155) 
+
 # 7.4.0
 - adding timelines for link checking (issue https://github.com/clarin-eric/curation-dashboard/issues/278)
 - upgrading to Spring Boot 3.4.4
