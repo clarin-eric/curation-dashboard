@@ -41,7 +41,7 @@
             <xsl:value-of select="format-number(./@score,'0.00')"/> /
             <xsl:value-of select="format-number(./@maxScore,'0.00')"/>
         </p>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <h2>Header</h2>
             <b>
                 Score:
@@ -111,7 +111,7 @@
                 </tr>
             </table>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <details>
                 <summary>
                     <h2>Facets</h2>
@@ -165,7 +165,7 @@
                 </tbody>
             </table>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <details>
                 <summary>
                     <h2>Usage</h2>
@@ -198,7 +198,7 @@
                 </tbody>
             </table>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <details>
                 <summary>
                     <h2>CMD Components</h2>
@@ -256,7 +256,7 @@
                 </tbody>
             </table>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <details>
                 <summary>
                     <h2>CMD Concepts</h2>
@@ -343,7 +343,7 @@
             </table>
         </section>
         <xsl:if test="./details//detail">
-            <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+            <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
                 <details>
                     <summary>
                         <h2>Details</h2>

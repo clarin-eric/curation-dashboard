@@ -146,28 +146,28 @@
         <b>All "per metadata record" averages are based on the number of processable metadata records (except in the Metadata Records section) </b>
         <br/>
         <br/>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
         <xsl:apply-templates select="fileReport"/>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
         <xsl:apply-templates select="headerReport"/>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
         <xsl:apply-templates select="profileReport"/>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
         <xsl:apply-templates select="facetReport"/>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
         <xsl:apply-templates select="resProxyReport"/>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
         <xsl:apply-templates select="xmlValidityReport"/>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
         <xsl:apply-templates select="xmlPopulationReport"/>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
         <xsl:apply-templates select="linkcheckerReport"/>
         </section>
         <xsl:if test="./recordDetails/record">

@@ -80,22 +80,22 @@
             <xsl:value-of select="./fileReport/size"/>
             B
         </p>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <xsl:apply-templates select="./facetReport"/>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <xsl:apply-templates select="./resProxyReport"/>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <xsl:apply-templates
                     select="./xmlPopulationReport"/>
         </section>
-        <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <xsl:apply-templates
                     select="./xmlValidityReport"/>
         </section>
         <xsl:if test="./details/detail">
-            <section class="shadow p-3 mb-5 bg-body-tertiary rounded">
+            <section class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <details>
                 <summary>
                     <h2 id="recordDetails">Record Details:</h2>
