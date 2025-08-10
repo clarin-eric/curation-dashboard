@@ -8,6 +8,7 @@ import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.ProfileCacheEntry;
 import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
+import eu.clarin.cmdi.curation.cr.exception.ProfileVersionNotSupportedException;
 import eu.clarin.cmdi.curation.cr.profile_parser.*;
 import eu.clarin.cmdi.curation.cr.xml.SchemaResourceResolver;
 import lombok.extern.slf4j.Slf4j;
@@ -74,9 +75,9 @@ public class CRCache {
          for(int i=0; i<nv.getTokenCount(); i++ ){
             if(nv.matchRawTokenString(i, "xmlns:cmd")){
                ProfileParser parser =  switch(nv.toNormalizedString(i+1)){
+                  // so far we only support CMDI 1.2 profiles
                   case "http://www.clarin.eu/cmd/1", "https://www.clarin.eu/cmd/1" -> this.ctx.getBean(CMDI1_2_ProfileParser.class);
-                  case "http://www.clarin.eu/cmd", "https://www.clarin.eu/cmd" -> this.ctx.getBean(CMDI1_1_ProfileParser.class);
-                  default -> throw new UnsupportedOperationException();
+                  default -> throw new ProfileVersionNotSupportedException("not a CMDI 1.2 profile");
                };
 
                parsedProfile = parser.parse(nv, schemaLocation, this.pphCache.getProfileHeadersMap().get(schemaLocation));
@@ -85,9 +86,10 @@ public class CRCache {
             }
          }
       }
-      catch (NavException | IllegalArgumentException | ParseException e) {
 
-         log.info("can't process schema '{}'", schemaLocation);
+      catch (NavException | IllegalArgumentException | ParseException | ProfileVersionNotSupportedException e) {
+
+         log.info("can't process schema '{}'\n{}", schemaLocation, e.toString());
          return null;
       }
 
@@ -101,7 +103,7 @@ public class CRCache {
       }
       catch (SAXException e) {
 
-         log.info("can't create Schema object from file '{}'", schemaLocation);
+         log.info("can't create Schema object from file '{}'\n{}", schemaLocation, e.toString());
          return null;
       }
 

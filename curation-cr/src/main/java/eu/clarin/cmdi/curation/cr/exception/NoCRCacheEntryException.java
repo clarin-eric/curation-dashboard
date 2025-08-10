@@ -4,7 +4,16 @@ import java.io.Serial;
 
 public class NoCRCacheEntryException extends Exception {
 
-   @Serial
+    public NoCRCacheEntryException() {
+    }
+
+    public NoCRCacheEntryException(String message) {
+        super(message);
+    }
+
+    @Serial
    private static final long serialVersionUID = 1L;
+
+
 
 }
