@@ -12,10 +12,10 @@ import java.nio.file.Path;
 @Data
 public class CCRConfig {
 
-   private Path ccrCache;
-   
-   private String restApi;
-   
-   private String query;
+    private Path ccrCache;
+
+    private String restApi;
+
+    private String query;
 
 }

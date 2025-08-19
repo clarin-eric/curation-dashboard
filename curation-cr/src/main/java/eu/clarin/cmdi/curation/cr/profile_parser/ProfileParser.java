@@ -7,10 +7,8 @@ import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.CCRStatus;
-import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +27,7 @@ public abstract class ProfileParser {
     */
    protected CCRService ccrService;
 
-   private CRElement _cur;
+
 
 
 
@@ -55,9 +53,8 @@ public abstract class ProfileParser {
     * @param header public schema header or null
     * @return the parsed profile
     * @throws CCRServiceNotAvailableException
-    * @throws CRServiceStorageException
     */
-   public ParsedProfile parse(VTDNav vn, String schemaLocation, ProfileHeader header) throws CCRServiceNotAvailableException, CRServiceStorageException {
+   public ParsedProfile parse(VTDNav vn, String schemaLocation, ProfileHeader header) throws CCRServiceNotAvailableException {
 
       try {
 
@@ -123,9 +120,8 @@ public abstract class ProfileParser {
     * @param xpathComponentNode
     * @return the parsed profile
     * @throws CCRServiceNotAvailableException
-    * @throws CRServiceStorageException
     */
-   protected abstract void fillMaps(Collection<CRElement> nodes, Map<String, CMDINode> xpathNode, Map<String, CMDINode> xpathElementNode, Map<String, CMDINode> xpathComponentNode) throws CCRServiceNotAvailableException, CRServiceStorageException;
+   protected abstract void fillMaps(Collection<CRElement> nodes, Map<String, CMDINode> xpathNode, Map<String, CMDINode> xpathElementNode, Map<String, CMDINode> xpathComponentNode) throws CCRServiceNotAvailableException;
 
    /**
     * Fill in header profile header.
@@ -152,6 +148,7 @@ public abstract class ProfileParser {
    }
 
    private Collection<CRElement> processElements(VTDNav vn) throws VTDException {
+      CRElement _cur = null;
       Collection<CRElement> nodes = new ArrayList<>();
       vn.toElement(VTDNav.ROOT);// reset
       AutoPilot ap = new AutoPilot(vn);

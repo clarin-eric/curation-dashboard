@@ -11,7 +11,6 @@ import eu.clarin.cmdi.curation.api.xml.CMDErrorHandler;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +59,7 @@ public class XmlValidator extends AbstractSubprocessor<CMDInstance, CMDInstanceR
          
          return;
       }
-      catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
+      catch (CCRServiceNotAvailableException | PPHCacheException e) {
 
           throw new MalFunctioningProcessorException(e);
       }

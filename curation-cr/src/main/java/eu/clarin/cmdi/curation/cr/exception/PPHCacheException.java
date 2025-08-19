@@ -13,4 +13,8 @@ public class PPHCacheException extends Exception {
     public PPHCacheException(String message) {
         super(message);
     }
+
+    public PPHCacheException(Throwable cause) {
+        super(cause);
+    }
 }

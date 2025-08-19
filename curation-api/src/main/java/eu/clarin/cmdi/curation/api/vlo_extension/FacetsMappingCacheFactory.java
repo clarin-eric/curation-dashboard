@@ -3,7 +3,6 @@ package eu.clarin.cmdi.curation.api.vlo_extension;
 import eu.clarin.cmdi.curation.api.cache.FacetMappingCache;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.vlo.config.VloConfig;
@@ -104,7 +103,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
                log.error("no ProfileCacheEntry object for schemaLocation '{}'", schemaLocation);
 
             }
-            catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
+            catch (CCRServiceNotAvailableException | PPHCacheException e) {
                 throw new RuntimeException(e);
             }
 

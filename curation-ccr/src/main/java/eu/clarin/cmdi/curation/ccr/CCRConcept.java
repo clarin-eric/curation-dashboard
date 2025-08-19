@@ -10,10 +10,10 @@ import java.io.Serializable;
 @Data
 public class CCRConcept implements Serializable {
 
-	private final String uri;
-	
-	private final String prefLabel;
-	
-	private final CCRStatus status;
+    private final String uri;
+
+    private final String prefLabel;
+
+    private final CCRStatus status;
 
 }

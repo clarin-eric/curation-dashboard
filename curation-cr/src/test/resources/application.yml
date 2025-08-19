@@ -12,8 +12,8 @@ curation:
       restApi: "https://vocabularies.clarin.eu/clavas/rest/v1/data"
       query: "?uri=${conceptURI}"
    http:
-      proxy-host: 127.0.0.1
-      proxy-port: ${mockServerPort}
+#      proxy-host: 127.0.0.1
+#      proxy-port: ${mockServerPort}
       user-agent: "CLARIN-curation-dashboard"
       connection-timeout: 5000
       read-timeout: 5000

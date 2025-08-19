@@ -15,7 +15,6 @@ import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
@@ -81,7 +80,7 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
          report.details.add(new Detail(Severity.FATAL,"facet" , "no ParsedProfile for profile location " + profile.getSchemaLocation()));
 
       }
-      catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
+      catch (CCRServiceNotAvailableException | PPHCacheException e) {
           throw new MalFunctioningProcessorException(e);
       }
        report.facetReport.percProfileCoverage = (double) report.facetReport.numOfFacetsCoveredByProfile/report.facetReport.numOfFacets;

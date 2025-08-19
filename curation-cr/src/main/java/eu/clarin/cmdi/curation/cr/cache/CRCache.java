@@ -6,7 +6,6 @@ import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.ProfileCacheEntry;
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.exception.ProfileVersionNotSupportedException;
 import eu.clarin.cmdi.curation.cr.profile_parser.*;
@@ -52,7 +51,7 @@ public class CRCache {
     * @throws CCRServiceNotAvailableException the ccr service is not available
     */
    @Cacheable(value = "crCache", key = "#schemaLocation", sync = true)
-   public ProfileCacheEntry getEntry(String schemaLocation) throws CRServiceStorageException, CCRServiceNotAvailableException, PPHCacheException {
+   public ProfileCacheEntry getEntry(String schemaLocation) throws CCRServiceNotAvailableException, PPHCacheException {
 
       String schemaString = this.profileCache.getProfileAsString(schemaLocation);
 

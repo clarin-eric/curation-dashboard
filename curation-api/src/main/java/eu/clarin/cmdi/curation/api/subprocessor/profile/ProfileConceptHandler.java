@@ -13,7 +13,6 @@ import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
@@ -58,7 +57,7 @@ public class ProfileConceptHandler extends AbstractSubprocessor<CMDProfile, CMDP
             log.debug("can't parse profile '{}'", profile.getSchemaLocation());
             return;
         }
-        catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
+        catch (CCRServiceNotAvailableException | PPHCacheException e) {
 
             throw new MalFunctioningProcessorException(e);
         }

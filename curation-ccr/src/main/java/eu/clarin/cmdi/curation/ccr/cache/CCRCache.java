@@ -60,7 +60,7 @@ public class CCRCache {
 
         final CCRConcept[] concept = {null};
 
-        if(StringUtils.isNotEmpty(conceptURI)) {
+        if (StringUtils.isNotEmpty(conceptURI)) {
             /*
              * wowasa (2017-05-26): validation check might be switched off to bypass expired
              * certificates. System-property can be set with the following entry in web.xml

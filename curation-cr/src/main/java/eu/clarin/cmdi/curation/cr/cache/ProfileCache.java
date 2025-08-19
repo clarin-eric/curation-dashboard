@@ -21,7 +21,7 @@ public class ProfileCache {
         this.httpUtils = httpUtils;
     }
 
-    @Cacheable(value = "profileCache", key = "#schemaLocation")
+    @Cacheable(value = "profileCache", key = "#schemaLocation", sync = true)
     public String getProfileAsString(String schemaLocation) {
 
         String schemaString;
