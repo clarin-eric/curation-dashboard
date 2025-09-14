@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.ccr;
 
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.commons.conf.HttpConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,8 @@ class CCRServiceTests {
 
     @Autowired
     private CacheManager cacheManager;
-
+    @Autowired
+    HttpConfig httpConfig;
 
     private MockServerClient mockServerClient;
 
@@ -61,7 +63,7 @@ class CCRServiceTests {
     }
 
     @Test
-    void serverNotAvailable() throws CCRServiceNotAvailableException {
+    void serviceNotAvailable() {
 
 
         this.mockServerClient
@@ -69,18 +71,19 @@ class CCRServiceTests {
                         request()
                 )
                 .respond(
-                        response().withStatusCode(503)
+                        response().withStatusCode(200)
                 );
 
+        // we're making the proxy server inaccessible by incrementing the port to call
+        httpConfig.setProxyPort(this.mockServerPort + 1);
 
-        // shouldn't throw any exception
-        assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99999/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
-        // should return null
-        assertNull(service.getConcept("http://hdl.handle.net/99999/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
-        // the null should be cached
-        Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99999/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
-        // the cache value should be null
-        Assertions.assertNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c").get());
+
+        // should throw any exception
+        assertThrows(CCRServiceNotAvailableException.class, () -> service.getConcept("http://hdl.handle.net/99999/CCR_C-4541_6dc2d021-1811-3d05-server-not-available"));
+
+
+        // resetting to the correct proxy server port
+        httpConfig.setProxyPort(this.mockServerPort);
     }
 
     @Test
@@ -97,13 +100,13 @@ class CCRServiceTests {
                 );
 
         // shouldn't throw any exception
-        assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
+        assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-timeout"));
         // should return null
-        assertNull(service.getConcept("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
+        assertNull(service.getConcept("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-timeout"));
         // the null should be cached
-        Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
+        Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-timeout"));
         // the cache value should be null
-        Assertions.assertNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c").get());
+        Assertions.assertNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-timeout").get());
     }
 
     @Test
@@ -118,22 +121,30 @@ class CCRServiceTests {
                                 .withBody("")
                 );
         // shouldn't throw any exception for a non parseable result
-        assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
+        assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-non-parseable"));
         // should return null
-        assertNull(service.getConcept("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
+        assertNull(service.getConcept("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-non-parseable"));
         // the null should be cached
-        Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
+        Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-non-parseable"));
         // the cache value should be null
-        Assertions.assertNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c").get());
+        Assertions.assertNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-non-parseable").get());
     }
 
     @Test
     void useCache() throws CCRServiceNotAvailableException {
+        this.mockServerClient
+                .when(
+                        request()
+                )
+                .respond(
+                        response()
+                                .withStatusCode(200)
+                );
 
-        service.getConcept("http://hdl.handle.net/11459/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c");
+        service.getConcept("http://hdl.handle.net/11459/CCR_C-4541_6dc2d021-1811-3d05-use-cache");
 
-        // getCache(...).get(...) returns only a value wrapper, the following get the value iteself
-        Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/11459/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c").get());
+        // getCache(...).get(...) returns only a value wrapper
+        Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/11459/CCR_C-4541_6dc2d021-1811-3d05-use-cache"));
     }
 
     @SpringBootConfiguration

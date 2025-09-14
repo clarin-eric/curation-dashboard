@@ -5,6 +5,7 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Import;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,8 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Import(TestConfig.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Slf4j
-public class ProfileTest {
+public class ProfileTest extends BaseTest {
    
    public final String xsdString;
    
@@ -31,10 +34,10 @@ public class ProfileTest {
    private ApiConfig conf;
    @Autowired
    private CacheManager cacheManager;
-   
+
    public ProfileTest() {
       
-      try(InputStream in = this.getClass().getResourceAsStream("/profile/media-corpus-profile.xsd")){
+      try(InputStream in = this.getClass().getResourceAsStream("/profile/teiHeader.xsd")){
          
          this.xsdString = new String(in.readAllBytes());
       }
@@ -45,15 +48,16 @@ public class ProfileTest {
          throw new RuntimeException();
       } 
    }
+
    
    @Test
-   void headerReport() {
+   void headerReport() throws URISyntaxException, IOException {
       
       try {
          
          CMDProfileReport report;
 
-         String schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1404130561238/xsd";
+         String schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1380106710826/xsd";
          
          report = curation.processCMDProfile(schemaLocation);
          //must be true since it's a public profile
@@ -74,18 +78,20 @@ public class ProfileTest {
    }
    
    @Test
-   void facetReport() {
+   void facetReport() throws URISyntaxException, IOException {
+
       
       CMDProfileReport report;
       
-      try{         
+      try{
          this.cacheManager.getCache("crCache").clear();
          report = curation.processCMDProfile(getTmpFile("",""));        
-         assertEquals(conf.getFacets().size(), report.facetReport.numOfFacetsCoveredByProfile);
+         assertEquals(9, report.facetReport.numOfFacetsCoveredByProfile);
          
          this.cacheManager.getCache("crCache").clear();
-         report = curation.processCMDProfile(getTmpFile("cmd:ConceptLink=\"http://hdl.handle.net/11459/CCR_C-2571_2be2e583-e5af-34c2-3673-93359ec1f7df\"", ""));
-         assertEquals(conf.getFacets().size() -1, report.facetReport.numOfFacetsCoveredByProfile); 
+         // removing 'subject' concept
+         report = curation.processCMDProfile(getTmpFile("cmd:ConceptLink=\"http://hdl.handle.net/11459/CCR_C-6147_ebed915e-f911-f128-cddc-466aa41c9c73\"", ""));
+         assertEquals(8, report.facetReport.numOfFacetsCoveredByProfile);
       }
       catch (IOException e) {
 
@@ -95,22 +101,23 @@ public class ProfileTest {
    
    @Test
    void conceptReport() {
+
       
       CMDProfileReport report;
       
       try{         
          this.cacheManager.getCache("crCache").clear();
          report = curation.processCMDProfile(getTmpFile("",""));        
-         assertEquals(101, report.conceptReport.total);
-         assertEquals(88, report.conceptReport.withConcept);
+         assertEquals(192, report.conceptReport.total);
+         assertEquals(190, report.conceptReport.withConcept);
          
          this.cacheManager.getCache("crCache").clear();
          // we delete the concept link, which is four times in the file
-         report = curation.processCMDProfile(getTmpFile("cmd:ConceptLink=\"http://hdl.handle.net/11459/CCR_C-63_95ec8724-267a-8689-a04d-50ae515bbacf\"", ""));
+         report = curation.processCMDProfile(getTmpFile("cmd:ConceptLink=\"http://hdl.handle.net/11459/CCR_C-6123_009f84ce-e47e-5513-f387-b3502897abae\"", ""));
          // since we haven't deleted any element, the number should have remained the same
-         assertEquals(101, report.conceptReport.total);
-         // but the number of elements with concept has decreased by four
-         assertEquals(84, report.conceptReport.withConcept); 
+         assertEquals(192, report.conceptReport.total);
+         // but the number of elements with concept has decreased by nine
+         assertEquals(181, report.conceptReport.withConcept);
       }
       catch (IOException e) {
 
@@ -121,7 +128,8 @@ public class ProfileTest {
    }
    
    @Test
-   void cacheTest() {
+   void cacheTest() throws URISyntaxException, IOException {
+
       
       try {
          
@@ -130,7 +138,7 @@ public class ProfileTest {
          
          conf.setMode("collection");
          
-         String schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1403526079380/xsd";
+         String schemaLocation = "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1::p_1380106710826/xsd";
          
          curation.processCMDProfile(schemaLocation);
          
@@ -165,5 +173,5 @@ public class ProfileTest {
       Files.writeString(tmpFilePath, this.xsdString.replace(replacementPattern, replacement));
       
       return tmpFilePath;
-   }  
+   }
 }

@@ -166,6 +166,12 @@ public class CCRCache {
                         });
             }
 
+            catch(ConnectException ex){
+
+                log.error("can't connect to server", ex);
+                throw new CCRServiceNotAvailableException(ex);
+            }
+
             catch (ParserConfigurationException ex) {
 
                 log.error("can't configure new SAXParser", ex);

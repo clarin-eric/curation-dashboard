@@ -23,9 +23,12 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ClassPathResource;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -128,7 +131,7 @@ class CRServiceTests {
                 )
                 .respond(
                         response()
-                                .withBody("")
+                                .withBody("<root></root>")
                 );
 
         assertDoesNotThrow(() -> this.crCache.getEntry("http://www.wowasa.com/clarin.eu:cr1:p_1403526079382/xsd"));
@@ -148,7 +151,52 @@ class CRServiceTests {
     }
 
     @Test
-    void isPublic() {
+    void isPublic() throws URISyntaxException, IOException {
+
+        this.mockServerClient
+                .when(
+                        request()
+                                .withPath("/ds/ComponentRegistry/rest/registry/1.x/profiles")
+                )
+                .respond(
+                        response()
+                                .withBody("""
+                                        <profileDescriptions>
+                                        <profileDescription>
+                                            <id>clarin.eu:cr1:p_1380106710826</id>
+                                            <name>teiHeader</name>
+                                            <description>
+                                            TEI header. Supplies the descriptive and declarative information making up an electronic title page prefixed to every TEI-conformant text. Version 2.5.0. Last updated on 26th July 2013 http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-teiHeader.html
+                                            </description>
+                                            <status>PRODUCTION</status>
+                                        </profileDescription>
+                                        </profileDescriptions>
+                                        """)
+                );
+        this.mockServerClient
+                .when(
+                        request()
+                )
+                .respond(
+                        response()
+                                .withBody("""
+                                        <?xml version="1.0" encoding="UTF-8"?>
+                                        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cmd="http://www.clarin.eu/cmd/1">
+                                          <xs:annotation>
+                                            <xs:appinfo xmlns:ann="http://www.clarin.eu">
+                                              <cmd:Header>
+                                                <cmd:ID>clarin.eu:cr1:p_1380106710826</cmd:ID>
+                                                <cmd:Name>teiHeader</cmd:Name>
+                                                <cmd:Description>TEI header. Supplies the descriptive and declarative information making up an electronic title page prefixed to every TEI-conformant text.
+                                        Version 2.5.0. Last updated on 26th July 2013
+                                        http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-teiHeader.html</cmd:Description>
+                                                <cmd:Status>production</cmd:Status>
+                                              </cmd:Header>
+                                            </xs:appinfo>
+                                          </xs:annotation>                         
+                                        </xs:schema>
+                                        """)
+                );
 
         assertDoesNotThrow(() -> {
             ParsedProfile parsedProfile = crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1380106710826/xsd");
@@ -158,18 +206,6 @@ class CRServiceTests {
             assertTrue(parsedProfile.header().isPublic());
         });
 
-        try {
-            crService.getParsedProfile("https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd");
-        }
-        catch (CCRServiceNotAvailableException e) {
-            throw new RuntimeException(e);
-        }
-        catch (PPHCacheException e) {
-            throw new RuntimeException(e);
-        }
-        catch (NoCRCacheEntryException e) {
-            throw new RuntimeException(e);
-        }
 
         this.mockServerClient
                 .when(

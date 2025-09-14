@@ -7,8 +7,13 @@ import eu.clarin.cmdi.curation.cr.cache.ProfileCache;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map;
 
@@ -16,6 +21,7 @@ import java.util.Map;
  * The type Cmdi 1 2 profile parser.
  */
 @Service
+@Lazy(true)
 public class CMDI1_2_ProfileParser extends ProfileParser {
 
     public static final String ENVELOPE_URL = "https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd";
@@ -28,12 +34,11 @@ public class CMDI1_2_ProfileParser extends ProfileParser {
      *
      * @param ccrService the ccr service
      */
-    public CMDI1_2_ProfileParser(CCRService ccrService, CRConfig crConfig, ProfileCache profileCache) throws CCRServiceNotAvailableException, ParseException {
+    public CMDI1_2_ProfileParser(CCRService ccrService, CRConfig crConfig, ProfileCache profileCache) throws CCRServiceNotAvailableException, ParseException, URISyntaxException, IOException {
 
         super(ccrService, crConfig);
 
-
-        String schemaString = profileCache.getProfileAsString(ENVELOPE_URL);
+        String schemaString = Files.readString(Paths.get(getClass().getResource("/cmd-envelop.xsd").toURI()));
 
         VTDGen vg = new VTDGen();
 
@@ -113,7 +118,7 @@ public class CMDI1_2_ProfileParser extends ProfileParser {
         String rootPath;
         String namespace;
 
-        if (nodes.stream().findFirst().get().name.equals("CMD")) { //basically for the cmd-envelope.csd
+        if (nodes.size() >0 && nodes.stream().findFirst().get().name.equals("CMD")) { //basically for the cmd-envelope.csd
             rootPath = "/";
             namespace = "cmd:";
         } else { //any profile

@@ -17,12 +17,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ProfileCtlTest {
+class ProfileCtlTest extends BaseCtlTest {
 
     @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private WebConfig webConfig;
+    public ProfileCtlTest(MockMvc mockMvc, WebConfig webConfig) {
+        super(mockMvc, webConfig);
+    }
 
     @Test
     void getProfile() throws Exception {
