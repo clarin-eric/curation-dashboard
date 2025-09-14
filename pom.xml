@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.4</version>
+        <version>3.5.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>eu.clarin.cmdi</groupId>
@@ -22,7 +22,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <linkchecker-persistence.version>2.0.1</linkchecker-persistence.version>
-        <revision>7.4.0</revision>
+        <revision>7.5.0-SNAPSHOT</revision>
         <vlo.version>4.12.1</vlo.version>
         <vtd.version>2.11</vtd.version>
         <saxon.version>12.3</saxon.version>
@@ -82,29 +82,6 @@
                     <argLine>-XX:+EnableDynamicAgentLoading</argLine>
                 </configuration>
             </plugin>
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-caches</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${java.io.tmpdir}/ehtestcache</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>ehtestcache</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
         </plugins>
     </build>
     <repositories>

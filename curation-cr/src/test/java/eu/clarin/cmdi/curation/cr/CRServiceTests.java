@@ -123,7 +123,7 @@ class CRServiceTests {
     }
 
     @Test
-    void nonParseableResult() throws CCRServiceNotAvailableException, PPHCacheException, NoCRCacheEntryException {
+    void nonParseableResult() throws CCRServiceNotAvailableException, PPHCacheException {
 
         this.mockServerClient
                 .when(
@@ -151,7 +151,7 @@ class CRServiceTests {
     }
 
     @Test
-    void isPublic() throws URISyntaxException, IOException {
+    void isPublic() {
 
         this.mockServerClient
                 .when(

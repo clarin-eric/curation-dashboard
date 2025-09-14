@@ -8,10 +8,12 @@ import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -38,7 +40,7 @@ public class CMDI1_2_ProfileParser extends ProfileParser {
 
         super(ccrService, crConfig);
 
-        String schemaString = Files.readString(Paths.get(getClass().getResource("/cmd-envelop.xsd").toURI()));
+        String schemaString = new String(new ClassPathResource("cmd-envelop.xsd").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
         VTDGen vg = new VTDGen();
 

@@ -7,11 +7,13 @@ import org.mockserver.client.MockServerClient;
 import org.mockserver.logging.MockServerLogger;
 import org.mockserver.socket.tls.KeyStoreFactory;
 import org.mockserver.springtest.MockServerTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -42,7 +44,7 @@ public class BaseCtlTest {
         HttpsURLConnection.setDefaultSSLSocketFactory(new KeyStoreFactory(new MockServerLogger()).sslContext().getSocketFactory());
     }
     @BeforeEach
-    public void createExpectations() throws URISyntaxException, IOException {
+    public void createExpectations() throws IOException {
         this.mockServerClient
                 .when(
                         request()
@@ -70,7 +72,7 @@ public class BaseCtlTest {
                 )
                 .respond(
                         response()
-                                .withBody(Files.readString(Paths.get(getClass().getResource("/testfiles/teiHeader.xsd").toURI())))
+                                .withBody(new String(new ClassPathResource("testfiles/teiHeader.xsd").getInputStream().readAllBytes(), StandardCharsets.UTF_8))
                 );
         this.mockServerClient
                 .when(
