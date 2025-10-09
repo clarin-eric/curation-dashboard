@@ -8,6 +8,7 @@ import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.mockserver.springtest.MockServerTest;
@@ -55,7 +56,7 @@ public class CollectionTest extends BaseTest {
     String xmlContent;
 
     @Autowired
-    public CollectionTest(ApiConfig conf, CurationModule curation) throws IOException {
+    public CollectionTest(ApiConfig conf, CurationModule curation) throws IOException, MalFunctioningProcessorException {
 
 
         this.conf = conf;
@@ -92,8 +93,18 @@ public class CollectionTest extends BaseTest {
 
             Files.copy(file099Path, this.file099CopyPath, StandardCopyOption.REPLACE_EXISTING);
 
-
         }
+    }
+
+    @BeforeAll
+    void createReferenceReports() {
+
+        // now we create a collection report from our collection
+        assertDoesNotThrow(() -> this.collectionReport = this.curation.processCollection(this.collectionPath));
+
+        // and an instance report in collection mode as reference
+        assertDoesNotThrow(() -> this.instanceReport = this.curation.processCMDInstance(collectionPath.resolve("001.xml")));
+
     }
 
     @AfterEach
@@ -107,16 +118,6 @@ public class CollectionTest extends BaseTest {
             log.error("", e);
         }
     }
-        @Test
-        void aaCreateReferenceReports() {
-
-            // now we create a collection report from our collection
-            assertDoesNotThrow(() -> this.collectionReport = this.curation.processCollection(this.collectionPath));
-
-            // and an instance report in collection mode as reference
-            assertDoesNotThrow(() -> this.instanceReport = this.curation.processCMDInstance(collectionPath.resolve("001.xml")));
-
-        }
 
     @Test
     void collection() {
