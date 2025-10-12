@@ -11,6 +11,7 @@ logging:
       root: ERROR
       # only CurationApp we're logging in info level to see the progress in processing
       eu.clarin.cmdi.curation.app.CurationApp: INFO
+      eu.clarin.cmdi.vlo.importer.mapping.FacetMappingFactory: off
 spring:
    jackson:
       #only non empty properties are processed. Otherwise, default value from object mapping is taken
