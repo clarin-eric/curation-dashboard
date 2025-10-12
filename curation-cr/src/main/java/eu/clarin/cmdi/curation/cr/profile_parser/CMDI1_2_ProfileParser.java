@@ -7,15 +7,12 @@ import eu.clarin.cmdi.curation.cr.cache.ProfileCache;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode.Component;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map;
 
@@ -23,7 +20,6 @@ import java.util.Map;
  * The type Cmdi 1 2 profile parser.
  */
 @Service
-@Lazy(true)
 public class CMDI1_2_ProfileParser extends ProfileParser {
 
     public static final String ENVELOPE_URL = "https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd";
