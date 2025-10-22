@@ -1,5 +1,6 @@
 package eu.clarin.cmdi.curation.ccr.cache;
 
+import com.ximpleware.*;
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.CCRStatus;
 import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
@@ -7,7 +8,6 @@ import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.xml.sax.Attributes;
@@ -24,9 +24,12 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The type Ccr cache.
@@ -37,6 +40,11 @@ public class CCRCache {
 
     private final HttpUtils httpUtils;
     private final CCRConfig ccrConfig;
+
+    private final Pattern DUBLIN_PATTERN = Pattern.compile("http(s)?://purl.org.+/(\\w+)");
+    private final Pattern WIKIDATA_PATTERN = Pattern.compile("http(s)?://www.wikidata.org/.*([PQ]{1}\\d+)");
+//    private final Pattern W3ID_PATTERN = Pattern.compile("http(s)?://www.w3id.org/.+/(\\w+)");
+//    private final Pattern MODS_PATTERN = Pattern.compile("http(s)?://www.loc.gov/.+#(\\w+)");
 
     private final SAXParserFactory fac;
 
@@ -58,136 +66,202 @@ public class CCRCache {
     @Cacheable(value = "ccrCache", key = "#conceptURI", sync = true)
     public CCRConcept getCCRConcept(String conceptURI) throws CCRServiceNotAvailableException {
 
-        final CCRConcept[] concept = {null};
+        Matcher matcher;
 
-        if (StringUtils.isNotEmpty(conceptURI)) {
-            /*
-             * wowasa (2017-05-26): validation check might be switched off to bypass expired
-             * certificates. System-property can be set with the following entry in web.xml
-             * <env-entry> <env-entry-name>ccrservice.ssl.validate</env-entry-name>
-             * <env-entry-type>java.lang.String</env-entry-type>
-             * <env-entry-value>off</env-entry-value> </env-entry>
-             */
+        if ((matcher = DUBLIN_PATTERN.matcher(conceptURI)).matches()
+//                || (matcher = W3ID_PATTERN.matcher(conceptURI)).matches()
+//                || (matcher = MODS_PATTERN.matcher(conceptURI)).matches()
+        ) {
 
-            if (System.getProperty("ccrservice.ssl.validate", "on").equalsIgnoreCase("off")) {
-                try {
-                    log.warn("SSL-certificate check in CCRService deactivated");
-
-                    TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                            return null;
-                        }
-
-                        public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-                        }
-
-                        public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-                        }
-                    }};
-
-                    SSLContext sc = SSLContext.getInstance("SSL");
-                    sc.init(null, trustAllCerts, new java.security.SecureRandom());
-                    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-                    String refHostName = new URL(ccrConfig.getRestApi()).getHost();
-
-                    HttpsURLConnection
-                            .setDefaultHostnameVerifier((hostname, session) -> hostname.equals(refHostName));
+            return new CCRConcept(conceptURI, matcher.group(2), CCRStatus.APPROVED);
+        }
 
 
-                }
-                catch (NoSuchAlgorithmException ex) {
+        /*
+         * wowasa (2017-05-26): validation check might be switched off to bypass expired
+         * certificates. System-property can be set with the following entry in web.xml
+         * <env-entry> <env-entry-name>ccrservice.ssl.validate</env-entry-name>
+         * <env-entry-type>java.lang.String</env-entry-type>
+         * <env-entry-value>off</env-entry-value> </env-entry>
+         */
 
-                    log.error("SSL algorithm not available from SSL context");
-                    throw new CCRServiceNotAvailableException(ex);
+        if (System.getProperty("ccrservice.ssl.validate", "on").equalsIgnoreCase("off")) {
+            try {
+                log.warn("SSL-certificate check in CCRService deactivated");
 
-                }
-                catch (KeyManagementException ex) {
+                TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
 
-                    log.error("couldn't set trust all certificate - this might be forbidden by policy settings");
-                    throw new CCRServiceNotAvailableException(ex);
+                    public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+                    }
 
-                }
-                catch (MalformedURLException ex) {
+                    public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+                    }
+                }};
 
-                    log.error("can't extract hostname from URL '{}'", ccrConfig.getRestApi());
-                    throw new CCRServiceNotAvailableException(ex);
-                }
-            } // end switch off validation check
+                SSLContext sc = SSLContext.getInstance("SSL");
+                sc.init(null, trustAllCerts, new java.security.SecureRandom());
+                HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-            String restApiUrlStr = ccrConfig.getRestApi() + ccrConfig.getQuery().replace("${conceptURI}", URLEncoder.encode(conceptURI, StandardCharsets.UTF_8));
+                String refHostName = new URL(ccrConfig.getRestApi()).getHost();
 
-            try (InputStream in = httpUtils.getURLConnection(restApiUrlStr).getInputStream()) {
+                HttpsURLConnection
+                        .setDefaultHostnameVerifier((hostname, session) -> hostname.equals(refHostName));
 
-                SAXParser parser = fac.newSAXParser();
 
-                parser.parse(in,
-                        new DefaultHandler() {
-
-                            private StringBuilder elementValue;
-
-                            String prefLabel;
-                            CCRStatus status = CCRStatus.UNKNOWN;
-
-                            @Override
-                            public void startElement(String uri, String localName, String qName, Attributes attributes) {
-
-                                switch (localName) {
-
-                                    case "prefLabel", "status" -> elementValue = new StringBuilder();
-                                }
-                            }
-
-                            @Override
-                            public void endElement(String uri, String localName, String qName) {
-
-                                switch (localName) {
-
-                                    case "prefLabel" -> this.prefLabel = this.elementValue.toString();
-                                    case "status" ->
-                                            this.status = EnumUtils.getEnum(CCRStatus.class, this.elementValue.toString().toUpperCase(), CCRStatus.UNKNOWN);
-                                }
-                            }
-
-                            @Override
-                            public void endDocument() {
-
-                                concept[0] = new CCRConcept(conceptURI, prefLabel, status);
-                            }
-
-                            @Override
-                            public void characters(char[] ch, int start, int length) {
-                                if (elementValue == null) {
-                                    elementValue = new StringBuilder();
-                                } else {
-                                    elementValue.append(ch, start, length);
-                                }
-                            }
-                        });
             }
+            catch (NoSuchAlgorithmException ex) {
 
-            catch(ConnectException ex){
+                log.error("SSL algorithm not available from SSL context");
+                throw new CCRServiceNotAvailableException(ex);
 
-                log.error("can't connect to server", ex);
+            }
+            catch (KeyManagementException ex) {
+
+                log.error("couldn't set trust all certificate - this might be forbidden by policy settings");
+                throw new CCRServiceNotAvailableException(ex);
+
+            }
+            catch (MalformedURLException ex) {
+
+                log.error("can't extract hostname from URL '{}'", ccrConfig.getRestApi());
                 throw new CCRServiceNotAvailableException(ex);
             }
+        } // end switch off validation check
 
-            catch (ParserConfigurationException ex) {
+        // we check whether the URI is wikidata
+        boolean isWikidata = false;
 
-                log.error("can't configure new SAXParser", ex);
-                throw new CCRServiceNotAvailableException(ex);
+        String restApiUrlStr;
+
+        if((matcher = WIKIDATA_PATTERN.matcher(conceptURI)).matches()) {
+            isWikidata = true;
+            restApiUrlStr = "https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=SELECT%20%3Flabel%20WHERE%20%7Bwd%3A"
+                    + matcher.group(2)
+                    + "%20rdfs%3Alabel%20%3Flabel%20%20FILTER%20%28lang%28%3Flabel%29%20IN%20%28%22en%22%29%29%7D";
+        }
+        else{
+
+            restApiUrlStr = ccrConfig.getRestApi() + ccrConfig.getQuery().replace("${conceptURI}", URLEncoder.encode(conceptURI, StandardCharsets.UTF_8));
+        }
+
+        try {
+
+            HttpResponse<InputStream> response = this.httpUtils.getReponse(new URI(restApiUrlStr), "*/*");
+
+            if(response.statusCode() != 200) {
+
+                return new CCRConcept(conceptURI, "invalid concept", CCRStatus.UNKNOWN);
             }
-            catch (IOException | URISyntaxException ex) {
 
-                log.info("can't read URL '{}'", restApiUrlStr);
+            SAXParser parser = fac.newSAXParser();
+
+            DefaultHandler handler;
+
+            CCRConcept concept = new CCRConcept(conceptURI);
+
+            if (isWikidata) {
+
+                handler = new WikidataHandler(concept);
+            }
+            else {
+
+                handler = new SkosHandler(concept);
             }
 
-            catch (SAXException ex) {
+            parser.parse(response.body(), handler);
 
-                log.info("can't parse file from URL'{}'", restApiUrlStr);
+            return concept;
+        }
+        catch (ParserConfigurationException e) {
+
+            throw new CCRServiceNotAvailableException(e);
+        }
+        catch (SAXException | URISyntaxException | IOException | InterruptedException e) {
+
+            log.error("can't process concept URI '{}'", conceptURI);
+            return new CCRConcept(conceptURI, "invalid concept", CCRStatus.UNKNOWN);
+        }
+    }
+
+    private class SkosHandler extends DefaultHandler {
+
+        private final CCRConcept concept;
+
+        private StringBuilder elementValue;
+
+        private SkosHandler(CCRConcept concept) {
+
+            this.concept = concept;
+        }
+
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) {
+
+            switch (localName) {
+
+                case "prefLabel", "status" -> elementValue = new StringBuilder();
             }
         }
 
-        return concept[0];
+        @Override
+        public void endElement(String uri, String localName, String qName) {
+
+            switch (localName) {
+
+                case "prefLabel" -> this.concept.setPrefLabel(this.elementValue.toString());
+                case "status" ->
+                        this.concept.setStatus(EnumUtils.getEnum(CCRStatus.class, this.elementValue.toString().toUpperCase(), CCRStatus.UNKNOWN));
+            }
+        }
+
+        @Override
+        public void characters(char[] ch, int start, int length) {
+            if (elementValue == null) {
+                elementValue = new StringBuilder();
+            } else {
+                elementValue.append(ch, start, length);
+            }
+        }
+    }
+    private class WikidataHandler extends DefaultHandler {
+
+        private final CCRConcept concept;
+
+        private StringBuilder elementValue;
+
+        private WikidataHandler(CCRConcept concept) {
+            this.concept = concept;
+            this.concept.setStatus(CCRStatus.APPROVED);
+        }
+
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) {
+
+            switch (localName) {
+
+                case "literal" -> elementValue = new StringBuilder();
+            }
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) {
+
+            switch (localName) {
+
+                case "literal" -> this.concept.setPrefLabel(this.elementValue.toString());
+            }
+        }
+
+        @Override
+        public void characters(char[] ch, int start, int length) {
+            if (elementValue == null) {
+                elementValue = new StringBuilder();
+            } else {
+                elementValue.append(ch, start, length);
+            }
+        }
     }
 }

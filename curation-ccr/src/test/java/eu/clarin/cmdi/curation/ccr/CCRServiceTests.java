@@ -63,7 +63,7 @@ class CCRServiceTests {
     }
 
     @Test
-    void serviceNotAvailable() {
+    void serviceNotAvailable() throws CCRServiceNotAvailableException {
 
 
         this.mockServerClient
@@ -78,8 +78,10 @@ class CCRServiceTests {
         httpConfig.setProxyPort(this.mockServerPort + 1);
 
 
-        // should throw any exception
-        assertThrows(CCRServiceNotAvailableException.class, () -> service.getConcept("http://hdl.handle.net/99999/CCR_C-4541_6dc2d021-1811-3d05-server-not-available"));
+        // should not throw any exception
+        assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99999/CCR_C-4541_6dc2d021-1811-3d05-server-not-available"));
+        // should return an unknown concept
+        assertEquals("unknown concept", service.getConcept("http://hdl.handle.net/99999/CCR_C-4541_6dc2d021-1811-3d05-server-not-available").getPrefLabel());
 
 
         // resetting to the correct proxy server port
@@ -101,12 +103,8 @@ class CCRServiceTests {
 
         // shouldn't throw any exception
         assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-timeout"));
-        // should return null
-        assertNull(service.getConcept("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-timeout"));
-        // the null should be cached
-        Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-timeout"));
-        // the cache value should be null
-        Assertions.assertNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-timeout").get());
+        // should return an unknown concept
+        assertEquals("unknown concept", service.getConcept("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-timeout").getPrefLabel());
     }
 
     @Test
@@ -122,12 +120,8 @@ class CCRServiceTests {
                 );
         // shouldn't throw any exception for a non parseable result
         assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-non-parseable"));
-        // should return null
-        assertNull(service.getConcept("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-non-parseable"));
-        // the null should be cached
-        Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-non-parseable"));
-        // the cache value should be null
-        Assertions.assertNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-non-parseable").get());
+        // should return an unknown concept
+        assertEquals("unknown concept", service.getConcept("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-non-parseable").getPrefLabel());
     }
 
     @Test
