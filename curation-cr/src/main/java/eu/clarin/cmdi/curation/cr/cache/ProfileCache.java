@@ -5,9 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 @Component
@@ -26,14 +25,11 @@ public class ProfileCache {
 
         String schemaString;
 
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(httpUtils.getURLConnection(schemaLocation).getInputStream()))) {
+        try {
 
-            StringBuffer buffer = new StringBuffer();
-
-            reader.lines().forEach(buffer::append);
-            schemaString = buffer.toString();
+            schemaString = httpUtils.getString(new URI(schemaLocation));
         }
-        catch (IOException | URISyntaxException e) {
+        catch (IOException | URISyntaxException | InterruptedException e) {
 
             log.error("couldn't get schema '{}'", schemaLocation);
             return null;
