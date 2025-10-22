@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.ccr.cache;
 
-import com.ximpleware.*;
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.CCRStatus;
 import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
