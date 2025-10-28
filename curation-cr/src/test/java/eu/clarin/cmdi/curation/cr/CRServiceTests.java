@@ -53,8 +53,6 @@ class CRServiceTests {
     @Autowired
     CRService crService;
     @Autowired
-    CRConfig crConfig;
-    @Autowired
     HttpConfig httpConfig;
     @Autowired
     CacheManager cacheManager;
@@ -64,13 +62,6 @@ class CRServiceTests {
     @MockServerPort
     private Integer mockServerPort;
 
-    @BeforeAll
-    public void prepareFileCache() throws IOException {
-        // ensure all connection using HTTPS will use the SSL context defined by
-        // MockServer to allow dynamically generated certificates to be accepted
-        HttpsURLConnection.setDefaultSSLSocketFactory(new KeyStoreFactory(new MockServerLogger()).sslContext().getSocketFactory());
-
-    }
 
     @Test
     void serverNotAvailable() {
@@ -199,7 +190,7 @@ class CRServiceTests {
                 );
 
         assertDoesNotThrow(() -> {
-            ParsedProfile parsedProfile = crService.getParsedProfile("https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1380106710826/xsd");
+            ParsedProfile parsedProfile = crService.getParsedProfile("http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin.eu:cr1:p_1380106710826/xsd");
             // the profile is in the context registry
             assertTrue(parsedProfile.header().isCrResident());
             // and it is public

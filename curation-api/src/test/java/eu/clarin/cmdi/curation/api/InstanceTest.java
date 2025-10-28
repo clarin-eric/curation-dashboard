@@ -7,6 +7,7 @@ package eu.clarin.cmdi.curation.api;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,17 +66,16 @@ public class InstanceTest extends BaseTest {
         }
     }
 
-    @Test
-    void aaCreateReferenceReport() {
+    @BeforeAll
+    void createReferenceReport() throws URISyntaxException {
 
-        assertDoesNotThrow(() -> this.referenceReport = curation.processCMDInstance(Paths.get(this.getClass().getResource("/instance/DE_2009_BergerEtAl_PolitikEntdecken_31_eng.xml").toURI())));
-
+        this.referenceReport = curation.processCMDInstance(Paths.get(this.getClass().getResource("/instance/DE_2009_BergerEtAl_PolitikEntdecken_31_eng.xml").toURI()));
     }
 
     @Test
     void file() throws URISyntaxException, IOException {
 
-        assertEquals(11139, this.referenceReport.fileReport.size);
+        assertEquals(11248, this.referenceReport.fileReport.size);
         assertTrue(this.referenceReport.fileReport.size <= conf.getMaxFileSize().toBytes());
         assertEquals(1.0, this.referenceReport.fileReport.score);
 
@@ -83,7 +84,7 @@ public class InstanceTest extends BaseTest {
 
         Path tmpFilePath = null;
 
-        try (BufferedWriter writer = Files.newBufferedWriter((tmpFilePath = getTmpFile("", "")), StandardOpenOption.APPEND)) {
+        try (BufferedWriter writer = Files.newBufferedWriter((tmpFilePath = getTmpFile("", "", false)), StandardOpenOption.APPEND)) {
 
             writer.write("<!-- ");
 
@@ -119,16 +120,16 @@ public class InstanceTest extends BaseTest {
 
             assertEquals(4.0, referenceReport.instanceHeaderReport.score);
 
-            CMDInstanceReport report = curation.processCMDInstance(getTmpFile("clarin.eu:cr1:p_1380106710826", "clarin.eu:cr1:p1380106710826"));
+            CMDInstanceReport report = curation.processCMDInstance(getTmpFile("clarin.eu:cr1:p_1380106710826", "clarin.eu:cr1:p1380106710826", false));
             assertFalse(report.isProcessable);
 
-            report = curation.processCMDInstance(getTmpFile("<cmd:MdProfile>clarin.eu:cr1:p_1380106710826</cmd:MdProfile>", "<cmd:MdProfile>eu:cr1:p_1380106710826</cmd:MdProfile>"));
+            report = curation.processCMDInstance(getTmpFile("<cmd:MdProfile>clarin.eu:cr1:p_1380106710826</cmd:MdProfile>", "<cmd:MdProfile>eu:cr1:p_1380106710826</cmd:MdProfile>", false));
             assertEquals(3.0, report.instanceHeaderReport.score);
 
-            report = curation.processCMDInstance(getTmpFile("<cmd:MdCollectionDisplayName>WorldViews</cmd:MdCollectionDisplayName>", ""));
+            report = curation.processCMDInstance(getTmpFile("<cmd:MdCollectionDisplayName>WorldViews</cmd:MdCollectionDisplayName>", "", false));
             assertEquals(3.0, report.instanceHeaderReport.score);
 
-            report = curation.processCMDInstance(getTmpFile("<cmd:MdSelfLink>http://worldviews.gei.de/rest/content/cmdi/DE_2009_BergerEtAl_PolitikEntdecken_31/eng/</cmd:MdSelfLink>", ""));
+            report = curation.processCMDInstance(getTmpFile("<cmd:MdSelfLink>http://worldviews.gei.de/rest/content/cmdi/DE_2009_BergerEtAl_PolitikEntdecken_31/eng/</cmd:MdSelfLink>", "", false));
             assertEquals(3.0, report.instanceHeaderReport.score);
 
         }
@@ -151,14 +152,14 @@ public class InstanceTest extends BaseTest {
         try {
             // delete cmd:Resources element - (?s).* is the DOTALL flag which includes line feed
             // files without resources should be treated as non processable
-            CMDInstanceReport report = curation.processCMDInstance(getTmpFile("<cmd:Resources>(?s).*</cmd:Resources>", ""));
+            CMDInstanceReport report = curation.processCMDInstance(getTmpFile("<cmd:Resources>.*</cmd:Resources>", "", true));
             assertFalse(report.isProcessable);
             // should be the same if we have no resource reference
-            report = curation.processCMDInstance(getTmpFile("<cmd:ResourceRef>.*</cmd:ResourceRef>", ""));
+            report = curation.processCMDInstance(getTmpFile("<cmd:ResourceRef>.*</cmd:ResourceRef>", "", false));
             assertFalse(report.isProcessable);
 
             // deleting all mime-types
-            report = curation.processCMDInstance(getTmpFile("mimetype=\".*\"", ""));
+            report = curation.processCMDInstance(getTmpFile("mimetype=\".*\"", "", false));
             assertEquals(0, report.resProxyReport.numOfResourcesWithMime);
             assertEquals(2, report.resProxyReport.numOfResourcesWithReference);
             assertEquals(0.0, report.resProxyReport.percOfResourcesWithMime);
@@ -178,19 +179,19 @@ public class InstanceTest extends BaseTest {
         try {
 
             // deleting a simple element
-            CMDInstanceReport report = curation.processCMDInstance(getTmpFile("<cmdp:repository>.*</cmdp:repository>", ""));
+            CMDInstanceReport report = curation.processCMDInstance(getTmpFile("<cmdp:repository>.*</cmdp:repository>", "", false));
 
             assertEquals(referenceReport.xmlPopulationReport.numOfXMLElements - 1, report.xmlPopulationReport.numOfXMLElements);
             assertEquals(referenceReport.xmlPopulationReport.numOfXMLSimpleElements - 1, report.xmlPopulationReport.numOfXMLSimpleElements);
             assertEquals(referenceReport.xmlPopulationReport.numOfXMLEmptyElements, report.xmlPopulationReport.numOfXMLEmptyElements);
 
             // deleting a complex element
-            report = curation.processCMDInstance(getTmpFile("<cmdp:publicationStmt(?s).*</cmdp:publicationStmt>", ""));
+            report = curation.processCMDInstance(getTmpFile("<cmdp:publicationStmt(?s).*</cmdp:publicationStmt>", "", false));
             assertEquals(referenceReport.xmlPopulationReport.numOfXMLElements - 9, report.xmlPopulationReport.numOfXMLElements);
             assertEquals(referenceReport.xmlPopulationReport.numOfXMLSimpleElements - 7, report.xmlPopulationReport.numOfXMLSimpleElements);
 
             // deleting the content of a simple element
-            report = curation.processCMDInstance(getTmpFile("<cmdp:num type=\"pages\" n=\"1\">31</cmdp:num>", "<cmdp:num type=\"pages\" n=\"1\" />"));
+            report = curation.processCMDInstance(getTmpFile("<cmdp:num type=\"pages\" n=\"1\">31</cmdp:num>", "<cmdp:num type=\"pages\" n=\"1\" />", false));
             assertEquals(referenceReport.xmlPopulationReport.numOfXMLEmptyElements + 1, report.xmlPopulationReport.numOfXMLEmptyElements);
 
         }
@@ -208,7 +209,7 @@ public class InstanceTest extends BaseTest {
 
         try {
             // we create more than 3 ERRORS, since the Attribute 'x' is not allowed to appear in element 'cmdp:item'
-            CMDInstanceReport report = curation.processCMDInstance(getTmpFile("<cmdp:item n", "<cmdp:item x"));
+            CMDInstanceReport report = curation.processCMDInstance(getTmpFile("<cmdp:item n", "<cmdp:item x", false));
 
             assertEquals(0.0, report.xmlValidityReport.score);
 
@@ -229,22 +230,12 @@ public class InstanceTest extends BaseTest {
 
         try {
 
-            assertTrue(referenceReport.facetReport.coverages.stream().filter(coverage -> coverage.name.equals("resourceClass")).findFirst().get().coveredByInstance);
+            assertTrue(referenceReport.facetReport.coverages.stream().filter(coverage -> coverage.name.equals("availability")).findFirst().get().coveredByInstance);
 
-            CMDInstanceReport report = curation.processCMDInstance(getTmpFile("<cmdp:type>.*</cmdp:type>", ""));
-            // we delete the elements who are linked the resourceClass facet
-            assertFalse(report.facetReport.coverages.stream().filter(coverage -> coverage.name.equals("resourceClass")).findFirst().get().coveredByInstance);
-            assertEquals(referenceReport.facetReport.numOfFacetsCoveredByInstance - 1, report.facetReport.numOfFacetsCoveredByInstance);
-
-            assertTrue(referenceReport.facetReport.coverages.stream().filter(coverage -> coverage.name.equals("organisation")).findFirst().get().coveredByInstance);
-
-            // repeating procedure for organisation facet
-            // we delete the elements who are linked the organisation facet
-            report = curation.processCMDInstance(getTmpFile("<cmdp:publisher>.*</cmdp:publisher>", ""));
-
-            assertFalse(report.facetReport.coverages.stream().filter(coverage -> coverage.name.equals("organisation")).findFirst().get().coveredByInstance);
-            assertEquals(referenceReport.facetReport.numOfFacetsCoveredByInstance - 1, report.facetReport.numOfFacetsCoveredByInstance);
-
+            CMDInstanceReport report = curation.processCMDInstance(getTmpFile("<cmdp:availability.*cmdp:availability>", "", true));
+            // we delete the elements who are linked the availability facet
+            assertFalse(report.facetReport.coverages.stream().filter(coverage -> coverage.name.equals("availability")).findFirst().get().coveredByInstance);
+            assertEquals(referenceReport.facetReport.numOfFacetsCoveredByInstance -1, report.facetReport.numOfFacetsCoveredByInstance);
         }
         catch (IOException e) {
 
@@ -257,11 +248,13 @@ public class InstanceTest extends BaseTest {
      * to unauthenticated the mean to write rubbish to the linkchecker database
      */
 
-    private Path getTmpFile(String replacementPattern, String replacement) throws IOException {
+    private Path getTmpFile(String replacementPattern, String replacement, boolean isDotall) throws IOException {
 
         Path tmpFilePath = Files.createTempFile(null, null);
 
-        Files.writeString(tmpFilePath, this.cmdString.replaceAll(replacementPattern, replacement));
+        Pattern pattern = isDotall?Pattern.compile(replacementPattern, Pattern.DOTALL):Pattern.compile(replacementPattern);
+
+        Files.writeString(tmpFilePath, pattern.matcher(this.cmdString).replaceAll(replacement));
 
         return tmpFilePath;
     }

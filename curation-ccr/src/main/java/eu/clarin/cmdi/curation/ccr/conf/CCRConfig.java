@@ -14,7 +14,11 @@ public class CCRConfig {
 
     private Path ccrCache;
 
-    private String restApi;
+    private String clavasRequest;
+
+    private String wikidataRequest;
+
+//    private String restApi;
 
     private String query;
 

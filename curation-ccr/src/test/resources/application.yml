@@ -1,4 +1,5 @@
 # properties are documented in the application.yml of the curation-app module
+# ATTENTION: this application.yml is only for testing. It uses http requests instead of https to avoid certificate issues with MockServer
 logging:
   level:
     root: ERROR
@@ -11,8 +12,8 @@ curation:
     proxy-port: ${mockServerPort}
   ccr-service:
     ccr-cache: ${java.io.tmpdir}/curation/ccr_cache
-    restApi: "https://vocabularies.clarin.eu/clavas/rest/v1/data"
-    query: "?uri=${conceptURI}"
+    clavas-request: http://vocabularies.clarin.eu/clavas/rest/v1/data?uri=${conceptURI}
+    wikidata-request: http://query.wikidata.org/bigdata/namespace/wdq/sparql?query=SELECT%20%3Flabel%20WHERE%20%7Bwd%3A${entityID}%20rdfs%3Alabel%20%3Flabel%20%20FILTER%20%28lang%28%3Flabel%29%20IN%20%28%22en%22%29%29%7D
 spring:
   cache:
     jcache:
