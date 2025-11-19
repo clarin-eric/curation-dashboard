@@ -11,21 +11,21 @@ import org.springframework.stereotype.Service;
 @Service
 class CCRServiceImpl implements CCRService {
 
-   private final CCRCache cache;
+    private final CCRCache cache;
 
-   public CCRServiceImpl(CCRCache cache) {
-      this.cache = cache;
-   }
+    public CCRServiceImpl(CCRCache cache) {
+        this.cache = cache;
+    }
 
-   /**
-    * Gets concept.
-    *
-    * @param uri the uri of the ccr concept
-    * @return the concept
-    */
-   @Override
-   public CCRConcept getConcept(String uri) throws CCRServiceNotAvailableException {
+    /**
+     * Gets concept.
+     *
+     * @param uri the uri of the ccr concept
+     * @return the concept
+     */
+    @Override
+    public CCRConcept getConcept(String uri) throws CCRServiceNotAvailableException {
 
-      return cache.getCCRConcept(uri);
-   }
+        return cache.getCCRConcept(uri);
+    }
 }

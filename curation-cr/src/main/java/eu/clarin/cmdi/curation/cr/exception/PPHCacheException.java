@@ -7,8 +7,14 @@ public class PPHCacheException extends Exception {
    @Serial
    private static final long serialVersionUID = 1L;
 
-   public PPHCacheException(Throwable cause) {
-      super(cause);
-   }
+    public PPHCacheException() {
+    }
 
+    public PPHCacheException(String message) {
+        super(message);
+    }
+
+    public PPHCacheException(Throwable cause) {
+        super(cause);
+    }
 }

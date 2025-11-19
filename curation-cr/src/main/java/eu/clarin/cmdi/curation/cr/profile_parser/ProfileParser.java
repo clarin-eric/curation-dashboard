@@ -7,12 +7,11 @@ import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.CCRConcept;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.CCRStatus;
-import eu.clarin.cmdi.curation.ccr.conf.CCRConfig;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CRElement.NodeType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -29,7 +28,7 @@ public abstract class ProfileParser {
     */
    protected CCRService ccrService;
 
-   private CRElement _cur;
+
 
 
 
@@ -55,9 +54,8 @@ public abstract class ProfileParser {
     * @param header public schema header or null
     * @return the parsed profile
     * @throws CCRServiceNotAvailableException
-    * @throws CRServiceStorageException
     */
-   public ParsedProfile parse(VTDNav vn, String schemaLocation, ProfileHeader header) throws CCRServiceNotAvailableException, CRServiceStorageException {
+   public ParsedProfile parse(VTDNav vn, String schemaLocation, ProfileHeader header) throws CCRServiceNotAvailableException {
 
       try {
 
@@ -123,9 +121,8 @@ public abstract class ProfileParser {
     * @param xpathComponentNode
     * @return the parsed profile
     * @throws CCRServiceNotAvailableException
-    * @throws CRServiceStorageException
     */
-   protected abstract void fillMaps(Collection<CRElement> nodes, Map<String, CMDINode> xpathNode, Map<String, CMDINode> xpathElementNode, Map<String, CMDINode> xpathComponentNode) throws CCRServiceNotAvailableException, CRServiceStorageException;
+   protected abstract void fillMaps(Collection<CRElement> nodes, Map<String, CMDINode> xpathNode, Map<String, CMDINode> xpathElementNode, Map<String, CMDINode> xpathComponentNode) throws CCRServiceNotAvailableException;
 
    /**
     * Fill in header profile header.
@@ -152,6 +149,7 @@ public abstract class ProfileParser {
    }
 
    private Collection<CRElement> processElements(VTDNav vn) throws VTDException {
+      CRElement _cur = null;
       Collection<CRElement> nodes = new ArrayList<>();
       vn.toElement(VTDNav.ROOT);// reset
       AutoPilot ap = new AutoPilot(vn);
@@ -287,24 +285,10 @@ public abstract class ProfileParser {
     */
    protected CCRConcept createConcept(String uri) throws CCRServiceNotAvailableException {
 
-      if (uri == null)
+      if (StringUtils.isBlank(uri))
          return null;
-      CCRConcept concept;
-      if (uri.startsWith("http://purl.org/dc/terms/")) {
 
-         concept = new CCRConcept(uri, uri.substring("http://purl.org/dc/terms/".length()), CCRStatus.DUBLIN_CORE);
-      }
-      else {
-
-         CCRConcept ccrConcept = null;
-
-         ccrConcept = ccrService.getConcept(uri);
-
-
-          concept = Objects.requireNonNullElseGet(ccrConcept, () -> new CCRConcept(uri, "invalid concept", CCRStatus.UNKNOWN));
-      }
-
-      return concept;
+      return ccrService.getConcept(uri);
    }
    private boolean isCrResident(String schemaLocation) {
 

@@ -24,12 +24,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class CurateCtlTest {
+class CurateCtlTest extends BaseCtlTest{
 
     @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private WebConfig webConfig;
+    public CurateCtlTest(MockMvc mockMvc, WebConfig webConfig) {
+        super(mockMvc, webConfig);
+    }
 
     @Test
     void getInstance() {
@@ -47,7 +47,7 @@ class CurateCtlTest {
         this.mockMvc.perform(multipart("/curate").file(multiPartFile).accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(forwardedUrlPattern("/download/instance/_tmp_*_curation_tmp"));
 
         // creating a mock multipart from a profile
-        multiPartFile = new MockMultipartFile("file", "media-corpus-profile.xsd", MediaType.MULTIPART_FORM_DATA_VALUE, this.getClass().getResourceAsStream("/testfiles/media-corpus-profile.xsd"));
+        multiPartFile = new MockMultipartFile("file", "teiHeader.xsd", MediaType.MULTIPART_FORM_DATA_VALUE, this.getClass().getResourceAsStream("/testfiles/teiHeader.xsd"));
         // send it and expect status OK and a profile report as result
         this.mockMvc.perform(multipart("/curate").file(multiPartFile)).andDo(print()).andExpect(status().isOk()).andExpect(content().string(containsString("CMD Profile Report")));
         // sending the same file with accept header xml should return status code OK and a xml file

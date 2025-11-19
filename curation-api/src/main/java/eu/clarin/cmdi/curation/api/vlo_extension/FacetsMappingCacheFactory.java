@@ -3,7 +3,6 @@ package eu.clarin.cmdi.curation.api.vlo_extension;
 import eu.clarin.cmdi.curation.api.cache.FacetMappingCache;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.vlo.config.VloConfig;
@@ -16,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The type Facets mapping cache factory.
@@ -104,7 +100,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
                log.error("no ProfileCacheEntry object for schemaLocation '{}'", schemaLocation);
 
             }
-            catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
+            catch (CCRServiceNotAvailableException | PPHCacheException e) {
                 throw new RuntimeException(e);
             }
 

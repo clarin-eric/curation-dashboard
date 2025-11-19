@@ -17,12 +17,12 @@ import java.nio.file.StandardCopyOption;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class LinkcheckerCtlTest {
+class LinkcheckerCtlTest extends BaseCtlTest {
 
     @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private WebConfig webConfig;
+    public LinkcheckerCtlTest(MockMvc mockMvc, WebConfig webConfig) {
+        super(mockMvc, webConfig);
+    }
 
     @Test
     void getReport() throws Exception {

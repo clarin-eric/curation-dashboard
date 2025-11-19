@@ -1,12 +1,16 @@
 package eu.clarin.cmdi.curation.ccr;
 
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.commons.conf.HttpConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.logging.MockServerLogger;
+import org.mockserver.matchers.Times;
+import org.mockserver.model.ConnectionOptions;
+import org.mockserver.model.Delay;
 import org.mockserver.socket.tls.KeyStoreFactory;
 import org.mockserver.springtest.MockServerPort;
 import org.mockserver.springtest.MockServerTest;
@@ -39,106 +43,201 @@ import javax.net.ssl.HttpsURLConnection;
 @MockServerTest
 class CCRServiceTests {
 
-   @Autowired
-   private CCRService service;
 
-   @Autowired
-   private CacheManager cacheManager;
+    private final CCRService service;
 
+    @Autowired
+    public CCRServiceTests(CCRService service) {
+        this.service = service;
+        // ensure all connection using HTTPS will use the SSL context defined by
+        // MockServer to allow dynamically generated certificates to be accepted
+//        HttpsURLConnection.setDefaultSSLSocketFactory(new KeyStoreFactory(new MockServerLogger()).sslContext().getSocketFactory());
+    }
 
-   private MockServerClient mockServerClient;
+    @Autowired
+    private CacheManager cacheManager;
+    @Autowired
+    HttpConfig httpConfig;
 
-   @MockServerPort
-   private Integer mockServerPort;
+    private MockServerClient mockServerClient;
 
-
-
-   @BeforeAll
-   public void prepareFileCache() throws IOException {
-      // ensure all connection using HTTPS will use the SSL context defined by
-      // MockServer to allow dynamically generated certificates to be accepted
-      HttpsURLConnection.setDefaultSSLSocketFactory(new KeyStoreFactory(new MockServerLogger()).sslContext().getSocketFactory());
-
-   }
-   @Test
-   void serverNotAvailable() throws CCRServiceNotAvailableException {
+    @MockServerPort
+    private Integer mockServerPort;
 
 
-      this.mockServerClient
-              .when(
-                  request()
-               )
-              .respond(
-                  response().withStatusCode(503)
-              );
+
+    @Test
+    void serviceNotAvailable() throws CCRServiceNotAvailableException {
 
 
-      // shouldn't throw any exception
-      assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99999/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
-      // should return null
-      assertNull(service.getConcept("http://hdl.handle.net/99999/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
-      // the null should be cached
-      Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99999/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
-      // the cache value should be null
-      Assertions.assertNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c").get());
-   }
+        this.mockServerClient
+                .when(
+                        request()
+                )
+                .respond(
+                        response().withStatusCode(200)
+                );
 
-   @Test
-   void connectionTimeout() throws CCRServiceNotAvailableException {
+        // we're making the proxy server inaccessible by incrementing the port to call
+        httpConfig.setProxyPort(this.mockServerPort + 1);
 
-      this.mockServerClient
-              .when(
-                      request()
-              )
-              .respond(
-                      response()
-                              .withStatusCode(200)
-                              .withDelay(TimeUnit.SECONDS, 6)
-              );
 
-      // shouldn't throw any exception
-      assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
-      // should return null
-      assertNull(service.getConcept("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
-      // the null should be cached
-      Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
-      // the cache value should be null
-      Assertions.assertNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c").get());   }
+        // should not throw any exception
+        assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99999/CCR_C-4541_6dc2d021-1811-3d05-server-not-available"));
+        // should return an unknown concept
+        assertEquals("invalid concept", service.getConcept("http://hdl.handle.net/99999/CCR_C-4541_6dc2d021-1811-3d05-server-not-available").getPrefLabel());
 
-   @Test
-   void nonParseableResult() throws CCRServiceNotAvailableException {
 
-      this.mockServerClient
-              .when(
-                      request()
-              )
-              .respond(
-                      response()
-                              .withBody("")
-              );
-      // shouldn't throw any exception for a non parseable result
-      assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
-      // should return null
-      assertNull(service.getConcept("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
-      // the null should be cached
-      Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c"));
-      // the cache value should be null
-      Assertions.assertNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c").get());
-   }
+        // resetting to the correct proxy server port
+        httpConfig.setProxyPort(this.mockServerPort);
+    }
 
-   @Test
-   void useCache() throws CCRServiceNotAvailableException {
+    @Test
+    void connectionTimeout() throws CCRServiceNotAvailableException {
 
-      service.getConcept("http://hdl.handle.net/11459/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c");
+        this.mockServerClient
+                .when(
+                        request()
+                )
+                .respond(
+                        response()
+                                .withStatusCode(200)
+                                .withDelay(TimeUnit.SECONDS, 6)
+                );
 
-      // getCache(...).get(...) returns only a value wrapper, the following get the value iteself
-      Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/11459/CCR_C-4541_6dc2d021-1811-3d05-56ca-7ef3e394817c").get());
-   }
+        // shouldn't throw any exception
+        assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-timeout"));
+        // should return an unknown concept
+        assertEquals("invalid concept", service.getConcept("http://hdl.handle.net/99998/CCR_C-4541_6dc2d021-1811-3d05-56ca-timeout").getPrefLabel());
+    }
 
-   @SpringBootConfiguration
-   @EnableCaching
-   @ComponentScan(basePackages = "eu.clarin.cmdi.curation")
-   public static class TestConfig {
+    @Test
+    void nonParseableResult() throws CCRServiceNotAvailableException {
 
-   }
+        this.mockServerClient
+                .when(
+                        request()
+                )
+                .respond(
+                        response()
+                                .withBody("")
+                );
+        // shouldn't throw any exception for a non parseable result
+        assertDoesNotThrow(() -> service.getConcept("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-non-parseable"));
+        // should return an unknown concept
+        assertEquals("invalid concept", service.getConcept("http://hdl.handle.net/99997/CCR_C-4541_6dc2d021-1811-3d05-non-parseable").getPrefLabel());
+    }
+
+    @Test
+    void useCache() throws CCRServiceNotAvailableException {
+        this.mockServerClient
+                .when(
+                        request()
+                )
+                .respond(
+                        response()
+                                .withStatusCode(200)
+                );
+
+        service.getConcept("http://hdl.handle.net/11459/CCR_C-4541_6dc2d021-1811-3d05-use-cache");
+
+        // getCache(...).get(...) returns only a value wrapper
+        Assertions.assertNotNull(cacheManager.getCache("ccrCache").get("http://hdl.handle.net/11459/CCR_C-4541_6dc2d021-1811-3d05-use-cache"));
+    }
+
+    @Test
+    void resultGroups() throws CCRServiceNotAvailableException {
+                this.mockServerClient
+                    .when(
+                            request(),
+                            Times.exactly(1)
+                    )
+                    .respond(
+                            response()
+                                    .withStatusCode(200)
+                                    .withBody("""
+                                            <rdf:RDF>
+                                            <skos:ConceptScheme rdf:about="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128">
+                                            <skos:hasTopConcept>
+                                            <skos:Concept rdf:about="http://hdl.handle.net/11459/CCR_C-3796_e89bb008-3e2e-1f70-afa5-e506a6c12683">
+                                            <ns0:status>candidate</ns0:status>
+                                            <skos:inScheme rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+                                            <skos:notation>fieldOfResearch</skos:notation>
+                                            <skos:prefLabel xml:lang="en">field of research</skos:prefLabel>
+                                            <skos:topConceptOf rdf:resource="http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128"/>
+                                            <skos:altLabel>fieldOfResearch</skos:altLabel>
+                                            <skos:altLabel xml:lang="en">research field</skos:altLabel>
+                                            <skos:changeNote>
+                                            This concept is based on the ISOcat data category: http://www.isocat.org/datcat/DC-3796
+                                            </skos:changeNote>
+                                            <skos:definition xml:lang="en">
+                                            Indication of the linguistic field for assigning a resource type to its linguistic context. (source: NaLiDa)
+                                            </skos:definition>
+                                            <skos:example xml:lang="en">
+                                            (general/applied) linguistics, phonetics, sociolinguistics, pragmatics, lexicography, etc.
+                                            </skos:example>
+                                            <skos:scopeNote xml:lang="en">
+                                            Possible resource types: tool, corpus, lexicon, grammar, experiment, etc.
+                                            </skos:scopeNote>
+                                            </skos:Concept>
+                                            </skos:hasTopConcept>
+                                            <rdfs:label xml:lang="en">Metadata</rdfs:label>
+                                            </skos:ConceptScheme>
+                                            </rdf:RDF>
+                                            """)
+                    );
+
+                this.mockServerClient
+                    .when(
+                            request(),
+                            Times.exactly(1)
+                    )
+                    .respond(
+                            response()
+                                    .withStatusCode(200)
+                                    .withBody("""
+                                            <?xml version='1.0' encoding='UTF-8'?>
+                                            <sparql xmlns='http://www.w3.org/2005/sparql-results#'>
+                                            	<head>
+                                            		<variable name='label'/>
+                                            	</head>
+                                            	<results>
+                                            		<result>
+                                            			<binding name='label'>
+                                            				<literal xml:lang='en'>sound recording device</literal>
+                                            			</binding>
+                                            		</result>
+                                            	</results>
+                                            </sparql>
+                                            """)
+                    );
+
+                final CCRConcept skosConcept = service.getConcept("http://hdl.handle.net/11459/CCR_C-3796_e89bb008-3e2e-1f70-afa5-e506a6c12683");
+
+                assertAll(
+                        "skos concept",
+                        () -> assertEquals("http://hdl.handle.net/11459/CCR_C-3796_e89bb008-3e2e-1f70-afa5-e506a6c12683", skosConcept.getUri()),
+                        () -> assertEquals("field of research", skosConcept.getPrefLabel()),
+                        () -> assertEquals(CCRStatus.CANDIDATE, skosConcept.getStatus())
+                );
+
+                final CCRConcept wikidataConcept = service.getConcept("http://www.wikidata.org/entity/Q758891");
+
+                assertAll(
+                        "wikidata concept",
+                        () -> assertEquals("http://www.wikidata.org/entity/Q758891", wikidataConcept.getUri()),
+                        () -> assertEquals("sound recording device", wikidataConcept.getPrefLabel()),
+                        () -> assertEquals(CCRStatus.APPROVED, wikidataConcept.getStatus())
+                );
+
+
+
+    }
+
+    @SpringBootConfiguration
+    @EnableCaching
+    @ComponentScan(basePackages = "eu.clarin.cmdi.curation")
+    public static class TestConfig {
+
+    }
 }

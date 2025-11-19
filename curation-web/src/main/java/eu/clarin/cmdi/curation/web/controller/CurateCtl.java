@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -113,13 +114,13 @@ public class CurateCtl {
                }
                else {
 
-                  try (InputStream in = httpUtils.getURLConnection(urlStr, MediaType.APPLICATION_XML_VALUE).getInputStream()) {
+                  try (InputStream in = httpUtils.getInputStream(new URI(urlStr), MediaType.APPLICATION_XML_VALUE)) {
 
                      inFilePath = Files.createTempFile(FileNameEncoder.encode(urlStr), "xml");
 
                      FileUtils.copyInputStreamToFile(in, inFilePath.toFile());
                   }
-                  catch (IOException | URISyntaxException e) {
+                  catch (IOException | URISyntaxException | InterruptedException e) {
 
                      log.error("couldn't download URL '{}' to file '{}'", urlStr, inFilePath);
                      throw new RuntimeException("internal error - please inform Clarin-Eric");

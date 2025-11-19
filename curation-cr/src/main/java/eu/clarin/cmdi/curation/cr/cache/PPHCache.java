@@ -17,6 +17,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,7 +48,7 @@ public class PPHCache {
 
         Map<String, ProfileHeader> profileHeaders = new ConcurrentHashMap<>();
 
-        try (InputStream in = httpUtils.getURLConnection(crConfig.getRestApi() + crConfig.getQuery()).getInputStream()) {
+        try (InputStream in = httpUtils.getInputStream(new URI(crConfig.getRestApi() + crConfig.getQuery()))) {
 
             SAXParserFactory fac = SAXParserFactory.newInstance();
             SAXParser parser = fac.newSAXParser();
@@ -118,7 +119,7 @@ public class PPHCache {
             log.error("stream not parsable for ProfileHeader");
             throw new PPHCacheException(e);
         }
-        catch (ParserConfigurationException e) {
+        catch (ParserConfigurationException | InterruptedException e) {
 
             log.error("can't configure new SAXParser");
             throw new PPHCacheException(e);

@@ -2,6 +2,7 @@ package eu.clarin.cmdi.curation.web.controller;
 
 import eu.clarin.cmdi.curation.web.conf.WebConfig;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,21 +10,21 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import java.nio.file.StandardCopyOption;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class CollectionCtlTest {
+class CollectionCtlTest extends BaseCtlTest{
 
     @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private WebConfig webConfig;
+    public CollectionCtlTest(MockMvc mockMvc, WebConfig webConfig) {
+        super(mockMvc, webConfig);
+    }
 
     @Test
     void getCollection() throws Exception {

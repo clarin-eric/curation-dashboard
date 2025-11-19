@@ -11,6 +11,7 @@ logging:
       root: ERROR
       # only CurationApp we're logging in info level to see the progress in processing
       eu.clarin.cmdi.curation.app.CurationApp: INFO
+      eu.clarin.cmdi.vlo.importer.mapping.FacetMappingFactory: off
 spring:
    jackson:
       #only non empty properties are processed. Otherwise, default value from object mapping is taken
@@ -69,11 +70,11 @@ curation:
    ccr-service:
       # mandatory output directory to cache concepts from concept registry
       ccr-cache: ${java.io.tmpdir}/curation/ccr_cache
-      # mandatory URL to receive concept registry information
-      restApi: "https://vocabularies.clarin.eu/clavas/rest/v1/data"
-      # mandatory query string to receive concept registry information on a specific concept
-      query: "?uri=${conceptURI}"
-   # modes are all|profile|instance|
+     # mandatory URL string to receive concept registry information on a specific concept
+      clavas-request: https://vocabularies.clarin.eu/clavas/rest/v1/data?uri=${conceptURI}
+     # mandatory URL string to receive the concept label of a specific entity from wikidata
+      wikidata-request: https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=SELECT%20%3Flabel%20WHERE%20%7Bwd%3A${entityID}%20rdfs%3Alabel%20%3Flabel%20%20FILTER%20%28lang%28%3Flabel%29%20IN%20%28%22en%22%29%29%7D
+  # modes are all|profile|instance|
    mode: all
    directory:
       # home directory of the application which is only used as a root for other directories

@@ -3,7 +3,6 @@ package eu.clarin.cmdi.curation.cr;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.cache.CRCache;
 import eu.clarin.cmdi.curation.cr.conf.CRConfig;
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.profile_parser.ParsedProfile;
@@ -44,13 +43,13 @@ public class CRServiceImpl implements CRService {
 
 
     @Override
-    public ProfileHeader createProfileHeader(String schemaLocation) throws CRServiceStorageException, CCRServiceNotAvailableException, PPHCacheException, NoCRCacheEntryException {
+    public ProfileHeader createProfileHeader(String schemaLocation) throws CCRServiceNotAvailableException, PPHCacheException, NoCRCacheEntryException {
 
         return getParsedProfile(schemaLocation).header();
     }
 
     @Override
-    public ParsedProfile getParsedProfile(String schemaLocation) throws CRServiceStorageException, CCRServiceNotAvailableException, PPHCacheException, NoCRCacheEntryException {
+    public ParsedProfile getParsedProfile(String schemaLocation) throws CCRServiceNotAvailableException, PPHCacheException, NoCRCacheEntryException {
 
         if(crCache.getEntry(schemaLocation) == null){
             throw new NoCRCacheEntryException();
@@ -60,7 +59,7 @@ public class CRServiceImpl implements CRService {
     }
 
     @Override
-    public Schema getSchema(String schemaLocation) throws CCRServiceNotAvailableException, CRServiceStorageException, PPHCacheException, NoCRCacheEntryException {
+    public Schema getSchema(String schemaLocation) throws CCRServiceNotAvailableException, PPHCacheException, NoCRCacheEntryException {
 
         if(crCache.getEntry(schemaLocation) == null){
             throw new NoCRCacheEntryException();

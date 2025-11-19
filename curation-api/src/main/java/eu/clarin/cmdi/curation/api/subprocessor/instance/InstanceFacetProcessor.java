@@ -18,7 +18,6 @@ import eu.clarin.cmdi.curation.api.xml.XPathValueService;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
-import eu.clarin.cmdi.curation.cr.exception.CRServiceStorageException;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
@@ -189,7 +188,7 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
             instanceReport.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
             instanceReport.isProcessable = false;
          }
-         catch (CRServiceStorageException | CCRServiceNotAvailableException | PPHCacheException e) {
+         catch (CCRServiceNotAvailableException | PPHCacheException e) {
              throw new MalFunctioningProcessorException(e);
          }
       }

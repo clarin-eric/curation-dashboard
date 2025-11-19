@@ -2,13 +2,16 @@ package eu.clarin.cmdi.curation.cr.cache;
 
 import eu.clarin.cmdi.curation.commons.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Component
 @Slf4j
@@ -21,24 +24,21 @@ public class ProfileCache {
         this.httpUtils = httpUtils;
     }
 
-    @Cacheable(value = "profileCache", key = "#schemaLocation")
+    @Cacheable(value = "profileCache", key = "#schemaLocation", sync = true)
     public String getProfileAsString(String schemaLocation) {
 
-        String schemaString;
+        try {
+            if(schemaLocation.startsWith("file:")){
 
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(httpUtils.getURLConnection(schemaLocation).getInputStream()))) {
+                return Files.readString(Paths.get(new URI(schemaLocation)));
+            }
 
-            StringBuffer buffer = new StringBuffer();
-
-            reader.lines().forEach(buffer::append);
-            schemaString = buffer.toString();
+            return httpUtils.getString(new URI(schemaLocation));
         }
-        catch (IOException | URISyntaxException e) {
+        catch (IOException | URISyntaxException | InterruptedException | IllegalArgumentException e) {
 
             log.error("couldn't get schema '{}'", schemaLocation);
             return null;
         }
-
-        return schemaString;
     }
 }
