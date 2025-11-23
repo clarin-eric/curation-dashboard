@@ -20,10 +20,6 @@ import java.util.Collection;
 @XmlAccessorType(XmlAccessType.NONE)
 public class ProfileFacetReport {
    @XmlAttribute
-   public static final double maxScore = 1.0;
-   @XmlAttribute
-   public double score;  
-   @XmlAttribute
    public int numOfFacets;
    @XmlAttribute
    public int numOfFacetsCoveredByProfile; 

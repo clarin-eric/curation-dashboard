@@ -121,11 +121,6 @@
                 In other words, if the profile defines an element for the facet.
             </p>
         </details>
-        <p>
-            Score:
-            <xsl:value-of select="format-number(./facetReport/@score,'0.00')"/> /
-            <xsl:value-of select="format-number(./facetReport/@maxScore,'0.00')"/>
-        </p>
         <p>Number of facets:
             <xsl:value-of select="./facetReport/@numOfFacets"/>
         </p>
