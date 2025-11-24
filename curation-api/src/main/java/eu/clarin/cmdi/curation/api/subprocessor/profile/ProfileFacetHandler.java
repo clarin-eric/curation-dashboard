@@ -84,7 +84,5 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
           throw new MalFunctioningProcessorException(e);
       }
        report.facetReport.percProfileCoverage = (double) report.facetReport.numOfFacetsCoveredByProfile/report.facetReport.numOfFacets;
-      report.facetReport.score = report.facetReport.percProfileCoverage;
-      report.score+=report.facetReport.score;
    }
 }

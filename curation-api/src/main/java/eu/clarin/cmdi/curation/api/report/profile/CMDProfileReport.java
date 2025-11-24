@@ -13,7 +13,6 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +34,7 @@ public class CMDProfileReport implements NamedReport {
    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
    public LocalDateTime previousCreationTime;
    @XmlAttribute
-   public static final double maxScore = 4.0;
+   public static final double maxScore = 3.0;
    @XmlAttribute
    public double score;
 
@@ -52,10 +51,10 @@ public class CMDProfileReport implements NamedReport {
 
    @XmlElementWrapper(name = "collectionUsage")
    @XmlElement(name = "collection")
-   public final Collection<CollectionUsage> collectionUsage = new ArrayList<CollectionUsage>();
+   public final Collection<CollectionUsage> collectionUsage = new ArrayList<>();
    @XmlElementWrapper(name = "details")
    @XmlElement(name = "detail")
-   public final Collection<Detail> details = new ArrayList<Detail>();
+   public final Collection<Detail> details = new ArrayList<>();
 
 
    @Override

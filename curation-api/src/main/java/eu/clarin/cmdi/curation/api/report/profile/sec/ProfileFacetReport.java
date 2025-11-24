@@ -8,7 +8,6 @@ import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -20,10 +19,6 @@ import java.util.Collection;
 @XmlAccessorType(XmlAccessType.NONE)
 public class ProfileFacetReport {
    @XmlAttribute
-   public static final double maxScore = 1.0;
-   @XmlAttribute
-   public double score;  
-   @XmlAttribute
    public int numOfFacets;
    @XmlAttribute
    public int numOfFacetsCoveredByProfile; 
@@ -31,7 +26,7 @@ public class ProfileFacetReport {
    public double percProfileCoverage;
    @XmlElementWrapper(name = "coverage")
    @XmlElement(name = "facet")
-   public Collection<Coverage> coverages = new ArrayList<Coverage>();
+   public Collection<Coverage> coverages = new ArrayList<>();
 
 
    @XmlRootElement
