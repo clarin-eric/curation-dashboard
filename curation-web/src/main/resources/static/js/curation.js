@@ -2,58 +2,37 @@ $(document).ready( function () {
     $.extend( $.fn.dataTable.defaults, {
         info: false,
         paging: false,
-        searching: false,
+        searching: true, // don't disable, since the column search is depending on it!
         scrollY: '70vh',
         scrollX: true,
-        scrollCollapse: true
-    } );
-    // Setup - add a text input to each footer cell
-    $('#collections thead tr').clone(true).appendTo( '#collections thead' );
-    $('#collections thead tr:eq(1) th').each( function (i) {
-        var title = $(this).text();
-        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
- 
-        $( 'input', this ).on( 'keyup change', function () {
-            if ( table.column(i).search() !== this.value ) {
-                table
-                    .column(i)
-                    .search( this.value )
-                    .draw();
-            }
-        } );
-    } );
- 
-    $('#collections').DataTable( {
-        order: [],
+        scrollCollapse: true,
+        order: [], // the data is ordered already
         orderCellsTop: true,
-        fixedHeader: true
-    } ); 
-    
-    $('#profiles thead tr').clone(true).appendTo( '#profiles thead' );
-    $('#profiles thead tr:eq(1) th').each( function (i) {
-        var title = $(this).text();
-        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
- 
-        $( 'input', this ).on( 'keyup change', function () {
-            if ( table2.column(i).search() !== this.value ) {
-                table2
-                    .column(i)
-                    .search( this.value )
-                    .draw();
-            }
-        } );
+        fixedHeader: true,
+        layout: {
+            topEnd: null //top prevent a general search field
+        }
     } );
-    
-    var table2 = $('#profiles').DataTable( {
-        order: [],
-        orderCellsTop: true,
-        fixedHeader: true
-    } );
+    // duplicating the header line
+    $('.dataTable thead tr').clone(true).appendTo('.dataTable thead');
+    // replacing the text in the second header line with input boxes for column search
+    $('.dataTable').DataTable().columns()
+        .every(function () {
+            let column = this;
+            let title = column.header(1).textContent;
 
+            // Create input element
+            let input = document.createElement('input');
+            input.placeholder = 'search ' + title;
+            column.header(1).replaceChildren(input);
 
-    $("#collections_filter").hide();//hide top filter which is not necessary
-    $("#profiles_filter").hide();//hide top filter which is not necessary
-
+            // Event listener for user input
+            input.addEventListener('keyup', () => {
+                if (column.search() !== this.value) {
+                    column.search(input.value).draw();
+                }
+            });
+        });
 } );
 
 Dropzone.autoDiscover = false;
@@ -101,93 +80,6 @@ $('#validateButton').click(function() {
         $(this).parent().parent().next().attr("hidden", false);
     }
 });
-/*
-window.onpageshow = function (event) {
-    //when back button is clicked, validate button doesnt refresh and stays in the loading spinner phase
-    //this is to insure that it does
-    $('#validateButton').html('Validate');
-    $('#validateButton').prop('disabled', false);
-};
-*/
-var table = $('#statsTable');
-var collectionName = table.attr("data-collection");
-var category = table.attr("data-category");
-var reportTableTbody = $('#reportTableTbody');
-
-var i = 1;
-var scrollReady = true;
-
-//if end of table is visible, add 100 more elements to it
-$(window).scroll(function() {
-    if(scrollReady){
-
-        //stackoverflow copied
-        var tableEnd = $("#tableEndSpan");
-
-        if(tableEnd.length){
-            var top_of_element = $("#tableEndSpan").offset().top;
-            var bottom_of_element = $("#tableEndSpan").offset().top + $("#tableEndSpan").outerHeight();
-            var bottom_of_screen = $(window).scrollTop() + $(window).innerHeight();
-            var top_of_screen = $(window).scrollTop();
-
-            if ((bottom_of_screen > top_of_element) && (top_of_screen < bottom_of_element)){
-
-                scrollReady=false;
-
-                tableEnd.append('<div id="uploadWheel" class="spinner"></div>')
-                setTimeout(function(){
-                    $("#uploadWheel").remove();
-
-                    // ajax call get data from server and append to the table
-                    $.ajax({
-                       dataType: "html",
-                       url: "/statistics/"+collectionName+"/"+category+"/"+i,
-                       success: function (data) {
-                           reportTableTbody.append(data);
-
-                           //this assures that if ever an empty element returns, there are no more requests sent
-                           if(data){
-                               i++;
-                               scrollReady=true;
-                           }
-
-                           //add toggle logic to all new buttons on the table and remove the class from them so that the logic doesn't get applied twice on ajax call
-                           $(".showUrlInfo").click(function() {
-                               if($(this).parent().parent().next().attr("hidden")){
-                                   $(this).parent().parent().next().removeAttr("hidden");
-                                   $(this).text("Hide");
-                               }
-                               else{
-                                   $(this).parent().parent().next().attr("hidden", true);
-                                   $(this).text("Show")
-                               }
-                           });
-                           $(".showUrlInfo").removeClass("showUrlInfo");
-                       }
-                    });
-
-                }, 1000);//wait a second between scroll and call
-
-            } else {
-                //do nothing
-            }
-        }
-    }
-});
-
-//add toggle logic to all buttons on the table and remove the class from them so that the logic doesn't get applied twice on ajax call
-$(".showUrlInfo").click(function() {
-
-    if($(this).parent().parent().next().attr("hidden")){
-        $(this).parent().parent().next().removeAttr("hidden");
-        $(this).text("Hide");
-    }
-    else{
-        $(this).parent().parent().next().attr("hidden", true);
-        $(this).text("Show")
-    }
-});
-$(".showUrlInfo").removeClass("showUrlInfo");
 
 
 
