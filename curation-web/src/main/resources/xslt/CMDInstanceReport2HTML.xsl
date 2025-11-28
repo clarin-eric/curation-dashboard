@@ -193,24 +193,24 @@
                         </td>
                         <xsl:choose>
                             <xsl:when test="@coveredByProfile = 'true'">
-                                <td class="bg-success">
+                                <td class="bg-success bg-opacity-50">
                                     <xsl:value-of select="@coveredByProfile"/>
                                 </td>
                             </xsl:when>
                             <xsl:otherwise>
-                                <td class="bg-danger">
+                                <td class="bg-danger bg-opacity-50">
                                     <xsl:value-of select="@coveredByProfile"/>
                                 </td>
                             </xsl:otherwise>
                         </xsl:choose>
                         <xsl:choose>
                             <xsl:when test="@coveredByInstance = 'true'">
-                                <td class="bg-success">
+                                <td class="bg-success bg-opacity-50">
                                     <xsl:value-of select="@coveredByInstance"/>
                                 </td>
                             </xsl:when>
                             <xsl:otherwise>
-                                <td class="bg-danger">
+                                <td class="bg-danger bg-opacity-50">
                                     <xsl:value-of select="@coveredByInstance"/>
                                 </td>
                             </xsl:otherwise>
@@ -219,18 +219,15 @@
                 </xsl:for-each>
             </tbody>
         </table>
-        <br/>
-        <font color="#ffd100">&#9873;</font>
-        - Derived facet
-        <br/>
-        <font color="#00aa00">&#9873;</font>
-        - Value mapping
-        <br/>
 
-        <button class="btn btn-info" id="facetValuesButton" type="button">Show facet values</button>
 
-        <div id="facetTable" hidden="true">
+        <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#xpathMapping" aria-expanded="false" aria-controls="xpathMapping" >Show facet values</button>
+
+        <div class="collapse" id="xpathMapping">
             <h3>Facet mapping</h3>
+            <span class="float-start"><font color="#ffd100">&#9873;</font> - Derived facet</span>
+            <span class="float-start ms-3"><font color="#00aa00">&#9873;</font> - Value mapping</span>
+
             <table class="table">
                 <thead>
                     <tr>

@@ -62,16 +62,6 @@ $("div#cmdi-dropzone").dropzone({
       }
 });
 
-$('#facetValuesButton').click(function (){
-
-    if($('#facetTable').attr("hidden")){
-        $(this).html("Hide Facet Values");
-        $('#facetTable').removeAttr("hidden");
-    }else{
-        $(this).html("Show Facet Values");
-        $('#facetTable').attr("hidden",true);
-    }
-});
 $('#validateButton').click(function() {
 
     //only change to spinner if input is valid
