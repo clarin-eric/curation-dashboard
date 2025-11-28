@@ -11,6 +11,7 @@ import eu.clarin.cmdi.curation.cr.exception.ProfileVersionNotSupportedException;
 import eu.clarin.cmdi.curation.cr.profile_parser.*;
 import eu.clarin.cmdi.curation.cr.xml.SchemaResourceResolver;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.input.BOMInputStream;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -31,11 +32,11 @@ import java.util.Set;
 @Slf4j
 public class CRCache {
 
-   private final ProfileCache profileCache;
+    private final ProfileCache profileCache;
 
-   private final PPHCache pphCache;
+    private final PPHCache pphCache;
 
-   private final ApplicationContext ctx;
+    private final ApplicationContext ctx;
 
     public CRCache(ProfileCache profileCache, PPHCache pphCache, ApplicationContext ctx) {
         this.profileCache = profileCache;
@@ -44,73 +45,76 @@ public class CRCache {
     }
 
     /**
-    * Gets public entry.
-    *
-    * @param schemaLocation the schemaURL
-    * @return the public entry
-    * @throws CCRServiceNotAvailableException the ccr service is not available
-    */
-   @Cacheable(value = "crCache", key = "#schemaLocation", sync = true)
-   public ProfileCacheEntry getEntry(String schemaLocation) throws CCRServiceNotAvailableException, PPHCacheException {
+     * Gets public entry.
+     *
+     * @param schemaLocation the schemaURL
+     * @return the public entry
+     * @throws CCRServiceNotAvailableException the ccr service is not available
+     */
+    @Cacheable(value = "crCache", key = "#schemaLocation", sync = true)
+    public ProfileCacheEntry getEntry(String schemaLocation) throws CCRServiceNotAvailableException, PPHCacheException {
 
-      String schemaString = this.profileCache.getProfileAsString(schemaLocation);
+        String schemaString = this.profileCache.getProfileAsString(schemaLocation);
 
-      if(Objects.isNull(schemaString)){
+        if (Objects.isNull(schemaString)) {
 
-         return null;
-      }
+            return null;
+        }
 
-      ParsedProfile parsedProfile = null;
+        ParsedProfile parsedProfile = null;
 
-      try {
+        try {
 
-         VTDGen vg = new VTDGen();
+            VTDGen vg = new VTDGen();
 
-         vg.setDoc(schemaString.getBytes());
-         vg.parse(true);
+            vg.setDoc(schemaString.getBytes());
+            vg.parse(true);
 
-         VTDNav nv = vg.getNav();
+            VTDNav nv = vg.getNav();
 
-         for(int i=0; i<nv.getTokenCount(); i++ ){
-            if(nv.matchRawTokenString(i, "xmlns:cmd")){
-               ProfileParser parser =  switch(nv.toNormalizedString(i+1)){
-                  // so far we only support CMDI 1.2 profiles
-                  case "http://www.clarin.eu/cmd/1", "https://www.clarin.eu/cmd/1" -> this.ctx.getBean(CMDI1_2_ProfileParser.class);
-                  default -> throw new ProfileVersionNotSupportedException("not a CMDI 1.2 profile");
-               };
+            for (int i = 0; i < nv.getTokenCount(); i++) {
+                if (nv.matchRawTokenString(i, "xmlns:cmd")) {
+                    ProfileParser parser = switch (nv.toNormalizedString(i + 1)) {
+                        // so far we only support CMDI 1.2 profiles
+                        case "http://www.clarin.eu/cmd/1", "https://www.clarin.eu/cmd/1" ->
+                                this.ctx.getBean(CMDI1_2_ProfileParser.class);
+                        default -> throw new ProfileVersionNotSupportedException("not a CMDI 1.2 profile");
+                    };
 
-               parsedProfile = parser.parse(nv, schemaLocation, this.pphCache.getProfileHeadersMap().get(schemaLocation));
+                    parsedProfile = parser.parse(nv, schemaLocation, this.pphCache.getProfileHeadersMap().get(schemaLocation));
 
-               break;
+                    break;
+                }
             }
-         }
-      }
+        }
 
-      catch (NavException | IllegalArgumentException | ParseException | ProfileVersionNotSupportedException e) {
+        catch (NavException | IllegalArgumentException | ParseException | ProfileVersionNotSupportedException e) {
 
-         log.info("can't process schema '{}'\n{}", schemaLocation, e.toString());
-         return null;
-      }
+            log.info("can't process schema '{}'\n{}", schemaLocation, e.toString());
+            return null;
+        }
 
-      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-      schemaFactory.setResourceResolver(new SchemaResourceResolver());
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        schemaFactory.setResourceResolver(new SchemaResourceResolver());
 
-      Schema schema = null;
+        Schema schema = null;
 
-      try {
-         schema = schemaFactory.newSchema(new StreamSource(new StringReader(schemaString)));
-      }
-      catch (SAXException e) {
+        try {
+            // removing byte order mark from Stream
+            BOMInputStream bis = new BOMInputStream(new ByteArrayInputStream(schemaString.getBytes()), false);
+            schema = schemaFactory.newSchema(new StreamSource(bis));
+        }
+        catch (SAXException e) {
 
-         log.info("can't create Schema object from file '{}'\n{}", schemaLocation, e.toString());
-         return null;
-      }
+            log.info("can't create Schema object from file '{}'\n{}", schemaLocation, e.toString());
+            return null;
+        }
 
-      return new ProfileCacheEntry(parsedProfile, schema);
-   }
+        return new ProfileCacheEntry(parsedProfile, schema);
+    }
 
-   public Set<String> getPublicSchemaLocations() throws PPHCacheException {
+    public Set<String> getPublicSchemaLocations() throws PPHCacheException {
 
-      return this.pphCache.getProfileHeadersMap().keySet();
-   }
+        return this.pphCache.getProfileHeadersMap().keySet();
+    }
 }
