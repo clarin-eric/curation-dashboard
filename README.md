@@ -1,7 +1,7 @@
 # Clarin Curation Dashboard
 ## Introduction
-Curation Dashboard is a service originally developed by the technical team of the [ACDH-CH](https://www.oeaw.ac.at/acdh) hosted and maintained by
-[CLARIN-ERIC](https://www.clarin.eu/). Its goal is to support CMD metadata authors and curators to improve quality of metadata for language resources. More information:
+Curation Dashboard is a service originally developed by the technical team of the [ACDH](https://www.oeaw.ac.at/acdh) hosted and maintained by
+[CLARIN ERIC](https://www.clarin.eu/). Its goal is to support CMD metadata authors and curators to improve quality of metadata for language resources. More information:
 
 * [CMD -Component Metadata](https://www.clarin.eu/content/component-metadata) - the CLARIN metadata framework.
 * [Code on Github](https://github.com/clarin-eric/curation-dashboard)
