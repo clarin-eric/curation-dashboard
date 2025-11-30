@@ -71,6 +71,20 @@ $('#validateButton').click(function() {
     }
 });
 
+//add toggle logic to all buttons on the table and remove the class from them so that the logic doesn't get applied twice on ajax call
+$(".showUrlInfo").click(function() {
+
+    if($(this).parent().parent().next().attr("hidden")){
+        $(this).parent().parent().next().removeAttr("hidden");
+        $(this).text("Hide");
+    }
+    else{
+        $(this).parent().parent().next().attr("hidden", true);
+        $(this).text("Show")
+    }
+});
+$(".showUrlInfo").removeClass("showUrlInfo");
+
 
 
 
