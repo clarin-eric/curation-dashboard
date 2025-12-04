@@ -27,7 +27,7 @@
             </div>
             <div class="clear" />
         </div>
-        <table id="collections" class="table table-striped table-sm dataTable" width="100%">
+        <table id="collections" class="table table-striped table-sm dataTable">
             <thead>
                 <tr>
                     <th data-sortable="true">Name</th>
