@@ -1,3 +1,15 @@
+$( document ).ready(function() {
+    if(location.pathname == '/'){
+        $(".nav-link").first().addClass("active");
+        return;
+    }
+    $(".nav-link").each(function (){
+        if($(this).attr("href") == location.pathname){
+            $(this).addClass("active");
+            return;
+        }
+    });
+});
 new DataTable('.dataTable', {
     columnControl: {
         target: 1, // adding the search row as row 1 with row in {0, 1,...}
@@ -20,7 +32,7 @@ new DataTable('.dataTable', {
 Dropzone.autoDiscover = false;
 
 $("button#cmdi-dropzone").dropzone({
-    url: "/curate",
+    url: "/validator",
     headers: {'Accept': 'text/html, application/xhtml+xml'},
     paramName: "file", // The name that will be used to transfer the file
       maxFilesize: 5, // MB
@@ -39,7 +51,7 @@ $("button#cmdi-dropzone").dropzone({
         $('#validateButton').prop('disabled', true);
 
         if(progress == 100){
-            $('div#cmdi-dropzone').append('<div>Upload complete. Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div class="spinner-border" role="status"><span class="visually-hidden">Validating...</span></div>');
+            $('button#cmdi-dropzone').append('<div>Upload complete. Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div class="spinner-border" role="status"><span class="visually-hidden">Validating...</span></div>');
         }
       }
 });
@@ -47,9 +59,9 @@ $("button#cmdi-dropzone").dropzone({
 $('#validateButton').click(function() {
 
     //only change to spinner if input is valid
-    if($('#url-input').val()){
-        $(this).parent().parent().attr("hidden", true);
-        $(this).parent().parent().next().attr("hidden", false);
+    if($("#url-input").val()){
+        $("#validatorTabPanel").attr("hidden", true);
+        $("#validatorSpinner").attr("hidden", false);
     }
 });
 
