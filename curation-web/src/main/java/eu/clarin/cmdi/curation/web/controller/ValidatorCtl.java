@@ -12,8 +12,6 @@ import eu.clarin.cmdi.curation.web.conf.WebConfig;
 import eu.clarin.cmdi.curation.web.exception.ProfileNotSupportedException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.zookeeper.Op;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +34,8 @@ import java.util.Optional;
  */
 @Slf4j
 @Controller
-@RequestMapping(value = {"/", "/curate"})
-public class CurateCtl {
+@RequestMapping(value = {"/validator"})
+public class ValidatorCtl {
 
    /**
     * The Conf.

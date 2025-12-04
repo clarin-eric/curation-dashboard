@@ -24,10 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class CurateCtlTest extends BaseCtlTest{
+class ValidatorCtlTest extends BaseCtlTest{
 
     @Autowired
-    public CurateCtlTest(MockMvc mockMvc, WebConfig webConfig) {
+    public ValidatorCtlTest(MockMvc mockMvc, WebConfig webConfig) {
         super(mockMvc, webConfig);
     }
 
