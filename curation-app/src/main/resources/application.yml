@@ -125,7 +125,7 @@ curation:
    # vlo_config_location:""
    vlo_config_location: ${VLO_CONFIG_LOCATION:}
    chart:
-      title: "Link checking results"
+      #title: "Link checking results"
       xAxisLabel: "date"
       yAxisLabel: "number of links"
       width: 1200
