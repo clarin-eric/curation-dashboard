@@ -1,98 +1,104 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-   <head>
-      <title>Curation Dashboard</title>
-      <meta charset="UTF-8">
-      <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
-      <meta content="IE=edge" http-equiv="X-UA-Compatible" />
-      <meta content="yes" name="mobile-web-app-capable">
-      <meta content="yes" name="apple-mobile-web-app-capable">
-      <meta content="Curation Dashboard" name="apple-mobile-web-app-title">
+<head>
+    <title>Curation Dashboard</title>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <meta content="yes" name="mobile-web-app-capable">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="Curation Dashboard" name="apple-mobile-web-app-title">
 
-      <link rel="icon" th:href="@{/images/favicon.png}" type="image/png" >
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-      <link id="curation-styles" rel="stylesheet" th:href="@{/css/curation.css}" type="text/css">
-      <link href="https://cdn.datatables.net/v/bs5/dt-2.3.2/fh-4.0.3/datatables.min.css" rel="stylesheet" integrity="sha384-DiQ15GezgIneaPGMpPe8qH/5RcNE8BeoWddTyDoO0ztIiSxu++/qnKKPwSTBQK5L" crossorigin="anonymous">
-      <link href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" id="dropzone-styles"
-         rel="stylesheet" type="text/css">
-   </head>
-   <body>
-      <div class="d-flex flex-column min-vh-100">
-       <!-- header -->
-         <header class="container sticky-top bg-secondary-subtle">
-            <nav class="navbar navbar-expand-lg">
-               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-               </button>
-               <span>Curation Dashboard @version@</span>
-               <div class="collapse navbar-collapse" id="navbarNav">
-                  <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                     <li class="nav-item">
-                        <a class="nav-link" href="/">Validator</a>
-                     </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="/profile">Profiles</a>
-                     </li>
-                     <li class="nav-item">
+    <link rel="icon" th:href="@{/images/favicon.png}" type="image/png">
+    <!--
+   <link rel="stylesheet" th:href="@{/css/switchboard.min.css}" type="text/css">
+   -->
+    <link id="curation-styles" rel="stylesheet" th:href="@{/css/curation.css}" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.datatables.net/v/bs5/dt-2.3.5/cc-1.1.1/datatables.min.css" rel="stylesheet"
+          integrity="sha384-IfVMKTz9d4IaUFxRBVN9QbH5YmOEWgZm7jZiAaqQYpg+LiCvROJQKkFxOe9UVxO9" crossorigin="anonymous">
+    <link href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" id="dropzone-styles"
+          rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="d-flex flex-column min-vh-100">
+    <!-- header -->
+    <header class="container">
+        <nav class="navbar navbar-default navbar-expand-lg bg-secondary-subtle">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <span class="navbar-brand">Curation Dashboard @version@</span>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="nav">
+                    <li class="nav-item active">
                         <a class="nav-link" href="/metadataprovider">Metadata Providers</a>
-                     </li>
-                     <li class="nav-item">
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile">Profiles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/validator">Validator</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="/linkchecker">Link Checker</a>
-                     </li>
-                     <li class="nav-item">
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="/help">Help</a>
-                     </li>
-                     <li class="nav-item">
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="/faq">FAQ</a>
-                     </li>
-                  </ul>
-                  <a class="navbar-brand ms-auto d-none d-lg-block" aria-label="Go to Clarin website" href="https://www.clarin.eu/">
-                     <img alt="Clarin logo" width="115" height="46" th:src="@{/images/clarin-logo-wide.png}">
-                  </a>
-               </div>
-            </nav>
-         </header>
-         <!-- main area -->
-         <main class="container" id="content" th:insert="${insert}">
-               <!--inserted with thymeleaf-->
-         </main>
-         <!-- footer -->
-         <footer class="container mt-auto d-flex flex-wrap justify-content-between align-items-center border-top">
-            <p class="col-md-4 mb-0 text-body-secondary text-uppercase">© 2025 clarin eric</p>
-            <ul class="nav col-md-4 justify-content-end">
-               <li class="nav-item">
-                  <a href="https://github.com/clarin-eric/curation-dashboard" class="nav-link px-2 text-body-secondary text-uppercase">code</a>
-               </li>
-               <li class="nav-item">
-                  <a href="mailto:curation@clarin.eu" class="nav-link px-2 text-body-secondary text-uppercase">feedback</a>
-               </li>
-            </ul>
-         </footer>
-      </div>
+                    </li>
+                </ul>
+                <a class="navbar-brand ms-auto d-none d-lg-block" aria-label="Go to Clarin website"
+                   href="https://www.clarin.eu/">
+                    <img alt="Clarin logo" width="115" height="46" th:src="@{/images/clarin-logo.svg}">
+                </a>
+            </div>
+        </nav>
+    </header>
+    <!-- main area -->
+    <main class="container" id="content" th:insert="${insert}">
+        <!--inserted with thymeleaf-->
+    </main>
+    <!-- footer -->
+    <footer class="container mt-auto d-flex flex-wrap justify-content-between align-items-center border-top">
+        <p class="justify-content-start">
+            <a href="https://github.com/clarin-eric/curation-dashboard">about</a>
+        </p>
+        <p class="justify-content-end">
+            <a href="mailto:curation@clarin.eu">contact</a>
+        </p>
+    </footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" type="text/javascript"></script>
+<script src="https://cdn.datatables.net/v/bs5/dt-2.3.5/cc-1.1.1/datatables.min.js" integrity="sha384-F7IfyANIDgnWh32MkYkmsZ/0ilfTaEwECVsg2yQUriZ8z/BHReD+aA5iXaqhM3Wi" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js" type="text/javascript"></script>
+<script th:src="@{/js/curation.js}" type="text/javascript"></script>
 
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js" type="text/javascript"></script>
-      <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js" type="text/javascript"></script>
-      <script th:src="@{/js/curation.js}" type="text/javascript"></script>
-      <script src="https://cdn.datatables.net/v/bs5/dt-2.3.2/fh-4.0.3/datatables.min.js" integrity="sha384-l7tWjf91IhwfWYGXtYTigiyQ07Usiu1KVPPYUz9L0dIti90TIhm5wbWKfPLefcaa" crossorigin="anonymous"></script>
-      <!-- Matomo -->
-      <script type="text/javascript">
-         var _paq = window._paq = window._paq || [];
-         /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-         _paq.push([ 'trackPageView' ]);
-         _paq.push([ 'enableLinkTracking' ]);
-         (function() {
-            var u = "https://stats.clarin.eu/";
-            _paq.push([ 'setTrackerUrl', u + 'matomo.php' ]);
-            _paq.push([ 'setSiteId', '37' ]);
-            var d = document, g = d.createElement('script'), s = d
-                  .getElementsByTagName('script')[0];
-            g.type = 'text/javascript';
-            g.async = true;
-            g.src = u + 'matomo.js';
-            s.parentNode.insertBefore(g, s);
-         })();
-      </script>
-      <!-- End Matomo Code -->
-   </body>
+<!-- Matomo -->
+<script type="text/javascript">
+    var _paq = window._paq = window._paq || [];
+    /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function () {
+        var u = "https://stats.clarin.eu/";
+        _paq.push(['setTrackerUrl', u + 'matomo.php']);
+        _paq.push(['setSiteId', '37']);
+        var d = document, g = d.createElement('script'), s = d
+            .getElementsByTagName('script')[0];
+        g.type = 'text/javascript';
+        g.async = true;
+        g.src = u + 'matomo.js';
+        s.parentNode.insertBefore(g, s);
+    })();
+</script>
+<!-- End Matomo Code -->
+</body>
 </html>

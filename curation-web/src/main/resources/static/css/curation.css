@@ -31,6 +31,7 @@
 
 /*these are necessary to replace fundament values*/
  /* unvisited link */
+/*
 a:link, a:visited {
     color: blue;
     text-decoration: underline;
@@ -46,6 +47,7 @@ a:active {
 a:hover {
     cursor: pointer;
 }
+ */
 /*end of fundament fix*/
 
 .centerContainer {
@@ -66,7 +68,6 @@ a:hover {
     background-color: #d8d8d8 !important;
 }
 div.infoLine{
-    font-family: "Lucida Console", "Courier New", monospace;
     font-size: 0.8em;
 }
 div.floatLeft{
@@ -79,18 +80,15 @@ div.floatRight{
 }
 div.creationTime{
    float: left;
-   font-family: "Lucida Console", "Courier New", monospace;
    font-size: 0.8em;
 }
 div.latestChecks{
    float: left;
    margin-left: 4em;
-   font-family: "Lucida Console", "Courier New", monospace;
    font-size: 0.8em;	
 }
 div.download {
    float: right;
-   font-family: "Lucida Console", "Courier New", monospace;
    font-size: 0.8em;
 }
 div.clear{
@@ -141,3 +139,18 @@ div.markdown table, div.markdown th, div.markdown td {
 tr.text-danger td, tr.text-warning td, tr.text-success td {
     color: inherit;
 }
+button.dropzone {
+    border: 3px dashed #888;
+    border-radius: 16px;
+    box-shadow: 2px 2px 5px #ccc;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    padding: 10px;
+}
+/*
+li.active, li.nav-item:hover{
+    color: #ffffff;!important;
+    background-color: #0080aa;
+}
+
+ */

@@ -1,43 +1,25 @@
-$(document).ready( function () {
-    $.extend( $.fn.dataTable.defaults, {
-        info: false,
-        paging: false,
-        searching: true, // don't disable, since the column search is depending on it!
-        scrollY: '70vh',
-        scrollX: true,
-        scrollCollapse: true,
-        order: [], // the data is ordered already
-        orderCellsTop: true,
-        fixedHeader: true,
-        layout: {
-            topEnd: null //top prevent a general search field
-        }
-    } );
-    // duplicating the header line
-    $('.dataTable thead tr').clone(true).appendTo('.dataTable thead');
-    // replacing the text in the second header line with input boxes for column search
-    $('.dataTable').DataTable().columns()
-        .every(function () {
-            let column = this;
-            let title = column.header(1).textContent;
-
-            // Create input element
-            let input = document.createElement('input');
-            input.placeholder = 'search ' + title;
-            column.header(1).replaceChildren(input);
-
-            // Event listener for user input
-            input.addEventListener('keyup', () => {
-                if (column.search() !== this.value) {
-                    column.search(input.value).draw();
-                }
-            });
-        });
-} );
+new DataTable('.dataTable', {
+    columnControl: {
+        target: 1, // adding the search row as row 1 with row in {0, 1,...}
+        content: ['search'] //adding a search row
+    },
+    info: false,
+    paging: false,
+    searching: true, // don't disable, since the column search is depending on it!
+    scrollY: '70vh',
+    scrollX: true,
+    scrollCollapse: true,
+    order: [], // the data is ordered already
+    orderCellsTop: true,
+    fixedHeader: true,
+    layout: {
+        topEnd: null //top prevent a general search field
+    }
+});
 
 Dropzone.autoDiscover = false;
 
-$("div#cmdi-dropzone").dropzone({
+$("button#cmdi-dropzone").dropzone({
     url: "/curate",
     headers: {'Accept': 'text/html, application/xhtml+xml'},
     paramName: "file", // The name that will be used to transfer the file
@@ -84,6 +66,13 @@ $(".showUrlInfo").click(function() {
     }
 });
 $(".showUrlInfo").removeClass("showUrlInfo");
+/*
+$(".nav-item").on("click", function (){
+    $("li.active").removeClass("active");
+    $(this).addClass("active");
+});
+
+ */
 
 
 
