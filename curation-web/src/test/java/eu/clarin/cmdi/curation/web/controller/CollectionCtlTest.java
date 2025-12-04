@@ -42,4 +42,10 @@ class CollectionCtlTest extends BaseCtlTest{
 
         this.mockMvc.perform(get("/collection/TestReport")).andDo(print()).andExpect(status().isOk());
     }
+
+    @Test
+    void getRobotsTxt() throws Exception {
+
+        this.mockMvc.perform(get("/robots.txt")).andDo(print()).andExpect(status().isOk());
+    }
 }

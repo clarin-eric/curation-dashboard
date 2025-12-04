@@ -5,6 +5,8 @@ import eu.clarin.cmdi.curation.web.exception.NoSuchReportException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -87,4 +89,26 @@ public class CollectionCtl {
       return "generic";
    
    }
+
+    /**
+     * Gets robots txt.
+     *
+     * @return the robots txt
+     */
+    @GetMapping("/robots.txt")
+    public ResponseEntity<String> getRobotsTxt() {
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(
+                        """
+                           User-agent: *
+                           Disallow: /download
+                           Disallow: /record
+                           
+                           User-agent: CLARIN-Linkchecker
+                           Allow: /
+                           """
+                );
+    }
 }

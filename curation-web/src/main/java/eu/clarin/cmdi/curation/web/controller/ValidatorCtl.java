@@ -241,26 +241,4 @@ public class ValidatorCtl {
          throw new RuntimeException("internal error - please inform Clarin-Eric");     
       }
    }
-
-   /**
-    * Gets robots txt.
-    *
-    * @return the robots txt
-    */
-   @GetMapping("/robots.txt")
-   public ResponseEntity<String> getRobotsTxt() {     
-      return ResponseEntity
-            .ok()
-            .contentType(MediaType.TEXT_PLAIN)
-            .body(
-               """
-                  User-agent: *
-                  Disallow: /download
-                  Disallow: /record
-                  
-                  User-agent: CLARIN-Linkchecker
-                  Allow: /
-                  """
-               );
-   }
 }
