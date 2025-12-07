@@ -3,14 +3,11 @@
     <xsl:output method="xhtml" indent="yes" omit-xml-declaration="yes" />
     <xsl:template match="/collectionHistoryReport">
         <h1>Metadata Provider Report History</h1>
+        <h2>List of Metadata Providers</h2>
         <ul>
             <xsl:for-each select="collection">
                 <li>
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:text>#</xsl:text>
-                            <xsl:value-of select="@name" />
-                        </xsl:attribute>
+                    <a href="#{generate-id(.)}">
                         <xsl:value-of select="replace(@name, '_', ' ')" />
                     </a>
                 </li>
@@ -18,8 +15,7 @@
         </ul>
         <xsl:for-each select="collection">
             <p>
-            <h2 class="anchor">
-                <xsl:attribute name="id"><xsl:value-of select="@name" /></xsl:attribute>
+            <h2 class="anchor" id="{generate-id(.)}">
                 <xsl:value-of select="replace(@name, '_', ' ')" />
             </h2>
             <xsl:for-each select="report">
