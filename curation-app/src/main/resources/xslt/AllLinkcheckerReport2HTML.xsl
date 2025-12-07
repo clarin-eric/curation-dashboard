@@ -20,9 +20,11 @@
             </div>
             <div class="clear"/>
         </div>
+        <h1>Link checking results for Metadata Providers</h1>
         <article class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <h3>Overall</h3>
             <table class="table w-100">
+                <caption class="visually-hidden">Table of link checking results</caption>
                 <thead>
                     <tr>
                         <th>Category</th>
@@ -72,17 +74,28 @@
             </table>
             <img class="w-100" src="/img/linkchecker/Overall.png" alt="timeline of link checking results" />
         </article>
+        <div>
+            <h2>List of Metadata Providers</h2>
+            <ul>
+                <xsl:for-each select="collection">
+                    <li>
+                        <a href="#{generate-id(.)}">
+                            <xsl:value-of select="replace(@name, '_', ' ')" />
+                        </a>
+                    </li>
+                </xsl:for-each>
+            </ul>
+        </div>
         <xsl:for-each select="collection">
             <article class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
                 <xsl:variable name="name" select="@name"/>
-
-                <h3>
+                <h3 id="{generate-id(.)}">
                     <xsl:value-of select="replace($name,'_',' ')"/>
                 </h3>
                 <table class="table w-100">
+                    <caption class="visually-hidden">Table of link checking results></caption>
                     <thead>
                         <tr>
-
                             <th>Category</th>
                             <th>Count</th>
                             <th>Average Response Duration(ms)</th>

@@ -1,43 +1,42 @@
 <div class="container-fluid">
-    <div id="validatorTabPanel" class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
+    <div class="shadow p-3 mt-5 mb-5 bg-body-tertiary rounded border border-2" id="validatorTabPanel">
         <ul class="nav nav-tabs" id="validatorTabList" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="file-tab" data-bs-toggle="tab" data-bs-target="#file-tab-pane" type="button" role="tab" aria-controls="file-tab-pane" aria-selected="true">Upload file</button>
+                <button aria-controls="file-tab-pane" aria-selected="true" class="nav-link active" data-bs-target="#file-tab-pane" data-bs-toggle="tab" id="file-tab" role="tab" type="button">Upload file</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="url-tab" data-bs-toggle="tab" data-bs-target="#url-tab-pane" type="button" role="tab" aria-controls="url-tab-pane" aria-selected="false">Submit URL</button>
+                <button aria-controls="url-tab-pane" aria-selected="false" class="nav-link" data-bs-target="#url-tab-pane" data-bs-toggle="tab" id="url-tab" role="tab" type="button">Submit URL</button>
             </li>
         </ul>
         <div class="tab-content" id="validatorTabContent">
-            <div class="tab-pane fade show active" id="file-tab-pane" role="tabpanel" aria-labelledby="file-tab" tabindex="0">
-                <div class="row">
-                    <button class="col-xs-12 btn-default dropzone" id="cmdi-dropzone">
+            <div aria-labelledby="file-tab" class="tab-pane fade show active" id="file-tab-pane" role="tabpanel" tabindex="0">
+                <div class="row mt-5">
+                    <div class="mb-5">Drag and Drop your CMD record/CMD profile on the field below.
+                        Or click on the field below to open the file chooser</div>
+                    <div class="col-xs-12 dropzone" id="cmdi-dropzone">
                         <div class="dz-message">
                             Drag a CMD record / CMD profile here or click to open file browser
                         </div>
-                    </button>
+                    </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="url-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
-                <div class="row mt-5 mb-5">
-                    <div class="col-8">
-                        <form action="/validator" id="urlForm">
-                            <input class="form-control" type="text" placeholder="CMD record URL / CMD profile URL"
-                                   id="url-input"
-                                   name="url-input" required>
-                        </form>
-                    </div>
-                    <div class="col-4">
-                        <button class="btn btn-primary" id="validateButton" type="submit" form="urlForm">Validate</button>
-                    </div>
+            <div aria-labelledby="home-tab" class="tab-pane fade" id="url-tab-pane" role="tabpanel" tabindex="0">
+                <div class="row mt-5" id="validatorInputPanel">
+                    <div class="mb-5">Insert the URL of a CMD record/CMD profile and click on 'validate'</div>
+                    <form action="/validator" id="urlForm">
+                        <div class="input-group col-12">
+                            <input class="form-control" id="url-input" name="url-input"
+                                   placeholder="CMD record URL / CMD profile URL"
+                                   required type="text">
+                            <button class="btn btn-primary" form="urlForm" id="validateButton" type="submit">Validate</button>
+                        </div>
+                    </form>
+                </div>
+                <div  class="mt-5" hidden="true" id="validatorSpinnerPanel">
+                    <span>Validating...</span>
+                    <div class="spinner-border" role="status" />
                 </div>
             </div>
         </div>
     </div>
-	<div class="row mt-5 mb-5" hidden="true" id="validatorSpinner">
-		<span>Validating...</span>
-		<div class="spinner-border" role="status">
-
-		</div>
-	</div>
-</div>
+</div></div>

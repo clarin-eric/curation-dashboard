@@ -31,7 +31,7 @@ new DataTable('.dataTable', {
 
 Dropzone.autoDiscover = false;
 
-$("button#cmdi-dropzone").dropzone({
+$("div#cmdi-dropzone").dropzone({
     url: "/validator",
     headers: {'Accept': 'text/html, application/xhtml+xml'},
     paramName: "file", // The name that will be used to transfer the file
@@ -48,10 +48,10 @@ $("button#cmdi-dropzone").dropzone({
       },
       totaluploadprogress: function(progress, bytesSent) {
         //disable validate button first.
-        $('#validateButton').prop('disabled', true);
+        //$('#validateButton').prop('disabled', true);
 
         if(progress == 100){
-            $('button#cmdi-dropzone').append('<div>Upload complete. Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div class="spinner-border" role="status"><span class="visually-hidden">Validating...</span></div>');
+            $('div#cmdi-dropzone').append('<div>Upload complete. Validating...&nbsp;&nbsp;&nbsp;&nbsp;</div><div class="spinner-border" role="status"><span class="visually-hidden">Validating...</span></div>');
         }
       }
 });
@@ -60,8 +60,8 @@ $('#validateButton').click(function() {
 
     //only change to spinner if input is valid
     if($("#url-input").val()){
-        $("#validatorTabPanel").attr("hidden", true);
-        $("#validatorSpinner").attr("hidden", false);
+        $("#validatorInputPanel").attr("hidden", true);
+        $("#validatorSpinnerPanel").attr("hidden", false);
     }
 });
 
