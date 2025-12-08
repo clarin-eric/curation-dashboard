@@ -1,14 +1,9 @@
 $( document ).ready(function() {
     if(location.pathname == '/'){
-        $(".nav-link").first().addClass("active");
+        $("header .nav-link").first().addClass("active");
         return;
     }
-    $(".nav-link").each(function (){
-        if($(this).attr("href") == location.pathname){
-            $(this).addClass("active");
-            return;
-        }
-    });
+    $("header .nav-item [href='" + location.pathname + "']").addClass("active")
 });
 new DataTable('.dataTable', {
     columnControl: {
