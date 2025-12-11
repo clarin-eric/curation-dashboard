@@ -24,6 +24,7 @@
             <div class="clear"/>
         </div>
         <table id="profiles" class="table table-striped table-sm dataTable">
+            <caption class="visually-hidden">Overview of public profiles and scores</caption>
             <thead>
                 <tr>
                     <th>Id</th>

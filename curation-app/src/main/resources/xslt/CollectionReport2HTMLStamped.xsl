@@ -85,66 +85,68 @@
         </a>
         <br/>
         <!-- scoreTable -->
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Section</th>
-                    <th class="text-end">Score</th>
-                    <th class="text-end">Score Percentage</th>
-                </tr>
-            </thead>
-            <tfoot>
-                <tr>
-                    <td>Total</td>
-                    <td  class="text-end">
-                        <xsl:value-of select="format-number(@aggregatedScore,'###,##0.0')"/>
-                        /
-                        <xsl:value-of select="format-number(@aggregatedMaxScore,'###,##0.0')"/>
-                    </td>
-                    <td  class="text-end">
-                        <xsl:value-of select="format-number(@scorePercentage, '0.0%')"/>
-                    </td>
-                </tr>
-            </tfoot>
-            <tbody>
-                <xsl:for-each select="*">
-                    <xsl:if test="@aggregatedScore">
-                        <tr>
-                            <td>
-                                <a>
-                                    <xsl:attribute name="href">
-                                        <xsl:text>#</xsl:text>
-                                        <xsl:value-of select="name(.)"/>
-                                    </xsl:attribute>
-                                    <xsl:choose>
-                                        <xsl:when test="name(.) = 'fileReport'">Metadata Records</xsl:when>
-                                        <xsl:when test="name(.) = 'profileReport'">Profile Usage</xsl:when>
-                                        <xsl:when test="name(.) = 'headerReport'">Header</xsl:when>
-                                        <xsl:when test="name(.) = 'resProxyReport'">Resource Proxy</xsl:when>
-                                        <xsl:when test="name(.) = 'xmlPopulationReport'">XML Population
-                                        </xsl:when>
-                                        <xsl:when test="name(.) = 'xmlValidityReport'">XML Validation</xsl:when>
-                                        <xsl:when test="name(.) = 'linkcheckerReport'">Link Validation
-                                        </xsl:when>
-                                        <xsl:when test="name(.) = 'facetReport'">Facets</xsl:when>
-                                        <xsl:otherwise>xxxxxxxxx</xsl:otherwise>
-                                    </xsl:choose>
-                                </a>
-                            </td>
-                            <td  class="text-end">
-                                <xsl:value-of select="format-number(@aggregatedScore,'###,##0.0')"/>
-                                /
-                                <xsl:value-of select="format-number(@aggregatedMaxScore,'###,##0.0')"/>
-                            </td>
-                            <td  class="text-end">
-                                <xsl:value-of select="format-number(@scorePercentage,'0.0%')"/>
-                            </td>
-                        </tr>
-                    </xsl:if>
-                </xsl:for-each>
-            </tbody>
-        </table>
+        <div class="table-responsive-lg">
+            <table class="table">
+                <caption class="visually-hidden">Table of scores per section (maximum score, reached score and percentage)</caption>
+                <thead>
+                    <tr>
+                        <th>Section</th>
+                        <th class="text-end">Score</th>
+                        <th class="text-end">Score Percentage</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td>Total</td>
+                        <td  class="text-end">
+                            <xsl:value-of select="format-number(@aggregatedScore,'###,##0.0')"/>
+                            /
+                            <xsl:value-of select="format-number(@aggregatedMaxScore,'###,##0.0')"/>
+                        </td>
+                        <td  class="text-end">
+                            <xsl:value-of select="format-number(@scorePercentage, '0.0%')"/>
+                        </td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <xsl:for-each select="*">
+                        <xsl:if test="@aggregatedScore">
+                            <tr>
+                                <td>
+                                    <a>
+                                        <xsl:attribute name="href">
+                                            <xsl:text>#</xsl:text>
+                                            <xsl:value-of select="name(.)"/>
+                                        </xsl:attribute>
+                                        <xsl:choose>
+                                            <xsl:when test="name(.) = 'fileReport'">Metadata Records</xsl:when>
+                                            <xsl:when test="name(.) = 'profileReport'">Profile Usage</xsl:when>
+                                            <xsl:when test="name(.) = 'headerReport'">Header</xsl:when>
+                                            <xsl:when test="name(.) = 'resProxyReport'">Resource Proxy</xsl:when>
+                                            <xsl:when test="name(.) = 'xmlPopulationReport'">XML Population
+                                            </xsl:when>
+                                            <xsl:when test="name(.) = 'xmlValidityReport'">XML Validation</xsl:when>
+                                            <xsl:when test="name(.) = 'linkcheckerReport'">Link Validation
+                                            </xsl:when>
+                                            <xsl:when test="name(.) = 'facetReport'">Facets</xsl:when>
+                                            <xsl:otherwise>xxxxxxxxx</xsl:otherwise>
+                                        </xsl:choose>
+                                    </a>
+                                </td>
+                                <td  class="text-end">
+                                    <xsl:value-of select="format-number(@aggregatedScore,'###,##0.0')"/>
+                                    /
+                                    <xsl:value-of select="format-number(@aggregatedMaxScore,'###,##0.0')"/>
+                                </td>
+                                <td  class="text-end">
+                                    <xsl:value-of select="format-number(@scorePercentage,'0.0%')"/>
+                                </td>
+                            </tr>
+                        </xsl:if>
+                    </xsl:for-each>
+                </tbody>
+            </table>
+        </div>
         <br/>
         The above table is based on
         <xsl:value-of select="format-number(//fileReport/numOfFilesProcessable, '###,##0')"/> processable metadata records.
@@ -191,70 +193,73 @@
                     importance for the metadata provider.
                 </p>
             </details>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Metadata Record</th>
-                        <th>Info</th>
-                        <th>Validate</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <xsl:for-each
-                            select="./recordDetails/record">
+            <div class="table-responsive-lg">
+                <table class="table">
+                    <caption class="visually-hidden">Table if issues with information on the issue</caption>
+                    <thead>
+                        <tr>
+                            <th>Metadata Record</th>
+                            <th>Info</th>
+                            <th>Validate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <xsl:for-each
+                                select="./recordDetails/record">
 
-                        <xsl:if test="not(position() > 100)">
+                            <xsl:if test="not(position() > 100)">
+                                <tr>
+                                    <td>
+                                        <a>
+                                            <xsl:attribute name="href">/record/<xsl:value-of
+                                                    select="./@origin"/>
+                                            </xsl:attribute>
+                                            <xsl:value-of select="./@origin"/>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-info" data-bs-toggle="collapse" aria-expanded="false">
+                                            <xsl:attribute name="data-bs-target">#mdr-row-<xsl:value-of select="position()" /></xsl:attribute>
+                                            <xsl:attribute name="aria-controls">mdr-row-<xsl:value-of select="position()" /></xsl:attribute>
+                                            Show
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-info">
+                                            <xsl:attribute name="onClick">
+                                                window.open('/curate?url-input=<xsl:value-of
+                                                    select="./@origin"></xsl:value-of>')
+                                            </xsl:attribute>
+                                            Validate file
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="collapse">
+                                    <xsl:attribute name="id">mdr-row-<xsl:value-of select="position()" /></xsl:attribute>
+                                    <td colspan="3">
+                                        <ul>
+                                            <xsl:for-each select="detail">
+                                                <li>
+                                                    Severity: <xsl:value-of select="./severity"></xsl:value-of>,
+                                                    Segment: <xsl:value-of select="./segment"></xsl:value-of>,
+                                                    Message:
+                                                    <xsl:value-of select="./message"></xsl:value-of>
+                                                </li>
+                                            </xsl:for-each>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </xsl:if>
+                        </xsl:for-each>
+                        <xsl:if
+                                test="count(./recordDetails/record) > 100">
                             <tr>
-                                <td>
-                                    <a>
-                                        <xsl:attribute name="href">/record/<xsl:value-of
-                                                select="./@origin"/>
-                                        </xsl:attribute>
-                                        <xsl:value-of select="./@origin"/>
-                                    </a>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-info" data-bs-toggle="collapse" aria-expanded="false">
-                                        <xsl:attribute name="data-bs-target">#mdr-row-<xsl:value-of select="position()" /></xsl:attribute>
-                                        <xsl:attribute name="aria-controls">mdr-row-<xsl:value-of select="position()" /></xsl:attribute>
-                                        Show
-                                    </button>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-info">
-                                        <xsl:attribute name="onClick">
-                                            window.open('/curate?url-input=<xsl:value-of
-                                                select="./@origin"></xsl:value-of>')
-                                        </xsl:attribute>
-                                        Validate file
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr class="collapse">
-                                <xsl:attribute name="id">mdr-row-<xsl:value-of select="position()" /></xsl:attribute>
-                                <td colspan="3">
-                                    <ul>
-                                        <xsl:for-each select="detail">
-                                            <li>
-                                                Severity: <xsl:value-of select="./severity"></xsl:value-of>,
-                                                Segment: <xsl:value-of select="./segment"></xsl:value-of>,
-                                                Message:
-                                                <xsl:value-of select="./message"></xsl:value-of>
-                                            </li>
-                                        </xsl:for-each>
-                                    </ul>
-                                </td>
+                                <td colspan="3">[...] complete list in downloadable report</td>
                             </tr>
                         </xsl:if>
-                    </xsl:for-each>
-                    <xsl:if
-                            test="count(./recordDetails/record) > 100">
-                        <tr>
-                            <td colspan="3">[...] complete list in downloadable report</td>
-                        </tr>
-                    </xsl:if>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </xsl:if>
     </xsl:template>
 
@@ -338,63 +343,65 @@
         <xsl:if test="./duplicatedMDSelfLinks/duplicatedMDSelfLink">
 
             <h3 id="duplicatedMDSelfLinks">Duplicated MDSelfLinks:</h3>
+            <div class="table-responsive-lg">
+                <table class="table">
+                    <caption class="visually-hidden">Table of duplicated MD selflinks (MD selflinks used in more than one record)</caption>
+                    <thead>
+                        <tr>
+                            <th>MDSelfLink</th>
+                            <th>Info</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <xsl:for-each
+                                select="./duplicatedMDSelfLinks/duplicatedMDSelfLink">
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>MDSelfLink</th>
-                        <th>Info</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <xsl:for-each
-                            select="./duplicatedMDSelfLinks/duplicatedMDSelfLink">
-
-                        <xsl:if test="not(position() > 100)">
-                            <tr>
-                                <td>
-                                    <xsl:value-of select="./mdSelfLink"/>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-info" data-bs-toggle="collapse" aria-expanded="false">
-                                        <xsl:attribute name="data-bs-target">#dsl-row-<xsl:value-of select="position()" /></xsl:attribute>
-                                        <xsl:attribute name="aria-controls">dsl-row-<xsl:value-of select="position()" /></xsl:attribute>
-                                        Show
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr class="collapse">
-                                <xsl:attribute name="id">mdr-row-<xsl:value-of select="position()" /></xsl:attribute>
-                                <td colspan="2">
-                                    <ul>
-                                        <xsl:for-each select="./origins/origin">
-                                            <xsl:if test="not(position() > 100)">
-                                                <li>
-                                                    <a>
-                                                        <xsl:attribute name="href">/record/<xsl:value-of
-                                                                select="."/>
-                                                        </xsl:attribute>
-                                                        <xsl:value-of select="."/>
-                                                    </a>
-                                                </li>
+                            <xsl:if test="not(position() > 100)">
+                                <tr>
+                                    <td>
+                                        <xsl:value-of select="./mdSelfLink"/>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-info" data-bs-toggle="collapse" aria-expanded="false">
+                                            <xsl:attribute name="data-bs-target">#dsl-row-<xsl:value-of select="position()" /></xsl:attribute>
+                                            <xsl:attribute name="aria-controls">dsl-row-<xsl:value-of select="position()" /></xsl:attribute>
+                                            Show
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="collapse">
+                                    <xsl:attribute name="id">mdr-row-<xsl:value-of select="position()" /></xsl:attribute>
+                                    <td colspan="2">
+                                        <ul>
+                                            <xsl:for-each select="./origins/origin">
+                                                <xsl:if test="not(position() > 100)">
+                                                    <li>
+                                                        <a>
+                                                            <xsl:attribute name="href">/record/<xsl:value-of
+                                                                    select="."/>
+                                                            </xsl:attribute>
+                                                            <xsl:value-of select="."/>
+                                                        </a>
+                                                    </li>
+                                                </xsl:if>
+                                            </xsl:for-each>
+                                            <xsl:if test="count(./origins/origin) > 100">
+                                                <li>[...] complete list in downloadable report</li>
                                             </xsl:if>
-                                        </xsl:for-each>
-                                        <xsl:if test="count(./origins/origin) > 100">
-                                            <li>[...] complete list in downloadable report</li>
-                                        </xsl:if>
-                                    </ul>
-                                </td>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </xsl:if>
+                        </xsl:for-each>
+                        <xsl:if
+                                test="count(./duplicatedMDSelfLinks/duplicatedMDSelfLink) > 100">
+                            <tr>
+                                <td colspan="2">[...] complete list in downloadable report</td>
                             </tr>
                         </xsl:if>
-                    </xsl:for-each>
-                    <xsl:if
-                            test="count(./duplicatedMDSelfLinks/duplicatedMDSelfLink) > 100">
-                        <tr>
-                            <td colspan="2">[...] complete list in downloadable report</td>
-                        </tr>
-                    </xsl:if>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </xsl:if>
     </xsl:template>
 
@@ -408,56 +415,59 @@
                 The profile usage section shows information shows which profiles are used how often in metadata records of a certain metadata Provider.
             </p>
         </details>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Schema Location</th>
-                    <th>Is Public</th>
-                    <th>In Component Registry</th>
-                    <th class="text-end">Score</th>
-                    <th class="text-end">Count</th>
-                </tr>
-            </thead>
-            <tfoot>
-                <tr>
-                    <td colspan="5">
-                        Total number of profiles:
-                        <xsl:value-of
-                                select="./totNumOfProfiles"/>
-                    </td>
-                </tr>
-            </tfoot>
-            <tbody>
-                <xsl:for-each
-                        select="./profiles/profile">
-                    <xsl:sort select="./@score" data-type="number"
-                              order="descending"/>
-                    <xsl:sort select="./@count" data-type="number"
-                              order="descending"/>
-                    <xsl:variable name="schemaLocation">
-                        <xsl:value-of select="./@schemaLocation"/>
-                    </xsl:variable>
+        <div class="table-responsive-lg">
+            <table class="table">
+                <caption class="visually-hidden">Table of used profiles (which profiles are used?)</caption>
+                <thead>
                     <tr>
-                        <td>
-                            <xsl:value-of select="./@schemaLocation"/>
-                        </td>
-                        <td>
-                            <xsl:value-of select="./@isPublic"/>
-                        </td>
-                        <td>
-                            <xsl:value-of select="./@isCrResident"/>
-                        </td>
-                        <td class='text-end'>
+                        <th>Schema Location</th>
+                        <th>Is Public</th>
+                        <th>In Component Registry</th>
+                        <th class="text-end">Score</th>
+                        <th class="text-end">Count</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="5">
+                            Total number of profiles:
                             <xsl:value-of
-                                    select="format-number(./@score,'0.00')"/>
-                        </td>
-                        <td class='text-end'>
-                            <xsl:value-of select="format-number(./@count, '###,##0')"/>
+                                    select="./totNumOfProfiles"/>
                         </td>
                     </tr>
-                </xsl:for-each>
-            </tbody>
-        </table>
+                </tfoot>
+                <tbody>
+                    <xsl:for-each
+                            select="./profiles/profile">
+                        <xsl:sort select="./@score" data-type="number"
+                                  order="descending"/>
+                        <xsl:sort select="./@count" data-type="number"
+                                  order="descending"/>
+                        <xsl:variable name="schemaLocation">
+                            <xsl:value-of select="./@schemaLocation"/>
+                        </xsl:variable>
+                        <tr>
+                            <td>
+                                <xsl:value-of select="./@schemaLocation"/>
+                            </td>
+                            <td>
+                                <xsl:value-of select="./@isPublic"/>
+                            </td>
+                            <td>
+                                <xsl:value-of select="./@isCrResident"/>
+                            </td>
+                            <td class='text-end'>
+                                <xsl:value-of
+                                        select="format-number(./@score,'0.00')"/>
+                            </td>
+                            <td class='text-end'>
+                                <xsl:value-of select="format-number(./@count, '###,##0')"/>
+                            </td>
+                        </tr>
+                    </xsl:for-each>
+                </tbody>
+            </table>
+        </div>
     </xsl:template>
 
 
@@ -472,39 +482,41 @@
                 even when it is not covered by the profile when cross facet mapping is used.
             </p>
         </details>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col" class="text-end">Coverage</th>
-                </tr>
-            </thead>
-            <tfoot>
-                <tr>
-                    <td colspan="2">
-                        <b>
-                            Average facet-coverage:
-                            <xsl:value-of
-                                    select="format-number(./@avgScore,'0.0%')"/>
-                        </b>
-                    </td>
-                </tr>
-            </tfoot>
-            <tbody>
-                <xsl:for-each select="./facets/facet">
+        <div class="table-responsive-lg">
+            <table class="table">
+                <caption class="visually-hidden">Table of facet coverage (is a defined facet covered?)</caption>
+                <thead>
                     <tr>
-                        <td>
-                            <xsl:value-of select="./@name"/>
-                        </td>
-                        <td class="text-end">
-                            <xsl:value-of
-                                    select="format-number(./@avgCoverage,'0.0%')"/>
+                        <th scope="col">Name</th>
+                        <th scope="col" class="text-end">Coverage</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="2">
+                            <b>
+                                Average facet-coverage:
+                                <xsl:value-of
+                                        select="format-number(./@avgScore,'0.0%')"/>
+                            </b>
                         </td>
                     </tr>
-                </xsl:for-each>
-            </tbody>
-        </table>
+                </tfoot>
+                <tbody>
+                    <xsl:for-each select="./facets/facet">
+                        <tr>
+                            <td>
+                                <xsl:value-of select="./@name"/>
+                            </td>
+                            <td class="text-end">
+                                <xsl:value-of
+                                        select="format-number(./@avgCoverage,'0.0%')"/>
+                            </td>
+                        </tr>
+                    </xsl:for-each>
+                </tbody>
+            </table>
+        </div>
     </xsl:template>
 
     <!-- resProxyReport -->
@@ -668,43 +680,45 @@
 
         <xsl:if test="./linkchecker/statistics">
             <h3>Link Checking Results</h3>
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col" class="text-start">Category</th>
-                        <th scope="col" class="text-end">Count</th>
-                        <th scope="col" class="text-end">Average Response Duration(ms)</th>
-                        <th scope="col" class="text-end">Max Response Duration(ms)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <xsl:for-each
-                            select="./linkchecker/statistics">
-
+            <div class="table-responsive-lg">
+                <table class="table">
+                    <caption class="visually-hidden">Table of link checking results</caption>
+                    <thead>
                         <tr>
-                            <xsl:attribute name="class">
-                                <xsl:value-of select="./@category"/>
-                            </xsl:attribute>
-                            <td class="text-start">
-                                <xsl:value-of select="./@category"/>
-                            </td>
-
-                            <td class="text-end">
-                                <xsl:value-of select="format-number(./@count, '###,##0')"/>
-                            </td>
-                            <td class="text-end">
-                                <xsl:value-of
-                                        select="format-number(./@avgRespTime, '###,##0.0')"/>
-                            </td>
-                            <td class="text-end">
-                                <xsl:value-of
-                                        select="format-number(./@maxRespTime, '###,##0.0')"/>
-                            </td>
+                            <th scope="col" class="text-start">Category</th>
+                            <th scope="col" class="text-end">Count</th>
+                            <th scope="col" class="text-end">Average Response Duration(ms)</th>
+                            <th scope="col" class="text-end">Max Response Duration(ms)</th>
                         </tr>
-                    </xsl:for-each>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <xsl:for-each
+                                select="./linkchecker/statistics">
+
+                            <tr>
+                                <xsl:attribute name="class">
+                                    <xsl:value-of select="./@category"/>
+                                </xsl:attribute>
+                                <td class="text-start">
+                                    <xsl:value-of select="./@category"/>
+                                </td>
+
+                                <td class="text-end">
+                                    <xsl:value-of select="format-number(./@count, '###,##0')"/>
+                                </td>
+                                <td class="text-end">
+                                    <xsl:value-of
+                                            select="format-number(./@avgRespTime, '###,##0.0')"/>
+                                </td>
+                                <td class="text-end">
+                                    <xsl:value-of
+                                            select="format-number(./@maxRespTime, '###,##0.0')"/>
+                                </td>
+                            </tr>
+                        </xsl:for-each>
+                    </tbody>
+                </table>
+            </div>
         </xsl:if>
     </xsl:template>
 </xsl:stylesheet>

@@ -104,39 +104,42 @@
                     as far as they're of importance for the data provider.
                 </p>
             </details>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Severity</th>
-                        <th>Segment</th>
-                        <th>Validate</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <xsl:for-each select="./details/detail">
-                        <xsl:choose>
-                            <xsl:when test="not(position() > 100)">
-                                <tr>
-                                    <td>
-                                        <xsl:value-of select="./severity"/>
-                                    </td>
-                                    <td>
-                                        <xsl:value-of select="./segment"/>
-                                    </td>
-                                    <td>
-                                        <xsl:value-of select="./message"/>
-                                    </td>
-                                </tr>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <tr>
-                                    <td colspan="3">[...] complete list in downloadable report</td>
-                                </tr>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:for-each>
-                </tbody>
-            </table>
+            <div class="table-responsive-lg">
+                <table class="table">
+                    <caption class="visually-hidden">Table if issues with information on the issue</caption>
+                    <thead>
+                        <tr>
+                            <th>Severity</th>
+                            <th>Segment</th>
+                            <th>Validate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <xsl:for-each select="./details/detail">
+                            <xsl:choose>
+                                <xsl:when test="not(position() > 100)">
+                                    <tr>
+                                        <td>
+                                            <xsl:value-of select="./severity"/>
+                                        </td>
+                                        <td>
+                                            <xsl:value-of select="./segment"/>
+                                        </td>
+                                        <td>
+                                            <xsl:value-of select="./message"/>
+                                        </td>
+                                    </tr>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <tr>
+                                        <td colspan="3">[...] complete list in downloadable report</td>
+                                    </tr>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:for-each>
+                    </tbody>
+                </table>
+            </div>
             </section>
         </xsl:if>
     </xsl:template>
@@ -151,74 +154,76 @@
         </details>
 
         <h3>Facet Coverage</h3>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <td>Name</td>
-                    <td>Covered By Profile</td>
-                    <td>Covered By Instance</td>
-                </tr>
-            </thead>
-            <tfoot>
-                <tr>
-                    <td colspan="3">
-                        <b>
-                            Covered by profile
-                            <xsl:value-of
-                                    select="count(./coverages/facet[@coveredByProfile = 'true'])"/>
-                            /
-                            <xsl:value-of select="./@numOfFacets"/>
-                            ;
-
-                            Covered by Instance
-                            <xsl:value-of
-                                    select="./@numOfFacetsCoveredByInstance"/>
-                            /
-                            <xsl:value-of select="./@numOfFacets"/>
-                            ;
-
-                            Instance coverage:
-                            <xsl:value-of
-                                    select="format-number(./@percCoveragedByInstance,'0.0%')"/>
-                        </b>
-                    </td>
-                </tr>
-            </tfoot>
-            <tbody>
-                <xsl:for-each select="./coverages/facet">
+        <div class="table-responsive-lg">
+            <table class="table">
+                <caption class="visually-hidden">Table of facet coverage (is a defined facet covered?)</caption>
+                <thead>
                     <tr>
-                        <td>
-                            <xsl:value-of select="./@name"/>
-                        </td>
-                        <xsl:choose>
-                            <xsl:when test="@coveredByProfile = 'true'">
-                                <td class="bg-success bg-opacity-50">
-                                    <xsl:value-of select="@coveredByProfile"/>
-                                </td>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <td class="bg-danger bg-opacity-50">
-                                    <xsl:value-of select="@coveredByProfile"/>
-                                </td>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                        <xsl:choose>
-                            <xsl:when test="@coveredByInstance = 'true'">
-                                <td class="bg-success bg-opacity-50">
-                                    <xsl:value-of select="@coveredByInstance"/>
-                                </td>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <td class="bg-danger bg-opacity-50">
-                                    <xsl:value-of select="@coveredByInstance"/>
-                                </td>
-                            </xsl:otherwise>
-                        </xsl:choose>
+                        <td>Name</td>
+                        <td>Covered By Profile</td>
+                        <td>Covered By Instance</td>
                     </tr>
-                </xsl:for-each>
-            </tbody>
-        </table>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">
+                            <b>
+                                Covered by profile
+                                <xsl:value-of
+                                        select="count(./coverages/facet[@coveredByProfile = 'true'])"/>
+                                /
+                                <xsl:value-of select="./@numOfFacets"/>
+                                ;
+
+                                Covered by Instance
+                                <xsl:value-of
+                                        select="./@numOfFacetsCoveredByInstance"/>
+                                /
+                                <xsl:value-of select="./@numOfFacets"/>
+                                ;
+
+                                Instance coverage:
+                                <xsl:value-of
+                                        select="format-number(./@percCoveragedByInstance,'0.0%')"/>
+                            </b>
+                        </td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <xsl:for-each select="./coverages/facet">
+                        <tr>
+                            <td>
+                                <xsl:value-of select="./@name"/>
+                            </td>
+                            <xsl:choose>
+                                <xsl:when test="@coveredByProfile = 'true'">
+                                    <td class="bg-success bg-opacity-50">
+                                        <xsl:value-of select="@coveredByProfile"/>
+                                    </td>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <td class="bg-danger bg-opacity-50">
+                                        <xsl:value-of select="@coveredByProfile"/>
+                                    </td>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <xsl:choose>
+                                <xsl:when test="@coveredByInstance = 'true'">
+                                    <td class="bg-success bg-opacity-50">
+                                        <xsl:value-of select="@coveredByInstance"/>
+                                    </td>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <td class="bg-danger bg-opacity-50">
+                                        <xsl:value-of select="@coveredByInstance"/>
+                                    </td>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </tr>
+                    </xsl:for-each>
+                </tbody>
+            </table>
+        </div>
 
 
         <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#xpathMapping" aria-expanded="false" aria-controls="xpathMapping" >Show facet values</button>
@@ -227,22 +232,24 @@
             <h3>Facet mapping</h3>
             <span class="float-start"><font color="#ffd100">&#9873;</font> - Derived facet</span>
             <span class="float-start ms-3"><font color="#00aa00">&#9873;</font> - Value mapping</span>
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">XPath</th>
-                        <th scope="col">Value</th>
-                        <th scope="col">Concept</th>
-                        <th scope="col">Facet</th>
-                        <th scope="col">Normalised Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <xsl:apply-templates
-                            select="./valueNodes/valueNode"/>
-                </tbody>
-            </table>
+            <div class="table-responsive-lg">
+                <table class="table">
+                    <caption class="visually-hidden">Table of xpaths, values and their mapping to facets</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">XPath</th>
+                            <th scope="col">Value</th>
+                            <th scope="col">Concept</th>
+                            <th scope="col">Facet</th>
+                            <th scope="col">Normalised Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <xsl:apply-templates
+                                select="./valueNodes/valueNode"/>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </xsl:template>
     <xsl:template match="valueNode">
@@ -347,26 +354,29 @@
             <xsl:value-of
                     select="format-number(./percOfResourcesWithReference,'0.0%')"/>
         </p>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Resource Type</th>
-                    <th scope="col" class="text-end">Count</th>
-                </tr>
-            </thead>
-            <tbody>
-                <xsl:for-each select="./resourceTypes/resourceType">
+        <div class="table-responsive-lg">
+            <table class="table">
+                <caption class="visually-hidden">Table of resource types (which resource are there and how often are they used?)</caption>
+                <thead>
                     <tr>
-                        <td>
-                            <xsl:value-of select="./@type"/>
-                        </td>
-                        <td class="text-end">
-                            <xsl:value-of select="./@count"/>
-                        </td>
+                        <th scope="col">Resource Type</th>
+                        <th scope="col" class="text-end">Count</th>
                     </tr>
-                </xsl:for-each>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <xsl:for-each select="./resourceTypes/resourceType">
+                        <tr>
+                            <td>
+                                <xsl:value-of select="./@type"/>
+                            </td>
+                            <td class="text-end">
+                                <xsl:value-of select="./@count"/>
+                            </td>
+                        </tr>
+                    </xsl:for-each>
+                </tbody>
+            </table>
+        </div>
     </xsl:template>
     <!-- XML population -->
     <xsl:template match="xmlPopulationReport">

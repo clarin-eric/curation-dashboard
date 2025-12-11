@@ -28,6 +28,7 @@
             <div class="clear" />
         </div>
         <table id="collections" class="table table-striped table-sm dataTable">
+            <caption class="visually-hidden">Overview of Metadata providers and scores</caption>
             <thead>
                 <tr>
                     <th data-sortable="true">Name</th>

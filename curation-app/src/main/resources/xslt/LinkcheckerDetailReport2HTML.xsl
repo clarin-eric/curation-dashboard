@@ -108,27 +108,30 @@
             </a>
             <xsl:text>)</xsl:text>
         </div>
-        <table class="reportTable">
-            <thead>
-                <tr>
-                    <th>Url</th>
-                    <th>Status</th>
-                    <th>Info</th>
-                </tr>
-            </thead>
+        <div class="table-responsive-lg">
+            <table class="table">
+                <caption class="visually-hidden">Table of link checking results per URL</caption>
+                <thead>
+                    <tr>
+                        <th>Url</th>
+                        <th>Status</th>
+                        <th>Info</th>
+                    </tr>
+                </thead>
 
-            <xsl:for-each select="status">
-                <xsl:if test="not(position() > 30)">
-                    <xsl:call-template name="status"/>
+                <xsl:for-each select="status">
+                    <xsl:if test="not(position() > 30)">
+                        <xsl:call-template name="status"/>
+                    </xsl:if>
+                </xsl:for-each>
+                <xsl:if
+                        test="count(status) > 30">
+                    <tr>
+                        <td colspan="3">[...] complete list in downloadable report</td>
+                    </tr>
                 </xsl:if>
-            </xsl:for-each>
-            <xsl:if
-                    test="count(status) > 30">
-                <tr>
-                    <td colspan="3">[...] complete list in downloadable report</td>
-                </tr>
-            </xsl:if>
-        </table>
+            </table>
+        </div>
 
     </xsl:template>
     <xsl:template name="status">

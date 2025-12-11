@@ -23,55 +23,57 @@
         <h1>Link checking results for Metadata Providers</h1>
         <article class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <h3>Overall</h3>
-            <table class="table w-100">
-                <caption class="visually-hidden">Table of link checking results</caption>
-                <thead>
-                    <tr>
-                        <th>Category</th>
-                        <th>Count</th>
-                        <th>Average Response Duration(ms)</th>
-                        <th>Max Response Duration(ms)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <xsl:for-each select="overall/statistics">
-                        <xsl:variable name="category">
-                            <xsl:value-of select="./@category"/>
-                        </xsl:variable>
-                        <tr class="{$category}">
+            <div class="table-responsive-lg">
+                <table class="table w-100">
+                    <caption class="visually-hidden">Table of link checking results</caption>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Count</th>
+                            <th>Average Response Duration(ms)</th>
+                            <th>Max Response Duration(ms)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <xsl:for-each select="overall/statistics">
+                            <xsl:variable name="category">
+                                <xsl:value-of select="./@category"/>
+                            </xsl:variable>
+                            <tr class="{$category}">
 
-                            <td>
-                                <a href="/linkchecker/Overall#{$category}">
-                                    <xsl:value-of select="@category"/>
-                                </a>
-                            </td>
-                            <td class='text-right'>
-                                <xsl:value-of select="format-number(@count, '###,##0')"/>
-                            </td>
-                            <td class='text-right'>
-                                <xsl:value-of select="format-number(@avgRespTime, '###,##0.0')"/>
-                            </td>
-                            <td class='text-right'>
-                                <xsl:value-of select="format-number(@maxRespTime, '###,##0.0')"/>
+                                <td>
+                                    <a href="/linkchecker/Overall#{$category}">
+                                        <xsl:value-of select="@category"/>
+                                    </a>
+                                </td>
+                                <td class='text-right'>
+                                    <xsl:value-of select="format-number(@count, '###,##0')"/>
+                                </td>
+                                <td class='text-right'>
+                                    <xsl:value-of select="format-number(@avgRespTime, '###,##0.0')"/>
+                                </td>
+                                <td class='text-right'>
+                                    <xsl:value-of select="format-number(@maxRespTime, '###,##0.0')"/>
+                                </td>
+                            </tr>
+                        </xsl:for-each>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5">
+                                Total number with response:
+                                <xsl:value-of select="format-number(overall/@totNumOfLinksWithDuration, '###,##0')"/>
+                                &#0183;
+                                Average Response Duration(ms):
+                                <xsl:value-of select="format-number(overall/@avgRespTime,'###,##0.0')"/>
+                                &#0183;
+                                Max Response Duration(ms):
+                                <xsl:value-of select="format-number(overall/@maxRespTime,'###,##0.0')"/>
                             </td>
                         </tr>
-                    </xsl:for-each>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="5">
-                            Total number with response:
-                            <xsl:value-of select="format-number(overall/@totNumOfLinksWithDuration, '###,##0')"/>
-                            &#0183;
-                            Average Response Duration(ms):
-                            <xsl:value-of select="format-number(overall/@avgRespTime,'###,##0.0')"/>
-                            &#0183;
-                            Max Response Duration(ms):
-                            <xsl:value-of select="format-number(overall/@maxRespTime,'###,##0.0')"/>
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
+                    </tfoot>
+                </table>
+            </div>
             <img class="w-100" src="/img/linkchecker/Overall.png" alt="timeline of link checking results" />
         </article>
         <div>
@@ -92,54 +94,56 @@
                 <h3 id="{generate-id(.)}">
                     <xsl:value-of select="replace($name,'_',' ')"/>
                 </h3>
-                <table class="table w-100">
-                    <caption class="visually-hidden">Table of link checking results></caption>
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Count</th>
-                            <th>Average Response Duration(ms)</th>
-                            <th>Max Response Duration(ms)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <xsl:for-each select="statistics">
-                            <xsl:variable name="category">
-                                <xsl:value-of select="./@category"/>
-                            </xsl:variable>
-                            <tr class="{$category}">
-                                <td>
-                                    <a href="/linkchecker/{$name}#{$category}">
-                                        <xsl:value-of select="@category"/>
-                                    </a>
-                                </td>
-                                <td class='text-right'>
-                                    <xsl:value-of select="format-number(@count, '###,##0')"/>
-                                </td>
-                                <td class='text-right'>
-                                    <xsl:value-of select="format-number(@avgRespTime, '###,##0.0')"/>
-                                </td>
-                                <td class='text-right'>
-                                    <xsl:value-of select="format-number(@maxRespTime, '###,##0.0')"/>
+                <div class="table-responsive-lg">
+                    <table class="table w-100">
+                        <caption class="visually-hidden">Table of link checking results></caption>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Count</th>
+                                <th>Average Response Duration(ms)</th>
+                                <th>Max Response Duration(ms)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <xsl:for-each select="statistics">
+                                <xsl:variable name="category">
+                                    <xsl:value-of select="./@category"/>
+                                </xsl:variable>
+                                <tr class="{$category}">
+                                    <td>
+                                        <a href="/linkchecker/{$name}#{$category}">
+                                            <xsl:value-of select="@category"/>
+                                        </a>
+                                    </td>
+                                    <td class='text-right'>
+                                        <xsl:value-of select="format-number(@count, '###,##0')"/>
+                                    </td>
+                                    <td class='text-right'>
+                                        <xsl:value-of select="format-number(@avgRespTime, '###,##0.0')"/>
+                                    </td>
+                                    <td class='text-right'>
+                                        <xsl:value-of select="format-number(@maxRespTime, '###,##0.0')"/>
+                                    </td>
+                                </tr>
+                            </xsl:for-each>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5">
+                                    Total Number With Response:
+                                    <xsl:value-of select="format-number(@totNumOfLinksWithDuration, '###,##0')"/>
+                                    &#0183;
+                                    Average Response Duration(ms):
+                                    <xsl:value-of select="format-number(@avgRespTime,'###,##0.0')"/>
+                                    &#0183;
+                                    Max Response Duration(ms):
+                                    <xsl:value-of select="format-number(@maxRespTime,'###,##0.0')"/>
                                 </td>
                             </tr>
-                        </xsl:for-each>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="5">
-                                Total Number With Response:
-                                <xsl:value-of select="format-number(@totNumOfLinksWithDuration, '###,##0')"/>
-                                &#0183;
-                                Average Response Duration(ms):
-                                <xsl:value-of select="format-number(@avgRespTime,'###,##0.0')"/>
-                                &#0183;
-                                Max Response Duration(ms):
-                                <xsl:value-of select="format-number(@maxRespTime,'###,##0.0')"/>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
+                        </tfoot>
+                    </table>
+                </div>
                 <img class="w-100" alt="timeline of link checking results">
                     <xsl:attribute name="src">
                         <xsl:text>/img/linkchecker/</xsl:text>
