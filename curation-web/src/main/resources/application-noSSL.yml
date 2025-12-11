@@ -57,7 +57,7 @@ curation:
     share: /data
   max_file_size: 100MB
   mode: instance
-  doc-url: "https://raw.githubusercontent.com/clarin-eric/cereal/main/curation-dashboard/markdown"
+  doc-url: "https://raw.githubusercontent.com/clarin-eric/cereal/dev/curation-dashboard/markdown"
 logging:
   level:
     root: ERROR
