@@ -13,7 +13,7 @@
     <!--
    <link rel="stylesheet" th:href="@{/css/switchboard.min.css}" type="text/css">
    -->
-    <link id="curation-styles" rel="stylesheet" th:href="@{/css/curation.css}" type="text/css">
+    <link id="curation-styles" rel="stylesheet" th:href="@{/css/curation.min.css}" type="text/css">
     <link href="https://cdn.datatables.net/v/bs5/dt-2.3.5/cc-1.1.1/datatables.min.css" rel="stylesheet"
           integrity="sha384-IfVMKTz9d4IaUFxRBVN9QbH5YmOEWgZm7jZiAaqQYpg+LiCvROJQKkFxOe9UVxO9" crossorigin="anonymous">
     <link href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" id="dropzone-styles"
@@ -23,37 +23,36 @@
 <div class="d-flex flex-column min-vh-100">
     <!-- header -->
     <header class="container">
-        <nav class="navbar navbar-default navbar-expand-lg bg-secondary-subtle">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <span class="navbar-brand">Curation Dashboard @version@</span>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="nav nav-pills nav-fill">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/metadataprovider">Metadata Providers</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/profile">Profiles</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/validator">Validator</a>
-                    </li>
-                    <li class="nav-item" id="nav-item-linkchecker">
-                        <a class="nav-link" href="/linkchecker">Link Checker</a>
-                    </li>
-                    <li class="nav-item" id="nav-item-help">
-                        <a class="nav-link" href="/help">Help</a>
-                    </li>
-                    <li class="nav-item" id="nav-item-faq">
-                        <a class="nav-link" href="/faq">FAQ</a>
-                    </li>
-                </ul>
-                <a class="navbar-brand ms-auto d-none d-lg-block" aria-label="Go to Clarin website"
-                   href="https://www.clarin.eu/">
-                    <img alt="Clarin logo" width="115" height="46" th:src="@{/images/clarin-logo.svg}">
-                </a>
+        <nav class="navbar navbar-default nav-pills navbar-expand-lg bg-secondary-subtle">
+            <div class="container-fluid">
+                <span class="navbar-brand">Curation Dashboard @version@</span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse show navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/metadataprovider">Metadata Providers</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/profile">Profiles</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/validator">Validator</a>
+                        </li>
+                        <li class="nav-item" id="nav-item-linkchecker">
+                            <a class="nav-link" href="/linkchecker">Link Checker</a>
+                        </li>
+                        <li class="nav-item" id="nav-item-help">
+                            <a class="nav-link" href="/help">Help</a>
+                        </li>
+                    </ul>
+                    <a class="navbar-brand ms-auto d-none d-lg-block" aria-label="Go to Clarin website"
+                       href="https://www.clarin.eu/">
+                        <img alt="Clarin logo" width="115" height="46" th:src="@{/images/clarin-logo.svg}">
+                    </a>
+                </div>
             </div>
         </nav>
     </header>
