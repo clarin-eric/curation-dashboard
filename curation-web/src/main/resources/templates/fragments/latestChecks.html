@@ -1,5 +1,6 @@
-<div class="container-fluid">
-    <table class="table w-100">
+<div class="table-responsive-lg">
+    <table class="table">
+        <caption class="visually-hidden">Table of the latest link checking results</caption>
         <thead>
         <tr>
             <th>Url</th>
@@ -14,7 +15,10 @@
                        th:text="${map.get('originalUrl')} !=null? ${map.get('originalUrl')[0]}:''"></a></td>
                 <td th:text="${map.get('fetch.statusCode')} !=null? ${map.get('fetch.statusCode')[0]}:'n/a'"></td>
                 <td>
-                    <button class="btn btn-info" data-bs-toggle="collapse" type="button" th:data-bs-target="'#lc-row-' + ${iStat.index}" aria-expanded="false" th:aria-controls="'lc-row-' + ${iStat.index}">Show</button>
+                    <button class="btn btn-info" data-bs-toggle="collapse" type="button"
+                            th:data-bs-target="'#lc-row-' + ${iStat.index}" aria-expanded="false"
+                            th:aria-controls="'lc-row-' + ${iStat.index}">Show
+                    </button>
                 </td>
             </tr>
             <tr class="collapse" th:id="'lc-row-' + ${iStat.index}">

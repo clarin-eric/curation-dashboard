@@ -14,7 +14,7 @@
             </xsl:for-each>
         </ul>
         <xsl:for-each select="collection">
-            <p>
+            <article class="shadow p-3 mb-5 bg-body-tertiary rounded border border-2">
             <h2 class="anchor" id="{generate-id(.)}">
                 <xsl:value-of select="replace(@name, '_', ' ')" />
             </h2>
@@ -27,7 +27,7 @@
                 </a>
                 <xsl:text> </xsl:text>
             </xsl:for-each>
-            </p>
+            </article>
         </xsl:for-each>
     </xsl:template>
 </xsl:stylesheet>
