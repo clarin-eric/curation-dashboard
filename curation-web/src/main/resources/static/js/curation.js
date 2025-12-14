@@ -3,7 +3,9 @@ $( document ).ready(function() {
         $("header .nav-link").first().addClass("active");
         return;
     }
-    $("header .nav-item [href='" + location.pathname + "']").addClass("active")
+    let navItem = $("header .nav-item [href='" + location.pathname + "']");
+    navItem.addClass("active");
+    navItem.attr("aria-current", "page");
 });
 new DataTable('.dataTable', {
     columnControl: {
@@ -55,8 +57,8 @@ $('#validateButton').click(function() {
 
     //only change to spinner if input is valid
     if($("#url-input").val()){
-        $("#validatorInputPanel").attr("hidden", true);
-        $("#validatorSpinnerPanel").attr("hidden", false);
+        $("#validatorInputPanel").hide();
+        $("#validatorSpinnerPanel").show();
     }
 });
 
@@ -64,22 +66,16 @@ $('#validateButton').click(function() {
 $(".showUrlInfo").click(function() {
 
     if($(this).parent().parent().next().attr("hidden")){
-        $(this).parent().parent().next().removeAttr("hidden");
+        $(this).parent().parent().next().show();
         $(this).text("Hide");
     }
     else{
-        $(this).parent().parent().next().attr("hidden", true);
+        $(this).parent().parent().next().hide();
         $(this).text("Show")
     }
 });
 $(".showUrlInfo").removeClass("showUrlInfo");
-/*
-$(".nav-item").on("click", function (){
-    $("li.active").removeClass("active");
-    $(this).addClass("active");
-});
 
- */
 
 
 
