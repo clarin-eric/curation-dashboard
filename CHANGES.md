@@ -1,5 +1,7 @@
 # 7.5.0
-- changing web-layout for bootstrap 5.3.7 (issues https://github.com/clarin-eric/curation-dashboard/issues/286, https://github.com/clarin-eric/curation-dashboard/issues/282, https://github.com/clarin-eric/curation-dashboard/issues/155) 
+- changing layout of curation-web for bootstrap 5.3.8 (issues https://github.com/clarin-eric/curation-dashboard/issues/286, https://github.com/clarin-eric/curation-dashboard/issues/282, https://github.com/clarin-eric/curation-dashboard/issues/155) 
+- requesting wikidata for concept names (issue https://github.com/clarin-eric/curation-dashboard/issues/291)
+- fixes and improvements 
 
 # 7.4.0
 - adding timelines for link checking (issue https://github.com/clarin-eric/curation-dashboard/issues/278)
