@@ -1,11 +1,11 @@
 $( document ).ready(function() {
     if(location.pathname == '/'){
-        $("header .nav-link").first().addClass("active");
+        $("header .nav-link").first().parent().addClass("active");
         return;
     }
     let navItem = $("header .nav-item [href='" + location.pathname + "']");
-    navItem.addClass("active");
-    navItem.attr("aria-current", "page");
+    navItem.parent().addClass("active");
+    navItem.parent().attr("aria-current", "page");
 });
 new DataTable('.dataTable', {
     columnControl: {
