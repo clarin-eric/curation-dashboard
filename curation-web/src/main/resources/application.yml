@@ -71,6 +71,6 @@ curation:
    clientUsername: curation   
    max_file_size: 100MB
    mode: instance
-   doc-url: "https://raw.githubusercontent.com/clarin-eric/cereal/main/curation-dashboard/markdown"
+   doc-url: "${DOC_URL}"
    vlo_config_location: "${VLO_CONFIG_LOCATION}"      
        
