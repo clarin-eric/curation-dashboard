@@ -10,6 +10,10 @@ spring:
     hibernate:
       ddl-auto: none
     database-platform: org.hibernate.dialect.MariaDBDialect
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
   cache:
     jcache:
       config: classpath:ehcache.xml
