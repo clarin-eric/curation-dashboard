@@ -51,6 +51,7 @@ curation:
       in:
       out: >
          /tmp/public
+      share: /share
    max_file_size: 100MB
    max_in_queue: 10
 logging:
