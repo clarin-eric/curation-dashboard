@@ -85,6 +85,7 @@ curation:
          ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
       # output directory for reports
       out: ${APPLICATION_HOME_DIRECTORY}/public
+      share: /share
    facets: 
       - languageCode
       - collection
