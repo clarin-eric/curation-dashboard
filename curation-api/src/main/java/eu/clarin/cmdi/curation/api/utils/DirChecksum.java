@@ -14,7 +14,11 @@ import java.util.HashMap;
 import java.util.zip.Adler32;
 
 /**
- * The type Dir checksum.
+ * The idea of class DirCheckum is get the information if the content of a given directory has changed since it was
+ * accessed last time. To do so we calculate a checksum based on the Adler32 algorithm for the directory
+ * and compare it with the previously calculated checksum for the directory.
+ * All checksums are stored in a HashMap which is persisted when the instance of DirChecksum is destroyed and
+ * re-instantiated, when the instance of DirChecksum is created.
  */
 @Slf4j
 @Component
@@ -28,6 +32,11 @@ public class DirChecksum {
     private HashMap<String, Long> checksums;
 
 
+    /**
+     * Instantiates a new Dir checksum.
+     *
+     * @param apiConfig the api config to get the Path of the share-directory to read and persist directory/checksum info
+     */
     public DirChecksum(ApiConfig apiConfig) {
 
         this.objFilePath = apiConfig.getDirectory().getShare().resolve(OBJ_FILE_NAME);
@@ -47,6 +56,9 @@ public class DirChecksum {
         }
     }
 
+    /**
+     * persisting the HashMap with directory/checksum information
+     */
     @PreDestroy
     private void destroy(){
 
@@ -58,6 +70,12 @@ public class DirChecksum {
         }
     }
 
+    /**
+     * Has changed boolean.
+     *
+     * @param dir the directory which we want to analyze for changes
+     * @return the boolean if the directory content has changed or not
+     */
     public boolean hasChanged(Path dir) {
 
         boolean hasChanged = true;
