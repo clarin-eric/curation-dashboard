@@ -50,10 +50,10 @@ public class CMDCollectionProcessor {
 
             String providerName = collection.getPath().getName(collection.getPath().getNameCount() - 1).toString();
 
-            if(!this.dirChecksum.hasChanged(collection.getPath())){ // no changes for collection
+            if(conf.isUseChecksum() && !this.dirChecksum.hasChanged(collection.getPath())){ // no changes for collection
                 Path reportPath = conf.getDirectory().getOut().resolve("xml").resolve("collection").resolve(providerName + ".xml");
 
-                if(Files.exists(reportPath)){
+                if(Files.exists(reportPath)){ // looking up the last report
                     log.info("no changes in collection - updating previous report '{}'",  reportPath);
                     try {
                         JAXBContext ctx = JAXBContext.newInstance(CollectionReport.class);
@@ -66,7 +66,7 @@ public class CMDCollectionProcessor {
                         log.error("cannot unmarshal collection report '{}'", reportPath, e);
                     }
                 }
-            }
+            } // not just if/else since I want to create a new report if the unmarshalling fails
             if(report == null) {
                 report = new CollectionReport();
 

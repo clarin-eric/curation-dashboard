@@ -40,6 +40,8 @@ public class ApiConfig {
    private String clientPassword;
 
    private int maxInQueue;
+
+   private boolean useChecksum;
    
    @Bean
    public VloConfig vloConfig() {

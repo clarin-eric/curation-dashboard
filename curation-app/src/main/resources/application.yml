@@ -76,6 +76,7 @@ curation:
       wikidata-request: https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=SELECT%20%3Flabel%20WHERE%20%7Bwd%3A${entityID}%20rdfs%3Alabel%20%3Flabel%20%20FILTER%20%28lang%28%3Flabel%29%20IN%20%28%22en%22%29%29%7D
   # modes are all|profile|instance|
    mode: all
+   use-checksum: true
    directory:
       # home directory of the application which is only used as a root for other directories
       home: ${APPLICATION_HOME_DIRECTORY}
