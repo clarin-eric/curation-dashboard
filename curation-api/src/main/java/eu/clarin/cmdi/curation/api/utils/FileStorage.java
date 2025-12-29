@@ -15,6 +15,7 @@ import jakarta.xml.bind.util.JAXBSource;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.saxon.BasicTransformerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.xml.transform.*;
@@ -38,6 +39,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Component
+@Lazy
 public class FileStorage {
 
     private final Pattern creationTimePattern = Pattern.compile("creationTime=\"(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\"");
