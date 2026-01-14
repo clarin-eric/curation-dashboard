@@ -46,7 +46,7 @@ public class LinkcheckerReport {
    @XmlElement
    public Long maxRespTime;
    @XmlElementWrapper(name = "linkchecker")
-   public Collection<Statistics> statistics = new TreeSet<Statistics>();
+   public Collection<Statistics> statistics = new TreeSet<>();
    
    @XmlRootElement
    @XmlAccessorType(XmlAccessType.FIELD)

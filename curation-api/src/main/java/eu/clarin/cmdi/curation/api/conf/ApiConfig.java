@@ -78,7 +78,5 @@ public class ApiConfig {
       private Collection<Path> in;
       
       private Path out;
-
-      private Path share;
    }
 }

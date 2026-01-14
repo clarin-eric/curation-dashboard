@@ -14,10 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- *
- */
-
-/**
  * report for one single collection
  *
  */
@@ -62,7 +58,7 @@ public class CollectionReport implements NamedReport{
 
    // XMLPopulatedValidator
    @XmlElement
-   public final XmlPopulationReport xmlPopulationReport = new XmlPopulationReport();;
+   public final XmlPopulationReport xmlPopulationReport = new XmlPopulationReport();
 
    // XMLValidator
    @XmlElement
@@ -70,7 +66,7 @@ public class CollectionReport implements NamedReport{
 
    // URL
    @XmlElement
-   public final LinkcheckerReport linkcheckerReport = new LinkcheckerReport();
+   public LinkcheckerReport linkcheckerReport = new LinkcheckerReport(); //not final since we want to replace it when directory content hasn't changed
 
    // Facets
    @XmlElement

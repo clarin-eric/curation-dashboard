@@ -2,7 +2,6 @@ package eu.clarin.cmdi.curation.api.subprocessor.collection;
 
 import eu.clarin.cmdi.curation.api.CurationModule;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
-import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
@@ -22,13 +21,11 @@ import java.util.stream.Stream;
 @Component
 public class CollectionUpdater {
 
-    private final ApiConfig conf;
     private final ApplicationContext ctx;
     private final AggregatedStatusRepository aRep;
     private final UrlRepository uRep;
 
-    public CollectionUpdater(ApiConfig conf, ApplicationContext ctx, AggregatedStatusRepository aRep, UrlRepository uRep) {
-        this.conf = conf;
+    public CollectionUpdater(ApplicationContext ctx, AggregatedStatusRepository aRep, UrlRepository uRep) {
         this.ctx = ctx;
         this.aRep = aRep;
         this.uRep = uRep;
@@ -38,7 +35,7 @@ public class CollectionUpdater {
 
         collectionReport.creationTime = LocalDateTime.now();
 
-        collectionReport.linkcheckerReport.statistics.clear();
+        collectionReport.linkcheckerReport = new LinkcheckerReport();
 
         // lincheckerReport
 

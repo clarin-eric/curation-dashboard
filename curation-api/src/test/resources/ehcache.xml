@@ -40,4 +40,10 @@ copied from ehcache/ehcache.xml to module test/resources
         </ehcache:expiry>
         <ehcache:heap unit="entries">500</ehcache:heap>
     </ehcache:cache>
+    <ehcache:cache alias="checksumCache">
+        <ehcache:expiry>
+            <ehcache:none/>
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">500</ehcache:heap>
+    </ehcache:cache>
 </ehcache:config>
