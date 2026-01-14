@@ -14,7 +14,6 @@ import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport.InvalidR
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
-import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.linkchecker.persistence.repository.UrlRepository;

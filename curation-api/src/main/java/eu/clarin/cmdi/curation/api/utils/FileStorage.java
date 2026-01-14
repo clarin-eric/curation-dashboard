@@ -14,7 +14,6 @@ import jakarta.xml.bind.PropertyException;
 import jakarta.xml.bind.util.JAXBSource;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.saxon.BasicTransformerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +29,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

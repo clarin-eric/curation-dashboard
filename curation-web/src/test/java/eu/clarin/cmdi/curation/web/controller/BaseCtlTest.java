@@ -12,10 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;

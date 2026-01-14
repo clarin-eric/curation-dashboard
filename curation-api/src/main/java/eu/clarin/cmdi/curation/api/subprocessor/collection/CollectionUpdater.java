@@ -1,7 +1,6 @@
 package eu.clarin.cmdi.curation.api.subprocessor.collection;
 
 import eu.clarin.cmdi.curation.api.CurationModule;
-import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;

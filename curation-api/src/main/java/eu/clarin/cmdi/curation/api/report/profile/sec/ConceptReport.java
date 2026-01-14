@@ -9,7 +9,6 @@ import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**

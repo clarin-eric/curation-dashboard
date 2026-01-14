@@ -3,15 +3,10 @@ package eu.clarin.cmdi.curation.ccr;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.commons.conf.HttpConfig;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockserver.client.MockServerClient;
-import org.mockserver.logging.MockServerLogger;
 import org.mockserver.matchers.Times;
-import org.mockserver.model.ConnectionOptions;
-import org.mockserver.model.Delay;
-import org.mockserver.socket.tls.KeyStoreFactory;
 import org.mockserver.springtest.MockServerPort;
 import org.mockserver.springtest.MockServerTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +19,11 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
-
-import javax.net.ssl.HttpsURLConnection;
 
 @SpringBootTest
 @EnableConfigurationProperties
