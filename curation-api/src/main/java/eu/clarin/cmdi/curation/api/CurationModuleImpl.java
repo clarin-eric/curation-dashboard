@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.api;
 
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
+import eu.clarin.cmdi.curation.api.entity.CMDCollectionSet;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
@@ -14,7 +15,6 @@ import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.model.Status;
-import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.linkchecker.persistence.repository.StatusRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -43,8 +44,6 @@ public class CurationModuleImpl implements CurationModule {
 
    @Autowired
    private ApplicationContext ctx;
-   @Autowired
-   private AggregatedStatusRepository asRep;
    @Autowired
    private StatusRepository sRep;
 
@@ -151,7 +150,13 @@ public class CurationModuleImpl implements CurationModule {
 
    }
 
-   /**
+    @Override
+    public Collection<CollectionReport> processCollectionSet(Collection<Path> paths) throws MalFunctioningProcessorException {
+
+       return ctx.getBean(CMDCollectionSet.class, paths).generateReport();
+    }
+
+    /**
     * Gets linkchecker detail reports.
     *
     * @return the linkchecker detail reports
@@ -168,7 +173,7 @@ public class CurationModuleImpl implements CurationModule {
       final CategoryReport[] lastCategoryReport = new CategoryReport[1];
 
       
-      try(Stream<AggregatedStatus> aStream = StreamSupport.stream(asRep.findAll().spliterator(), false)){
+      try(Stream<AggregatedStatus> aStream = sRep.findAggregatedStatus()){
          
          aStream.forEach(aStatus -> {
             

@@ -76,7 +76,7 @@ public class AllLinkcheckerReport implements NamedReport {
       private Double avgRespTime;
 
       @XmlAttribute
-      private Long maxRespTime;
+      private Integer maxRespTime;
 
       @XmlElement
       private Collection<Statistics> statistics;
@@ -125,7 +125,7 @@ public class AllLinkcheckerReport implements NamedReport {
       private Double avgRespTime;
 
       @XmlAttribute
-      private Long maxRespTime;
+      private Integer maxRespTime;
 
       @XmlElement(name = "statistics")
       public Collection<Statistics> getStatistics() {

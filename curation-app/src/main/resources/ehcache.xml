@@ -29,6 +29,14 @@
             <ehcache:disk persistent="true" unit="GB">1</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
+    <ehcache:cache alias="collectionReportCache">
+        <ehcache:expiry>
+            <ehcache:ttl unit="days">7</ehcache:ttl>
+        </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:disk persistent="true" unit="GB">1</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
     <ehcache:cache alias="crCache">
         <ehcache:expiry>
             <ehcache:none/>

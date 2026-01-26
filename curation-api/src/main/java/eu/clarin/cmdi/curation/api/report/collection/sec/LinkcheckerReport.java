@@ -44,7 +44,7 @@ public class LinkcheckerReport {
    @XmlElement
    public Double avgRespTime;
    @XmlElement
-   public Long maxRespTime;
+   public Integer maxRespTime;
    @XmlElementWrapper(name = "linkchecker")
    public Collection<Statistics> statistics = new TreeSet<>();
    
@@ -64,7 +64,7 @@ public class LinkcheckerReport {
       public Double avgRespTime;
 
       @XmlAttribute
-      public Long maxRespTime;
+      public Integer maxRespTime;
 
       @XmlAttribute
       public final Category category;

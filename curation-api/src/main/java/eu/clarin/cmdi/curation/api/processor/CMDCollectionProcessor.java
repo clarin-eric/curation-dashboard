@@ -1,22 +1,17 @@
 package eu.clarin.cmdi.curation.api.processor;
 
+import eu.clarin.cmdi.curation.api.cache.CollectionReportCache;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
-import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionAggregator;
+import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionLinkchecker;
 import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionUpdater;
-import eu.clarin.cmdi.curation.api.utils.DirChecksum;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
+
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 @Slf4j
 @Component
@@ -24,62 +19,23 @@ import java.time.LocalDateTime;
 public class CMDCollectionProcessor {
 
     private final ApiConfig conf;
-    private final CollectionAggregator collectionAggregator;
-    private final CollectionUpdater collectionUpdater;
-    private final DirChecksum dirChecksum;
+    private final ApplicationContext applicationContext;
+    private final CollectionReportCache collectionReportCache;
 
-    public CMDCollectionProcessor(ApiConfig conf, CollectionAggregator collectionAggregator, CollectionUpdater collectionUpdater, DirChecksum dirChecksum) {
+    public CMDCollectionProcessor(ApiConfig conf, ApplicationContext applicationContext, CollectionReportCache collectionReportCache) {
         this.conf = conf;
-        this.collectionAggregator = collectionAggregator;
-        this.collectionUpdater = collectionUpdater;
-        this.dirChecksum = dirChecksum;
+        this.applicationContext = applicationContext;
+        this.collectionReportCache = collectionReportCache;
     }
+
 
     public CollectionReport process(CMDCollection collection) {
 
+        CollectionReport collectionReport = this.collectionReportCache.getNewCollectionReport(collection);
 
-        LocalDateTime start = LocalDateTime.now();
+        applicationContext.getBean(CollectionLinkchecker.class).process(collectionReport);
+        applicationContext.getBean(CollectionUpdater.class).process(collectionReport);
 
-        CollectionReport report = null;
-
-        log.info("Started report generation for collection: " + collection.getPath());
-
-        if (collection.getPath().getNameCount() >= 1) {
-
-            String providerName = collection.getPath().getName(collection.getPath().getNameCount() - 1).toString();
-
-            if(conf.isUseChecksum() && !this.dirChecksum.hasChanged(collection.getPath())){ // no changes for collection
-                Path reportPath = conf.getDirectory().getOut().resolve("xml").resolve("collection").resolve(providerName + ".xml");
-
-                if(Files.exists(reportPath)){ // looking up the last report
-                    log.info("no changes in collection - updating previous report '{}'",  reportPath);
-                    try {
-                        JAXBContext ctx = JAXBContext.newInstance(CollectionReport.class);
-                        Unmarshaller unmarshaller = ctx.createUnmarshaller();
-                        report = (CollectionReport) unmarshaller.unmarshal(reportPath.toFile());
-                        collectionUpdater.process(report);
-
-                    }
-                    catch (JAXBException e) {
-                        log.error("cannot unmarshal collection report '{}'", reportPath, e);
-                    }
-                }
-            } // not just if/else since I want to create a new report if the unmarshalling fails
-            if(report == null) {
-                report = new CollectionReport();
-
-                report.fileReport.provider = providerName;
-                collectionAggregator.process(collection, report);
-            }
-
-            LocalDateTime end = LocalDateTime.now();
-
-            log.info("It took {} to generate the report for collection: {}", Duration.between(start, end).toString(), report.getName());
-        }
-        else {
-            log.error("the provider group is the last name in the path. Therefore the collection path MUSTN'T be the root directory");
-        }
-
-        return report;
+        return collectionReport;
     }
 }

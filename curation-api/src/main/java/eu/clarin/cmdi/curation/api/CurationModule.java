@@ -62,6 +62,8 @@ public interface CurationModule {
     */
    public CollectionReport processCollection(Path path) throws MalFunctioningProcessorException;
 
+   public Collection<CollectionReport> processCollectionSet(Collection<Path> paths) throws MalFunctioningProcessorException;
+
    /**
     * Gets linkchecker detail reports.
     *

@@ -13,11 +13,6 @@ import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport.InvalidReference;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
-import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
-import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
-import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
-import eu.clarin.linkchecker.persistence.repository.UrlRepository;
-import eu.clarin.linkchecker.persistence.utils.Category;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -47,8 +42,7 @@ public class CollectionAggregator {
 
     private final ApiConfig conf;
     private final ApplicationContext ctx;
-    private final AggregatedStatusRepository aRep;
-    private final UrlRepository uRep;
+
 
     private final Map<String, Collection<String>> mdSelfLinks = new HashMap<>();
 
@@ -56,11 +50,10 @@ public class CollectionAggregator {
 
     private final Lock lock = new ReentrantLock();
 
-    public CollectionAggregator(ApiConfig conf, ApplicationContext ctx, AggregatedStatusRepository aRep, UrlRepository uRep) {
+    public CollectionAggregator(ApiConfig conf, ApplicationContext ctx) {
         this.conf = conf;
         this.ctx = ctx;
-        this.aRep = aRep;
-        this.uRep = uRep;
+
     }
 
     /**
@@ -166,7 +159,17 @@ public class CollectionAggregator {
             log.error("Error occurred while waiting for the thread pool to terminate.");
         }
 
-        calculateAverages(collectionReport);
+        // find all mdSelfLinks which appear in more than origin
+
+        this.mdSelfLinks.forEach((key, value) -> {
+            if (value.size() == 1) { //link is unique
+                collectionReport.headerReport.numWithUniqueMdSelflink++;
+            } else {//duplicate link
+                collectionReport.headerReport.duplicatedMDSelfLink.add(new MDSelfLink(key, value));
+            }
+        });
+        // adding score for unique selflinks
+        collectionReport.headerReport.aggregatedScore += collectionReport.headerReport.numWithUniqueMdSelflink;
     }
 
     /**
@@ -278,199 +281,6 @@ public class CollectionAggregator {
         }
         finally {
             this.lock.unlock();
-        }
-    }
-
-    private void calculateAverages(CollectionReport collectionReport) {
-        // find all mdSelfLinks which appear in more than origin
-
-        this.mdSelfLinks.forEach((key, value) -> {
-            if (value.size() == 1) { //link is unique
-                collectionReport.headerReport.numWithUniqueMdSelflink++;
-            } else {//duplicate link
-                collectionReport.headerReport.duplicatedMDSelfLink.add(new MDSelfLink(key, value));
-            }
-        });
-        // adding score for unique selflinks
-        collectionReport.headerReport.aggregatedScore += collectionReport.headerReport.numWithUniqueMdSelflink;
-
-        // lincheckerReport
-
-        try (Stream<AggregatedStatus> stream = aRep.findAllByProvidergroupName(collectionReport.getName())) {
-
-            stream.forEach(categoryStats -> {
-                Statistics xmlStatistics = new Statistics(categoryStats.getCategory());
-                xmlStatistics.avgRespTime = categoryStats.getAvgDuration();
-                xmlStatistics.maxRespTime = categoryStats.getMaxDuration();
-                xmlStatistics.count = categoryStats.getNumberId();
-                collectionReport.linkcheckerReport.totNumOfCheckedLinks += categoryStats.getNumberId().intValue();
-                collectionReport.linkcheckerReport.totNumOfLinksWithDuration += categoryStats.getNumberDuration().intValue();
-
-                collectionReport.linkcheckerReport.statistics.add(xmlStatistics);
-            });
-        }
-        catch (IllegalArgumentException ex) {
-
-            log.error(ex.getMessage());
-
-        }
-        catch (Exception ex) {
-
-            log.error("couldn't get category statistics for provider group '{}' from database", collectionReport.getName(),
-                    ex);
-        }
-
-        collectionReport.linkcheckerReport.totNumOfLinks = (int) uRep
-                .countByProvidergroupName(collectionReport.getName());
-        collectionReport.linkcheckerReport.totNumOfUniqueLinks = (int) uRep
-                .countDistinctByProvidergroupName(collectionReport.getName());
-
-        if (collectionReport.linkcheckerReport.totNumOfCheckedLinks > 0) {
-            collectionReport.linkcheckerReport.statistics.stream().filter(statistics -> statistics.category == Category.Ok)
-                    .findFirst().ifPresent(
-                            statistics -> collectionReport.linkcheckerReport.ratioOfValidLinks = statistics.count
-                                    / (double) collectionReport.linkcheckerReport.totNumOfCheckedLinks
-                    );
-
-        }
-
-        if (collectionReport.linkcheckerReport.totNumOfLinks > 0) {
-            collectionReport.linkcheckerReport.aggregatedMaxScore = collectionReport.fileReport.numOfFilesProcessable
-                    * collectionReport.linkcheckerReport.totNumOfCheckedLinks / (double) collectionReport.linkcheckerReport.totNumOfLinks;
-
-            collectionReport.linkcheckerReport.aggregatedScore = collectionReport.linkcheckerReport.ratioOfValidLinks
-                    * collectionReport.fileReport.numOfFilesProcessable
-                    * collectionReport.linkcheckerReport.totNumOfCheckedLinks / (double) collectionReport.linkcheckerReport.totNumOfLinks;
-        }
-
-        collectionReport.fileReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore
-                * collectionReport.fileReport.numOfFiles;
-
-        collectionReport.profileReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.maxScore
-                * collectionReport.fileReport.numOfFilesProcessable;
-        // adding 1 to instance max score for uniqueness of MDselflink
-        collectionReport.headerReport.aggregatedMaxScore = (eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport.maxScore + 1)
-                * collectionReport.fileReport.numOfFilesProcessable;
-
-        collectionReport.resProxyReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport.maxScore
-                * collectionReport.fileReport.numOfFilesProcessable;
-
-        collectionReport.xmlPopulationReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport.maxScore
-                * collectionReport.fileReport.numOfFilesProcessable;
-
-        collectionReport.xmlValidityReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport.maxScore
-                * collectionReport.fileReport.numOfFilesProcessable;
-
-        collectionReport.facetReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.maxScore
-                * collectionReport.fileReport.numOfFilesProcessable;
-
-
-        if (collectionReport.fileReport.numOfFiles > 0) {
-            // file
-            collectionReport.fileReport.avgFileSize = collectionReport.fileReport.size
-                    / collectionReport.fileReport.numOfFiles;
-            collectionReport.fileReport.scorePercentage = collectionReport.fileReport.aggregatedScore
-                    / (double) collectionReport.fileReport.numOfFiles;
-            collectionReport.fileReport.avgScore = collectionReport.fileReport.aggregatedScore
-                    / collectionReport.fileReport.numOfFiles;
-            //profile
-            collectionReport.profileReport.totNumOfProfiles = collectionReport.profileReport.profiles.size();
-
-            //collection
-            collectionReport.aggregatedScore = collectionReport.fileReport.aggregatedScore + collectionReport.profileReport.aggregatedScore
-                    + collectionReport.headerReport.aggregatedScore + collectionReport.resProxyReport.aggregatedScore
-                    + collectionReport.xmlPopulationReport.aggregatedScore + collectionReport.xmlValidityReport.aggregatedScore
-                    + collectionReport.linkcheckerReport.aggregatedScore + collectionReport.facetReport.aggregatedScore;
-
-            collectionReport.aggregatedMaxScore = collectionReport.fileReport.aggregatedMaxScore + collectionReport.profileReport.aggregatedMaxScore
-                    + collectionReport.headerReport.aggregatedMaxScore + collectionReport.resProxyReport.aggregatedMaxScore
-                    + collectionReport.xmlPopulationReport.aggregatedMaxScore + collectionReport.xmlValidityReport.aggregatedMaxScore
-                    + collectionReport.linkcheckerReport.aggregatedMaxScore + collectionReport.facetReport.aggregatedMaxScore;
-
-            collectionReport.scorePercentage = collectionReport.aggregatedScore / collectionReport.aggregatedMaxScore;
-
-        }
-        if (collectionReport.fileReport.numOfFilesProcessable > 0) {
-            // file
-
-            //profile
-            collectionReport.profileReport.avgScore = collectionReport.profileReport.aggregatedScore
-                    / (double) collectionReport.fileReport.numOfFilesProcessable;
-            collectionReport.profileReport.scorePercentage = collectionReport.profileReport.aggregatedScore
-                    / collectionReport.profileReport.aggregatedMaxScore;
-
-            // header
-            collectionReport.headerReport.scorePercentage = collectionReport.headerReport.aggregatedScore
-                    / collectionReport.headerReport.aggregatedMaxScore;
-            collectionReport.headerReport.avgScore = (collectionReport.headerReport.aggregatedScore
-                    / (double) collectionReport.fileReport.numOfFilesProcessable);
-            // resProxy
-            collectionReport.resProxyReport.avgNumOfResources = (collectionReport.resProxyReport.totNumOfResources
-                    / (double) collectionReport.fileReport.numOfFilesProcessable);
-            collectionReport.resProxyReport.avgNumOfResourcesWithMime = (collectionReport.resProxyReport.totNumOfResourcesWithMime
-                    / (double) collectionReport.fileReport.numOfFilesProcessable);
-            collectionReport.resProxyReport.avgNumOfResourcesWithReference = (collectionReport.resProxyReport.totNumOfResourcesWithReference
-                    / (double) collectionReport.fileReport.numOfFilesProcessable);
-            collectionReport.resProxyReport.scorePercentage = collectionReport.resProxyReport.aggregatedScore
-                    / collectionReport.resProxyReport.aggregatedMaxScore;
-            collectionReport.resProxyReport.avgScore = (collectionReport.resProxyReport.aggregatedScore
-                    / (double) collectionReport.fileReport.numOfFilesProcessable);
-            // XmlPopulation
-            collectionReport.xmlPopulationReport.avgNumOfXMLElements = collectionReport.xmlPopulationReport.totNumOfXMLElements
-                    / (double) collectionReport.fileReport.numOfFilesProcessable;
-            collectionReport.xmlPopulationReport.avgNumOfXMLSimpleElements = collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements
-                    / (double) collectionReport.fileReport.numOfFilesProcessable;
-            collectionReport.xmlPopulationReport.avgNumOfXMLEmptyElements = (double) collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
-                    / collectionReport.fileReport.numOfFilesProcessable;
-
-            if (collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements > 0) {
-                collectionReport.xmlPopulationReport.avgRateOfPopulatedElements = (1.0
-                        - collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
-                        / (double) collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements);
-            }
-            collectionReport.xmlPopulationReport.scorePercentage = collectionReport.xmlPopulationReport.aggregatedScore
-                    / collectionReport.xmlPopulationReport.aggregatedMaxScore;
-            collectionReport.xmlPopulationReport.avgScore = (collectionReport.xmlPopulationReport.aggregatedScore
-                    / (double) collectionReport.fileReport.numOfFilesProcessable);
-            // xmlvalidity
-            collectionReport.xmlValidityReport.scorePercentage = collectionReport.xmlValidityReport.aggregatedScore
-                    / collectionReport.xmlValidityReport.aggregatedMaxScore;
-            collectionReport.xmlValidityReport.avgScore = (collectionReport.xmlValidityReport.aggregatedScore
-                    / (double) collectionReport.fileReport.numOfFilesProcessable);
-            // facet
-            collectionReport.facetReport.facets
-                    .forEach(facet -> facet.avgCoverage = facet.count / (double) collectionReport.fileReport.numOfFilesProcessable);
-            collectionReport.facetReport.percCoverageNonZero = (double) collectionReport.facetReport.facets.stream()
-                    .filter(facet -> facet.count > 0).count() / collectionReport.facetReport.facets.size();
-            collectionReport.facetReport.scorePercentage = collectionReport.facetReport.aggregatedScore
-                    / collectionReport.facetReport.aggregatedMaxScore;
-            collectionReport.facetReport.avgScore = (collectionReport.facetReport.aggregatedScore
-                    / (double) collectionReport.fileReport.numOfFilesProcessable);
-            // linkchecker
-            collectionReport.linkcheckerReport.avgNumOfLinks = collectionReport.linkcheckerReport.totNumOfLinks
-                    / (double) collectionReport.fileReport.numOfFilesProcessable;
-            collectionReport.linkcheckerReport.avgNumOfUniqueLinks = collectionReport.linkcheckerReport.totNumOfUniqueLinks
-                    / (double) collectionReport.fileReport.numOfFilesProcessable;
-            collectionReport.linkcheckerReport.maxRespTime = collectionReport.linkcheckerReport.statistics.stream()
-                    .filter(statistics -> statistics.maxRespTime != null).mapToLong(statistics -> statistics.maxRespTime)
-                    .max().orElse(0);
-            if (collectionReport.linkcheckerReport.totNumOfLinksWithDuration > 0) {
-                collectionReport.linkcheckerReport.avgRespTime = collectionReport.linkcheckerReport.statistics.stream()
-                        .filter(statistics -> statistics.avgRespTime != null)
-                        .mapToDouble(statistics -> statistics.avgRespTime * statistics.count).sum()
-                        / (double) collectionReport.linkcheckerReport.totNumOfLinksWithDuration;
-            }
-            collectionReport.linkcheckerReport.scorePercentage = collectionReport.linkcheckerReport.aggregatedScore
-                    / collectionReport.linkcheckerReport.aggregatedMaxScore;
-            //collection
-            collectionReport.avgScore = collectionReport.aggregatedScore
-                    / (double) collectionReport.fileReport.numOfFilesProcessable;
-
-            // add profileUsage
-            this.profileUsage.forEach((k,v) -> this.ctx.getBean(CurationModule.class)
-                                                    .processCMDProfile(k)
-                                                    .collectionUsage
-                                                    .add(new CMDProfileReport.CollectionUsage(collectionReport.fileReport.provider, v.get())));
         }
     }
 }

@@ -121,14 +121,17 @@ public class CurationApp {
                 final AllLinkcheckerReport allLinkcheckerReport = new AllLinkcheckerReport();
                 final CollectionHistoryReport collectionHistoryReport = new CollectionHistoryReport();
 
-                conf.getDirectory().getIn().forEach(inPath -> {
-                    try {
-                        processCollection(inPath, allCollectionReport, allLinkcheckerReport);
-                    }
-                    catch (MalFunctioningProcessorException e) {
-                        throw new RuntimeException(e);
-                    }
+                Collection<CollectionReport> collectionReports = curation.processCollectionSet(conf.getDirectory().getIn());
+
+                collectionReports.forEach(collectionReport -> {
+
+                    allCollectionReport.addReport(collectionReport);
+                    allLinkcheckerReport.addReport(collectionReport);
+
+                    storage.saveReport(collectionReport, CurationEntityType.COLLECTION, true);
+
                 });
+
 
                 // remove old reports
                 if (conf.getPurgeReportAfter() > 0) {

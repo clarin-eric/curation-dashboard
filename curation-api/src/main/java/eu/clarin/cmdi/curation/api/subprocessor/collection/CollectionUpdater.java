@@ -2,79 +2,31 @@ package eu.clarin.cmdi.curation.api.subprocessor.collection;
 
 import eu.clarin.cmdi.curation.api.CurationModule;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
-import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
-import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
-import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
-import eu.clarin.linkchecker.persistence.repository.UrlRepository;
-import eu.clarin.linkchecker.persistence.utils.Category;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.stream.Stream;
 
 @Slf4j
 @Component
 public class CollectionUpdater {
 
-    private final ApplicationContext ctx;
-    private final AggregatedStatusRepository aRep;
-    private final UrlRepository uRep;
+    private final ApplicationContext applicationContext;
 
-    public CollectionUpdater(ApplicationContext ctx, AggregatedStatusRepository aRep, UrlRepository uRep) {
-        this.ctx = ctx;
-        this.aRep = aRep;
-        this.uRep = uRep;
+    public CollectionUpdater(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
+
+
     @Transactional
     public void process(CollectionReport collectionReport) {
 
         collectionReport.creationTime = LocalDateTime.now();
 
-        collectionReport.linkcheckerReport = new LinkcheckerReport();
 
-        // lincheckerReport
-
-        try (Stream<AggregatedStatus> stream = aRep.findAllByProvidergroupName(collectionReport.getName())) {
-
-            stream.forEach(categoryStats -> {
-                LinkcheckerReport.Statistics xmlStatistics = new LinkcheckerReport.Statistics(categoryStats.getCategory());
-                xmlStatistics.avgRespTime = categoryStats.getAvgDuration();
-                xmlStatistics.maxRespTime = categoryStats.getMaxDuration();
-                xmlStatistics.count = categoryStats.getNumberId();
-                collectionReport.linkcheckerReport.totNumOfCheckedLinks += categoryStats.getNumberId().intValue();
-                collectionReport.linkcheckerReport.totNumOfLinksWithDuration += categoryStats.getNumberDuration().intValue();
-
-                collectionReport.linkcheckerReport.statistics.add(xmlStatistics);
-            });
-        }
-        catch (IllegalArgumentException ex) {
-
-            log.error(ex.getMessage());
-
-        }
-        catch (Exception ex) {
-
-            log.error("couldn't get category statistics for provider group '{}' from database", collectionReport.getName(),
-                    ex);
-        }
-
-        collectionReport.linkcheckerReport.totNumOfLinks = (int) uRep
-                .countByProvidergroupName(collectionReport.getName());
-        collectionReport.linkcheckerReport.totNumOfUniqueLinks = (int) uRep
-                .countDistinctByProvidergroupName(collectionReport.getName());
-
-        if (collectionReport.linkcheckerReport.totNumOfCheckedLinks > 0) {
-            collectionReport.linkcheckerReport.statistics.stream().filter(statistics -> statistics.category == Category.Ok)
-                    .findFirst().ifPresent(
-                            statistics -> collectionReport.linkcheckerReport.ratioOfValidLinks = statistics.count
-                                    / (double) collectionReport.linkcheckerReport.totNumOfCheckedLinks
-                    );
-
-        }
 
         if (collectionReport.linkcheckerReport.totNumOfLinks > 0) {
             collectionReport.linkcheckerReport.aggregatedMaxScore = collectionReport.fileReport.numOfFilesProcessable
@@ -108,7 +60,7 @@ public class CollectionUpdater {
             collectionReport.linkcheckerReport.avgNumOfUniqueLinks = collectionReport.linkcheckerReport.totNumOfUniqueLinks
                     / (double) collectionReport.fileReport.numOfFilesProcessable;
             collectionReport.linkcheckerReport.maxRespTime = collectionReport.linkcheckerReport.statistics.stream()
-                    .filter(statistics -> statistics.maxRespTime != null).mapToLong(statistics -> statistics.maxRespTime)
+                    .filter(statistics -> statistics.maxRespTime != null).mapToInt(statistics -> statistics.maxRespTime)
                     .max().orElse(0);
             if (collectionReport.linkcheckerReport.totNumOfLinksWithDuration > 0) {
                 collectionReport.linkcheckerReport.avgRespTime = collectionReport.linkcheckerReport.statistics.stream()
@@ -123,7 +75,7 @@ public class CollectionUpdater {
                     / (double) collectionReport.fileReport.numOfFilesProcessable;
 
             // add profileUsage
-            collectionReport.profileReport.profiles.forEach(profile -> this.ctx.getBean(CurationModule.class)
+            collectionReport.profileReport.profiles.forEach(profile -> this.applicationContext.getBean(CurationModule.class)
                 .processCMDProfile(profile.schemaLocation)
                 .collectionUsage
                 .add(new CMDProfileReport.CollectionUsage(collectionReport.fileReport.provider, profile.count))
