@@ -61,8 +61,8 @@ public class CollectionLinkchecker {
 
                 LinkcheckerReport report = this.linkcheckerReports.computeIfAbsent(urlCount.getProvidergroupName(), k -> new LinkcheckerReport());
 
-                report.totNumOfLinks = urlCount.getCount();
-                report.totNumOfUniqueLinks = urlCount.getDistinctCount();
+                report.totNumOfLinks = urlCount.getCount().intValue();
+                report.totNumOfUniqueLinks = urlCount.getDistinctCount().intValue();
             });
 
         }
