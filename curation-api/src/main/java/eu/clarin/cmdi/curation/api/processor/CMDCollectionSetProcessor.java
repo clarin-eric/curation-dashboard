@@ -12,6 +12,7 @@ import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 
 import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionLinkchecker;
 import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionUpdater;
+import eu.clarin.linkchecker.persistence.repository.UrlContextRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -35,6 +36,8 @@ public class CMDCollectionSetProcessor {
     private final ApplicationContext applicationContext;
     private final ChecksumCache checksumCache;
     private final CollectionReportCache collectionReportCache;
+
+    private final UrlContextRepository urlContextRepository;
 
 
     public Collection<CollectionReport> process(CMDCollectionSet cmdCollectionSet) {
@@ -76,6 +79,8 @@ public class CMDCollectionSetProcessor {
 
 
                 collectionReport = this.collectionReportCache.getCollectionReport(cmdCollection);
+                // setting ingestionDate to now, since we don't process the links
+                urlContextRepository.updateIngestionDate(collectionReport.getName());
 
             }
             else { //generate new report and cache it
