@@ -1,7 +1,7 @@
 package eu.clarin.cmdi.curation.api.processor;
 
-import eu.clarin.cmdi.curation.api.cache.ChecksumCache;
 import eu.clarin.cmdi.curation.api.cache.CollectionReportCache;
+import eu.clarin.cmdi.curation.api.cache.DirChecksumCache;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDCollectionSet;
@@ -34,7 +34,7 @@ public class CMDCollectionSetProcessor {
 
     private final ApiConfig apiConfig;
     private final ApplicationContext applicationContext;
-    private final ChecksumCache checksumCache;
+    private final DirChecksumCache dirChecksumCache;
     private final CollectionReportCache collectionReportCache;
 
     private final UrlContextRepository urlContextRepository;
@@ -75,20 +75,18 @@ public class CMDCollectionSetProcessor {
             CMDCollection cmdCollection = applicationContext.getBean(CMDCollection.class, path);
 
             // checksum approach activated, checksum hasn't changed and a previous collection report is available
-            if (apiConfig.isUseChecksum() && this.checksumCache.getChecksum(path) == this.checksumCache.getNewChecksum(path) && Objects.nonNull(this.collectionReportCache.getCollectionReport(cmdCollection))) {
-
+            if (apiConfig.isUseChecksum() && this.dirChecksumCache.getChecksum(path) == this.dirChecksumCache.getNewChecksum(path) && Objects.nonNull(this.collectionReportCache.getCollectionReport(cmdCollection))) {
 
                 collectionReport = this.collectionReportCache.getCollectionReport(cmdCollection);
                 // setting ingestionDate to now, since we don't process the links
                 urlContextRepository.updateIngestionDate(collectionReport.getName());
-
             }
             else { //generate new report and cache it
 
                 collectionReport = this.collectionReportCache.getNewCollectionReport(cmdCollection);
             }
         }
-        else { //
+        else { // parent directory of collection directories
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path)) {
                 directoryStream.forEach(dir -> {
                     try {
