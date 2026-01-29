@@ -15,11 +15,11 @@ import java.util.zip.Adler32;
 
 @Slf4j
 @Component
-public class ChecksumCache {
+public class DirChecksumCache {
 
     @Cacheable(value = "checksumCache", key ="#dir.toString()")
     public long getChecksum(Path dir) {
-        return -1;
+        return 0;
     }
 
     @CachePut(value = "checksumCache", key = "#dir.toString()")
@@ -45,6 +45,7 @@ public class ChecksumCache {
         }
         catch (IOException e) {
             log.error("can't create checksum from directory '{}'", dir, e);
+            return 0;
         }
         return adler32.getValue();
     }
