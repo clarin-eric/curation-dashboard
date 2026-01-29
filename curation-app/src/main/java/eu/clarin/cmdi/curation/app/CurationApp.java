@@ -335,49 +335,4 @@ public class CurationApp {
             log.info("end time: {}", LocalDateTime.now());
         };
     }
-
-    private void processCollection(Path path, AllCollectionReport allCollectionReport, AllLinkcheckerReport allLinkcheckerReport) throws MalFunctioningProcessorException {
-
-        if (isCollectionRoot(path)) {
-
-            log.info("start processing collection from path '{}'", path);
-
-            CollectionReport collectionReport = curation.processCollection(path);
-
-            allCollectionReport.addReport(collectionReport);
-            allLinkcheckerReport.addReport(collectionReport);
-
-            storage.saveReport(collectionReport, CurationEntityType.COLLECTION, true);
-
-            log.info("done processing collection from path '{}'", path);
-
-        } else {
-            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path)) {
-                directoryStream.forEach(dir -> {
-                    try {
-                        processCollection(dir, allCollectionReport, allLinkcheckerReport);
-                    }
-                    catch (MalFunctioningProcessorException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-            }
-            catch (IOException e) {
-                log.error("can't create directory stream for path '{}'", path);
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    private boolean isCollectionRoot(Path path) {
-
-        try (Stream<Path> stream = Files.walk(path, 1)) {
-            return stream.anyMatch(Files::isRegularFile);
-        }
-        catch (IOException e) {
-
-            log.error("can't walk through path '{}'", path);
-            throw new RuntimeException(e);
-        }
-    }
 }
