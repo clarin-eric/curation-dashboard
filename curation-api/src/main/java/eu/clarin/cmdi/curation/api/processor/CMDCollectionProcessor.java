@@ -5,7 +5,7 @@ import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionLinkchecker;
-import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionUpdater;
+import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionScoreCalculator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -34,7 +34,7 @@ public class CMDCollectionProcessor {
         CollectionReport collectionReport = this.collectionReportCache.getNewCollectionReport(collection);
 
         applicationContext.getBean(CollectionLinkchecker.class).process(collectionReport);
-        applicationContext.getBean(CollectionUpdater.class).process(collectionReport);
+        applicationContext.getBean(CollectionScoreCalculator.class).process(collectionReport);
 
         return collectionReport;
     }

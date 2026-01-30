@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @Component
-public class CollectionUpdater {
+public class CollectionScoreCalculator {
 
     private final ApplicationContext applicationContext;
 
-    public CollectionUpdater(ApplicationContext applicationContext) {
+    public CollectionScoreCalculator(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
@@ -25,8 +25,6 @@ public class CollectionUpdater {
     public void process(CollectionReport collectionReport) {
 
         collectionReport.creationTime = LocalDateTime.now();
-
-
 
         if (collectionReport.linkcheckerReport.totNumOfLinks > 0) {
             collectionReport.linkcheckerReport.aggregatedMaxScore = collectionReport.fileReport.numOfFilesProcessable

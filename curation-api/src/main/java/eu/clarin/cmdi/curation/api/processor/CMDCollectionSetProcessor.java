@@ -11,7 +11,7 @@ import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 
 import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionLinkchecker;
-import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionUpdater;
+import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionScoreCalculator;
 import eu.clarin.linkchecker.persistence.repository.UrlContextRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +42,7 @@ public class CMDCollectionSetProcessor {
 
     public Collection<CollectionReport> process(CMDCollectionSet cmdCollectionSet) {
 
-        final Map<String, CollectionReport> collectionReports = new HashMap<>();
+        final Collection<CollectionReport> collectionReports = new ArrayList<>();
 
         cmdCollectionSet.getPaths().forEach(path -> {
             try {
@@ -54,20 +54,21 @@ public class CMDCollectionSetProcessor {
         });
 
         final CollectionLinkchecker collectionLinkchecker = applicationContext.getBean(CollectionLinkchecker.class);
-        final CollectionUpdater  collectionUpdater = applicationContext.getBean(CollectionUpdater.class);
+        final CollectionScoreCalculator collectionScoreCalculator = applicationContext.getBean(CollectionScoreCalculator.class);
 
-        collectionReports.values().forEach(collectionReport -> {
+        // we iterate through all reports, add the link checker report and calculate aggregated scores
+        collectionReports.forEach(collectionReport -> {
 
             // adding linkchecker statistics
             collectionLinkchecker.process(collectionReport);
             // calculate sums and averages over all section-reports for collection report
-            collectionUpdater.process(collectionReport);
+            collectionScoreCalculator.process(collectionReport);
         });
 
-        return collectionReports.values();
+        return collectionReports;
     }
 
-    private void processCollection(Path path, Map<String, CollectionReport> collectionReports) throws MalFunctioningProcessorException {
+    private void processCollection(Path path, Collection<CollectionReport> collectionReports) throws MalFunctioningProcessorException {
 
         if (isCollectionRoot(path)) { // root directory of a collection
 
@@ -85,6 +86,7 @@ public class CMDCollectionSetProcessor {
 
                 collectionReport = this.collectionReportCache.getNewCollectionReport(cmdCollection);
             }
+            collectionReports.add(collectionReport);
         }
         else { // parent directory of collection directories
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path)) {

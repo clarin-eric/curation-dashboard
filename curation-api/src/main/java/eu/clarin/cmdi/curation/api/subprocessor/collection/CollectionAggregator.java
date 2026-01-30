@@ -159,17 +159,7 @@ public class CollectionAggregator {
             log.error("Error occurred while waiting for the thread pool to terminate.");
         }
 
-        // find all mdSelfLinks which appear in more than origin
-
-        this.mdSelfLinks.forEach((key, value) -> {
-            if (value.size() == 1) { //link is unique
-                collectionReport.headerReport.numWithUniqueMdSelflink++;
-            } else {//duplicate link
-                collectionReport.headerReport.duplicatedMDSelfLink.add(new MDSelfLink(key, value));
-            }
-        });
-        // adding score for unique selflinks
-        collectionReport.headerReport.aggregatedScore += collectionReport.headerReport.numWithUniqueMdSelflink;
+        calculateAverages(collectionReport);
     }
 
     /**
@@ -281,6 +271,116 @@ public class CollectionAggregator {
         }
         finally {
             this.lock.unlock();
+        }
+    }
+
+    private void calculateAverages(CollectionReport collectionReport) {
+        // find all mdSelfLinks which appear in more than origin
+
+        this.mdSelfLinks.forEach((key, value) -> {
+            if (value.size() == 1) { //link is unique
+                collectionReport.headerReport.numWithUniqueMdSelflink++;
+            }
+            else {//duplicate link
+                collectionReport.headerReport.duplicatedMDSelfLink.add(new MDSelfLink(key, value));
+            }
+        });
+        // adding score for unique selflinks
+        collectionReport.headerReport.aggregatedScore += collectionReport.headerReport.numWithUniqueMdSelflink;
+
+
+
+        collectionReport.fileReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.FileReport.maxScore
+                * collectionReport.fileReport.numOfFiles;
+
+        collectionReport.profileReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport.maxScore
+                * collectionReport.fileReport.numOfFilesProcessable;
+        // adding 1 to instance max score for uniqueness of MDselflink
+        collectionReport.headerReport.aggregatedMaxScore = (eu.clarin.cmdi.curation.api.report.instance.sec.InstanceHeaderReport.maxScore + 1)
+                * collectionReport.fileReport.numOfFilesProcessable;
+
+        collectionReport.resProxyReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.ResourceProxyReport.maxScore
+                * collectionReport.fileReport.numOfFilesProcessable;
+
+        collectionReport.xmlPopulationReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.XmlPopulationReport.maxScore
+                * collectionReport.fileReport.numOfFilesProcessable;
+
+        collectionReport.xmlValidityReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport.maxScore
+                * collectionReport.fileReport.numOfFilesProcessable;
+
+        collectionReport.facetReport.aggregatedMaxScore = eu.clarin.cmdi.curation.api.report.instance.sec.InstanceFacetReport.maxScore
+                * collectionReport.fileReport.numOfFilesProcessable;
+
+
+        if (collectionReport.fileReport.numOfFiles > 0) {
+            // file
+            collectionReport.fileReport.avgFileSize = collectionReport.fileReport.size
+                    / collectionReport.fileReport.numOfFiles;
+            collectionReport.fileReport.scorePercentage = collectionReport.fileReport.aggregatedScore
+                    / (double) collectionReport.fileReport.numOfFiles;
+            collectionReport.fileReport.avgScore = collectionReport.fileReport.aggregatedScore
+                    / collectionReport.fileReport.numOfFiles;
+            //profile
+            collectionReport.profileReport.totNumOfProfiles = collectionReport.profileReport.profiles.size();
+
+
+        }
+        if (collectionReport.fileReport.numOfFilesProcessable > 0) {
+            // file
+
+            //profile
+            collectionReport.profileReport.avgScore = collectionReport.profileReport.aggregatedScore
+                    / (double) collectionReport.fileReport.numOfFilesProcessable;
+            collectionReport.profileReport.scorePercentage = collectionReport.profileReport.aggregatedScore
+                    / collectionReport.profileReport.aggregatedMaxScore;
+
+            // header
+            collectionReport.headerReport.scorePercentage = collectionReport.headerReport.aggregatedScore
+                    / collectionReport.headerReport.aggregatedMaxScore;
+            collectionReport.headerReport.avgScore = (collectionReport.headerReport.aggregatedScore
+                    / (double) collectionReport.fileReport.numOfFilesProcessable);
+            // resProxy
+            collectionReport.resProxyReport.avgNumOfResources = (collectionReport.resProxyReport.totNumOfResources
+                    / (double) collectionReport.fileReport.numOfFilesProcessable);
+            collectionReport.resProxyReport.avgNumOfResourcesWithMime = (collectionReport.resProxyReport.totNumOfResourcesWithMime
+                    / (double) collectionReport.fileReport.numOfFilesProcessable);
+            collectionReport.resProxyReport.avgNumOfResourcesWithReference = (collectionReport.resProxyReport.totNumOfResourcesWithReference
+                    / (double) collectionReport.fileReport.numOfFilesProcessable);
+            collectionReport.resProxyReport.scorePercentage = collectionReport.resProxyReport.aggregatedScore
+                    / collectionReport.resProxyReport.aggregatedMaxScore;
+            collectionReport.resProxyReport.avgScore = (collectionReport.resProxyReport.aggregatedScore
+                    / (double) collectionReport.fileReport.numOfFilesProcessable);
+            // XmlPopulation
+            collectionReport.xmlPopulationReport.avgNumOfXMLElements = collectionReport.xmlPopulationReport.totNumOfXMLElements
+                    / (double) collectionReport.fileReport.numOfFilesProcessable;
+            collectionReport.xmlPopulationReport.avgNumOfXMLSimpleElements = collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements
+                    / (double) collectionReport.fileReport.numOfFilesProcessable;
+            collectionReport.xmlPopulationReport.avgNumOfXMLEmptyElements = (double) collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
+                    / collectionReport.fileReport.numOfFilesProcessable;
+
+            if (collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements > 0) {
+                collectionReport.xmlPopulationReport.avgRateOfPopulatedElements = (1.0
+                        - collectionReport.xmlPopulationReport.totNumOfXMLEmptyElements
+                        / (double) collectionReport.xmlPopulationReport.totNumOfXMLSimpleElements);
+            }
+            collectionReport.xmlPopulationReport.scorePercentage = collectionReport.xmlPopulationReport.aggregatedScore
+                    / collectionReport.xmlPopulationReport.aggregatedMaxScore;
+            collectionReport.xmlPopulationReport.avgScore = (collectionReport.xmlPopulationReport.aggregatedScore
+                    / (double) collectionReport.fileReport.numOfFilesProcessable);
+            // xmlvalidity
+            collectionReport.xmlValidityReport.scorePercentage = collectionReport.xmlValidityReport.aggregatedScore
+                    / collectionReport.xmlValidityReport.aggregatedMaxScore;
+            collectionReport.xmlValidityReport.avgScore = (collectionReport.xmlValidityReport.aggregatedScore
+                    / (double) collectionReport.fileReport.numOfFilesProcessable);
+            // facet
+            collectionReport.facetReport.facets
+                    .forEach(facet -> facet.avgCoverage = facet.count / (double) collectionReport.fileReport.numOfFilesProcessable);
+            collectionReport.facetReport.percCoverageNonZero = (double) collectionReport.facetReport.facets.stream()
+                    .filter(facet -> facet.count > 0).count() / collectionReport.facetReport.facets.size();
+            collectionReport.facetReport.scorePercentage = collectionReport.facetReport.aggregatedScore
+                    / collectionReport.facetReport.aggregatedMaxScore;
+            collectionReport.facetReport.avgScore = (collectionReport.facetReport.aggregatedScore
+                    / (double) collectionReport.fileReport.numOfFilesProcessable);
         }
     }
 }
