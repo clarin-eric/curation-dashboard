@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.api.subprocessor.collection;
 
-import eu.clarin.cmdi.curation.api.CurationModule;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
@@ -8,7 +7,6 @@ import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport.RecordDetail;
 import eu.clarin.cmdi.curation.api.report.collection.sec.FacetReport.FacetCollectionStruct;
 import eu.clarin.cmdi.curation.api.report.collection.sec.HeaderReport.MDSelfLink;
-import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport.Statistics;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ProfileReport.Profile;
 import eu.clarin.cmdi.curation.api.report.collection.sec.ResProxyReport.InvalidReference;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
@@ -30,7 +28,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Stream;
 
 /**
  * The type Collection aggregator.

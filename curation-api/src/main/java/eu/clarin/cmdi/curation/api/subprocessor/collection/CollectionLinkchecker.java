@@ -1,6 +1,5 @@
 package eu.clarin.cmdi.curation.api.subprocessor.collection;
 
-import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
@@ -10,18 +9,12 @@ import eu.clarin.linkchecker.persistence.repository.UrlRepository;
 import eu.clarin.linkchecker.persistence.utils.Category;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -64,7 +57,9 @@ public class CollectionLinkchecker {
                     statistic.count = aggregatedStatus.getNumberId();
                     statistic.nonNullCount = aggregatedStatus.getNumberDuration();
 
-                    this.linkcheckerReports.computeIfAbsent(aggregatedStatus.getProvidergroupName(), k -> new LinkcheckerReport()).statistics.add(statistic);
+                    LinkcheckerReport linkcheckerReport = this.linkcheckerReports.computeIfAbsent(aggregatedStatus.getProvidergroupName(), k -> new LinkcheckerReport());
+                    linkcheckerReport.statistics.add(statistic);
+                    linkcheckerReport.totNumOfCheckedLinks += statistic.count;
                 });
             }
 
@@ -72,24 +67,21 @@ public class CollectionLinkchecker {
 
                 stream.forEach(urlCount -> {
 
-                    LinkcheckerReport report = this.linkcheckerReports.computeIfAbsent(urlCount.getProvidergroupName(), k -> new LinkcheckerReport());
+                    LinkcheckerReport linkcheckerReport = this.linkcheckerReports.computeIfAbsent(urlCount.getProvidergroupName(), k -> new LinkcheckerReport());
 
-                    report.totNumOfLinks = urlCount.getCount().intValue();
-                    report.totNumOfUniqueLinks = urlCount.getDistinctCount().intValue();
+                    linkcheckerReport.totNumOfLinks = urlCount.getCount().intValue();
+                    linkcheckerReport.totNumOfUniqueLinks = urlCount.getDistinctCount().intValue();
+                    // calculating the ratio of valid links
+                    if (linkcheckerReport.totNumOfCheckedLinks > 0) {
+                        linkcheckerReport.statistics.stream().filter(statistics -> statistics.category == Category.Ok)
+                            .findFirst()
+                            .ifPresent(
+                        statistics -> linkcheckerReport.ratioOfValidLinks = statistics.count
+                                / (double) linkcheckerReport.totNumOfCheckedLinks
+                            );
+                    }
                 });
             }
-
-            this.linkcheckerReports.values().forEach(linkcheckerReport -> {
-
-                if (linkcheckerReport.totNumOfCheckedLinks > 0) {
-                    linkcheckerReport.statistics.stream().filter(statistics -> statistics.category == Category.Ok)
-                            .findFirst().ifPresent(
-                                    statistics -> linkcheckerReport.ratioOfValidLinks = statistics.count
-                                            / (double) linkcheckerReport.totNumOfCheckedLinks
-                            );
-
-                }
-            });
         });
     }
 
