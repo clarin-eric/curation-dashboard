@@ -1,7 +1,6 @@
 package eu.clarin.cmdi.curation.api.cache;
 
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
-import eu.clarin.cmdi.curation.api.processor.CMDCollectionProcessor;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionAggregator;
 import lombok.extern.slf4j.Slf4j;
