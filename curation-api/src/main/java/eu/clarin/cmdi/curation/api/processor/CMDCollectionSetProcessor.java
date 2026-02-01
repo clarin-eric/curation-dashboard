@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -77,6 +78,7 @@ public class CMDCollectionSetProcessor {
             if (apiConfig.isUseChecksum() && this.dirChecksumCache.getChecksum(path) == this.dirChecksumCache.getNewChecksum(path) && Objects.nonNull(this.collectionReportCache.getCollectionReport(cmdCollection))) {
                 log.info("collection directory hasn't changed - using cashed collection report for collection {}", path.toString());
                 collectionReport = this.collectionReportCache.getCollectionReport(cmdCollection);
+                collectionReport.creationTime = LocalDateTime.now();
                 // setting ingestionDate to now, since we don't process the links
                 urlContextRepository.updateIngestionDate(collectionReport.getName());
             }

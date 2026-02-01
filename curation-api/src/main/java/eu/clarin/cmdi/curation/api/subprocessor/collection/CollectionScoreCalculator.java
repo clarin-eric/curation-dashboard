@@ -24,8 +24,6 @@ public class CollectionScoreCalculator {
     @Transactional
     public void process(CollectionReport collectionReport) {
 
-        collectionReport.creationTime = LocalDateTime.now();
-
         if (collectionReport.linkcheckerReport.totNumOfLinks > 0) {
             collectionReport.linkcheckerReport.aggregatedMaxScore = collectionReport.fileReport.numOfFilesProcessable
                     * collectionReport.linkcheckerReport.totNumOfCheckedLinks / (double) collectionReport.linkcheckerReport.totNumOfLinks;
