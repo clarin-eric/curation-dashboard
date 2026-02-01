@@ -121,6 +121,7 @@ public class CurationApp {
                 final AllLinkcheckerReport allLinkcheckerReport = new AllLinkcheckerReport();
                 final CollectionHistoryReport collectionHistoryReport = new CollectionHistoryReport();
 
+                log.info("start processing collections at time: {}", LocalDateTime.now());
                 Collection<CollectionReport> collectionReports = curation.processCollectionSet(conf.getDirectory().getIn());
 
                 collectionReports.forEach(collectionReport -> {
@@ -131,7 +132,7 @@ public class CurationApp {
                     storage.saveReport(collectionReport, CurationEntityType.COLLECTION, true);
 
                 });
-
+                log.info("finished processing collections at time: {}", LocalDateTime.now());
 
                 // remove old reports
                 if (conf.getPurgeReportAfter() > 0) {

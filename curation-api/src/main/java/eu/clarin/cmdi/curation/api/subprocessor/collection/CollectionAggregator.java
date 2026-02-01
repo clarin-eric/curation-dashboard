@@ -102,15 +102,17 @@ public class CollectionAggregator {
 
                     collectionReport.fileReport.size += attrs.size();
 
-                    final CMDInstance instance = ctx.getBean(CMDInstance.class, filePath, attrs.size(),
-                            collectionReport.fileReport.provider);
+                    final CMDInstance cmdInstance = ctx.getBean(CMDInstance.class);
+                    cmdInstance.setPath(filePath);
+                    cmdInstance.setSize(attrs.size());
+                    cmdInstance.setProvidergroupName(collectionReport.fileReport.provider);
 
                     executor.execute(() -> {
 
 
                         CMDInstanceReport instanceReport;
                         try {
-                            instanceReport = instance.generateReport();
+                            instanceReport = cmdInstance.generateReport();
                         }
                         catch (MalFunctioningProcessorException e) {
                             executor.shutdownNow();

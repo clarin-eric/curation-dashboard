@@ -3,7 +3,7 @@ package eu.clarin.cmdi.curation.api.entity;
 import eu.clarin.cmdi.curation.api.processor.CMDCollectionSetProcessor;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +12,12 @@ import java.util.Collection;
 
 @Scope("prototype")
 @Component
+@RequiredArgsConstructor
 @Data
 public class CMDCollectionSet {
 
-    @Autowired
-    private CMDCollectionSetProcessor processor;
+
+    private final CMDCollectionSetProcessor processor;
 
     private Collection<Path> paths;
 

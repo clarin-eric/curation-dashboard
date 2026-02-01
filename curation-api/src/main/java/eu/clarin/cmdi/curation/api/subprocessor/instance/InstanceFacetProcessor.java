@@ -22,9 +22,11 @@ import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -38,22 +40,22 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CMDInstanceReport> {
 
-   @Autowired
-   private ApiConfig conf;
-   @Autowired
-   private CRService crService;
+   private final ApiConfig conf;
+
+   private final ApplicationContext applicationContext;
+
+   private final CRService crService;
    /**
     * The Profile report cache.
     */
-   @Autowired
-   ProfileReportCache profileReportCache;
+   private final ProfileReportCache profileReportCache;
    /**
     * The Xpath value service.
     */
-   @Autowired
-   XPathValueService xpathValueService;
+   private final XPathValueService xpathValueService;
 
    /**
     * Process.
@@ -76,8 +78,12 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
 
       instanceReport.facetReport = new InstanceFacetReport();
 
+      CMDProfile cmdProfile = applicationContext.getBean(CMDProfile.class);
+      cmdProfile.setSchemaLocation(instanceReport.profileHeaderReport.getSchemaLocation());
+      cmdProfile.setCacheable(true);
+
       profileReportCache
-            .getProfileReport(new CMDProfile(instanceReport.profileHeaderReport.getSchemaLocation(), true)).facetReport.coverages
+            .getProfileReport(cmdProfile).facetReport.coverages
             .forEach(profileCoverage -> instanceReport.facetReport.coverages
                   .add(new Coverage(profileCoverage.name, profileCoverage.coveredByProfile)));
 

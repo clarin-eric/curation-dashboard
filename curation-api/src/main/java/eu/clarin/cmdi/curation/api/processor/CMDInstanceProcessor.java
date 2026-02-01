@@ -6,6 +6,7 @@ import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.subprocessor.instance.*;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -15,10 +16,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
+@RequiredArgsConstructor
 public class CMDInstanceProcessor {
    
-   @Autowired
-   private ApplicationContext ctx;
+
+   private final ApplicationContext ctx;
    
    private Collection<AbstractSubprocessor<CMDInstance,CMDInstanceReport>> subprocessors;
 

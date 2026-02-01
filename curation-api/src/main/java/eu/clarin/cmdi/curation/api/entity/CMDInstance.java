@@ -7,9 +7,11 @@ import eu.clarin.cmdi.vlo.importer.CMDIData;
 import eu.clarin.cmdi.vlo.importer.CMDIRecordProcessor;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import eu.clarin.cmdi.vlo.importer.solr.DocumentStoreException;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +23,14 @@ import java.util.Optional;
 
 @Component
 @Scope(value="prototype")
+@RequiredArgsConstructor
 @Data
 @Slf4j
 public class CMDInstance {
+
+    private final CMDInstanceProcessor processor;
+
+    private final CMDIRecordProcessor<Map<String, List<ValueSet>>> cmdiRecordProcessor;
 
    private Optional<CMDIData<Map<String, List<ValueSet>>>> cmdiData;
 
@@ -32,25 +39,6 @@ public class CMDInstance {
    private String url;
    
    private String providergroupName;
-   
-   @Autowired
-   private CMDInstanceProcessor processor;
-   @Autowired
-   private CMDIRecordProcessor<Map<String, List<ValueSet>>> cmdiRecordProcessor;
-
-   public CMDInstance(Path path) {
-      
-      this.path = path;
-
-   }
-
-   public CMDInstance(Path path, long size, String providergroupName) {
-      
-      this.path = path;
-      this.size = size;
-      this.providergroupName = providergroupName;
-   
-   }
    
    public Optional<CMDIData<Map<String, List<ValueSet>>>> getCmdiData() {
       
@@ -75,6 +63,5 @@ public class CMDInstance {
    public CMDInstanceReport generateReport() throws MalFunctioningProcessorException {
       
       return processor.process(this);
-   
    }
 }

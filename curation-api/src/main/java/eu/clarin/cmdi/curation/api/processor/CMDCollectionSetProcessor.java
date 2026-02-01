@@ -27,7 +27,6 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Component
-@Scope(value = "prototype")
 @Slf4j
 @RequiredArgsConstructor
 public class CMDCollectionSetProcessor {
@@ -38,7 +37,6 @@ public class CMDCollectionSetProcessor {
     private final CollectionReportCache collectionReportCache;
 
     private final UrlContextRepository urlContextRepository;
-
 
     public Collection<CollectionReport> process(CMDCollectionSet cmdCollectionSet) {
 
@@ -73,11 +71,12 @@ public class CMDCollectionSetProcessor {
         if (isCollectionRoot(path)) { // root directory of a collection
 
             CollectionReport collectionReport;
-            CMDCollection cmdCollection = applicationContext.getBean(CMDCollection.class, path);
+            CMDCollection cmdCollection = applicationContext.getBean(CMDCollection.class);
+            cmdCollection.setPath(path);
 
             // checksum approach activated, checksum hasn't changed and a previous collection report is available
             if (apiConfig.isUseChecksum() && this.dirChecksumCache.getChecksum(path) == this.dirChecksumCache.getNewChecksum(path) && Objects.nonNull(this.collectionReportCache.getCollectionReport(cmdCollection))) {
-
+                log.info("collection directory hasn't changed - using cashed collection report for collection {}", path.toString());
                 collectionReport = this.collectionReportCache.getCollectionReport(cmdCollection);
                 // setting ingestionDate to now, since we don't process the links
                 urlContextRepository.updateIngestionDate(collectionReport.getName());

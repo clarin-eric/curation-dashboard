@@ -8,10 +8,12 @@ logging:
             max-file-size: 10MB
    level:
       # generally we only want to log errors
-      root: ERROR
+      root: error
       # only CurationApp we're logging in info level to see the progress in processing
-      eu.clarin.cmdi.curation.app.CurationApp: INFO
+      eu.clarin.cmdi.curation.app.CurationApp: info
       eu.clarin.cmdi.vlo.importer.mapping.FacetMappingFactory: off
+      eu.clarin.cmdi.curation.api.processor.CMDCollectionSetProcessor: info
+      eu.clarin.cmdi.curation.api.cache.CollectionReportCache: info
 spring:
    jackson:
       #only non empty properties are processed. Otherwise, default value from object mapping is taken
