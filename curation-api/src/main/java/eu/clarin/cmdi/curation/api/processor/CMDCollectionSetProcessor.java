@@ -42,9 +42,11 @@ public class CMDCollectionSetProcessor {
 
         final Collection<CollectionReport> collectionReports = new ArrayList<>();
 
+        final Set<String> cachedCollectionNames = new HashSet<>();
+
         cmdCollectionSet.getPaths().forEach(path -> {
             try {
-                processCollection(path, collectionReports);
+                processCollection(path, collectionReports, cachedCollectionNames);
             }
             catch (MalFunctioningProcessorException e) {
                 throw new RuntimeException(e);
@@ -63,10 +65,14 @@ public class CMDCollectionSetProcessor {
             collectionScoreCalculator.process(collectionReport);
         });
 
+        if(!cachedCollectionNames.isEmpty()) {
+            urlContextRepository.updateIngestionDate(cachedCollectionNames);
+        }
+
         return collectionReports;
     }
 
-    private void processCollection(Path path, Collection<CollectionReport> collectionReports) throws MalFunctioningProcessorException {
+    private void processCollection(Path path, Collection<CollectionReport> collectionReports, Set<String> cachedCollectionNames) throws MalFunctioningProcessorException {
 
         if (isCollectionRoot(path)) { // root directory of a collection
 
@@ -78,10 +84,11 @@ public class CMDCollectionSetProcessor {
             if (apiConfig.isUseChecksum() && this.dirChecksumCache.getChecksum(path) == this.dirChecksumCache.getNewChecksum(path) && Objects.nonNull(this.collectionReportCache.getCollectionReport(cmdCollection))) {
                 log.info("collection directory hasn't changed - using cashed collection report for collection {}", path.toString());
                 collectionReport = this.collectionReportCache.getCollectionReport(cmdCollection);
-                collectionReport.creationTime = LocalDateTime.now();
                 // setting ingestionDate to now, since we don't process the links
-                urlContextRepository.updateIngestionDate(collectionReport.getName());
-            }
+                collectionReport.creationTime = LocalDateTime.now();
+                // saving the name of the cached collection for later db bulk update
+                cachedCollectionNames.add(collectionReport.getName());
+           }
             else { //generate new report and cache it
 
                 collectionReport = this.collectionReportCache.getNewCollectionReport(cmdCollection);
@@ -92,7 +99,7 @@ public class CMDCollectionSetProcessor {
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path)) {
                 directoryStream.forEach(dir -> {
                     try {
-                        processCollection(dir, collectionReports);
+                        processCollection(dir, collectionReports, cachedCollectionNames);
                     }
                     catch (MalFunctioningProcessorException e) {
                         throw new RuntimeException(e);
