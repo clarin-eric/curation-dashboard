@@ -6,12 +6,14 @@ package eu.clarin.cmdi.curation.api.report.collection.sec;
 
 import jakarta.xml.bind.annotation.*;
 
+import java.io.Serializable;
+
 /**
  *
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XmlPopulationReport {
+public class XmlPopulationReport implements Serializable {
    @XmlAttribute
    public double aggregatedScore;
    @XmlAttribute

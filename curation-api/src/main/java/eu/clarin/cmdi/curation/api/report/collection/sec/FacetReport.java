@@ -8,6 +8,7 @@ import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -17,7 +18,7 @@ import java.util.Collection;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FacetReport {
+public class FacetReport implements Serializable {
    @XmlAttribute
    public double aggregatedScore;
    @XmlAttribute
@@ -38,7 +39,7 @@ public class FacetReport {
    @XmlAccessorType(XmlAccessType.FIELD)
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public static class FacetCollectionStruct { 
+   public static class FacetCollectionStruct implements Serializable {
       @XmlAttribute
       public final String name;
       @XmlAttribute

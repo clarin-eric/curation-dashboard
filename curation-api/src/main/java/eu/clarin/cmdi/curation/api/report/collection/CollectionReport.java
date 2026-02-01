@@ -9,6 +9,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +20,7 @@ import java.util.Collection;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CollectionReport implements NamedReport{
+public class CollectionReport implements NamedReport, Serializable {
    
    @XmlAttribute
    public double aggregatedScore;
@@ -80,7 +81,7 @@ public class CollectionReport implements NamedReport{
    @XmlRootElement
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public static class RecordDetail {
+   public static class RecordDetail implements Serializable {
       @XmlAttribute
       private final String origin;
       @XmlElement(name = "detail")

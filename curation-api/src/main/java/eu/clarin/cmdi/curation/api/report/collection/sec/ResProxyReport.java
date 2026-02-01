@@ -8,6 +8,7 @@ import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -16,7 +17,7 @@ import java.util.Collection;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ResProxyReport {
+public class ResProxyReport implements Serializable {
    @XmlAttribute
    public double aggregatedScore;
    @XmlAttribute
@@ -45,7 +46,7 @@ public class ResProxyReport {
    @XmlAccessorType(XmlAccessType.FIELD)  
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public static class InvalidReference{
+   public static class InvalidReference implements Serializable {
       @XmlAttribute
       public final String origin;
       @XmlElementWrapper(name = "references")

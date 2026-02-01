@@ -6,13 +6,15 @@ package eu.clarin.cmdi.curation.api.report.collection.sec;
 
 import jakarta.xml.bind.annotation.*;
 
+import java.io.Serializable;
+
 
 /**
  *
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FileReport {
+public class FileReport implements Serializable {
    @XmlAttribute
    public double aggregatedScore;
    @XmlAttribute
@@ -39,5 +41,4 @@ public class FileReport {
    public long maxFileSize;
    @XmlElement
    public long avgFileSize;
-   
 }

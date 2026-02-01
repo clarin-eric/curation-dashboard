@@ -10,6 +10,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  *
  */
@@ -17,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @XmlAccessorType(XmlAccessType.FIELD)
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
-public class Detail {
+public class Detail implements Serializable {
    public final Severity severity;
    public final String segment;
    public final String message;

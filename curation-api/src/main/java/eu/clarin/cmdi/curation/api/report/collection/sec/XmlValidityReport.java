@@ -6,13 +6,15 @@ package eu.clarin.cmdi.curation.api.report.collection.sec;
 
 import jakarta.xml.bind.annotation.*;
 
+import java.io.Serializable;
+
 
 /**
  *
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XmlValidityReport {
+public class XmlValidityReport implements Serializable {
    @XmlAttribute
    public double aggregatedScore;
    @XmlAttribute
@@ -23,5 +25,4 @@ public class XmlValidityReport {
    public double avgScore;
    @XmlElement
    public int totNumOfValidRecords;
-
 }

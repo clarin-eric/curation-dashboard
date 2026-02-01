@@ -8,6 +8,7 @@ import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -16,7 +17,7 @@ import java.util.Collection;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProfileReport {
+public class ProfileReport implements Serializable {
    @XmlAttribute
    public double aggregatedScore;
    @XmlAttribute
@@ -29,17 +30,15 @@ public class ProfileReport {
    @XmlElement
    public int totNumOfProfiles;
    
-   
    @XmlElementWrapper(name = "profiles")
    @XmlElement(name = "profile")
-   public Collection<Profile> profiles = new ArrayList<Profile>();  
-
+   public Collection<Profile> profiles = new ArrayList<Profile>();
 
    @XmlRootElement
    @XmlAccessorType(XmlAccessType.FIELD)
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public static class Profile {
+   public static class Profile implements Serializable {
       @XmlAttribute
       public final String schemaLocation;
       @XmlAttribute

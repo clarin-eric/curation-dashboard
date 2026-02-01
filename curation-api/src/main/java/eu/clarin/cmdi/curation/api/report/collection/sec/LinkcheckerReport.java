@@ -9,6 +9,7 @@ import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -18,7 +19,7 @@ import java.util.TreeSet;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LinkcheckerReport {
+public class LinkcheckerReport implements Serializable {
    @XmlAttribute
    public double aggregatedScore;
    @XmlAttribute
@@ -52,7 +53,7 @@ public class LinkcheckerReport {
    @XmlAccessorType(XmlAccessType.FIELD)
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public static class Statistics implements Comparable<Statistics> {      
+   public static class Statistics implements Comparable<Statistics>, Serializable {
       
       @XmlAttribute
       public long count;

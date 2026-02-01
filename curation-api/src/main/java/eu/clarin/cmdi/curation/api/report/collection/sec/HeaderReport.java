@@ -8,6 +8,7 @@ import jakarta.xml.bind.annotation.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -17,7 +18,7 @@ import java.util.Collection;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HeaderReport {
+public class HeaderReport implements Serializable {
    @XmlAttribute
    public double aggregatedScore;
    @XmlAttribute
@@ -46,7 +47,7 @@ public class HeaderReport {
    @XmlRootElement
    @RequiredArgsConstructor
    @NoArgsConstructor(force = true)
-   public static class MDSelfLink {
+   public static class MDSelfLink implements Serializable {
       
       @XmlElement
       public final String mdSelfLink;
@@ -55,5 +56,4 @@ public class HeaderReport {
       @XmlElement(name = "origin")
       public final Collection<String> origin;
    }
-
 }
