@@ -9,7 +9,6 @@ import eu.clarin.linkchecker.persistence.repository.UrlRepository;
 import eu.clarin.linkchecker.persistence.utils.Category;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,7 +21,6 @@ import java.util.stream.Stream;
 @Slf4j
 @Component
 @Scope("prototype")
-@Lazy
 public class CollectionLinkchecker {
 
     private final PlatformTransactionManager transactionManager;
@@ -86,7 +84,7 @@ public class CollectionLinkchecker {
     }
 
     public void process(CollectionReport collectionReport) {
-
-        collectionReport.linkcheckerReport = this.linkcheckerReports.get(collectionReport.getName());
+        // if a collection has no link we must create an empty LinkcheckerReport
+        collectionReport.linkcheckerReport = this.linkcheckerReports.computeIfAbsent(collectionReport.getName(), k -> new LinkcheckerReport());
     }
 }
