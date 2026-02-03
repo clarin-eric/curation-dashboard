@@ -15,12 +15,13 @@ import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.model.Status;
+import eu.clarin.linkchecker.persistence.model.StatusDetail;
 import eu.clarin.linkchecker.persistence.repository.StatusRepository;
+import eu.clarin.linkchecker.persistence.utils.Category;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 
@@ -165,7 +169,7 @@ public class CurationModuleImpl implements CurationModule {
     @Override
     public Collection<CollectionReport> processCollectionSet(Collection<Path> paths) throws MalFunctioningProcessorException {
 
-        CMDCollectionSet  cmdCollectionSet = ctx.getBean(CMDCollectionSet.class);
+        CMDCollectionSet cmdCollectionSet = ctx.getBean(CMDCollectionSet.class);
         cmdCollectionSet.setPaths(paths);
 
         return cmdCollectionSet.generateReport();
@@ -181,68 +185,78 @@ public class CurationModuleImpl implements CurationModule {
     public Collection<LinkcheckerDetailReport> getLinkcheckerDetailReports() {
 
         final Collection<LinkcheckerDetailReport> linkcheckerDetailReports = new ArrayList<LinkcheckerDetailReport>();
-        final LinkcheckerDetailReport overallReport = new LinkcheckerDetailReport("Overall");
-        linkcheckerDetailReports.add(overallReport);
 
         final LinkcheckerDetailReport[] lastLinkcheckerDetailReport = new LinkcheckerDetailReport[1];
         final CategoryReport[] lastCategoryReport = new CategoryReport[1];
+        final StatusDetailReport[] lastStatusDetailReport = new StatusDetailReport[1];
 
 
         try (Stream<AggregatedStatus> aStream = sRep.findAggregatedStatus()) {
-
+            // we iterate through a list grouped by providergroup-name and category
             aStream.forEach(aStatus -> {
 
-                try (Stream<Status> sStream = sRep.findAllByProvidergroupAndCategory(aStatus.getProvidergroupName(), aStatus.getCategory())) {
+                if(lastStatusDetailReport[0] == null || !lastLinkcheckerDetailReport[0].getName().equals(aStatus.getProvidergroupName())) {
 
-                    sStream.limit(31).forEach(status -> {
+                    lastLinkcheckerDetailReport[0] = new LinkcheckerDetailReport(aStatus.getProvidergroupName());
+                    linkcheckerDetailReports.add(lastLinkcheckerDetailReport[0]);
+                }
 
-                        StatusDetailReport statusDetailReport = new StatusDetailReport(
-                                status.getUrl().getName(),
-                                status.getMethod(),
-                                status.getStatusCode(),
-                                status.getMessage(),
-                                status.getCheckingDate(),
-                                status.getContentType(),
-                                status.getContentLength(),
-                                status.getDuration(),
-                                status.getRedirectCount()
-                        );
+                if(lastCategoryReport[0] == null || !lastCategoryReport[0].getCategory().equals(aStatus.getCategory())) {
 
-                        status.getUrl().getUrlContexts().forEach(uc -> statusDetailReport.getContexts().add(new Context(uc.getContext().getOrigin(), uc.getExpectedMimeType())));
+                    lastCategoryReport[0] = new CategoryReport(aStatus.getCategory());
+                    lastLinkcheckerDetailReport[0].getCategoryReports().add(lastCategoryReport[0]);
+                }
+                // for each providergroup and category we get the 31 latest status results
+                try (Stream<StatusDetail> sdStream = sRep.findStatusDetail(aStatus.getProvidergroupName(), aStatus.getCategory())) {
 
+                    final AtomicInteger counter = new AtomicInteger();
 
-                        if (lastLinkcheckerDetailReport[0] == null || !lastLinkcheckerDetailReport[0].getName().equals(aStatus.getProvidergroupName())) {
+                    sdStream.takeWhile(statusDetail -> counter.get() < 32).forEach(statusDetail -> {
 
-                            lastLinkcheckerDetailReport[0] = new LinkcheckerDetailReport(aStatus.getProvidergroupName());
-                            lastCategoryReport[0] = null;
+                        if (lastStatusDetailReport[0] == null || !lastStatusDetailReport[0].getUrl().equals(statusDetail.getUrlname())) {
 
-                            linkcheckerDetailReports.add(lastLinkcheckerDetailReport[0]);
+                            counter.incrementAndGet();
+
+                            lastStatusDetailReport[0] = new StatusDetailReport(
+                                    statusDetail.getUrlname(),
+                                    statusDetail.getMethod(),
+                                    statusDetail.getStatusCode(),
+                                    statusDetail.getMessage(),
+                                    statusDetail.getCheckingDate(),
+                                    statusDetail.getContentType(),
+                                    statusDetail.getContentLength(),
+                                    statusDetail.getDuration(),
+                                    statusDetail.getRedirectCount()
+                            );
+
+                            lastCategoryReport[0].getStatusDetails().add(lastStatusDetailReport[0]);
+
                         }
 
-                        if (lastCategoryReport[0] == null || lastCategoryReport[0].getCategory() != aStatus.getCategory()) {
+                        lastStatusDetailReport[0].getContexts().add(new Context(statusDetail.getOrigin(), statusDetail.getExpectedMimeType()));
 
-                            lastCategoryReport[0] = new CategoryReport(aStatus.getCategory());
 
-                            lastLinkcheckerDetailReport[0].getCategoryReports().add(lastCategoryReport[0]);
-
-                            overallReport.getCategoryReports()
-                                    .stream()
-                                    .filter(report -> report.getCategory() == aStatus.getCategory())
-                                    .findFirst()
-                                    .orElseGet(() -> {
-                                        CategoryReport categoryReport = new CategoryReport(aStatus.getCategory());
-                                        overallReport.getCategoryReports().add(categoryReport);
-
-                                        return categoryReport;
-                                    })
-                                    .getStatusDetails()
-                                    .add(statusDetailReport);
-                        }
-
-                        lastCategoryReport[0].getStatusDetails().add(statusDetailReport);
                     });
                 }
             });
+
+            final LinkcheckerDetailReport overallReport = new LinkcheckerDetailReport("Overall");
+
+            final Map<Category, CategoryReport> categoryReports = new HashMap<Category, CategoryReport>();
+
+            linkcheckerDetailReports.forEach(linkcheckerDetailReport -> {
+                linkcheckerDetailReport.getCategoryReports().forEach(categoryReport -> {
+                    categoryReport.getStatusDetails().stream().limit(1).findFirst().ifPresent(statusDetail -> {
+                        categoryReports.computeIfAbsent(categoryReport.getCategory(), k -> {
+                            CategoryReport overallCategoryReport = new CategoryReport(categoryReport.getCategory());
+                            overallReport.getCategoryReports().add(overallCategoryReport);
+                            return new CategoryReport();
+                        }).getStatusDetails().add(statusDetail);
+                    });
+                });
+            });
+
+            linkcheckerDetailReports.add(overallReport);
         }
 
         return linkcheckerDetailReports;
