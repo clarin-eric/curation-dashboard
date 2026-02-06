@@ -121,7 +121,7 @@ public class CurationApp {
                 final AllLinkcheckerReport allLinkcheckerReport = new AllLinkcheckerReport();
                 final CollectionHistoryReport collectionHistoryReport = new CollectionHistoryReport();
 
-                log.info("start processing collections at time: {}", LocalDateTime.now());
+                log.info("start generating collection reports at time: {}", LocalDateTime.now());
                 Collection<CollectionReport> collectionReports = curation.processCollectionSet(conf.getDirectory().getIn());
 
                 collectionReports.forEach(collectionReport -> {
@@ -132,7 +132,7 @@ public class CurationApp {
                     storage.saveReport(collectionReport, CurationEntityType.COLLECTION, true);
 
                 });
-                log.info("finished processing collections at time: {}", LocalDateTime.now());
+                log.info("finished generating collection reports at time: {}", LocalDateTime.now());
 
                 // remove old reports
                 if (conf.getPurgeReportAfter() > 0) {
@@ -160,7 +160,7 @@ public class CurationApp {
                 storage.saveReport(collectionHistoryReport, CurationEntityType.COLLECTION, false);
 
                 // create charts
-                log.info("start generating linkchecker charts");
+                log.info("start generating linkchecker charts at time: {}", LocalDateTime.now());
                 final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
                 final Map<String, StackedAreaChart> charts = new HashMap<>();
@@ -261,7 +261,7 @@ public class CurationApp {
                     }
                 });
 
-                log.info("done generating linkchecker charts");
+                log.info("finished generating linkchecker charts at time: {}", LocalDateTime.now());
             }
             // it's important to process profiles after collections, to fill the collection usage section of the profiles
             // before they're printed out
@@ -271,9 +271,9 @@ public class CurationApp {
 
                 final Cache cache = this.cacheManager.getCache("profileReportCache");
 
-                crService.getPublicSchemaLocations().forEach(schemaLocation -> { //this is for the public profiles
+                log.info("start generating profile reports at time: {}", LocalDateTime.now());
 
-                    log.info("start processing public profile '{}'", schemaLocation);
+                crService.getPublicSchemaLocations().forEach(schemaLocation -> { //this is for the public profiles
 
                     CMDProfileReport profileReport = curation.processCMDProfile(schemaLocation);
 
@@ -284,7 +284,6 @@ public class CurationApp {
                     assert cache != null;
                     cache.evict(schemaLocation);
 
-                    log.info("done processing public profile '{}'", schemaLocation);
                 });
 
                 // now we have to do the same for the nonpublic profiles used by CMDI files
@@ -293,43 +292,43 @@ public class CurationApp {
 
                 it.forEachRemaining(entry -> {
 
-                    log.info("start processing non public profile '{}'", entry.getValue().headerReport.getSchemaLocation());
                     allProfileReport.addReport(entry.getValue());
 
                     storage.saveReport(entry.getValue(), CurationEntityType.PROFILE, false);
-                    log.info("done processing non public profile '{}'", entry.getValue().headerReport.getSchemaLocation());
                 });
 
                 storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);
+
+                log.info("finished generating profile reports at time: {}", LocalDateTime.now());
             }
 
             if ("all".equalsIgnoreCase(conf.getMode()) || "linkchecker".equalsIgnoreCase(conf.getMode())) {
 
-                log.info("start writing linkchecker detail reports");
+                log.info("start generating linkchecker detail reports at time: {}", LocalDateTime.now());
                 curation.getLinkcheckerDetailReports().forEach(report -> storage.saveReport(report, CurationEntityType.LINKCHECKER, false));
-                log.info("done writing linkchecker detail reports");
+                log.info("finished writing linkchecker detail reports at time: {}", LocalDateTime.now());
             }
 
             if ("all".equalsIgnoreCase(conf.getMode())) {
                 if (conf.getLinkDeactivationAfter() > 0) {
                     log.info("start deactivating links older than {} days", conf.getLinkDeactivationAfter());
                     linkService.deactivateLinksOlderThan(conf.getLinkDeactivationAfter());
-                    log.info("done deactivating links");
+                    log.info("finished deactivating links");
                 }
                 if (conf.getLinkDeletionAfter() > 0) {
                     log.info("start deleting links older than {} days", conf.getLinkDeletionAfter());
                     linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
-                    log.info("done deleting links");
+                    log.info("finished deleting links");
                 }
                 if (conf.getPurgeHistoryAfter() > 0) {
                     log.info("start purging history table from records checked before {} days", conf.getPurgeHistoryAfter());
                     linkService.purgeHistory(conf.getPurgeHistoryAfter());
-                    log.info("done purging history");
+                    log.info("finished purging history");
                 }
                 if (conf.getPurgeObsoleteAfter() > 0) {
                     log.info("start purging obsolete table from records checked before {} days", conf.getPurgeObsoleteAfter());
                     linkService.purgeObsolete(conf.getPurgeObsoleteAfter());
-                    log.info("done purging obsolete");
+                    log.info("finished purging obsolete");
                 }
             }
 
