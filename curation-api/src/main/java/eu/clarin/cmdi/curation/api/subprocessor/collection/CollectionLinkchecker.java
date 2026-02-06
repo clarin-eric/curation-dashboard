@@ -4,6 +4,7 @@ import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.model.UrlCount;
+import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
 import eu.clarin.linkchecker.persistence.repository.StatusRepository;
 import eu.clarin.linkchecker.persistence.repository.UrlRepository;
 import eu.clarin.linkchecker.persistence.utils.Category;
@@ -25,16 +26,16 @@ public class CollectionLinkchecker {
 
     private final PlatformTransactionManager transactionManager;
 
-    private final StatusRepository statusRepository;
-    private final UrlRepository urlRepository;
+    private final AggregatedStatusRepository asRep;
+    private final UrlRepository uRep;
 
     private final Map<String, LinkcheckerReport> linkcheckerReports;
 
-    public CollectionLinkchecker(PlatformTransactionManager transactionManager, StatusRepository statusRepository, UrlRepository urlRepository) {
+    public CollectionLinkchecker(PlatformTransactionManager transactionManager, AggregatedStatusRepository asRep, UrlRepository uRep) {
         this.transactionManager = transactionManager;
 
-        this.statusRepository = statusRepository;
-        this.urlRepository = urlRepository;
+        this.asRep = asRep;
+        this.uRep = uRep;
 
         this.linkcheckerReports = new HashMap<>();
     }
@@ -45,15 +46,15 @@ public class CollectionLinkchecker {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
 
         transactionTemplate.executeWithoutResult(status -> {
-            try(Stream<AggregatedStatus> stream = statusRepository.findAggregatedStatus()){
+            try(Stream<AggregatedStatus> stream = asRep.findAll()){
 
                 stream.forEach(aggregatedStatus -> {
 
                     LinkcheckerReport.Statistics  statistic = new LinkcheckerReport.Statistics(aggregatedStatus.getCategory());
                     statistic.avgRespTime = aggregatedStatus.getAvgDuration();
                     statistic.maxRespTime = aggregatedStatus.getMaxDuration();
-                    statistic.count = aggregatedStatus.getNumberId();
-                    statistic.nonNullCount = aggregatedStatus.getNumberDuration();
+                    statistic.count = aggregatedStatus.getNumber();
+                    statistic.nonNullCount = aggregatedStatus.getNumberWithDuration();
 
                     LinkcheckerReport linkcheckerReport = this.linkcheckerReports.computeIfAbsent(aggregatedStatus.getProvidergroupName(), k -> new LinkcheckerReport());
                     linkcheckerReport.statistics.add(statistic);
@@ -61,7 +62,7 @@ public class CollectionLinkchecker {
                 });
             }
 
-            try(Stream<UrlCount> stream = urlRepository.aggregateCountUrl()){
+            try(Stream<UrlCount> stream = uRep.aggregateCountUrl()){
 
                 stream.forEach(urlCount -> {
 

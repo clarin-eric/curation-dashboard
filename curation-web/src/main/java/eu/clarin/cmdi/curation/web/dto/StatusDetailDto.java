@@ -42,7 +42,7 @@ public class StatusDetailDto {
     */
    public String getUrl() {
       
-      return this.statusDetail.getUrlname();
+      return this.statusDetail.getUrlName();
    }
 
    /**
@@ -124,7 +124,7 @@ public class StatusDetailDto {
     */
    public String getCollection() {
       
-      return this.statusDetail.getProvidergroupname();
+      return this.statusDetail.getProvidergroupName();
    }
 
    /**

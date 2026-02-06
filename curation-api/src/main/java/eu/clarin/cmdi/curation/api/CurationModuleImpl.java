@@ -15,7 +15,8 @@ import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.model.StatusDetail;
-import eu.clarin.linkchecker.persistence.repository.StatusRepository;
+import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
+import eu.clarin.linkchecker.persistence.repository.StatusDetailRepository;
 import eu.clarin.linkchecker.persistence.utils.Category;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,9 @@ public class CurationModuleImpl implements CurationModule {
 
     private final ApplicationContext ctx;
 
-    private final StatusRepository sRep;
+    private final AggregatedStatusRepository asRep;
+    
+    private final StatusDetailRepository sdRep;
 
     /**
      * Process cmd profile cmd profile report.
@@ -187,7 +190,7 @@ public class CurationModuleImpl implements CurationModule {
         final StatusDetailReport[] lastStatusDetailReport = new StatusDetailReport[1];
 
 
-        try (Stream<AggregatedStatus> aStream = sRep.findAggregatedStatus()) {
+        try (Stream<AggregatedStatus> aStream = asRep.findAll()) {
             // we iterate through a list grouped by providergroup-name and category
             aStream.forEach(aStatus -> {
 
@@ -203,18 +206,18 @@ public class CurationModuleImpl implements CurationModule {
                     lastLinkcheckerDetailReport[0].getCategoryReports().add(lastCategoryReport[0]);
                 }
                 // for each providergroup and category we get the 31 latest status results
-                try (Stream<StatusDetail> sdStream = sRep.findStatusDetail(aStatus.getProvidergroupName(), aStatus.getCategory())) {
+                try (Stream<StatusDetail> sdStream = sdRep.findByProvidergroupnameAndCategory(aStatus.getProvidergroupName(), aStatus.getCategory())) {
 
                     final AtomicInteger counter = new AtomicInteger();
 
                     sdStream.takeWhile(statusDetail -> counter.get() < 32).forEach(statusDetail -> {
 
-                        if (lastStatusDetailReport[0] == null || !lastStatusDetailReport[0].getUrl().equals(statusDetail.getUrlname())) {
+                        if (lastStatusDetailReport[0] == null || !lastStatusDetailReport[0].getUrl().equals(statusDetail.getUrlName())) {
 
                             counter.incrementAndGet();
 
                             lastStatusDetailReport[0] = new StatusDetailReport(
-                                    statusDetail.getUrlname(),
+                                    statusDetail.getUrlName(),
                                     statusDetail.getMethod(),
                                     statusDetail.getStatusCode(),
                                     statusDetail.getMessage(),
