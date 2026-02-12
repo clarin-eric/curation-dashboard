@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.5</version>
+        <version>4.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>eu.clarin.cmdi</groupId>
@@ -21,8 +21,8 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <linkchecker-persistence.version>2.2.0-SNAPSHOT</linkchecker-persistence.version>
-        <revision>7.6.0-SNAPSHOT</revision>
+        <linkchecker-persistence.version>2.2.0-alpha2</linkchecker-persistence.version>
+        <revision>7.6.0-alpha1</revision>
         <vlo.version>4.12.4</vlo.version>
         <vtd.version>2.11</vtd.version>
         <saxon.version>12.3</saxon.version>
