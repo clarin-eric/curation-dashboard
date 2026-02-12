@@ -42,11 +42,10 @@ public class CMDCollectionSetProcessor {
 
         final Collection<CollectionReport> collectionReports = new ArrayList<>();
 
-        final Set<String> cachedCollectionNames = new HashSet<>();
 
         cmdCollectionSet.getPaths().forEach(path -> {
             try {
-                processCollection(path, collectionReports, cachedCollectionNames);
+                processCollection(path, collectionReports);
             }
             catch (MalFunctioningProcessorException e) {
                 throw new RuntimeException(e);
@@ -65,14 +64,10 @@ public class CMDCollectionSetProcessor {
             collectionScoreCalculator.process(collectionReport);
         });
 
-        if(!cachedCollectionNames.isEmpty()) {
-            urlContextRepository.updateIngestionDate(cachedCollectionNames);
-        }
-
         return collectionReports;
     }
 
-    private void processCollection(Path path, Collection<CollectionReport> collectionReports, Set<String> cachedCollectionNames) throws MalFunctioningProcessorException {
+    private void processCollection(Path path, Collection<CollectionReport> collectionReports) throws MalFunctioningProcessorException {
 
         if (isCollectionRoot(path)) { // root directory of a collection
 
@@ -86,8 +81,8 @@ public class CMDCollectionSetProcessor {
                 collectionReport = this.collectionReportCache.getCollectionReport(cmdCollection);
                 // setting ingestionDate to now, since we don't process the links
                 collectionReport.creationTime = LocalDateTime.now();
-                // saving the name of the cached collection for later db bulk update
-                cachedCollectionNames.add(collectionReport.getName());
+                // updating ingestion date for active links of the collection
+                urlContextRepository.updateIngestionDateByProvidergroupName(collectionReport.getName());
            }
             else { //generate new report and cache it
 
@@ -99,7 +94,7 @@ public class CMDCollectionSetProcessor {
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path)) {
                 directoryStream.forEach(dir -> {
                     try {
-                        processCollection(dir, collectionReports, cachedCollectionNames);
+                        processCollection(dir, collectionReports);
                     }
                     catch (MalFunctioningProcessorException e) {
                         throw new RuntimeException(e);

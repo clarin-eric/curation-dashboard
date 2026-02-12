@@ -66,10 +66,10 @@ public class CollectionLinkchecker {
 
                 stream.forEach(urlCount -> {
 
-                    LinkcheckerReport linkcheckerReport = this.linkcheckerReports.computeIfAbsent(urlCount.getProvidergroupName(), k -> new LinkcheckerReport());
+                    LinkcheckerReport linkcheckerReport = this.linkcheckerReports.computeIfAbsent(urlCount.providergroupName(), k -> new LinkcheckerReport());
 
-                    linkcheckerReport.totNumOfLinks = urlCount.getCount().intValue();
-                    linkcheckerReport.totNumOfUniqueLinks = urlCount.getDistinctCount().intValue();
+                    linkcheckerReport.totNumOfLinks = urlCount.count().intValue();
+                    linkcheckerReport.totNumOfUniqueLinks = urlCount.distinctCount().intValue();
                     // calculating the ratio of valid links
                     if (linkcheckerReport.totNumOfCheckedLinks > 0) {
                         linkcheckerReport.statistics.stream().filter(statistics -> statistics.category == Category.Ok)
