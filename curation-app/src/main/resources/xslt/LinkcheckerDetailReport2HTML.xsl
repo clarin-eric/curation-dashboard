@@ -160,10 +160,10 @@
                 </xsl:choose>
             </td>
             <td>
-                <button class="showUrlInfo btn btn-info">Show</button>
+                <button class="btn btn-info" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#{generate-id()}" aria-controls="{generate-id()}">Show</button>
             </td>
         </tr>
-        <tr hidden="hidden">
+        <tr class="collapse" id="{generate-id()}">
             <td colspan="3">
                 <b>Message:</b>
                 <xsl:value-of select="./@message"/>

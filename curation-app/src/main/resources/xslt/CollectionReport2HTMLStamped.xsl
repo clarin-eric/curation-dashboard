@@ -218,9 +218,7 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-info" data-bs-toggle="collapse" aria-expanded="false">
-                                            <xsl:attribute name="data-bs-target">#mdr-row-<xsl:value-of select="position()" /></xsl:attribute>
-                                            <xsl:attribute name="aria-controls">mdr-row-<xsl:value-of select="position()" /></xsl:attribute>
+                                        <button type="button" class="btn btn-info" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#{generate-id()}" aria-controls="{generate-id()}">
                                             Show
                                         </button>
                                     </td>
@@ -234,8 +232,7 @@
                                         </button>
                                     </td>
                                 </tr>
-                                <tr class="collapse">
-                                    <xsl:attribute name="id">mdr-row-<xsl:value-of select="position()" /></xsl:attribute>
+                                <tr class="collapse" id="{generate-id()}">
                                     <td colspan="3">
                                         <ul>
                                             <xsl:for-each select="detail">
@@ -362,15 +359,12 @@
                                         <xsl:value-of select="./mdSelfLink"/>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-info" data-bs-toggle="collapse" aria-expanded="false">
-                                            <xsl:attribute name="data-bs-target">#dsl-row-<xsl:value-of select="position()" /></xsl:attribute>
-                                            <xsl:attribute name="aria-controls">dsl-row-<xsl:value-of select="position()" /></xsl:attribute>
+                                        <button type="button" class="btn btn-info" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#{generate-id()}" aria-controls="{generate-id()}">
                                             Show
                                         </button>
                                     </td>
                                 </tr>
-                                <tr class="collapse">
-                                    <xsl:attribute name="id">mdr-row-<xsl:value-of select="position()" /></xsl:attribute>
+                                <tr class="collapse" id="{generate-id()}">
                                     <td colspan="2">
                                         <ul>
                                             <xsl:for-each select="./origins/origin">
