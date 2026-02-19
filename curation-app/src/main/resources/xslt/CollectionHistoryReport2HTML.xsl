@@ -20,29 +20,60 @@
             </h2>
             <div class="accordion" id="{generate-id(@name)}">
                 <xsl:for-each-group select="report" group-by="substring(@isoDate, 1, 7)">
-                    <div class="accordion-item">
-                        <h3 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#{generate-id()}" aria-expanded="true" aria-controls="{generate-id()}">
-                            <xsl:value-of select="current-grouping-key()" /> (<xsl:value-of select="count(current-group())" />)
-                            </button>
-                        </h3>
-                    <div id="{generate-id()}" class="accordion-collapse collapse" data-bs-parent="#{generate-id(../@name)}">
-                        <div class="accordion-body">
-                            <ul>
-                                <xsl:for-each select="current-group()">
-                                    <li>
-                                        <a>
-                                            <xsl:attribute name="href">
-                                                <xsl:text>/metadataprovider/</xsl:text><xsl:value-of select="@fileName" />
-                                            </xsl:attribute>
-                                            <xsl:value-of select="@isoDate" />
-                                        </a>
-                                    </li>
-                                </xsl:for-each>
-                            </ul>
-                        </div>
-                    </div>
-                    </div>
+                    <xsl:choose>
+                        <xsl:when test="current-grouping-key()=format-date(current-date(), '[Y,4]-[M,2]')">
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#{generate-id()}" aria-expanded="true" aria-controls="{generate-id()}">
+                                        <xsl:value-of select="current-grouping-key()" /> (<xsl:value-of select="count(current-group())" />)
+                                    </button>
+                                </h3>
+                                <div id="{generate-id()}" class="accordion-collapse collapse show" data-bs-parent="#{generate-id(../@name)}">
+                                    <div class="accordion-body">
+                                        <ul>
+                                            <xsl:for-each select="current-group()">
+                                                <li>
+                                                    <a>
+                                                        <xsl:attribute name="href">
+                                                            <xsl:text>/metadataprovider/</xsl:text><xsl:value-of select="@fileName" />
+                                                        </xsl:attribute>
+                                                        <xsl:value-of select="@isoDate" />
+                                                    </a>
+                                                </li>
+                                            </xsl:for-each>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#{generate-id()}" aria-expanded="false" aria-controls="{generate-id()}">
+                                        <xsl:value-of select="current-grouping-key()" /> (<xsl:value-of select="count(current-group())" />)
+                                    </button>
+                                </h3>
+                                <div id="{generate-id()}" class="accordion-collapse collapse" data-bs-parent="#{generate-id(../@name)}">
+                                    <div class="accordion-body">
+                                        <ul>
+                                            <xsl:for-each select="current-group()">
+                                                <li>
+                                                    <a>
+                                                        <xsl:attribute name="href">
+                                                            <xsl:text>/metadataprovider/</xsl:text><xsl:value-of select="@fileName" />
+                                                        </xsl:attribute>
+                                                        <xsl:value-of select="@isoDate" />
+                                                    </a>
+                                                </li>
+                                            </xsl:for-each>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </xsl:otherwise>
+                    </xsl:choose>
+
                 </xsl:for-each-group>
             </div>
             </article>
