@@ -37,7 +37,6 @@ public class ProfileCtl {
    @GetMapping(value = {"", "/{profileReportName}"})
    public String getProfile(@RequestHeader(name = "Accept", required = false) Optional<String> acceptHeader, @RequestParam(name = "format", required = false) Optional <String> format, @PathVariable(value = "profileReportName") Optional<String> profileReportName, Model model) {
 
-      String returnString = null;
       Path reportPath = conf.getDirectory().getOut().resolve("html").resolve("profile");
       
       if(profileReportName.isPresent()) {
