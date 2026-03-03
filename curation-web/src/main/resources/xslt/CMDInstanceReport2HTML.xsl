@@ -13,6 +13,15 @@
                 download as
                 <a>
                     <xsl:attribute name="href">
+                        <xsl:text>/instance/</xsl:text>
+                        <xsl:value-of
+                                select="replace(//fileReport/location,'[/.:]','_')"/>
+                    </xsl:attribute>
+                    <xsl:text>html</xsl:text>
+                </a>
+                <xsl:text> </xsl:text>
+                <a>
+                    <xsl:attribute name="href">
                         <xsl:text>/download/instance/</xsl:text>
                         <xsl:value-of
                                 select="replace(//fileReport/location,'[/.:]','_')"/>

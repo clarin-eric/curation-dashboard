@@ -143,8 +143,6 @@ public class ValidatorCtl {
 
          String returnString = createReport(inFilePath, format, acceptHeader, model);
          return returnString;
-         
-
       }
    }
 
@@ -223,16 +221,8 @@ public class ValidatorCtl {
 
          else {
 
-            Path htmlFilePath = conf.getDirectory().getOut()
-                    .resolve("html")
-                    .resolve("instance")
-                    .resolve(report.getName() + ".html");
-
-            model.addAttribute("insert", htmlFilePath.toString());
+             return "forward:/instance/" + report.getName();
          }
-
-         return "generic";
-
       }
       catch (IOException e) {
 
