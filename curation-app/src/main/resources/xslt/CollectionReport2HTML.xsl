@@ -213,7 +213,7 @@
                                     <td>
                                         <button type="button" class="btn btn-info">
                                             <xsl:attribute name="onClick">
-                                                window.open('/curate?url-input=<xsl:value-of
+                                                window.open('/validator?url-input=<xsl:value-of
                                                     select="./@origin"></xsl:value-of>')
                                             </xsl:attribute>
                                             Validate file
