@@ -2,11 +2,12 @@
 logging:
    file: 
       name: ${APPLICATION_HOME_DIRECTORY}/logs/curation-web.log
-      logback:
-         rollingpolicy:
-            max-file-size: 10MB
+   logback:
+      rollingpolicy:
+         max-file-size: 10MB
    level:
-      root: ERROR 
+      root: error
+      eu.clarin.cmdi.vlo.importer.mapping.FacetMappingFactory: off
 spring:
    datasource:
       url: ${DATABASE_URI}

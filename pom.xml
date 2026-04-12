@@ -21,7 +21,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <linkchecker-persistence.version>2.2.0-alpha2</linkchecker-persistence.version>
+        <linkchecker-persistence.version>2.2.0</linkchecker-persistence.version>
         <revision>7.6.0-SNAPSHOT</revision>
         <vlo.version>4.12.4</vlo.version>
         <vtd.version>2.11</vtd.version>
@@ -45,10 +45,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
-        <dependency>
             <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
         </dependency>
@@ -57,10 +53,6 @@
             <artifactId>ehcache</artifactId>
             <version>${ehcache.version}</version>
             <classifier>jakarta</classifier>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
     </dependencies>
     <build>
