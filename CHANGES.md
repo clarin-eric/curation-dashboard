@@ -1,3 +1,10 @@
+# 7.6.0
+- upgrading to Spring Boot 4.0.2
+- using checksum approach for Metadata Provider reports (issue https://github.com/clarin-eric/curation-dashboard/issues/302) 
+- making instance reports bookmarkable again (issue https://github.com/clarin-eric/curation-dashboard/issues/298)
+- grouping Metadata Provider report history by month (issue https://github.com/clarin-eric/curation-dashboard/issues/303)
+- bugfix for show/hide (issue https://github.com/clarin-eric/curation-dashboard/issues/304)
+
 # 7.5.0
 - changing layout of curation-web for bootstrap 5.3.8 (issues https://github.com/clarin-eric/curation-dashboard/issues/286, https://github.com/clarin-eric/curation-dashboard/issues/282, https://github.com/clarin-eric/curation-dashboard/issues/155) 
 - requesting wikidata for concept names (issue https://github.com/clarin-eric/curation-dashboard/issues/291)
