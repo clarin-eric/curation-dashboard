@@ -265,7 +265,7 @@ public class Download {
       Query query = !"overall".equalsIgnoreCase(providergroupName)?
          em.createNativeQuery(              
                """
-               SELECT NULL AS order_nr, s.*, u.name AS urlname, p.name AS providergroupname, c.origin, uc.expected_mime_type
+               SELECT NULL AS order_nr, s.*, u.name AS url_name, p.name AS providergroup_name, c.origin, uc.expected_mime_type
                   FROM status s 
                   INNER JOIN url u ON s.url_id = u.id 
                   INNER JOIN url_context uc ON uc.url_id = u.id
@@ -279,7 +279,7 @@ public class Download {
                .setParameter(2, providergroupName):
          em.createNativeQuery(
                """
-               SELECT NULL AS order_nr, s.*, u.name AS urlname, p.name AS providergroupname, c.origin, uc.expected_mime_type
+               SELECT NULL AS order_nr, s.*, u.name AS url_name, p.name AS providergroup_name, c.origin, uc.expected_mime_type
                   FROM status s 
                   INNER JOIN url u ON s.url_id = u.id 
                   INNER JOIN url_context uc ON uc.url_id = u.id
