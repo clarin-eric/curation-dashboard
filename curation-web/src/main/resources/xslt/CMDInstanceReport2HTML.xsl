@@ -282,14 +282,14 @@
                             </td>
                         </xsl:if>
                         <xsl:choose>
-                            <xsl:when test="@usesValueMapping">
+                            <xsl:when test="@usesValueMapping = 'true'">
                                 <td>
                                     <font color="#00aa00">
                                         <xsl:value-of select="@name"/>
                                     </font>
                                 </td>
                             </xsl:when>
-                            <xsl:when test="@isDerived">
+                            <xsl:when test="@isDerived = 'true'">
                                 <td>
                                     <font color="#ffd100">
                                         <xsl:value-of select="@name"/>

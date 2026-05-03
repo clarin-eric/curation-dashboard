@@ -25,7 +25,6 @@ import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -116,37 +115,27 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
             final Map<Integer, List<ValueSet>> indexValueSetMap = facetValuesMap.values() // a List of ValueSet
                   .stream().flatMap(List::stream).collect(Collectors.groupingBy(ValueSet::getVtdIndex));
 
-            VTDGen vtdGen = new VTDGen();
-            vtdGen.setDoc(Files.readAllBytes(instance.getPath()));
-            vtdGen.parse(false);
 
-            VTDNav nav = vtdGen.getNav();
-            AutoPilot ap = new AutoPilot(nav);
 
             // attention: we assume that the xpath in the stream are in document order
             // if this is not the case a call of ap.resetXPath() is mandatory
-            this.xpathValueService.getXpathValueMap(instance.getPath()).entrySet()
-               .stream().filter(node -> StringUtils.isNotBlank(node.getValue()))
-                  .forEach(node -> {
+            this.xpathValueService.getValueTriples(instance.getPath())
+               .stream()
+                  .forEach(triple -> {
 
-                     ValueNode valueNode = new ValueNode(node.getKey(), node.getValue());
+                     ValueNode valueNode = new ValueNode(triple.xPath(), triple.value());
 
                      CMDINode cmdiNode;
 
-                     if ((cmdiNode = cmdiNodeMap.get(node.getKey().replaceAll("\\[\\d\\]", ""))) != null && cmdiNode.concept != null) {
+                     if ((cmdiNode = cmdiNodeMap.get(triple.xPath())) != null && cmdiNode.concept != null) {
 
                         valueNode.concept = new ConceptReport.Concept(cmdiNode.concept);
                      }
 
-                     try {
-                        ap.selectXPath(node.getKey().replaceAll("\\w+:", ""));
-
                         List<ValueSet> valueSetList;
-                        
-                        int vtdIndex = ap.evalXPath(); 
 
-                        if (vtdIndex != -1 && (valueSetList = indexValueSetMap.get(vtdIndex)) != null) {
-                           
+                        if (triple.vtdIndex() != -1 && (valueSetList = indexValueSetMap.get(triple.vtdIndex())) != null) {
+
                            valueSetList.forEach(valueSet -> valueNode.facets.add(
                                  new FacetValueStruct(
                                     valueSet.getTargetFacetName(),
@@ -156,20 +145,6 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
                                  )
                               ));
                         }
-                     }
-                     catch (XPathParseException e) {
-
-                        log.error("can't parse xpath '{}'", node.getKey());
-                     }
-                     catch (XPathEvalException e) {
-
-                        log.error("can't evaluate xpath '{}'", node.getKey());
-                     }
-                     
-                     catch (NavException e) {
-
-                        log.error("", e);
-                     }
 
                      instanceReport.facetReport.valueNodes.add(valueNode);
                   });
@@ -181,18 +156,6 @@ public class InstanceFacetProcessor extends AbstractSubprocessor<CMDInstance, CM
             instanceReport.details.add(new Detail(Severity.FATAL, "facets", "can't parse profile '" + instanceReport.instanceHeaderReport.schemaLocation + "'"));
             instanceReport.isProcessable = false;
 
-         }
-         catch (IOException e1) {
-
-            log.error("can't read file '{}'", instance.getPath());
-            instanceReport.details.add(new Detail(Severity.FATAL, "file", "can't read file '" + instance.getPath().getFileName() + "'"));
-            instanceReport.isProcessable = false;
-         }
-         catch (ParseException e1) {
-            
-            log.error("can't parse file '{}'", instance.getPath());
-            instanceReport.details.add(new Detail(Severity.FATAL, "file", "can't parse file '" + instance.getPath().getFileName() + "'"));
-            instanceReport.isProcessable = false;
          }
          catch (CCRServiceNotAvailableException | PPHCacheException e) {
              throw new MalFunctioningProcessorException(e);
