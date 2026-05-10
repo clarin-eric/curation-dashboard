@@ -5,11 +5,8 @@ import eu.clarin.cmdi.curation.api.cache.DirChecksumCache;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDCollectionSet;
-
 import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
-
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
-
 import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionLinkchecker;
 import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionScoreCalculator;
 import eu.clarin.linkchecker.persistence.repository.UrlContextRepository;
@@ -23,7 +20,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Component

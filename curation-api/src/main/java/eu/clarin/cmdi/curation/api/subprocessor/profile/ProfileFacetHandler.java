@@ -5,6 +5,7 @@ package eu.clarin.cmdi.curation.api.subprocessor.profile;
 
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.api.report.Detail;
 import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
@@ -13,7 +14,6 @@ import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport.Coverag
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
-import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;

@@ -4,15 +4,13 @@
 package eu.clarin.cmdi.curation.api.processor;
 
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.subprocessor.profile.ProfileConceptHandler;
 import eu.clarin.cmdi.curation.api.subprocessor.profile.ProfileFacetHandler;
 import eu.clarin.cmdi.curation.api.subprocessor.profile.ProfileHeaderHandler;
-import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**

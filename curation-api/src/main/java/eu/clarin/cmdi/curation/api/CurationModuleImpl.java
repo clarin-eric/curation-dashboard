@@ -4,6 +4,7 @@ import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.entity.CMDCollectionSet;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport;
@@ -12,7 +13,6 @@ import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport.Co
 import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport.StatusDetailReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.utils.FileNameEncoder;
-import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.model.StatusDetail;
 import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
@@ -30,7 +30,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 

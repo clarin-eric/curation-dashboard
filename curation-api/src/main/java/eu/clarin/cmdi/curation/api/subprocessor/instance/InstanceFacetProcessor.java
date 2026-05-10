@@ -1,10 +1,10 @@
 package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
-import com.ximpleware.*;
 import eu.clarin.cmdi.curation.api.cache.ProfileReportCache;
 import eu.clarin.cmdi.curation.api.conf.ApiConfig;
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
 import eu.clarin.cmdi.curation.api.entity.CMDProfile;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.api.report.Detail;
 import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
@@ -16,7 +16,6 @@ import eu.clarin.cmdi.curation.api.report.profile.sec.ConceptReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.xml.XPathValueService;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
-import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
@@ -24,12 +23,9 @@ import eu.clarin.cmdi.curation.cr.profile_parser.CMDINode;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

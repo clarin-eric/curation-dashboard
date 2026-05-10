@@ -5,7 +5,6 @@ import eu.clarin.cmdi.curation.api.report.collection.sec.LinkcheckerReport;
 import eu.clarin.linkchecker.persistence.model.AggregatedStatus;
 import eu.clarin.linkchecker.persistence.model.UrlCount;
 import eu.clarin.linkchecker.persistence.repository.AggregatedStatusRepository;
-import eu.clarin.linkchecker.persistence.repository.StatusRepository;
 import eu.clarin.linkchecker.persistence.repository.UrlRepository;
 import eu.clarin.linkchecker.persistence.utils.Category;
 import jakarta.annotation.PostConstruct;

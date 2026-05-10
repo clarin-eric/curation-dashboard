@@ -6,11 +6,9 @@ import eu.clarin.cmdi.curation.api.entity.CMDCollection;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionLinkchecker;
 import eu.clarin.cmdi.curation.api.subprocessor.collection.CollectionScoreCalculator;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CMDCollectionProcessor {
 
-    private final ApiConfig conf;
     private final ApplicationContext applicationContext;
     private final CollectionReportCache collectionReportCache;
 

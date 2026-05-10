@@ -1,10 +1,10 @@
 package eu.clarin.cmdi.curation.api.processor;
 
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.subprocessor.instance.*;
-import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;

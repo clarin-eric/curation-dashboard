@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.curation.api.subprocessor.instance;
 
 import eu.clarin.cmdi.curation.api.entity.CMDInstance;
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.api.report.Detail;
 import eu.clarin.cmdi.curation.api.report.Detail.Severity;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
@@ -9,7 +10,6 @@ import eu.clarin.cmdi.curation.api.report.instance.sec.XmlValidityReport;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
 import eu.clarin.cmdi.curation.api.xml.CMDErrorHandler;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
-import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;

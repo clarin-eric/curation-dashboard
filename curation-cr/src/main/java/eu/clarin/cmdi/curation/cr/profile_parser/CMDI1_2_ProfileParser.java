@@ -1,6 +1,9 @@
 package eu.clarin.cmdi.curation.cr.profile_parser;
 
-import com.ximpleware.*;
+import com.ximpleware.ParseException;
+import com.ximpleware.VTDException;
+import com.ximpleware.VTDGen;
+import com.ximpleware.VTDNav;
 import eu.clarin.cmdi.curation.ccr.CCRService;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.cache.ProfileCache;
@@ -24,7 +27,7 @@ public class CMDI1_2_ProfileParser extends ProfileParser {
 
     public static final String ENVELOPE_URL = "https://infra.clarin.eu/CMDI/1.2/xsd/cmd-envelop.xsd";
 
-    private ParsedProfile envelope;
+    private final ParsedProfile envelope;
 
 
     /**
@@ -116,7 +119,7 @@ public class CMDI1_2_ProfileParser extends ProfileParser {
         String rootPath;
         String namespace;
 
-        if (nodes.size() >0 && nodes.stream().findFirst().get().name.equals("CMD")) { //basically for the cmd-envelope.csd
+        if (!nodes.isEmpty() && nodes.stream().findFirst().get().name.equals("CMD")) { //basically for the cmd-envelope.csd
             rootPath = "/";
             namespace = "cmd:";
         } else { //any profile

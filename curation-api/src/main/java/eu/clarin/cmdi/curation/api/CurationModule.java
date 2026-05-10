@@ -1,10 +1,10 @@
 package eu.clarin.cmdi.curation.api;
 
+import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.api.report.collection.CollectionReport;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.curation.api.report.linkchecker.LinkcheckerDetailReport;
 import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
-import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,9 +22,8 @@ public interface CurationModule {
     *
     * @param schemaLocation the schema location
     * @return the cmd profile report
-    * @throws MalformedURLException the malformed url exception
     */
-   public CMDProfileReport processCMDProfile(String schemaLocation);
+   CMDProfileReport processCMDProfile(String schemaLocation);
 
    /**
     * Process cmd profile cmd profile report.
@@ -33,7 +32,7 @@ public interface CurationModule {
     * @return the cmd profile report
     * @throws MalformedURLException the malformed url exception
     */
-   public CMDProfileReport processCMDProfile(Path path) throws MalformedURLException;
+   CMDProfileReport processCMDProfile(Path path) throws MalformedURLException;
 
    /**
     * Process cmd instance cmd instance report.
@@ -44,7 +43,7 @@ public interface CurationModule {
    /*
     * throws Exception if file doesn't exist or is invalid
     */
-   public CMDInstanceReport processCMDInstance(Path file);
+   CMDInstanceReport processCMDInstance(Path file);
 
    /**
     * Process cmd instance cmd instance report.
@@ -52,7 +51,7 @@ public interface CurationModule {
     * @param url the url
     * @return the cmd instance report
     */
-   public CMDInstanceReport processCMDInstance(URL url);
+   CMDInstanceReport processCMDInstance(URL url);
 
    /**
     * Process collection collection report.
@@ -60,15 +59,15 @@ public interface CurationModule {
     * @param path the path
     * @return the collection report
     */
-   public CollectionReport processCollection(Path path) throws MalFunctioningProcessorException;
+   CollectionReport processCollection(Path path) throws MalFunctioningProcessorException;
 
-   public Collection<CollectionReport> processCollectionSet(Collection<Path> paths) throws MalFunctioningProcessorException;
+   Collection<CollectionReport> processCollectionSet(Collection<Path> paths) throws MalFunctioningProcessorException;
 
    /**
     * Gets linkchecker detail reports.
     *
     * @return the linkchecker detail reports
     */
-   public Collection<LinkcheckerDetailReport> getLinkcheckerDetailReports();
+   Collection<LinkcheckerDetailReport> getLinkcheckerDetailReports();
 
 }

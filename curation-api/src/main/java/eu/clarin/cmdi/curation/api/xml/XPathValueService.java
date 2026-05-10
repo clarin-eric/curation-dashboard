@@ -7,12 +7,14 @@ package eu.clarin.cmdi.curation.api.xml;
 import com.ximpleware.NavException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
