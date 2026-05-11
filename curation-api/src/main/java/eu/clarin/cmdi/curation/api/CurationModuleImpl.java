@@ -246,13 +246,16 @@ public class CurationModuleImpl implements CurationModule {
 
             final Map<Category, CategoryReport> categoryReports = new HashMap<Category, CategoryReport>();
 
+            //iterating through all lc detail reports
             linkcheckerDetailReports.forEach(linkcheckerDetailReport -> {
+                //iterating through category reports
                 linkcheckerDetailReport.getCategoryReports().forEach(categoryReport -> {
+                    //taking the first status detail and adding it to the overall report
                     categoryReport.getStatusDetails().stream().limit(1).findFirst().ifPresent(statusDetail -> {
                         categoryReports.computeIfAbsent(categoryReport.getCategory(), k -> {
                             CategoryReport overallCategoryReport = new CategoryReport(categoryReport.getCategory());
                             overallReport.getCategoryReports().add(overallCategoryReport);
-                            return new CategoryReport();
+                            return overallCategoryReport;
                         }).getStatusDetails().add(statusDetail);
                     });
                 });
