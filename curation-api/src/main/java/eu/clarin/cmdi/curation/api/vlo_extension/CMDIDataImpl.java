@@ -6,6 +6,8 @@ import eu.clarin.cmdi.vlo.importer.CMDIDataBaseImpl;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetDefinition;
 import eu.clarin.cmdi.vlo.importer.mapping.TargetFacet;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -35,7 +37,7 @@ public class CMDIDataImpl extends CMDIDataBaseImpl<Map<String, List<ValueSet>>> 
     */
    public CMDIDataImpl(FieldNameService fieldNameService) {
       super(fieldNameService);
-      facetValuesMap = new HashMap<String, List<ValueSet>>();
+      facetValuesMap = new HashMap<>();
    }
 
    /**
@@ -54,27 +56,21 @@ public class CMDIDataImpl extends CMDIDataBaseImpl<Map<String, List<ValueSet>>> 
          setId(value.trim());
       }
       else {
-         
-         this.facetValuesMap.computeIfAbsent(valueSet.getTargetFacetName(), list -> new ArrayList<ValueSet>())
-               .add(valueSet);
+         addValueSet(valueSet, caseInsensitive);
       }
    }
 
    /**
     * Add doc field.
     *
-    * @param fieldName       the field name
+    * @param facetName       the field name
     * @param value           the value
     * @param caseInsensitive the case insensitive
     */
    @Override
-   public void addDocField(String fieldName, Object value, boolean caseInsensitive) {
+   public void addDocField(String facetName, Object value, boolean caseInsensitive) {
 
-      this.facetValuesMap.computeIfAbsent(fieldName, list -> new ArrayList<ValueSet>()).add(
-
-            new ValueSet(-1, new FacetDefinition(null, "unknown"),
-                  new TargetFacet(new FacetDefinition(null, fieldName), value.toString()),
-                  Pair.of(value.toString(), DEFAULT_LANGUAGE), false, false));
+      addValueSet(facetName, value, caseInsensitive);
    }
 
    /**
@@ -86,22 +82,22 @@ public class CMDIDataImpl extends CMDIDataBaseImpl<Map<String, List<ValueSet>>> 
    @Override
    public void addDocFieldIfNull(ValueSet valueSet, boolean caseInsensitive) {
 
-      this.facetValuesMap.putIfAbsent(valueSet.getTargetFacetName(), List.of(valueSet));
+      if(this.facetValuesMap.containsKey(valueSet.getTargetFacetName())){
+
+         addDocField(valueSet, caseInsensitive);
+      }
    }
 
    /**
     * Gets doc field.
     *
-    * @param name the name
+    * @param facetName the name of the field/facet
     * @return the doc field
     */
    @Override
-   public Collection<Object> getDocField(String name) {
+   public Collection<Object> getDocField(String facetName) {
 
-      Collection<ValueSet> valueSetList;
-
-      return (valueSetList = this.facetValuesMap.get(name)) == null ? null
-            : valueSetList.stream().map(ValueSet::getValue).collect(Collectors.toList());
+      return (hasField(facetName)? this.facetValuesMap.get(facetName).stream().map(ValueSet::getValue).collect(Collectors.toList()) : null);
    }
 
    /**
@@ -122,54 +118,79 @@ public class CMDIDataImpl extends CMDIDataBaseImpl<Map<String, List<ValueSet>>> 
     */
    @Override
    public void replaceDocField(ValueSet valueSet, boolean caseInsensitive) {
-      this.facetValuesMap.put(valueSet.getTargetFacetName(), Arrays.asList(valueSet));
 
+      removeField(valueSet.getTargetFacetName());
+
+      addDocFieldIfNull(valueSet, caseInsensitive);
    }
 
    /**
     * Replace doc field.
     *
-    * @param name            the name
+    * @param facetName            the name
     * @param value           the value
     * @param caseInsensitive the case insensitive
     */
    @Override
-   public void replaceDocField(String name, Object value, boolean caseInsensitive) {
+   public void replaceDocField(String facetName, Object value, boolean caseInsensitive) {
 
+      removeField(facetName);
+
+      addValueSet(facetName, value, caseInsensitive);
    }
 
    /**
     * Remove field.
     *
-    * @param name the name
+    * @param facetName the name
     */
    @Override
-   public void removeField(String name) {
-      this.facetValuesMap.remove(name);
+   public void removeField(String facetName) {
 
+      this.facetValuesMap.remove(facetName);
    }
 
    /**
     * Has field boolean.
     *
-    * @param name the name
+    * @param facetName the name
     * @return the boolean
     */
    @Override
-   public boolean hasField(String name) {
-      return this.facetValuesMap.containsKey(name);
+   public boolean hasField(String facetName) {
+
+      return this.facetValuesMap.containsKey(facetName);
    }
 
    /**
     * Gets field values.
     *
-    * @param name the name
+    * @param facetName the name
     * @return the field values
     */
    @Override
-   public Collection<Object> getFieldValues(String name) {
+   public Collection<Object> getFieldValues(String facetName) {
 
-      return this.facetValuesMap.get(name).stream().map(Object.class::cast).collect(Collectors.toList());
+      return getDocField(facetName);
    }
 
+
+   private void addValueSet(ValueSet valueSet, boolean caseInsensitive){
+
+      if(caseInsensitive){
+
+         valueSet.setValue(valueSet.getValueLanguagePair().getLeft().trim().toLowerCase());
+      }
+      this.facetValuesMap.computeIfAbsent(valueSet.getTargetFacetName(), list -> new ArrayList<ValueSet>())
+              .add(valueSet);
+   }
+
+   private void addValueSet(String facetName, Object value, boolean caseInsensitive){
+      addValueSet(
+         new ValueSet(-1, new FacetDefinition(null, "unknown"),
+                 new TargetFacet(new FacetDefinition(null, facetName), value.toString()),
+                 Pair.of(value.toString(), DEFAULT_LANGUAGE), false, false),
+         caseInsensitive
+      );
+   }
 }
