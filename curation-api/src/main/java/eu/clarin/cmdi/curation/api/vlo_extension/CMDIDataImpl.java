@@ -6,8 +6,6 @@ import eu.clarin.cmdi.vlo.importer.CMDIDataBaseImpl;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetDefinition;
 import eu.clarin.cmdi.vlo.importer.mapping.TargetFacet;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
