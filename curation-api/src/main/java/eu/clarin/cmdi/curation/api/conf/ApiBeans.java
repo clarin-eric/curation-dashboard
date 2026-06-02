@@ -15,7 +15,6 @@ import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
 import eu.clarin.cmdi.vlo.importer.processor.CMDIDataProcessor;
 import eu.clarin.cmdi.vlo.importer.processor.CMDIParserVTDXML;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -29,11 +28,16 @@ import java.util.Map;
 @Component
 @Lazy
 public class ApiBeans {
-   @Autowired
-   private FacetsMappingCacheFactory fac;
-   @Autowired
-   VloConfig vloConfig;
-   
+
+   private final FacetsMappingCacheFactory fac;
+   private final VloConfig vloConfig;
+
+   public ApiBeans(FacetsMappingCacheFactory fac, VloConfig vloConfig) {
+
+      this.fac = fac;
+      this.vloConfig = vloConfig;
+   }
+
    @Bean
    public CMDIRecordProcessor<Map<String, List<ValueSet>>> cmdiRecordProcessor(){
 
@@ -64,6 +68,5 @@ public class ApiBeans {
             return false;
          }
       };          
-   }   
-
+   }
 }
