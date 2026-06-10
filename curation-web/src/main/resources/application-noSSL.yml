@@ -24,10 +24,9 @@ spring:
   mvc:
     async:
       request-timeout: 3600000
-server:
-  error:
-    include-stacktrace: always
-
+  web:
+    error:
+      include-stacktrace: always
 curation:
   cr-service:
     restApi: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
