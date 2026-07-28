@@ -17,12 +17,12 @@
         <url>https://www.clarin.eu</url>
     </organization>
     <properties>
+        <revision>7.6.2-SNAPSHOT</revision>
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <linkchecker-persistence.version>2.2.0</linkchecker-persistence.version>
-        <revision>7.6.1</revision>
+        <linkchecker-persistence.version>3.0.0-SNAPSHOT</linkchecker-persistence.version>
         <vlo.version>4.12.4</vlo.version>
         <vtd.version>2.11</vtd.version>
         <saxon.version>12.3</saxon.version>
