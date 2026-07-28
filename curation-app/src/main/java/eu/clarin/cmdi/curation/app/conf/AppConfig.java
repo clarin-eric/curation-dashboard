@@ -30,9 +30,8 @@ public class AppConfig {
    
    private int linkDeletionAfter;
    
-   private int purgeHistoryAfter;
-   
-   private int purgeObsoleteAfter;
+   private int purgeChecksAfter;
+
 
    private int purgeReportAfter;
    

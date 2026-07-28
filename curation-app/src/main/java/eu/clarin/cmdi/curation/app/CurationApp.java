@@ -318,15 +318,10 @@ public class CurationApp {
                     linkService.deleteLinksOderThan(conf.getLinkDeletionAfter());
                     log.info("finished deleting links");
                 }
-                if (conf.getPurgeHistoryAfter() > 0) {
-                    log.info("start purging history table from records checked before {} days", conf.getPurgeHistoryAfter());
-                    linkService.purgeHistory(conf.getPurgeHistoryAfter());
-                    log.info("finished purging history");
-                }
-                if (conf.getPurgeObsoleteAfter() > 0) {
-                    log.info("start purging obsolete table from records checked before {} days", conf.getPurgeObsoleteAfter());
-                    linkService.purgeObsolete(conf.getPurgeObsoleteAfter());
-                    log.info("finished purging obsolete");
+                if (conf.getPurgeChecksAfter() > 0) {
+                    log.info("start purging database table from records checked before {} days", conf.getPurgeChecksAfter());
+                    linkService.purgeChecksOlderThan(conf.getPurgeChecksAfter());
+                    log.info("finished purging database");
                 }
             }
 
