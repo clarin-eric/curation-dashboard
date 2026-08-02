@@ -319,9 +319,9 @@ public class CurationApp {
                     log.info("finished deleting links");
                 }
                 if (conf.getPurgeChecksAfter() > 0) {
-                    log.info("start purging database table from records checked before {} days", conf.getPurgeChecksAfter());
+                    log.info("start purging status, history and obsolete table from checks older than {} days", conf.getPurgeChecksAfter());
                     linkService.purgeChecksOlderThan(conf.getPurgeChecksAfter());
-                    log.info("finished purging database");
+                    log.info("finished purging old checks");
                 }
             }
 

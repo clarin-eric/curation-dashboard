@@ -115,15 +115,13 @@ curation:
    # root URL of the help and faq page
    #doc_url:
    clientUsername: curation
-   # deactivate links in url_context table when they are not confirmed for x days. 0 turns of the feature
+   # deactivate links in url_context table when they are not confirmed for LINK_DEACTIVATION_AFTER days. 0 turns of the feature
    link_deactivation_after: ${LINK_DEACTIVATION_AFTER:365}
-   # delete links are when not confirmed for x days (flat info saved in obsolete). 0 turns of the feature
+   # delete links are when not confirmed for LINK_DELETION_AFTER days (flat info saved in obsolete). 0 turns of the feature
    link_deletion_after: ${LINK_DELETION_AFTER:365}
-   # purge links from history table (flat info saved in obsolete) after x days. 0 turns of the feature
-   purge_history_after: ${PURGE_HISTORY_AFTER:365}
-   # purge records from obsolete table after y days. 0 turns of the feature
-   purge_obsolete_after: ${PURGE_OBSOLETE_AFTER:100}
-   # purge reports from directory.out path, older than x days. 0 turns of the feature
+   # purge checking results after PURGE_CHECKS_AFTER days from status, history and obsolete table. 0 turns of the feature
+   purge_checks_after: ${PURGE_CHECKS_AFTER:365}
+   # purge reports from directory.out path, older than PURGE_REPORT_AFTER days. 0 turns of the feature
    purge_report_after: ${PURGE_REPORT_AFTER:365}
    # path to the vloConfig.xml file. Empty path uses default vloConfig from vlo-commons
    # vlo_config_location:""

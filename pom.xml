@@ -17,7 +17,7 @@
         <url>https://www.clarin.eu</url>
     </organization>
     <properties>
-        <revision>7.6.2-SNAPSHOT</revision>
+        <revision>7.7.0-SNAPSHOT</revision>
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
