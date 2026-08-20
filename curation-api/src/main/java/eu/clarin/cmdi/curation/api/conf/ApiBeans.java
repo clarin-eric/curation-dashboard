@@ -4,23 +4,12 @@
  */
 package eu.clarin.cmdi.curation.api.conf;
 
-import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
-import eu.clarin.cmdi.vlo.LanguageCodeUtils;
-import eu.clarin.cmdi.vlo.config.FieldNameServiceImpl;
 import eu.clarin.cmdi.vlo.config.VloConfig;
-import eu.clarin.cmdi.vlo.importer.CMDIRecordProcessor;
-import eu.clarin.cmdi.vlo.importer.MetadataImporter;
-import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
-import eu.clarin.cmdi.vlo.importer.api.ValueSetCmdiData;
-import eu.clarin.cmdi.vlo.importer.processor.CMDIDataProcessor;
-import eu.clarin.cmdi.vlo.importer.processor.CMDIParserVTDXML;
-import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
+import eu.clarin.cmdi.vlo.importer.api.CmdiRecordAnalyzer;
+import eu.clarin.cmdi.vlo.importer.api.FacetsMappingProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -29,44 +18,31 @@ import java.util.Map;
 @Lazy
 public class ApiBeans {
 
-   private final FacetsMappingCacheFactory fac;
+   private final FacetsMappingProvider facetsMappingProvider;
    private final VloConfig vloConfig;
 
-   public ApiBeans(FacetsMappingCacheFactory fac, VloConfig vloConfig) {
+   public ApiBeans(FacetsMappingProvider facetsMappingProvider, VloConfig vloConfig) {
 
-      this.fac = fac;
+      this.facetsMappingProvider = facetsMappingProvider;
       this.vloConfig = vloConfig;
    }
 
+   /**
+    * The analyzer that {@link eu.clarin.cmdi.curation.api.entity.CMDInstance}
+    * runs each record through.
+    *
+    * <p>
+    * Configured for analysis rather than import: every record keeps the full
+    * ValueSet per facet value.
+    * {@link eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory}
+    * describes the used facet mappings - and adds some extra curation facets
+    * </p>
+    *
+    * @return the analyzer
+    */
    @Bean
-   public CMDIRecordProcessor<Map<String, List<ValueSet>>> cmdiRecordProcessor(){
+   public CmdiRecordAnalyzer cmdiRecordAnalyzer() {
 
-      final LanguageCodeUtils languageCodeUtils = new LanguageCodeUtils(vloConfig);
-
-      final FieldNameServiceImpl fieldNameServiceImpl = new FieldNameServiceImpl(vloConfig);
-
-      final ValueSetCmdiData.Factory cmdiDataFactory = new ValueSetCmdiData.Factory(fieldNameServiceImpl);
-
-      final VLOMarshaller marshaller = new VLOMarshaller();
-
-      CMDIDataProcessor<Map<String, List<ValueSet>>> dataProcessor = new CMDIParserVTDXML<>(
-            MetadataImporter.registerPostProcessors(vloConfig, fieldNameServiceImpl, languageCodeUtils),
-            MetadataImporter.registerPostMappingFilters(fieldNameServiceImpl), vloConfig, fac, marshaller,
-            cmdiDataFactory, fieldNameServiceImpl, false);
-
-      return new CMDIRecordProcessor<Map<String, List<ValueSet>>>(dataProcessor, fieldNameServiceImpl) {
-
-         @Override
-         protected boolean skipOnDuplicateId() {
-
-            return false;
-         }
-
-         @Override
-         protected boolean skipOnNoResources() {
-
-            return false;
-         }
-      };          
+      return CmdiRecordAnalyzer.create(vloConfig, facetsMappingProvider);
    }
 }

@@ -12,7 +12,7 @@ import eu.clarin.cmdi.curation.api.report.profile.CMDProfileReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport;
 import eu.clarin.cmdi.curation.api.report.profile.sec.ProfileFacetReport.Coverage;
 import eu.clarin.cmdi.curation.api.subprocessor.AbstractSubprocessor;
-import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
+import eu.clarin.cmdi.vlo.importer.api.FacetsMappingProvider;
 import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
 import eu.clarin.cmdi.curation.cr.CRService;
 import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
@@ -40,7 +40,7 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
     * The Fac.
     */
    @Autowired
-   FacetsMappingCacheFactory fac;
+   FacetsMappingProvider facetsMappingProvider;
 
    /**
     * Process.
@@ -54,7 +54,7 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
 
       try {
 
-         FacetsMapping facetMapping = fac.getFacetsMapping(profile.getSchemaLocation());
+         FacetsMapping facetMapping = facetsMappingProvider.getFacetsMapping(profile.getSchemaLocation());
 
          final Map<String, CMDINode> elements = crService.getParsedProfile(profile.getSchemaLocation()).xpathElementNode();
          

@@ -7,11 +7,10 @@ import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
 import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.Pattern;
-import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
+import eu.clarin.cmdi.vlo.importer.api.FacetsMappingBuilder;
 import eu.clarin.cmdi.vlo.importer.api.FacetsMappingDecorator;
-import eu.clarin.cmdi.vlo.importer.mapping.ConceptLinkPathMapper;
+import eu.clarin.cmdi.vlo.importer.api.FacetsMappingProvider;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetDefinition;
-import eu.clarin.cmdi.vlo.importer.mapping.FacetMappingFactory;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +23,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The type Facets mapping cache factory.
+ * Supplies facets mappings for the curation module, cached by schema location.
  *
  * @author Wolfgang Walter SAUER (wowasa) &lt;clarin@wowasa.com&gt;
  */
 @Service
 @Slf4j
-public class FacetsMappingCacheFactory extends FacetMappingFactory {
+public class FacetsMappingCacheFactory implements FacetsMappingProvider {
 
-   private final VloConfig vloConfig;
+   private final FacetsMappingBuilder builder;
 
    private final CRService crService;
 
@@ -48,24 +47,10 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
    @Autowired
    public FacetsMappingCacheFactory(VloConfig vloConfig, CRService crService, FacetMappingCache cache) {
 
-      super(vloConfig, new VLOMarshaller());
-      this.vloConfig = vloConfig;
+      this.builder = new FacetsMappingBuilder(vloConfig);
       this.crService = crService;
       this.cache = cache;
    }
-
-   /**
-    * Gets facet mapping.
-    *
-    * @param profileId        the profile id
-    * @param useLocalXSDCache the use local xsd cache
-    * @return the facet mapping
-    */
-   @Override
-   public FacetsMapping getFacetMapping(String profileId, Boolean useLocalXSDCache) {
-
-        return getFacetsMapping(vloConfig.getComponentRegistryProfileSchema(profileId));
-    }
 
    /**
     * Gets facets mapping.
@@ -73,11 +58,11 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
     * @param schemaLocation the URL of the schema
     * @return the facets mapping
     */
+   @Override
    public FacetsMapping getFacetsMapping(String schemaLocation) {
-      
+
       return cache.getFacetMapping(schemaLocation, this);
    }
-
 
    /**
     * Create facets mapping.
@@ -87,42 +72,36 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
     */
    public FacetsMapping createFacetsMapping(String schemaLocation) {
 
-      return new FacetsMappingDecorator(createMapping(new ConceptLinkPathMapper() {
+      return new FacetsMappingDecorator(builder.build(schemaLocation, this::conceptLinkPaths), curationFacets());
+   }
 
-         @Override
-         public Map<String, List<Pattern>> createConceptLinkPathMapping() {
-            
-            final Map<String, List<Pattern>> result = new HashMap<>();
+   /**
+    * Concept URI to XPath mappings for a profile, read from the component registry.
+    *
+    * @param schemaLocation the URL of the schema
+    * @return the patterns per concept URI
+    */
+   private Map<String, List<Pattern>> conceptLinkPaths(String schemaLocation) {
 
-            try {
-               crService.getParsedProfile(schemaLocation).xpathElementNode().entrySet()
-                  .stream()
-                  .filter(element -> (element.getValue().concept != null))
-                  .forEach(element -> result.computeIfAbsent(element.getValue().concept.getUri(), k -> new ArrayList<>())
-                  .add(new Pattern(element.getKey())));
-            }
-            catch (NoCRCacheEntryException e) {
+      final Map<String, List<Pattern>> result = new HashMap<>();
 
-               log.error("no ProfileCacheEntry object for schemaLocation '{}'", schemaLocation);
+      try {
+         crService.getParsedProfile(schemaLocation).xpathElementNode().entrySet()
+            .stream()
+            .filter(element -> (element.getValue().concept != null))
+            .forEach(element -> result.computeIfAbsent(element.getValue().concept.getUri(), k -> new ArrayList<>())
+            .add(new Pattern(element.getKey())));
+      }
+      catch (NoCRCacheEntryException e) {
 
-            }
-            catch (CCRServiceNotAvailableException | PPHCacheException e) {
-                throw new RuntimeException(e);
-            }
+         log.error("no ProfileCacheEntry object for schemaLocation '{}'", schemaLocation);
 
-             return result;
-         }
+      }
+      catch (CCRServiceNotAvailableException | PPHCacheException e) {
+          throw new RuntimeException(e);
+      }
 
-         @Override
-         public String getXsd() {
-            return schemaLocation;
-         }
-
-         @Override
-         public Boolean useLocalXSDCache() {
-            return true;
-         }
-      }), curationFacets());
+      return result;
    }
 
    /**
