@@ -4,7 +4,6 @@
  */
 package eu.clarin.cmdi.curation.api.conf;
 
-import eu.clarin.cmdi.curation.api.vlo_extension.CMDIDataImplFactory;
 import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
 import eu.clarin.cmdi.vlo.LanguageCodeUtils;
 import eu.clarin.cmdi.vlo.config.FieldNameServiceImpl;
@@ -12,6 +11,7 @@ import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.CMDIRecordProcessor;
 import eu.clarin.cmdi.vlo.importer.MetadataImporter;
 import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
+import eu.clarin.cmdi.vlo.importer.api.ValueSetCmdiData;
 import eu.clarin.cmdi.vlo.importer.processor.CMDIDataProcessor;
 import eu.clarin.cmdi.vlo.importer.processor.CMDIParserVTDXML;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
@@ -45,7 +45,7 @@ public class ApiBeans {
 
       final FieldNameServiceImpl fieldNameServiceImpl = new FieldNameServiceImpl(vloConfig);
 
-      final CMDIDataImplFactory cmdiDataFactory = new CMDIDataImplFactory(fieldNameServiceImpl);
+      final ValueSetCmdiData.Factory cmdiDataFactory = new ValueSetCmdiData.Factory(fieldNameServiceImpl);
 
       final VLOMarshaller marshaller = new VLOMarshaller();
 

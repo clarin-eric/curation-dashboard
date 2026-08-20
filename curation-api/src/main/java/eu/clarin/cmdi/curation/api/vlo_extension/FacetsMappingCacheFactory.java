@@ -8,7 +8,9 @@ import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.vlo.config.VloConfig;
 import eu.clarin.cmdi.vlo.importer.Pattern;
 import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
+import eu.clarin.cmdi.vlo.importer.api.FacetsMappingDecorator;
 import eu.clarin.cmdi.vlo.importer.mapping.ConceptLinkPathMapper;
+import eu.clarin.cmdi.vlo.importer.mapping.FacetDefinition;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetMappingFactory;
 import eu.clarin.cmdi.vlo.importer.mapping.FacetsMapping;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +87,7 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
     */
    public FacetsMapping createFacetsMapping(String schemaLocation) {
 
-      return new FacetsMappingExt(createMapping(new ConceptLinkPathMapper() {
+      return new FacetsMappingDecorator(createMapping(new ConceptLinkPathMapper() {
 
          @Override
          public Map<String, List<Pattern>> createConceptLinkPathMapping() {
@@ -119,6 +122,32 @@ public class FacetsMappingCacheFactory extends FacetMappingFactory {
          public Boolean useLocalXSDCache() {
             return true;
          }
-      }));
+      }), curationFacets());
+   }
+
+   /**
+    * Facets the curation module needs that VLO does not define in facetConcepts.xml.
+    *
+    * @return the additional facet definitions, by name
+    */
+   private static Map<String, FacetDefinition> curationFacets() {
+
+      final LinkedHashMap<String, FacetDefinition> extra = new LinkedHashMap<>();
+
+      extra.put("curation_schemaLocation",
+            facet("curation_schemaLocation", "/cmd:CMD/@*[local-name()='schemaLocation']"));
+      extra.put("curation_noNamespaceSchemaLocation",
+            facet("curation_noNamespaceSchemaLocation", "/cmd:CMD/@*[local-name()='noNamespaceSchemaLocation']"));
+      extra.put("curation_mdProfile",
+            facet("curation_mdProfile", "/cmd:CMD/cmd:Header/cmd:MdProfile/text()"));
+
+      return extra;
+   }
+
+   private static FacetDefinition facet(String name, String xpath) {
+
+      final FacetDefinition definition = new FacetDefinition(null, name);
+      definition.setPattern(new Pattern(xpath));
+      return definition;
    }
 }

@@ -23,7 +23,7 @@
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <linkchecker-persistence.version>3.0.0</linkchecker-persistence.version>
-        <vlo.version>4.12.4</vlo.version>
+        <vlo.version>4.15-SNAPSHOT</vlo.version>
         <vtd.version>2.11</vtd.version> <!-- don't change the vtd version ! -->
         <saxon.version>12.3</saxon.version>
         <mockserver.version>7.6.0</mockserver.version>
