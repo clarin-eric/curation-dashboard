@@ -55,7 +55,7 @@ curation:
    http:
       # the user agent String, send with any request
       # empty String turns of the feature
-      user-agent: CLARIN-curation-dashboard
+      user-agent: CLARIN-curation-dashboard (https://curation.clarin.eu; curation@clarin.eu)
       # connection timeout for request in ms
       # 0 turns of the feature
       connection-timeout: 10000
@@ -84,8 +84,9 @@ curation:
       home: ${APPLICATION_HOME_DIRECTORY}
       dataRoot: ${APPLICATION_HOME_DIRECTORY}/data
       # root directory for collections of CMD files
-      in: >
-         ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
+      in:
+         - ${APPLICATION_HOME_DIRECTORY}/data/clarin/results/cmdi
+         - ${APPLICATION_HOME_DIRECTORY}/data/others/results/cmdi/Mozilla_Data_Collective
       # output directory for reports
       out: ${APPLICATION_HOME_DIRECTORY}/public
       share: /share
