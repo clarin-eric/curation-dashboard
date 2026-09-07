@@ -38,6 +38,16 @@ server:
       enabled: true
    port: 8443
 curation:
+   http:
+      # the user agent String, send with any request
+      # empty String turns of the feature
+      user-agent: CLARIN-curation-dashboard (https://curation.clarin.eu; curation@clarin.eu)
+      # connection timeout for request in ms
+      # 0 turns of the feature
+      connection-timeout: 10000
+      # read timeout in ms
+      # 0 turns of the feature
+      read-timeout: 10000
    cr-service:
       cr-cache: ${java.io.tmpdir}/curation/cr_cache
       restApi: "https://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles"
