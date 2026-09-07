@@ -1,3 +1,7 @@
+# 7.7.0
+- upgrading to Spring Boot 4.1.1
+- deleting status results older 365 from database (issue https://github.com/clarin-eric/curation-dashboard/issues/310)
+
 # 7.6.0
 - upgrading to Spring Boot 4.0.2
 - using checksum approach for Metadata Provider reports (issue https://github.com/clarin-eric/curation-dashboard/issues/302) 
