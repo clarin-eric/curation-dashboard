@@ -49,12 +49,6 @@
         </ehcache:expiry>
         <ehcache:heap unit="entries">500</ehcache:heap>
     </ehcache:cache>
-    <ehcache:cache alias="facetMappingCache">
-        <ehcache:expiry>
-            <ehcache:none/>
-        </ehcache:expiry>
-        <ehcache:heap unit="entries">500</ehcache:heap>
-    </ehcache:cache>
     <ehcache:cache alias="checksumCache">
         <ehcache:expiry>
             <ehcache:ttl unit="days">7</ehcache:ttl>

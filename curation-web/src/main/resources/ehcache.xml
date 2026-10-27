@@ -34,10 +34,4 @@
         </ehcache:expiry>
         <ehcache:heap unit="entries">500</ehcache:heap>
     </ehcache:cache>
-    <ehcache:cache alias="facetMappingCache">
-        <ehcache:expiry>
-            <ehcache:none/>
-        </ehcache:expiry>
-        <ehcache:heap unit="entries">1000</ehcache:heap>
-    </ehcache:cache>
 </ehcache:config>
