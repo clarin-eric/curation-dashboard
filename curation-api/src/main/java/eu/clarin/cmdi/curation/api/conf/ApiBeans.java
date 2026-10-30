@@ -4,21 +4,20 @@
  */
 package eu.clarin.cmdi.curation.api.conf;
 
-import eu.clarin.cmdi.curation.api.vlo_extension.CMDIDataImplFactory;
-import eu.clarin.cmdi.curation.api.vlo_extension.FacetsMappingCacheFactory;
-import eu.clarin.cmdi.vlo.LanguageCodeUtils;
-import eu.clarin.cmdi.vlo.config.FieldNameServiceImpl;
+import eu.clarin.cmdi.curation.ccr.exception.CCRServiceNotAvailableException;
+import eu.clarin.cmdi.curation.cr.CRService;
+import eu.clarin.cmdi.curation.cr.exception.NoCRCacheEntryException;
+import eu.clarin.cmdi.curation.cr.exception.PPHCacheException;
 import eu.clarin.cmdi.vlo.config.VloConfig;
-import eu.clarin.cmdi.vlo.importer.CMDIRecordProcessor;
-import eu.clarin.cmdi.vlo.importer.MetadataImporter;
-import eu.clarin.cmdi.vlo.importer.VLOMarshaller;
-import eu.clarin.cmdi.vlo.importer.processor.CMDIDataProcessor;
-import eu.clarin.cmdi.vlo.importer.processor.CMDIParserVTDXML;
-import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
+import eu.clarin.cmdi.vlo.importer.api.CmdiRecordAnalyzer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,46 +26,73 @@ import java.util.Map;
  */
 @Component
 @Lazy
+@Slf4j
 public class ApiBeans {
 
-   private final FacetsMappingCacheFactory fac;
-   private final VloConfig vloConfig;
+   /**
+    * Facets that VLO does not define in facetConcepts.xml but needed for header checks
+    */
+   private static final Map<String, String> CURATION_FACETS = new LinkedHashMap<>();
 
-   public ApiBeans(FacetsMappingCacheFactory fac, VloConfig vloConfig) {
-
-      this.fac = fac;
-      this.vloConfig = vloConfig;
+   static {
+      CURATION_FACETS.put("curation_schemaLocation", "/cmd:CMD/@*[local-name()='schemaLocation']");
+      CURATION_FACETS.put("curation_noNamespaceSchemaLocation", "/cmd:CMD/@*[local-name()='noNamespaceSchemaLocation']");
+      CURATION_FACETS.put("curation_mdProfile", "/cmd:CMD/cmd:Header/cmd:MdProfile/text()");
    }
 
+   private final VloConfig vloConfig;
+   private final CRService crService;
+
+   public ApiBeans(VloConfig vloConfig, CRService crService) {
+
+      this.vloConfig = vloConfig;
+      this.crService = crService;
+   }
+
+   /**
+    * The analyzer that {@link eu.clarin.cmdi.curation.api.entity.CMDInstance}
+    * runs each record through.
+    *
+    * <p>
+    * Configured for analysis rather than import: every record keeps the full
+    * ValueSet per facet value.
+    *
+    * </p>
+    *
+    * @return the analyzer
+    */
    @Bean
-   public CMDIRecordProcessor<Map<String, List<ValueSet>>> cmdiRecordProcessor(){
+   public CmdiRecordAnalyzer cmdiRecordAnalyzer() {
 
-      final LanguageCodeUtils languageCodeUtils = new LanguageCodeUtils(vloConfig);
+      return new CmdiRecordAnalyzer(vloConfig, this::conceptPaths, CURATION_FACETS);
+   }
 
-      final FieldNameServiceImpl fieldNameServiceImpl = new FieldNameServiceImpl(vloConfig);
+   /**
+    * The XPaths of each concept link in a profile: concept URI to XPaths.
+    *
+    * @param schemaLocation the URL of the schema
+    * @return the concept paths, empty if the profile is not in the CR cache
+    */
+   private Map<String, List<String>> conceptPaths(String schemaLocation) {
 
-      final CMDIDataImplFactory cmdiDataFactory = new CMDIDataImplFactory(fieldNameServiceImpl);
+      final Map<String, List<String>> result = new HashMap<>();
 
-      final VLOMarshaller marshaller = new VLOMarshaller();
+      try {
+         crService.getParsedProfile(schemaLocation).xpathElementNode().entrySet()
+            .stream()
+            .filter(element -> (element.getValue().concept != null))
+            .forEach(element -> result.computeIfAbsent(element.getValue().concept.getUri(), k -> new ArrayList<>())
+            .add(element.getKey()));
+      }
+      catch (NoCRCacheEntryException e) {
 
-      CMDIDataProcessor<Map<String, List<ValueSet>>> dataProcessor = new CMDIParserVTDXML<>(
-            MetadataImporter.registerPostProcessors(vloConfig, fieldNameServiceImpl, languageCodeUtils),
-            MetadataImporter.registerPostMappingFilters(fieldNameServiceImpl), vloConfig, fac, marshaller,
-            cmdiDataFactory, fieldNameServiceImpl, false);
+         log.error("no ProfileCacheEntry object for schemaLocation '{}'", schemaLocation);
 
-      return new CMDIRecordProcessor<Map<String, List<ValueSet>>>(dataProcessor, fieldNameServiceImpl) {
+      }
+      catch (CCRServiceNotAvailableException | PPHCacheException e) {
+          throw new RuntimeException(e);
+      }
 
-         @Override
-         protected boolean skipOnDuplicateId() {
-
-            return false;
-         }
-
-         @Override
-         protected boolean skipOnNoResources() {
-
-            return false;
-         }
-      };          
+      return result;
    }
 }

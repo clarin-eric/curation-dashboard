@@ -4,7 +4,7 @@ import eu.clarin.cmdi.curation.api.exception.MalFunctioningProcessorException;
 import eu.clarin.cmdi.curation.api.processor.CMDInstanceProcessor;
 import eu.clarin.cmdi.curation.api.report.instance.CMDInstanceReport;
 import eu.clarin.cmdi.vlo.importer.CMDIData;
-import eu.clarin.cmdi.vlo.importer.CMDIRecordProcessor;
+import eu.clarin.cmdi.vlo.importer.api.CmdiRecordAnalyzer;
 import eu.clarin.cmdi.vlo.importer.processor.ValueSet;
 import eu.clarin.cmdi.vlo.importer.solr.DocumentStoreException;
 import lombok.Data;
@@ -28,7 +28,7 @@ public class CMDInstance {
 
     private final CMDInstanceProcessor processor;
 
-    private final CMDIRecordProcessor<Map<String, List<ValueSet>>> cmdiRecordProcessor;
+    private final CmdiRecordAnalyzer cmdiRecordAnalyzer;
 
     private Optional<CMDIData<Map<String, List<ValueSet>>>> cmdiData;
 
@@ -44,7 +44,7 @@ public class CMDInstance {
 
             try {
 
-                this.cmdiData = cmdiRecordProcessor.processRecord(this.path.toFile());
+                this.cmdiData = cmdiRecordAnalyzer.analyze(this.path.toFile());
             }
             catch (DocumentStoreException e) {
 
