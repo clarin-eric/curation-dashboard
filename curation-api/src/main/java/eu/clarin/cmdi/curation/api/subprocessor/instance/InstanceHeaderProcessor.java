@@ -67,7 +67,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
 
         Matcher matcher;
         if (facetValuesMap.containsKey("curation_schemaLocation") && !facetValuesMap.get("curation_schemaLocation").isEmpty()
-                && (matcher = profilePattern.matcher((CharSequence) facetValuesMap.get("curation_schemaLocation"))).find()) {
+                && (matcher = profilePattern.matcher((CharSequence) facetValuesMap.get("curation_schemaLocation").getFirst().getValue())).find()) {
 
             instanceReport.instanceHeaderReport.schemaLocation = matcher.group();
         }
