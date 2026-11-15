@@ -290,9 +290,16 @@ public class CurationApp {
 
                 it.forEachRemaining(entry -> {
 
-                    allProfileReport.addReport(entry.getValue());
+                    if(Objects.nonNull(entry.getValue()) && Objects.nonNull(entry.getValue().headerReport.getId())) {
 
-                    storage.saveReport(entry.getValue(), CurationEntityType.PROFILE, false);
+                        allProfileReport.addReport(entry.getValue());
+
+                        storage.saveReport(entry.getValue(), CurationEntityType.PROFILE, false);
+                    }
+                    else{
+
+                        log.error("no ID for profile '{}'", entry.getKey());
+                    }
                 });
 
                 storage.saveReport(allProfileReport, CurationEntityType.PROFILE, false);

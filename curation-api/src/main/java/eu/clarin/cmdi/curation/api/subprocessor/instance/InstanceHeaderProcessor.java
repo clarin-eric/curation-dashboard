@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The type Instance header processor.
@@ -27,6 +28,8 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
     /**
      * The Conf.
      */
+
+    private static final Pattern profilePattern = Pattern.compile("http(s)?://www.clarin.eu/cmd/1/profiles/clarin\\.eu:cr1:p_[0-9]+");
 
     private final CRConfig crConfig;
 
@@ -62,11 +65,13 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
 
         Map<String, List<ValueSet>> facetValuesMap = instance.getCmdiData().get().getDocument();
 
+        Matcher matcher;
+        if (facetValuesMap.containsKey("curation_schemaLocation") && !facetValuesMap.get("curation_schemaLocation").isEmpty()
+                && (matcher = profilePattern.matcher((CharSequence) facetValuesMap.get("curation_schemaLocation"))).find()) {
 
-        if (facetValuesMap.containsKey("curation_schemaLocation") && !facetValuesMap.get("curation_schemaLocation").isEmpty()) {
-            String[] schemaLocationArray = facetValuesMap.get("curation_schemaLocation").getFirst().getValue().split(" ");
-            instanceReport.instanceHeaderReport.schemaLocation = (schemaLocationArray[schemaLocationArray.length - 1]);
-        } else if (facetValuesMap.containsKey("curation_noNamespaceSchemaLocation") && !facetValuesMap.get("curation_noNamespaceSchemaLocation").isEmpty()) {
+            instanceReport.instanceHeaderReport.schemaLocation = matcher.group();
+        }
+        else if (facetValuesMap.containsKey("curation_noNamespaceSchemaLocation") && !facetValuesMap.get("curation_noNamespaceSchemaLocation").isEmpty()) {
             instanceReport.instanceHeaderReport.schemaLocation = facetValuesMap.get("curation_noNamespaceSchemaLocation").getFirst().getValue();
         }
 
