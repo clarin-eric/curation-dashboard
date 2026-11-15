@@ -29,7 +29,7 @@ public class InstanceHeaderProcessor extends AbstractSubprocessor<CMDInstance, C
      * The Conf.
      */
 
-    private static final Pattern profilePattern = Pattern.compile("http(s)?://www.clarin.eu/cmd/1/profiles/clarin\\.eu:cr1:p_[0-9]+");
+    private static final Pattern profilePattern = Pattern.compile("http(s)?://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/clarin\\.eu:cr1:p_[0-9]+/xsd");
 
     private final CRConfig crConfig;
 
