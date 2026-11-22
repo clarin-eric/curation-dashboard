@@ -28,7 +28,7 @@ public class CMDInstance {
 
     private final CMDInstanceProcessor processor;
 
-    private final CmdiRecordAnalyzer cmdiRecordAnalyzer;
+    private final CmdiRecordAnalyzer<Map<String, List<ValueSet>>> cmdiRecordAnalyzer;
 
     private Optional<CMDIData<Map<String, List<ValueSet>>>> cmdiData;
 

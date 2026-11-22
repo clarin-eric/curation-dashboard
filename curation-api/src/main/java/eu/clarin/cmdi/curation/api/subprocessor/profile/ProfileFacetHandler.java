@@ -37,7 +37,7 @@ public class ProfileFacetHandler extends AbstractSubprocessor<CMDProfile, CMDPro
    @Autowired
    private CRService crService;
    @Autowired
-   private CmdiRecordAnalyzer cmdiRecordAnalyzer;
+   private CmdiRecordAnalyzer<?> cmdiRecordAnalyzer;
 
    /**
     * Process.
