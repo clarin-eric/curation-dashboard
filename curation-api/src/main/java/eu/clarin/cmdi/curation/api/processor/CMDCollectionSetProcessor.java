@@ -43,11 +43,16 @@ public class CMDCollectionSetProcessor {
 
 
         cmdCollectionSet.getPaths().forEach(path -> {
-            try {
-                processCollection(path, collectionReports);
+            if (Files.exists(path)){
+                try {
+                    processCollection(path, collectionReports);
+                }
+                catch (MalFunctioningProcessorException e) {
+                    throw new RuntimeException(e);
+                }
             }
-            catch (MalFunctioningProcessorException e) {
-                throw new RuntimeException(e);
+            else{
+                log.warn("path '{}' doesn't exist - you may need to modify the application.yml", path);
             }
         });
 

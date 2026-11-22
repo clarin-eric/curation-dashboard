@@ -36,6 +36,14 @@
             <div class="clear"/>
         </div>
         <h1>CMD Profile Report</h1>
+        <h3>Profile ID: <xsl:value-of select="/cmdProfileReport/headerReport/id" /></h3>
+        <a>
+            <xsl:attribute name="href">
+                <xsl:text>https://vlo.clarin.eu/search?q=_componentProfileId%3A</xsl:text>
+                <xsl:value-of select="encode-for-uri(/cmdProfileReport/headerReport/id)"/>
+            </xsl:attribute>
+            <xsl:text>search for records based on this profile in VLO</xsl:text>
+        </a>
         <p>
             Score:
             <xsl:value-of select="format-number(./@score,'0.00')"/> /

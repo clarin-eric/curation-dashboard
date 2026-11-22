@@ -7,8 +7,8 @@ logging:
             # we're rolling after 10MB which is only reached when we have a massif occurrence of errors
             max-file-size: 10MB
    level:
-      # generally we only want to log errors
-      root: error
+      # generally we only want to log errors and warnings
+      root: warn
       # only CurationApp we're logging in info level to see the progress in processing
       eu.clarin.cmdi.curation.app.CurationApp: info
       eu.clarin.cmdi.vlo.importer.mapping.FacetMappingFactory: off

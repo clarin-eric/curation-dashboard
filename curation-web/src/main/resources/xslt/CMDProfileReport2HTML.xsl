@@ -45,6 +45,7 @@
             <div class="clear"/>
         </div>
         <h1>CMD Profile Report</h1>
+        <h3>Profile ID: <xsl:value-of select="/cmdProfileReport/headerReport/id" /></h3>
         <p>
             Score:
             <xsl:value-of select="format-number(./@score,'0.00')"/> /
